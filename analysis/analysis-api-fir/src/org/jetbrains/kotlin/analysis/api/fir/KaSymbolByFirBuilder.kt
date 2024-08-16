@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -344,8 +346,27 @@ internal class KaSymbolByFirBuilder(
             return KaFirJavaFieldSymbol(firSymbol, analysisSession)
         }
 
-        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KaBackingFieldSymbol =
-            KaFirBackingFieldSymbol(firSymbol, analysisSession)
+        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KaBackingFieldSymbol {
+            val propertySymbol = buildPropertySymbol(firSymbol.propertySymbol)
+            requireWithAttachment(
+                propertySymbol is KaPropertySymbol,
+                { "Inconsistent state: property symbol is not a ${KaPropertySymbol::class.simpleName}" },
+            ) {
+                withFirSymbolEntry("property", propertySymbol.firSymbol)
+                withFirSymbolEntry("backingField", firSymbol)
+            }
+
+            val backingFieldSymbol = propertySymbol.backingFieldSymbol
+            requireWithAttachment(
+                backingFieldSymbol != null,
+                { "Inconsistent state: backing field symbol is null" },
+            ) {
+                withFirSymbolEntry("property", propertySymbol.firSymbol)
+                withFirSymbolEntry("backingField", firSymbol)
+            }
+
+            return backingFieldSymbol
+        }
 
         private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {
             is FirJavaField -> true

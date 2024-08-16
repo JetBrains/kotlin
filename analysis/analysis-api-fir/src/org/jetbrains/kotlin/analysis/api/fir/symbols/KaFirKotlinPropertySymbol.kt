@@ -88,9 +88,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
         }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion {
-            firSymbol.backingFieldSymbol?.let { builder.variableBuilder.buildBackingFieldSymbol(it) }
-        }
+        get() = withValidityAssertion { KaFirBackingFieldSymbol(this) }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion {
