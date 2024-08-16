@@ -99,6 +99,20 @@ public actual annotation class JvmSynthetic
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
+ * Indicates that the Java declaration is an actualization for the existing Kotlin `expect` declaration.
+ * The pair of Kotlin `expect` and Java `actual` declarations must have the same FQN (fully qualified name)
+ *
+ * The annotation can be used only in Java and acts similarly to the `actual` keyword in Kotlin.
+ * Since the annotation is meaningless when used in Kotlin, the Kotlin compiler reports any usages of this annotation in Kotlin code.
+ *
+ * Also see: [Expect and actual declarations documentation](https://kotlinlang.org/docs/multiplatform-expect-actual.html)
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("2.0") // todo change to 2.1 once we migrate stdlib to K2 KT-56076
+public annotation class KotlinActual
+
+/**
  * This annotation marks Kotlin `expect` declarations that are implicitly actualized by Java.
  *
  * # Safety Risks
