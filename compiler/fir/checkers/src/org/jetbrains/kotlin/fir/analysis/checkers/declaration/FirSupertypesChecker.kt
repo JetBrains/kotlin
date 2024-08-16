@@ -107,7 +107,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         checkDelegationWithoutPrimaryConstructor(declaration, context, reporter)
 
         if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
-            checkInconsistentTypeParameters(listOf(Pair(null, declaration.symbol)), context, reporter, declaration.source, true)
+            checkInconsistentTypeParameters(listOf(null to declaration.symbol), context, reporter, declaration.source, isValues = true)
         }
     }
 

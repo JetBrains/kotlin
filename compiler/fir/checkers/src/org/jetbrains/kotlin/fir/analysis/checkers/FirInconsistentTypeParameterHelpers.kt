@@ -23,33 +23,24 @@ fun checkInconsistentTypeParameters(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     source: KtSourceElement?,
-    isValues: Boolean
+    isValues: Boolean,
 ) {
     val result = buildDeepSubstitutionMultimap(firTypeRefClasses, context)
     for ((typeParameterSymbol, typeAndProjections) in result) {
         val projections = typeAndProjections.projections
         if (projections.size > 1) {
-            // Report `Any?` instead of `*` for star projections because diagnostics renderer doesn't support type projections
-            // Moreover, K1 report `Any?` instead of `*`
-            if (isValues) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES,
-                    typeParameterSymbol,
-                    typeAndProjections.classSymbol,
-                    projections.map { it.type ?: StandardTypes.NullableAny },
-                    context
-                )
-            } else {
-                reporter.reportOn(
-                    source,
-                    FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS,
-                    typeParameterSymbol,
-                    typeAndProjections.classSymbol,
-                    projections.map { it.type ?: StandardTypes.NullableAny },
-                    context
-                )
-            }
+            val diagnosticFactory =
+                if (isValues) FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES else FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
+            reporter.reportOn(
+                source,
+                diagnosticFactory,
+                typeParameterSymbol,
+                typeAndProjections.classSymbol,
+                // Report `Any?` instead of `*` for star projections because diagnostics renderer doesn't support type projections
+                // Moreover, K1 report `Any?` instead of `*`
+                projections.map { it.type ?: StandardTypes.NullableAny },
+                context
+            )
         }
     }
 }
@@ -78,15 +69,9 @@ private fun buildDeepSubstitutionMultimap(
                 val typeParameterSymbol = typeParameterSymbols[index]
 
                 substitution[typeParameterSymbol] = substitutedArgument
-                var classSymbolAndProjections = result[typeParameterSymbol]
-                val projections: MutableList<ConeTypeProjection>
-                if (classSymbolAndProjections == null) {
-                    projections = mutableListOf()
-                    classSymbolAndProjections = ClassSymbolAndProjections(classSymbol, projections)
-                    result[typeParameterSymbol] = classSymbolAndProjections
-                } else {
-                    projections = classSymbolAndProjections.projections
-                }
+                val projections = result.getOrPut(typeParameterSymbol) {
+                    ClassSymbolAndProjections(classSymbol, mutableListOf())
+                }.projections
 
                 val substitutedArgumentType = substitutedArgument.type
                 if (projections.none {
@@ -115,8 +100,8 @@ private fun buildDeepSubstitutionMultimap(
         }
     }
 
-    for (firTypeRefClass in firTypeRefClasses) {
-        fillInDeepSubstitutor(firTypeRefClass.first?.coneType?.fullyExpandedType(session)?.typeArguments, firTypeRefClass.second, context)
+    for ((typeRef, regularClassSymbol) in firTypeRefClasses) {
+        fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType(session)?.typeArguments, regularClassSymbol, context)
     }
     return result
 }
