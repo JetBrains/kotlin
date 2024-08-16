@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
 
 private const val KOTLIN = "kotlin"
 private const val GET = "get"
@@ -47,7 +46,6 @@ internal fun buildCall(
         type ?: target.owner.returnType,
         target,
         typeArguments.size,
-        valueArguments.size,
         origin
     ).apply {
         typeArguments.let {

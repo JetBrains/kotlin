@@ -100,7 +100,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     UNDEFINED_OFFSET,
                     context.irBuiltIns.anyType,
                     context.intrinsics.jsBind,
-                    valueArgumentsCount = 2,
                     typeArgumentsCount = 0,
                     origin = JsStatementOrigins.BIND_CALL,
                 ).apply {
@@ -170,7 +169,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         factory: IrSimpleFunctionSymbol
     ): IrCall {
         val newCall = expression.run {
-            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, valueArgumentsCount, origin)
+            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, origin)
         }
 
         newCall.dispatchReceiver = expression.dispatchReceiver
@@ -434,7 +433,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             invokeFun.returnType,
             invokeFun.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = invokeFun.valueParameters.size,
             origin = JsStatementOrigins.EXPLICIT_INVOKE,
             superQualifierSymbol = null
         )

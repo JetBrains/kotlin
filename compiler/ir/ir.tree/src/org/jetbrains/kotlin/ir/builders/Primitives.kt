@@ -36,7 +36,6 @@ fun primitiveOp1(
     IrCallImpl(
         startOffset, endOffset, primitiveOpReturnType, primitiveOpSymbol,
         typeArgumentsCount = 0,
-        valueArgumentsCount = 0,
         origin = origin
     ).also {
         it.dispatchReceiver = dispatchReceiver
@@ -54,7 +53,6 @@ fun primitiveOp2(
         primitiveOpReturnType,
         primitiveOpSymbol,
         typeArgumentsCount = 0,
-        valueArgumentsCount = 2,
         origin = origin
     ).apply {
         putValueArgument(0, argument1)

@@ -388,7 +388,6 @@ open class FunctionInlining(
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
-                            inlinedFunction.valueParameters.size,
                             INLINED_FUNCTION_REFERENCE
                         )
                 }.apply {

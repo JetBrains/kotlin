@@ -53,8 +53,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             call.endOffset,
             comparator.owner.returnType,
             comparator,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 2
+            typeArgumentsCount = 0
         ).apply {
             putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
             putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))

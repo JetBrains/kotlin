@@ -124,8 +124,7 @@ internal abstract class UnsignedProgressionType(
                 startOffset, endOffset,
                 unsignedType,
                 unsafeCoerceIntrinsic,
-                typeArgumentsCount = 2,
-                valueArgumentsCount = 1
+                typeArgumentsCount = 2
             ).apply {
                 putTypeArgument(0, fromType)
                 putTypeArgument(1, unsignedType)
@@ -136,8 +135,7 @@ internal abstract class UnsignedProgressionType(
             IrCallImpl(
                 startOffset, endOffset, unsignedConversionFunction.owner.returnType,
                 unsignedConversionFunction,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = 0
+                typeArgumentsCount = 0
             ).apply {
                 extensionReceiver = this@asUnsigned
             }
@@ -152,8 +150,7 @@ internal abstract class UnsignedProgressionType(
             IrCallImpl(
                 startOffset, endOffset, toType,
                 unsafeCoerceIntrinsic,
-                typeArgumentsCount = 2,
-                valueArgumentsCount = 1
+                typeArgumentsCount = 2
             ).apply {
                 putTypeArgument(0, unsignedType)
                 putTypeArgument(1, toType)

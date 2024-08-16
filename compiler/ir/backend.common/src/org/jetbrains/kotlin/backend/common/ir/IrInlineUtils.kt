@@ -121,7 +121,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
             IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
-                typeArgumentsCount = 0, valueArgumentsCount = arguments.size,
+                typeArgumentsCount = 0,
             ).apply {
                 dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
                 for ((index, argument) in arguments.withIndex()) {

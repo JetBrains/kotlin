@@ -187,7 +187,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     expression.type,
                     staticTarget.symbol,
                     typeArgumentsCount = expression.typeArgumentsCount,
-                    valueArgumentsCount = expression.valueArgumentsCount + 1,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol
                 )

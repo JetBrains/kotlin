@@ -94,7 +94,6 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     declaration.returnType,
                     proxyFunction.symbol,
                     proxyFunction.typeParameters.size,
-                    proxyFunction.valueParameters.size,
                 ).apply {
                     declaration.dispatchReceiverParameter?.let {
                         extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
@@ -125,7 +124,6 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     declaration.returnType,
                     jsFunction,
                     0,
-                    1,
                 ).apply {
                     putValueArgument(0, createValueParametersObject(declaration.valueParameters).toIrConst(context.irBuiltIns.stringType))
                 }
@@ -186,7 +184,6 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     declaration.returnType,
                     jsFunction,
                     0,
-                    1,
                 ).apply {
                     val objectAssignCall = "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(declaration.valueParameters)})"
                     putValueArgument(0, objectAssignCall.toIrConst(context.irBuiltIns.stringType))

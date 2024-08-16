@@ -365,7 +365,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArgumentsCount - typeParametersToRemove,
-                    valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )

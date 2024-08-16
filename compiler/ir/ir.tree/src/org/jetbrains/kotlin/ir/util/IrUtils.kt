@@ -560,7 +560,6 @@ fun irCall(
             newReturnType ?: type,
             newSymbol,
             typeArgumentsCount,
-            valueArgumentsCount = newSymbol.owner.valueParameters.size,
             origin = origin,
             superQualifierSymbol = newSuperQualifierSymbol
         ).apply {
@@ -779,7 +778,7 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
     is IrGetValue ->
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
     is IrCall ->
-        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol).also {
+        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, origin, superQualifierSymbol).also {
             it.dispatchReceiver = dispatchReceiver?.remapReceiver(oldReceiver, newReceiver)
             it.extensionReceiver = extensionReceiver?.remapReceiver(oldReceiver, newReceiver)
         }

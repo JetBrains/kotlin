@@ -135,7 +135,7 @@ class LegacySyntheticAccessorLowering(private val context: CommonBackendContext)
         val copier = FunctionCopier(fileHash)
         val newFunction = copier.copy(this)
 
-        val irCall = IrCallImpl(startOffset, endOffset, newFunction.returnType, symbol, typeParameters.size, valueParameters.size)
+        val irCall = IrCallImpl(startOffset, endOffset, newFunction.returnType, symbol, typeParameters.size)
 
         newFunction.typeParameters.forEachIndexed { i, tp ->
             irCall.putTypeArgument(i, tp.defaultType)
@@ -164,7 +164,7 @@ class LegacySyntheticAccessorLowering(private val context: CommonBackendContext)
 
             functionMap[callee]?.let { newFunction ->
                 val newExpression = expression.run {
-                    IrCallImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount, valueArgumentsCount, origin)
+                    IrCallImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount, origin)
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)

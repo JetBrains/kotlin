@@ -504,7 +504,6 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
                 endOffset = expression.endOffset,
                 type = expression.type,
                 symbol = externalGetInstance.symbol,
-                valueArgumentsCount = 0,
                 typeArgumentsCount = 0
             )
         }

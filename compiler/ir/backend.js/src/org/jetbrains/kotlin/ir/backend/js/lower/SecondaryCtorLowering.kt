@@ -312,7 +312,6 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         return IrCallImpl(
             call.startOffset, call.endOffset, call.type, newTarget,
             typeArgumentsCount = call.typeArgumentsCount,
-            valueArgumentsCount = newTarget.owner.valueParameters.size,
             superQualifierSymbol = irClass.symbol.takeIf { context.es6mode && call.isSyntheticDelegatingReplacement }
         ).apply {
             copyTypeArgumentsFrom(call)

@@ -246,7 +246,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             type = function.returnType.substitute(expression.typeSubstitutionMap),
             symbol = replacement.symbol,
             typeArgumentsCount = replacement.typeParameters.size,
-            valueArgumentsCount = replacement.valueParameters.size,
             origin = expression.origin,
             superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol
         ).apply {

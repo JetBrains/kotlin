@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
-import kotlin.collections.ArrayList
 
 object DevirtualizationUnfoldFactors {
     /**
@@ -1421,7 +1420,6 @@ internal object DevirtualizationAnalysis {
                     actualCallee.returnType,
                     actualCallee.symbol,
                     actualCallee.typeParameters.size,
-                    actualCallee.valueParameters.size,
                     callSite.origin,
                     actualCallee.parentAsClass.symbol
             )

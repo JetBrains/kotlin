@@ -24,7 +24,6 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrImplementationDetail
@@ -190,8 +189,7 @@ class WrapJsComposableLambdaLowering(
             endOffset = SYNTHETIC_OFFSET,
             type = lambda.type,
             symbol = rememberFunSymbol,
-            typeArgumentsCount = 1,
-            valueArgumentsCount = 4
+            typeArgumentsCount = 1
         ).apply {
             putTypeArgument(0, lambda.type)
             putValueArgument(0, irGet(composableLambdaVar)) // key1
@@ -230,8 +228,7 @@ class WrapJsComposableLambdaLowering(
             endOffset = SYNTHETIC_OFFSET,
             type = returnType,
             symbol = runSymbol,
-            typeArgumentsCount = 1,
-            valueArgumentsCount = 1
+            typeArgumentsCount = 1
         ).apply {
             putTypeArgument(0, returnType)
             putValueArgument(0, runBlock)

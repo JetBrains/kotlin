@@ -81,7 +81,6 @@ class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext,
                 expression.type,
                 expression.symbol,
                 function.typeParameters.size,
-                function.valueParameters.size,
                 expression.origin,
                 expression.superQualifierSymbol
             ).also {
@@ -300,7 +299,6 @@ class ComposeLikeDefaultArgumentRewriter(
             symbol.owner.returnType,
             symbol as IrSimpleFunctionSymbol,
             symbol.owner.typeParameters.size,
-            symbol.owner.valueParameters.size,
             origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver

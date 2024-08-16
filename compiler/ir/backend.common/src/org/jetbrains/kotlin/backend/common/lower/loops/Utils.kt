@@ -38,7 +38,6 @@ internal fun IrExpression.negate(): IrExpression {
             IrCallImpl(
                 startOffset, endOffset, unaryMinusFun.returnType,
                 unaryMinusFun.symbol,
-                valueArgumentsCount = 0,
                 typeArgumentsCount = 0
             ).apply {
                 dispatchReceiver = this@negate
@@ -61,7 +60,6 @@ internal fun IrExpression.decrement(): IrExpression {
             IrCallImpl(
                 startOffset, endOffset, type,
                 decFun.symbol,
-                valueArgumentsCount = 0,
                 typeArgumentsCount = 0
             ).apply {
                 dispatchReceiver = this@decrement
@@ -201,8 +199,7 @@ private fun IrExpression.makeIrCallConversionToTargetClass(
     return IrCallImpl(
         startOffset, endOffset,
         castFun.returnType, castFun.symbol,
-        typeArgumentsCount = 0,
-        valueArgumentsCount = 0
+        typeArgumentsCount = 0
     ).also { it.dispatchReceiver = this }
 }
 

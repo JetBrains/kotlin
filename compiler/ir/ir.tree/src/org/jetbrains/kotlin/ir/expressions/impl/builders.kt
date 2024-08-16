@@ -799,9 +799,9 @@ fun IrCallImpl(
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int = symbol.getRealOwner().typeParameters.size,
-    valueArgumentsCount: Int = symbol.getRealOwner().valueParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
+    valueArgumentsCount: Int = symbol.getRealOwner().valueParameters.size,
 ): IrCallImpl = IrCallImplWithShape(
     startOffset = startOffset,
     endOffset = endOffset,
@@ -1069,8 +1069,6 @@ fun IrCallImpl.Companion.fromSymbolOwner(
         endOffset,
         symbol.owner.returnType,
         symbol,
-        typeArgumentsCount = symbol.owner.typeParameters.size,
-        valueArgumentsCount = symbol.owner.valueParameters.size,
         origin = null,
         superQualifierSymbol = null
     )

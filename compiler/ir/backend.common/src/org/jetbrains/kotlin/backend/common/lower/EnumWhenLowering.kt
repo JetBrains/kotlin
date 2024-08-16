@@ -165,8 +165,7 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
         return IrCallImpl(
             expression.startOffset, expression.endOffset,
             expression.type, expression.symbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 2
+            typeArgumentsCount = 0
         ).apply {
             putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol))
             putValueArgument(1, IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal))

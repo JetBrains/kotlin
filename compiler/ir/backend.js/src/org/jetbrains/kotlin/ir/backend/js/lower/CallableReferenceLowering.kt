@@ -331,7 +331,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                             callee.returnType,
                             callee.symbol,
                             callee.typeParameters.size,
-                            callee.valueParameters.size,
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                 }

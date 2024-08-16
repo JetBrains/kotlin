@@ -142,7 +142,6 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         return IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType,
             function.symbol,
-            valueArgumentsCount = function.valueParameters.size,
             typeArgumentsCount = function.typeParameters.size
         )
     }

@@ -103,8 +103,7 @@ private class VarargTransformer(
             expression.endOffset,
             arrayInfo.primitiveArrayType,
             concatFun,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 1
+            typeArgumentsCount = 0
         ).apply {
             putValueArgument(0, arrayLiteral)
         }
@@ -135,8 +134,7 @@ private class VarargTransformer(
                 expression.endOffset,
                 arrayInfo.primitiveArrayType,
                 copyFunction,
-                typeArgumentsCount = 1,
-                valueArgumentsCount = 1
+                typeArgumentsCount = 1
             ).apply {
                 putTypeArgument(0, arrayInfo.primitiveArrayType)
                 putValueArgument(0, segment)
@@ -198,8 +196,7 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
     return IrCallImpl(
         startOffset, endOffset,
         type, intrinsic,
-        typeArgumentsCount = if (intrinsic.owner.typeParameters.isNotEmpty()) 1 else 0,
-        valueArgumentsCount = 1
+        typeArgumentsCount = if (intrinsic.owner.typeParameters.isNotEmpty()) 1 else 0
     ).apply {
         if (typeArgumentsCount == 1) {
             putTypeArgument(0, varargElementType)

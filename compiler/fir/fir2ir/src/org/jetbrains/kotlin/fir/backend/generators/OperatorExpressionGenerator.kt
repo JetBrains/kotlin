@@ -317,7 +317,6 @@ internal class OperatorExpressionGenerator(
             irExpression.startOffset, irExpression.endOffset,
             conversionFirFunction.resolvedReturnType.toIrType(c),
             conversionFunctionSymbol as IrSimpleFunctionSymbol,
-            valueArgumentsCount = 0,
             typeArgumentsCount = 0
         ).also {
             it.dispatchReceiver = irExpression
