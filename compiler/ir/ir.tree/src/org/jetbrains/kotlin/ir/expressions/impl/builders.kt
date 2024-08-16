@@ -1110,7 +1110,6 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
     val constructor = constructorSymbol.owner
     val constructorTypeParametersCount = constructor.typeParameters.size
     val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
-    val valueParametersCount = constructor.valueParameters.size
 
     return IrConstructorCallImpl(
         startOffset, endOffset,
@@ -1118,8 +1117,7 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
         constructorSymbol,
         totalTypeParametersCount,
         constructorTypeParametersCount,
-        valueParametersCount,
-        origin
+        origin = origin,
     )
 }
 
@@ -1174,9 +1172,8 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int = symbol.owner.allTypeParameters.size,
-    valueArgumentsCount: Int = symbol.owner.valueParameters.size,
 ): IrDelegatingConstructorCallImpl =
-    IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount)
 
 
 @ObsoleteDescriptorBasedAPI
