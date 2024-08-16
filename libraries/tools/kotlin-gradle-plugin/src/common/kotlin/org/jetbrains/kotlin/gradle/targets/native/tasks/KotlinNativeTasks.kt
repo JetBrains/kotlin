@@ -62,11 +62,13 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
+import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.nio.file.Files
+import java.security.MessageDigest
 import javax.inject.Inject
 import kotlin.collections.associateBy
 import kotlin.collections.component1
@@ -784,7 +786,7 @@ internal class CacheBuilder(
         val optimized: Boolean,
         val konanDataDir: Provider<File>,
         val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
-        val forceDisableRunningInProcess: Provider<Boolean>
+        val forceDisableRunningInProcess: Provider<Boolean>,
     ) {
         val rootCacheDirectory
             get() = getRootCacheDirectory(
@@ -1037,7 +1039,7 @@ internal class CacheBuilder(
     }
 }
 
-@CacheableTask
+@DisableCachingByDefault(because = "CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.")
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
     DefaultTask(),
     UsesBuildMetricsService,
@@ -1072,13 +1074,27 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @Internal
     val settings: DefaultCInteropSettings = params.settings
 
+    @get:Internal
+    abstract val destinationDirectory: DirectoryProperty
+
+    @Deprecated(
+        message = "This property will be remove in future releases, please use `destinationDirectory` instead",
+        replaceWith = ReplaceWith("destinationDirectory")
+    )
     @Internal // Taken into account in the outputFileProvider property
-    lateinit var destinationDir: Provider<File>
+    var destinationDir: Provider<File> = destinationDirectory.map { it.asFile }
+        set(value) {
+            destinationDirectory.fileProvider(value)
+        }
 
     @get:Input
     val konanTarget: KonanTarget = params.konanTarget
 
-    @get:Input
+    @Deprecated(
+        message = "This property will be remove in future releases. " +
+                "Please don't use it in your builds."
+    )
+    @get:Internal
     val konanVersion: String = project.nativeProperties.kotlinNativeVersion.get()
 
     @Suppress("unused")
@@ -1149,12 +1165,12 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     // Inputs and outputs.
 
     @OutputFile
-    val outputFileProvider: Provider<File> = project.provider { destinationDir.get().resolve(outputFileName) }
+    val outputFileProvider: Provider<File> = destinationDirectory.map { it.asFile.resolve(outputFileName) }
 
     //Error file will be written only for errors during a project sync because for the sync task mustn't fail
     //see: org.jetbrains.kotlin.gradle.targets.native.tasks.IdeaSyncKotlinNativeCInteropRunnerExecutionContext
     @get:OutputFile
-    internal val errorFileProvider: Provider<File> = project.provider { destinationDir.get().resolve("cinterop_error.out") }
+    internal val errorFileProvider: Provider<File> = destinationDirectory.map { it.asFile.resolve("cinterop_error.out") }
 
     init {
         //KTIJ-25563:
@@ -1222,6 +1238,15 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
+    private val allHeadersHashesFile: Provider<RegularFile> =
+        destinationDirectory.dir(interopName).map { it.file("cinterop-headers-hash.json") }
+
+    init {
+        outputs.upToDateWhen {
+            checkHeadersChanged()
+        }
+    }
+
     // Task action.
     @OptIn(ExperimentalStdlibApi::class)
     @TaskAction
@@ -1273,7 +1298,65 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                     )
                 )
             }
+
+            val allHeadersMetadataDirectory = allHeadersHashesFile.get().asFile
+            allHeadersMetadataDirectory.parentFile.mkdirs()
+            allHeadersMetadataDirectory.writeText(JsonUtils.gson.toJson(createHeadersHashByPathMap()))
         }
     }
+
+
+    private fun checkHeadersChanged(): Boolean {
+        if (!allHeadersHashesFile.get().asFile.exists()) {
+            return false
+        }
+        val previousBuildHeaders = JsonUtils.toMap<String, String>(allHeadersHashesFile.get().asFile.readText())
+
+        val currentBuildHeaders = createHeadersHashByPathMap()
+
+        return previousBuildHeaders.keys == currentBuildHeaders.keys &&
+                previousBuildHeaders.all {
+                    currentBuildHeaders[it.key] == it.value
+                }
+    }
+
+    private fun createHeadersHashByPathMap(messageDigest: MessageDigest = MessageDigest.getInstance("MD5")) =
+        collectExistingHeaders().files.associate { header ->
+            header.absolutePath to String(messageDigest.digest(header.readBytes()), Charsets.UTF_8)
+        }
+
+    private fun collectExistingHeaders(): FileCollection {
+        val (headersFromDefFile, includedDirectoriesFromDefFile) = extractHeadersFromDefFile()
+
+        val includedDirectories = allHeadersDirs.map { dir -> dir.absolutePath }
+
+        return collectExistingHeaders(headersFromDefFile, includedDirectoriesFromDefFile + includedDirectories)
+    }
+
+    private fun extractHeadersFromDefFile(): Pair<List<String>, List<String>> {
+        val includedDirOption = "-I"
+
+        if (!definitionFile.isPresent || !definitionFile.asFile.get().exists()) {
+            return Pair(emptyList(), emptyList())
+        }
+
+        val defFileConfig = DefFile(definitionFile.asFile.get(), konanTarget).config
+
+        val defFileHeaders = defFileConfig.headers
+
+        val includedDirectories = defFileConfig.compilerOpts
+            .filter { option -> option.startsWith(includedDirOption) }
+            .map { includeOpt -> includeOpt.removePrefix(includedDirOption) }
+
+        return Pair(defFileHeaders, includedDirectories)
+    }
+
+    private fun collectExistingHeaders(declaredHeaders: List<String>, includedDirectories: List<String>) = objectFactory
+        .fileCollection()
+        .from(
+            *declaredHeaders
+                .flatMap { header -> includedDirectories.map { dir -> dir + File.separator + header } }
+                .toTypedArray())
+        .filter { file -> file.exists() }
 
 }

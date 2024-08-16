@@ -485,26 +485,6 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-52243 cinterop caching")
-    @GradleTest
-    fun testCInteropCaching(gradleVersion: GradleVersion) {
-        nativeProject("commonizeCurlInterop", gradleVersion) {
-
-            configureCommonizerTargets()
-
-            val localBuildCacheDir = projectPath.resolve("local-build-cache-dir").also { assertTrue(it.toFile().mkdirs()) }
-            enableLocalBuildCache(localBuildCacheDir)
-
-            build(":commonize", buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)) {
-                assertTasksExecuted(":cinteropCurlTargetA", ":cinteropCurlTargetB")
-            }
-            build(":clean") {}
-            build(":commonize", buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true)) {
-                assertTasksFromCache(":cinteropCurlTargetA", ":cinteropCurlTargetB")
-            }
-        }
-    }
-
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
     fun testCommonizationWithTransitiveCinterop(gradleVersion: GradleVersion) {

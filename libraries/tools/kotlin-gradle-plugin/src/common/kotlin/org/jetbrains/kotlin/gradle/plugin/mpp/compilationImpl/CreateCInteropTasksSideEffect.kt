@@ -41,7 +41,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
         )
 
         val interopTask = project.registerTask<CInteropProcess>(interop.interopProcessingTaskName, listOf(params)) {
-            it.destinationDir = project.klibOutputDirectory(compilationInfo).dir("cinterop").map { it.asFile }
+            it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("cinterop"))
             it.group = KotlinNativeTargetConfigurator.INTEROP_GROUP
             it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
                     "for compilation '${compilation.compilationName}'" +
