@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: cleaner_in_main_with_checker.out
+// FIR_IDENTICAL
 // DISABLE_NATIVE: gcType=NOOP
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 

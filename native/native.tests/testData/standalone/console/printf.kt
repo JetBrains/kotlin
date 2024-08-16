@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // OUTPUT_DATA_FILE: printf.out
+// FIR_IDENTICAL
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import platform.posix.printf

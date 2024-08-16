@@ -1,5 +1,6 @@
 // KIND: STANDALONE_NO_TR
 // OUTPUT_DATA_FILE: 4x42.out
+// FIR_IDENTICAL
 
 fun main() {
     addition()

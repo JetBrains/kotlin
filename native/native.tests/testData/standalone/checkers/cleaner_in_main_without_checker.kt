@@ -1,4 +1,5 @@
 // OUTPUT_DATA_FILE: cleaner_in_main_without_checker.out
+// FIR_IDENTICAL
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.native.ref.createCleaner

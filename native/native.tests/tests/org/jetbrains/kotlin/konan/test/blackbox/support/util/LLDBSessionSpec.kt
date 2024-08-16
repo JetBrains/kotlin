@@ -140,17 +140,19 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
             val executablePathRegexp = Regex("""('\S+\.kexe' \(\S+\))|("\S+\.kexe")""")
             val lldbScriptPath = Regex("""(\S+/konan_lldb.py)""")
             val processIdRegex = Regex("""Process \d+""")
-            val threadIdRegex = Regex("""thread #\d+""")
-            val frameIdRegex = Regex("""frame #\d+""")
             val memoryAddressRegex = Regex("""0x[0-9a-fA-F]+""")
+            val nonKotlinFrames = Regex("""(.*frame #\d+: <frame pc>.*\.kexe`kfun:#main.*\n)(?:.*frame #\d+: <frame pc>.*\n)+""")
+            val breakpointOffset = Regex( """(Breakpoint .* \+ )\d+( at)""")
+            val targetStoppedLine = Regex( """Target \d+: .* stopped\.\n""")
 
             return lldbOutput
                 .replace(executablePathRegexp, "<path to executable>")
                 .replace(lldbScriptPath, "<path to lldb script>")
                 .replace(processIdRegex, "Process <process id>")
-                .replace(threadIdRegex, "thread <thread id>")
-                .replace(frameIdRegex, "frame <frame id>")
                 .replace(memoryAddressRegex, "<memory address>")
+                .replace(nonKotlinFrames, "$1")
+                .replace(breakpointOffset, "$1<breakpoint offset>$2")
+                .replace(targetStoppedLine, "")
         }
     }
 }

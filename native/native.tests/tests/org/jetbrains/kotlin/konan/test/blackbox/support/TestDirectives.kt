@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.junit.jupiter.api.Assertions
 import java.io.File
 import kotlin.time.Duration
 
@@ -337,19 +335,6 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
-    val firIdentical = FIR_IDENTICAL in registeredDirectives
-    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2 && !firIdentical) "fir." else ""
-    val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
-    val specFileLocation = "$specFilePathWithoutExtension${firSpecificExt}txt"
-    val specFile = File(specFileLocation)
-    return try {
-        LLDBSessionSpec.parse(specFile.readText())
-    } catch (e: Exception) {
-        Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
-    }
-}
-
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {
     val module = parsedDirective.values.singleOrNull()?.toString()?.let(TEST_MODULE_REGEX::matchEntire)?.let { match ->
         val name = match.groupValues[1]
@@ -442,8 +427,15 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
     return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs, assertionsMode)
 }
 
-internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
+internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location, settings: Settings): OutputDataFile? {
+    val file = parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
+    val firIdentical = FIR_IDENTICAL in registeredDirectives
+    if (firIdentical || file == null) return file
+    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2) "fir." else ""
+    val filePathWithoutExtension = file.file.absolutePath.removeSuffix(file.file.extension)
+    val fileLocation = "$filePathWithoutExtension${firSpecificExt}${file.file.extension}"
+    return OutputDataFile(file = File(fileLocation))
+}
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)

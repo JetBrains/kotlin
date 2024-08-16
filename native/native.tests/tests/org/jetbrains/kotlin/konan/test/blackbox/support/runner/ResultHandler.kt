@@ -33,6 +33,7 @@ internal class ResultHandler(
                     it.actual,
                 )
             }
+            System.err.println(getLoggedRun())
             JUnit5Assertions.failAll(exceptions)
         } else {
             val runResultInfo = buildString {

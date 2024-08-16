@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
@@ -121,7 +121,7 @@ sealed interface TestRunCheck {
 
     class TestFiltering(val testOutputFilter: TestOutputFilter) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
-            if (testOutputFilter == TCTestOutputFilter) {
+            if (testOutputFilter != TestOutputFilter.NO_FILTERING && testOutputFilter != LLDBTestOutputFilter) {
                 val testReport = runResult.processOutput.stdOut.testReport
 
                 checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }

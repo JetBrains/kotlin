@@ -1,40 +1,14 @@
 (lldb) target create <path to executable>
 Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
 Stop hook #1 added.
-(lldb) b main.kt:6
-Breakpoint 1: 2 locations.
+(lldb) b main.kt:8
+Breakpoint 1: where = samples_standalone_lldb_stepping.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 100 at main.kt:8:13, address = <memory address>
 (lldb) r
 Process <process id> stopped
-* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.2
-    frame <frame id>: <memory address> samples_standalone_lldb_stepping.kexe`Konan_start(args=[]) at main.kt:7:1
-   4   	
-   5   	import kotlin.test.*
-   6   	
--> 7   	fun main(args: Array<String>) {
-    	^
-   8   	    var x = 1
-   9   	    var y = 2
-   10  	    var z = x + y
-Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
-Process <process id> launched: <path to executable>
-(lldb) n
-Process <process id> stopped
 * thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
-    frame <frame id>: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:7:1
-   4   	
-   5   	import kotlin.test.*
-   6   	
--> 7   	fun main(args: Array<String>) {
-    	^
-   8   	    var x = 1
-   9   	    var y = 2
-   10  	    var z = x + y
-Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
-(lldb) n
-Process <process id> stopped
-* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
-    frame <frame id>: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:8:13
+    frame #0: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:8:13
    5   	import kotlin.test.*
    6   	
    7   	fun main(args: Array<String>) {
@@ -44,10 +18,11 @@ Process <process id> stopped
    10  	    var z = x + y
    11  	    println(z)
 Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
+Process <process id> launched: <path to executable>
 (lldb) n
 Process <process id> stopped
 * thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
-    frame <frame id>: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:9:13
+    frame #0: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:9:13
    6   	
    7   	fun main(args: Array<String>) {
    8   	    var x = 1
@@ -55,6 +30,29 @@ Process <process id> stopped
     	            ^
    10  	    var z = x + y
    11  	    println(z)
+   12  	}
+Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
+(lldb) n
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
+    frame #0: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:10:13
+   7   	fun main(args: Array<String>) {
+   8   	    var x = 1
+   9   	    var y = 2
+-> 10  	    var z = x + y
+    	            ^
+   11  	    println(z)
+   12  	}
+Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
+(lldb) n
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = step over
+    frame #0: <memory address> samples_standalone_lldb_stepping.kexe`kfun:#main(args=[]){} at main.kt:11:13
+   8   	    var x = 1
+   9   	    var y = 2
+   10  	    var z = x + y
+-> 11  	    println(z)
+    	            ^
    12  	}
 Target 0: (samples_standalone_lldb_stepping.kexe) stopped.
 (lldb) q

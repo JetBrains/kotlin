@@ -1,5 +1,6 @@
 // No termination is going on here. But that's the closest location to other unhandled exception hook tests.
 // OUTPUT_DATA_FILE: unhandledExceptionHookWithProcess.out
+// FIR_IDENTICAL
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.concurrent.AtomicInt
