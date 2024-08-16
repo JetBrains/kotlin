@@ -3,12 +3,12 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
     isExtension: false
-    isVal: true
+    isVal: false
     location: PROPERTY
     modality: FINAL
     name: field
@@ -19,7 +19,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
-    visibility: PUBLIC
+    visibility: PRIVATE
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"

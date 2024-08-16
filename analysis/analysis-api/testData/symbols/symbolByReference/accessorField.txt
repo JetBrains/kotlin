@@ -11,7 +11,7 @@ KaBackingFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
-  isVal: true
+  isVal: false
   location: PROPERTY
   modality: FINAL
   name: field

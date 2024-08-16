@@ -1,12 +1,12 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
+  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isExpect: false
   isExtension: false
-  isVal: true
+  isVal: false
   location: PROPERTY
   modality: FINAL
   name: field
@@ -17,7 +17,7 @@ KaBackingFieldSymbol:
     annotations: []
     typeArguments: []
     type: kotlin/Int
-  visibility: LOCAL
+  visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KaSourceModule "Sources of main"

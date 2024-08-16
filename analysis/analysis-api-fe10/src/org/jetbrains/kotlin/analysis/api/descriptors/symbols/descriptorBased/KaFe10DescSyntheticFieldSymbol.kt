@@ -47,18 +47,6 @@ internal class KaFe10DescSyntheticFieldSymbol(
     override val returnType: KaType
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { descriptor.kaSymbolModality }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
-
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { descriptor.ktVisibility }
-
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         val accessorPsi = descriptor.containingDeclaration.toSourceElement.getPsi()
         if (accessorPsi is KtPropertyAccessor) {
@@ -70,6 +58,9 @@ internal class KaFe10DescSyntheticFieldSymbol(
 
         return KaFe10NeverRestoringSymbolPointer()
     }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion { !descriptor.propertyDescriptor.isVar }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
     override fun hashCode(): Int = calculateHashCode()

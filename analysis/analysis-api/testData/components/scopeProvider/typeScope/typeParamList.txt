@@ -701,14 +701,14 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
     isExtension: false
     isVal: true
     location: PROPERTY
-    modality: ABSTRACT
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/collections/List.size)
@@ -717,7 +717,7 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Int
-    visibility: PUBLIC
+    visibility: PRIVATE
   callableId: kotlin/collections/List.size
   compilerVisibility: Public
   contextReceivers: []

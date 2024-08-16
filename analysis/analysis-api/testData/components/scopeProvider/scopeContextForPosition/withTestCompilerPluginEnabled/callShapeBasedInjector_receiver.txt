@@ -16,7 +16,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -32,7 +32,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: LOCAL
+          visibility: PRIVATE
         callableId: null
         compilerVisibility: Local
         contextReceivers: []

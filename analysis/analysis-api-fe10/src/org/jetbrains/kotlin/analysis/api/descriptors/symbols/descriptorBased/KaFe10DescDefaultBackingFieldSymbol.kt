@@ -40,10 +40,9 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
         get() = withValidityAssertion { owningProperty.returnType }
 
     override val token: KaLifetimeToken get() = owningProperty.token
-    override val isActual: Boolean get() = withValidityAssertion { false }
-    override val isExpect: Boolean get() = withValidityAssertion { false }
-    override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
-    override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion { owningProperty.isVal }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

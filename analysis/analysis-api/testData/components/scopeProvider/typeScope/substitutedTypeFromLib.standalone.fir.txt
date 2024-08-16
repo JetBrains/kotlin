@@ -344,7 +344,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -359,7 +359,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: A
-    visibility: PUBLIC
+    visibility: PRIVATE
   callableId: kotlin/Pair.first
   compilerVisibility: Public
   contextReceivers: []
@@ -415,7 +415,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -430,7 +430,7 @@ KaKotlinPropertySymbol:
     returnType: KaTypeParameterType:
       annotations: []
       type: B
-    visibility: PUBLIC
+    visibility: PRIVATE
   callableId: kotlin/Pair.second
   compilerVisibility: Public
   contextReceivers: []

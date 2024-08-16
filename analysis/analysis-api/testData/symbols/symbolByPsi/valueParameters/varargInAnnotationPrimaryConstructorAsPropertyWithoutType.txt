@@ -29,7 +29,7 @@ KaConstructorSymbol:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -49,7 +49,7 @@ KaConstructorSymbol:
                 type: ERROR_TYPE
             ]
             type: kotlin/Array<out ERROR CLASS: Incomplete code>
-          visibility: PUBLIC
+          visibility: PRIVATE
           getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsPropertyWithoutType.kt)
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"

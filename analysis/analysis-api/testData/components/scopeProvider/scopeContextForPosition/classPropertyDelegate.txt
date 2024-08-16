@@ -47,7 +47,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -63,7 +63,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: PUBLIC
+          visibility: PRIVATE
         callableId: test/Child.constructorProp
         compilerVisibility: Public
         contextReceivers: []
@@ -226,7 +226,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -242,7 +242,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: PUBLIC
+          visibility: PRIVATE
         callableId: test/Base.value
         compilerVisibility: Public
         contextReceivers: []
@@ -551,7 +551,7 @@ scopes:
               backingFieldSymbol: KaBackingFieldSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                compilerVisibility: Private
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -567,7 +567,7 @@ scopes:
                   annotations: []
                   typeArguments: []
                   type: kotlin/Int
-                visibility: PUBLIC
+                visibility: PRIVATE
               callableId: test/Child.constructorProp
               compilerVisibility: Public
               contextReceivers: []

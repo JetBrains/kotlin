@@ -3,7 +3,7 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -24,7 +24,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
-    visibility: PUBLIC
+    visibility: PRIVATE
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"

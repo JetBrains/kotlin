@@ -375,7 +375,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -391,7 +391,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/String
-          visibility: PUBLIC
+          visibility: PRIVATE
         callableId: kotlin/Enum.name
         compilerVisibility: Public
         contextReceivers: []
@@ -449,7 +449,7 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -465,7 +465,7 @@ scopes:
             annotations: []
             typeArguments: []
             type: kotlin/Int
-          visibility: PUBLIC
+          visibility: PRIVATE
         callableId: kotlin/Enum.ordinal
         compilerVisibility: Public
         contextReceivers: []

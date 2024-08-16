@@ -50,23 +50,29 @@ public typealias KtVariableLikeSymbol = KaVariableSymbol
 public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     public abstract val owningProperty: KaKotlinPropertySymbol
 
-    final override val name: Name get() = withValidityAssertion { fieldName }
+    final override val name: Name get() = withValidityAssertion { StandardNames.BACKING_FIELD }
+
+    /** PSI may be not-null in the case of explicit backing field ([KEEP-278](https://github.com/Kotlin/KEEP/issues/278)) */
     final override val psi: PsiElement? get() = withValidityAssertion { null }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
     override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    // KT-70767: for the backing field expect/action is meaningless as it doesn't have such a semantic
+
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
 
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
-    final override val isVal: Boolean get() = withValidityAssertion { true }
 
     abstract override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol>
-
-    public companion object {
-        private val fieldName = StandardNames.BACKING_FIELD
-    }
 }
 
 @Deprecated("Use 'KaBackingFieldSymbol' instead", ReplaceWith("KaBackingFieldSymbol"))

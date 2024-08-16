@@ -48,21 +48,14 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
             ?: KaFe10NeverRestoringSymbolPointer()
     }
 
-    override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
-
-    override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
-
     override val returnType: KaType
         get() = withValidityAssertion { owningProperty.returnType }
 
     override val token: KaLifetimeToken
         get() = owningProperty.token
+
+    override val isVal: Boolean
+        get() = withValidityAssertion { !propertyPsi.isVar }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
