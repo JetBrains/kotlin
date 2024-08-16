@@ -227,8 +227,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.longToDouble.owner.returnType,
                             intrinsics.longToDouble,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
+                            typeArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -240,8 +239,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.longToFloat.owner.returnType,
                             intrinsics.longToFloat,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
+                            typeArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -253,8 +251,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.jsNumberToLong.owner.returnType,
                             intrinsics.jsNumberToLong,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 1
+                            typeArgumentsCount = 0
                         ).apply {
                             putValueArgument(0, call.dispatchReceiver)
                         }

@@ -80,7 +80,6 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             context.dynamicType,
             context.intrinsics.jsPrototypeOfSymbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 1
         ).apply {
             putValueArgument(0, owner.jsConstructorReference(context))
         }

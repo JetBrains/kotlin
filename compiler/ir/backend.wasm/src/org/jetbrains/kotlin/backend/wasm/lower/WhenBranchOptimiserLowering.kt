@@ -168,8 +168,7 @@ private class WhenBranchOptimiserTransformer(
                         endOffset = UNDEFINED_OFFSET,
                         type = context.irBuiltIns.nothingType,
                         symbol = context.wasmSymbols.wasmUnreachable,
-                        typeArgumentsCount = 0,
-                        valueArgumentsCount = 0
+                        typeArgumentsCount = 0
                     )
                     branch.result = unreachable
                     expression.branches.add(branch)

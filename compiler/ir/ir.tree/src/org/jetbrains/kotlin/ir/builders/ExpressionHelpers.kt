@@ -196,7 +196,6 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression?, getterSymbol
         type,
         getterSymbol as IrSimpleFunctionSymbol,
         typeArgumentsCount = getterSymbol.owner.typeParameters.size,
-        valueArgumentsCount = 0,
         origin = IrStatementOrigin.GET_PROPERTY
     ).apply {
         dispatchReceiver = receiver
@@ -208,7 +207,6 @@ fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, setterSymbol
         type,
         setterSymbol as IrSimpleFunctionSymbol,
         typeArgumentsCount = setterSymbol.owner.typeParameters.size,
-        valueArgumentsCount = 1,
         origin = IrStatementOrigin.EQ
     ).apply {
         dispatchReceiver = receiver
@@ -249,7 +247,6 @@ fun IrBuilderWithScope.irCall(
     IrCallImpl(
         startOffset, endOffset, type, callee,
         typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = valueArgumentsCount,
         origin = origin
     )
 
@@ -286,7 +283,7 @@ fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin? = n
     IrCallImpl(
         startOffset, endOffset, callee.returnType,
         callee.symbol as IrSimpleFunctionSymbol,
-        callee.typeParameters.size, callee.valueParameters.size,
+        callee.typeParameters.size,
         origin, superQualifierSymbol
     )
 

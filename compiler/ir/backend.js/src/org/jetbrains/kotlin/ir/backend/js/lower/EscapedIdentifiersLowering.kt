@@ -50,7 +50,6 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 type = context.dynamicType,
                 symbol = context.intrinsics.globalThis.owner.getter!!.symbol,
                 typeArgumentsCount = 0,
-                valueArgumentsCount = 0,
             )
 
         private val IrFunction.dummyDispatchReceiverParameter

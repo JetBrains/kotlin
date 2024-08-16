@@ -427,7 +427,6 @@ class ComposerLambdaMemoization(
             composerIrClass.defaultType.replaceArgumentsWithStarProjections(),
             currentComposerSymbol as IrSimpleFunctionSymbol,
             currentComposerSymbol.owner.typeParameters.size,
-            currentComposerSymbol.owner.valueParameters.size,
             IrStatementOrigin.FOR_LOOP_ITERATOR,
         )
     }

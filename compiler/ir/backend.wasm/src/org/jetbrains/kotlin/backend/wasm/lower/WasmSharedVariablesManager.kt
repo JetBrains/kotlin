@@ -77,7 +77,6 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             type = propertyGetter.returnType,
             symbol = propertyGetter.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 0,
             origin = originalGet.origin
         ).also {
             it.dispatchReceiver = IrGetValueImpl(
@@ -112,7 +111,6 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             type = propertySetter.returnType,
             symbol = propertySetter.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 1,
             origin = originalSet.origin
         ).also {
             it.dispatchReceiver = IrGetValueImpl(

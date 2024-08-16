@@ -79,7 +79,6 @@ class IrValidatorTest {
             IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
-                valueArgumentsCount = 1,
             ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
@@ -105,7 +104,6 @@ class IrValidatorTest {
             IrCallImpl(
                 6, 23, TestIrBuiltins.anyType, function.symbol,
                 typeArgumentsCount = 0,
-                valueArgumentsCount = 1,
            ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)

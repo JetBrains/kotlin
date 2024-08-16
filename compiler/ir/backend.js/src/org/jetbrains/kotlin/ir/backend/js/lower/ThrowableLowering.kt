@@ -72,7 +72,6 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             return expression.run {
                 IrCallImpl(
                     startOffset, endOffset, type, newThrowableFunction,
-                    valueArgumentsCount = 2,
                     typeArgumentsCount = 0
                 ).also {
                     it.putValueArgument(0, messageArg)
@@ -93,7 +92,6 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             val expressionReplacement = expression.run {
                 IrCallImpl(
                     startOffset, endOffset, type, extendThrowableFunction,
-                    valueArgumentsCount = 3,
                     typeArgumentsCount = 0
                 ).also {
                     it.putValueArgument(0, thisReceiver)

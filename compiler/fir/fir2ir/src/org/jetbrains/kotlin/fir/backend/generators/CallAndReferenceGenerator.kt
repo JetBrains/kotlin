@@ -587,7 +587,6 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, irType,
                         declarationStorage.findGetterOfProperty(irSymbol),
                         typeArgumentsCount = calleeReference.toResolvedCallableSymbol()!!.fir.typeParameters.size,
-                        valueArgumentsCount = 0,
                         origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
                         superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                     )
@@ -767,7 +766,6 @@ class CallAndReferenceGenerator(
                         setterSymbol != null -> IrCallImpl(
                             startOffset, endOffset, type, setterSymbol,
                             typeArgumentsCount = firProperty.typeParameters.size,
-                            valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
@@ -812,7 +810,6 @@ class CallAndReferenceGenerator(
                     IrCallImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = firFunction?.typeParameters?.size ?: 0,
-                        valueArgumentsCount = 1,
                         origin = origin
                     ).apply {
                         putValueArgument(0, irRhsWithCast)
@@ -1243,8 +1240,7 @@ class CallAndReferenceGenerator(
                     startOffset, endOffset,
                     firConversionFunction.fir.returnTypeRef.toIrType(),
                     irConversionFunction,
-                    typeArgumentsCount = 0,
-                    valueArgumentsCount = 0
+                    typeArgumentsCount = 0
                 ).apply {
                     extensionReceiver = this@applyToElement
                 }

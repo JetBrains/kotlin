@@ -631,7 +631,6 @@ open class LocalDeclarationsLowering(
                 oldCall.type,
                 newCallee.symbol,
                 typeArgumentsCount = newCallee.typeParameters.size,
-                valueArgumentsCount = newCallee.valueParameters.size,
                 origin = oldCall.origin,
                 superQualifierSymbol = oldCall.superQualifierSymbol
             ).also {

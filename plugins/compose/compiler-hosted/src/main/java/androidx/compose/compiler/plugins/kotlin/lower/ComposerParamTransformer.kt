@@ -203,7 +203,6 @@ class ComposerParamTransformer(
             type,
             ownerFn.symbol,
             typeArgumentsCount,
-            ownerFn.valueParameters.size,
             origin,
             superQualifierSymbol
         ).also {

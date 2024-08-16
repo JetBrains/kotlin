@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesManager {
 
@@ -39,7 +38,6 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
             IrCallImpl(
                 initializer.startOffset, initializer.endOffset,
                 dynamicType, createBox,
-                valueArgumentsCount = 1,
                 typeArgumentsCount = 1
             ).apply {
                 putTypeArgument(0, valueType)
@@ -68,7 +66,6 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
             originalGet.type,
             readBox,
             typeArgumentsCount = 1,
-            valueArgumentsCount = 1,
             originalGet.origin
         ).apply {
             putTypeArgument(0, originalGet.type)
@@ -91,7 +88,6 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
             builtIns.unitType,
             writeBox,
             typeArgumentsCount = 1,
-            valueArgumentsCount = 2,
             originalSet.origin
         ).apply {
             putTypeArgument(0, originalSet.value.type)

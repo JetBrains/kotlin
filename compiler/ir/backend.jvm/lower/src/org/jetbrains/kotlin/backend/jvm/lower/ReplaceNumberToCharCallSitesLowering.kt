@@ -53,7 +53,6 @@ internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendConte
             dispatchReceiver.startOffset, dispatchReceiver.endOffset,
             context.irBuiltIns.intType, context.irBuiltIns.numberClass.functionByName("toInt"),
             typeArgumentsCount = 0,
-            valueArgumentsCount = 0,
         ).also { toInt ->
             toInt.dispatchReceiver = dispatchReceiver
         }

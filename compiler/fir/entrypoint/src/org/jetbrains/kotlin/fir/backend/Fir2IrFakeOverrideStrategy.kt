@@ -350,8 +350,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             offset,
             callReturnType,
             delegateTargetFunction.symbol,
-            delegatedFunction.typeParameters.size,
-            delegatedFunction.valueParameters.size
+            delegatedFunction.typeParameters.size
         ).apply {
             val thisDispatchReceiverParameter = delegatedFunction.dispatchReceiverParameter!!
             val getField = IrGetFieldImpl(
