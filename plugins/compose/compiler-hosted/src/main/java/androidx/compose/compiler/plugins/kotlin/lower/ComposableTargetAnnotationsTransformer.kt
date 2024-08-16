@@ -516,7 +516,6 @@ class ComposableTargetAnnotationsTransformer(
             classSymbol.constructors.first(),
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 1,
             origin = null
         )
 

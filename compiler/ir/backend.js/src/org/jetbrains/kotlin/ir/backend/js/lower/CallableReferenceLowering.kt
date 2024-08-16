@@ -92,7 +92,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     startOffset, endOffset, type, ctor.symbol,
                     typeArgumentsCount = 0, /*TODO: properly set type arguments*/
                     constructorTypeArgumentsCount = 0,
-                    valueArgumentsCount = vpCount,
                     origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
                 ).apply {
                     boundReceiver?.let {
@@ -323,7 +322,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                             callee.symbol,
                             callee.countContextTypeParameters(),
                             callee.typeParameters.size,
-                            callee.valueParameters.size,
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
                     is IrSimpleFunction ->

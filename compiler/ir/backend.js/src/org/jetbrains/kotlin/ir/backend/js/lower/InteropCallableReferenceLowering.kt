@@ -535,8 +535,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     lambdaType,
                     constructor.symbol,
                     lambdaInfo.lambdaClass.typeParameters.size,
-                    constructor.typeParameters.size,
-                    constructor.valueParameters.size
+                    constructor.typeParameters.size
                 )
 
                 for ((i, vp) in factoryFunction.valueParameters.withIndex()) {

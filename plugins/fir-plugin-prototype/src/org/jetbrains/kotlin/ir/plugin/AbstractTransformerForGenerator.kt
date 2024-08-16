@@ -80,8 +80,7 @@ abstract class AbstractTransformerForGenerator(
             constructedType,
             constructor.symbol,
             typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 0
+            constructorTypeArgumentsCount = 0
         )
         val returnStatement = IrReturnImpl(-1, -1, irBuiltIns.nothingType, function.symbol, constructorCall)
         return irFactory.createBlockBody(-1, -1, listOf(returnStatement))

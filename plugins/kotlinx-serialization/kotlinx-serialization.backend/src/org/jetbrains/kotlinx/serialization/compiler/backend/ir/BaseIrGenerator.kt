@@ -81,7 +81,6 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             jsExportIgnoreCtor.symbol,
             jsExportIgnore.typeParameters.size,
             jsExportIgnoreCtor.typeParameters.size,
-            jsExportIgnoreCtor.valueParameters.size,
         )
     }
 

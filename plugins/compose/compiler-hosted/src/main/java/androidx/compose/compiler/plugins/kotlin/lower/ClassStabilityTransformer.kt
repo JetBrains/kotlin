@@ -199,7 +199,6 @@ class ClassStabilityTransformer(
             StabilityInferredClass.constructors.first(),
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 1,
             origin = null
         ).also {
             it.putValueArgument(0, irConst(parameterMask))

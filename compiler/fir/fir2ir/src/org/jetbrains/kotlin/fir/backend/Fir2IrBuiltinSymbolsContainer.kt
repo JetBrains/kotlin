@@ -135,7 +135,6 @@ class Fir2IrBuiltinSymbolsContainer(
             constructorSymbol,
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 0,
         )
     }
 

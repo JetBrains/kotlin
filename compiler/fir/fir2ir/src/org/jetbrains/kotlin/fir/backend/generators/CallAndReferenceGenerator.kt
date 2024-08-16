@@ -873,7 +873,7 @@ class CallAndReferenceGenerator(
                 @OptIn(UnsafeDuringIrConstructionAPI::class) // Error class constructor is already created, see IrErrorClassImpl.
                 IrConstructorCallImpl(
                     startOffset, endOffset, type, type.symbol.owner.primaryConstructor!!.symbol,
-                    valueArgumentsCount = 0, typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
+                    typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
                     source = FirAnnotationSourceElement(annotation),
                 )
             }
