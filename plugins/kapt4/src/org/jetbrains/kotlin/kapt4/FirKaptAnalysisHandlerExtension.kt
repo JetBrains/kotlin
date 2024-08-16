@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.kapt4
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.collectSources
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -21,8 +20,8 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontendForAnalysis
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -106,13 +105,8 @@ open class FirKaptAnalysisHandlerExtension(
 
         val disposable = Disposer.newDisposable("K2KaptSession.project")
         try {
-            val coreEnvironment =
-                KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             val projectEnvironment =
-                VfsBasedProjectEnvironment(
-                    project,
-                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-                ) { coreEnvironment.createPackagePartProvider(it) }
+                createProjectEnvironment(updatedConfiguration, disposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
             if (messageCollector.hasErrors()) {
                 return false
             }
@@ -199,8 +193,7 @@ open class FirKaptAnalysisHandlerExtension(
         projectEnvironment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration,
     ): List<KtFile> {
-        val environment = KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        return environment.getSourceFiles()
+        return createSourceFilesFromSourceRoots(configuration, projectEnvironment.project, configuration.kotlinSourceRoots)
     }
 
     private fun contextForStubGeneration(
