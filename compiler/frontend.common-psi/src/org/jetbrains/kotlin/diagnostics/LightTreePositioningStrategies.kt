@@ -224,6 +224,19 @@ object LightTreePositioningStrategies {
             ?: node
 
     val DECLARATION_NAME: LightTreePositioningStrategy = object : BaseDeclarationNameStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR) {
+                return markElement(tree.accessorNamePlaceholder(node), startOffset, endOffset, tree, node)
+            }
+
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+
         override fun markNameIdentifier(
             nameIdentifier: LighterASTNode,
             startOffset: Int,
@@ -245,6 +258,7 @@ object LightTreePositioningStrategies {
                 && node.tokenType != KtNodeTypes.PRIMARY_CONSTRUCTOR
                 && node.tokenType != KtNodeTypes.SECONDARY_CONSTRUCTOR
                 && node.tokenType != KtNodeTypes.OBJECT_LITERAL
+                && node.tokenType != KtNodeTypes.PROPERTY_ACCESSOR
             ) {
                 if (tree.nameIdentifier(node) == null) {
                     return false
@@ -340,6 +354,42 @@ object LightTreePositioningStrategies {
             return super.mark(node, startOffset, endOffset, tree)
         }
     }
+
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            when (node.tokenType) {
+                KtNodeTypes.FUN -> {
+                    val startElement = tree.findChildByType(node, FUN_KEYWORD) ?: node
+                    val endOfSignatureElement =
+                        tree.typeReference(node)
+                            ?: tree.valueParameterList(node)
+                            ?: tree.nameIdentifier(node)
+                            ?: node
+                    return markRange(startElement, endOfSignatureElement, startOffset, endOffset, tree, node)
+                }
+                KtNodeTypes.PROPERTY -> {
+                    val start = tree.findChildByType(node, TokenSet.create(VAL_KEYWORD, VAR_KEYWORD)) ?: node
+                    val endOfSignatureElement = tree.typeReference(node) ?: tree.nameIdentifier(node) ?: node
+                    return markRange(start, endOfSignatureElement, startOffset, endOffset, tree, node)
+                }
+                KtNodeTypes.PROPERTY_ACCESSOR -> {
+                    val endOfSignatureElement =
+                        tree.typeReference(node)
+                            ?: tree.rightParenthesis(node)
+                            ?: tree.accessorNamePlaceholder(node)
+
+                    return markRange(tree.accessorNamePlaceholder(node), endOfSignatureElement, startOffset, endOffset, tree, node)
+                }
+            }
+            return DECLARATION_SIGNATURE.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
 
     val DECLARATION_SIGNATURE_OR_DEFAULT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(

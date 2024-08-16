@@ -56,6 +56,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_SIGNATURE
     )
 
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
+        PositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS
+    )
+
     val DECLARATION_SIGNATURE_OR_DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT,
         PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT

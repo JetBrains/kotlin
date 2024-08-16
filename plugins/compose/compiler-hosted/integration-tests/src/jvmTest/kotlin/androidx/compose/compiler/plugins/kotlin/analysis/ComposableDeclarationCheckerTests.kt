@@ -217,6 +217,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
         // In K1, we report the `CONFLICTING_OVERLOADS` error on properties as well as property
         // accessors. In K2 we only report the error on property accessors.
         check(
+            if (!useFir) {
             """
             import androidx.compose.runtime.Composable
 
@@ -230,7 +231,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             object FakeFoo : Foo {
                 <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                ${if (!useFir) "<!CONFLICTING_OVERLOADS!>" else ""}override val nonComposableProperty: Boolean${if (!useFir) "<!>" else ""} <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
+                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
 
             interface Bar {
@@ -245,9 +246,42 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
                 <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> = true
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                ${if (!useFir) "<!CONFLICTING_OVERLOADS!>" else ""}override val nonComposableProperty: Boolean${if (!useFir) "<!>" else ""} <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
+                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
-        """
+            """
+            } else {
+            """
+            import androidx.compose.runtime.Composable
+
+            interface Foo {
+                @Composable
+                fun composableFunction(param: Boolean): Boolean
+                fun nonComposableFunction(param: Boolean): Boolean
+                val nonComposableProperty: Boolean
+            }
+
+            object FakeFoo : Foo {
+                override <!CONFLICTING_OVERLOADS!>fun composableFunction(param: Boolean)<!> = true
+                @Composable override <!CONFLICTING_OVERLOADS!>fun nonComposableFunction(param: Boolean)<!> = true
+                override val nonComposableProperty: Boolean @Composable <!CONFLICTING_OVERLOADS!>get()<!> = true
+            }
+
+            interface Bar {
+                @Composable
+                fun composableFunction(param: Boolean): Boolean
+                @get:Composable val composableProperty: Boolean
+                fun nonComposableFunction(param: Boolean): Boolean
+                val nonComposableProperty: Boolean
+            }
+
+            object FakeBar : Bar {
+                override <!CONFLICTING_OVERLOADS!>fun composableFunction(param: Boolean)<!> = true
+                override <!CONFLICTING_OVERLOADS!>val composableProperty: Boolean<!> = true
+                @Composable override <!CONFLICTING_OVERLOADS!>fun nonComposableFunction(param: Boolean)<!> = true
+                override val nonComposableProperty: Boolean @Composable <!CONFLICTING_OVERLOADS!>get()<!> = true
+            }
+            """
+            }
         )
     }
 
@@ -410,7 +444,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 import androidx.compose.runtime.Composable
 
                 class Impl : @Composable () -> Unit {
-                    <!CONFLICTING_OVERLOADS!>override fun invoke()<!> {}
+                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>override fun invoke()<!> {}" else "override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                 }
             """
         )
@@ -423,7 +457,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 import androidx.compose.runtime.Composable
 
                 class Impl : () -> Unit {
-                    <!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}
+                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}" else "@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                 }
             """
         )
@@ -436,7 +470,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
                 import androidx.compose.runtime.Composable
 
                 class Impl : () -> Unit, @Composable (Int) -> Unit {
-                    <!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}
+                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}" else "@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                     @Composable override fun invoke(p0: Int) {}
                 }
             """

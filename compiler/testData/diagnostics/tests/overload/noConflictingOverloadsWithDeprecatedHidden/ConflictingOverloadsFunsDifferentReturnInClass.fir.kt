@@ -6,15 +6,15 @@ class A {
 }
 
 open class B {
-    <!CONFLICTING_OVERLOADS!>open fun a(a: Int): Int<!> = 0
+    open <!CONFLICTING_OVERLOADS!>fun a(a: Int): Int<!> = 0
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN) fun a(a: Int)<!> {
+    @Deprecated("a", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>fun a(a: Int)<!> {
     }
 }
 
 open class C {
     <!CONFLICTING_OVERLOADS!>fun a(a: Int): Int<!> = 0
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN) open fun a(a: Int)<!> {
+    @Deprecated("a", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun a(a: Int)<!> {
     }
 }

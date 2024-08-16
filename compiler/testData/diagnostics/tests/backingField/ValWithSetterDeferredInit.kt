@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class A {

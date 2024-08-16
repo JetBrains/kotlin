@@ -3,7 +3,7 @@
 package c
 
 abstract class Foo{
-    <!ABSTRACT_PROPERTY_WITHOUT_TYPE!>protected abstract val prop<!>
+    protected abstract <!ABSTRACT_PROPERTY_WITHOUT_TYPE!>val prop<!>
     protected abstract val prop2 by <!ABSTRACT_DELEGATED_PROPERTY, DELEGATE_SPECIAL_FUNCTION_MISSING!>TODO()<!>
     protected abstract val prop3 = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>1<!>
 }

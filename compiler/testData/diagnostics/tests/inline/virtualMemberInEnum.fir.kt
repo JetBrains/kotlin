@@ -1,6 +1,6 @@
 enum class Some {
     A {
-        <!OVERRIDE_BY_INLINE!>override fun foo(s: () -> String): String<!> {
+        override <!OVERRIDE_BY_INLINE!>fun foo(s: () -> String): String<!> {
             return s() + s()
         }
     };

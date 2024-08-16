@@ -159,20 +159,35 @@ object PositioningStrategies {
             ?: element
 
     @JvmField
-    val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
-        override fun mark(element: KtNamedDeclaration): List<TextRange> {
-            val nameIdentifier = element.nameIdentifier
-            if (nameIdentifier != null) {
-                if (element is KtClassOrObject) {
-                    val startElement = findStartingPsiElementForDeclarationName(element)
-                    return markRange(startElement, nameIdentifier)
+    val DECLARATION_NAME: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            if (element is KtNamedDeclaration) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) {
+                    if (element is KtClassOrObject) {
+                        val startElement = findStartingPsiElementForDeclarationName(element)
+                        return markRange(startElement, nameIdentifier)
+                    }
+                    return markElement(nameIdentifier)
                 }
-                return markElement(nameIdentifier)
-            }
-            if (element is KtNamedFunction) {
-                return DECLARATION_SIGNATURE.mark(element)
+                if (element is KtNamedFunction) {
+                    return DECLARATION_SIGNATURE.mark(element)
+                }
+            } else if (element is KtPropertyAccessor) {
+                return markElement(element.namePlaceholder)
             }
             return DEFAULT.mark(element)
+        }
+    }
+
+    @JvmField
+    val DECLARATION_NAME_OR_ACCESSOR: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            return when (element) {
+                is KtPropertyAccessor -> markElement(element.namePlaceholder)
+                is KtNamedDeclaration -> DECLARATION_NAME.mark(element)
+                else -> super.mark(element)
+            }
         }
     }
 
@@ -238,6 +253,36 @@ object PositioningStrategies {
                 }
             }
             return super.mark(element)
+        }
+    }
+
+    @JvmField
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            when (element) {
+                is KtNamedFunction -> {
+                    val startElement = element.funKeyword ?: element
+                    val endOfSignatureElement =
+                        element.typeReference
+                            ?: element.valueParameterList
+                            ?: element.nameIdentifier
+                            ?: element
+                    return markRange(startElement, endOfSignatureElement)
+                }
+                is KtProperty -> {
+                    val endOfSignatureElement = element.typeReference ?: element.nameIdentifier ?: element
+                    return markRange(element.valOrVarKeyword, endOfSignatureElement)
+                }
+                is KtPropertyAccessor -> {
+                    val endOfSignatureElement =
+                        element.returnTypeReference
+                            ?: element.rightParenthesis
+                            ?: element.namePlaceholder
+
+                    return markRange(element.namePlaceholder, endOfSignatureElement)
+                }
+            }
+            return DECLARATION_SIGNATURE.mark(element)
         }
     }
 

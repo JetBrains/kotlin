@@ -6,14 +6,14 @@ interface B
 <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
 <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun A.()<!> {}
 
-<!FUNCTION_DECLARATION_WITH_NO_NAME!>@a fun ()<!> {}
+@a <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
 <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun @a A.()<!> {}
 
 class Outer {
     <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
     <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun B.()<!> {}
 
-    <!FUNCTION_DECLARATION_WITH_NO_NAME!>@a fun ()<!> {}
+    @a <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
     <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun @a A.()<!> {}
 }
 

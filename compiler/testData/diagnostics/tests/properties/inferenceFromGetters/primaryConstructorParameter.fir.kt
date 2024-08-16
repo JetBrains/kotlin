@@ -21,5 +21,5 @@ class C(p: Any, val v: Any) {
         get() { return <!UNRESOLVED_REFERENCE!>p<!> }
         set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>let<!> <!CANNOT_INFER_PARAMETER_TYPE!>{}<!> }
 
-    <!LATEINIT_PROPERTY_WITHOUT_TYPE!>lateinit var test6<!>
+    lateinit <!LATEINIT_PROPERTY_WITHOUT_TYPE!>var test6<!>
 }

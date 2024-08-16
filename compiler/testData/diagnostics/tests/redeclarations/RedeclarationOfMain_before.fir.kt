@@ -25,24 +25,24 @@ typealias S = String
 
 // FILE: invalid_noargs_suspend.kt
 package invalid5
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main()<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 
 // FILE: invalid_array_suspend.kt
 package invalid6
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
 
 // FILE: invalid_vararg_suspend.kt
 package invalid7
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(vararg args: String)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(vararg args: String)<!> {}
 
 // FILE: invalid_array_typealias_suspend.kt
 package invalid8
 typealias S = String
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<S>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<S>)<!> {}
 
 // ### VALID
 

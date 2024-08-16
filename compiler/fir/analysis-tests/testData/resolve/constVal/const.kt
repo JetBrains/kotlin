@@ -7,7 +7,7 @@ public class Constants {
 
 // FILE: const.kt
 const val a = "something"
-<!MUST_BE_INITIALIZED!><!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val b<!>
+<!CONST_VAL_WITHOUT_INITIALIZER!>const<!> <!MUST_BE_INITIALIZED!>val b<!>
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val c = null
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val d = ForConst
 const val e = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one()<!>

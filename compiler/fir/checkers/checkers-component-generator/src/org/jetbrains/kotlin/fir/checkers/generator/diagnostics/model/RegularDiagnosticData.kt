@@ -125,6 +125,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     TYPE_ARGUMENT_LIST_OR_SELF,
     WHEN_GUARD,
     PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+    CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"

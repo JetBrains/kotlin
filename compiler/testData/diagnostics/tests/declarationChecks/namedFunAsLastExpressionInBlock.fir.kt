@@ -3,7 +3,7 @@
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
-    val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
+    val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
     x <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
 
     foo { <!ARGUMENT_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
@@ -26,15 +26,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named8(): Int {return 1}<!>
-        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named9() = 1<!>
+        0 -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named8<!>(): Int {return 1}
+        else -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named9<!>() = 1
     }
 
     val x31 = when (1) {
         0 -> {
             fun named10(): Int {return 1}
         }
-        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named11() = 1<!>
+        else -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named11<!>() = 1
     }
 
     val x4 = {
@@ -44,12 +44,12 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = (<!ANONYMOUS_FUNCTION_WITH_NAME, UNRESOLVED_REFERENCE!>fun named15(): Boolean { return true }<!>)()
+    val b = (<!UNRESOLVED_REFERENCE!>fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named15<!>(): Boolean { return true }<!>)()
 
-    baz(<!ANONYMOUS_FUNCTION_WITH_NAME!>fun named16(){}<!>)
+    baz(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named16<!>(){})
 }
 
-fun bar() = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named() {}<!>
+fun bar() = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named<!>() {}
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!

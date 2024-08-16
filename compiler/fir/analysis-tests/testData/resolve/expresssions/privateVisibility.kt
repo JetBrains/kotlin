@@ -38,7 +38,7 @@ private class Private {
 
 fun withLocals() {
     class Local {
-        <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>private fun bar()<!>
+        private <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun bar()<!>
 
         fun baz() {
             bar()

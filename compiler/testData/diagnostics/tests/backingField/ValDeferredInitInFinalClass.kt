@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 class Foo : I {
     // no getter
