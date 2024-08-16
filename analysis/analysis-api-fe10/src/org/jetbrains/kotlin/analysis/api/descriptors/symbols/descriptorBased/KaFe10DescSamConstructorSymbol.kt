@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.sam.SamTypeAliasConstructorDescriptor
 
 internal class KaFe10DescSamConstructorSymbol(
     override val descriptor: SamConstructorDescriptor,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaSamConstructorSymbol(), KaFe10DescSymbol<SamConstructorDescriptor> {
     private val expandedDescriptor: SamConstructorDescriptor
         get() = (descriptor as? SamTypeAliasConstructorDescriptor)?.expandedConstructorDescriptor ?: descriptor
@@ -57,9 +57,6 @@ internal class KaFe10DescSamConstructorSymbol(
 
     override val returnType: KaType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
-
-    override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }

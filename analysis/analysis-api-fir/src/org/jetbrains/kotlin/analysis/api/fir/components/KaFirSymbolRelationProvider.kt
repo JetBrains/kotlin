@@ -33,22 +33,12 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.expectForActual
-import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
@@ -60,7 +50,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolRelationProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
     override val KaSymbol.containingSymbol: KaSymbol?
         get() = withValidityAssertion {
@@ -98,7 +88,8 @@ internal class KaFirSymbolRelationProvider(
                 is KaLocalVariableSymbol,
                 is KaAnonymousFunctionSymbol,
                 is KaAnonymousObjectSymbol,
-                is KaDestructuringDeclarationSymbol -> {
+                is KaDestructuringDeclarationSymbol,
+                    -> {
                     return getContainingDeclarationByPsi(this)
                 }
 
@@ -204,7 +195,7 @@ internal class KaFirSymbolRelationProvider(
             val firSymbol = when (this) {
                 is KaFirReceiverParameterSymbol -> {
                     // symbol from receiver parameter
-                    firSymbol
+                    owningFirSymbol
                 }
                 else -> {
                     // general FIR-based symbol

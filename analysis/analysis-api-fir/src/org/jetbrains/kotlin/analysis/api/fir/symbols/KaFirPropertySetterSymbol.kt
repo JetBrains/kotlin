@@ -94,8 +94,11 @@ internal class KaFirPropertySetterSymbol(
     override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { listOf(parameter) }
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
 
+    override val receiverParameter: KaReceiverParameterSymbol?
+        get() = withValidityAssertion {
+            builder.variableBuilder.buildVariableSymbol(firSymbol.fir.propertySymbol).receiverParameter
+        }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }

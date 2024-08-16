@@ -9,18 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.callableId
-import org.jetbrains.kotlin.analysis.api.fir.callableIdForName
-import org.jetbrains.kotlin.analysis.api.fir.entryName
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
-import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModality
-import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModalityByModifiers
-import org.jetbrains.kotlin.analysis.api.fir.location
+import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
-import org.jetbrains.kotlin.analysis.api.fir.visibility
-import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -44,11 +34,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -67,9 +53,6 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
 
     override val returnType: KaType
         get() = withValidityAssertion { firSymbol.returnType(builder) }
-
-    override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { firSymbol.receiver(builder) }
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
@@ -243,6 +226,11 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 firSymbol.delegateFieldSymbol != null
         }
 
+    override val receiverParameter: KaReceiverParameterSymbol?
+        get() = withValidityAssertion {
+            KaFirReceiverParameterSymbol(backingPsi, analysisSession, this)
+        }
+
     override val isVal: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
@@ -327,6 +315,9 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion { false }
 
+    override val receiverParameter: KaReceiverParameterSymbol?
+        get() = withValidityAssertion { null }
+
     override val isVal: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
@@ -383,6 +374,9 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
 
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion { false }
+
+    override val receiverParameter: KaReceiverParameterSymbol?
+        get() = withValidityAssertion { null }
 
     override val isVal: Boolean
         get() = withValidityAssertion {

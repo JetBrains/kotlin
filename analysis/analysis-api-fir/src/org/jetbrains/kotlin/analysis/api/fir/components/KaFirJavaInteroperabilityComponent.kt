@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
@@ -87,7 +86,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFirJavaInteroperabilityComponent(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
     private val jvmTypeMapper: FirJvmTypeMapper by lazy {
         when {
@@ -336,7 +335,7 @@ internal class KaFirJavaInteroperabilityComponent(
                         symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                     }
                     is KaBackingFieldSymbol -> symbol.owningProperty
-                    is KaFirReceiverParameterSymbol -> symbol.owningCallableSymbol
+                    is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
                     else -> symbol
                 }
 

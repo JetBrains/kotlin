@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -22,9 +21,9 @@ internal class KaFirReceiverParameterSymbolPointer(
         require(analysisSession is KaFirSession)
         val callableSymbol = with(analysisSession) {
             ownerPointer.restoreSymbol()
-        } ?: return null
+        }
 
-        return analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(callableSymbol.firSymbol)
+        return callableSymbol?.receiverParameter
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

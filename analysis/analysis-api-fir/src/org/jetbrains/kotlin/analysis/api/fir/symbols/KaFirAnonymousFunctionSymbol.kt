@@ -56,7 +56,17 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
     override val annotations: KaAnnotationList get() = withValidityAssertion { psiOrSymbolAnnotationList() }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
-    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
+
+    override val receiverParameter: KaReceiverParameterSymbol?
+        get() = withValidityAssertion {
+            KaFirReceiverParameterSymbol(
+                // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
+                backingPsi?.takeIf { it is KtNamedFunction },
+                analysisSession,
+                this,
+            )
+        }
+
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }

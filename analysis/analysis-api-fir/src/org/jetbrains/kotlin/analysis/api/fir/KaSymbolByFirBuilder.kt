@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -51,8 +50,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -374,12 +371,7 @@ internal class KaSymbolByFirBuilder(
 
         fun buildExtensionReceiverSymbol(firSymbol: FirCallableSymbol<*>): KaReceiverParameterSymbol? {
             if (firSymbol.fir.receiverParameter == null) return null
-
-            firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrappedCallable ->
-                return buildExtensionReceiverSymbol(unwrappedCallable.symbol)
-            }
-
-            return KaFirReceiverParameterSymbol(firSymbol, analysisSession)
+            return buildCallableSymbol(firSymbol).receiverParameter
         }
     }
 

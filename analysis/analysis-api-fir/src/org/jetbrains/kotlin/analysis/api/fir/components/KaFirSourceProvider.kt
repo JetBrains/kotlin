@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 
 internal class KaFirSourceProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaSessionComponent<KaFirSession>(), KaSourceProvider {
     override val KaDeclarationSymbol.klibSourceFileName: String?
         get() = withValidityAssertion {
             val firSymbol = when (this) {
-                is KaFirReceiverParameterSymbol -> firSymbol
+                is KaFirReceiverParameterSymbol -> owningFirSymbol
                 else -> (this as KaFirSymbol<*>).firSymbol
             }
             firSymbol.klibSourceFile?.name

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirSamConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -65,8 +64,6 @@ internal class KaFirSamConstructorSymbol(
         }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
-
-    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 

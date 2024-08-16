@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-public sealed class KaFunctionSymbol : KaCallableSymbol(), @Suppress("DEPRECATION") KaSymbolWithKind {
+public sealed class KaFunctionSymbol : KaCallableSymbol(),
+    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
     public abstract val valueParameters: List<KaValueParameterSymbol>
 
     /**
@@ -51,6 +53,7 @@ public typealias KtAnonymousFunctionSymbol = KaAnonymousFunctionSymbol
 @OptIn(KaImplementationDetail::class)
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
+    final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
 
     abstract override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol>
 }
