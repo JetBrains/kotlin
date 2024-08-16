@@ -262,7 +262,6 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                     arrayConstructorSymbol.owner.returnType, arrayConstructorSymbol,
                     typeArgumentsCount = arrayConstructorSymbol.owner.typeParameters.size,
                     constructorTypeArgumentsCount = 0,
-                    valueArgumentsCount = 1
                 ).apply {
                     putValueArgument(0, size)
                 }

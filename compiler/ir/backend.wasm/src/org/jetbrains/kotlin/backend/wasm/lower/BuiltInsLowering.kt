@@ -184,7 +184,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     type = kclassConstructor.returnType,
                     symbol = kclassConstructor.symbol,
                     typeArgumentsCount = 1,
-                    valueArgumentsCount = 1,
                     constructorTypeArgumentsCount = 0
                 ).also {
                     it.putClassTypeArgument(0, type)

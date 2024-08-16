@@ -101,8 +101,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                 IrConstructorCallImpl(
                     expression.startOffset, expression.endOffset, expression.type, irFun.symbol,
                     typeArgumentsCount = irFun.typeParameters.size,
-                    constructorTypeArgumentsCount = 0,
-                    valueArgumentsCount = irFun.valueParameters.size
+                    constructorTypeArgumentsCount = 0
                 ).apply {
                     copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
                 }

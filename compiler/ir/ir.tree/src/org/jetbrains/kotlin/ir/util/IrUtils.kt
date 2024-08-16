@@ -518,7 +518,6 @@ fun irConstructorCall(
             symbol = newSymbol,
             typeArgumentsCount = typeArgumentsCount,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = call.valueArgumentsCount,
             origin = origin
         ).apply {
             copyTypeAndValueArgumentsFrom(

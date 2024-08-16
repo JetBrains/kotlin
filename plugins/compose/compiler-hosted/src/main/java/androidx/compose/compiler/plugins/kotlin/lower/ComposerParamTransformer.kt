@@ -178,8 +178,7 @@ class ComposerParamTransformer(
             type = composableIrClass.defaultType,
             symbol = composableIrClass.primaryConstructor!!.symbol,
             typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 0
+            constructorTypeArgumentsCount = 0
         )
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
@@ -320,7 +319,6 @@ class ComposerParamTransformer(
                 ctor,
                 typeArgumentsCount = 0,
                 constructorTypeArgumentsCount = 0,
-                valueArgumentsCount = 1,
                 origin = null
             ).also {
                 it.putValueArgument(0, underlyingType.defaultValue(startOffset, endOffset))
@@ -436,7 +434,6 @@ class ComposerParamTransformer(
             symbol = ctor,
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 1,
         ).also {
             it.putValueArgument(
                 0,
@@ -699,7 +696,6 @@ class ComposerParamTransformer(
             symbol = jvmSyntheticIrClass.primaryConstructor!!.symbol,
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
-            valueArgumentsCount = 0,
         )
         copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements.add(

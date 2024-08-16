@@ -22,13 +22,11 @@ import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.isComposableAnnotation
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -145,7 +143,6 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
                 newCallee,
                 expression.typeArgumentsCount,
                 expression.constructorTypeArgumentsCount,
-                expression.valueArgumentsCount,
                 mapStatementOrigin(expression.origin)
             ).apply {
                 copyRemappedTypeArgumentsFrom(expression)

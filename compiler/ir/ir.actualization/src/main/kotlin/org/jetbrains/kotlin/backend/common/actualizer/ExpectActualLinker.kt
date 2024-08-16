@@ -256,7 +256,6 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             constructorSymbol,
             expression.typeArgumentsCount,
             expression.constructorTypeArgumentsCount,
-            valueArgumentsCount,
             mapStatementOrigin(expression.origin),
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)

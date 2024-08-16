@@ -41,8 +41,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
                 type = boxClass.defaultType,
                 symbol = constructorSymbol,
                 typeArgumentsCount = boxClass.owner.typeParameters.size,
-                constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size,
-                valueArgumentsCount = constructorSymbol.owner.valueParameters.size
+                constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size
             ).apply {
                 putValueArgument(0, initializer)
             }

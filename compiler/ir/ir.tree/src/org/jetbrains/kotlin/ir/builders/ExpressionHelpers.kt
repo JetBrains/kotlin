@@ -260,7 +260,6 @@ fun IrBuilderWithScope.irCall(
 ): IrConstructorCall =
     IrConstructorCallImpl(
         startOffset, endOffset, type, callee,
-        valueArgumentsCount = callee.owner.valueParameters.size,
         typeArgumentsCount = callee.owner.typeParameters.size + constructedClass.typeParameters.size,
         constructorTypeArgumentsCount = callee.owner.typeParameters.size
     )
