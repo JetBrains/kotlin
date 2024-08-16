@@ -23,13 +23,11 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(libs.junit4)
-    testApi(kotlinTest("junit"))
-    testApi(kotlinStdlib())
-    testApi(projectTests(":kotlin-build-common"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(intellijCore())
-    testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testApi(intellijJDom())
+    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinStdlib())
+    testImplementation(projectTests(":kotlin-build-common"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(intellijCore())
 
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
