@@ -225,7 +225,7 @@ digraph singleReturnFromTry_kt {
     59 -> {61};
     60 -> {51} [color=green style=dashed];
     60 -> {61} [color=green];
-    60 -> {69} [style=dotted label="Postponed"];
+    60 -> {69} [color=red style=dotted label="Postponed"];
     61 -> {62} [style=dotted];
     62 -> {63} [style=dotted];
     63 -> {64} [style=dotted];
