@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 
-fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
+fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
     require(
         symbol.classKind == KaClassKind.CLASS ||
                 symbol.classKind == KaClassKind.ENUM_CLASS ||
@@ -24,7 +24,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
     ) {
         "Unsupported symbol.classKind: ${symbol.classKind}"
     }
-    if (!analysisSession.isVisibleInObjC(symbol)) return null
+    if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL
@@ -69,7 +69,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
         )
     }
 
-    return ObjCInterfaceImpl(
+    ObjCInterfaceImpl(
         name = name.objCName,
         comment = comment,
         origin = origin,

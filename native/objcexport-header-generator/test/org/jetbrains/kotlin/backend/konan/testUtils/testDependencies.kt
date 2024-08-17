@@ -48,3 +48,8 @@ val testLibraryKotlinxCoroutines
     get() = testDependencyKlibs.firstOrNull {
         it.pathString.contains("coroutines")
     } ?: error("Missing 'kotlinx-coroutines' in 'testDependencyKlibs' System Property")
+
+val testLibraryAtomicFu
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("atomicfu")
+    } ?: error("Missing 'org.jetbrains.kotlinx.atomicfu' in 'testDependencyKlibs' System Property")

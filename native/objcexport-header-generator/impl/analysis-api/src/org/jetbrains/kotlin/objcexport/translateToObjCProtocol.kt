@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfac
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
-fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtocol? {
+fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtocol? = withClassifierContext(symbol) {
     // TODO: check if this symbol shall be exposed in the first place
     require(symbol.classKind == KaClassKind.INTERFACE)
-    if (!analysisSession.isVisibleInObjC(symbol)) return null
+    if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
 
     // TODO: Check error type!
     val name = getObjCClassOrProtocolName(symbol)
@@ -30,7 +30,7 @@ fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtoc
 
     val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
 
-    return ObjCProtocolImpl(
+    ObjCProtocolImpl(
         name = name.objCName,
         comment = comment,
         origin = analysisSession.getObjCExportStubOrigin(symbol),

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
-fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
+fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
     require(symbol.classKind == KaClassKind.OBJECT || symbol.classKind == KaClassKind.COMPANION_OBJECT)
-    if (!analysisSession.isVisibleInObjC(symbol)) return null
+    if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL
@@ -39,7 +39,7 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
             .flatMap { translateToObjCExportStub(it) }
     }
 
-    return ObjCInterfaceImpl(
+    ObjCInterfaceImpl(
         name = name.objCName,
         comment = comment,
         origin = origin,

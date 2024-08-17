@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.reflect.KCallable
 import kotlin.test.fail
 
 /**
@@ -115,7 +116,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - kotlinxCoroutines`() {
         doTest(
             dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxCoroutines),
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines, testLibraryAtomicFu),
                 exportedDependencies = setOf(testLibraryKotlinxCoroutines)
             )
         )
@@ -244,6 +245,21 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testExtensionsKlibFile),
                 exportedDependencies = setOf(testExtensionsKlibFile)
+            )
+        )
+    }
+
+    /**
+     * Disabled because of
+     * - KT-66510 init order
+     * - KT-67823 deprecation message
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - CoroutineDispatcherKey`() {
+        doTest(
+            dependenciesDir.resolve("coroutineDispatcherKey"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines)
             )
         )
     }
