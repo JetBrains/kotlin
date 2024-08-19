@@ -43,12 +43,12 @@ class JvmDependenciesDynamicCompoundIndex : JvmDependenciesIndex {
 
     override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
 
-    override fun <T : Any> findClass(
+    override fun <T : Any> findClasses(
         classId: ClassId,
         acceptedRootTypes: Set<JavaRoot.RootType>,
-        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? = lock.read {
-        indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
+        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?,
+    ): Collection<T> = lock.read {
+        indices.flatMap { it.findClasses(classId, acceptedRootTypes, findClassGivenDirectory) }
     }
 
     override fun traverseDirectoriesInPackage(
