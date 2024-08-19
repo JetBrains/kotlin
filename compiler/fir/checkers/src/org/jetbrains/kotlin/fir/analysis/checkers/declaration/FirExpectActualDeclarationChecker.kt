@@ -378,7 +378,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         expectDeclarationSymbol: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-    ) {
+    ) { // todo convert to Incompatibility
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
             declaration is FirClass &&
             declaration.classKind == ClassKind.ANNOTATION_CLASS &&

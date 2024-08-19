@@ -456,7 +456,7 @@ internal abstract class IrExpectActualMatchingContext(
         }
     }
 
-    override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean {
+    override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean { // todo suka
         /*
          * This is incorrect for java classes (because all java interfaces are considered as fun interfaces),
          *   but it's fine to not to check if some java interfaces is really SAM or not, because if one
