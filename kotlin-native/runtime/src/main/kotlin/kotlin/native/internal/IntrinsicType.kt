@@ -95,5 +95,8 @@ internal class IntrinsicType {
         const val GET_AND_ADD_ARRAY_ELEMENT     = "GET_AND_ADD_ARRAY_ELEMENT"
         const val COMPARE_AND_SET_ARRAY_ELEMENT = "COMPARE_AND_SET_ARRAY_ELEMENT"
 
+        // Features
+        const val IS_SWIFT_EXPORT_ENABLED       = "IS_SWIFT_EXPORT_ENABLED"
+        const val IS_OBJC_INTEROP_ENABLED       = "IS_OBJC_INTEROP_ENABLED"
     }
 }

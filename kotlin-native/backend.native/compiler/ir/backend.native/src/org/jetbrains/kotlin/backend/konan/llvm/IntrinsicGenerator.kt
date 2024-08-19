@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.konan.target.supportsObjcInterop
 
 internal enum class IntrinsicType {
     PLUS,
@@ -109,7 +110,10 @@ internal enum class IntrinsicType {
     COMPARE_AND_EXCHANGE_ARRAY_ELEMENT,
     COMPARE_AND_SET_ARRAY_ELEMENT,
     GET_AND_SET_ARRAY_ELEMENT,
-    GET_AND_ADD_ARRAY_ELEMENT
+    GET_AND_ADD_ARRAY_ELEMENT,
+    // Features
+    IS_SWIFT_EXPORT_ENABLED,
+    IS_OBJC_INTEROP_ENABLED;
 }
 
 internal enum class ConstantConstructorIntrinsicType {
@@ -272,6 +276,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.COMPARE_AND_SET_ARRAY_ELEMENT -> emitCompareAndSetArrayElement(callSite, args)
                 IntrinsicType.GET_AND_SET_ARRAY_ELEMENT -> emitGetAndSetArrayElement(callSite, args, resultSlot)
                 IntrinsicType.GET_AND_ADD_ARRAY_ELEMENT -> emitGetAndAddArrayElement(callSite, args)
+                IntrinsicType.IS_OBJC_INTEROP_ENABLED -> emitIsObjCInteropEnabled()
+                IntrinsicType.IS_SWIFT_EXPORT_ENABLED -> emitIsSwiftExportEnabled()
                 IntrinsicType.GET_CONTINUATION,
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.SAVE_COROUTINE_STATE,
@@ -864,6 +870,9 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitUnsignedCompareTo(args: List<LLVMValueRef>) =
             emitCompareTo(args, signed = false)
+
+    private fun FunctionGenerationContext.emitIsObjCInteropEnabled() = llvm.int1(context.config.target.supportsObjcInterop())
+    private fun FunctionGenerationContext.emitIsSwiftExportEnabled() = llvm.int1(context.config.swiftExport)
 
     private fun FunctionGenerationContext.makeConstOfType(type: LLVMTypeRef, value: Int): LLVMValueRef = when (type) {
         llvm.int8Type -> llvm.int8(value.toByte())

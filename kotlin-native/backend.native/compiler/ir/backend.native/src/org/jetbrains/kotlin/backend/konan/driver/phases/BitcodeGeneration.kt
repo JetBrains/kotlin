@@ -73,7 +73,8 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                     context.objCExportCodeSpec
             )
 
-            input.irModule.acceptVoid(CodeGeneratorVisitor(generationState, input.irModule.irBuiltins, input.lifetimes))
+            val codegenVisitor = CodeGeneratorVisitor(generationState, input.irModule.irBuiltins, input.lifetimes)
+            input.irModule.acceptVoid(codegenVisitor)
 
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)

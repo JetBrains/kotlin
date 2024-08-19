@@ -22,5 +22,6 @@ object NativeRuntimeNames {
         val SharedImmutableAlias = ClassId(kotlinNativePackage, Name.identifier("SharedImmutable"))
         val ThreadLocal = ClassId(kotlinNativePackage.child(Name.identifier("concurrent")), Name.identifier("ThreadLocal"))
         val ThreadLocalAlias = ClassId(kotlinNativePackage, Name.identifier("ThreadLocal"))
+        val ToRetainedSwift = ClassId(kotlinNativeInternalPackage.child(Name.identifier("ref")), Name.identifier("ToRetainedSwift"))
     }
 }

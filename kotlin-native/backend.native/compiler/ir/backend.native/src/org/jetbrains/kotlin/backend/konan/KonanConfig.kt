@@ -358,7 +358,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val swiftExport by lazy {
-        configuration.get(BinaryOptions.swiftExport) ?: false
+        configuration.get(BinaryOptions.swiftExport)?.let {
+            if (it && !target.supportsObjcInterop()) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Swift Export is not supported on targets without ObjC interop")
+                false
+            } else {
+                it
+            }
+        } ?: false
     }
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {

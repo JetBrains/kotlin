@@ -450,6 +450,7 @@ extern "C" id objc_autorelease(id self);
 // It might use autorelease though, which will be suboptimal.
 template <bool retain>
 static PERFORMANCE_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
+  RuntimeAssert(!kotlin::compiler::swiftExport(), "Unavailable in Swift Export: convertToRetained has different signature");
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
   if (obj == nullptr) return nullptr;
@@ -518,6 +519,8 @@ static id convertKotlinObjectToRetained(ObjHeader* obj) {
 }
 
 static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const TypeInfo* typeInfo) {
+  RuntimeAssert(!kotlin::compiler::swiftExport(), "Unavailable in Swift Export: convertToRetained has different signature");
+
   const TypeInfo* foundTypeInfo = nullptr;
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
@@ -560,6 +563,8 @@ static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const 
 }
 
 static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
+  RuntimeAssert(!kotlin::compiler::swiftExport(), "Unavailable in Swift Export: convertToRetained has different signature");
+
   const TypeInfo* typeInfo = obj->type_info();
   convertReferenceToRetainedObjC convertToRetained = findConvertToRetainedFromInterfaces(typeInfo);
 

@@ -54,6 +54,10 @@ RUNTIME_NOTHROW OBJ_GETTER(Kotlin_internal_reflect_getObjectReferenceFieldByInde
     RETURN_OBJ(*reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]));
 }
 
+RUNTIME_NOTHROW const TypeInfo* Kotlin_native_internal_reflect_superClass(const TypeInfo* typeInfo) {
+    return typeInfo->superType_;
+}
+
 }
 
 std::string TypeInfo::fqName() const {

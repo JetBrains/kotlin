@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.swiftexport.processToRetainedSwift
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
@@ -829,8 +830,10 @@ internal class CodeGeneratorVisitor(
         }
 
 
-        if (!declaration.shouldGenerateBody())
+        if (!declaration.shouldGenerateBody()) {
+            codegen.processToRetainedSwift(declaration)
             return
+        }
 
         // Some special functions may have empty body, thay are handled separetely.
         val body = declaration.body ?: return
@@ -878,6 +881,8 @@ internal class CodeGeneratorVisitor(
         if (declaration.retainAnnotation(context.config.target)) {
             llvm.usedFunctions.add(codegen.llvmFunction(declaration))
         }
+
+        codegen.processToRetainedSwift(declaration)
 
         if (context.shouldVerifyBitCode())
             verifyModule(llvm.module, "${ir2string(declaration.parent)}::${ir2string(declaration)}")
