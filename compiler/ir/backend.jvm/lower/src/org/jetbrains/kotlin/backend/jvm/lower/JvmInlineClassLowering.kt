@@ -241,9 +241,14 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             ?: return super.visitFunctionAccess(expression)
 
         return IrCallImpl(
-            expression.startOffset, expression.endOffset, function.returnType.substitute(expression.typeSubstitutionMap),
-            replacement.symbol, replacement.typeParameters.size, replacement.valueParameters.size,
-            expression.origin, (expression as? IrCall)?.superQualifierSymbol
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset,
+            type = function.returnType.substitute(expression.typeSubstitutionMap),
+            symbol = replacement.symbol,
+            typeArgumentsCount = replacement.typeParameters.size,
+            valueArgumentsCount = replacement.valueParameters.size,
+            origin = expression.origin,
+            superQualifierSymbol = (expression as? IrCall)?.superQualifierSymbol
         ).apply {
             buildReplacement(function, expression, replacement)
         }

@@ -512,14 +512,14 @@ fun irConstructorCall(
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
-            startOffset,
-            endOffset,
-            type,
-            newSymbol,
-            typeArgumentsCount,
-            0,
-            call.valueArgumentsCount,
-            origin
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = type,
+            symbol = newSymbol,
+            typeArgumentsCount = typeArgumentsCount,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = call.valueArgumentsCount,
+            origin = origin
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,

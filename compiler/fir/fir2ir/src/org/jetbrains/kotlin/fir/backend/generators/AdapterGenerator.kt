@@ -283,8 +283,8 @@ internal class AdapterGenerator(
                     endOffset,
                     type,
                     adapteeSymbol,
-                    callableReferenceAccess.typeArguments.size,
-                    firAdaptee.valueParameters.size + firAdaptee.contextReceivers.size,
+                    typeArgumentsCount = callableReferenceAccess.typeArguments.size,
+                    valueArgumentsCount = firAdaptee.valueParameters.size + firAdaptee.contextReceivers.size,
                     origin = null,
                     superQualifierSymbol = null
                 )

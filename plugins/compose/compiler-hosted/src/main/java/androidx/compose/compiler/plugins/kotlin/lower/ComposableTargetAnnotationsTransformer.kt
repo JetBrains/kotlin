@@ -514,10 +514,10 @@ class ComposableTargetAnnotationsTransformer(
             UNDEFINED_OFFSET,
             classSymbol.defaultType,
             classSymbol.constructors.first(),
-            0,
-            0,
-            1,
-            null
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = 1,
+            origin = null
         )
 
     private fun filteredAnnotations(annotations: List<IrConstructorCall>) = annotations

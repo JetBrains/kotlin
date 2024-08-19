@@ -433,10 +433,10 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             UNDEFINED_OFFSET,
             invokeFun.returnType,
             invokeFun.symbol,
-            0,
-            invokeFun.valueParameters.size,
-            JsStatementOrigins.EXPLICIT_INVOKE,
-            null
+            typeArgumentsCount = 0,
+            valueArgumentsCount = invokeFun.valueParameters.size,
+            origin = JsStatementOrigins.EXPLICIT_INVOKE,
+            superQualifierSymbol = null
         )
 
         fun getValue(d: IrValueDeclaration): IrExpression = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.symbol)
