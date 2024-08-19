@@ -259,6 +259,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveReferenceTestGenerated
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GloballyDuplicateLibraries {
+    @Test
+    public void testAllFilesPresentInGloballyDuplicateLibraries() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/inImport")
   @TestDataPath("$PROJECT_ROOT")
   public class InImport {

@@ -2431,6 +2431,28 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries")
+  @TestDataPath("$PROJECT_ROOT")
+  public class GloballyDuplicateLibraries {
+    @Test
+    public void testAllFilesPresentInGloballyDuplicateLibraries() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("functionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary.kt")
+    public void testFunctionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries/functionCallsInIndependentModulesWithGloballyDuplicateJavaLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallsInIndependentModulesWithGloballyDuplicateLibrary.kt")
+    public void testFunctionCallsInIndependentModulesWithGloballyDuplicateLibrary() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/globallyDuplicateLibraries/functionCallsInIndependentModulesWithGloballyDuplicateLibrary.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/inImport")
   @TestDataPath("$PROJECT_ROOT")
   public class InImport {

@@ -110,4 +110,16 @@ public class FirStandaloneNormalAnalysisSourceModuleMultiModuleSymbolByPsiTestGe
   public void testExpectPropertyExplicitDefaultAccessors() {
     runTest("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi/expectPropertyExplicitDefaultAccessors.kt");
   }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateJavaLibrary.kt")
+  public void testIndependentModulesWithGloballyDuplicateJavaLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi/independentModulesWithGloballyDuplicateJavaLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("independentModulesWithGloballyDuplicateLibrary.kt")
+  public void testIndependentModulesWithGloballyDuplicateLibrary() {
+    runTest("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi/independentModulesWithGloballyDuplicateLibrary.kt");
+  }
 }

@@ -1,0 +1,11 @@
+// FILE: module1.kt
+
+val common: library.Common
+
+val value: kotlin.String
+
+// FILE: module2.kt
+
+val common: library.Common
+
+val value: kotlin.Int
