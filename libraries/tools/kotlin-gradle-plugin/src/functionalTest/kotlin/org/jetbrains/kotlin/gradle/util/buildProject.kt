@@ -164,5 +164,5 @@ fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
 }
 
 fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED, enabled.toString())
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, enabled.toString())
 }

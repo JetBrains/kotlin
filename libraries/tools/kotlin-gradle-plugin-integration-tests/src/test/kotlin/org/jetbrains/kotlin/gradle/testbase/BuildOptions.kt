@@ -11,8 +11,10 @@ import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import java.util.*
@@ -57,7 +59,7 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
-    val enableKmpProjectIsolation: Boolean? = null,
+    val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
 ) {
     enum class ConfigurationCacheValue {
         DISABLED,
@@ -253,8 +255,8 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.compiler.arguments.log.level=$compilerArgumentsLogLevel")
         }
 
-        if (enableKmpProjectIsolation != null) {
-            arguments.add("-Pkotlin.kmp.project.isolation.enabled=$enableKmpProjectIsolation")
+        if (kmpIsolatedProjectsSupport != null) {
+            arguments.add("-Pkotlin.kmp.project.isolation.enabled=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
         }
 
         arguments.addAll(freeArgs)
@@ -349,3 +351,5 @@ fun BuildOptions.withBundledKotlinNative() = copy(
 
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
+fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)

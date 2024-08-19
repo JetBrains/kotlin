@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -203,7 +204,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample1",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(enableKmpProjectIsolation = false)
+                .disableKmpIsolatedProjectSupport() // a very old Kotlin is involved in this test
                 .disableConfigurationCache_KT70416()
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
@@ -462,7 +463,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
         project(
             "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(enableKmpProjectIsolation = false)
+            buildOptions = defaultBuildOptions.disableKmpIsolatedProjectSupport() // old version of kotlin is involved in this test
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
 

@@ -54,14 +54,14 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -537,7 +537,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
 
     val kotlinKmpProjectIsolationEnabled: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED) ?: true
+        get() {
+            val mode = enumProperty<KmpIsolatedProjectsSupport>(
+                PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
+                KmpIsolatedProjectsSupport.AUTO
+            )
+
+            return when (mode) {
+                KmpIsolatedProjectsSupport.ENABLE -> true
+                KmpIsolatedProjectsSupport.DISABLE -> false
+                KmpIsolatedProjectsSupport.AUTO -> project.isProjectIsolationEnabled
+            }
+        }
 
     /**
      * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
@@ -659,7 +670,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.experimental.swift-export.enabled")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
-        val KOTLIN_KMP_PORJECT_ISOLATION_ENABLED = property("kotlin.kmp.project.isolation.enabled")
+        val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used
