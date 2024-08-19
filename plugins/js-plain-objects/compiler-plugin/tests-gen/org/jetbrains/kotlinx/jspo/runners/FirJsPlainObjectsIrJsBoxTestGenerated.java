@@ -79,6 +79,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("with-js-qualifier.kt")
+  public void testWith_js_qualifier() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-js-qualifier.kt");
+  }
+
+  @Test
   @TestMetadata("with-marker-interfaces.kt")
   public void testWith_marker_interfaces() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-marker-interfaces.kt");
