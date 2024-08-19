@@ -300,6 +300,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         useAndroidSdk()
         acceptAndroidSdkLicenses()
         maxParallelForks = 8
+        maxHeapSize = "640m"
 
         testLogging {
             events("passed", "skipped", "failed")
