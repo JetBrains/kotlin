@@ -213,9 +213,9 @@ open class LiveLiteralTransformer(
         UNDEFINED_OFFSET,
         liveLiteralInfoAnnotation.defaultType,
         liveLiteralInfoAnnotation.constructors.single(),
-        0,
-        0,
-        2
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0,
+        valueArgumentsCount = 2
     ).apply {
         putValueArgument(0, irConst(key))
         putValueArgument(1, irConst(offset))
@@ -228,9 +228,9 @@ open class LiveLiteralTransformer(
         UNDEFINED_OFFSET,
         liveLiteralFileInfoAnnotation.defaultType,
         liveLiteralFileInfoAnnotation.constructors.single(),
-        0,
-        0,
-        1
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0,
+        valueArgumentsCount = 1
     ).apply {
         putValueArgument(0, irConst(file))
     }

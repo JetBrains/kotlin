@@ -430,11 +430,13 @@ class ComposerParamTransformer(
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
         val type = jvmName.createType(false, emptyList())
         return IrConstructorCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            type,
-            ctor,
-            0, 0, 1
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = type,
+            symbol = ctor,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = 1,
         ).also {
             it.putValueArgument(
                 0,
@@ -691,13 +693,13 @@ class ComposerParamTransformer(
         }
         copy.origin = ComposeDefaultValueStubOrigin
         copy.annotations += IrConstructorCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            jvmSyntheticIrClass.defaultType,
-            jvmSyntheticIrClass.primaryConstructor!!.symbol,
-            0,
-            0,
-            0,
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = jvmSyntheticIrClass.defaultType,
+            symbol = jvmSyntheticIrClass.primaryConstructor!!.symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = 0,
         )
         copy.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements.add(

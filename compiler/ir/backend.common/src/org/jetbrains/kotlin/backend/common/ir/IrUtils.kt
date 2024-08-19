@@ -111,8 +111,8 @@ fun CommonBackendContext.createArrayOfExpression(
         endOffset,
         arrayType,
         ir.symbols.arrayOf,
-        1,
-        1
+        typeArgumentsCount = 1,
+        valueArgumentsCount = 1
     ).apply {
         putTypeArgument(0, arrayElementType)
         putValueArgument(0, arg0)

@@ -64,8 +64,11 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                 val vpCount = if (function.isSuspend) 1 else 0
                 val ctorCall =
                     IrConstructorCallImpl(
-                        startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, vpCount,
-                        JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                        startOffset, endOffset, type, ctor.symbol,
+                        typeArgumentsCount = 0 /*TODO: properly set type arguments*/,
+                        constructorTypeArgumentsCount = 0,
+                        valueArgumentsCount = vpCount,
+                        origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
                     ).apply {
                         if (function.isSuspend) {
                             putValueArgument(0, IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType))
@@ -87,8 +90,10 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                 val vpCount = if (boundReceiver != null) 1 else 0
                 val ctorCall = IrConstructorCallImpl(
                     startOffset, endOffset, type, ctor.symbol,
-                    0 /*TODO: properly set type arguments*/, 0,
-                    vpCount, JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                    typeArgumentsCount = 0, /*TODO: properly set type arguments*/
+                    constructorTypeArgumentsCount = 0,
+                    valueArgumentsCount = vpCount,
+                    origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
                 ).apply {
                     boundReceiver?.let {
                         putValueArgument(0, it)

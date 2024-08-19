@@ -79,8 +79,8 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             UNDEFINED_OFFSET,
             context.dynamicType,
             context.intrinsics.jsPrototypeOfSymbol,
-            0,
-            1
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 1
         ).apply {
             putValueArgument(0, owner.jsConstructorReference(context))
         }

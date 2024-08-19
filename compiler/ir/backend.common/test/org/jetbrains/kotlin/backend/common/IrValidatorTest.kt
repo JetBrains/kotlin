@@ -74,7 +74,11 @@ class IrValidatorTest {
             returnType = TestIrBuiltins.anyType
         }
         val functionCall =
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol, 0, 1).apply {
+            IrCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 1,
+            ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }
@@ -95,7 +99,11 @@ class IrValidatorTest {
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
         val functionCall =
-            IrCallImpl(6, 23, TestIrBuiltins.anyType, function.symbol, 0, 1).apply {
+            IrCallImpl(
+                6, 23, TestIrBuiltins.anyType, function.symbol,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 1,
+           ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }

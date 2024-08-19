@@ -34,9 +34,9 @@ class InvokeStaticInitializersLowering(val context: JsCommonBackendContext) : Bo
             irClass.endOffset,
             context.irBuiltIns.unitType,
             instance.symbol,
-            0,
-            0,
-            JsStatementOrigins.SYNTHESIZED_STATEMENT
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            origin = JsStatementOrigins.SYNTHESIZED_STATEMENT
         )
 
         (irBody as IrStatementContainer).statements.add(0, getInstanceCall)

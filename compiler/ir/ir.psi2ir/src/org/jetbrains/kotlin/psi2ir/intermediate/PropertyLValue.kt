@@ -149,10 +149,11 @@ internal class AccessorPropertyLValue(
             IrCallImpl(
                 startOffset, endOffset,
                 type,
-                getter!!, typeArgumentsCount,
-                contextReceiverValues.size,
-                origin,
-                superQualifier
+                getter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = contextReceiverValues.size,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
@@ -175,10 +176,11 @@ internal class AccessorPropertyLValue(
             IrCallImpl(
                 startOffset, endOffset,
                 returnType,
-                setter!!, typeArgumentsCount,
-                1 + contextReceiverValues.size,
-                origin,
-                superQualifier
+                setter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = 1 + contextReceiverValues.size,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
