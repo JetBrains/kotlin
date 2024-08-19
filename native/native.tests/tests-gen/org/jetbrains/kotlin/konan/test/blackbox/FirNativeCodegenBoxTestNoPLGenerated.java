@@ -28316,6 +28316,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }
 
+      @Test
+      @TestMetadata("extensionFunInvoke.kt")
+      public void testExtensionFunInvoke() {
+        runTest("compiler/testData/codegen/box/invokedynamic/extensionFunInvoke.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
       @TestDataPath("$PROJECT_ROOT")
