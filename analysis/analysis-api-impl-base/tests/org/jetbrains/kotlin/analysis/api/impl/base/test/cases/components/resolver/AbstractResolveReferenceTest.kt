@@ -50,17 +50,17 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
     }
 
     override fun collectElementsToResolve(
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
     ): Collection<ResolveTestCaseContext<KtReference?>> {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile).ifEmpty {
-            testServices.expressionMarkerProvider.getSelectedRangeOrNull(mainFile)?.let {
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(file).ifEmpty {
+            testServices.expressionMarkerProvider.getSelectedRangeOrNull(file)?.let {
                 CaretMarker(tag = "", offset = it.startOffset)
             }.let(::listOfNotNull)
         }
 
-        return collectElementsToResolve(caretPositions, mainFile)
+        return collectElementsToResolve(caretPositions, file)
     }
 
     protected fun collectElementsToResolve(
@@ -97,30 +97,30 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
     override fun generateResolveOutput(
         context: ResolveTestCaseContext<KtReference?>,
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
     ): String {
         val reference = context.element ?: return "no references found"
 
-        return analyzeReferenceElement(reference.element, mainModule) {
+        return analyzeReferenceElement(reference.element, module) {
             val symbols = reference.resolveToSymbols()
             val symbolsAgain = reference.resolveToSymbols()
             testServices.assertions.assertEquals(symbols, symbolsAgain)
 
-            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.testModule.directives
+            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
             renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
         }
     }
 
-    protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {
+    protected open fun <R> analyzeReferenceElement(element: KtElement, module: KtTestModule, action: KaSession.() -> R): R {
         return analyseForTest(element) { action() }
     }
 
     open fun KaSession.getAdditionalSymbolInfo(symbol: KaSymbol): String? = null
 
-    private fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
-        mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
+    private fun findReferencesAtCaret(file: KtFile, caretPosition: Int): List<KtReference> =
+        file.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
     private object Directives : SimpleDirectivesContainer() {
         val RENDER_PSI_CLASS_NAME by directive(

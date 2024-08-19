@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractResolveReferenceByFileTest : AbstractResolveReferenceTest() {
     override fun collectElementsToResolve(
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
-    ): Collection<ResolveTestCaseContext<KtReference?>> = collectAllReferences(mainFile)
+    ): Collection<ResolveTestCaseContext<KtReference?>> = collectAllReferences(file)
 }

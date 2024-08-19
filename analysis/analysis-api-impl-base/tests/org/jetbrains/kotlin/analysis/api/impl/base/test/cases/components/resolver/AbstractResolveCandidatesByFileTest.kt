@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractResolveCandidatesByFileTest : AbstractResolveCandidatesTest() {
     override fun collectElementsToResolve(
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
-    ): Collection<ResolveTestCaseContext<KtElement>> = collectAllKtElements(mainFile)
+    ): Collection<ResolveTestCaseContext<KtElement>> = collectAllKtElements(file)
 }

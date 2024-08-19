@@ -20,30 +20,30 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
     final override fun generateResolveOutput(
         context: ResolveTestCaseContext<KtElement>,
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
     ): String = generateResolveOutput(context.element, testServices)
 
     abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String
 
     override fun collectElementsToResolve(
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices,
     ): Collection<ResolveTestCaseContext<KtElement>> {
-        val carets = testServices.expressionMarkerProvider.getAllCarets(mainFile)
+        val carets = testServices.expressionMarkerProvider.getAllCarets(file)
         if (carets.size > 1) {
             return carets.map {
-                val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, it.tag)
+                val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(file, it.tag)
                 ResolveKtElementTestCaseContext(element = element, marker = it.fullTag)
             }
         }
 
-        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
+        val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(file)
             ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
-                ktFile = mainFile,
-                module = mainModule,
+                ktFile = file,
+                module = module,
                 defaultType = KtElement::class,
             ) as KtElement
 

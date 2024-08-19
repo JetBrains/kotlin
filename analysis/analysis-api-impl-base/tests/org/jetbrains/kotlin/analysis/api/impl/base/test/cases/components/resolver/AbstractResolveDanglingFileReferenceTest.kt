@@ -48,24 +48,24 @@ abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferen
     }
 
     override fun collectElementsToResolve(
-        mainFile: KtFile,
-        mainModule: KtTestModule,
+        file: KtFile,
+        module: KtTestModule,
         testServices: TestServices
     ): Collection<ResolveTestCaseContext<KtReference?>> {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(file)
 
-        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
-        val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
+        val ktPsiFactory = KtPsiFactory.contextual(file, markGenerated = true, eventSystemEnabled = true)
+        val fakeKtFile = ktPsiFactory.createFile("fake.kt", file.text)
 
-        if (mainModule.testModule.directives.contains(Directives.COPY_RESOLUTION_MODE)) {
-            fakeKtFile.originalFile = mainFile
+        if (module.testModule.directives.contains(Directives.COPY_RESOLUTION_MODE)) {
+            fakeKtFile.originalFile = file
         }
 
         return collectElementsToResolve(caretPositions, fakeKtFile)
     }
 
-    override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {
-        val resolutionMode = mainModule.testModule.directives.singleOrZeroValue(Directives.COPY_RESOLUTION_MODE)
+    override fun <R> analyzeReferenceElement(element: KtElement, module: KtTestModule, action: KaSession.() -> R): R {
+        val resolutionMode = module.testModule.directives.singleOrZeroValue(Directives.COPY_RESOLUTION_MODE)
         return if (resolutionMode != null) {
             analyzeCopy(element, resolutionMode) { action() }
         } else {
