@@ -86,7 +86,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             getCpuModel(generationState),
             getCpuFeatures(generationState),
             LlvmOptimizationLevel.AGGRESSIVE,
-            LlvmSizeLevel.NONE,
+            if (config.smallBinary) LlvmSizeLevel.AGGRESSIVE else LlvmSizeLevel.NONE,
             LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive,
             configurables.currentRelocationMode(generationState).translateToLlvmRelocMode(),
             LLVMCodeModel.LLVMCodeModelDefault,
@@ -127,8 +127,7 @@ internal fun createLTOFinalPipelineConfig(
     // TODO(KT-66501): investigate, why sizeLevel is essentially === to NONE (and inline it if it's OK)
     val sizeLevel: LlvmSizeLevel = when {
         // We try to optimize code as much as possible on embedded targets.
-        context.shouldOptimize() -> LlvmSizeLevel.NONE
-        context.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
+        config.smallBinary -> LlvmSizeLevel.AGGRESSIVE
         else -> LlvmSizeLevel.NONE
     }
     val codegenOptimizationLevel: LLVMCodeGenOptLevel = when {
