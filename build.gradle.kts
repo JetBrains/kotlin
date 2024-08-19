@@ -50,6 +50,7 @@ plugins {
     }
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
+    id("com.autonomousapps.dependency-analysis") version "1.33.0"
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
