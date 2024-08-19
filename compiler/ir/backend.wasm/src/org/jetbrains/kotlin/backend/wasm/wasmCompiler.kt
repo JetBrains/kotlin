@@ -459,15 +459,6 @@ fun WasmCompiledModuleFragment.generateExports(): String {
 
     /*language=js */
     return """
-export default new Proxy(exports, {
-    _shownError: false,
-    get(target, prop) {
-        if (!this._shownError) {
-            this._shownError = true;
-            throw new Error("Do not use default import. Use the corresponding named import instead.")
-        }
-    }
-});
 ${exportNames?.let { "export $it = exports;" }}
 """
 }
