@@ -19,6 +19,7 @@ class SirStructBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
 
@@ -27,6 +28,7 @@ class SirStructBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             name,
             declarations,
         )
@@ -51,6 +53,7 @@ inline fun buildStructCopy(original: SirStruct, init: SirStructBuilder.() -> Uni
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
     return copyBuilder.apply(init).build()

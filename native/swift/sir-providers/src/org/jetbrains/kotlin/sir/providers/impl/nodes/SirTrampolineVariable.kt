@@ -14,6 +14,7 @@ public class SirTrampolineVariable(
     public val source: SirVariable
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
     override val origin: SirOrigin get() = SirOrigin.Trampoline(source)
     override val visibility: SirVisibility get() = source.visibility
     override val documentation: String? get() = source.documentation

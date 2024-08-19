@@ -9,12 +9,9 @@
 package org.jetbrains.kotlin.sir
 
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.declaration]
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.attribute]
  */
-sealed interface SirDeclaration : SirElement {
-    val origin: SirOrigin
-    val visibility: SirVisibility
-    val documentation: String?
-    var parent: SirDeclarationParent
-    val attributes: MutableList<SirAttribute>
+abstract class SirAttribute : SirElementBase(), SirNamed {
+    abstract override val name: String
+    abstract val arguments: List<String>
 }

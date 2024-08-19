@@ -50,5 +50,7 @@ internal class SirFunctionFromKtSymbol(
         }
         set(_) = Unit
 
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+
     override var body: SirFunctionBody? = null
 }

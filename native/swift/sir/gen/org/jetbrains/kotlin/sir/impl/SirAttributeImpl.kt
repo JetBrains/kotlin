@@ -10,15 +10,9 @@
 
 package org.jetbrains.kotlin.sir.impl
 
-import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.SirAttribute
 
-internal class SirTypealiasImpl(
-    override val origin: SirOrigin,
-    override val visibility: SirVisibility,
-    override val documentation: String?,
-    override val attributes: MutableList<SirAttribute>,
+internal class SirAttributeImpl(
     override val name: String,
-    override val type: SirType,
-) : SirTypealias() {
-    override lateinit var parent: SirDeclarationParent
-}
+    override val arguments: MutableList<String>,
+) : SirAttribute()

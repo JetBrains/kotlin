@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
-import org.jetbrains.kotlin.generators.tree.StandardTypes.boolean
-import org.jetbrains.kotlin.generators.tree.StandardTypes.string
 import org.jetbrains.kotlin.generators.tree.config.element
 import org.jetbrains.kotlin.generators.tree.config.sealedElement
 import org.jetbrains.kotlin.sir.tree.generator.config.AbstractSwiftIrTreeBuilder
@@ -44,6 +42,11 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("imports", importType, isMutableList = true)
     }
 
+    val attribute by element {
+        parent(named)
+        +listField("arguments", string)
+    }
+
     val declaration by sealedElement {
         customParentInVisitor = rootElement
         +field("origin", originType)
@@ -52,6 +55,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("parent", declarationParent, mutable = true, isChild = false) {
             useInBaseTransformerDetection = false
         }
+        +listField("attributes", attribute, isMutableList = true)
     }
 
     val extension: Element by element {

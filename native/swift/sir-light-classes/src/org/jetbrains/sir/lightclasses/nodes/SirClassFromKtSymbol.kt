@@ -58,6 +58,8 @@ internal class SirClassFromKtSymbol(
         }
         set(_) = Unit
 
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+
     override val declarations: List<SirDeclaration> by lazyWithSessions {
         childDeclarations() + syntheticDeclarations()
     }

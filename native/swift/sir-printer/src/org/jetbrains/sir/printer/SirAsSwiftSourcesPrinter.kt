@@ -71,6 +71,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirTypealias.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         print("typealias ")
         printName()
@@ -81,6 +82,7 @@ public class SirAsSwiftSourcesPrinter(
     private fun SirDeclarationContainer.print() {
         if (this is SirDeclaration) {
             printDocumentation()
+            printAttributes()
             if (this is SirClass) {
                 printModifiers()
             } else {
@@ -133,6 +135,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirVariable.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         kind.print()
         print(
@@ -151,6 +154,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirCallable.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         printOverride()
         printPreNameKeywords()
@@ -324,6 +328,22 @@ public class SirAsSwiftSourcesPrinter(
             SirCallableKind.STATIC_METHOD -> "static "
         }
     )
+
+    private fun SirDeclaration.printAttributes() = attributes.forEach {
+        it.print()
+    }
+
+    private fun SirAttribute.print() {
+        print("@", name)
+        if (arguments.isNotEmpty()) {
+            print("(")
+            arguments.forEach {
+                print(it)
+            }
+            print(")")
+        }
+        println()
+    }
 }
 
 private val SirVisibility.swift
