@@ -1276,6 +1276,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATION_IN_CONTRACT_ERROR) { firDiagnostic ->
+        AnnotationInContractErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY) { firDiagnostic ->
         CompilerRequiredAnnotationAmbiguityImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

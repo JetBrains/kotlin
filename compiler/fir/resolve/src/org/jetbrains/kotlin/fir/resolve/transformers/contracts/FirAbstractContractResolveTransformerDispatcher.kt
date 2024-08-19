@@ -75,7 +75,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         if (insideContractDescription) {
             val typeDiagnostic = ConeSimpleDiagnostic(
                 "Cannot infer annotation call type during CONTRACTS phase.",
-                DiagnosticKind.InferenceError
+                DiagnosticKind.AnnotationInContract
             )
             val errorType = ConeErrorType(typeDiagnostic)
 

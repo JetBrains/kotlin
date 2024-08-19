@@ -922,6 +922,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
     }
 
+    interface AnnotationInContractError : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationInContractError::class
+    }
+
     interface CompilerRequiredAnnotationAmbiguity : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CompilerRequiredAnnotationAmbiguity::class
         val typeFromCompilerPhase: KaType
