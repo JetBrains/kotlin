@@ -137,6 +137,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("fillNulls.kt")
+  public void testFillNulls() {
+    runTest("testData/box/fillNulls.kt");
+  }
+
+  @Test
   @TestMetadata("flexibleReturnType.kt")
   public void testFlexibleReturnType() {
     runTest("testData/box/flexibleReturnType.kt");
