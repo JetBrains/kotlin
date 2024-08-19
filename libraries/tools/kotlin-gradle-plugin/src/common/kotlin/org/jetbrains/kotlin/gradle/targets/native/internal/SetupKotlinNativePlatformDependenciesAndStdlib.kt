@@ -74,9 +74,9 @@ internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjec
 
     val stdlib = project.files(project.konanDistribution.stdlib)
     sourceSets.forEach { sourceSet ->
-        /*val commonizerTarget = */sourceSet.commonizerTarget.await() ?: return@forEach
-//        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
-//        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
+        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
+        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
         sourceSet.addDependencyForLegacyImport(stdlib)
     }
 }
