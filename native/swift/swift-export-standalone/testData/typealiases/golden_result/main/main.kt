@@ -43,6 +43,18 @@ public fun DATA_OBJECT_WITH_PACKAGE_variable_set(self: kotlin.native.internal.Na
     __self.variable = __newValue
 }
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_typealiases_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(typealiases.Foo::class)
+external fun SwiftExport_ExportedKotlinPackages_typealiases_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_typealiases_inner_Bar_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(typealiases.inner.Bar::class)
+external fun SwiftExport_ExportedKotlinPackages_typealiases_inner_Bar_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(DATA_OBJECT_WITH_PACKAGE::class)
+external fun SwiftExport_main_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("__root___DATA_OBJECT_WITH_PACKAGE_get")
 public fun __root___DATA_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
     val _result = DATA_OBJECT_WITH_PACKAGE

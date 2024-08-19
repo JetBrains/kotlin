@@ -38,6 +38,15 @@ internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDecla
 }
 
 private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
+    if (origin is SirOrigin.ExportedInit) {
+        return listOf(
+            BridgeRequest(
+                callable = this,
+                bridgeName = this.name,
+                fqName = (((origin as SirOrigin.ExportedInit).`for` as KotlinSource).symbol as KaNamedClassSymbol).classId!!.asSingleFqName().pathSegments().map { it.toString() },
+            )
+        )
+    }
     val fqName = ((origin as? KotlinSource)?.symbol as? KaFunctionSymbol)
         ?.callableId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }

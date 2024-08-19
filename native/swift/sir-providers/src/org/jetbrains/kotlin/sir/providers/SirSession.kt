@@ -29,7 +29,8 @@ public interface SirSession :
     SirModuleProvider,
     SirTypeProvider,
     SirVisibilityChecker,
-    SirChildrenProvider
+    SirChildrenProvider,
+    SirClassAdaptersProvider
 {
     public val sirSession: SirSession
         get() = this
@@ -44,6 +45,7 @@ public interface SirSession :
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
+    public val classAdaptersProvider: SirClassAdaptersProvider
 
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.errorTypeStrategy
@@ -59,6 +61,14 @@ public interface SirSession :
 
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = with (trampolineDeclarationsProvider) {
         this@trampolineDeclarations.trampolineDeclarations()
+    }
+
+    override fun SirClass.generateAdapterDeclarations() = with(classAdaptersProvider) {
+        this@generateAdapterDeclarations.generateAdapterDeclarations()
+    }
+
+    override fun SirModule.dumpAdapterDeclarations() = with(classAdaptersProvider) {
+        this@dumpAdapterDeclarations.dumpAdapterDeclarations()
     }
 
     override fun KaModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
@@ -162,4 +172,9 @@ public interface SirVisibilityChecker {
      * @return null if symbol should not be exposed to SIR completely.
      */
     public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
+}
+
+public interface SirClassAdaptersProvider {
+    public fun SirClass.generateAdapterDeclarations()
+    public fun SirModule.dumpAdapterDeclarations()
 }

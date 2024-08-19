@@ -72,3 +72,6 @@ val SirFunction.swiftFqName: String
 
 val SirVariable.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+
+val SirClass.exportedInitName: String
+    get() = "SwiftExport_${swiftFqName.replace(".", "_")}_toRetainedSwift"

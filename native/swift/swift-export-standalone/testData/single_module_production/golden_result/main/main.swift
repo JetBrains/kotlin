@@ -17,6 +17,12 @@ public var variable: Swift.Int32 {
         main.org.kotlin.foo.variable = newValue
     }
 }
+@_cdecl("SwiftExport_main_org_kotlin_foo_Clazz_toRetainedSwift")
+private func SwiftExport_main_org_kotlin_foo_Clazz_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.org.kotlin.foo.Clazz(__externalRCRef: externalRCRef)).toOpaque()
+}
 public func function(
     arg: Swift.Int32
 ) -> Swift.Int32 {

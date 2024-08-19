@@ -55,16 +55,21 @@ internal fun ModuleWithScopeProvider.initializeSirModule(
     // This will traverse every top level declaration of a given provider
     // This in turn inits every root declaration that will be consumed down the pipe by swift export
     traverseTopLevelDeclarationsInScopes(sirSession, scopeProvider)
-
-    return with(moduleProvider) {
-        SwiftModuleBuildResults(
-            module = mainModule.sirModule(),
-            packages = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping)
-                sirSession.enumGenerator.collectedPackages
-            else
-                emptySet()
-        )
+    val module = with(moduleProvider) {
+        mainModule.sirModule().apply {
+            with(sirSession) {
+                dumpAdapterDeclarations()
+            }
+        }
     }
+
+    return SwiftModuleBuildResults(
+        module = module,
+        packages = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping)
+            sirSession.enumGenerator.collectedPackages
+        else
+            emptySet()
+    )
 }
 
 private fun traverseTopLevelDeclarationsInScopes(

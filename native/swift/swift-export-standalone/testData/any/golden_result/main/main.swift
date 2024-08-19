@@ -16,6 +16,12 @@ public final class MyObject : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+@_cdecl("SwiftExport_main_MyObject_toRetainedSwift")
+private func SwiftExport_main_MyObject_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.MyObject(__externalRCRef: externalRCRef)).toOpaque()
+}
 public func getMainObject() -> KotlinRuntime.KotlinBase {
     return KotlinRuntime.KotlinBase(__externalRCRef: __root___getMainObject())
 }

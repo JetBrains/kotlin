@@ -1,6 +1,10 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_org_kotlin_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(org.kotlin.Foo::class)
+external fun SwiftExport_ExportedKotlinPackages_org_kotlin_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("org_kotlin_Foo_init_allocate")
 public fun org_kotlin_Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<org.kotlin.Foo>()

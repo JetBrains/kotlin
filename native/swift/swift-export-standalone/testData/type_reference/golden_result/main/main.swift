@@ -267,6 +267,48 @@ public var var_object_wp: ExportedKotlinPackages.namespace.deeper.Object_with_pa
         return __root___var_object_wp_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
     }
 }
+@_cdecl("SwiftExport_ExportedKotlinPackages_namespace_deeper_Class_with_package_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_namespace_deeper_Class_with_package_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.namespace.deeper.Class_with_package(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_ExportedKotlinPackages_namespace_deeper_DATA_OBJECT_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_namespace_deeper_DATA_OBJECT_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_ExportedKotlinPackages_namespace_deeper_Object_with_package_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_namespace_deeper_Object_with_package_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.namespace.deeper.Object_with_package(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_main_Class_without_package_toRetainedSwift")
+private func SwiftExport_main_Class_without_package_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Class_without_package(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_main_Demo_toRetainedSwift")
+private func SwiftExport_main_Demo_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Demo(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_main_OPEN_CLASS_toRetainedSwift")
+private func SwiftExport_main_OPEN_CLASS_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.OPEN_CLASS(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_main_Object_without_package_toRetainedSwift")
+private func SwiftExport_main_Object_without_package_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Object_without_package(__externalRCRef: externalRCRef)).toOpaque()
+}
 public func combine(
     arg1: main.Class_without_package,
     arg2: ExportedKotlinPackages.namespace.deeper.Class_with_package,

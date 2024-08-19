@@ -25,6 +25,12 @@ public final class Foo : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+@_cdecl("SwiftExport_main_Foo_toRetainedSwift")
+private func SwiftExport_main_Foo_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Foo(__externalRCRef: externalRCRef)).toOpaque()
+}
 // Can't export ext: extension functions are not supported yet.
 // Can't export foo: inline functions are not supported yet.
 // Can't export MyInterface: interface classifiers are not supported yet.

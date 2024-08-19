@@ -1,6 +1,10 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_dependency_four_AnotherBar_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(dependency.four.AnotherBar::class)
+external fun SwiftExport_ExportedKotlinPackages_dependency_four_AnotherBar_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("dependency_four_AnotherBar_init_allocate")
 public fun dependency_four_AnotherBar_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<dependency.four.AnotherBar>()

@@ -18,11 +18,28 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
     override fun generateFunctionBridges(request: BridgeRequest) = buildList {
         when (request.callable) {
             is SirFunction -> {
-                add(
-                    request.descriptor.createFunctionBridge(typeNamer) { name, args ->
-                        "$name(${args.joinToString()})"
-                    }
-                )
+                if (request.callable.origin is SirOrigin.ExportedInit) {
+                    add(FunctionBridge(
+                            kotlinFunctionBridge = KotlinFunctionBridge(
+                                lines = buildList {
+                                    add("@kotlinx.cinterop.internal.CCall(\"${request.bridgeName}\")")
+                                    add("@kotlin.native.internal.ref.ToRetainedSwift(${request.fqName.joinToString(separator = ".")}::class)")
+                                    add("external fun ${request.bridgeName}(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr")
+                                },
+                                packageDependencies = emptyList(),
+                            ),
+                            cDeclarationBridge = CFunctionBridge(
+                                lines = emptyList(),
+                                headerDependencies = emptyList(),
+                            ),
+                        ))
+                } else {
+                    add(
+                        request.descriptor.createFunctionBridge(typeNamer) { name, args ->
+                            "$name(${args.joinToString()})"
+                        }
+                    )
+                }
             }
             is SirGetter -> {
                 add(
@@ -56,6 +73,7 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
     }
 
     override fun generateSirFunctionBody(request: BridgeRequest) = SirFunctionBody(buildList {
+        require(request.callable.origin !is SirOrigin.ExportedInit)
         when (request.callable) {
             is SirFunction, is SirGetter, is SirSetter -> {
                 add("return ${request.descriptor.swiftCall(typeNamer)}")

@@ -26,8 +26,10 @@ internal class KotlinBridgePrinter : BridgePrinter {
             yield("")
         }
         functions.forEach { functionLines ->
-            yieldAll(functionLines)
-            yield("")
+            if (functionLines.isNotEmpty()) {
+                yieldAll(functionLines)
+                yield("")
+            }
         }
     }
 }

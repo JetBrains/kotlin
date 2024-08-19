@@ -1,6 +1,10 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_MyObject_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(MyObject::class)
+external fun SwiftExport_main_MyObject_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("__root___MyObject_get")
 public fun __root___MyObject_get(): kotlin.native.internal.NativePtr {
     val _result = MyObject

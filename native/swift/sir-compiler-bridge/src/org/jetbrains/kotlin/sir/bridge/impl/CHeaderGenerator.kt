@@ -27,8 +27,10 @@ internal class CBridgePrinter : BridgePrinter {
             yield("")
         }
         functions.forEach { functionLines ->
-            yieldAll(functionLines)
-            yield("")
+            if (functionLines.isNotEmpty()) {
+                yieldAll(functionLines)
+                yield("")
+            }
         }
     }
 }

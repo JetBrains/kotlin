@@ -8,6 +8,10 @@ public fun Bar_p_get(self: kotlin.native.internal.NativePtr): kotlin.native.inte
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_Bar_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(Bar::class)
+external fun SwiftExport_main_Bar_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("__root___meaningOfLife")
 public fun __root___meaningOfLife(): kotlin.native.internal.NativePtr {
     val _result = meaningOfLife()

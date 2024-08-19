@@ -13,3 +13,9 @@ public final class Outer : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+@_cdecl("SwiftExport_main_Outer_toRetainedSwift")
+private func SwiftExport_main_Outer_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Outer(__externalRCRef: externalRCRef)).toOpaque()
+}

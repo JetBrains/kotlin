@@ -2,6 +2,12 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
+@_cdecl("SwiftExport_ExportedKotlinPackages_org_kotlin_Foo_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_org_kotlin_Foo_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.org.kotlin.Foo(__externalRCRef: externalRCRef)).toOpaque()
+}
 public extension ExportedKotlinPackages.org.kotlin {
     public final class Foo : KotlinRuntime.KotlinBase {
         public override init() {

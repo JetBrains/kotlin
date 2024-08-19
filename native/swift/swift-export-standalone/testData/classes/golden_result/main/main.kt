@@ -168,6 +168,54 @@ public fun OBJECT_NO_PACKAGE_variable_set(self: kotlin.native.internal.NativePtr
     __self.variable = __newValue
 }
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.Foo::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_NAMESPACED_CLASS_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.NAMESPACED_CLASS::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_NAMESPACED_CLASS_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.deeper.DATA_OBJECT_WITH_PACKAGE::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_deeper_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.deeper.Foo::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_deeper_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_deeper_NAMESPACED_CLASS_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.deeper.NAMESPACED_CLASS::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_deeper_NAMESPACED_CLASS_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_namespace_deeper_OBJECT_WITH_PACKAGE_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(namespace.deeper.OBJECT_WITH_PACKAGE::class)
+external fun SwiftExport_ExportedKotlinPackages_namespace_deeper_OBJECT_WITH_PACKAGE_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_ExportedKotlinPackages_why_we_need_module_names_CLASS_WITH_SAME_NAME_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(why_we_need_module_names.CLASS_WITH_SAME_NAME::class)
+external fun SwiftExport_ExportedKotlinPackages_why_we_need_module_names_CLASS_WITH_SAME_NAME_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_CLASS_WITH_SAME_NAME_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(CLASS_WITH_SAME_NAME::class)
+external fun SwiftExport_main_CLASS_WITH_SAME_NAME_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_ClassWithNonPublicConstructor_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(ClassWithNonPublicConstructor::class)
+external fun SwiftExport_main_ClassWithNonPublicConstructor_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(Foo::class)
+external fun SwiftExport_main_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_OBJECT_NO_PACKAGE_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(OBJECT_NO_PACKAGE::class)
+external fun SwiftExport_main_OBJECT_NO_PACKAGE_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_OPEN_CLASS_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(OPEN_CLASS::class)
+external fun SwiftExport_main_OPEN_CLASS_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_allocate")
 public fun __root___CLASS_WITH_SAME_NAME_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<CLASS_WITH_SAME_NAME>()

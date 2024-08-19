@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.session
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.sir.providers.SirClassAdaptersProvider
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -55,4 +56,5 @@ internal class StandaloneSirSession(
     )
     override val visibilityChecker = SirVisibilityCheckerImpl(unsupportedDeclarationReporter)
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
+    override val classAdaptersProvider: SirClassAdaptersProvider = SirClassAdaptersProviderImpl()
 }

@@ -13,6 +13,10 @@ public fun Foo_Nested_init_initialize(__kt: kotlin.native.internal.NativePtr): U
     kotlin.native.internal.initInstance(____kt, Foo.Nested())
 }
 
+@kotlinx.cinterop.internal.CCall("SwiftExport_main_Foo_toRetainedSwift")
+@kotlin.native.internal.ref.ToRetainedSwift(Foo::class)
+external fun SwiftExport_main_Foo_toRetainedSwift(ref: kotlin.native.internal.ref.ExternalRCRef): kotlin.native.internal.NativePtr
+
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Foo>()

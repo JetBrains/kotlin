@@ -44,6 +44,24 @@ public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
         return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
     }
 }
+@_cdecl("SwiftExport_ExportedKotlinPackages_typealiases_Foo_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_typealiases_Foo_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.typealiases.Foo(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_ExportedKotlinPackages_typealiases_inner_Bar_toRetainedSwift")
+private func SwiftExport_ExportedKotlinPackages_typealiases_inner_Bar_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(ExportedKotlinPackages.typealiases.inner.Bar(__externalRCRef: externalRCRef)).toOpaque()
+}
+@_cdecl("SwiftExport_main_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift")
+private func SwiftExport_main_DATA_OBJECT_WITH_PACKAGE_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.DATA_OBJECT_WITH_PACKAGE(__externalRCRef: externalRCRef)).toOpaque()
+}
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {

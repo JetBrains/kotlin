@@ -32,6 +32,12 @@ public var variable: Swift.Never {
         fatalError()
     }
 }
+@_cdecl("SwiftExport_main_Bar_toRetainedSwift")
+private func SwiftExport_main_Bar_toRetainedSwift(
+    externalRCRef: Swift.UInt
+) -> Swift.UnsafeMutableRawPointer {
+    return Unmanaged.passRetained(main.Bar(__externalRCRef: externalRCRef)).toOpaque()
+}
 public func meaningOfLife() -> Swift.Never {
     return __root___meaningOfLife()
 }
