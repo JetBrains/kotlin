@@ -2174,7 +2174,7 @@ class LightTreeRawFirDeclarationBuilder(
                         convertAnnotationEntry(
                             it,
                             diagnostic = ConeSimpleDiagnostic(
-                                "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationNotAllowed,
+                                "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationInWhereClause,
                             )
                         )
                 }
