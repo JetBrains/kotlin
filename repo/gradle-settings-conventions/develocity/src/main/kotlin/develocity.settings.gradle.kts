@@ -13,13 +13,15 @@ if (!buildScanServer.isNullOrEmpty()) {
 
 develocity {
     val isTeamCity = buildProperties.isTeamcityBuild
-    if (!buildScanServer.isNullOrEmpty()) {
+    val hasBuildScanServer = !buildScanServer.isNullOrEmpty()
+    if (hasBuildScanServer) {
         server.set(buildScanServer)
     }
     buildScan {
         capture {
             uploadInBackground = !isTeamCity
         }
+        publishing.onlyIf { hasBuildScanServer }
 
         val overriddenUsername = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()
         val overriddenHostname = (buildProperties.getOrNull("kotlin.build.scan.hostname") as? String)?.trim()
