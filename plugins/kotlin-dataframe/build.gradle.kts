@@ -37,6 +37,7 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-annotations-jvm:$kotlinVersion")
 
     implementation(project(":core"))
+    implementation(project(":dataframe-excel"))
     api(libs.kotlinLogging)
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
 
