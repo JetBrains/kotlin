@@ -6,8 +6,6 @@ plugins {
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
-val antLauncherJar by configurations.creating
-
 dependencies {
     testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
 
@@ -34,9 +32,6 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-
-    antLauncherJar(commonDependency("org.apache.ant", "ant"))
-    antLauncherJar(toolsJar())
 }
 
 optInToExperimentalCompilerApi()
@@ -62,13 +57,6 @@ projectTest(
 
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    val antLauncherJarPathProvider = project.provider {
-        antLauncherJar.asPath
-    }
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
 }
 
 if (kotlinBuildProperties.isTeamcityBuild) {

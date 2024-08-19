@@ -79,6 +79,10 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
             }
+
+            testClass<AbstractAntTaskTest> {
+                model("integration/ant/jvm", extension = null, recursive = false)
+            }
         }
 
         testGroup("compiler/tests-gen", "compiler/testData") {
@@ -241,10 +245,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractWriteSignatureTest> {
                 model("writeSignature")
-            }
-
-            testClass<AbstractAntTaskTest> {
-                model("integration/ant/jvm", extension = null, recursive = false)
             }
 
             testClass<AbstractControlFlowTest> {
