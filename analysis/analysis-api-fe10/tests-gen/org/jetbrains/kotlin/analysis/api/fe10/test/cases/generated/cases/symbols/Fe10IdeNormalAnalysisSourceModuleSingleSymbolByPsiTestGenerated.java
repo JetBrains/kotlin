@@ -436,6 +436,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("initWithAnnotations.kt")
+    public void testInitWithAnnotations() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/initWithAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("memberLevelDestructuringDeclaration.kt")
     public void testMemberLevelDestructuringDeclaration() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/memberLevelDestructuringDeclaration.kt");
