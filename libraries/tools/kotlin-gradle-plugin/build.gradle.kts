@@ -289,6 +289,7 @@ tasks {
         }
     }
     GradlePluginVariant.values().forEach { variant ->
+        if (kotlinBuildProperties.isInJpsBuildIdeaSync) return@forEach
         val sourceSet = sourceSets.getByName(variant.sourceSetName)
         val taskSuffix = sourceSet.jarTaskName.capitalize()
         val shadowJarTaskName = "$EMBEDDABLE_COMPILER_TASK_NAME$taskSuffix"
