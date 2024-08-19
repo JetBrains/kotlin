@@ -94,10 +94,3 @@ private class ArrayIterator<T> constructor(val array: Array<T>) : Iterator<T> {
     override fun hasNext() = index < array.size
     override fun next() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
 }
-
-internal inline fun <reified T> createAnyArray(size: Int, init: (Int) -> T): Array<T> {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmAnyArray(size)
-    result.fill(size, init)
-    return Array(result)
-}

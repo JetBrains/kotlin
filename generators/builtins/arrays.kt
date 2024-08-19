@@ -340,28 +340,6 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
 
         override fun FileBuilder.modifyGeneratedFileAfterClass() {
             generateArrayIteratorClass()
-            method {
-                signature {
-                    visibility = MethodVisibility.INTERNAL
-                    isInline = true
-                    methodName = (if (kind == null) "<reified T> " else "") + "create${kind?.capitalized ?: "Any"}Array"
-                    parameter {
-                        name = "size"
-                        type = PrimitiveType.INT.capitalized
-                    }
-                    parameter {
-                        name = "init"
-                        type = "(${PrimitiveType.INT.capitalized}) -> $elementTypeName"
-                    }
-                    returnType = arrayTypeName
-                }
-                """
-                    if (size < 0) throw IllegalArgumentException("Negative array size")
-                    val result = $storageArrayType(size)
-                    result.fill(size, ${if (kind == PrimitiveType.BOOLEAN) "{ init(it).reinterpretAsByte() }" else "init"})
-                    return $arrayClassName(result)
-                """.trimIndent().setAsBlockBody()
-            }
             if (kind == PrimitiveType.BOOLEAN) {
                 method {
                     annotations += "WasmNoOpCast"

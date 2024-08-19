@@ -96,13 +96,6 @@ private class ByteArrayIterator constructor(val array: ByteArray) : ByteIterator
     override fun nextByte() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createByteArray(size: Int, init: (Int) -> Byte): ByteArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmByteArray(size)
-    result.fill(size, init)
-    return ByteArray(result)
-}
-
 /**
  * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
  *
@@ -185,13 +178,6 @@ private class CharArrayIterator constructor(val array: CharArray) : CharIterator
     private var index = 0
     override fun hasNext() = index < array.size
     override fun nextChar() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createCharArray(size: Int, init: (Int) -> Char): CharArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmCharArray(size)
-    result.fill(size, init)
-    return CharArray(result)
 }
 
 /**
@@ -278,13 +264,6 @@ private class ShortArrayIterator constructor(val array: ShortArray) : ShortItera
     override fun nextShort() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createShortArray(size: Int, init: (Int) -> Short): ShortArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmShortArray(size)
-    result.fill(size, init)
-    return ShortArray(result)
-}
-
 /**
  * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
  *
@@ -367,13 +346,6 @@ private class IntArrayIterator constructor(val array: IntArray) : IntIterator() 
     private var index = 0
     override fun hasNext() = index < array.size
     override fun nextInt() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createIntArray(size: Int, init: (Int) -> Int): IntArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmIntArray(size)
-    result.fill(size, init)
-    return IntArray(result)
 }
 
 /**
@@ -460,13 +432,6 @@ private class LongArrayIterator constructor(val array: LongArray) : LongIterator
     override fun nextLong() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createLongArray(size: Int, init: (Int) -> Long): LongArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmLongArray(size)
-    result.fill(size, init)
-    return LongArray(result)
-}
-
 /**
  * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
  *
@@ -549,13 +514,6 @@ private class FloatArrayIterator constructor(val array: FloatArray) : FloatItera
     private var index = 0
     override fun hasNext() = index < array.size
     override fun nextFloat() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createFloatArray(size: Int, init: (Int) -> Float): FloatArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmFloatArray(size)
-    result.fill(size, init)
-    return FloatArray(result)
 }
 
 /**
@@ -642,13 +600,6 @@ private class DoubleArrayIterator constructor(val array: DoubleArray) : DoubleIt
     override fun nextDouble() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createDoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmDoubleArray(size)
-    result.fill(size, init)
-    return DoubleArray(result)
-}
-
 /**
  * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
  *
@@ -731,13 +682,6 @@ private class BooleanArrayIterator constructor(val array: BooleanArray) : Boolea
     private var index = 0
     override fun hasNext() = index < array.size
     override fun nextBoolean() = if (index < array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createBooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmByteArray(size)
-    result.fill(size, { init(it).reinterpretAsByte() })
-    return BooleanArray(result)
 }
 
 @WasmNoOpCast
