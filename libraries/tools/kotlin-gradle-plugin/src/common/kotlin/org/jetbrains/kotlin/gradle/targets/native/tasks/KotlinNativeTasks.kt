@@ -508,7 +508,9 @@ internal constructor(
                 when (val compilation = compilation) {
                     is KotlinCompilationInfo.TCS ->
                         filteredLibraries.addAll(
-                            (compilation.compilation as AbstractKotlinNativeCompilation).nativeDistributionDependencies.exclude(originalPlatformLibraries()).files
+                            (compilation.compilation as AbstractKotlinNativeCompilation).nativeDistributionDependencies.exclude(
+                                originalPlatformLibraries()
+                            ).files
                         )
                 }
                 filteredLibraries.toPathsArray()

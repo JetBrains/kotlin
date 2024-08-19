@@ -84,9 +84,6 @@ internal class KotlinNativeProvider(
     @get:Internal
     internal val nativeKotlinVersion = project.nativeProperties.kotlinNativeVersion
 
-//    @get:Internal
-//    internal val environmentBlacklist = konanPropertiesBuildService.map { it.environmentBlacklist }
-
     @get:Internal
     internal val nativeJvmArgs = project.listProperty { project.nativeProperties.jvmArgs.get() }
 
@@ -105,9 +102,6 @@ internal class KotlinNativeProvider(
 
     @get:Internal
     internal val useXcodeMessageStyle = project.provider { project.useXcodeMessageStyle }
-
-    //    @get:Internal
-//    internal val nativeProperties = project.provider {project.nativeProperties}
 
     @get:Internal
     internal val nativeClasspath = project.provider {

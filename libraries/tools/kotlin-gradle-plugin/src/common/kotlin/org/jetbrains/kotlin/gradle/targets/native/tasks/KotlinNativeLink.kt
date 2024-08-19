@@ -86,7 +86,7 @@ constructor(
     // Avoid resolving these dependencies during task graph construction when we can't build the target:
     @Suppress("DEPRECATION")
     @get:Internal
-    internal val nativeDistributionDependencies = compilation.nativeDistributionDependencies
+    internal val nativeDistributionDependencies = compilation.nativeDependencies
 
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(

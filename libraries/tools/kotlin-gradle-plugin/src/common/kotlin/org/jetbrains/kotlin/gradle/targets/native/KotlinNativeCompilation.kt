@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesFor
 import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -54,6 +55,9 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
 
     internal val useGenericPluginArtifact: Boolean
         get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
+
+    internal val nativeDependencies: ConfigurableFileCollection
+        get() = compilation.project.objects.fileCollection().from(compilation.project.getOriginalPlatformLibrariesFor(konanTarget))
 
     @OptIn(UnsafeApi::class)
     internal val nativeDistributionDependencies: ConfigurableFileCollection
