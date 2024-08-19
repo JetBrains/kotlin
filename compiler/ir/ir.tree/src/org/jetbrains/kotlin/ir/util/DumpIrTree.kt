@@ -346,7 +346,7 @@ class DumpIrTreeVisitor(
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {
-            inlinedBlock.inlinedElement.dumpInternal("inlinedElement")
+            inlinedBlock.inlineFunction.dumpInternal("inlineFunction")
             inlinedBlock.acceptChildren(this, "")
         }
     }

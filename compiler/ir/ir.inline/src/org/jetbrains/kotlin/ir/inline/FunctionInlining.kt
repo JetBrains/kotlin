@@ -235,13 +235,15 @@ open class FunctionInlining(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
-                inlinedElement = originalInlinedElement,
+                inlineFunction = callee.originalFunction,
                 origin = null,
                 statements = evaluationStatements + newStatements
             ).apply {
-                // `inlineCall` is required only for JVM backend only, but this inliner is common, so we need opt-in.
+                // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
                 @OptIn(JvmIrInlineExperimental::class)
                 this.inlineCall = callSite
+                @OptIn(JvmIrInlineExperimental::class)
+                this.inlinedElement = originalInlinedElement
             }
 
             // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to

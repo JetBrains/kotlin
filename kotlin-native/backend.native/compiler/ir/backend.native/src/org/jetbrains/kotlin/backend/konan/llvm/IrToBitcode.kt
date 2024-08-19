@@ -1984,7 +1984,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) :
-            FileScope(inlinedBlock.inlineFunction?.let {
+            FileScope(inlinedBlock.inlineFunction.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 generationState.inlineFunctionOrigins[it]?.irFile ?: it.fileOrNull
             }
@@ -1992,21 +1992,17 @@ internal class CodeGeneratorVisitor(
                     ?: error("returnable block should belong to current file at least")) {
 
         private val functionScope by lazy {
-            inlinedBlock.inlineFunction?.let {
+            inlinedBlock.inlineFunction.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 it.scope(file().fileEntry.line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
             }
         }
 
         override fun location(offset: Int): LocationInfo? {
-            return if (inlinedBlock.inlineFunction != null) {
-                val diScope = functionScope ?: return null
-                val inlinedAt = outerContext.location(inlinedBlock.startOffset) ?: return null
-                val (line, column) = file.fileEntry.lineAndColumn(offset)
-                LocationInfo(diScope, line, column, inlinedAt)
-            } else {
-                outerContext.location(offset)
-            }
+            val diScope = functionScope ?: return null
+            val inlinedAt = outerContext.location(inlinedBlock.startOffset) ?: return null
+            val (line, column) = file.fileEntry.lineAndColumn(offset)
+            return LocationInfo(diScope, line, column, inlinedAt)
         }
 
         /**

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
-import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
@@ -55,7 +54,7 @@ abstract class UsefulDeclarationProcessor(
 
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration) {
             super.visitInlinedFunctionBlock(inlinedBlock, data)
-            inlinedBlock.inlineFunction?.addToUsefulPolyfilledDeclarations()
+            inlinedBlock.inlineFunction.addToUsefulPolyfilledDeclarations()
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {

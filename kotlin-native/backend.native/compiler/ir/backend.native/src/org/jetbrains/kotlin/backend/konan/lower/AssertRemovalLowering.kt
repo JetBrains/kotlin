@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -22,8 +21,7 @@ internal class AssertRemovalLowering(val context: Context) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-                val inlinedFunction = inlinedBlock.inlineFunction ?: return super.visitInlinedFunctionBlock(inlinedBlock)
-                if (inlinedFunction.symbol in asserts) {
+                if (inlinedBlock.inlineFunction.symbol in asserts) {
                     return IrCompositeImpl(inlinedBlock.startOffset, inlinedBlock.endOffset, inlinedBlock.type)
                 }
                 return super.visitInlinedFunctionBlock(inlinedBlock)

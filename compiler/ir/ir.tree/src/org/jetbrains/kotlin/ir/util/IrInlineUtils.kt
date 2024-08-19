@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -25,24 +26,20 @@ annotation class JvmIrInlineExperimental
 
 @JvmIrInlineExperimental
 var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(followAttributeOwner = true)
+@JvmIrInlineExperimental
+var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(followAttributeOwner = true)
 
+@OptIn(JvmIrInlineExperimental::class)
 val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
     get() = when (val element = inlinedElement) {
         is IrFunction -> element
         is IrFunctionExpression -> element.function
         is IrFunctionReference -> element.symbol.owner
         is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
+        else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
     }
 
-val IrInlinedFunctionBlock.inlineFunction: IrFunction?
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
-        else -> null
-    }
-
+@OptIn(JvmIrInlineExperimental::class)
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedElement is IrFunction
 }

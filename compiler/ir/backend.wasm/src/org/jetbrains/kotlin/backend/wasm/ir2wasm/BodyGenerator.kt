@@ -915,11 +915,7 @@ class BodyGenerator(
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         body.buildNop(inlinedBlock.getSourceLocation())
 
-        val inlineFunction = when (val inlineDeclaration = inlinedBlock.inlineDeclaration) {
-            is IrProperty -> inlineDeclaration.getter
-            else -> inlineDeclaration as? IrFunction
-        } ?: compilationException("Function was expected", inlinedBlock.inlineDeclaration)
-
+        val inlineFunction = inlinedBlock.inlineFunction
         functionContext.stepIntoInlinedFunction(inlineFunction)
         super.visitInlinedFunctionBlock(inlinedBlock)
         functionContext.stepOutLastInlinedFunction()
@@ -929,7 +925,7 @@ class BodyGenerator(
         val inlineFunction = inlinedBlock.inlineFunction
         val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
         val owner = correspondingProperty?.owner ?: inlineFunction
-        val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "<UNKNOWN>"
+        val name = owner.fqNameWhenAvailable?.asString() ?: owner.name.asString()
 
         body.commentGroupStart { "Inlined call of `$name`" }
         super.visitInlinedFunctionBlock(inlinedBlock, data)

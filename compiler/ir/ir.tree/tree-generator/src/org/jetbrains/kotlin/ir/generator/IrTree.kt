@@ -742,7 +742,7 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
-        +field("inlinedElement", rootElement, isChild = false)
+        +field("inlineFunction", function, isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
         visitorParameterName = "body"
