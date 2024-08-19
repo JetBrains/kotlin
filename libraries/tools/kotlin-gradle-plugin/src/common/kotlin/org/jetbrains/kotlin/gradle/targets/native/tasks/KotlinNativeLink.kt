@@ -86,7 +86,10 @@ constructor(
     // Avoid resolving these dependencies during task graph construction when we can't build the target:
     @Suppress("DEPRECATION")
     @get:Internal
-    internal val nativeDistributionDependencies = compilation.nativeDependencies
+    internal val nativeDependencies = compilation.nativeDependencies
+    @Suppress("DEPRECATION")
+    @get:Internal
+    internal val nativeDistributionDependencies = compilation.nativeDistributionDependencies
 
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
@@ -286,7 +289,7 @@ constructor(
         }
     }
 
-    internal fun originalPlatformLibraries() = objectFactory.fileCollection().from(nativeDistributionDependencies)
+    internal fun originalPlatformLibraries() = objectFactory.fileCollection().from(nativeDependencies)
 
     private fun validatedExportedLibraries() {
         if (exportLibrariesResolvedConfiguration == null) return
