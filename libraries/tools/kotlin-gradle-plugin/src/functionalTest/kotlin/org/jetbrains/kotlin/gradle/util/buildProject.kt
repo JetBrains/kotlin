@@ -175,3 +175,7 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
         project.propertiesExtension.set(KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, KmpIsolatedProjectsSupport.DISABLE)
     }
 }
+
+fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
+}
