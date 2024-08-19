@@ -87,7 +87,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             getCpuModel(generationState),
             getCpuFeatures(generationState),
             LlvmOptimizationLevel.AGGRESSIVE,
-            LlvmSizeLevel.NONE,
+            if (config.smallBinary) LlvmSizeLevel.AGGRESSIVE else LlvmSizeLevel.NONE,
             LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive,
             configurables.currentRelocationMode(generationState).translateToLlvmRelocMode(),
             LLVMCodeModel.LLVMCodeModelDefault,
@@ -126,11 +126,9 @@ internal fun createLTOFinalPipelineConfig(
         context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
-    // TODO(KT-66501): investigate, why sizeLevel is essentially === to NONE (and inline it if it's OK)
     val sizeLevel: LlvmSizeLevel = when {
-        // We try to optimize code as much as possible on embedded targets.
-        context.shouldOptimize() -> LlvmSizeLevel.NONE
-        context.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
+        // Only optimize for size, when required by configuration. LlvmSizeLevel.AGGRESSIVE will translate to "Oz"
+        config.smallBinary -> LlvmSizeLevel.AGGRESSIVE
         else -> LlvmSizeLevel.NONE
     }
     val codegenOptimizationLevel: LLVMCodeGenOptLevel = when {
@@ -189,9 +187,10 @@ abstract class LlvmOptimizationPipeline(
 
     abstract val pipelineName: String
     abstract val passes: List<String>
-    val optimizationFlag = when {
-        config.sizeLevel != LlvmSizeLevel.NONE -> "Os"
-        else -> "O${config.optimizationLevel.value}"
+    val optimizationFlag = when (config.sizeLevel) {
+        LlvmSizeLevel.NONE -> "O${config.optimizationLevel.value}"
+        LlvmSizeLevel.DEFAULT -> "Os"
+        LlvmSizeLevel.AGGRESSIVE -> "Oz"
     }
 
     private val arena = Arena()
