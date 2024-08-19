@@ -207,7 +207,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
-  -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
+  -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
