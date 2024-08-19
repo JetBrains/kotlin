@@ -687,6 +687,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Test
+    @TestMetadata("trueNegativeOperatorAssignmentOnPropertyFromClass.kt")
+    public void testTrueNegativeOperatorAssignmentOnPropertyFromClass() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/trueNegativeOperatorAssignmentOnPropertyFromClass.kt");
+    }
+
+    @Test
     @TestMetadata("tryInference.kt")
     public void testTryInference() {
       runTest("compiler/fir/analysis-tests/testData/resolve/tryInference.kt");
