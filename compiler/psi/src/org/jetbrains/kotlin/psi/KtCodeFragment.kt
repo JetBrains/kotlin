@@ -32,18 +32,25 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 abstract class KtCodeFragment(
-    private val myProject: Project,
-    name: String,
-    text: CharSequence,
+    viewProvider: FileViewProvider,
     imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR
     elementType: IElementType,
     private val context: PsiElement?
-) : KtFile(
-    run {
-        val psiManager = PsiManager.getInstance(myProject) as PsiManagerEx
-        psiManager.fileManager.createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true)
-    }, false
-), KtCodeFragmentBase {
+) : KtFile(viewProvider, false), KtCodeFragmentBase {
+    constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        elementType: IElementType,
+        context: PsiElement?
+    ) : this(
+        createFileViewProviderForLightFile(project, name, text),
+        imports,
+        elementType,
+        context,
+    )
+
     private var viewProvider = super.getViewProvider() as SingleRootFileViewProvider
     private var importDirectiveStrings = LinkedHashSet<String>()
 
@@ -104,7 +111,7 @@ abstract class KtCodeFragment(
             myOriginalFile = this@KtCodeFragment
             importDirectiveStrings = LinkedHashSet(this@KtCodeFragment.importDirectiveStrings)
             viewProvider = SingleRootFileViewProvider(
-                PsiManager.getInstance(myProject),
+                PsiManager.getInstance(project),
                 LightVirtualFile(name, KotlinFileType.INSTANCE, text),
                 false
             )
@@ -228,6 +235,14 @@ abstract class KtCodeFragment(
             Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
         val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
+
+        internal fun createFileViewProviderForLightFile(project: Project, name: String, text: CharSequence): FileViewProvider {
+            val psiManager = PsiManager.getInstance(project) as PsiManagerEx
+            return psiManager.fileManager.createFileViewProvider(
+                LightVirtualFile(name, KotlinFileType.INSTANCE, text),
+                /* eventSystemEnabled = */true
+            )
+        }
 
         private val LOG = Logger.getInstance(KtCodeFragment::class.java)
     }
