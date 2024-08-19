@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM
 // ISSUE: KT-37592, KT-70310
 
 class A {
