@@ -20,11 +20,8 @@ java {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
-    maxParallelForks = if (System.getenv("GITHUB_ACTIONS") != null) {
-        Runtime.getRuntime().availableProcessors()
-    } else {
-        (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
-    }
+    maxHeapSize = "1G"
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
 
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = dokkaBuild.testJavaLauncherVersion
