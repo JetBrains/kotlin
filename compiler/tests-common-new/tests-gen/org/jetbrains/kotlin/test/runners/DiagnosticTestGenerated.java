@@ -15915,6 +15915,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("noImportFromRootPackage.kt")
+      public void testNoImportFromRootPackage() {
+        runTest("compiler/testData/diagnostics/tests/imports/noImportFromRootPackage.kt");
+      }
+
+      @Test
       @TestMetadata("OperatorRenameOnImport.kt")
       public void testOperatorRenameOnImport() {
         runTest("compiler/testData/diagnostics/tests/imports/OperatorRenameOnImport.kt");
