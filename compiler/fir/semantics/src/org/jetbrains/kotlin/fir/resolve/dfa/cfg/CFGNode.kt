@@ -59,7 +59,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun killEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean): Boolean {
             val oldEdge = to.edgeFrom(from)
             if (oldEdge.kind.isDead) return false
-            val newEdge = Edge.create(oldEdge.label, if (oldEdge.kind.isBack) EdgeKind.DeadCfgBackward else EdgeKind.DeadForward)
+            val newEdge = Edge.create(oldEdge.label, oldEdge.kind.toDead())
             to.insertIncomingEdge(from, newEdge)
             if (propagateDeadness) {
                 to.isDead = true
