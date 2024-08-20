@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUES: KT-69985, KT-69986
 // FILE: file1.kt
 open class ClassFromRoot {
