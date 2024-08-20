@@ -45,12 +45,24 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         return global.pointer.getElementPtr(llvm, global.type, 0).bitcast(kObjHeaderPtr)
     }
 
+    private fun String.isValidUnicode(): Boolean {
+        var i = 0
+        while (i < length) {
+            val c = this[i++]
+            if (c.isLowSurrogate()) return false
+            if (c.isHighSurrogate() && (i == length || !this[i++].isLowSurrogate())) return false
+        }
+        return true
+    }
+
     private fun createKotlinStringLiteral(value: String): ConstPointer {
         val (encodingFlag, encoded) = if (value.all { it.code in 0..255 }) {
             // Technically it's not *really* Latin-1 because real Latin-1 has unassigned codepoints,
             // so `toByteArray(Charsets.ISO_8859_1)` does not produce the same result - it can replace
             // some of the characters with placeholders.
             1 to ByteArray(value.length) { value[it].code.toByte() }
+        } else if (value.isValidUnicode()) {
+            2 to value.toByteArray(Charsets.UTF_8)
         } else {
             // And here it's technically not always UTF-16 either because we could have unpaired surrogates,
             // so `toByteArray(Charsets.UTF_16{LE,BE})` is also wrong...

@@ -26,6 +26,7 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "KString.h"
+#include "KString.UTF8.h"
 #include "Porting.h"
 #include "Types.h"
 
@@ -45,7 +46,8 @@ size_t encodingUnitSize(StringEncoding encoding) {
     switch (encoding) {
     case StringEncoding::kUTF16: return sizeof(typename StringData<StringEncoding::kUTF16>::unit);
     case StringEncoding::kLatin1: return sizeof(typename StringData<StringEncoding::kLatin1>::unit);
-    default: return 0;
+    case StringEncoding::kUTF8: return sizeof(typename StringData<StringEncoding::kUTF8>::unit);
+    default: ThrowIllegalArgumentException();
     }
 }
 
@@ -55,6 +57,7 @@ auto encodingAware(KConstRef string, F&& impl) {
     switch (header->encoding()) {
     case StringEncoding::kUTF16: return impl(StringData<StringEncoding::kUTF16>(header));
     case StringEncoding::kLatin1: return impl(StringData<StringEncoding::kLatin1>(header));
+    case StringEncoding::kUTF8: return impl(StringData<StringEncoding::kUTF8>(header));
     default: ThrowIllegalArgumentException();
     }
 }
@@ -89,9 +92,22 @@ bool utf16StringIsLatin1(const uint16_t* utf16, size_t lengthChars) {
     return allZeroWhenMasked<0xFF00, 0xFF00FF00FF00FF00ull>(utf16, lengthChars);
 }
 
-template <typename String, typename It>
-bool isInSurrogatePair(String&& string, It&& it) {
-    return string.at(it.ptr()) != it;
+// StringEncoding::kUTF8 implies a *valid* string, so invalid ones must be converted to UTF-16
+// with replacement. This function returns the length of the converted string iff conversion is needed, else 0.
+// (Invalid strings cannot have a length of 0 chars, because empty strings are always valid.)
+size_t utf8StringLengthInCharsIfInvalid(const char* utf8, size_t lengthBytes) {
+    bool invalid = false;
+    size_t result = 0;
+    for (auto p = utf8, end = p + lengthBytes; p != end; ) {
+        // Unicode code points are limited to 0x10FFFF.
+        auto c = utf8::with_replacement::next(p, end, std::numeric_limits<uint32_t>::max());
+        if (c >= 0x110000) {
+            c = utf8::with_replacement::default_replacement;
+            invalid = true;
+        }
+        result += 1 + (c >= 0x10000);
+    }
+    return invalid ? result : 0;
 }
 
 template <typename Allocator /*= KRef(size_t sizeInChars) */>
@@ -128,20 +144,14 @@ OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool en
     if (utf8StringIsASCII(utf8, lengthBytes)) {
         RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, lengthBytes,
             [=](uint8_t* out) { std::copy_n(utf8, lengthBytes, out); })
+    } else if (auto lengthChars = utf8StringLengthInCharsIfInvalid(utf8, lengthBytes)) {
+        if (ensureValid) ThrowCharacterCodingException();
+        RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, lengthChars,
+            [=](KChar* out) { utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out); });
+    } else {
+        RETURN_RESULT_OF(createString<StringEncoding::kUTF8>, lengthBytes,
+            [=](uint8_t* out) { std::copy_n(utf8, lengthBytes, out); });
     }
-    size_t lengthChars;
-    try {
-        lengthChars = ensureValid
-            ? utf8::utf16_length(utf8, utf8 + lengthBytes)
-            : utf8::with_replacement::utf16_length(utf8, utf8 + lengthBytes);
-    } catch (...) {
-        ThrowCharacterCodingException();
-    }
-    RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, lengthChars, [=](KChar* out) {
-        return ensureValid
-            ? utf8::unchecked::utf8to16(utf8, utf8 + lengthBytes, out) // already known to be valid
-            : utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out);
-    });
 }
 
 template <KStringConversionMode mode>
@@ -211,18 +221,20 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     // Note: this function can be called in "Native" thread state. But this is fine:
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
+    KRef result;
     auto sizeInBytes = strlen(nullTerminatedUTF8);
     if (utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
-        auto result = allocatePermanentString(StringEncoding::kLatin1, sizeInBytes);
+        result = allocatePermanentString(StringEncoding::kLatin1, sizeInBytes);
         std::copy_n(nullTerminatedUTF8, sizeInBytes, StringHeader::of(result)->data());
-        return result;
-    } else {
+    } else if (auto sizeInChars = utf8StringLengthInCharsIfInvalid(nullTerminatedUTF8, sizeInBytes)) {
         auto end = nullTerminatedUTF8 + sizeInBytes;
-        auto sizeInChars = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
-        auto result = allocatePermanentString(StringEncoding::kUTF16, sizeInChars);
+        result = allocatePermanentString(StringEncoding::kUTF16, sizeInChars);
         utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, reinterpret_cast<KChar*>(StringHeader::of(result)->data()));
-        return result;
+    } else {
+        result = allocatePermanentString(StringEncoding::kUTF8, sizeInBytes);
+        std::copy_n(nullTerminatedUTF8, sizeInBytes, StringHeader::of(result)->data());
     }
+    return result;
 }
 
 extern "C" void FreePermanentStringForTests(KConstRef header) {
@@ -237,9 +249,11 @@ extern "C" KInt Kotlin_String_getStringLength(KConstRef thiz) {
 extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, KChar newChar) {
     return encodingAware(thizPtr, [=](auto thiz) {
         if (!thiz.canEncode(oldChar)) RETURN_OBJ(const_cast<KRef>(thizPtr));
-        if (thiz.encoding == StringEncoding::kLatin1 && thiz.canEncode(newChar)) {
-            RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, thiz.sizeInUnits(),
-                [=](uint8_t* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+        if constexpr (thiz.encoding == StringEncoding::kLatin1) {
+            if (thiz.canEncode(newChar)) {
+                RETURN_RESULT_OF(createString<StringEncoding::kLatin1>, thiz.sizeInUnits(),
+                    [=](uint8_t* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+            }
         }
         RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars(),
             [=](KChar* out) { std::replace_copy(thiz.begin(), thiz.end(), out, oldChar, newChar); });
@@ -254,12 +268,11 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
     if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
-        RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
-        RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
-        auto resultLength = thiz.sizeInChars() + other.sizeInChars(); // can't overflow since MAX_STRING_SIZE is (max value)/2
-        if (resultLength > MAX_STRING_SIZE) {
-            ThrowOutOfMemoryError();
-        }
+        auto thizSize = thiz.sizeInChars();
+        auto otherSize = other.sizeInChars();
+        RuntimeAssert(thizSize <= MAX_STRING_SIZE, "this cannot be this large");
+        RuntimeAssert(otherSize <= MAX_STRING_SIZE, "other cannot be this large");
+        if (thizSize + otherSize > MAX_STRING_SIZE) ThrowOutOfMemoryError();
 
         if (thiz.encoding == other.encoding &&
             // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
@@ -271,7 +284,7 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
                 std::copy(other.begin().ptr(), other.end().ptr(), halfway);
             });
         } else {
-            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
+            RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, thizSize + otherSize, [=](KChar* out) {
                 auto halfway = std::copy(thiz.begin(), thiz.end(), out);
                 std::copy(other.begin(), other.end(), halfway);
             });
@@ -319,7 +332,7 @@ extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex
 
         auto start = thiz.begin() + startIndex;
         auto end = start + (endIndex - startIndex);
-        if (isInSurrogatePair(thiz, start) || isInSurrogatePair(thiz, end)) {
+        if (start.ptr() == nullptr || end.ptr() == nullptr) {
             RETURN_RESULT_OF(createString<StringEncoding::kUTF16>, endIndex - startIndex,
                 [=](KChar* out) { std::copy(start, end, out); });
         }
@@ -347,14 +360,12 @@ static KInt Kotlin_String_compareAt(It1 it1, It1 end1, It2 it2, It2 end2) {
 
 extern "C" KInt Kotlin_String_compareTo(KConstRef thiz, KConstRef other) {
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
-        auto begin1 = thiz.begin(), end1 = thiz.end();
-        auto begin2 = other.begin(), end2 = other.end();
         if constexpr (thiz.encoding == other.encoding) {
-            auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
-            return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
+            auto [ptr1, ptr2] = std::mismatch(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
+            return Kotlin_String_compareAt(thiz.at(ptr1), thiz.end(), other.at(ptr2), other.end());
         } else {
-            auto [it1, it2] = std::mismatch(begin1, end1, begin2, end2);
-            return Kotlin_String_compareAt(it1, end1, it2, end2);
+            auto [it1, it2] = std::mismatch(thiz.begin(), thiz.end(), other.begin(), other.end());
+            return Kotlin_String_compareAt(it1, thiz.end(), it2, other.end());
         }
     });
 }
@@ -430,6 +441,13 @@ extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     });
 }
 
+// iterator.ptr() is guaranteed to be non-null after calling this.
+template <typename It>
+static KChar advanceIfInSurrogatePair(It& iterator) { return iterator.ptr() == nullptr ? *iterator++ : 0; }
+
+template <typename It>
+static KChar retractIfInSurrogatePair(It& iterator) { return iterator.ptr() == nullptr ? *iterator-- : 0; }
+
 // Bounds checks are performed on Kotlin side
 extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOffset, KConstRef other, KInt otherOffset, KInt length) {
     return length == 0 || encodingAware(thiz, other, [=](auto thiz, auto other) {
@@ -441,16 +459,10 @@ extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOff
         auto end2 = begin2 + length;
         if constexpr (thiz.encoding == other.encoding) {
             // Assuming only one "canonical" encoding, can byte-compare encoded values.
-            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
-            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
-                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
-                : isInSurrogatePair(other, begin2);
-            if (startsWithUnequalLowSurrogate) return false;
-            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
-                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
-                : isInSurrogatePair(other, end2);
-            if (endsWithUnequalHighSurrogate) return false;
-            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+            // Since ptr() is only defined at unit boundaries, surrogates at ends should be checked separately.
+            return advanceIfInSurrogatePair(begin1) == advanceIfInSurrogatePair(begin2) &&
+                retractIfInSurrogatePair(end1) == retractIfInSurrogatePair(end2) &&
+                std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
         } else {
             return std::equal(begin1, end1, begin2, end2);
         }
@@ -472,8 +484,9 @@ extern "C" KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
 extern "C" KInt Kotlin_String_indexOfChar(KConstRef thiz, KChar ch, KInt fromIndex) {
     auto unsignedIndex = fromIndex < 0 ? 0 : static_cast<size_t>(fromIndex);
     return encodingAware(thiz, [=](auto thiz) {
-        auto i = std::min(unsignedIndex, thiz.sizeInChars());
-        for (auto it = thiz.begin() + i; i < thiz.sizeInChars(); ++i) {
+        auto size = thiz.sizeInChars();
+        auto i = std::min(unsignedIndex, size);
+        for (auto it = thiz.begin() + i; i < size; ++i) {
             if (*it++ == ch) return static_cast<KInt>(i);
         }
         return -1;
@@ -511,12 +524,9 @@ extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KIn
         if constexpr (thiz.encoding == other.encoding) {
             auto shift = unsignedIndex;
             while (start != end) {
-                if (isInSurrogatePair(thiz, start)) {
-                    // `start` points into a surrogate pair, skip its second half since presumably
-                    // this encoding doesn't allow `other` to start with it anyway.
-                    ++start;
-                    ++shift;
-                }
+                // Ensure start.ptr() is valid; if it's not, `other` cannot start with a low surrogate in this
+                // encoding, so we can simply skip one Char.
+                shift += (advanceIfInSurrogatePair(start) != 0);
                 auto ptr = std::search(start.ptr(), end.ptr(), patternStart.ptr(), patternEnd.ptr());
                 if (ptr == end.ptr()) break;
                 auto it = thiz.at(ptr);
@@ -570,7 +580,8 @@ extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thi
 }
 
 template <KStringConversionMode mode>
-static std::string to_string_impl(const KChar* it, const KChar* end) noexcept(mode != KStringConversionMode::CHECKED) {
+static std::string to_string_impl(const StringData<StringEncoding::kUTF16>&,
+                                  const KChar* it, const KChar* end) noexcept(mode != KStringConversionMode::CHECKED) {
     std::string utf8;
     utf8.reserve(end - it);
     switch (mode) {
@@ -592,7 +603,7 @@ static std::string to_string_impl(const KChar* it, const KChar* end) noexcept(mo
 }
 
 template <KStringConversionMode>
-static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcept {
+static std::string to_string_impl(const StringData<StringEncoding::kLatin1>&, const uint8_t* it, const uint8_t* end) noexcept {
     std::string result;
     result.resize((end - it) + std::count_if(it, end, [](uint8_t c) { return c & 0x80; }));
     auto out = result.begin();
@@ -608,19 +619,34 @@ static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcep
     return result;
 }
 
+template <KStringConversionMode>
+static std::string to_string_impl(const StringData<StringEncoding::kUTF8>&, const uint8_t* it, const uint8_t* end) noexcept {
+    return std::string(it, end);
+}
+
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
     RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
     return encodingAware(kstring, [=](auto kstring) {
         auto length = kstring.sizeInChars();
         RuntimeAssert(start <= length, "start index out of bounds");
+        RuntimeAssert(size == std::string::npos || size <= length - start, "size out of bounds");
+        if (start == length || size == 0) return std::string();
+
         auto it = kstring.begin() + start;
-        auto end = kstring.end();
-        if (size != std::string::npos) {
-            RuntimeAssert(size <= length - start, "size out of bounds");
-            end = it + size;
+        auto end = size == std::string::npos ? kstring.end() : it + size;
+        bool startsWithLowSurrogate = advanceIfInSurrogatePair(it);
+        bool endsWithHighSurrogate = retractIfInSurrogatePair(end);
+        if constexpr (mode == KStringConversionMode::CHECKED) {
+            if (startsWithLowSurrogate || endsWithHighSurrogate) ThrowCharacterCodingException();
         }
-        return to_string_impl<mode>(it.ptr(), end.ptr());
+        auto result = to_string_impl<mode>(kstring, it.ptr(), end.ptr());
+        if constexpr (mode == KStringConversionMode::REPLACE_INVALID) {
+            static constexpr const char* const SURROGATE_REPLACEMENT = "\xEF\xBF\xBD";
+            if (startsWithLowSurrogate) result.insert(0, SURROGATE_REPLACEMENT);
+            if (endsWithHighSurrogate) result.append(SURROGATE_REPLACEMENT);
+        }
+        return result;
     });
 }
 

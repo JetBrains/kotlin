@@ -14,6 +14,7 @@
 enum class StringEncoding : uint8_t {
     kUTF16 = 0,
     kLatin1 = 1,
+    kUTF8 = 2,
 };
 
 // Strings are effectively this:
@@ -73,7 +74,6 @@ struct FixedLengthUnitStringData {
 
         const unit* p_;
 
-        const unit* ptr() const { return p_; }
         KChar operator*() const { return *p_; }
         Iterator& operator++() { ++p_; return *this; };
         Iterator& operator--() { --p_; return *this; };
@@ -83,9 +83,13 @@ struct FixedLengthUnitStringData {
         bool operator==(const Iterator& other) const { return p_ == other.p_; }
         bool operator!=(const Iterator& other) const { return p_ != other.p_; }
         size_t operator-(const Iterator& other) const { return p_ - other.p_; }
+
+        // Can return nullptr if this iterator is in the middle of a surrogate pair that is represented
+        // as a single sequence in this encoding. In that case, ++ or -- once to arrive at a valid pointer.
+        const unit* ptr() const { return p_; }
     };
 
-    const unit* data_;
+    const unit* const data_;
     const size_t size_;
 
     FixedLengthUnitStringData(const StringHeader* header) :

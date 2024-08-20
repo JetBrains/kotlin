@@ -55,28 +55,29 @@ id Kotlin_Interop_CreateNSStringFromKString(ObjHeader* str) {
 }
 
 OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
-  if (str == nullptr) {
-    RETURN_OBJ(nullptr);
-  }
-
-  KRef result;
-  auto immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
-  auto length = CFStringGetLength(immutableCopyOrSameStr);
+  if (str == nullptr) RETURN_OBJ(nullptr);
+  size_t length = [str length];
   if (length == 0) RETURN_RESULT_OF0(TheEmptyString);
 
-  auto encoding = CFStringGetFastestEncoding(immutableCopyOrSameStr);
+  KRef result;
+  NSString* immutableCopyOrSameStr = [str copy];
+  NSStringEncoding encoding = [immutableCopyOrSameStr fastestEncoding];
   switch (encoding) {
-    case kCFStringEncodingASCII:
-    case kCFStringEncodingNonLossyASCII:
-    case kCFStringEncodingISOLatin1:
+    case NSUTF8StringEncoding:
+      result = CreateStringFromUtf8(
+        [immutableCopyOrSameStr UTF8String],
+        [immutableCopyOrSameStr lengthOfBytesUsingEncoding: encoding], OBJ_RESULT);
+      break;
+    case NSASCIIStringEncoding:
+    case NSISOLatin1StringEncoding:
       result = CreateUninitializedString(StringEncoding::kLatin1, length, OBJ_RESULT);
-      CFStringGetBytes(immutableCopyOrSameStr, {0, length}, encoding, '?', false,
-        reinterpret_cast<UInt8*>(StringHeader::of(result)->data()), length, nullptr);
+      [immutableCopyOrSameStr getBytes: StringHeader::of(result)->data() maxLength: length usedLength: nullptr
+        encoding: encoding options: 0 range: NSMakeRange(0, length) remainingRange: nullptr];
       break;
     default:
       result = CreateUninitializedString(StringEncoding::kUTF16, length, OBJ_RESULT);
-      CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
-        reinterpret_cast<UniChar*>(StringHeader::of(result)->data()));
+      [immutableCopyOrSameStr getCharacters: reinterpret_cast<UniChar*>(StringHeader::of(result)->data())
+        range: NSMakeRange(0, length)];
       break;
   }
   result->SetAssociatedObject((void*)immutableCopyOrSameStr);
