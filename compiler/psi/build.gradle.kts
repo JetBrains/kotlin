@@ -14,6 +14,7 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:frontend.common"))
     api(project(":kotlin-script-runtime"))
+    implementation(project(":kotlin-annotations-jvm"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
