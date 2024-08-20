@@ -1983,6 +1983,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("kt70753.kt")
+    public void testKt70753() {
+      runTest("compiler/testData/ir/irText/expressions/kt70753.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaInCAO.kt")
     public void testLambdaInCAO() {
       runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
