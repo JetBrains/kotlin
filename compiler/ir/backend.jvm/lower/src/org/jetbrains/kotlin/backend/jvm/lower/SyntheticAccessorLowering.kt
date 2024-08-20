@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_W
 import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
+import org.jetbrains.kotlin.backend.jvm.ir.inlineDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil

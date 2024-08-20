@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.ir.util.isFunctionInlining

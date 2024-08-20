@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
@@ -98,4 +97,14 @@ val IrDeclaration.fileParentBeforeInline: IrFile
             ?: this.parentClassOrNull?.getDeclarationBeforeInline()
             ?: this
         return original.fileParent
+    }
+
+@OptIn(JvmIrInlineExperimental::class)
+val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
+    get() = when (val element = inlinedElement) {
+        is IrFunction -> element
+        is IrFunctionExpression -> element.function
+        is IrFunctionReference -> element.symbol.owner
+        is IrPropertyReference -> element.symbol.owner
+        else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
     }
