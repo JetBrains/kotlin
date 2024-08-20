@@ -1,0 +1,29 @@
+MODULE main
+	CLASS BuiltinFunctionsToStringKt$box$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function3<Ljava/util/Map<**>;*Ljava/lang/Object;Ljava/lang/Object;>;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function3<Ljava/util/Map<**>;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;>;
+		K1
+			---
+		K2
+			invoke(Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; [public, final]
+		K1
+			invoke(Ljava/util/Map;Ljava/lang/Void;Ljava/lang/Object;)Ljava/lang/Object; [public, final]
+		K2
+			---
+	CLASS BuiltinFunctionsToStringKt$box$2.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function3<Ljava/util/HashMap<**>;**Ljava/lang/Object;>;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function3<Ljava/util/HashMap<**>;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;>;
+		K1
+			---
+		K2
+			invoke(Ljava/util/HashMap;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; [public, final]
+		K1
+			invoke(Ljava/util/HashMap;Ljava/lang/Void;Ljava/lang/Void;)Ljava/lang/Object; [public, final]
+		K2
+			---

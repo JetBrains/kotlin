@@ -191,9 +191,7 @@ class CallAndReferenceGenerator(
                 return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
                     with(adapterGenerator) {
-                        // TODO: Figure out why `adaptedType` is different from the `type`?
-                        val adaptedType = callableReferenceAccess.resolvedType.toIrType() as IrSimpleType
-                        generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, adaptedType)
+                        generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, type)
                     }
                 } else {
                     IrFunctionReferenceImpl(
@@ -225,39 +223,20 @@ class CallAndReferenceGenerator(
     }
 
     private fun approximateFunctionReferenceType(kotlinType: ConeKotlinType): ConeKotlinType {
-        // This is a hack to support intersection types in function references on JVM.
-        // Function reference type KFunctionN<T1, ..., TN, R> might contain intersection types in its top-level arguments.
-        // Intersection types in expressions and local variable declarations usually don't bother us.
-        // However, in case of function references type mapping affects behavior:
-        // resulting function reference class will have a bridge method, which will downcast its arguments to the expected types.
-        // This would cause ClassCastException in case of usual type approximation,
-        // because '{ X1 & ... & Xm }' would be approximated to 'Nothing'.
-        // JVM_OLD just relies on type mapping for generic argument types in such case.
-        if (!kotlinType.isReflectFunctionType(session))
-            return kotlinType
-        if (kotlinType !is ConeSimpleKotlinType)
-            return kotlinType
-        if (kotlinType.typeArguments.none { it.type is ConeIntersectionType })
-            return kotlinType
+        // Approximate a function type's input types to their supertypes.
+        // Approximating the outer type will lead to the input types being approximated to their subtypes
+        // because the input type parameters have in variance.
+        if (kotlinType !is ConeClassLikeType) return kotlinType
 
         val typeArguments = kotlinType.typeArguments
         return kotlinType.withArguments(Array(typeArguments.size) { i ->
             val projection = typeArguments[i]
             if (i < typeArguments.lastIndex) {
-                approximateFunctionReferenceParameterType(projection)
+                projection.type?.approximateForIrOrNull(this)?.toTypeProjection(projection.kind) ?: projection
             } else {
                 projection
             }
         })
-    }
-
-    private fun approximateFunctionReferenceParameterType(typeProjection: ConeTypeProjection): ConeTypeProjection {
-        if (typeProjection.isStarProjection) return typeProjection
-        val intersectionType = typeProjection as? ConeIntersectionType ?: return typeProjection
-        val newType = intersectionType.upperBoundForApproximation
-            ?: session.typeContext.commonSuperType(intersectionType.intersectedTypes.toList()) as? ConeKotlinType
-            ?: return typeProjection
-        return newType.toTypeProjection(typeProjection.kind)
     }
 
     private fun FirQualifiedAccessExpression.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
