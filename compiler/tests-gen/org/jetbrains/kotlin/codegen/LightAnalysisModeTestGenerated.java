@@ -3753,6 +3753,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/callableReference/returnNullFromFlexibleUnitLambda.kt");
     }
 
+    @TestMetadata("starProjectionCallableReference.kt")
+    public void testStarProjectionCallableReference() {
+      runTest("compiler/testData/codegen/box/callableReference/starProjectionCallableReference.kt");
+    }
+
     @TestMetadata("staticMethod.kt")
     public void testStaticMethod() {
       runTest("compiler/testData/codegen/box/callableReference/staticMethod.kt");

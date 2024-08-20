@@ -2993,6 +2993,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       runTest("compiler/testData/codegen/box/callableReference/nested.kt");
     }
 
+    @Test
+    @TestMetadata("starProjectionCallableReference.kt")
+    public void testStarProjectionCallableReference() {
+      runTest("compiler/testData/codegen/box/callableReference/starProjectionCallableReference.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
     @TestDataPath("$PROJECT_ROOT")
