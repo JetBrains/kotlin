@@ -1,5 +1,3 @@
-package second
-
 class MyClass {
     val prop = object : B<String> {
         override fun foo<caret>(x: String) = Unit

@@ -1,6 +1,10 @@
 // FILE: main.kt
 package foo
 
+import AddSupertype1
+import AddSupertype2
+import AddSupertype3
+
 import org.jetbrains.kotlin.fir.plugin.MetaSupertype
 
 interface MyInterface {

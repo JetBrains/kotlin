@@ -5,8 +5,9 @@ public class BaseClass {
 }
 
 // FILE: User.kt
-
 package test
+
+import BaseClass
 
 class User : BaseClass() {
     fun foo(tree: BaseClass) {
