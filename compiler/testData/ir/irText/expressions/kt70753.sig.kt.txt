@@ -1,0 +1,28 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A{}string
+  //   Public signature: /A.string|-528183805128847417[0]
+  //   Public signature debug description: {}string
+  val string: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-string>(){}kotlin.String
+    //   Public signature: /A.string.<get-string>|2389239443190785132[0]
+    //   Public signature debug description: <get-string>(){}kotlin.String
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(string: String) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+fun box(): String
