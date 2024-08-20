@@ -120,7 +120,7 @@ digraph atLeastOnce_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    26 -> {28} [style=dotted label="CapturedByValue"];
+    26 -> {28} [color=green style=dotted label="CapturedByValue"];
     27 -> {28 34};
     27 -> {36} [style=dotted];
     27 -> {28} [style=dashed];

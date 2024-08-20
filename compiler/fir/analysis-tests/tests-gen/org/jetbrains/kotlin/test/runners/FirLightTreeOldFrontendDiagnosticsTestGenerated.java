@@ -8128,6 +8128,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("deadAnonymousObject.kt")
+        public void testDeadAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("deadCallInInvokeCall.kt")
         public void testDeadCallInInvokeCall() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCallInInvokeCall.kt");

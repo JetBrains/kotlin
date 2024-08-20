@@ -120,7 +120,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     25 -> {26};
     26 -> {27};
     27 -> {28};
-    27 -> {29} [style=dotted label="CapturedByValue"];
+    27 -> {29} [color=green style=dotted label="CapturedByValue"];
     28 -> {29 37};
     28 -> {39} [style=dotted];
     28 -> {29} [style=dashed];
@@ -215,7 +215,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    53 -> {55} [style=dotted label="CapturedByValue"];
+    53 -> {55} [color=green style=dotted label="CapturedByValue"];
     54 -> {55 63};
     54 -> {65} [style=dotted];
     54 -> {55} [style=dashed];
@@ -287,7 +287,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     80 -> {81};
     81 -> {82};
     82 -> {83};
-    82 -> {84} [style=dotted label="CapturedByValue"];
+    82 -> {84} [color=green style=dotted label="CapturedByValue"];
     83 -> {84 92};
     83 -> {94} [style=dotted];
     83 -> {84} [style=dashed];

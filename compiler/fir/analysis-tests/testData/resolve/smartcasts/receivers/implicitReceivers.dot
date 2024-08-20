@@ -469,7 +469,7 @@ digraph implicitReceivers_kt {
     122 -> {123};
     123 -> {124};
     124 -> {125};
-    124 -> {126} [style=dotted label="CapturedByValue"];
+    124 -> {126} [color=green style=dotted label="CapturedByValue"];
     125 -> {126 175};
     125 -> {177} [style=dotted];
     125 -> {126} [style=dashed];
@@ -478,7 +478,7 @@ digraph implicitReceivers_kt {
     128 -> {129};
     129 -> {130};
     130 -> {131};
-    130 -> {132} [style=dotted label="CapturedByValue"];
+    130 -> {132} [color=green style=dotted label="CapturedByValue"];
     131 -> {132 169};
     131 -> {171} [style=dotted];
     131 -> {132} [style=dashed];
@@ -487,7 +487,7 @@ digraph implicitReceivers_kt {
     134 -> {135};
     135 -> {136};
     136 -> {137};
-    136 -> {138} [style=dotted label="CapturedByValue"];
+    136 -> {138} [color=green style=dotted label="CapturedByValue"];
     137 -> {138 154};
     137 -> {156} [style=dotted];
     137 -> {138} [style=dashed];

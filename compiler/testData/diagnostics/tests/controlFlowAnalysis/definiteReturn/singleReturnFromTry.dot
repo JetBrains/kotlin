@@ -78,7 +78,7 @@ digraph singleReturnFromTry_kt {
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    15 -> {17} [style=dotted label="CapturedByValue"];
+    15 -> {17} [color=green style=dotted label="CapturedByValue"];
     16 -> {17 24 26};
     16 -> {17} [style=dashed];
     17 -> {18};
@@ -222,7 +222,7 @@ digraph singleReturnFromTry_kt {
     52 -> {53};
     53 -> {54};
     54 -> {55};
-    54 -> {56} [style=dotted label="CapturedByValue"];
+    54 -> {56} [color=green style=dotted label="CapturedByValue"];
     55 -> {56 63 65};
     55 -> {56} [style=dashed];
     56 -> {57};
@@ -313,7 +313,7 @@ digraph singleReturnFromTry_kt {
     78 -> {79};
     79 -> {80};
     80 -> {81};
-    80 -> {82} [style=dotted label="CapturedByValue"];
+    80 -> {82} [color=green style=dotted label="CapturedByValue"];
     81 -> {82 99 101};
     81 -> {82} [style=dashed];
     82 -> {83};
@@ -423,7 +423,7 @@ digraph singleReturnFromTry_kt {
     110 -> {111};
     111 -> {112};
     112 -> {113};
-    112 -> {114} [style=dotted label="CapturedByValue"];
+    112 -> {114} [color=green style=dotted label="CapturedByValue"];
     113 -> {114 121 123};
     113 -> {114} [style=dashed];
     114 -> {115};

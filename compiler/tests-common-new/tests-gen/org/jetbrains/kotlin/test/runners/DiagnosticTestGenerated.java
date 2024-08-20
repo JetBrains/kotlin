@@ -8134,6 +8134,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("deadAnonymousObject.kt")
+        public void testDeadAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("deadCallInInvokeCall.kt")
         public void testDeadCallInInvokeCall() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCallInInvokeCall.kt");

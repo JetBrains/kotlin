@@ -109,7 +109,7 @@ digraph inPlaceLambdas_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    21 -> {23} [style=dotted label="CapturedByValue"];
+    21 -> {23} [color=green style=dotted label="CapturedByValue"];
     22 -> {23 33};
     22 -> {35} [style=dotted];
     22 -> {23} [style=dashed];
@@ -176,7 +176,7 @@ digraph inPlaceLambdas_kt {
     43 -> {44};
     44 -> {45};
     45 -> {46};
-    45 -> {47} [style=dotted label="CapturedByValue"];
+    45 -> {47} [color=green style=dotted label="CapturedByValue"];
     46 -> {47 53};
     46 -> {55} [style=dotted];
     46 -> {47} [style=dashed];
@@ -280,7 +280,7 @@ digraph inPlaceLambdas_kt {
     73 -> {74};
     74 -> {75};
     75 -> {76};
-    75 -> {77} [style=dotted label="CapturedByValue"];
+    75 -> {77} [color=green style=dotted label="CapturedByValue"];
     76 -> {77 90};
     76 -> {92} [style=dotted];
     76 -> {77} [style=dashed];

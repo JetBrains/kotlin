@@ -172,7 +172,7 @@ digraph flowFromInplaceLambda2_kt {
     30 -> {31};
     31 -> {32};
     32 -> {33};
-    32 -> {34} [style=dotted label="CapturedByValue"];
+    32 -> {34} [color=green style=dotted label="CapturedByValue"];
     33 -> {34 44};
     33 -> {46} [style=dotted];
     33 -> {34} [style=dashed];
@@ -197,7 +197,7 @@ digraph flowFromInplaceLambda2_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    53 -> {55} [style=dotted label="CapturedByValue"];
+    53 -> {55} [color=green style=dotted label="CapturedByValue"];
     54 -> {55 62};
     54 -> {64} [style=dotted];
     54 -> {55} [style=dashed];
@@ -312,7 +312,7 @@ digraph flowFromInplaceLambda2_kt {
     76 -> {77};
     77 -> {78};
     78 -> {79};
-    78 -> {80} [style=dotted label="CapturedByValue"];
+    78 -> {80} [color=green style=dotted label="CapturedByValue"];
     79 -> {80 90};
     79 -> {92} [style=dotted];
     79 -> {80} [style=dashed];
@@ -341,7 +341,7 @@ digraph flowFromInplaceLambda2_kt {
     101 -> {102};
     102 -> {103};
     103 -> {104};
-    103 -> {105} [style=dotted label="CapturedByValue"];
+    103 -> {105} [color=green style=dotted label="CapturedByValue"];
     104 -> {105 112};
     104 -> {114} [style=dotted];
     104 -> {105} [style=dashed];
@@ -480,7 +480,7 @@ digraph flowFromInplaceLambda2_kt {
     126 -> {127};
     127 -> {128};
     128 -> {129};
-    128 -> {130} [style=dotted label="CapturedByValue"];
+    128 -> {130} [color=green style=dotted label="CapturedByValue"];
     129 -> {130 140};
     129 -> {142} [style=dotted];
     129 -> {130} [style=dashed];
@@ -521,7 +521,7 @@ digraph flowFromInplaceLambda2_kt {
     163 -> {164};
     164 -> {165};
     165 -> {166};
-    165 -> {167} [style=dotted label="CapturedByValue"];
+    165 -> {167} [color=green style=dotted label="CapturedByValue"];
     166 -> {167 174};
     166 -> {176} [style=dotted];
     166 -> {167} [style=dashed];
@@ -730,7 +730,7 @@ digraph flowFromInplaceLambda2_kt {
     207 -> {208};
     208 -> {209};
     209 -> {210};
-    209 -> {211} [style=dotted label="CapturedByValue"];
+    209 -> {211} [color=green style=dotted label="CapturedByValue"];
     210 -> {211 219};
     210 -> {221} [style=dotted];
     210 -> {211} [style=dashed];
@@ -753,7 +753,7 @@ digraph flowFromInplaceLambda2_kt {
     226 -> {227};
     227 -> {228};
     228 -> {229};
-    228 -> {230} [style=dotted label="CapturedByValue"];
+    228 -> {230} [color=green style=dotted label="CapturedByValue"];
     229 -> {230 240};
     229 -> {242} [style=dotted];
     229 -> {230} [style=dashed];
@@ -781,7 +781,7 @@ digraph flowFromInplaceLambda2_kt {
     250 -> {251};
     251 -> {252};
     252 -> {253};
-    252 -> {254} [style=dotted label="CapturedByValue"];
+    252 -> {254} [color=green style=dotted label="CapturedByValue"];
     253 -> {254 262};
     253 -> {264} [style=dotted];
     253 -> {254} [style=dashed];
@@ -890,7 +890,7 @@ digraph flowFromInplaceLambda2_kt {
     281 -> {282};
     282 -> {283};
     283 -> {284};
-    283 -> {285} [style=dotted label="CapturedByValue"];
+    283 -> {285} [color=green style=dotted label="CapturedByValue"];
     284 -> {285 295};
     284 -> {297} [style=dotted];
     284 -> {285} [style=dashed];
@@ -913,7 +913,7 @@ digraph flowFromInplaceLambda2_kt {
     300 -> {301};
     301 -> {302};
     302 -> {303};
-    302 -> {304} [style=dotted label="CapturedByValue"];
+    302 -> {304} [color=green style=dotted label="CapturedByValue"];
     303 -> {304 309};
     303 -> {311} [style=dotted];
     303 -> {304} [style=dashed];
@@ -1088,7 +1088,7 @@ digraph flowFromInplaceLambda2_kt {
     332 -> {333};
     333 -> {334};
     334 -> {335};
-    334 -> {336} [style=dotted label="CapturedByValue"];
+    334 -> {336} [color=green style=dotted label="CapturedByValue"];
     335 -> {336 346};
     335 -> {348} [style=dotted];
     335 -> {336} [style=dashed];
@@ -1113,7 +1113,7 @@ digraph flowFromInplaceLambda2_kt {
     353 -> {354};
     354 -> {355};
     355 -> {356};
-    355 -> {357} [style=dotted label="CapturedByValue"];
+    355 -> {357} [color=green style=dotted label="CapturedByValue"];
     356 -> {357 367};
     356 -> {369} [style=dotted];
     356 -> {357} [style=dashed];
@@ -1141,7 +1141,7 @@ digraph flowFromInplaceLambda2_kt {
     377 -> {378};
     378 -> {379};
     379 -> {380};
-    379 -> {381} [style=dotted label="CapturedByValue"];
+    379 -> {381} [color=green style=dotted label="CapturedByValue"];
     380 -> {381 388};
     380 -> {390} [style=dotted];
     380 -> {381} [style=dashed];
@@ -1285,7 +1285,7 @@ digraph flowFromInplaceLambda2_kt {
     414 -> {415};
     415 -> {416};
     416 -> {417};
-    416 -> {418} [style=dotted label="CapturedByValue"];
+    416 -> {418} [color=green style=dotted label="CapturedByValue"];
     417 -> {418 428};
     417 -> {430} [style=dotted];
     417 -> {418} [style=dashed];
@@ -1310,7 +1310,7 @@ digraph flowFromInplaceLambda2_kt {
     435 -> {436};
     436 -> {437};
     437 -> {438};
-    437 -> {439} [style=dotted label="CapturedByValue"];
+    437 -> {439} [color=green style=dotted label="CapturedByValue"];
     438 -> {439 447};
     438 -> {449} [style=dotted];
     438 -> {439} [style=dashed];

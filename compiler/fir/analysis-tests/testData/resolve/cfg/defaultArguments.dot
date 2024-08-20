@@ -104,7 +104,7 @@ digraph defaultArguments_kt {
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    19 -> {21} [style=dotted label="CapturedByValue"];
+    19 -> {21} [color=green style=dotted label="CapturedByValue"];
     20 -> {21 29};
     20 -> {31} [style=dotted];
     20 -> {21} [style=dashed];

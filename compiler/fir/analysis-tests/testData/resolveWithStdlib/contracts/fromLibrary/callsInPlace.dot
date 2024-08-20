@@ -56,7 +56,7 @@ digraph callsInPlace_kt {
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    6 -> {8} [style=dotted label="CapturedByValue"];
+    6 -> {8} [color=green style=dotted label="CapturedByValue"];
     7 -> {8 14};
     7 -> {16} [style=dotted];
     7 -> {8} [style=dashed];
@@ -114,7 +114,7 @@ digraph callsInPlace_kt {
     27 -> {28};
     28 -> {29};
     29 -> {30};
-    29 -> {31} [style=dotted label="CapturedByValue"];
+    29 -> {31} [color=green style=dotted label="CapturedByValue"];
     30 -> {31 36 38};
     30 -> {31} [style=dashed];
     31 -> {32};
@@ -165,7 +165,7 @@ digraph callsInPlace_kt {
     43 -> {44};
     44 -> {45};
     45 -> {46};
-    45 -> {48} [style=dotted label="CapturedByValue"];
+    45 -> {48} [color=green style=dotted label="CapturedByValue"];
     46 -> {47};
     47 -> {48 53 55};
     47 -> {48} [style=dashed];
@@ -228,7 +228,7 @@ digraph callsInPlace_kt {
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    63 -> {65} [style=dotted label="CapturedByValue"];
+    63 -> {65} [color=green style=dotted label="CapturedByValue"];
     64 -> {65 77};
     64 -> {79} [style=dotted];
     64 -> {65} [style=dashed];
@@ -297,7 +297,7 @@ digraph callsInPlace_kt {
     85 -> {86};
     86 -> {87};
     87 -> {88};
-    87 -> {89} [style=dotted label="CapturedByValue"];
+    87 -> {89} [color=green style=dotted label="CapturedByValue"];
     88 -> {89 101};
     88 -> {103} [style=dotted];
     88 -> {89} [style=dashed];
@@ -403,9 +403,9 @@ digraph callsInPlace_kt {
     120 -> {121};
     121 -> {122};
     122 -> {123};
-    122 -> {130} [style=dotted label="CapturedByValue"];
+    122 -> {130} [color=green style=dotted label="CapturedByValue"];
     123 -> {124};
-    123 -> {125} [style=dotted label="CapturedByValue"];
+    123 -> {125} [color=green style=dotted label="CapturedByValue"];
     124 -> {125 130 135 137 138};
     124 -> {125 130} [style=dashed];
     125 -> {126};
@@ -475,9 +475,9 @@ digraph callsInPlace_kt {
     143 -> {144};
     144 -> {145};
     145 -> {146};
-    145 -> {153} [style=dotted label="CapturedByValue"];
+    145 -> {153} [color=green style=dotted label="CapturedByValue"];
     146 -> {147};
-    146 -> {148} [style=dotted label="CapturedByValue"];
+    146 -> {148} [color=green style=dotted label="CapturedByValue"];
     147 -> {148 153 158 160 161};
     147 -> {148 153} [style=dashed];
     148 -> {149};

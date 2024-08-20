@@ -195,7 +195,7 @@ digraph postponedLambdaInReturn_kt {
     31 -> {32};
     32 -> {33};
     33 -> {34};
-    33 -> {35} [style=dotted label="CapturedByValue"];
+    33 -> {35} [color=green style=dotted label="CapturedByValue"];
     34 -> {35 74};
     34 -> {76} [style=dotted];
     34 -> {35} [style=dashed];
@@ -373,7 +373,7 @@ digraph postponedLambdaInReturn_kt {
     84 -> {85};
     85 -> {86};
     86 -> {87};
-    86 -> {88} [style=dotted label="CapturedByValue"];
+    86 -> {88} [color=green style=dotted label="CapturedByValue"];
     87 -> {88 133};
     87 -> {135} [style=dotted];
     87 -> {88} [style=dashed];
@@ -550,7 +550,7 @@ digraph postponedLambdaInReturn_kt {
     146 -> {147};
     147 -> {148};
     148 -> {149};
-    148 -> {150} [style=dotted label="CapturedByValue"];
+    148 -> {150} [color=green style=dotted label="CapturedByValue"];
     149 -> {150 193};
     149 -> {195} [style=dotted];
     149 -> {150} [style=dashed];

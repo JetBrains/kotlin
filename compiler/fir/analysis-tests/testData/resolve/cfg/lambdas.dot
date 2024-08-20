@@ -106,7 +106,7 @@ digraph lambdas_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    21 -> {23} [style=dotted label="CapturedByValue"];
+    21 -> {23} [color=green style=dotted label="CapturedByValue"];
     22 -> {23 33 35};
     22 -> {23} [style=dashed];
     23 -> {24};
@@ -281,7 +281,7 @@ digraph lambdas_kt {
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    83 -> {85} [style=dotted label="CapturedByValue"];
+    83 -> {85} [color=green style=dotted label="CapturedByValue"];
     84 -> {85 92 94};
     84 -> {85} [style=dashed];
     85 -> {86};
@@ -344,7 +344,7 @@ digraph lambdas_kt {
     101 -> {102};
     102 -> {103};
     103 -> {104};
-    103 -> {105} [style=dotted label="CapturedByValue"];
+    103 -> {105} [color=green style=dotted label="CapturedByValue"];
     104 -> {105 112 114};
     104 -> {105} [style=dashed];
     105 -> {106};

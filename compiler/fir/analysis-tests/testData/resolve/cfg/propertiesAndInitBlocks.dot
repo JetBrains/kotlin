@@ -172,7 +172,7 @@ digraph propertiesAndInitBlocks_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10};
-    9 -> {11} [style=dotted label="CapturedByValue"];
+    9 -> {11} [color=green style=dotted label="CapturedByValue"];
     10 -> {11 56 58};
     10 -> {11} [style=dashed];
     11 -> {12};

@@ -92,7 +92,7 @@ digraph initBlockAndInPlaceLambda_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    16 -> {18} [style=dotted label="CapturedByValue"];
+    16 -> {18} [color=green style=dotted label="CapturedByValue"];
     17 -> {18 28};
     17 -> {30} [style=dotted];
     17 -> {18} [style=dashed];

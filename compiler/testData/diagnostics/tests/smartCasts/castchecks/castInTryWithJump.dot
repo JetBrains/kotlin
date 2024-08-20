@@ -1061,7 +1061,7 @@ digraph castInTryWithJump_fir_kt {
     313 -> {314};
     314 -> {315};
     315 -> {316};
-    315 -> {317} [style=dotted label="CapturedByValue"];
+    315 -> {317} [color=green style=dotted label="CapturedByValue"];
     316 -> {317 380};
     316 -> {382} [style=dotted];
     316 -> {317} [style=dashed];

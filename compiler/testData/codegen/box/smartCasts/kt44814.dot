@@ -773,7 +773,7 @@ digraph kt44814_kt {
     198 -> {199};
     199 -> {200};
     200 -> {201};
-    200 -> {202} [style=dotted label="CapturedByValue"];
+    200 -> {202} [color=green style=dotted label="CapturedByValue"];
     201 -> {202 213 215};
     201 -> {202} [style=dashed];
     202 -> {203};
@@ -819,7 +819,7 @@ digraph kt44814_kt {
     239 -> {240};
     240 -> {241};
     241 -> {242};
-    241 -> {243} [style=dotted label="CapturedByValue"];
+    241 -> {243} [color=green style=dotted label="CapturedByValue"];
     242 -> {243 252};
     242 -> {254} [style=dotted];
     242 -> {243} [style=dashed];

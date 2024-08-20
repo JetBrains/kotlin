@@ -178,7 +178,7 @@ digraph incorrectSmartcastToNothing_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    47 -> {49} [style=dotted label="CapturedByValue"];
+    47 -> {49} [color=green style=dotted label="CapturedByValue"];
     48 -> {49 59};
     48 -> {61} [style=dotted];
     48 -> {49} [style=dashed];

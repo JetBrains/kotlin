@@ -427,7 +427,7 @@ digraph safeCalls_kt {
     132 -> {133};
     133 -> {134};
     134 -> {135};
-    134 -> {136} [style=dotted label="CapturedByValue"];
+    134 -> {136} [color=green style=dotted label="CapturedByValue"];
     135 -> {136 142};
     135 -> {144} [style=dotted];
     135 -> {136} [style=dashed];

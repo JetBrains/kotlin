@@ -340,7 +340,7 @@ digraph smartcastToNothing_kt {
     106 -> {107};
     107 -> {108};
     108 -> {109};
-    108 -> {110} [style=dotted label="CapturedByValue"];
+    108 -> {110} [color=green style=dotted label="CapturedByValue"];
     109 -> {110 116};
     109 -> {118} [style=dotted];
     109 -> {110} [style=dashed];

@@ -151,7 +151,7 @@ digraph complexPostponedCfg_kt {
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    15 -> {17} [style=dotted label="CapturedByValue"];
+    15 -> {17} [color=green style=dotted label="CapturedByValue"];
     16 -> {17 65};
     16 -> {67} [style=dotted];
     16 -> {17} [style=dashed];
@@ -159,7 +159,7 @@ digraph complexPostponedCfg_kt {
     18 -> {19};
     19 -> {20};
     20 -> {21};
-    20 -> {22} [style=dotted label="CapturedByValue"];
+    20 -> {22} [color=green style=dotted label="CapturedByValue"];
     21 -> {22 59};
     21 -> {61} [style=dotted];
     21 -> {22} [style=dashed];
@@ -178,7 +178,7 @@ digraph complexPostponedCfg_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
-    36 -> {38} [style=dotted label="CapturedByValue"];
+    36 -> {38} [color=green style=dotted label="CapturedByValue"];
     37 -> {38 53};
     37 -> {55} [style=dotted];
     37 -> {38} [style=dashed];

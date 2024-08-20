@@ -485,7 +485,7 @@ digraph jumps_kt {
     154 -> {155};
     155 -> {156};
     156 -> {157};
-    156 -> {158} [style=dotted label="CapturedByValue"];
+    156 -> {158} [color=green style=dotted label="CapturedByValue"];
     157 -> {158 164 166};
     157 -> {158} [style=dashed];
     158 -> {159};

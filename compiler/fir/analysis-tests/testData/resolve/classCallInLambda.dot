@@ -53,7 +53,7 @@ digraph classCallInLambda_kt {
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    6 -> {8} [style=dotted label="CapturedByValue"];
+    6 -> {8} [color=green style=dotted label="CapturedByValue"];
     7 -> {8 14};
     7 -> {16} [style=dotted];
     7 -> {8} [style=dashed];

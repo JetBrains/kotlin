@@ -85,7 +85,7 @@ digraph postponedLambdaInConstructor_kt {
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    11 -> {13} [style=dotted label="CapturedByValue"];
+    11 -> {13} [color=green style=dotted label="CapturedByValue"];
     12 -> {13 23};
     12 -> {25} [style=dotted];
     12 -> {13} [style=dashed];

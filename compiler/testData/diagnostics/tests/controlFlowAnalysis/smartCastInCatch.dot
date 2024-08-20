@@ -476,7 +476,7 @@ digraph smartCastInCatch_fir_kt {
     148 -> {149 164};
     149 -> {150};
     150 -> {151};
-    150 -> {152} [style=dotted label="CapturedByValue"];
+    150 -> {152} [color=green style=dotted label="CapturedByValue"];
     151 -> {152 158};
     151 -> {160} [style=dotted];
     151 -> {152} [style=dashed];
