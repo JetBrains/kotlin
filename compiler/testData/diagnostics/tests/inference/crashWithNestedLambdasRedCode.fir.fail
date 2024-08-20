@@ -1,1 +1,0 @@
-org.jetbrains.kotlin.util.FileAnalysisException: While analysing /crashWithNestedLambdasRedCode.kt:5:5: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirAnonymousFunctionExpressionImpl' to be resolved
