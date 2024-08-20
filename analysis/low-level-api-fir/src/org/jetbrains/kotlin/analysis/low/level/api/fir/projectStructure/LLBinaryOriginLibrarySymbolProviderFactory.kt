@@ -123,6 +123,21 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         )
     }
 
+    override fun createWasmLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
+    ): List<FirSymbolProvider> {
+        val kLibs = moduleData.getLibraryKLibs()
+
+        return listOf(
+            KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs)
+        )
+    }
+
     override fun createBuiltinsSymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,

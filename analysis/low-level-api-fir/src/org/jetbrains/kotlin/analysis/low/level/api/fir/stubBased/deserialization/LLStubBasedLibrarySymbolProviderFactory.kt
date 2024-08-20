@@ -125,6 +125,26 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
         )
     }
 
+    override fun createWasmLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
+    ): List<FirSymbolProvider> {
+        return listOf(
+            createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
+                project,
+                scope,
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                isFallbackDependenciesProvider,
+            ),
+        )
+    }
+
     override fun createBuiltinsSymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,

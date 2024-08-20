@@ -241,6 +241,7 @@ fun <F> prepareWasmSessions(
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration.languageVersionSettings,
+                configuration.wasmTarget,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->

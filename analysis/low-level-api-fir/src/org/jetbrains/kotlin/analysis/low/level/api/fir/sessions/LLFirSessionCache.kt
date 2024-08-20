@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatform
@@ -252,6 +253,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         return when {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
             targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)
+            targetPlatform.all { it is WasmPlatform } -> LLFirWasmSessionFactory(project)
             targetPlatform.all { it is NativePlatform } -> LLFirNativeSessionFactory(project)
             else -> LLFirCommonSessionFactory(project)
         }
