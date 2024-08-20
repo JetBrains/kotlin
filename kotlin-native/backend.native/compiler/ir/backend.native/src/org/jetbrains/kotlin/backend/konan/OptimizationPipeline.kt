@@ -125,7 +125,7 @@ internal fun createLTOFinalPipelineConfig(
         else -> LlvmOptimizationLevel.DEFAULT
     }
     val sizeLevel: LlvmSizeLevel = when {
-        // Only optimize for size, if specified on the command line. Any level != NONE gives LLVM opt level "Os".
+        // Only optimize for size, when required by configuration. Any level != NONE gives LLVM opt level "Os".
         config.smallBinary -> LlvmSizeLevel.AGGRESSIVE
         else -> LlvmSizeLevel.NONE
     }
