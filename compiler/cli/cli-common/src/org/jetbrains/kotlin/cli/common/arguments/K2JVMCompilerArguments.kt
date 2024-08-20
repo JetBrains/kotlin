@@ -808,10 +808,10 @@ This option is deprecated and will be deleted in future versions."""
         }
 
     @Argument(
-        value = "-Xuse-kapt4",
-        description = "Enable the experimental KAPT 4."
+        value = "-Xuse-k2-kapt",
+        description = "Enable the experimental support for K2 KAPT."
     )
-    var useKapt4 = false
+    var useK2Kapt = false
         set(value) {
             checkFrozen()
             field = value

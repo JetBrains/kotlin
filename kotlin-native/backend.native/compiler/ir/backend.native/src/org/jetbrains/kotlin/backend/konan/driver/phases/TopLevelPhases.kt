@@ -14,12 +14,9 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
@@ -136,8 +133,10 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         val fragments = backendEngine.splitIntoFragments(irModule)
         val threadsCount = context.config.threadsCount
         if (threadsCount == 1) {
-            fragments.forEach { fragment ->
-                runAfterLowerings(fragment, createGenerationStateAndRunLowerings(fragment))
+            val fragmentsList = fragments.toList()
+            val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+            fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
+                runAfterLowerings(fragment, generationState)
             }
         } else {
             val fragmentsList = fragments.toList()

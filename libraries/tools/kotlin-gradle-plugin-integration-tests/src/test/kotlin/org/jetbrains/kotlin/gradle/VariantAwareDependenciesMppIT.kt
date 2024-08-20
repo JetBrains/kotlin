@@ -204,7 +204,8 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_7)
     @GradleTest
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
-        project("new-mpp-jvm-with-java-multi-module", gradleVersion) {
+        val buildOptions = defaultBuildOptions
+        project("new-mpp-jvm-with-java-multi-module", gradleVersion, buildOptions) {
             testResolveAllConfigurations("app")
         }
     }

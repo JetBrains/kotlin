@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isValueClass
@@ -201,7 +203,11 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
-            ).generateParentDeclaration()
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.valueParameters = it.createValueParameters()
+            }
         }
     }
 
@@ -221,15 +227,43 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
-            ).generateParentDeclaration()
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.valueParameters = it.createValueParameters()
+            }
         }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
+    private fun IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
+        typeTranslator.buildWithScope(this) {
+            val result = arrayListOf<IrValueParameter>()
+            descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
+                factory.createValueParameter(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = origin,
+                    name = Name.identifier("contextReceiverParameter$i"),
+                    type = contextReceiverParameter.type.toIrType(),
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
+                ).apply { parent = this@createValueParameters }
+            }
+            descriptor.valueParameters.mapTo(result) {
+                stubGenerator.generateValueParameterStub(it)
+                    .apply { parent = this@createValueParameters }
+            }
+        }
+
+    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
             type, varargElementType,
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
@@ -239,6 +273,12 @@ abstract class DeclarationStubGenerator(
             }
         }.generateParentDeclaration()
     }
+
+    private fun IrLazyFunctionBase.createReceiverParameter(parameter: ReceiverParameterDescriptor?): IrValueParameter? =
+        if (stubGenerator.extensions.isStaticFunction(descriptor)) null
+        else typeTranslator.buildWithScope(this) {
+            parameter?.generateReceiverParameterStub()?.also { it.parent = this@createReceiverParameter }
+        }
 
     // in IR Generator enums also have special handling, but here we have not enough data for it
     // probably, that is not a problem, because you can't add new enum value to external module

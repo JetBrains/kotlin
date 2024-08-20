@@ -16,3 +16,6 @@ internal inline fun <reified T : Named> ObjectFactory.newInstance(vararg args: A
 
 internal inline fun <reified T> ObjectFactory.domainObjectSet() =
     domainObjectSet(T::class.java)
+
+internal inline fun <reified T> ObjectFactory.namedDomainObjectSet() =
+    namedDomainObjectSet(T::class.java)

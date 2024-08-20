@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.IOException
@@ -105,7 +108,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
     private fun runInProcess(args: ToolArguments) {
         metricsReporter.measure(GradleBuildTime.NATIVE_IN_PROCESS) {
-            val isolatedClassLoader = classLoadersCachingBuildService.getClassLoader(toolSpec.classpath.files.toList())
+            val isolatedClassLoader = classLoadersCachingBuildService.getClassLoader(
+                toolSpec.classpath.files.toList(),
+                // Required for KotlinNativePaths to properly detect konan home directory
+                object : ParentClassLoaderProvider {
+                    @OptIn(KotlinBuildToolsInternalJdkUtils::class)
+                    private val jdkClassesClassLoader = getJdkClassesClassLoader()
+
+                    override fun getClassLoader(): ClassLoader? = jdkClassesClassLoader
+                    override fun hashCode(): Int = jdkClassesClassLoader.hashCode()
+                    override fun equals(other: Any?): Boolean =
+                        other is ParentClassLoaderProvider && other.getClassLoader() == jdkClassesClassLoader
+                }
+            )
             if (toolSpec.jvmArgs.get().contains("-ea")) isolatedClassLoader.setDefaultAssertionStatus(true)
 
             logger.log(
@@ -118,7 +133,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 """.trimMargin()
             )
 
-
+            val toolArgs = listOf(toolSpec.displayName.get()) + args.arguments
             try {
                 val mainClass = isolatedClassLoader.loadClass(toolSpec.mainClass.get())
                 val entryPoint = mainClass
@@ -127,7 +142,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    entryPoint.invoke(null, args.arguments.toTypedArray())
+                    entryPoint.invoke(null, toolArgs.toTypedArray())
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException

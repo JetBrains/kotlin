@@ -65,7 +65,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
             receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
-            receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
+            receiver is Primitive -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             // TODO try to save fields in Primitive -> then it is possible to move up next branch
             // TODO try to create backing field if it is missing
             irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushCompoundInstruction(irFunction.createGetField())
@@ -130,7 +130,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
         verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        verify(field.initializer?.expression !is IrConst<*>)
+        verify(field.initializer?.expression !is IrConst)
         callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 
@@ -186,7 +186,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val constructorCall = constructor.createConstructorCall()
         val constructorValueParameters = constructor.valueParameters.map { it.symbol }
 
-        val primitiveValueParameters = args.map { it as Primitive<*> }
+        val primitiveValueParameters = args.map { it as Primitive }
         primitiveValueParameters.forEachIndexed { index, primitive ->
             constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }

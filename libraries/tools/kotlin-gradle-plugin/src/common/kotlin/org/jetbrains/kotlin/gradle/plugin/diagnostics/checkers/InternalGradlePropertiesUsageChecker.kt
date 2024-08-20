@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -20,12 +21,11 @@ internal object InternalGradlePropertiesUsageChecker : KotlinGradleProjectChecke
         val internalPropertiesUsed = PropertiesProvider.PropertyNames.allInternalProperties().filter { name ->
             kotlinPropertiesProvider.property(name).orNull != null
         }
-        val internalPropertiesFiltered = internalPropertiesUsed.minus(PropertiesProvider.PropertyNames.MPP_13X_FLAGS_SET_BY_PLUGIN)
-        if (internalPropertiesFiltered.isEmpty()) return
+        if (internalPropertiesUsed.isEmpty()) return
 
         collector.reportOncePerGradleBuild(
             project,
-            KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed(internalPropertiesFiltered.sorted()),
+            KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed(internalPropertiesUsed.sorted()),
             // Known issue in edge case: if several Gradle subprojects declare internal properties, only one will be reported
             key = InternalGradlePropertiesUsageChecker::class.qualifiedName!!
         )

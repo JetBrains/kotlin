@@ -123,10 +123,14 @@ fun compileWasm(
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
 ): WasmCompilerResult {
+    val useJsTag = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
+
     val compiledWasmModule = WasmCompiledModuleFragment(
         backendContext.irBuiltIns,
-        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)
+        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
+        backendContext.isWasmJsTarget && useJsTag,
     )
+
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
     allModules.forEach { codeGenerator.collectInterfaceTables(it) }
     allModules.forEach { codeGenerator.generateModule(it) }
@@ -166,7 +170,8 @@ fun compileWasm(
     if (backendContext.isWasmJsTarget) {
         jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper(
             "./$baseFileName.wasm",
-            backendContext.jsModuleAndQualifierReferences
+            backendContext.jsModuleAndQualifierReferences,
+            useJsTag
         )
         jsWrapper = compiledWasmModule.generateEsmExportsWrapper(
             "./$baseFileName.uninstantiated.mjs",
@@ -212,7 +217,8 @@ ${generateExports()}
 
 fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
     wasmFilePath: String,
-    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>
+    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
+    useJsTag: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -290,6 +296,9 @@ $jsCodeBodyIndented
     const wasmFilePath = ${wasmFilePath.toJsStringLiteral()};
     const importObject = {
         js_code,
+        intrinsics: {
+            ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
+        },
 $imports
     };
     
@@ -450,15 +459,6 @@ fun WasmCompiledModuleFragment.generateExports(): String {
 
     /*language=js */
     return """
-export default new Proxy(exports, {
-    _shownError: false,
-    get(target, prop) {
-        if (!this._shownError) {
-            this._shownError = true;
-            throw new Error("Do not use default import. Use the corresponding named import instead.")
-        }
-    }
-});
 ${exportNames?.let { "export $it = exports;" }}
 """
 }

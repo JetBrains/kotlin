@@ -166,7 +166,6 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 type = context.irBuiltIns.anyNType,
                                 isAssignable = arg.isAssignable,
                                 symbol = IrValueParameterSymbolImpl(),
-                                index = arg.index,
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,
@@ -251,7 +250,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     }
 }
 
-internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {
+internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrSimpleFunction) : IrDeclarationOrigin {
     override val name: String
         get() = "BRIDGE_METHOD"
 
@@ -260,8 +259,8 @@ internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : 
     }
 }
 
-internal val IrFunction.bridgeTarget: IrFunction?
-        get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
+internal val IrSimpleFunction.bridgeTarget: IrSimpleFunction?
+    get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
 
 private fun IrBuilderWithScope.returnIfBadType(value: IrExpression,
                                                type: IrType,

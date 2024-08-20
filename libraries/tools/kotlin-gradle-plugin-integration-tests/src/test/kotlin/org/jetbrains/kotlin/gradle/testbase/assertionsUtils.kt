@@ -15,16 +15,15 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 internal fun BuildResult.printBuildOutput() {
-    println(
-        """
+    println(failedAssertionOutput())
+}
+internal fun BuildResult.failedAssertionOutput() = """
         |Failed assertion build output:
         |#######################
         |$output
         |#######################
         |
         """.trimMargin()
-    )
-}
 
 internal fun String.normalizeLineEndings(): String = replace("\n", System.lineSeparator())
 

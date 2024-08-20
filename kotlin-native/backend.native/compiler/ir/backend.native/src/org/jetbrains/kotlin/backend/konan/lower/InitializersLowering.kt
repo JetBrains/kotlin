@@ -64,7 +64,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     val initExpression = initializer.expression
                     val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
                     if (isConst)
-                        require(initExpression is IrConst<*>) { "Const val can only be initialized with a const: ${declaration.render()}" }
+                        require(initExpression is IrConst) { "Const val can only be initialized with a const: ${declaration.render()}" }
                     (if (isConst) constInitializers else initializers).add(
                             IrBlockImpl(startOffset, endOffset,
                                     context.irBuiltIns.unitType,

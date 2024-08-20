@@ -21,7 +21,7 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
 
         a::class != b::class -> false
 
-        a is IrConst<*> && b is IrConst<*> -> a.value == b.value
+        a is IrConst && b is IrConst -> a.value == b.value
 
         a is IrClassReference && b is IrClassReference -> equalBy(a, b) {
             val classId = it.classType.classOrFail.classId

@@ -163,6 +163,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 overridableMember.updateDeclarationHeader()
                 overridableMember.getter?.updateDeclarationHeader()
                 overridableMember.setter?.updateDeclarationHeader()
+                overridableMember.isLateinit = false
             }
         }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -21,12 +21,12 @@ internal class AssertRemovalLowering(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression {
-                val inlinedFunction = expression.inlineFunction ?: return super.visitReturnableBlock(expression)
+            override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+                val inlinedFunction = inlinedBlock.inlineFunction ?: return super.visitInlinedFunctionBlock(inlinedBlock)
                 if (inlinedFunction.symbol in asserts) {
-                    return IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
+                    return IrCompositeImpl(inlinedBlock.startOffset, inlinedBlock.endOffset, inlinedBlock.type)
                 }
-                return super.visitReturnableBlock(expression)
+                return super.visitInlinedFunctionBlock(inlinedBlock)
             }
         })
     }

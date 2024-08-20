@@ -116,11 +116,8 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
     return when (target) {
         is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
         is SharedCommonizerTarget -> {
-            val commonizerTaskProvider = commonizeNativeDistributionTask ?: return project.files()
-            val commonizedLibrariesProvider = commonizerTaskProvider.flatMap { task ->
-                task.rootOutputDirectoryProperty.map { getCommonizedPlatformLibrariesFor(it.asFile, target) }
-            }
-            project.files(commonizedLibrariesProvider)
+            val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return project.files()
+            project.files(klibs)
         }
     }
 }
@@ -130,11 +127,6 @@ private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget
 
 private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
     konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
-}
-
-private fun getCommonizedPlatformLibrariesFor(rootOutputDirectory: File, target: SharedCommonizerTarget): List<File> {
-    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
-    return targetOutputDirectory.listLibraryFiles()
 }
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()

@@ -210,7 +210,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         annotationVisitor: AnnotationVisitor
     ) {
         when (value) {
-            is IrConst<*> -> annotationVisitor.visit(name, value.value)
+            is IrConst -> annotationVisitor.visit(name, value.value)
             is IrConstructorCall -> {
                 val callee = value.symbol.owner
                 when {

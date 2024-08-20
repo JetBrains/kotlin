@@ -17,16 +17,27 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
 class KtBlockCodeFragment(
-    project: Project,
-    name: String,
-    text: CharSequence,
-    imports: String?,
+    viewProvider: FileViewProvider,
+    imports: String?, // Should be separated by KtCodeFragment.IMPORT_SEPARATOR
     context: PsiElement?
-) : KtCodeFragment(project, name, text, imports, KtNodeTypes.BLOCK_CODE_FRAGMENT, context) {
+) : KtCodeFragment(viewProvider, imports, KtNodeTypes.BLOCK_CODE_FRAGMENT, context) {
+
+    constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        context: PsiElement?
+    ) : this(
+        createFileViewProviderForLightFile(project, name, text),
+        imports,
+        context,
+    )
 
     override fun getContentElement() = findChildByClass(KtBlockExpression::class.java)
             ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")

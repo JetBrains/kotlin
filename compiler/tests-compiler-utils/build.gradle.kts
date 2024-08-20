@@ -31,7 +31,7 @@ dependencies {
 
     testApi(libs.guava)
     testApi(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    testApi(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testApi(libs.intellij.asm)
     testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
     testApi(intellijJDom())
 }

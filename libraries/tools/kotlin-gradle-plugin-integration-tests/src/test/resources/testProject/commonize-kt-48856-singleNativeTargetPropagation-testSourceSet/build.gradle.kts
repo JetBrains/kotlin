@@ -34,11 +34,12 @@ kotlin {
 
     tasks.create("listNativeTestDependencies") {
         nativeTest as DefaultKotlinSourceSet
-        val nativeTestMetadataConfiguration = configurations[nativeTest.intransitiveMetadataConfigurationName]
-        dependsOn(nativeTestMetadataConfiguration)
+        val nativeTestMetadataFiles = configurations[nativeTest.intransitiveMetadataConfigurationName]!!
+            .incoming.artifacts.artifactFiles
+        dependsOn(nativeTestMetadataFiles)
 
         doFirst {
-            nativeTestMetadataConfiguration.files.forEach { dependencyFile ->
+            nativeTestMetadataFiles.forEach { dependencyFile ->
                 logger.quiet("Dependency: ${dependencyFile.path}")
             }
         }

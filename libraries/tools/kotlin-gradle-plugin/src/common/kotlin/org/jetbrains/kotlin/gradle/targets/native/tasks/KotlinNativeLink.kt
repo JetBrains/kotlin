@@ -18,8 +18,15 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
+import org.jetbrains.kotlin.compilerRunner.getKonanParallelThreads
+import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -27,12 +34,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -53,6 +63,7 @@ constructor(
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
+    UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService {
 
@@ -111,7 +122,7 @@ constructor(
 
     @Suppress("unused")
     @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.isUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
@@ -196,17 +207,20 @@ constructor(
         ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
     }
 
-    private val cacheBuilderSettings by lazy {
-        CacheBuilder.Settings.createWithProject(
-            kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
-            kotlinNativeProvider.get().konanDataDir.orNull,
-            project,
-            binary,
-            konanTarget,
-            toolOptions,
-            externalDependenciesArgs
+    private val cacheBuilderSettings
+        get() = CacheBuilder.Settings(
+            konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory.asFile },
+            konanCacheKind = project.getKonanCacheKind(konanTarget),
+            gradleUserHomeDir = project.gradle.gradleUserHomeDir,
+            konanTarget = konanTarget,
+            toolOptions = toolOptions,
+            externalDependenciesArgs = externalDependenciesArgs,
+            debuggable = binary.debuggable,
+            optimized = binary.optimized,
+            konanDataDir = kotlinNativeProvider.flatMap { it.konanDataDir.map { File(it) } },
+            kotlinCompilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel,
+            forceDisableRunningInProcess = forceDisableRunningInProcess,
         )
-    }
 
     private class CacheSettings(
         val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind,
@@ -244,6 +258,7 @@ constructor(
             args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
+            args.konanDataDir = kotlinNativeProvider.get().konanDataDir.orNull
 
             KotlinCommonCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
         }
@@ -363,11 +378,26 @@ constructor(
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(
-        kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
-        kotlinNativeProvider.get().konanDataDir.orNull,
-        project
-    )
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+
+    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+    private val runnerJvmArgs = project.nativeProperties.jvmArgs
+    private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
+    private val useXcodeMessageStyle = project.useXcodeMessageStyle
+
+    @get:Internal
+    internal val nativeCompilerRunner
+        get() = objectFactory.KotlinNativeCompilerRunner(
+            metrics,
+            classLoadersCachingService,
+            forceDisableRunningInProcess,
+            useXcodeMessageStyle,
+            useEmbeddableCompilerJar,
+            actualNativeHomeDirectory,
+            runnerJvmArgs,
+            konanPropertiesService
+        )
 
     @TaskAction
     fun compile() {
@@ -406,10 +436,9 @@ constructor(
                             )
                         }
                         val cacheBuilder = CacheBuilder(
-                            objectFactory = objectFactory,
                             settings = cacheBuilderSettings,
                             konanPropertiesService = konanPropertiesService.get(),
-                            metricsReporter = metricsReporter
+                            nativeCompilerRunner = nativeCompilerRunner,
                         )
                         addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
                     }
@@ -419,10 +448,13 @@ constructor(
             val arguments = createCompilerArguments()
             val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
 
-            objectFactory.KotlinNativeCompilerRunner(
-                settings = runnerSettings,
-                metricsReporter = metricsReporter
-            ).run(buildArguments)
+            nativeCompilerRunner.runTool(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
+                    compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+                    arguments = buildArguments
+                )
+            )
         }
     }
 

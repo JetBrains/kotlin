@@ -301,7 +301,7 @@ internal class StatementGenerator(
 
             1 -> {
                 val first = entries.first()
-                if (first is IrConst<*> && first.kind == IrConstKind.String)
+                if (first is IrConst && first.kind == IrConstKind.String)
                     IrConstImpl.string(startOffset, endOffset, first.type, first.value as String)
                 else
                     IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
@@ -320,11 +320,11 @@ internal class StatementGenerator(
             var constStringEndOffset = 0
 
             for (entry in this) {
-                if (entry is IrConst<*> && entry.kind == IrConstKind.String) {
+                if (entry is IrConst && entry.kind == IrConstKind.String) {
                     if (constString.isEmpty()) {
                         constStringStartOffset = entry.startOffset
                     }
-                    constString.append(IrConstKind.String.valueOf(entry))
+                    constString.append(entry.value as String)
                     constStringEndOffset = entry.endOffset
                 } else {
                     if (constString.isNotEmpty()) {

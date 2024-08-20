@@ -318,7 +318,6 @@ class Fir2IrConverter(
                         injectedValue.typeRef.toIrType(typeConverter),
                         isAssignable = isMutated,
                         injectedValue.irParameterSymbol,
-                        index,
                         varargElementType = null,
                         isCrossinline = false,
                         isNoinline = false,
@@ -606,8 +605,8 @@ class Fir2IrConverter(
                 property = this, fakeOverrideOwnerLookupTag = null
             )?.owner ?: return null
 
-            fun IrProperty.tryToGetConst(): IrConst<*>? = (backingField?.initializer?.expression as? IrConst<*>)
-            fun IrConst<*>.asString(): String {
+            fun IrProperty.tryToGetConst(): IrConst? = (backingField?.initializer?.expression as? IrConst)
+            fun IrConst.asString(): String {
                 return when (val constVal = value) {
                     is Char -> constVal.code.toString()
                     is String -> "\"$constVal\""

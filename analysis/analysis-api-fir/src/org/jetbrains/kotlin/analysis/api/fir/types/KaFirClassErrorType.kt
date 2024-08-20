@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.ErrorClassTypeQual
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeDiagnosticPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -47,15 +46,16 @@ internal class KaFirClassErrorType(
 ) : KaClassErrorType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
 
-    override val qualifiers: List<KaClassTypeQualifier> by cached {
-        when (coneDiagnostic) {
-            is ConeUnresolvedError ->
-                ErrorClassTypeQualifierBuilder.createQualifiersForUnresolvedType(coneDiagnostic, builder)
-            is ConeUnmatchedTypeArgumentsError ->
-                ErrorClassTypeQualifierBuilder.createQualifiersForUnmatchedTypeArgumentsType(coneDiagnostic, builder)
-            else -> error("Unsupported ${coneDiagnostic::class}")
+    override val qualifiers: List<KaClassTypeQualifier>
+        get() = withValidityAssertion {
+            when (coneDiagnostic) {
+                is ConeUnresolvedError ->
+                    ErrorClassTypeQualifierBuilder.createQualifiersForUnresolvedType(coneDiagnostic, builder)
+                is ConeUnmatchedTypeArgumentsError ->
+                    ErrorClassTypeQualifierBuilder.createQualifiersForUnmatchedTypeArgumentsType(coneDiagnostic, builder)
+                else -> error("Unsupported ${coneDiagnostic::class}")
+            }
         }
-    }
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
@@ -68,18 +68,21 @@ internal class KaFirClassErrorType(
     @KaNonPublicApi
     override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
 
-    override val candidateSymbols: Collection<KaClassLikeSymbol> by cached {
-        val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
-        symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
-    }
+    override val candidateSymbols: Collection<KaClassLikeSymbol>
+        get() = withValidityAssertion {
+            val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
+            symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
+        }
 
-    override val abbreviation: KaUsualClassType? by cached {
-        builder.buildAbbreviatedType(coneType)
-    }
+    override val abbreviation: KaUsualClassType?
+        get() = withValidityAssertion {
+            builder.buildAbbreviatedType(coneType)
+        }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -95,7 +98,7 @@ private class KaFirClassErrorTypePointer(
     coneType: ConeClassLikeType,
     coneDiagnostic: ConeDiagnostic,
     builder: KaSymbolByFirBuilder,
-    private val nullability: ConeNullability
+    private val nullability: ConeNullability,
 ) : KaTypePointer<KaClassErrorType> {
     private val coneTypePointer: ConeTypePointer<*> = if (coneType !is ConeErrorType) {
         val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)

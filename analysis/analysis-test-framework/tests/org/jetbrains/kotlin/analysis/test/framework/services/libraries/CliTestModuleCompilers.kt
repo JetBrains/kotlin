@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
@@ -87,12 +89,12 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         return library
     }
 
-    override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
+    override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
         val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
         val librarySourcesPath = tmpDir / "${module.name}-sources.jar"
         val manifest = Manifest().apply { mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0" }
         JarOutputStream(librarySourcesPath.outputStream(), manifest).use { jarOutputStream ->
-            for (testFile in module.files) {
+            for (testFile in files) {
                 val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
                 addFileToJar(testFile.relativePath, text, jarOutputStream)
             }
@@ -260,11 +262,11 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
  */
 object DispatchingTestModuleCompiler : TestModuleCompiler() {
     override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
-        return getCompiler(module).compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
+        return getCompiler(module).compile(tmpDir, module, dependencyBinaryRoots, testServices)
     }
 
-    override fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path {
-        return getCompiler(module).compileTestModuleToLibrarySources(module, testServices)
+    override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
+        return getCompiler(module).compileSources(module.files, module, testServices)
     }
 
     private fun getCompiler(module: TestModule): CliTestModuleCompiler {

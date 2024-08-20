@@ -1,7 +1,7 @@
 FILE: safeCallsWithUnaryOperators.kt
     public? final? fun foo(): R|kotlin/Unit| {
-        a#?.{ $subj$.b# }++
-        a#?.{ $subj$.b# }?.{ $subj$.c# }++
+        a#?.{ $subj$.b#++ }
+        a#?.{ $subj$.b# }?.{ $subj$.c#++ }
         a#?.{ $subj$.b# }.c#++
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#
@@ -48,8 +48,8 @@ FILE: safeCallsWithUnaryOperators.kt
         a#?.{ $subj$.b# }.d#()++
     }
     public? final? fun foo2(): R|kotlin/Unit| {
-        ++a#?.{ $subj$.b# }
-        ++a#?.{ $subj$.b# }?.{ $subj$.c# }
+        a#?.{ ++$subj$.b# }
+        a#?.{ $subj$.b# }?.{ ++$subj$.c# }
         ++a#?.{ $subj$.b# }.c#
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#

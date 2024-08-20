@@ -47,7 +47,7 @@ internal fun IrProperty.getPropertyReferenceForOptimizableDelegatedProperty(): I
 internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty(): IrExpression? {
     fun IrExpression.isInlineable(): Boolean =
         when (this) {
-            is IrConst<*>, is IrGetSingletonValue -> true
+            is IrConst, is IrGetSingletonValue -> true
             is IrCall ->
                 dispatchReceiver?.isInlineable() != false
                         && extensionReceiver?.isInlineable() != false

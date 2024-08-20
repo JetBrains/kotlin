@@ -12,7 +12,10 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -126,6 +129,15 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.kotlinNativeProvider.set(project.provider {
             KotlinNativeProvider(project, task.konanTarget, task.kotlinNativeBundleBuildService)
         })
+        task.kotlinCompilerArgumentsLogLevel
+            .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
+            .finalizeValueOnRead()
+        task.konanPropertiesService
+            .value(KonanPropertiesBuildService.registerIfAbsent(project))
+            .disallowChanges()
+        task.classLoadersCachingService
+            .value(ClassLoadersCachingBuildService.registerIfAbsent(project))
+            .disallowChanges()
     }
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
     return resultTask

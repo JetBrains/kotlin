@@ -402,5 +402,4 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                 map("T", "String")
         );
     }
-
 }

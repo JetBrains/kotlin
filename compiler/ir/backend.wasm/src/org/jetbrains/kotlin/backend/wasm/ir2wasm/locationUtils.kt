@@ -46,12 +46,23 @@ fun IrElement.getSourceLocation(file: IrFile?, type: LocationType = LocationType
 
     if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
 
-    if (file.isIgnoredFile) {
-        return SourceLocation.IgnoredLocation(path, line, column)
+    val module = file.module.name.asString()
+
+    return if (file.isIgnoredFile) {
+        SourceLocation.IgnoredLocation(
+            module,
+            path,
+            line,
+            column
+        )
+    } else {
+        SourceLocation.Location(
+            module,
+            path,
+            line,
+            column
+        )
     }
-
-
-    return SourceLocation.Location(path, line, column)
 }
 
 fun WasmExpressionBuilder.buildUnreachableForVerifier() {

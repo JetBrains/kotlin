@@ -68,10 +68,10 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 internal fun IrExpression.isBoxOrUnboxCall() =
         (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
 
-internal val IrFunctionAccessExpression.actualCallee: IrFunction
+internal val IrCall.actualCallee: IrSimpleFunction
     get() {
         val callee = symbol.owner
-        return ((this as? IrCall)?.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
+        return (this.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
     }
 
 internal val IrFunctionAccessExpression.isVirtualCall: Boolean

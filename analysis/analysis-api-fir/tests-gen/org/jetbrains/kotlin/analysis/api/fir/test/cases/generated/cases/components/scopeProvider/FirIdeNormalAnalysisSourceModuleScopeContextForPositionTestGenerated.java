@@ -196,6 +196,12 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/syntheticPropertiesScope.kt");
   }
 
+  @Test
+  @TestMetadata("valueClassFromPackage.kt")
+  public void testValueClassFromPackage() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/valueClassFromPackage.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")

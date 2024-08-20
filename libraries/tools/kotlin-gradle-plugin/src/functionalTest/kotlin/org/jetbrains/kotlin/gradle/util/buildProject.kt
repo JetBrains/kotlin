@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
@@ -103,7 +104,11 @@ fun Project.applyCocoapodsPlugin() {
 }
 
 fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
-    getExtension<CocoapodsExtension>("cocoapods")!!.apply(code)
+    requireNotNull(getExtension<CocoapodsExtension>("cocoapods")).apply(code)
+}
+
+fun KotlinMultiplatformExtension.swiftExport(code: SwiftExportExtension.() -> Unit) {
+    requireNotNull(getExtension<SwiftExportExtension>("swiftExport")).apply(code)
 }
 
 val Project.propertiesExtension: ExtraPropertiesExtension
@@ -156,4 +161,8 @@ fun Project.mockXcodeVersion(version: XcodeVersion = XcodeVersion.maxTested) {
 
 fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT, enabled.toString())
+}
+
+fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED, enabled.toString())
 }

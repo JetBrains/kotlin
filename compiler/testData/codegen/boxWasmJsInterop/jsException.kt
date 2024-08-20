@@ -1,8 +1,9 @@
 // TARGET_BACKEND: WASM
 
-fun throwSomeJsException(): Int = js("{ throw 42; }")
+fun throwSomeJsException(): Int = js("{ throw new Error('Test'); }")
+fun throwSomeJsPrimitive(): Int = js("{ throw null; }")
 
-fun withFinally(): Boolean {
+fun jsExceptionWithFinally(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -12,31 +13,64 @@ fun withFinally(): Boolean {
     return false
 }
 
-fun withThrowable(): Boolean {
+fun jsExceptionWithThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
-    } catch (_: Throwable) {
+    } catch (e: Throwable) {
+        return e.message == "Exception was thrown while running JavaScript code"
+    }
+    return false
+}
+
+fun jsExceptionWithJsException(): Boolean {
+    try {
+        throwSomeJsException()
+        return false
+    } catch (e: JsException) {
+        return e.thrownValue == null && e.message == "Exception was thrown while running JavaScript code"
+    }
+    return false
+}
+
+fun jsPrimitiveWithFinally(): Boolean {
+    try {
+        throwSomeJsPrimitive()
+        return false
+    } finally {
         return true
     }
     return false
 }
 
-fun withJsException(): Boolean {
+fun jsPrimitiveWithThrowable(): Boolean {
     try {
-        throwSomeJsException()
+        throwSomeJsPrimitive()
         return false
-    } catch (_: JsException) {
-        return true
+    } catch (e: Throwable) {
+        return e.message == "Exception was thrown while running JavaScript code"
+    }
+    return false
+}
+
+fun jsPrimitiveWithJsException(): Boolean {
+    try {
+        throwSomeJsPrimitive()
+        return false
+    } catch (e: JsException) {
+        return e.message == "Exception was thrown while running JavaScript code"
     }
     return false
 }
 
 fun box(): String {
+    if (!jsExceptionWithFinally()) return "FAIL1"
+    if (!jsExceptionWithThrowable()) return "FAIL2"
+    if (!jsExceptionWithJsException()) return "FAIL3"
 
-    if (!withFinally()) return "FAIL1"
-    if (!withThrowable()) return "FAIL2"
-    if (!withJsException()) return "FAIL3"
+    if (!jsPrimitiveWithFinally()) return "FAIL4"
+    if (!jsPrimitiveWithThrowable()) return "FAIL5"
+    if (!jsPrimitiveWithJsException()) return "FAIL6"
 
     return "OK"
 }

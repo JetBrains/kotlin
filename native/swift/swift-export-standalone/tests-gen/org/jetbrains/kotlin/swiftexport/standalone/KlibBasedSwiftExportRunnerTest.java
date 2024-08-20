@@ -54,6 +54,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("inheritance")
+  public void testInheritance() {
+    runTest("native/swift/swift-export-standalone/testData/inheritance/");
+  }
+
+  @Test
   @TestMetadata("inner_classes")
   public void testInner_classes() {
     runTest("native/swift/swift-export-standalone/testData/inner_classes/");

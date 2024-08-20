@@ -21,6 +21,14 @@ object KotlinUsages {
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
 
+    // This type is required to distinguish metadata jar configuration from a psm secondary variant.
+    // At the same time, disambiguation and compatibility rules should count them as equivalent
+    // to be possible to apply a transform actions chain to `kotlin-metadata` artifact to get psm.
+    const val KOTLIN_PSM_METADATA = "kotlin-psm-metadata"
+
+    // This type is required to distinguish metadata jar configuration from a source sets secondary variant.
+    const val KOTLIN_LOCAL_METADATA = "kotlin-local-metadata"
+
     /**
      * Platform CInterop usage:
      * These are CInterop files that represent executable .klibs for a given konan target
@@ -115,10 +123,20 @@ object KotlinUsages {
     private class KotlinMetadataCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
             // ensure that a consumer that requests 'kotlin-metadata' can also consumer 'kotlin-api' artifacts or the
-            // 'java-*' ones (these are how Gradle represents a module that is published with no Gradle module metadata)
+            // 'java-*' ones (these are how Gradle represents a module that is published with no Gradle module metadata).
             if (
                 consumerValue?.name == KOTLIN_METADATA &&
                 (producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
+            ) {
+                compatible()
+            }
+            if (consumerValue?.name == KOTLIN_PSM_METADATA &&
+                (producerValue?.name == KOTLIN_METADATA || producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
+            ) {
+                compatible()
+            }
+            if (consumerValue?.name == KOTLIN_LOCAL_METADATA &&
+                (producerValue?.name == KOTLIN_METADATA || producerValue?.name == KOTLIN_API || producerValue?.name in javaUsagesForKotlinMetadataConsumers)
             ) {
                 compatible()
             }
@@ -171,13 +189,24 @@ object KotlinUsages {
 
     private class KotlinMetadataDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
+            val commonCandidateList = listOf(KOTLIN_METADATA, KOTLIN_API, *javaUsagesForKotlinMetadataConsumers.toTypedArray())
             if (consumerValue?.name == KOTLIN_METADATA) {
                 // Prefer Kotlin metadata, but if there's no such variant then accept 'kotlin-api' or the Java usages
                 // (see the compatibility rule):
-                val acceptedProducerValues = listOf(KOTLIN_METADATA, KOTLIN_API, *javaUsagesForKotlinMetadataConsumers.toTypedArray())
-                val candidatesMap = candidateValues.associateBy { it.name }
-                acceptedProducerValues.firstOrNull { it in candidatesMap }?.let { closestMatch(candidatesMap.getValue(it)) }
+                closestMatchToFirstAppropriateCandidate(commonCandidateList)
             }
+            if (consumerValue?.name == KOTLIN_PSM_METADATA) {
+                // Prefer Kotlin psm metadata, but if there's no such variant then accept the candidate order as for kotlin metadata
+                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_PSM_METADATA) + commonCandidateList)
+            }
+            if (consumerValue?.name == KOTLIN_LOCAL_METADATA) {
+                closestMatchToFirstAppropriateCandidate(listOf(KOTLIN_LOCAL_METADATA) + commonCandidateList)
+            }
+        }
+
+        private fun MultipleCandidatesDetails<Usage>.closestMatchToFirstAppropriateCandidate(acceptedProducerValues: List<String>) {
+            val candidatesMap = candidateValues.associateBy { it.name }
+            acceptedProducerValues.firstOrNull { it in candidatesMap }?.let { closestMatch(candidatesMap.getValue(it)) }
         }
     }
 
@@ -219,7 +248,7 @@ object KotlinUsages {
     internal fun setupAttributesMatchingStrategy(
         attributesSchema: AttributesSchema,
         isKotlinGranularMetadata: Boolean,
-        isKotlinResourcesCompatibilityRuleEnabled: Boolean
+        isKotlinResourcesCompatibilityRuleEnabled: Boolean,
     ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)

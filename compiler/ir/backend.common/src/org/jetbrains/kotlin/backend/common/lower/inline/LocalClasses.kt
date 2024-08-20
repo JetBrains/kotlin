@@ -1,13 +1,16 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -134,6 +137,37 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
     }
 }
 
+private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: MutableSet<IrClass>) {
+    if (!isInline) return
+    // Conservatively assume that functions with reified type parameters must be copied.
+    if (typeParameters.any { it.isReified }) return
+
+    val crossinlineParameters = valueParameters.filter { it.isCrossinline }.toSet()
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            var canExtract = true
+            if (crossinlineParameters.isNotEmpty()) {
+                declaration.acceptVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitGetValue(expression: IrGetValue) {
+                        if (expression.symbol.owner in crossinlineParameters)
+                            canExtract = false
+                    }
+                })
+            }
+            if (canExtract)
+                classesToExtract.add(declaration)
+        }
+    })
+}
+
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -141,35 +175,8 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = container as? IrFunction ?: return
-        if (!function.isInline) return
-        // Conservatively assume that functions with reified type parameters must be copied.
-        if (function.typeParameters.any { it.isReified }) return
-
-        val crossinlineParameters = function.valueParameters.filter { it.isCrossinline }.toSet()
         val classesToExtract = mutableSetOf<IrClass>()
-        function.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                var canExtract = true
-                if (crossinlineParameters.isNotEmpty()) {
-                    declaration.acceptVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitGetValue(expression: IrGetValue) {
-                            if (expression.symbol.owner in crossinlineParameters)
-                                canExtract = false
-                        }
-                    })
-                }
-                if (canExtract)
-                    classesToExtract.add(declaration)
-            }
-        })
+        function.collectExtractableLocalClassesInto(classesToExtract)
         if (classesToExtract.isEmpty())
             return
 
@@ -179,41 +186,12 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
 
 class LocalClassesExtractionFromInlineFunctionsLowering(
     context: CommonBackendContext,
-    recordExtractedLocalClasses: BackendContext.(IrClass) -> Unit = {},
-) : LocalClassPopupLowering(context, recordExtractedLocalClasses) {
+) : LocalClassPopupLowering(context) {
     private val classesToExtract = mutableSetOf<IrClass>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = container as? IrFunction ?: return
-        if (!function.isInline) return
-        // Conservatively assume that functions with reified type parameters must be copied.
-        if (function.typeParameters.any { it.isReified }) return
-
-        val crossinlineParameters = function.valueParameters.filter { it.isCrossinline }.toSet()
-
-        function.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                var canExtract = true
-                if (crossinlineParameters.isNotEmpty()) {
-                    declaration.acceptVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitGetValue(expression: IrGetValue) {
-                            if (expression.symbol.owner in crossinlineParameters)
-                                canExtract = false
-                        }
-                    })
-                }
-                if (canExtract)
-                    classesToExtract.add(declaration)
-            }
-        })
+        function.collectExtractableLocalClassesInto(classesToExtract)
         if (classesToExtract.isEmpty())
             return
 

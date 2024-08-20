@@ -27,9 +27,6 @@ class WasmFunctionCodegenContext(
     val bodyGen: WasmExpressionBuilder =
         WasmIrExpressionBuilder(wasmFunction.instructions)
 
-    val tagIdx: Int
-        get() = 0
-
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
@@ -49,6 +46,12 @@ class WasmFunctionCodegenContext(
 
         wasmLocals[irValueDeclaration] = wasmLocal
         wasmFunction.locals += wasmLocal
+    }
+
+    fun defineTmpVariable(type: WasmType): Int {
+        val wasmLocal = WasmLocal(wasmFunction.locals.size, "tmp", type, false)
+        wasmFunction.locals += wasmLocal
+        return wasmLocal.id
     }
 
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal {
@@ -96,7 +99,7 @@ class WasmFunctionCodegenContext(
     }
 
     val currentFunction: IrFunction
-        get() = inlinedFunctionStack.lastOrNull() ?: irFunction
+        get() = inlinedFunctionStack.firstOrNull() ?: irFunction
 
     fun stepIntoInlinedFunction(inlineFunction: IrFunction) {
         inlinedFunctionStack.push(inlineFunction)

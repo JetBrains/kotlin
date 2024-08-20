@@ -17,6 +17,6 @@ kotlin {
         homepage = "https://github.com/JetBrains/kotlin"
         summary = "CocoaPods test library"
         ios.deploymentTarget = "13.5"
-        pod("AFNetworking")
+        pod("Base64")
     }
 }

@@ -146,7 +146,6 @@ public class KotlinOverridingTest extends KotlinTestWithEnvironment {
         assertNotOverridable(
                 "fun <T1, X : Array<out T1>> a(a : Array<*>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
-
     }
 
     private void assertOverridable(String superFun, String subFun) {

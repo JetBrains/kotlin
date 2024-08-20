@@ -17,10 +17,10 @@ class CompiledLibraryProvider(private val testServices: TestServices) : TestServ
         if (module.name in libraries) {
             error("Library for module ${module.name} is already compiled")
         }
-        val libraryJar = testServices.testModuleCompiler.compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
-        val librarySourcesJar = testServices.testModuleCompiler.compileTestModuleToLibrarySources(module, testServices)
+        val (libraryJars, librarySourcesJars) =
+            testServices.testModuleCompiler.compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
 
-        return CompiledLibrary(libraryJar, librarySourcesJar).also { libraries[module.name] = it }
+        return CompiledLibrary(libraryJars, librarySourcesJars).also { libraries[module.name] = it }
     }
 
     fun getCompiledLibrary(moduleName: String): CompiledLibrary? = libraries[moduleName]
@@ -30,6 +30,6 @@ val TestServices.compiledLibraryProvider: CompiledLibraryProvider by TestService
 val TestServices.testModuleCompiler: TestModuleCompiler by TestServices.testServiceAccessor()
 
 data class CompiledLibrary(
-    val artifact: Path,
-    val sources: Path?,
+    val roots: List<Path>,
+    val sourceRoots: List<Path>,
 )

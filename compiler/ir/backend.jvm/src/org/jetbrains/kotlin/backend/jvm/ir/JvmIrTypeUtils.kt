@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.

@@ -1,0 +1,4 @@
+@R|pckg/Caret|() public/*package*/ open class AA : R|kotlin/Any| {
+    public/*package*/ constructor(): R|pckg/AA|
+
+}

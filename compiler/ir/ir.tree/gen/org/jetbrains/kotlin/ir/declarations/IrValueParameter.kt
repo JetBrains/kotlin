@@ -28,8 +28,6 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract override val symbol: IrValueParameterSymbol
 
-    abstract var index: Int
-
     abstract var varargElementType: IrType?
 
     abstract var isCrossinline: Boolean
@@ -66,6 +64,10 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     abstract var isHidden: Boolean
 
     abstract var defaultValue: IrExpressionBody?
+
+    var index: Int = -1
+        @DelicateIrParameterIndexSetter
+        set
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)

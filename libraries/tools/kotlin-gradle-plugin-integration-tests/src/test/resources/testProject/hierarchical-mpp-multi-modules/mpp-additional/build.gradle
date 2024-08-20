@@ -17,7 +17,7 @@ kotlin {
     }
     linuxX64("linux")
     macosX64("macos")
-    ios()
+    iosX64()
     jvm()
 
     sourceSets {

@@ -11,6 +11,7 @@
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
+#include "concurrent/Mutex.hpp"
 #include "ReferenceOps.hpp"
 #include "RunLoopFinalizerProcessor.hpp"
 #include "TypeLayout.hpp"
@@ -83,8 +84,13 @@ public:
     void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
     bool mainThreadFinalizerProcessorAvailable() noexcept;
 
+    auto gcLock() noexcept {
+        return std::unique_lock{gcLock_};
+    }
+
 private:
     std::unique_ptr<Impl> impl_;
+    ThreadStateAware<std::mutex> gcLock_{};
 };
 
 void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;

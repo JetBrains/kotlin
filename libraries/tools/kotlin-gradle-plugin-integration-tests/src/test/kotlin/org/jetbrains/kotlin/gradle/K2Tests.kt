@@ -23,7 +23,7 @@ class K2HierarchicalMppIT : HierarchicalMppIT() {
 @MppGradlePluginTests
 @DisplayName("KLibs in K2")
 class K2KlibBasedMppIT : KlibBasedMppIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2().disableConfigurationCache_KT70416()
 }
 
 @Disabled("Used for local testing only")
@@ -33,7 +33,9 @@ class K2CommonizerIT : CommonizerIT() {
 
 @Ignore
 class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .copy(languageVersion = "2.0")
+        .disableConfigurationCache_KT70416()
 }
 
 @MppGradlePluginTests

@@ -118,7 +118,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
 
-            ComposePluginRegistrar.checkCompilerVersion(configuration)
+            ComposePluginRegistrar.checkCompilerConfiguration(configuration)
 
             environment.project.registerExtensions(configuration)
 

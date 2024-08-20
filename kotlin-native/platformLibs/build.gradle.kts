@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
 
@@ -18,11 +19,7 @@ plugins {
 }
 
 // region: Util functions.
-fun KonanTarget.defFiles() =
-        project.fileTree("src/platform/${family.visibleName}")
-                .filter { it.name.endsWith(".def") }
-                .map { DefFile(it, this) }
-
+fun KonanTarget.defFiles() = familyDefFiles(family).map { DefFile(it, this) }
 
 fun defFileToLibName(target: String, name: String) = "$target-$name"
 
@@ -35,6 +32,14 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+
+val updateDefFileDependenciesTask = tasks.register("updateDefFileDependencies")
+val updateDefFileTasksPerFamily = if (HostManager.hostIsMac) {
+    registerUpdateDefFileDependenciesForAppleFamiliesTasks(updateDefFileDependenciesTask)
+} else {
+    emptyMap()
+}
+
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
@@ -52,6 +57,7 @@ enabledTargets(platformManager).forEach { target ->
 
             this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
             dependsOn(":kotlin-native:${targetName}CrossDist")
+            updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
             this.konanTarget.set(target)
             this.outputDirectory.set(
@@ -71,7 +77,7 @@ enabledTargets(platformManager).forEach { target ->
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )
-            this.enableParallel.set(project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true)
+            this.enableParallel.set(project.getBooleanProperty("kotlin.native.platformLibs.parallel") ?: true)
         }
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {

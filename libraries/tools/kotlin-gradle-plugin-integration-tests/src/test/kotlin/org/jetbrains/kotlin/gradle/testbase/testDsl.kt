@@ -14,6 +14,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -26,6 +27,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Create a new test project.
@@ -198,6 +200,10 @@ fun TestProject.build(
 ) {
     if (enableBuildScan) agreeToBuildScanService()
     ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
+
+    if (enableGradleDebug && isTeamCityRun) {
+        fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
+    }
 
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
@@ -678,7 +684,7 @@ private fun String.wrapWithAllProjectBlock(): String =
     |
     """.trimMargin()
 
-private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
+internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
     val pluginsBlockPattern = Regex("plugins\\s*\\{[^}]*}", RegexOption.DOT_MATCHES_ALL)
 
@@ -688,6 +694,13 @@ private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert:
     val insertionIndex = listOfNotNull(lastImportIndex, pluginBlockEndIndex).maxOrNull() ?: return blockToInsert + this
 
     return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
+}
+
+internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String): String {
+    val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
+
+    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull() ?: return blockToInsert + this
+    return StringBuilder(this).insert(lastImportIndex + 1, "\n$blockToInsert\n").toString()
 }
 
 

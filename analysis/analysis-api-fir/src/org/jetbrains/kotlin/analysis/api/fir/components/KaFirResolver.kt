@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
@@ -1403,7 +1402,7 @@ internal class KaFirResolver(
         )
     }
 
-    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaFirNamedFunctionSymbol): KaSubstitutor {
+    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaSubstitutor.Empty(token)
@@ -1475,7 +1474,7 @@ internal class KaFirResolver(
     }
 
     private fun FirArrayLiteral.createArgumentMapping(
-        arrayOfSymbol: KaFirNamedFunctionSymbol,
+        arrayOfSymbol: KaNamedFunctionSymbol,
         substitutor: KaSubstitutor,
     ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
         val ktArgumentMapping = linkedMapOf<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()

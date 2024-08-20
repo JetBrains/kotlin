@@ -3,7 +3,7 @@
 import KotlinRuntime
 
 public extension ExportedKotlinPackages.org.kotlin {
-    public class Foo : KotlinRuntime.KotlinBase {
+    public final class Foo : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = org_kotlin_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

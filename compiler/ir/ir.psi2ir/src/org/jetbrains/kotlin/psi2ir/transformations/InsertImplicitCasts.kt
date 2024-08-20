@@ -405,7 +405,7 @@ internal class InsertImplicitCasts(
             this is IrCall && preventDeprecatedIntegerValueTypeLiteralConversion()
         ) return this
 
-        return if (this is IrConst<*>) {
+        return if (this is IrConst) {
             val value = this.value as Int
             val irType = targetType.toIrType()
             when {

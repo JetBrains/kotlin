@@ -171,11 +171,9 @@ public interface KtTokens {
     int INFIX_KEYWORD_Id = 142;
     int CONST_KEYWORD_Id = 143;
     int SUSPEND_KEYWORD_Id = 144;
-    int HEADER_KEYWORD_Id = 145;
-    int IMPL_KEYWORD_Id = 146;
-    int EXPECT_KEYWORD_Id = 147;
-    int ACTUAL_KEYWORD_Id = 148;
-    int INTERPOLATION_PREFIX_Id = 149;
+    int EXPECT_KEYWORD_Id = 145;
+    int ACTUAL_KEYWORD_Id = 146;
+    int INTERPOLATION_PREFIX_Id = 147;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -347,9 +345,6 @@ public interface KtTokens {
 
     KtModifierKeywordToken SUSPEND_KEYWORD = KtModifierKeywordToken.softKeywordModifier("suspend", SUSPEND_KEYWORD_Id);
 
-    KtModifierKeywordToken HEADER_KEYWORD = KtModifierKeywordToken.softKeywordModifier("header", HEADER_KEYWORD_Id);
-    KtModifierKeywordToken IMPL_KEYWORD = KtModifierKeywordToken.softKeywordModifier("impl", IMPL_KEYWORD_Id);
-
     KtModifierKeywordToken EXPECT_KEYWORD = KtModifierKeywordToken.softKeywordModifier("expect", EXPECT_KEYWORD_Id);
     KtModifierKeywordToken ACTUAL_KEYWORD = KtModifierKeywordToken.softKeywordModifier("actual", ACTUAL_KEYWORD_Id);
 
@@ -374,7 +369,7 @@ public interface KtTokens {
                                              LATEINIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
-                                             SUSPEND_KEYWORD, HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
+                                             SUSPEND_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
                                              VALUE_KEYWORD, CONTEXT_KEYWORD
     );
 
@@ -390,7 +385,7 @@ public interface KtTokens {
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATEINIT_KEYWORD,
                     DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
                     CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD, SUSPEND_KEYWORD,
-                    HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD, VALUE_KEYWORD
+                    EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD, VALUE_KEYWORD
             };
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);

@@ -17,8 +17,9 @@ buildscript {
 }
 
 plugins {
-    // Version here should be also synced with the version in 'libs.versions.toml'
+    // Versions here should be also synced with the versions in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+    id("com.gradle.develocity") version("3.17.5")
 }
 
 dependencyResolutionManagement {
@@ -29,16 +30,43 @@ dependencyResolutionManagement {
     }
 }
 
-include(":build-cache")
 include(":develocity")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
 
-// Unfortunately it is not possible to apply build-cache.settings.gradle.kts as script compilation
-// could not then find types from "kotlin-build-gradle-plugin"
-// Sync below to the content of settings plugin
+// Sync below to the content of develocity settings plugin
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
+
+develocity {
+    val isTeamCity = buildProperties.isTeamcityBuild
+    if (!buildProperties.buildScanServer.isNullOrEmpty()) {
+        server.set(buildProperties.buildScanServer)
+    }
+    buildScan {
+        capture {
+            uploadInBackground = !isTeamCity
+        }
+
+        val overriddenUsername = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()
+        val overriddenHostname = (buildProperties.getOrNull("kotlin.build.scan.hostname") as? String)?.trim()
+        if (buildProperties.isJpsBuildEnabled) {
+            tag("JPS")
+        }
+        obfuscation {
+            ipAddresses { _ -> listOf("0.0.0.0") }
+            hostname { _ -> overriddenHostname ?: "concealed" }
+            username { originalUsername ->
+                when {
+                    isTeamCity -> "TeamCity"
+                    overriddenUsername.isNullOrEmpty() -> "concealed"
+                    overriddenUsername == "<default>" -> originalUsername
+                    else -> overriddenUsername
+                }
+            }
+        }
+    }
+}
 
 buildCache {
     local {
@@ -47,17 +75,13 @@ buildCache {
             directory = buildProperties.localBuildCacheDirectory
         }
     }
-
-    val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
-    if (!remoteBuildCacheUrl.isNullOrEmpty()) {
-        remote<HttpBuildCache> {
-            url = uri(remoteBuildCacheUrl)
+    if (develocity.server.isPresent) {
+        remote(develocity.buildCache) {
             isPush = buildProperties.pushToBuildCache
-            if (buildProperties.buildCacheUser != null &&
-                buildProperties.buildCachePassword != null
-            ) {
-                credentials.username = buildProperties.buildCacheUser
-                credentials.password = buildProperties.buildCachePassword
+            val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+            isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
+            if (!remoteBuildCacheUrl.isNullOrEmpty()) {
+                server = remoteBuildCacheUrl.removeSuffix("/cache/")
             }
         }
     }

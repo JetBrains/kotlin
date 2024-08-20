@@ -76,13 +76,13 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 // and unbound symbol replacement is happening later.
                 // So we compare descriptors for now.
                 if (expression.symbol == symbols.immutableBlobOf) {
-                    // Convert arguments of the binary blob to special IrConst<String> structure, so that
+                    // Convert arguments of the binary blob to special IrConst structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg
                             ?: error("varargs shall not be lowered yet")
                     val builder = StringBuilder()
                     args.elements.forEach {
-                        require(it is IrConst<*>) { renderCompilerError(irFile, it, "expected const") }
+                        require(it is IrConst) { renderCompilerError(irFile, it, "expected const") }
                         val value = it.value
                         require(value is Short && value >= 0 && value <= 0xff) {
                             renderCompilerError(irFile, it, "incorrect value for binary data: $value")

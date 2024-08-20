@@ -127,8 +127,9 @@ struct GCInfo {
 
 GCInfo last;
 GCInfo current;
-// This lock can be got by thread in runnable state making parallel mark, so
-kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock;
+// This lock can be obtained by a thread in a runnable state which participates in parallel mark.
+// Thread state switches are undesirable during parallel mark.
+kotlin::SpinLock lock;
 
 GCInfo* statByEpoch(uint64_t epoch) {
     if (current.epoch == epoch) return &current;
@@ -472,7 +473,7 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
     if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            handle_.getEpoch(), "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
             threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 

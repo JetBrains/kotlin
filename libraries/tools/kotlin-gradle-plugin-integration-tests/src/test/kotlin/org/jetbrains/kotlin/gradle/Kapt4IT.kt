@@ -76,7 +76,7 @@ fun TestProject.forceKapt4() {
                 try {
                     Class.forName('org.jetbrains.kotlin.gradle.tasks.KotlinCompile')
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-kapt4', '-Xsuppress-version-warnings'])
+                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-k2-kapt', '-Xsuppress-version-warnings'])
                     }
                 } catch(ClassNotFoundException ignore) {
                 }
@@ -89,7 +89,7 @@ fun TestProject.forceKapt4() {
                 try {
                     Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-kapt4", "-Xsuppress-version-warnings"))
+                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-k2-kapt", "-Xsuppress-version-warnings"))
                     }
                 } catch(ignore: ClassNotFoundException) {
                 }

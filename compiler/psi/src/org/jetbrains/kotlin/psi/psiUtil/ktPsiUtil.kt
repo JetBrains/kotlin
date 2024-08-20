@@ -325,6 +325,12 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
     return callable?.receiverTypeReference != null
 }
 
+fun KtDeclaration.isExpectDeclaration(): Boolean = when {
+    hasExpectModifier() -> true
+    this is KtParameter -> ownerFunction?.isExpectDeclaration() == true
+    else -> containingClassOrObject?.isExpectDeclaration() == true
+}
+
 fun KtElement.isContextualDeclaration(): Boolean {
     val contextReceivers = when (this) {
         is KtCallableDeclaration -> contextReceivers

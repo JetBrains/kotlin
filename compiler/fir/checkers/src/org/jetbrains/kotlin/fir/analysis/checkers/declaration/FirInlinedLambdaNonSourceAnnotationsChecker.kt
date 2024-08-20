@@ -14,11 +14,28 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.getAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
+import org.jetbrains.kotlin.fir.references.isError
 
 object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.inlineStatus != InlineStatus.Inline && declaration.inlineStatus != InlineStatus.CrossInline) {
             return
+        }
+
+        // If the lambda belongs to a function call which is already an error, do not report non-source annotation.
+        for (call in context.callsOrAssignments) {
+            if (call is FirFunctionCall && call.calleeReference.isError()) {
+                val mapping = call.resolvedArgumentMapping ?: continue
+                for ((argument, parameter) in mapping) {
+                    if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction === declaration) {
+                        return
+                    }
+                }
+            }
         }
 
         for (it in declaration.annotations) {

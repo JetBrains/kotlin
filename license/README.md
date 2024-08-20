@@ -257,25 +257,6 @@ any distributions of the tools or libraries:
  - Path: libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/nodejs/Platform.kt
       - License: Apache License 2.0 ([license/third_party/gradle-node-plugin_LICENSE.txt](third_party/gradle-node-plugin_LICENSE.txt))
       - Origin: Copyright (c) 2013 node-gradle/gradle-node-plugin
-      
- - Path: libraries/tools/kotlin-test-js-runner/karma-kotlin-reporter.js
-      - License: MIT ([license/third_party/karma_LICENSE.txt](third_party/karma_LICENSE.txt)
-             and [license/third_party/karma-teamcity-reporter_LICENSE.txt](third_party/karma-teamcity-reporter_LICENSE.txt))
-      - Origin: Copyright (C) 2011-2019 Google, Inc. and Copyright (C) 2011-2013 Vojta Jína and contributors.
-      
- - Path: libraries/tools/kotlin-test-js-runner/mocha-kotlin-reporter.js
-      - License: MIT ([license/third_party/mocha-teamcity-reporter_LICENSE.txt](third_party/mocha-teamcity-reporter_LICENSE.txt))
-      - Origin: Copyright (c) 2016 Jamie Sherriff
-      
- - Path: libraries/tools/kotlin-test-js-runner/src/utils.ts
-      - License: MIT ([license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt)
-             and [license/third_party/lodash_LICENSE.txt](third_party/lodash_LICENSE.txt))
-      - Origin: Copyright (c) 2013 Aaron Forsander and Copyright JS Foundation and other contributors <https://js.foundation/>
-      
- - Path: libraries/tools/kotlin-test-js-runner/src/teamcity-format.js
-      - License: MIT ([license/third_party/mocha-teamcity-reporter_LICENSE.txt](third_party/mocha-teamcity-reporter_LICENSE.txt)
-             and [license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt))
-      - Origin: Copyright (c) 2016 Jamie Sherriff and Copyright (c) 2013 Aaron Forsander
 
 ## Example Code
 

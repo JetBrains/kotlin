@@ -9,6 +9,8 @@ where advanced options include:
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file. This is available only in the IR backend.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
+  -Xwasm-source-map-include-mappings-from-unavailable-sources
+                             Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
   -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
   -Xir-base-class-in-metadata Write base classes into metadata.
   -Xir-build-cache           Use the compiler to build the cache.
@@ -55,6 +57,7 @@ where advanced options include:
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
+  -Xwasm-attach-js-exception Attach a thrown by JS-value to the JsException class
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
   -Xwasm-use-traps-instead-of-exceptions
@@ -125,7 +128,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
-  -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
+  -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).

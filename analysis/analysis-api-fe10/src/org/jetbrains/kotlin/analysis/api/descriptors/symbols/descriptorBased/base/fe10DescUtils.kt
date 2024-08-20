@@ -300,7 +300,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
             }
 
             return when (val typeDeclaration = typeConstructor.declarationDescriptor) {
-                is FunctionClassDescriptor -> KaFe10FunctionalType(unwrappedType, typeDeclaration, analysisContext)
+                is FunctionClassDescriptor -> KaFe10FunctionType(unwrappedType, typeDeclaration, analysisContext)
                 is ClassDescriptor -> KaFe10UsualClassType(unwrappedType, typeDeclaration, analysisContext)
                 else -> {
                     val errorType =

@@ -2628,6 +2628,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+      public void testParenthesizedSafeCallsAndOperators() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/parenthesizedSafeCallsAndOperators.kt");
+      }
+
+      @Test
       @TestMetadata("plusWithAssignSmartCast.kt")
       public void testPlusWithAssignSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");
@@ -2836,6 +2842,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         @TestMetadata("propertyWithExtensionType.kt")
         public void testPropertyWithExtensionType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/propertyWithExtensionType.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallsWithImplicitInvoke.kt")
+        public void testSafeCallsWithImplicitInvoke() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/safeCallsWithImplicitInvoke.kt");
         }
 
         @Test

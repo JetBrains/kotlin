@@ -240,7 +240,10 @@ public class PropertyGenTest extends CodegenTestCase {
         findDeclaredMethodByName(c, "getExtension");
         findDeclaredMethodByName(c, "setExtension");
 
-        findDeclaredMethodByName(initializedClassLoader.loadClass("C$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()), "getClassObjectVal");
+        findDeclaredMethodByName(
+                initializedClassLoader.loadClass("C$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()),
+                "getClassObjectVal"
+        );
 
         assertNull("Property should not have a getter", findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"));
         assertNull("Property should not have a setter", findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"));

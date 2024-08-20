@@ -58,7 +58,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun IrConstructorCall.hasOnlySupportedAnnotationArgumentTypes(): Boolean {
         for (i in 0 until valueArgumentsCount) {
-            if (getValueArgument(i) !is IrConst<*>) {
+            if (getValueArgument(i) !is IrConst) {
                 return false
             }
         }
@@ -279,7 +279,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             argumentMapping = buildAnnotationArgumentMapping {
                 for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
                     val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
-                    val argument = this@toFirAnnotation.getValueArgument(i) as IrConst<*>
+                    val argument = this@toFirAnnotation.getValueArgument(i) as IrConst
                     this.mapping[name] = when (argument.kind) {
                         IrConstKind.Boolean -> buildLiteralExpression(
                             source = null,

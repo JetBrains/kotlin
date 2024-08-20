@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
@@ -44,21 +44,24 @@ internal class KaFirUsualClassType(
                 ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
         }
 
-    override val qualifiers by cached {
-        UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
-    }
+    override val qualifiers: List<KaResolvedClassTypeQualifier>
+        get() = withValidityAssertion {
+            UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
+        }
 
     override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviation: KaUsualClassType? by cached {
-        builder.buildAbbreviatedType(coneType)
-    }
+    override val abbreviation: KaUsualClassType?
+        get() = withValidityAssertion {
+            builder.buildAbbreviatedType(coneType)
+        }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -72,7 +75,7 @@ internal class KaFirUsualClassType(
 
 private class KaFirUsualClassTypePointer(
     coneType: ConeClassLikeTypeImpl,
-    builder: KaSymbolByFirBuilder
+    builder: KaSymbolByFirBuilder,
 ) : KaTypePointer<KaUsualClassType> {
     private val coneTypePointer = coneType.createPointer(builder)
 

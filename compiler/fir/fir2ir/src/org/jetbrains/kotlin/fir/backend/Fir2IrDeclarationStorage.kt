@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -96,14 +95,25 @@ class Fir2IrDeclarationStorage(
 
     class PropertyCacheStorage(
         val normal: ConcurrentHashMap<FirProperty, IrPropertySymbol>,
-        val synthetic: ConcurrentHashMap<FirFunction, IrPropertySymbol>
+        val synthetic: ConcurrentHashMap<SyntheticPropertyKey, IrPropertySymbol>
     ) {
         /**
          * Fir synthetic properties are session-dependent, so it can't be used as a cache key
          * That's why, we are using original java function as a key in that case.
          */
-        private val FirSyntheticProperty.cacheKey
-            get() = symbol.getterSymbol!!.delegateFunctionSymbol.fir
+        data class SyntheticPropertyKey(
+            val originalFunction: FirSimpleFunction,
+            val dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
+        )
+
+        private val FirSyntheticProperty.cacheKey: SyntheticPropertyKey
+            get() {
+                val originalFunction = symbol.getterSymbol!!.delegateFunctionSymbol.fir
+                val dispatchReceiverLookupTag = runIf(symbol !is FirSimpleSyntheticPropertySymbol) {
+                    dispatchReceiverType?.classLikeLookupTagIfAny
+                }
+                return SyntheticPropertyKey(originalFunction, dispatchReceiverLookupTag)
+            }
 
         operator fun set(fir: FirProperty, value: IrPropertySymbol) {
             when (fir) {
@@ -397,7 +407,14 @@ class Fir2IrDeclarationStorage(
 
             function.origin.generatedAnyMethod -> {
                 val name = function.nameOrSpecialName
-                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY) {
+                /*
+                 * During regular compilation `equals`, `hashCode` and `toString` are generated separately using DataClassMemberGenerator.
+                 *   `componentN` and `copy` are generated on a FIR level, so they are created here like any other regular function.
+                 *
+                 * In AA API mode the source-based data class may come as a dependency, which means that even for generated method we
+                 *   will create a regular Fir2IrLazyFunction
+                 */
+                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY || configuration.allowNonCachedDeclarations) {
                     "Only componentN functions should be cached this way, but got: $name"
                 }
                 functionCache[function] = irFunctionSymbol
@@ -948,7 +965,6 @@ class Fir2IrDeclarationStorage(
 
     fun createAndCacheParameter(
         valueParameter: FirValueParameter,
-        index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         skipDefaultParameter: Boolean = false,
@@ -960,7 +976,6 @@ class Fir2IrDeclarationStorage(
     ): IrValueParameter {
         return callablesGenerator.createIrParameter(
             valueParameter,
-            index,
             useStubForDefaultValueStub,
             typeOrigin,
             skipDefaultParameter,
@@ -1187,7 +1202,7 @@ class Fir2IrDeclarationStorage(
     internal fun fillUnboundSymbols() {
         fillUnboundSymbols(functionCache)
         fillUnboundSymbols(propertyCache.normal)
-        fillUnboundSymbols(propertyCache.synthetic)
+        fillUnboundSymbols(propertyCache.synthetic.mapKeys { it.key.originalFunction })
     }
 
     @LeakedDeclarationCaches

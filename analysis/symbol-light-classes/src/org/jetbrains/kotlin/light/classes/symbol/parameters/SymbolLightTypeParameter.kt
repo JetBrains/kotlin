@@ -9,6 +9,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
@@ -132,8 +133,15 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getLBrace(): PsiElement? = null
     override fun getRBrace(): PsiElement? = null
     override fun getScope(): PsiElement = parent
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
+
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        return InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+    }
+
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean {
+        return InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
+    }
+
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null

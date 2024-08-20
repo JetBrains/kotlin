@@ -431,7 +431,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         val index = valueParameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.index
             ?: valueParameters.size
         function.valueParameters += valueParameters.take(index).map {
-            it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
+            it.copyTo(function, type = it.type.substitute(substitutionMap))
         }
         val continuationParameter = function.addValueParameter(
             SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
@@ -439,7 +439,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
             JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
         function.valueParameters += valueParameters.drop(index).map {
-            it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
+            it.copyTo(function, type = it.type.substitute(substitutionMap))
         }
         context.remapMultiFieldValueClassStructure(
             this, function,

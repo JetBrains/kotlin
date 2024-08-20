@@ -21,6 +21,7 @@ assert(
                listOf("Hello", "World")
                |
                [Hello, World]
+
 )
 ---
 ---

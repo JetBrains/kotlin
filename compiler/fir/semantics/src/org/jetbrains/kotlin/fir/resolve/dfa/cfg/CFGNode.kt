@@ -50,7 +50,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             if (kind != EdgeKind.Forward || label != NormalPath) {
                 to.insertIncomingEdge(from, Edge.create(label, kind))
             }
-            if (propagateDeadness && kind == EdgeKind.DeadForward) {
+            if (propagateDeadness && kind.isDead && !kind.isBack) {
                 to.isDead = true
             }
         }
@@ -59,7 +59,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         fun killEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean): Boolean {
             val oldEdge = to.edgeFrom(from)
             if (oldEdge.kind.isDead) return false
-            val newEdge = Edge.create(oldEdge.label, if (oldEdge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward)
+            val newEdge = Edge.create(oldEdge.label, if (oldEdge.kind.isBack) EdgeKind.DeadCfgBackward else EdgeKind.DeadForward)
             to.insertIncomingEdge(from, newEdge)
             if (propagateDeadness) {
                 to.isDead = true
@@ -117,7 +117,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     private var _flow: PersistentFlow? = null
     open val flowInitialized: Boolean get() = _flow != null
     open var flow: PersistentFlow
-        get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
+        get() = _flow
+            ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
         @CfgInternals
         set(value) {
             assert(_flow == null) { "reassigning flow for $this" }
@@ -265,6 +266,13 @@ class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnon
 class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitMergePostponedLambdaExitsNode(this, data)
+    }
+}
+
+class AnonymousFunctionCaptureNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int) :
+    CFGNode<FirAnonymousFunctionExpression>(owner, level) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitAnonymousFunctionCaptureNode(this, data)
     }
 }
 

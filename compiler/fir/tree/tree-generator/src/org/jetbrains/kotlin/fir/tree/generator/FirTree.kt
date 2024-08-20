@@ -380,7 +380,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("isPrefix", boolean)
         +field("operationName", nameType)
-        +field("expression", expression)
+        +field("expression", expression, withReplace = true)
         +field("operationSource", sourceElementType, nullable = true)
     }
 

@@ -1,12 +1,19 @@
 // ISSUE: KT-70186
 
-interface Domain<in T : Any> {
-    fun foo()
+interface Base<T> {
+    fun foo(a: T): T
 }
 
-interface Bin<in T : Any, out V> : Domain<T>
+class BaseImpl(val a: Base<Int>) : Base<Int> by a
 
-class DomainBin<T : Comparable<T>, D : Domain<T>, out V>(val domain: D) : Bin<T, V>, Domain<T> by domain
-class DomainBin2<T : Comparable<T>, D : Domain<T>, out V, G : D>(val domain: G) : Bin<T, V>, Domain<T> by domain
+class BaseImpl2<D>(val a: Base<D>) : Base<D> by a
+class BaseImpl3<D: Number>(val a: Base<D>) : Base<D> by a
+
+class BaseImpl4<D : Base<Int>>(val a: D) : Base<Int> by a
+class BaseImpl5<D : Base<D>>(val a: D) : Base<D> by a
+class BaseImpl6<A, D : Base<A>>(val a: D) : Base<A> by a
+class BaseImpl7<A, D : Base<Base<A>>>(val a: D) : Base<Base<A>> by a
+
+class BaseImpl8<A: Base<*>, D : Base<A>>(val a: D) : Base<A> by a
 
 fun box() = "OK"

@@ -38,7 +38,7 @@ fun foo(a: A?) {
     (a?.ll)[0][0]++
     (a?.ll)[0][0] = 1
     (a?.q)()
-    (a?.w)++
+    (a?.<!VARIABLE_EXPECTED!>w<!>)++
 
     a?.l.plusAssign(1)
     a?.l.get(0)
@@ -75,7 +75,7 @@ fun foo(a: A?) {
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0]++
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0] = 1
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>q)()
-        (a<!UNNECESSARY_SAFE_CALL!>?.<!>w)++
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!><!VARIABLE_EXPECTED!>w<!>)++
 
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.plusAssign(1)
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.get(0)

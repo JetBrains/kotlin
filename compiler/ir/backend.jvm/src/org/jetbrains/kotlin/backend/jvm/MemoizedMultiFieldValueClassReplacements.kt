@@ -53,7 +53,6 @@ class MemoizedMultiFieldValueClassReplacements(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
                 this.name = oldParam.name
-                index = targetFunction.valueParameters.size
             }.apply {
                 defaultValue = oldParam.defaultValue
                 copyAnnotationsFrom(oldParam)
@@ -69,7 +68,6 @@ class MemoizedMultiFieldValueClassReplacements(
                 this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 type = leaf.type.substitute(localSubstitutionMap)
                 origin = originWhenFlattened
-                index = targetFunction.valueParameters.size
                 isAssignable = isAssignable || oldParam.defaultValue != null
             }.also { newParam ->
                 newParam.defaultValue = oldParam.defaultValue?.let {
@@ -241,7 +239,7 @@ class MemoizedMultiFieldValueClassReplacements(
     }
 
     private fun IrFunction.makeMethodLikeRemappedParameters(function: IrFunction): List<RemappedParameter> {
-        dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
+        dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
         val newFlattenedParameters = makeAndAddGroupedValueParametersFrom(function, includeDispatcherReceiver = false, mapOf(), this)
         val receiver = dispatchReceiverParameter
         return if (receiver != null) listOf(RegularMapping(receiver)) + newFlattenedParameters else newFlattenedParameters

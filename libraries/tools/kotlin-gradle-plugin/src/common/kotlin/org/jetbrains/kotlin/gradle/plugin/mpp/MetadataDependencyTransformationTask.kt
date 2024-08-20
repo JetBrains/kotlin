@@ -20,6 +20,8 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -54,12 +56,12 @@ internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
 }
 
 @DisableCachingByDefault(because = "Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load")
-open class MetadataDependencyTransformationTask
+abstract class MetadataDependencyTransformationTask
 @Inject constructor(
     kotlinSourceSet: KotlinSourceSet,
     private val objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
     private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
@@ -150,7 +152,8 @@ open class MetadataDependencyTransformationTask
             parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { identifier: ComponentIdentifier ->
                 val serializableKey = identifier.serializableUniqueKey
                 visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
-            }
+            },
+            kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(this)
         )
 
         if (outputsDir.isDirectory) {

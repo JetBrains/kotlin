@@ -33,12 +33,3 @@ npm upgrade
 
 cd $root_dir
 echo "End upgrade 'libraries/kotlin.test/js/it/package-lock.json'"
-
-# Upgrade libraries/tools/kotlin-test-js-runner/package-lock.json
-
-echo "Start upgrade 'libraries/tools/kotlin-test-js-runner/package-lock.json'"
-cd ./libraries/tools/kotlin-test-js-runner
-npm upgrade
-
-cd $root_dir
-echo "End upgrade 'libraries/tools/kotlin-test-js-runner/package-lock.json'"

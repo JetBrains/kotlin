@@ -400,11 +400,11 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitDeclarationReference(expression)
     }
 
-    override fun visitConst(expression: IrConst<*>, data: Nothing?) {
+    override fun visitConst(expression: IrConst, data: Nothing?) {
         visitConst(expression)
     }
 
-    fun visitConst(expression: IrConst<*>) {
+    fun visitConst(expression: IrConst) {
         visitExpression(expression)
     }
 

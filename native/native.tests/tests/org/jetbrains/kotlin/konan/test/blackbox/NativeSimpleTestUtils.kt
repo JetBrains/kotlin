@@ -25,7 +25,7 @@ internal abstract class ArtifactBuilder<T>(
     val test: AbstractNativeSimpleTest,
     val rootDir: File,
     val targetSrc: String,
-    dependencies: List<TestCompilationArtifact.KLIB>
+    dependencies: List<TestCompilationDependency<*>>
 ) {
     private val buildDir = test.buildDir
     var outputDir: String = ""
@@ -37,11 +37,7 @@ internal abstract class ArtifactBuilder<T>(
         sources.add(Pair(this, to))
     }
 
-    fun dependsOn(klib: TestCompilationArtifact.KLIB) {
-        dependencies.add(klib)
-    }
-
-    protected abstract fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>): T
+    protected abstract fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationDependency<*>>): T
 
     fun build(): T {
         val targetSrc = buildDir.resolve(targetSrc)
@@ -65,9 +61,9 @@ internal class LibraryBuilder(
     test: AbstractNativeSimpleTest,
     rootDir: File,
     targetSrc: String,
-    dependencies: List<TestCompilationArtifact.KLIB>
+    dependencies: List<TestCompilationDependency<*>>
 ) : ArtifactBuilder<TestCompilationArtifact.KLIB>(test, rootDir, targetSrc, dependencies) {
-    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
+    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationDependency<*>>) =
         test.compileToLibrary(
             sourcesDir,
             outputDir,
@@ -82,7 +78,7 @@ internal class ExecutableBuilder(
     rootDir: File,
     targetSrc: String,
     val tryPassSystemCacheDirectory: Boolean,
-    dependencies: List<TestCompilationArtifact.KLIB>
+    dependencies: List<TestCompilationDependency<*>>
 ) : ArtifactBuilder<CompiledExecutable>(test, rootDir, targetSrc, dependencies) {
     private val freeCompilerArgs = mutableListOf<String>()
 
@@ -91,7 +87,7 @@ internal class ExecutableBuilder(
     }
 
     // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
-    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
+    override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationDependency<*>>) =
         test.compileToExecutableInOneStage(
             sourcesDir,
             tryPassSystemCacheDirectory,
@@ -109,6 +105,9 @@ internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
 internal fun TestCompilationArtifact.KLIB.asIncludedLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.IncludedLibrary)
 
+internal fun TestCompilationArtifact.KLIB.asFriendLibraryDependency() =
+    ExistingDependency(this, TestCompilationDependencyType.FriendLibrary)
+
 internal fun TestCompilationArtifact.KLIBStaticCache.asStaticCacheDependency() =
     ExistingDependency(this, TestCompilationDependencyType.LibraryStaticCache)
 
@@ -122,16 +121,16 @@ internal fun AbstractNativeSimpleTest.compileToLibrary(
     sourcesDir: File,
     outputDir: File,
     vararg dependencies: TestCompilationArtifact.KLIB
-): TestCompilationArtifact.KLIB = compileToLibrary(sourcesDir, outputDir, TestCompilerArgs.EMPTY, dependencies.asList())
+): TestCompilationArtifact.KLIB = compileToLibrary(sourcesDir, outputDir, TestCompilerArgs.EMPTY, dependencies.map { it.asLibraryDependency() })
 
 internal fun AbstractNativeSimpleTest.compileToLibrary(
     sourcesDir: File,
     outputDir: File,
     freeCompilerArgs: TestCompilerArgs,
-    dependencies: List<TestCompilationArtifact.KLIB>
+    dependencies: List<TestCompilationDependency<*>>
 ): TestCompilationArtifact.KLIB {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToLibrary(testCase, outputDir, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToLibrary(testCase, outputDir, dependencies)
     return compilationResult.resultingArtifact
 }
 
@@ -181,17 +180,17 @@ internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-) = compileToExecutableInOneStage(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
+) = compileToExecutableInOneStage(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.map { it.asLibraryDependency() })
 
 // WARNING: compiles in one-stage mode (sources->executable) even when `mode=TWO_STAGE_MULTI_MODULE`
 internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     sourcesDir: File,
     tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
-    dependencies: List<TestCompilationArtifact.KLIB>
+    dependencies: List<TestCompilationDependency<*>>
 ): CompiledExecutable {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToExecutableInOneStage(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToExecutableInOneStage(testCase, tryPassSystemCacheDirectory, dependencies)
     return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 

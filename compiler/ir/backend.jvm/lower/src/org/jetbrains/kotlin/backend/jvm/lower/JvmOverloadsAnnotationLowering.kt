@@ -157,7 +157,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
         oldFunction: IrFunction,
         numDefaultParametersToExpect: Int
     ): List<IrValueParameter> {
-        var parametersCopied = 0
         var defaultParametersCopied = 0
         val result = mutableListOf<IrValueParameter>()
         for (oldValueParameter in oldFunction.valueParameters) {
@@ -168,14 +167,13 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 result.add(
                     oldValueParameter.copyTo(
                         this,
-                        index = parametersCopied++,
                         defaultValue = null,
                         isCrossinline = oldValueParameter.isCrossinline,
                         isNoinline = oldValueParameter.isNoinline
                     )
                 )
             } else if (oldValueParameter.defaultValue == null) {
-                result.add(oldValueParameter.copyTo(this, index = parametersCopied++))
+                result.add(oldValueParameter.copyTo(this))
             }
         }
         return result

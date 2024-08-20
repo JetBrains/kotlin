@@ -707,7 +707,7 @@ class IrSourcePrinterVisitor(
         print("\"")
         for (arg in arguments) {
             when {
-                arg is IrConst<*> && arg.kind == IrConstKind.String -> print(arg.value)
+                arg is IrConst && arg.kind == IrConstKind.String -> print(arg.value)
                 arg is IrGetValue -> {
                     print("$")
                     arg.print()
@@ -755,11 +755,11 @@ class IrSourcePrinterVisitor(
             }
             isIf -> {
                 val singleLine = expression.branches.all {
-                    it.result is IrConst<*> || it.result is IrGetValue
+                    it.result is IrConst || it.result is IrGetValue
                 }
                 expression.branches.forEachIndexed { index, branch ->
                     val isElse = index == expression.branches.size - 1 &&
-                        (branch.condition as? IrConst<*>)?.value == true
+                        (branch.condition as? IrConst)?.value == true
                     when {
                         index == 0 -> {
                             print("if (")
@@ -801,7 +801,7 @@ class IrSourcePrinterVisitor(
                 print("when ")
                 bracedBlock {
                     expression.branches.forEach {
-                        val isElse = (it.condition as? IrConst<*>)?.value == true
+                        val isElse = (it.condition as? IrConst)?.value == true
 
                         if (isElse) {
                             print("else")
@@ -1106,7 +1106,7 @@ class IrSourcePrinterVisitor(
         return "0b$result" + if (value < 0) ".inv()" else ""
     }
 
-    override fun visitConst(expression: IrConst<*>) {
+    override fun visitConst(expression: IrConst) {
         val result = when (expression.kind) {
             is IrConstKind.Null -> "${expression.value}"
             is IrConstKind.Boolean -> "${expression.value}"
@@ -1588,7 +1588,7 @@ class IrSourcePrinterVisitor(
         when (irElement) {
             null -> append("<null>")
             is IrConstructorCall -> renderAsAnnotation(irElement)
-            is IrConst<*> -> {
+            is IrConst -> {
                 append('\'')
                 append(irElement.value.toString())
                 append('\'')

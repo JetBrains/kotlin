@@ -10,25 +10,30 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
+import org.jetbrains.kotlin.gradle.util.resourcesRoot
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 import java.io.File
+import java.nio.file.Path
 import kotlin.test.assertEquals
 
 class SerializationToolsTest {
 
     @Test
     fun `test hierarchy SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(hierarchyModules())
-        val hierarchyJson = hierarchyJson()
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules(), 1721919536167))
+        val hierarchyJson = testJson("hierarchyJson").readText()
 
         assertEquals(json.unixStylePath(), hierarchyJson)
     }
 
     @Test
     fun `test hierarchy SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(hierarchyJson())
-        val hierarchyModules = hierarchyModules()
+        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(
+            testJson("hierarchyJson").readText()
+        )
+        val hierarchyModules = GradleSwiftExportModules(hierarchyModules(), 1721919536167)
 
         assertEquals(modules, hierarchyModules)
     }
@@ -43,16 +48,18 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(nestedModules())
-        val nestedJson = nestedJson()
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules(), 1721919536167))
+        val nestedJson = testJson("nestedJson").readText()
 
         assertEquals(json.unixStylePath(), nestedJson)
     }
 
     @Test
     fun `test nested SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(nestedJson())
-        val nestedModules = nestedModules()
+        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(
+            testJson("nestedJson").readText()
+        )
+        val nestedModules = GradleSwiftExportModules(nestedModules(), 1721919536167)
 
         assertEquals(modules, nestedModules)
     }
@@ -67,9 +74,9 @@ class SerializationToolsTest {
 
     @Test
     fun `test Windows Unix SwiftModule paths`() {
-        val json = SerializationTools.writeToJson(simpleModules())
-        val simpleJson = simpleJson()
-        val simpleWinJson = simpleWindowsJson()
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules(), 1721919536167))
+        val simpleJson = testJson("simpleJson").readText()
+        val simpleWinJson = testJson("simpleWindowsJson").readText()
 
         if (HostManager.hostIsMingw) {
             assertEquals(json, simpleWinJson)
@@ -78,38 +85,6 @@ class SerializationToolsTest {
             assertEquals(json, simpleWinJson.unixStylePath())
         }
     }
-
-    private fun simpleJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": []
-          }
-        ]
-    """.trimIndent()
-
-    private fun simpleWindowsJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "\\A\\SwiftFile.swift",
-              "kotlinBridges": "\\A\\KotlinBridge.kt",
-              "cHeaderBridges": "\\A\\Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": []
-          }
-        ]
-    """.trimIndent()
 
     private fun simpleModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
@@ -123,66 +98,6 @@ class SerializationToolsTest {
             emptyList()
         )
     )
-
-    /*
-     *  Module_A
-     *  ├── Module_C
-     *  └── Module_D
-     *
-     *  Module_B
-     *  ├── Module_C
-     *  └── Module_E
-     */
-    private fun hierarchyJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C",
-              "Module_D"
-            ]
-          },
-          {
-            "files": {
-              "swiftApi": "/B/SwiftFile.swift",
-              "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
-            },
-            "bridgeName": "Bridge_B",
-            "name": "Module_B",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C",
-              "Module_E"
-            ]
-          },
-          {
-            "swiftApi": "/C/SwiftFile.swift",
-            "name": "Module_C",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          },
-          {
-            "swiftApi": "/D/SwiftFile.swift",
-            "name": "Module_D",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          },
-          {
-            "swiftApi": "/E/SwiftFile.swift",
-            "name": "Module_E",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          }
-        ]
-    """.trimIndent()
 
     private fun hierarchyModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
@@ -222,66 +137,6 @@ class SerializationToolsTest {
         )
     )
 
-    /*
-     * Module_A
-     * └── Module_B
-     *     └── Module_C
-     *         └── Module_D
-     *             └── Module_E
-     */
-    private fun nestedJson() = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_B"
-            ]
-          },
-          {
-            "files": {
-              "swiftApi": "/B/SwiftFile.swift",
-              "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
-            },
-            "bridgeName": "Bridge_B",
-            "name": "Module_B",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C"
-            ]
-          },
-          {
-            "swiftApi": "/C/SwiftFile.swift",
-            "name": "Module_C",
-            "type": "SWIFT_ONLY",
-            "dependencies": [
-              "Module_D"
-            ]
-          },
-          {
-            "swiftApi": "/D/SwiftFile.swift",
-            "name": "Module_D",
-            "type": "SWIFT_ONLY",
-            "dependencies": [
-              "Module_E"
-            ]
-          },
-          {
-            "swiftApi": "/E/SwiftFile.swift",
-            "name": "Module_E",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          }
-        ]
-    """.trimIndent()
-
     private fun nestedModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
@@ -320,5 +175,10 @@ class SerializationToolsTest {
         )
     )
 }
+
+private val serializationToolsTestFilesRoot: Path
+    get() = resourcesRoot.resolve("testData/SerializationToolsTest")
+
+private fun testJson(fileName: String): File = serializationToolsTestFilesRoot.resolve("$fileName.json").toFile()
 
 private fun String.unixStylePath() = this.replace("\\\\", "/")

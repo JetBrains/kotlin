@@ -17,6 +17,10 @@ internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     )
 }
 
+internal fun dashSeparatedToUpperCamelCase(name: String): String {
+    return name.split("-").joinToString("") { it.capitalize() }
+}
+
 internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(*nameParts.toList().toTypedArray())
 
 internal fun dashSeparatedName(vararg nameParts: String?): String {

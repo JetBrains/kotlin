@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cstdint>
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
@@ -234,12 +235,14 @@ NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
 }
 #endif
 
-NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
+NO_EXTERNAL_CALLS_CHECK uintptr_t currentThreadId() {
 #if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
     uint64_t tid;
     pthread_t self = pthread_self();
     RuntimeCheck(!pthread_threadid_np(self, &tid), "Error getting thread id");
-    RuntimeCheck((*(reinterpret_cast<int32_t*>(&tid) + 1)) == 0, "Thread id is not a uint32");
+    if constexpr (sizeof(uintptr_t) < sizeof(uint64_t)) {
+        RuntimeCheck(*(reinterpret_cast<int32_t*>(&tid) + 1) == 0, "Thread id does not fit in a pointer");
+    }
     return tid;
 #elif KONAN_ANDROID
     return gettid();

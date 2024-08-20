@@ -555,7 +555,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
-            buildGradle.appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.32' }")
+            buildScriptInjection { dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-reflect:1.5.32") }
             testResolveAllConfigurations { unresolvedConfigurations, buildResult ->
                 assertTrue("Unresolved configurations: $unresolvedConfigurations") { unresolvedConfigurations.isEmpty() }
                 buildResult.assertOutputContains(">> :compileClasspath --> kotlin-reflect-1.5.32.jar")

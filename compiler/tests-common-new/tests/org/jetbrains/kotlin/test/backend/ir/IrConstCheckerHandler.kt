@@ -57,7 +57,7 @@ private class IrConstChecker : IrTypeTransformerVoid() {
     }
 
     override fun visitField(declaration: IrField) {
-        if (declaration.correspondingPropertySymbol?.owner?.isConst == true && declaration.initializer?.expression !is IrConst<*>) {
+        if (declaration.correspondingPropertySymbol?.owner?.isConst == true && declaration.initializer?.expression !is IrConst) {
             error("Const field is not containing const expression. Got ${declaration.initializer?.dump()}")
         }
         super.visitField(declaration)
@@ -65,7 +65,7 @@ private class IrConstChecker : IrTypeTransformerVoid() {
 
     private fun checkAnnotations(container: IrAnnotationContainer) {
         fun IrElement.isConst(): Boolean {
-            return this is IrConst<*> || this is IrGetEnumValue || this is IrClassReference || (this is IrConstructorCall && type.isAnnotation())
+            return this is IrConst || this is IrGetEnumValue || this is IrClassReference || (this is IrConstructorCall && type.isAnnotation())
         }
 
         container.annotations.forEach { annotation ->

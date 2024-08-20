@@ -32,11 +32,15 @@ import kotlin.test.fail
 @MppGradlePluginTests
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions
+            .disableConfigurationCache_KT70416()
+
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {
         with(project("commonizeHierarchically", gradleVersion)) {
             resolveIdeDependencies(":p1") { dependencies ->
-                if (task(":commonizeNativeDistribution") == null) fail("Missing :commonizeNativeDistribution task")
+                if (task(":p1:commonizeNativeDistribution") == null) fail("Missing :commonizeNativeDistribution task")
 
                 fun Iterable<IdeaKotlinDependency>.filterNativePlatformDependencies() =
                     filterIsInstance<IdeaKotlinResolvedBinaryDependency>()

@@ -79,9 +79,13 @@ public class SirAsSwiftSourcesPrinter(
     }
 
     private fun SirDeclarationContainer.print() {
-        (this as? SirDeclaration)?.let {
+        if (this is SirDeclaration) {
             printDocumentation()
-            printVisibility()
+            if (this is SirClass) {
+                printModifiers()
+            } else {
+                printVisibility()
+            }
         }
 
         printContainerKeyword()
@@ -218,6 +222,27 @@ public class SirAsSwiftSourcesPrinter(
             ?.let { "${it.swift} " }
             ?: ""
     )
+
+    private fun SirClass.printModifiers() {
+        when (modality) {
+            SirClassModality.OPEN -> {
+                if (visibility == SirVisibility.PUBLIC) {
+                    print("open ")
+                } else {
+                    // Swift classes are internally inheritable
+                    // by default – no need to print "open"
+                    printVisibility()
+                }
+            }
+            SirClassModality.FINAL -> {
+                printVisibility()
+                print("final ")
+            }
+            SirClassModality.UNSPECIFIED -> {
+                printVisibility()
+            }
+        }
+    }
 
     private fun SirCallable.printPreNameKeywords() = when (this) {
         is SirInit -> initKind.print()

@@ -11,7 +11,7 @@ dependencies {
     implementation(commonDependency("io.javaslang","javaslang"))
     compileOnly(intellijCore())
     compileOnly(libs.kotlinx.coroutines.core.jvm)
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(libs.guava)
 }

@@ -46,7 +46,7 @@ private fun JvmIrBuilder.normalizeArgument(expression: IrExpression): IrExpressi
         return irImplicitCast(expression, context.irBuiltIns.intType)
     }
 
-    if (expression is IrConst<*> && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
+    if (expression is IrConst && expression.kind == IrConstKind.String && (expression.value as String).length == 1) {
         // PSI2IR generates const Strings for 1-length literals in string templates (e.g., the space between x and y in "$x $y").
         // We want to use the more efficient `append(Char)` function in such cases. This mirrors the behavior of the non-IR backend.
         //

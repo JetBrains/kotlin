@@ -104,6 +104,12 @@ fun getHashableObject(value: Int): Any = HashableObject(value)
 fun getHash(obj: Any): Int = obj.hashCode()
 fun isEqual(lhs: Any, rhs: Any): Boolean = lhs == rhs
 
+// FILE: OpenClasses.kt
+
+open class Base {
+    fun test(): Int = 42
+}
+
 // FILE: dependency_usage.kt
 import dependency.*
 

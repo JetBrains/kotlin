@@ -368,7 +368,6 @@ private fun TranslationPluginContext.declareParameterStub(parameterDescriptor: P
         type = type,
         isAssignable = false,
         symbol = symbol,
-        index = parameterDescriptor.indexOrMinusOne,
         varargElementType = varargElementType,
         isCrossinline = parameterDescriptor.isCrossinline,
         isNoinline = parameterDescriptor.isNoinline,

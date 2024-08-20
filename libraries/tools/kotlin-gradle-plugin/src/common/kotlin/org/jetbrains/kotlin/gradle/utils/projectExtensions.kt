@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+
+private val Project.basePluginConfiguration: BasePluginExtension
+    get() = extensions.getByType()
 
 /**
  * The base name to use for archive files.
  */
 internal val Project.archivesName
-    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
-        .getInstance(this)
-        .archivesName
-
+    get() = basePluginConfiguration.archivesName
 
 /**
  * Returns the directory to generate JAR archives into.
@@ -26,10 +27,7 @@ internal val Project.archivesName
  * @return The directory. Never returns null.
  */
 internal val Project.libsDirectory
-    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
-        .getInstance(this)
-        .libsDirectory
-
+    get() = basePluginConfiguration.libsDirectory
 
 /**
  * Returns the directory to generate TAR and ZIP archives into.
@@ -37,9 +35,13 @@ internal val Project.libsDirectory
  * @return The directory. Never returns null.
  */
 internal val Project.distsDirectory
-    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
-        .getInstance(this)
-        .distsDirectory
+    get() = basePluginConfiguration.distsDirectory
 
 internal val Project.konanDistribution: KonanDistribution
     get() = KonanDistribution(nativeProperties.actualNativeHomeDirectory.get())
+
+internal val Project.javaSourceSets: SourceSetContainer
+    get() = extensions.getByType<JavaPluginExtension>().sourceSets
+
+internal val Project.javaSourceSetsIfAvailable
+    get() = extensions.findByType<JavaPluginExtension>()?.sourceSets

@@ -53,7 +53,7 @@ class SPMManifestGeneratorTest {
                 products: [
                     .library(
                         name: "SharedLibrary",
-                        targets: ["Shared"]
+                        targets: ["Shared", "Dependency"]
                     ),
                 ],
                 targets: [
@@ -140,7 +140,7 @@ class SPMManifestGeneratorTest {
                 products: [
                     .library(
                         name: "SharedLibrary",
-                        targets: ["Shared"]
+                        targets: ["Shared", "Dependency1", "Dependency2", "Dependency3", "Dependency4", "Dependency5"]
                     ),
                 ],
                 targets: [

@@ -374,7 +374,6 @@ open class DeepCopyIrTreeWithSymbols(
             type = declaration.type.remapType(),
             isAssignable = declaration.isAssignable,
             symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
-            index = declaration.index,
             varargElementType = declaration.varargElementType?.remapType(),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,
@@ -417,10 +416,10 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
 
-    override fun visitConst(expression: IrConst<*>): IrConst<*> =
+    override fun visitConst(expression: IrConst): IrConst =
         expression.shallowCopyConst().processAttributes(expression)
 
-    private fun <T> IrConst<T>.shallowCopyConst() = IrConstImpl(startOffset, endOffset, type.remapType(), kind, value)
+    private fun IrConst.shallowCopyConst() = IrConstImpl(startOffset, endOffset, type.remapType(), kind, value)
 
     override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =
         IrConstantObjectImpl(
@@ -470,7 +469,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrInlinedFunctionBlockImpl(
             inlinedBlock.startOffset, inlinedBlock.endOffset,
             inlinedBlock.type.remapType(),
-            inlinedBlock.inlineCall, inlinedBlock.inlinedElement,
+            inlinedBlock.inlinedElement,
             mapStatementOrigin(inlinedBlock.origin),
             statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
         ).processAttributes(inlinedBlock)

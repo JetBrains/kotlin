@@ -196,7 +196,7 @@ progressive mode enabled may cause compilation errors in progressive mode."""
 
     @Argument(
         value = "-Xcompiler-plugin",
-        valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
+        valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]",
         description = "Register a compiler plugin.",
         delimiter = Argument.Delimiters.none
     )

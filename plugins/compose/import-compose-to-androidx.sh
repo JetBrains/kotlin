@@ -27,7 +27,9 @@ androidxVersionsPath="$androidxPath/gradle/libs.versions.toml"
   :kotlin-script-runtime:install \
   :kotlin-daemon-embeddable:install \
   :kotlin-compiler-embeddable:install \
-  :plugins:compose:compiler:install
+  :plugins:compose:compiler:install \
+  :kotlinx-serialization-compiler-plugin.embeddable:install \
+  :kotlin-parcelize-compiler:install
 
 # Substitute compose compiler snapshot version in libs.versions.toml
 sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.1.255-SNAPSHOT"/g' "$androidxVersionsPath"

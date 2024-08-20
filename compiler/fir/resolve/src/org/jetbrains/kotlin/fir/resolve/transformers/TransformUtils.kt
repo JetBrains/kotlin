@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.createArrayType
 
 internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
     if (isVararg) {
@@ -42,6 +38,22 @@ internal fun FirCallableDeclaration.transformTypeToArrayType(session: FirSession
             delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
         }
     )
+}
+
+fun FirAnonymousFunction.transformInlineStatus(
+    parameter: FirValueParameter,
+    functionIsInline: Boolean,
+    session: FirSession,
+) {
+    val parameterIsSomeFunction = parameter.returnTypeRef.coneType.isSomeFunctionType(session)
+    val inlineStatus = when {
+        !parameterIsSomeFunction -> InlineStatus.NoInline
+        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+        parameter.isNoinline -> InlineStatus.NoInline
+        functionIsInline -> InlineStatus.Inline
+        else -> InlineStatus.NoInline
+    }
+    replaceInlineStatus(inlineStatus)
 }
 
 inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {

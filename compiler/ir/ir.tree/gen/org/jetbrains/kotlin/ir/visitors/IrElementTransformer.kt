@@ -176,7 +176,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitClassReference(expression: IrClassReference, data: D): IrExpression =
         visitDeclarationReference(expression, data)
 
-    override fun visitConst(expression: IrConst<*>, data: D): IrExpression =
+    override fun visitConst(expression: IrConst, data: D): IrExpression =
         visitExpression(expression, data)
 
     override fun visitConstantValue(expression: IrConstantValue, data: D): IrConstantValue {

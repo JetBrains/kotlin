@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
-import mockProjectStructureMetadataFileForProject
+import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
@@ -55,7 +55,7 @@ class IdeSourceDependencyResolutionTest {
         producer.evaluate()
         consumer.evaluate()
 
-        mockProjectStructureMetadataFileForProject(producer)
+        producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
         consumer.resolveDependencies("commonMain").assertMatches(
             regularSourceDependency(":producer/commonMain")
@@ -171,7 +171,7 @@ class IdeSourceDependencyResolutionTest {
         producer.evaluate()
         consumer.evaluate()
 
-        mockProjectStructureMetadataFileForProject(producer)
+        producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
         consumer.resolveDependencies("jvmAndAndroidMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),

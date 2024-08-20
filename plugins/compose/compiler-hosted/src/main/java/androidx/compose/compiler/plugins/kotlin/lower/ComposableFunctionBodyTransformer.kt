@@ -21,7 +21,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer.ComposeDefaultValueStubOrigin
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -1916,7 +1915,7 @@ class ComposableFunctionBodyTransformer(
 
         when (this) {
             // Disambiguate ?. clauses which become a "null" constant expression
-            is IrConst<*> -> {
+            is IrConst -> {
                 hash = 31 * hash + (this.value?.hashCode() ?: 1)
             }
             // Disambiguate the key for blocks and composite containers in case block offsets are
@@ -1943,7 +1942,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun IrElement.irSourceKey(): IrConst<Int> =
+    private fun IrElement.irSourceKey(): IrConst =
         IrConstImpl.int(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -1951,7 +1950,7 @@ class ComposableFunctionBodyTransformer(
             sourceKey()
         )
 
-    private fun irFunctionSourceKey(): IrConst<Int> =
+    private fun irFunctionSourceKey(): IrConst =
         IrConstImpl.int(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -2871,8 +2870,7 @@ class ComposableFunctionBodyTransformer(
                     visitNormalComposableCall(expression)
                 }
             }
-            ComposeFqNames.key,
-            DecoyFqNames.key -> visitKeyCall(expression)
+            ComposeFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }
     }
@@ -2954,7 +2952,7 @@ class ComposableFunctionBodyTransformer(
 
         val defaultMasks = defaultArgs.map {
             when (it) {
-                !is IrConst<*> -> error("Expected default mask to be a const")
+                !is IrConst -> error("Expected default mask to be a const")
                 else -> it.value as? Int ?: error("Expected default mask to be an Int")
             }
         }
@@ -3128,7 +3126,7 @@ class ComposableFunctionBodyTransformer(
             val meta = inputArgMetas[index]
 
             // Only create variables when reads introduce side effects
-            val trivialExpression = meta.isCertain || expr is IrGetValue || expr is IrConst<*>
+            val trivialExpression = meta.isCertain || expr is IrGetValue || expr is IrConst
             if (!trivialExpression) {
                 irTemporary(expr, nameHint = "remember\$arg\$$index")
             } else {

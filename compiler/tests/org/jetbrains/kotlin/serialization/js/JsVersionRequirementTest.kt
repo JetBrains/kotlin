@@ -74,7 +74,12 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
     override fun loadModule(directory: File): ModuleDescriptor {
         val environment = createEnvironment(extraDependencies = listOf(File(directory, "lib.meta.js")))
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            emptyList(), BindingTraceContext(environment.project), createModule(environment), environment.configuration, CompilerEnvironment, environment.project
+            emptyList(),
+            BindingTraceContext(environment.project),
+            createModule(environment),
+            environment.configuration,
+            CompilerEnvironment,
+            environment.project
         ).moduleDescriptor
     }
 
@@ -85,12 +90,15 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK).apply {
-                put(JSConfigurationKeys.LIBRARIES, extraDependencies.map(File::getPath) + StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath)
+                put(
+                    JSConfigurationKeys.LIBRARIES,
+                    extraDependencies.map(File::getPath) + StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath
+                )
                 put(JSConfigurationKeys.META_INFO, true)
 
                 if (languageVersion != null) {
                     languageVersionSettings =
-                            LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(languageVersion))
+                        LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(languageVersion))
                 }
             },
             EnvironmentConfigFiles.JS_CONFIG_FILES

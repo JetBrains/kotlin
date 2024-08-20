@@ -347,4 +347,10 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   public void testUserDefinedSerializerInCompanion() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
   }
+
+  @Test
+  @TestMetadata("uuidSerializer.kt")
+  public void testUuidSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/uuidSerializer.kt");
+  }
 }

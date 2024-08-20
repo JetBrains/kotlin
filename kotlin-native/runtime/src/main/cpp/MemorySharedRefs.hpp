@@ -58,7 +58,7 @@ class BackRefFromAssociatedObject {
   union {
     struct {
       kotlin::mm::RawSpecialRef* ref_;
-      kotlin::ManuallyScoped<kotlin::RWSpinLock<kotlin::MutexThreadStateHandling::kIgnore>> deallocMutex_;
+      kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
     }; // Regular object.
     ObjHeader* permanentObj_; // Permanent object.
   };

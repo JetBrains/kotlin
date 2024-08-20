@@ -117,7 +117,7 @@ internal fun buildGetValue(
 
 internal fun IrPluginContext.buildConstNull() = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.anyNType)
 
-internal fun IrExpression.isConstNull() = this is IrConst<*> && this.kind.asString == "Null"
+internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString == "Null"
 
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
@@ -179,7 +179,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val returnType = if (isSetter) irBuiltIns.unitType else valueType
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
-        val valueParameter = buildValueParameter(this, name, 0, valueType)
+        val valueParameter = buildValueParameter(this, name, valueType)
         this.valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(
@@ -229,7 +229,7 @@ internal fun IrPluginContext.buildFieldAccessor(
     val returnType = if (isSetter) irBuiltIns.unitType else valueType
     val name = if (isSetter) field.setterName() else field.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
-        val valueParameter = buildValueParameter(this, name, 0, valueType)
+        val valueParameter = buildValueParameter(this, name, valueType)
         valueParameters = if (isSetter) listOf(valueParameter) else emptyList()
         body = irFactory.buildBlockBody(
             listOf(

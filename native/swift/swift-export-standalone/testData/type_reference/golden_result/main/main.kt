@@ -200,6 +200,18 @@ public fun __root___Demo_init_initialize(__kt: kotlin.native.internal.NativePtr,
     kotlin.native.internal.initInstance(____kt, Demo(__arg1, __arg2, __arg3, __arg4))
 }
 
+@ExportedBridge("__root___OPEN_CLASS_init_allocate")
+public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OPEN_CLASS>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
+public fun __root___OPEN_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
+}
+
 @ExportedBridge("__root___Object_without_package_get")
 public fun __root___Object_without_package_get(): kotlin.native.internal.NativePtr {
     val _result = Object_without_package
@@ -218,6 +230,12 @@ public fun __root___combine(arg1: kotlin.native.internal.NativePtr, arg2: kotlin
 @ExportedBridge("__root___produce_DATA_OBJECT")
 public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
     val _result = produce_DATA_OBJECT()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___produce_OPEN_CLASS")
+public fun __root___produce_OPEN_CLASS(): kotlin.native.internal.NativePtr {
+    val _result = produce_OPEN_CLASS()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -249,6 +267,12 @@ public fun __root___produce_object_wp(): kotlin.native.internal.NativePtr {
 public fun __root___recieve_DATA_OBJECT(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as namespace.deeper.DATA_OBJECT
     recieve_DATA_OBJECT(__x)
+}
+
+@ExportedBridge("__root___recieve_OPEN_CLASS__TypesOfArguments__uintptr_t__")
+public fun __root___recieve_OPEN_CLASS(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as OPEN_CLASS
+    recieve_OPEN_CLASS(__x)
 }
 
 @ExportedBridge("__root___recieve_class__TypesOfArguments__uintptr_t__")

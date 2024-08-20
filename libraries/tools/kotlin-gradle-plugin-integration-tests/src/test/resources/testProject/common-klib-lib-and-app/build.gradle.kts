@@ -13,8 +13,9 @@ kotlin {
 	linuxX64()
 	linuxArm64()
 
-	// macOS-specific targets - created by the ios() shortcut:
-	ios()
+	iosX64()
+	iosArm64()
+	iosSimulatorArm64()
 
 	mingwX64()
 
@@ -70,8 +71,9 @@ tasks {
 		val target = name.removePrefix("compileKotlin").decapitalize()
 		if (target in skipCompilationOfTargets) {
 			actions.clear()
+			val destinationDirProvider = project.layout.buildDirectory.dir("classes/kotlin/$target/main/klib/${project.name}.klib")
 			doLast { 
-				val destinationFile = project.buildDir.resolve("classes/kotlin/$target/main/klib/${project.name}.klib")
+				val destinationFile = destinationDirProvider.get().asFile
 				destinationFile.parentFile.mkdirs()
 				println("Writing a dummy klib to $destinationFile")
 				destinationFile.createNewFile()

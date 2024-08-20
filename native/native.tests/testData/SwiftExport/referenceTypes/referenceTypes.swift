@@ -242,6 +242,20 @@ func objectsHashProperly() throws {
     try testEquality(ein, two)
 }
 
+func openClassesAreInheritable() throws {
+    class Child: Base {}
+
+    let base = Base()
+    let child = Child()
+
+    try assertFalse(base === child)
+    try assertEquals(actual: ObjectIdentifier(type(of: base)), expected: ObjectIdentifier(Base.self))
+    try assertEquals(actual: ObjectIdentifier(type(of: child)), expected: ObjectIdentifier(Child.self))
+
+    try assertEquals(actual: base.test(), expected: 42)
+    try assertEquals(actual: child.test(), expected: 42)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -276,6 +290,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "depsObjectsTravelBridgeAsAny", method: withAutorelease(depsObjectsTravelBridgeAsAny)),
             TestCase(name: "depsObjectsTravelBridgeAsAny2", method: withAutorelease(depsObjectsTravelBridgeAsAny2)),
             TestCase(name: "objectsHashProperly", method: withAutorelease(objectsHashProperly)),
+            TestCase(name: "openClassesAreInheritable", method: withAutorelease(openClassesAreInheritable)),
         ]
     }
 }

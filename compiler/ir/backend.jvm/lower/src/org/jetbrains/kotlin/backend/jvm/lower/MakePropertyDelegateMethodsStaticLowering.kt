@@ -43,11 +43,11 @@ internal class MakePropertyDelegateMethodsStaticLowering(val context: JvmBackend
         if (!declaration.isSyntheticDelegateMethod()) return super.visitSimpleFunction(declaration)
 
         val oldParameter = declaration.dispatchReceiverParameter ?: return super.visitSimpleFunction(declaration)
-        val newParameter = oldParameter.copyTo(declaration, index = 0)
+        val newParameter = oldParameter.copyTo(declaration)
 
         return declaration.apply {
             valueParameters =
-                listOf(newParameter) + valueParameters.map { it.copyTo(this, index = it.index + 1) }
+                listOf(newParameter) + valueParameters.map { it.copyTo(this) }
             dispatchReceiverParameter = null
             body = body?.transform(VariableRemapper(mapOf(oldParameter to newParameter)), null)
         }

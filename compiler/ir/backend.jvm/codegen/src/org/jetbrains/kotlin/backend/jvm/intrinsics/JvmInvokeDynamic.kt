@@ -64,7 +64,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             is IrCall ->
                 evalBootstrapArgumentIntrinsicCall(element, codegen)
                     ?: throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
-            is IrConst<*> ->
+            is IrConst ->
                 when (element.kind) {
                     IrConstKind.Byte -> (element.value as Byte).toInt()
                     IrConstKind.Short -> (element.value as Short).toInt()

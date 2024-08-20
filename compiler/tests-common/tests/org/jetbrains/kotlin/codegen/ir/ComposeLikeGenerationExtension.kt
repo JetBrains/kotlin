@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -157,7 +158,6 @@ class ComposeLikeDefaultArgumentRewriter(
                         type = defaultParameterType(param),
                         isAssignable = param.defaultValue != null,
                         symbol = IrValueParameterSymbolImpl(),
-                        index = param.index,
                         varargElementType = param.varargElementType,
                         isCrossinline = param.isCrossinline,
                         isNoinline = param.isNoinline,
@@ -253,7 +253,7 @@ class ComposeLikeDefaultArgumentRewriter(
         )
     }
 
-    private fun irConst(value: Int): IrConst<Int> = IrConstImpl(
+    private fun irConst(value: Int): IrConst = IrConstImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,

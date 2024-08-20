@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
@@ -180,9 +179,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             if (!allowLazyDeclarationsCreation) {
                 error("Lazy constructors should be processed in Fir2IrDeclarationStorage")
             }
-            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
-            lazyConstructor.prepareTypeParameters()
-            return lazyConstructor
+            return lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
@@ -308,7 +305,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType(c)
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
                         }
@@ -550,7 +547,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirLiteralExpression) {
-                    this.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(irType))
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
                 }
                 /*
                  * fields of regular properties are stored inside IrProperty
@@ -591,7 +588,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),
-            index = parent.contextReceiverParametersCount,
             varargElementType = null,
             isCrossinline = isCrossinline,
             isNoinline = isNoinline,
@@ -630,7 +626,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 type = type,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -671,7 +666,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     declarationStorage.createAndCacheParameter(
-                        valueParameter, index + contextReceiverParametersCount,
+                        valueParameter,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.classId != StandardClassIds.Enum,
                         typeOrigin,
                         skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER,
@@ -730,7 +725,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     internal fun createIrParameter(
         valueParameter: FirValueParameter,
-        index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         skipDefaultParameter: Boolean = false,
@@ -752,7 +746,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 type = type,
                 isAssignable = valueParameter.containingFunctionSymbol.fir.shouldParametersBeAssignable(c),
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = valueParameter.varargElementType?.toIrType(c, typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
                 isNoinline = valueParameter.isNoinline,
@@ -1003,6 +996,10 @@ internal fun IrDeclarationParent?.isExternalParent(): Boolean {
         returns(true) implies (this@isExternalParent != null)
     }
     return this is Fir2IrLazyClass || this is IrExternalPackageFragment
+            // This check is required when compiling in the debugger.
+            // We eagerly wrap declarations into facade class while we still have info about the file.
+            // See Fir2IrDeclarationStorage.findIrParent
+            || (this is IrDeclaration && this.isFileClass)
 }
 
 internal fun FirCallableDeclaration?.shouldParametersBeAssignable(c: Fir2IrComponents): Boolean {

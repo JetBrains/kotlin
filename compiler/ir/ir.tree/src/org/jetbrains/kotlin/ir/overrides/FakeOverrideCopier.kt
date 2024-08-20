@@ -90,7 +90,6 @@ internal class FakeOverrideCopier(
             type = typeRemapper.remapType(declaration.type),
             isAssignable = declaration.isAssignable,
             symbol = IrValueParameterSymbolImpl(null),
-            index = declaration.index,
             varargElementType = declaration.varargElementType?.let(typeRemapper::remapType),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,

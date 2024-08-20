@@ -58,7 +58,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         allImplOf(function) {
-            defaultEmptyList("valueParameters")
             defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body")
             default("contextReceiverParametersCount", "0")
             isLateinit("returnType")
@@ -309,6 +308,96 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 """.replaceIndent(currentIndent))
             }
         }
+
+        impl(const) {
+            implementation.generationCallback = {
+                println()
+                printlnMultiLine("""
+                    companion object {
+                        fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
+                
+                        fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, value)
+                
+                        fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Null, null)
+                
+                        fun boolean(startOffset: Int, endOffset: Int, type: IrType, value: Boolean): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
+                
+                        fun constTrue(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            boolean(startOffset, endOffset, type, true)
+                
+                        fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
+                            boolean(startOffset, endOffset, type, false)
+                
+                        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
+                
+                        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
+                
+                        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
+                
+                        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
+                
+                        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
+                
+                        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
+                    }
+                """.trimIndent())
+            }
+        }
+
+        allImplOf(memberAccessExpression) {
+            defaultNull("dispatchReceiver", "extensionReceiver")
+        }
+
+        allImplOf(functionAccessExpression) {
+            default("contextReceiversCount", "0")
+        }
+
+        impl(call) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(constructorCall) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            undefinedOffset()
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(delegatingConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(enumConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(functionReference) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: Symbol) {
@@ -362,11 +451,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         for (element in model.elements) {
             for (implementation in element.implementations) {
-                // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const || element.isSubclassOf(IrTree.memberAccessExpression)) {
-                    implementation.doPrint = false
-                }
-
                 if (element.category == Element.Category.Expression) {
                     implementation.isConstructorPublic = false
                 }

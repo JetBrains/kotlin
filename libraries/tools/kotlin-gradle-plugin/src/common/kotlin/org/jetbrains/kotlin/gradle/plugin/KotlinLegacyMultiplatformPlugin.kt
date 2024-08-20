@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.createDependencyScope
+import org.jetbrains.kotlin.gradle.utils.javaSourceSetsIfAvailable
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -117,9 +117,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
 
                 // Workaround for older versions of Kotlin/Native overriding the old signature
-                commonProject.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                    .getInstance(commonProject)
-                    .sourceSetsIfAvailable
+                commonProject.javaSourceSetsIfAvailable
                     ?.findByName(commonSourceSet.name)
                     ?.let { javaSourceSet ->
                         @Suppress("DEPRECATION")

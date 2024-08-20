@@ -25,6 +25,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import kotlin.test.Ignore
 
 @RunWith(Parameterized::class)
 class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -1224,8 +1225,9 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Ignore("b/357878245")
     @Test
-    fun defaultParametersInFakeOverrideVirtualComposableFunctions() {
+    fun defaultParametersInFakeOverrideOpenComposableFunctions() {
         compile(
             mapOf(
                 "Base" to mapOf(

@@ -1,6 +1,6 @@
+// IGNORE_INLINER: IR
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
-
 package builders
 inline fun call(crossinline init: () -> Unit) {
     return init()

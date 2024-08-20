@@ -254,8 +254,8 @@ internal class KaFe10ExpressionTypeProvider(
                 if (expression == parentExpression.statements.lastOrNull()) {
                     val functionLiteral = parentExpression.parent as? KtFunctionLiteral
                     if (functionLiteral != null) {
-                        val functionalType = computeExpectedType(functionLiteral) as? KaFunctionType
-                        functionalType?.returnType?.let { return it }
+                        val functionType = computeExpectedType(functionLiteral) as? KaFunctionType
+                        functionType?.returnType?.let { return it }
                     }
                 }
             }

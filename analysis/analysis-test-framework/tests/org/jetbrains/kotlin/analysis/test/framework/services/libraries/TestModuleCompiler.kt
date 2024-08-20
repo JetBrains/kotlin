@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
@@ -18,18 +20,28 @@ import kotlin.io.path.div
 import kotlin.io.path.writeText
 
 abstract class TestModuleCompiler : TestService {
-    fun compileTestModuleToLibrary(module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
-        val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath()
-        for (testFile in module.files) {
-            val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
-            val filePath = tmpDir / testFile.relativePath
-            filePath.parent.createDirectories()
+    fun compileTestModuleToLibrary(module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): CompilationResult {
+        val byRoot = module.files.groupBy { it.directives[Directives.BINARY_ROOT].singleOrNull() }
+        val binary = mutableListOf<Path>()
+        val sources = mutableListOf<Path>()
+        byRoot.entries.forEach { (binaryRootName, files) ->
+            val tmpDir = KtTestUtil.tmpDir("testSourcesToCompile").toPath().let { if (binaryRootName != null) it / binaryRootName else it }
+            files.forEach { testFile ->
+                val text = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
+                val filePath = tmpDir / testFile.relativePath
+                filePath.parent.createDirectories()
 
-            val tmpSourceFile = filePath.createFile()
-            tmpSourceFile.writeText(text)
+                val tmpSourceFile = filePath.createFile()
+                tmpSourceFile.writeText(text)
+            }
+
+            binary.add(compile(tmpDir, module, dependencyBinaryRoots, testServices))
+            sources.add(compileSources(files, module, testServices))
         }
-        return compile(tmpDir, module, dependencyBinaryRoots, testServices)
+        return CompilationResult(binary, sources)
     }
+
+    data class CompilationResult(val binaries: List<Path>, val sources: List<Path>)
 
     abstract fun compile(
         tmpDir: Path,
@@ -38,10 +50,11 @@ abstract class TestModuleCompiler : TestService {
         testServices: TestServices,
     ): Path
 
-    abstract fun compileTestModuleToLibrarySources(module: TestModule, testServices: TestServices): Path?
+    abstract fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path
 
     object Directives : SimpleDirectivesContainer() {
         val COMPILER_ARGUMENTS by stringDirective("List of additional compiler arguments")
         val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
+        val BINARY_ROOT by stringDirective("A library root to which a file will be compiled", DirectiveApplicability.File)
     }
 }

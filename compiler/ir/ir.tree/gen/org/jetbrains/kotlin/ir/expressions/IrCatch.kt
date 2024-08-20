@@ -22,6 +22,8 @@ abstract class IrCatch : IrElementBase(), IrElement {
 
     abstract var result: IrExpression
 
+    abstract var origin: IrStatementOrigin?
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCatch(this, data)
 

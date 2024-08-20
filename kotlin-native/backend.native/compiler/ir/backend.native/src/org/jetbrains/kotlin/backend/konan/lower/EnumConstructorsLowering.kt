@@ -122,7 +122,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         body.setDeclarationsParent(this)
                     }
 
-            fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
+            fun createSynthesizedValueParameter(name: String, type: IrType): IrValueParameter =
                     context.irFactory.createValueParameter(
                             startOffset = startOffset,
                             endOffset = endOffset,
@@ -131,7 +131,6 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                             type = type,
                             isAssignable = false,
                             symbol = IrValueParameterSymbolImpl(),
-                            index = index,
                             varargElementType = null,
                             isCrossinline = false,
                             isNoinline = false,
@@ -140,10 +139,10 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         parent = loweredConstructor
                     }
 
-            loweredConstructor.valueParameters += createSynthesizedValueParameter(0, "name", context.irBuiltIns.stringType)
-            loweredConstructor.valueParameters += createSynthesizedValueParameter(1, "ordinal", context.irBuiltIns.intType)
+            loweredConstructor.valueParameters += createSynthesizedValueParameter("name", context.irBuiltIns.stringType)
+            loweredConstructor.valueParameters += createSynthesizedValueParameter("ordinal", context.irBuiltIns.intType)
             loweredConstructor.valueParameters += constructor.valueParameters.map {
-                it.copyTo(loweredConstructor, index = it.loweredIndex).apply {
+                it.copyTo(loweredConstructor).apply {
                     loweredEnumConstructorParameters[it] = this
                 }
             }

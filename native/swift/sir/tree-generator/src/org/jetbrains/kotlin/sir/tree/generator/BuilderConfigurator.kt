@@ -23,6 +23,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "SirVisibility.PUBLIC")
         }
 
+        configureFieldInAllLeafBuilders("modality") {
+            default(it, "SirClassModality.UNSPECIFIED")
+        }
+
         builder(setter) {
             default("parameterName", "\"newValue\"")
         }

@@ -1,0 +1,8 @@
+@java.lang.Override
+open fun func(): kotlin.Int!
+
+open val prop: kotlin.Int!
+  @java.lang.Override
+  get()
+
+constructor(integer: kotlin.Int!)

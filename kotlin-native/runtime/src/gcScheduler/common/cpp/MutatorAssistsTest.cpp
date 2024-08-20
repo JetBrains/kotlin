@@ -95,7 +95,7 @@ private:
     }
 
     MutatorAssists assists_;
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutatorMapMutex_;
+    RWSpinLock mutatorMapMutex_;
     std::map<mm::ThreadData*, Mutator*> mutatorMap_;
 };
 

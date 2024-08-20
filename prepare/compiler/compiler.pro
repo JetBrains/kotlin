@@ -325,8 +325,11 @@
     public ** plusAll(java.util.Map);
 }
 
-# This class is needed for test framework
+# These classes is needed for test framework
 -keep class com.intellij.openapi.util.text.StringUtil { *; }
+-keepclassmembers class com.intellij.openapi.util.io.NioFiles {
+    public static void deleteRecursively(java.nio.file.Path);
+}
 
 
 # This is used from standalone analysis API, which is NOT a part of the compiler but is bundled into kotlin-annotation-processing.

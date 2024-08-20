@@ -62,6 +62,10 @@ object SMAPBuilder {
         lineMappings.joinToString("") { it.toSMAP(id, mapToFirstLine) }
 }
 
+/**
+ * This class is an "SMAP delegate". It uses the info from [smap] and fills [parent].
+ * Used mostly to fill line numbers of an inlined function.
+ */
 class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val callSite: SourcePosition? = null) {
     private val visitedLines = Int2IntOpenHashMap()
     private var lastVisitedRange: RangeMapping? = null
@@ -96,6 +100,9 @@ class SourceMapCopyingMethodVisitor(private val smapCopier: SourceMapCopier, mv:
 
 data class SourcePosition(val line: Int, val file: String, val path: String)
 
+/**
+ * This class allows us to build new SMAP from scratch by mapping lines one by one.
+ */
 class SourceMapper(val sourceInfo: SourceInfo?) {
     constructor(name: String?, original: SMAP) : this(original.fileMappings.firstOrNull { it.name == name }?.toSourceInfo())
 
@@ -141,6 +148,10 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     }
 }
 
+/**
+ * Represents SMAP as a structure that is contained in `SourceDebugExtension` attribute of a class.
+ * This structure is immutable, we can only query for a result.
+ */
 class SMAP(val fileMappings: List<FileMapping>) {
     // assuming disjoint line mappings (otherwise binary search can't be used anyway)
     private val intervals = fileMappings.flatMap { it.lineMappings }.sortedBy { it.dest }

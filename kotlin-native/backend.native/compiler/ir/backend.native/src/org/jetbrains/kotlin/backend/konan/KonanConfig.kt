@@ -101,9 +101,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
-    val disableAllocatorOverheadEstimate: Boolean by lazy {
-        configuration.get(BinaryOptions.disableAllocatorOverheadEstimate) ?: false
-    }
     val packFields: Boolean by lazy {
         configuration.get(BinaryOptions.packFields) ?: true
     }

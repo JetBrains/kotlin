@@ -275,6 +275,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         }
 
     @Argument(
+        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
+        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine."
+    )
+    var includeUnavailableSourcesIntoSourceMap = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",
         description = "Dump reachability information collected about declarations while performing DCE to a file. " +
@@ -617,6 +627,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         description = "Use an updated version of the exception proposal with try_table."
     )
     var wasmUseNewExceptionProposal = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-attach-js-exception",
+        description = "Attach a thrown by JS-value to the JsException class"
+    )
+    var wasmUseJsTag: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

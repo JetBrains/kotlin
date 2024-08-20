@@ -100,7 +100,7 @@ private:
     }
 
     void DumpThread(ThreadData& thread) {
-        RuntimeLogDebug({kTagMemDump}, "Dumping thread %d", thread.threadId());
+        RuntimeLogDebug({kTagMemDump}, "Dumping thread %" PRIuPTR, thread.threadId());
         DumpU8(TAG_THREAD);
         DumpId(&thread);
     }

@@ -4,15 +4,15 @@ plugins {
 }
 
 dependencies {
-    testApi(projectTests(":compiler"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:fir2ir"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":compiler:fir:fir2ir"))
+    testRuntimeOnly(projectTests(":compiler"))
+
+    testImplementation(libs.junit4)
+    testImplementation(project(":kotlin-stdlib"))
+    testImplementation(project(":libraries:tools:abi-comparator"))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.platform.runner)
     testImplementation(libs.junit.platform.suite.api)

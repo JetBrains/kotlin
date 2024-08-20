@@ -104,6 +104,12 @@ internal object DataFlowIR {
     class FunctionParameter(val type: Type, val boxFunction: FunctionSymbol?, val unboxFunction: FunctionSymbol?)
 
     abstract class FunctionSymbol(val attributes: Int, val irDeclaration: IrDeclaration?, val name: String?) {
+        init {
+            require(irDeclaration == null || irDeclaration is IrSimpleFunction || irDeclaration is IrField) {
+                "Unexpected declaration: ${irDeclaration?.render()}"
+            }
+        }
+
         lateinit var parameters: Array<FunctionParameter>
         lateinit var returnParameter: FunctionParameter
 
@@ -112,7 +118,7 @@ internal object DataFlowIR {
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
         val explicitlyExported = attributes.and(FunctionAttributes.EXPLICITLY_EXPORTED) != 0
 
-        val irFunction: IrFunction? get() = irDeclaration as? IrFunction
+        val irFunction: IrSimpleFunction? get() = irDeclaration as? IrSimpleFunction
         val irFile: IrFile? get() = irDeclaration?.fileOrNull
 
         var escapes: Int? = null
@@ -211,19 +217,13 @@ internal object DataFlowIR {
         object Null : Node()
 
         open class Call(val callee: FunctionSymbol, val arguments: List<Edge>, val returnType: Type,
-                        open val irCallSite: IrFunctionAccessExpression?) : Node()
+                        val irCallSite: IrCall?) : Node()
 
-        class StaticCall(callee: FunctionSymbol, arguments: List<Edge>,
-                         val receiverType: Type?, returnType: Type, irCallSite: IrFunctionAccessExpression?)
+        class StaticCall(callee: FunctionSymbol, arguments: List<Edge>, returnType: Type, irCallSite: IrCall?)
             : Call(callee, arguments, returnType, irCallSite)
 
-        // TODO: It can be replaced with a pair(AllocInstance, constructor Call), remove.
-        class NewObject(constructor: FunctionSymbol, arguments: List<Edge>,
-                        val constructedType: Type, override val irCallSite: IrConstructorCall?)
-            : Call(constructor, arguments, constructedType, irCallSite)
-
         open class VirtualCall(callee: FunctionSymbol, arguments: List<Edge>,
-                               val receiverType: Type, returnType: Type, override val irCallSite: IrCall?)
+                               val receiverType: Type, returnType: Type, irCallSite: IrCall?)
             : Call(callee, arguments, returnType, irCallSite)
 
         class VtableCall(callee: FunctionSymbol, receiverType: Type, val calleeVtableIndex: Int,
@@ -236,7 +236,11 @@ internal object DataFlowIR {
 
         class Singleton(val type: Type, val constructor: FunctionSymbol?, val arguments: List<Edge>?) : Node()
 
-        class AllocInstance(val type: Type, val irCallSite: IrCall?) : Node()
+        sealed class Alloc(val type: Type, val irCallSite: IrCall?) : Node()
+
+        class AllocInstance(type: Type, irCallSite: IrCall?) : Alloc(type, irCallSite)
+
+        class AllocArray(type: Type, val size: Edge, irCallSite: IrCall?) : Alloc(type, irCallSite)
 
         class FunctionReference(val symbol: FunctionSymbol, val type: Type, val returnType: Type) : Node()
 
@@ -304,6 +308,9 @@ internal object DataFlowIR {
                 is Node.AllocInstance ->
                     "        ALLOC INSTANCE ${node.type}"
 
+                is Node.AllocArray ->
+                    "        ALLOC ARRAY ${node.type} of size #${ids[node.size.node]!!}"
+
                 is Node.FunctionReference ->
                     "        FUNCTION REFERENCE ${node.symbol}"
 
@@ -329,15 +336,6 @@ internal object DataFlowIR {
                     appendLine("        INTERFACE CALL ${node.callee}. Return type = ${node.returnType}")
                     appendLine("            RECEIVER: ${node.receiverType}")
                     append("            INTERFACE ID: ${node.interfaceId}. ITABLE INDEX: ${node.calleeItableIndex}")
-                    appendList(node.arguments) {
-                        append("            ARG #${ids[it.node]!!}")
-                        appendCastTo(it.castToType)
-                    }
-                }
-
-                is Node.NewObject -> buildString {
-                    appendLine("        NEW OBJECT ${node.callee}")
-                    append("        CONSTRUCTED TYPE ${node.constructedType}")
                     appendList(node.arguments) {
                         append("            ARG #${ids[it.node]!!}")
                         appendCastTo(it.castToType)
@@ -444,7 +442,7 @@ internal object DataFlowIR {
                     element.acceptChildrenVoid(this)
                 }
 
-                override fun visitFunction(declaration: IrFunction) {
+                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                     declaration.body?.let { mapFunction(declaration) }
                 }
 
@@ -569,12 +567,12 @@ internal object DataFlowIR {
                 }
 
         fun mapFunction(declaration: IrDeclaration): FunctionSymbol = when (declaration) {
-            is IrFunction -> mapFunction(declaration)
+            is IrSimpleFunction -> mapFunction(declaration)
             is IrField -> mapPropertyInitializer(declaration)
             else -> error("Unknown declaration: $declaration")
         }
 
-        private fun mapFunction(function: IrFunction): FunctionSymbol = function.target.let {
+        private fun mapFunction(function: IrSimpleFunction): FunctionSymbol = function.target.let {
             functionMap[it]?.let { return it }
 
             val parent = it.parent
@@ -584,7 +582,7 @@ internal object DataFlowIR {
             }
             val name = "kfun:$containingDeclarationPart${it.computeFunctionName()}"
 
-            val returnsUnit = it is IrConstructor || it.returnType.isUnit()
+            val returnsUnit = it.returnType.isUnit()
             val returnsNothing = it.returnType.isNothing()
             var attributes = 0
             if (returnsUnit)
@@ -601,10 +599,9 @@ internal object DataFlowIR {
                 it.isExternal || it.isBuiltInOperator -> {
                     val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
                     val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
-                    @Suppress("UNCHECKED_CAST")
-                    val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value
-                    @Suppress("UNCHECKED_CAST")
-                    val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements?.map { (it as IrConst<Int>).value }
+                    val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst)?.value as? Int
+                    val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements
+                            ?.map { (it as IrConst).value as Int }
                     FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported()).apply {
                         escapes  = escapesBitMask
                         pointsTo = pointsToBitMask?.toIntArray()
@@ -612,14 +609,14 @@ internal object DataFlowIR {
                 }
 
                 else -> {
-                    val isAbstract = it is IrSimpleFunction && it.modality == Modality.ABSTRACT
+                    val isAbstract = it.modality == Modality.ABSTRACT
                     val irClass = it.parent as? IrClass
                     val bridgeTarget = it.bridgeTarget
                     val isSpecialBridge = bridgeTarget.let {
                         it != null && it.getDefaultValueForOverriddenBuiltinFunction() != null
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
-                    val placeToFunctionsTable = !isAbstract && it !is IrConstructor && irClass != null
+                    val placeToFunctionsTable = !isAbstract && irClass != null
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     val functionSymbol = if (it.isExported())
@@ -639,7 +636,7 @@ internal object DataFlowIR {
             return symbol
         }
 
-        private val IrFunction.isSpecial get() =
+        private val IrSimpleFunction.isSpecial get() =
             origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
                     || origin is DECLARATION_ORIGIN_BRIDGE_METHOD
 

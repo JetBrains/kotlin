@@ -77,7 +77,7 @@ internal abstract class IrConstExpressionTransformer(
         )
 
         fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression = wrapInStringConcat().interpret(failAsError = data.inConstantExpression)
-        fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst<*>) value.toString() else ""
+        fun IrExpression.getConstStringOrEmpty(): String = if (this is IrConst) value.toString() else ""
 
         // If we have some complex expression in arguments (like some `IrComposite`) we will skip it,
         // but we must visit this argument in order to apply all possible optimizations.
@@ -99,7 +99,7 @@ internal abstract class IrConstExpressionTransformer(
                 }
                 else -> {
                     val nextAsConst = next.wrapInToStringConcatAndInterpret()
-                    if (nextAsConst !is IrConst<*>) {
+                    if (nextAsConst !is IrConst) {
                         folded += next
                         buildersList.add(StringBuilder(next.getConstStringOrEmpty()))
                     } else {
@@ -114,7 +114,7 @@ internal abstract class IrConstExpressionTransformer(
             }
         }
 
-        val foldedConst = folded.singleOrNull() as? IrConst<*>
+        val foldedConst = folded.singleOrNull() as? IrConst
         if (foldedConst != null && foldedConst.value is String) {
             return IrConstImpl.string(expression.startOffset, expression.endOffset, expression.type, buildersList.single().toString())
         }

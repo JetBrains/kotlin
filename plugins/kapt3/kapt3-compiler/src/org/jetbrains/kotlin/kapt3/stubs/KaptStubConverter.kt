@@ -491,11 +491,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
-        val declarationDescriptor = kaptContext.bindingContext[BindingContext.CLASS, declaration] ?: return defaultSuperTypes
-
-        if (typeMapper.mapType(declarationDescriptor.defaultType) != Type.getObjectType(clazz.name)) {
-            return defaultSuperTypes
-        }
+        if (declaration.computeJvmInternalName() != clazz.name) return defaultSuperTypes
 
         val (superClass, superInterfaces) = partitionSuperTypes(declaration) ?: return defaultSuperTypes
 
@@ -1112,7 +1108,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             val ktFile = typeFromSource?.containingKtFile
             if (ktFile != null) {
                 @Suppress("UNCHECKED_CAST")
-                return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource, emptyMap()) as T
+                return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource) as T
             }
         }
 

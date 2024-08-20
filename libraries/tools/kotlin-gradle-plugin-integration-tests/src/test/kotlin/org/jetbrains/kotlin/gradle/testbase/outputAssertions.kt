@@ -156,7 +156,7 @@ fun BuildResult.assertNoBuildWarnings(
 }
 
 val expectedK2KaptWarnings = setOf(
-    "w: Kapt currently doesn't support language version 2.0+. Falling back to 1.9."
+    "w: Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9."
 )
 
 /**

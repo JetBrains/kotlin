@@ -37,7 +37,7 @@ val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
     get() {
         val isK2 = (languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
         val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-        return isK2 && isKaptUsed && !useKapt4
+        return isK2 && isKaptUsed && !useK2Kapt
     }
 
 fun K2JVMCompilerArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault: Boolean): Boolean {

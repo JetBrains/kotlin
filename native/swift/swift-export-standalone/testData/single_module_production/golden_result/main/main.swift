@@ -30,7 +30,7 @@ public extension main.org.kotlin.baz {
 }
 public extension main.org.kotlin.foo {
     public typealias Typealias = Swift.Int32
-    public class Clazz : KotlinRuntime.KotlinBase {
+    public final class Clazz : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = org_kotlin_foo_Clazz_init_allocate()
             super.init(__externalRCRef: __kt)

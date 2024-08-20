@@ -21,7 +21,7 @@ class IrConstantPrimitiveImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override var value: IrConst<*>,
+    override var value: IrConst,
 ) : IrConstantPrimitive() {
     override var attributeOwnerId: IrAttributeContainer = this
 

@@ -531,7 +531,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         get() = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        if (checkCompilerVersion(configuration)) {
+        if (checkCompilerConfiguration(configuration)) {
             val usesK2 = configuration.languageVersionSettings.languageVersion.usesK2
             val descriptorSerializerContext =
                 if (usesK2) null
@@ -553,7 +553,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
     }
 
     companion object {
-        fun checkCompilerVersion(configuration: CompilerConfiguration): Boolean {
+        fun checkCompilerConfiguration(configuration: CompilerConfiguration): Boolean {
             val msgCollector = configuration.messageCollector
             val suppressKotlinVersionCheck = configuration.get(ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK)
             if (suppressKotlinVersionCheck != null) {
@@ -568,7 +568,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             if (decoysEnabled) {
                 msgCollector.report(
                     CompilerMessageSeverity.ERROR,
-                    "Decoys generation should be disabled for Compose Multiplatform projects"
+                    "Decoys generation is no longer supported by the Compose compiler."
                 )
                 return false
             }
@@ -634,9 +634,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val nonSkippingGroupOptimizationEnabled = configuration.get(
                 ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
                 FeatureFlag.OptimizeNonSkippingGroups.default
-            )
-            val decoysEnabled = configuration.getBoolean(
-                ComposeConfiguration.DECOYS_ENABLED_KEY,
             )
             val metricsDestination = configuration.get(
                 ComposeConfiguration.METRICS_DESTINATION_KEY,
@@ -714,7 +711,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
                 sourceInformationEnabled = sourceInformationEnabled,
                 traceMarkersEnabled = traceMarkersEnabled,
-                decoysEnabled = decoysEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
                 irVerificationMode = irVerificationMode,

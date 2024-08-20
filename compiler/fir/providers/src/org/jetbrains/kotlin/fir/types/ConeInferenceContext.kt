@@ -531,7 +531,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return buildList {
             // excluding return type
             for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
-                add(builtInFunctionType.getArgument(index).getType())
+                val type = when (val arg = builtInFunctionType.getArgument(index)) {
+                    is ConeKotlinTypeProjection -> arg.type
+                    else -> StandardClassIds.Any.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isNullable = true)
+                }
+                add(type)
             }
         }
     }
@@ -542,17 +546,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        val simpleType = fullyExpandedType(session).lowerBoundIfFlexible() as ConeRigidType
+        val rigidType = fullyExpandedType(session).lowerBoundIfFlexible() as ConeRigidType
 
         return when {
-            simpleType.isSomeFunctionType(session) -> this
-            simpleType is ConeCapturedType -> {
-                simpleType.constructor.supertypes?.firstNotNullOfOrNull { it.getFunctionTypeFromSupertypes() }
+            rigidType.isSomeFunctionType(session) -> this
+            rigidType is ConeCapturedType -> {
+                rigidType.constructor.supertypes?.firstNotNullOfOrNull { it.getFunctionTypeFromSupertypes() }
+            }
+            rigidType is ConeTypeParameterType -> {
+                rigidType.lookupTag.typeParameterSymbol.resolvedBounds.firstNotNullOfOrNull { it.coneType.getFunctionTypeFromSupertypes() }
             }
             else -> {
                 var functionalSupertype: KotlinTypeMarker? = null
-                simpleType.anySuperTypeConstructor { type ->
-                    simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
+                rigidType.anySuperTypeConstructor { type ->
+                    // `fastCorrespondingSupertypes` only works for `ConeClassLikeType`.
+                    // We need a special case above for every type for which `TypeConstructorMarker.supertypes`
+                    // returns something non-trivial.
+                    rigidType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
                         val isFunction = (superType as ConeKotlinType).isSomeFunctionType(session)
                         if (isFunction) {
                             functionalSupertype = superType
@@ -562,8 +572,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 }
                 functionalSupertype
             }
-        } ?: errorWithAttachment("Failed to find functional supertype for ${simpleType::class.java}") {
-            withConeTypeEntry("type", simpleType)
+        } ?: errorWithAttachment(
+            """
+            Failed to find functional supertype for ${rigidType::class.java}.
+            The contract of this function is that it returns a non-null value iff `isBuiltinFunctionTypeOrSubtype` returns `true`.
+            """.trimIndent()
+        ) {
+            withConeTypeEntry("type", rigidType)
         }
     }
 

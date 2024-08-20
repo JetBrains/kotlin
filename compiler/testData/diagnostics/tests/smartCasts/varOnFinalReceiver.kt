@@ -64,3 +64,23 @@ fun test5() {
     b.x as String
     <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length // bad
 }
+
+fun test6(){
+    var b  = Stable()
+    b.x as String
+    invokeLater {
+        <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length
+        b = Stable()
+    }
+}
+
+fun test7(){
+    var b  = Stable()
+
+    invokeLater {
+        b.x as String
+        <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length
+    }
+
+    b = Stable()
+}

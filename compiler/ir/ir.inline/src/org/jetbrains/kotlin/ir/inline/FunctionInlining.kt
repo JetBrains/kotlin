@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -147,7 +148,7 @@ open class FunctionInlining(
             }
 
             override fun visitElement(element: IrElement) {
-                if (element is IrAttributeContainer) element.setUpCorrectAttributeOwner()
+                if (element is IrAttributeContainer && element !is IrInlinedFunctionBlock) element.setUpCorrectAttributeOwner()
                 element.acceptChildrenVoid(this)
             }
         })
@@ -210,11 +211,14 @@ open class FunctionInlining(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
-                inlineCall = callSite,
                 inlinedElement = originalInlinedElement,
                 origin = null,
                 statements = evaluationStatements + newStatements
-            )
+            ).apply {
+                // `inlineCall` is required only for JVM backend only, but this inliner is common, so we need opt-in.
+                @OptIn(JvmIrInlineExperimental::class)
+                this.inlineCall = callSite
+            }
 
             // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
             // control special composite blocks that are inside `IrInlinedFunctionBlock`
@@ -732,9 +736,9 @@ open class FunctionInlining(
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                     // If original type of parameter is T, then `parameter.type` is T after substitution or erasure,
                     // depending on whether T reified or not.
-                    parameter.type
+                    type = parameter.type
                 ).apply {
-                    statements.add(variableInitializer)
+                    statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                 isMutable = false,

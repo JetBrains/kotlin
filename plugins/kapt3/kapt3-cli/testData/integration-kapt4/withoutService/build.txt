@@ -21,7 +21,7 @@ ap/Processor.kt
 
 # kapt
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
 -Kapt-sources=output/sources

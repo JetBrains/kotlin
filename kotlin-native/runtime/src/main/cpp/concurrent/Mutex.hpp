@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 #ifndef RUNTIME_MUTEX_H
@@ -32,15 +21,16 @@ enum class MutexThreadStateHandling {
     kIgnore, kSwitchIfRegistered
 };
 
-template <MutexThreadStateHandling threadStateHandling>
-class SpinLock;
-
-namespace internal {
-
-class SpinLockBase : private Pinned {
+class SpinLock : private Pinned {
 public:
     bool try_lock() noexcept {
         return !flag_.test_and_set(std::memory_order_acquire);
+    }
+
+    void lock() noexcept {
+        while(!try_lock()) {
+            std::this_thread::yield();
+        }
     }
 
     void unlock() noexcept {
@@ -51,45 +41,32 @@ private:
     std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
 };
 
-}
-
-template <>
-class SpinLock<MutexThreadStateHandling::kIgnore> : public internal::SpinLockBase {
+template<typename Mutex>
+class ThreadStateAware : private Pinned {
 public:
-    void lock() noexcept {
-        while(!try_lock()) {
-            yield();
-        }
-    }
-
-private:
-    // No need to check for external calls, because we explicitly ignore thread state.
-    static NO_EXTERNAL_CALLS_CHECK NO_INLINE void yield() {
-        std::this_thread::yield();
-    }
-};
-
-template <>
-class SpinLock<MutexThreadStateHandling::kSwitchIfRegistered> : public internal::SpinLockBase {
-public:
-    void lock() noexcept {
+    void lock() noexcept(noexcept(std::declval<Mutex>().lock())) {
         // Fast path without thread state switching.
         if (try_lock()) {
             return;
         }
 
         kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-        while (!try_lock()) {
-            std::this_thread::yield();
-        }
+        mutex_.lock();
     }
+
+    bool try_lock() noexcept(noexcept(std::declval<Mutex>().lock())) {
+        return mutex_.try_lock();
+    }
+
+    void unlock() noexcept(noexcept(std::declval<Mutex>().unlock())) {
+        mutex_.unlock();
+    }
+
+private:
+    Mutex mutex_{};
 };
 
-template <MutexThreadStateHandling threadStateHandling>
-class RWSpinLock;
-
-template <>
-class RWSpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
+class RWSpinLock : private Pinned {
     using State = uint64_t;
 
 public:

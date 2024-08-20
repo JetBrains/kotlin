@@ -45,6 +45,7 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
 
     for ((argument, parameter) in argumentMapping) {
         val lambda = argument.expression.unwrapAnonymousFunctionExpression() ?: continue
+        lambda.transformInlineStatus(parameter, isInline, session)
         val kind = byParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {
             // Inline functional parameters have to be called in-place; that's the only permitted operation on them.
             isInline && !parameter.isNoinline && !parameter.isCrossinline &&

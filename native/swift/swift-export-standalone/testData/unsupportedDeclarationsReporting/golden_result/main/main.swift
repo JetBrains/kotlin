@@ -1,8 +1,8 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public class Foo : KotlinRuntime.KotlinBase {
-    public class Nested : KotlinRuntime.KotlinBase {
+public final class Foo : KotlinRuntime.KotlinBase {
+    public final class Nested : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Foo_Nested_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -28,7 +28,7 @@ public class Foo : KotlinRuntime.KotlinBase {
 // Can't export ext: extension functions are not supported yet.
 // Can't export foo: inline functions are not supported yet.
 // Can't export MyInterface: interface classifiers are not supported yet.
-// Can't export a.b.c.A: non-final classes are not supported yet.
+// Can't export a.b.c.A: abstract classes are not supported yet.
 // Can't export a.b.c.E: enum_class classifiers are not supported yet.
 // Can't export Foo.Inner: inner classes are not supported yet.
 // Can't export Foo.Nested.plus: operators are not supported yet.

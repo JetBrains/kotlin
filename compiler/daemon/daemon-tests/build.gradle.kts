@@ -12,7 +12,7 @@ dependencies {
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(libs.junit4)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:tests-integration"))
     testImplementation(intellijCore())
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)

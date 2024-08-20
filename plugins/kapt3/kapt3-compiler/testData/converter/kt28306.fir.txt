@@ -1,19 +1,45 @@
 package foo;
 
 /**
- * public abstract interface foo/InterfaceWithDefaults<T#0 (* T *)> : kotlin/Any {
+ * public abstract interface foo/InterfaceWithDefaults<T#0 (* T *)> : error/NonExistentClass, error/NonExistentClass {
  *
  *   // signature: foo()V
  *   public open fun foo(): kotlin/Unit
+ *
+ *   // nested class: Nested
  *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
+public abstract interface InterfaceWithDefaults<T extends java.lang.Object> extends Error1, Error2 {
 
     public abstract void foo();
 
+    /**
+     * public abstract interface foo/InterfaceWithDefaults.Nested<T#0 (* S *)> : error/NonExistentClass, error/NonExistentClass {
+     *
+     *   // signature: bar()V
+     *   public open fun bar(): kotlin/Unit
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static abstract interface Nested<S extends java.lang.Object> extends Error1, Error2 {
+
+        public abstract void bar();
+
+        /**
+         * synthetic class
+         */
+        @kotlin.Metadata()
+        public static final class DefaultImpls {
+
+            public static <S extends java.lang.Object>void bar(@org.jetbrains.annotations.NotNull() foo.InterfaceWithDefaults.Nested<S> $this) {
+            }
+        }
+    }
     /**
      * synthetic class
      */

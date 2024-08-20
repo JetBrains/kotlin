@@ -18,7 +18,6 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.SourceSetCompatibilityHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -136,9 +133,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         withJavaEnabled = true
 
         project.plugins.apply(JavaBasePlugin::class.java)
-        val javaSourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-            .getInstance(project)
-            .sourceSets
+        val javaSourceSets = project.javaSourceSets
         AbstractKotlinPlugin.setUpJavaSourceSets(this, duplicateJavaSourceSetsAsKotlinSourceSets = false)
 
         // Below, some effort is made to ensure that a user or 3rd-party plugin that inspects or interacts
@@ -161,17 +156,17 @@ abstract class KotlinJvmTarget @Inject constructor(
                 compilation.output.classesDirs.minus(javaClasses)
             )
 
-            javaSourceSet.output.setResourcesDir(Callable { compilation.output.resourcesDirProvider })
+            javaSourceSet.output.setResourcesDir(Callable {
+                @Suppress("DEPRECATION")
+                compilation.output.resourcesDirProvider
+            })
 
             setupDependenciesCrossInclusionForJava(compilation, javaSourceSet)
         }
 
         project.launchInStage(AfterFinaliseDsl) {
-            val sourceSetCompatibilityHelper = project
-                .variantImplementationFactory<SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory>()
-                .getInstance()
             javaSourceSets.all { javaSourceSet ->
-                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet, sourceSetCompatibilityHelper)
+                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
             }
         }
 
@@ -259,20 +254,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             project.addExtendsFromRelation(javaSourceSet.runtimeClasspathConfigurationName, configurationName)
         }
 
-        // Add the Java source set dependencies to the Kotlin compilation compile & runtime configurations:
-
-        val sourceSetCompatibilityHelper = project
-            .variantImplementationFactory<SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory>()
-            .getInstance()
-
-        val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            sourceSetCompatibilityHelper
-                .getCompileConfigurationName(javaSourceSet)
-                ?.takeIf { project.configurations.findByName(it) != null }
-        } else null
-
         listOfNotNull(
-            compileConfigurationName,
             javaSourceSet.compileOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName
@@ -280,14 +262,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             project.addExtendsFromRelation(compilation.compileDependencyConfigurationName, configurationName)
         }
 
-        val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            sourceSetCompatibilityHelper
-                .getRuntimeConfigurationName(javaSourceSet)
-                ?.takeIf { project.configurations.findByName(it) != null }
-        } else null
-
         listOfNotNull(
-            runtimeConfigurationName,
             javaSourceSet.runtimeOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName
@@ -298,24 +273,9 @@ abstract class KotlinJvmTarget @Inject constructor(
 
     private fun copyUserDefinedAttributesToJavaConfigurations(
         javaSourceSet: SourceSet,
-        sourceSetCompatibilityHelper: SourceSetCompatibilityHelper
     ) {
-        val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            sourceSetCompatibilityHelper
-                .getCompileConfigurationName(javaSourceSet)
-                ?.takeIf { project.configurations.findByName(it) != null }
-        } else null
-
-        val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            sourceSetCompatibilityHelper
-                .getRuntimeConfigurationName(javaSourceSet)
-                ?.takeIf { project.configurations.findByName(it) != null }
-        } else null
-
         listOfNotNull(
-            compileConfigurationName,
             javaSourceSet.compileClasspathConfigurationName,
-            runtimeConfigurationName,
             javaSourceSet.runtimeClasspathConfigurationName,
             javaSourceSet.apiConfigurationName,
             javaSourceSet.implementationConfigurationName,
@@ -327,12 +287,6 @@ abstract class KotlinJvmTarget @Inject constructor(
             copyAttributesTo(project, dest = configuration)
         }
     }
-
-    /**
-     * Check if "compile" and "runtime" configurations are still available in current Gradle version.
-     */
-    private fun areRuntimeOrCompileConfigurationsAvailable(): Boolean =
-        GradleVersion.version(project.gradle.gradleVersion) <= GradleVersion.version("6.8.3")
 
     @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions = project.objects

@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.inlinedFunctionBlock]
  */
 abstract class IrInlinedFunctionBlock : IrBlock() {
-    abstract var inlineCall: IrFunctionAccessExpression
-
     abstract var inlinedElement: IrElement
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

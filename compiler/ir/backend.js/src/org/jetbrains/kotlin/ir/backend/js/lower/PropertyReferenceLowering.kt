@@ -69,7 +69,6 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
             val valueParameters = boundArguments.mapIndexed { i, arg ->
                 buildValueParameter(factoryDeclaration) {
                     type = arg.type
-                    index = i
                     name = Name.identifier("\$b$i")
                 }
             }

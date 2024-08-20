@@ -106,6 +106,18 @@ public class FirIdeNormalAnalysisLibraryBinaryModuleAbbreviatedTypeTestGenerated
   }
 
   @Test
+  @TestMetadata("NullableFunctionAlias.kt")
+  public void testNullableFunctionAlias() {
+    runTest("analysis/analysis-api/testData/types/abbreviatedType/NullableFunctionAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableFunctionAliasFromLibrary.kt")
+  public void testNullableFunctionAliasFromLibrary() {
+    runTest("analysis/analysis-api/testData/types/abbreviatedType/NullableFunctionAliasFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("NullableStringAlias.kt")
   public void testNullableStringAlias() {
     runTest("analysis/analysis-api/testData/types/abbreviatedType/NullableStringAlias.kt");

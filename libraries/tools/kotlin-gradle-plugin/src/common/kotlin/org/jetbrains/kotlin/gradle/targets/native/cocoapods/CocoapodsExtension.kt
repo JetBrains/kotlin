@@ -13,12 +13,11 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.URI
@@ -48,14 +47,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
      */
     fun noPodspec() {
         needPodspec = false
-    }
-
-    /**
-     * Setup plugin to generate synthetic xcodeproj compatible with static libraries
-     */
-    @Deprecated("'useLibraries' mode is removed", level = DeprecationLevel.ERROR)
-    fun useLibraries() {
-        project.kotlinToolingDiagnosticsCollector.report(project, CocoapodsPluginDiagnostics.UseLibrariesUsed())
     }
 
     /**
@@ -111,7 +102,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
     private val anyPodFramework = project.provider {
-        val anyTarget = project.multiplatformExtension.supportedTargets().first()
+        val anyTarget = project.multiplatformExtension.supportedAppleTargets().first()
         val anyFramework = anyTarget.binaries
             .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
             .withType(Framework::class.java)
@@ -225,7 +216,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     }
 
     private fun forAllPodFrameworks(action: Action<in Framework>) {
-        project.multiplatformExtension.supportedTargets().all { target ->
+        project.multiplatformExtension.supportedAppleTargets().all { target ->
             target.binaries
                 .matching { it.name.startsWith(POD_FRAMEWORK_PREFIX) }
                 .withType(Framework::class.java) { action.execute(it) }

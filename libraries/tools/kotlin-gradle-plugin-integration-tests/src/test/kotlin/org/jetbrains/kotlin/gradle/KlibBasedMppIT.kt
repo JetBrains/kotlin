@@ -29,7 +29,10 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 open class KlibBasedMppIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+    override val defaultBuildOptions: BuildOptions = super
+        .defaultBuildOptions
+        .copyEnsuringK1()
+        .disableConfigurationCache_KT70416()
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
@@ -63,7 +66,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
                     assertTrue(isDirectory())
                     deleteRecursively()
                 }
-            publishProjectDepAndAddDependency(validateHostSpecificPublication = false)
+            publishProjectDepAndAddDependency(validateHostSpecificPublication = false, localRepo)
         }
     }
 
@@ -157,7 +160,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
             checkTaskCompileClasspath(
                 "compileWindowsAndLinuxMainKotlinMetadata",
                 checkModulesInClasspath = commonModules + windowsAndLinuxModules,
-                checkModulesNotInClasspath = hostSpecificModules
+                checkModulesNotInClasspath = hostSpecificModules,
             )
 
             // The consumer should correctly receive the klibs of the host-specific source sets
@@ -183,7 +186,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         @TempDir localRepo: Path
     ) {
         testBuildWithDependency(gradleVersion, localRepo) {
-            publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
+            publishProjectDepAndAddDependency(validateHostSpecificPublication = true, localRepo)
         }
     }
 
@@ -266,9 +269,9 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.publishProjectDepAndAddDependency(validateHostSpecificPublication: Boolean) {
+    private fun TestProject.publishProjectDepAndAddDependency(validateHostSpecificPublication: Boolean, localRepo: Path) {
         build(":$dependencyModuleName:publish") {
-            if (validateHostSpecificPublication) checkPublishedHostSpecificMetadata(this@publishProjectDepAndAddDependency)
+            if (validateHostSpecificPublication) checkPublishedHostSpecificMetadata(this@publishProjectDepAndAddDependency, localRepo)
         }
 
         buildGradleKts.appendText(
@@ -385,14 +388,14 @@ open class KlibBasedMppIT : KGPBaseTest() {
             .substringAfter("-classpath ").substringBefore(" -").split(File.pathSeparator)
     }
 
-    private fun BuildResult.checkPublishedHostSpecificMetadata(project: TestProject) {
-        val groupDir = project.projectPath.resolve("repo/com/example")
+    private fun BuildResult.checkPublishedHostSpecificMetadata(project: TestProject, localRepo: Path) {
+        val groupDir = localRepo.resolve("com/example")
 
         assertTasksExecuted(":$dependencyModuleName:compileIosMainKotlinMetadata")
 
         // Check that the metadata JAR doesn't contain the host-specific source set entries, but contains the shared-Native source set
         // that can be built on every host:
-        ZipFile(groupDir.resolve("$dependencyModuleName/1.0/$dependencyModuleName-1.0-all.jar").toFile())
+        ZipFile(groupDir.resolve("$dependencyModuleName/1.0/$dependencyModuleName-1.0.jar").toFile())
             .use { metadataJar ->
                 assertTrue(metadataJar.entries().asSequence().none { it.name.startsWith("iosMain") })
                 assertTrue(metadataJar.entries().asSequence().any { it.name.startsWith("linuxMain") })
@@ -471,14 +474,12 @@ open class KlibBasedMppIT : KGPBaseTest() {
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
-        val taskClass = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>"
-        val expression = """(tasks.getByName("$taskName") as $taskClass).libraries.toList()"""
-        checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
+        checkPrintedItems(subproject, taskName, checkModulesInClasspath, checkModulesNotInClasspath)
     }
 
     private fun TestProject.checkPrintedItems(
         subproject: String?,
-        itemsExpression: String,
+        taskName: String,
         checkAnyItemsContains: List<Regex>,
         checkNoItemContains: List<Regex>,
     ) {
@@ -486,17 +487,18 @@ open class KlibBasedMppIT : KGPBaseTest() {
         val testProject = if (subproject != null) subProject(subproject) else this
         testProject.buildGradleKts.appendText(
             """
-
-            |tasks.register("$printingTaskName") {
-            |    dependsOn("transformDependenciesMetadata")
-            |    doLast {
-            |        println("###$printingTaskName" + $itemsExpression)
+            |
+            |tasks.withType<org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>>().configureEach {
+            |    if (name == "$taskName") {
+            |       doLast {
+            |           println("###$printingTaskName" + libraries.toList())
+            |        }
             |    }
             |}
             """.trimMargin()
         )
 
-        build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
+        build(taskName) {
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
             // NOTE: This does not work for commonized libraries, they may contain the ',' naturally
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()

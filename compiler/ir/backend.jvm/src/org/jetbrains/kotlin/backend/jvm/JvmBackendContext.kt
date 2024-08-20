@@ -97,9 +97,6 @@ class JvmBackendContext(
 
     lateinit var enumEntriesIntrinsicMappingsCache: EnumEntriesIntrinsicMappingsCache
 
-    // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
-    val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
-
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
     ).isNotEmpty()

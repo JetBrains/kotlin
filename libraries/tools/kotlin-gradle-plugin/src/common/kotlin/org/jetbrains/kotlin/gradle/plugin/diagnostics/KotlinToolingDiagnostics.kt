@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
@@ -937,6 +938,19 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(featureName: String, youtrackUrl: String) = build(
+            """
+                Experimental Feature Notice ⚠️
+                
+                $featureName is an experimental feature and subject to change in any future releases.
+                It may not function as you expect and you may encounter bugs. Use it at your own risk.
+                
+                Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack $youtrackUrl.
+            """.trimIndent()
+        )
+    }
+
     object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(usedDeprecatedProperty: String): ToolingDiagnostic {
             return build(
@@ -1009,6 +1023,43 @@ object KotlinToolingDiagnostics {
                 """.trimMargin()
             )
         }
+    }
+
+    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(userScriptSandboxingEnabled: Boolean) = build(
+            """
+            ${if (userScriptSandboxingEnabled) "You" else "BUILT_PRODUCTS_DIR is not accessible, probably you"} have sandboxing for user scripts enabled.
+            In your Xcode project, navigate to "Build Setting",
+            and under "Build Options" set "User script sandboxing" (ENABLE_USER_SCRIPT_SANDBOXING) to "NO".
+            Then, run "./gradlew --stop" to stop the Gradle daemon
+            For more information, see documentation: https://kotl.in/iq4uke
+            """.trimIndent()
+        )
+    }
+
+    object UnsupportedTargetShortcutError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(shortcutName: String, explicitTargets: String, trace: Throwable) = build(
+            """
+            The $shortcutName target shortcut is deprecated and no longer supported.
+            Please explicitly declare your targets using:
+            
+            """.trimIndent() + explicitTargets + """
+                
+            For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
+
+    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion: ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependency: String, includedProjectPath: String): ToolingDiagnostic = build(
+            """
+                Dependency '$dependency' resolved into included build project '$includedProjectPath'. 
+                However Kotlin Multiplatform can't process such dependency with enabled Project Isolation support.
+                Please consider upgrading Kotlin Version to the latest one in '$includedProjectPath' project.
+                Or disable Project Isolation support by setting gradle property: '$KOTLIN_KMP_PORJECT_ISOLATION_ENABLED=false'
+            """.trimIndent()
+        )
     }
 }
 

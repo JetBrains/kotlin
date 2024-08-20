@@ -10,10 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -133,47 +136,75 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
     return null
 }
 
+internal fun Project.commonizedNativeDistributionKlibsOrNull(target: SharedCommonizerTarget): Provider<List<File>>? {
+    val task = commonizeNativeDistributionTask ?: return null
+    return task.flatMap { it.commonizedNativeDistributionLocationFile.map { getCommonizedPlatformLibrariesFor(it.asFile, target) } }
+}
+
+private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: SharedCommonizerTarget): List<File> {
+    val rootOutputDirectory = commonizerFile.readText().trim().let(::File)
+    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
+    return targetOutputDirectory.listLibraryFiles()
+}
+
+private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
+    .filter { it.isDirectory || it.extension == "klib" }
+
+private val Project.addCommonizerTaskToProject
+    get() = if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
+        this
+    } else {
+        rootProject
+    }
+
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
     get() {
         if (!isAllowCommonizer()) return null
-        if (rootProject.nativeProperties.isToolchainEnabled.get()) {
+        val projectIsolationEnabled = kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
+        val addCommonizerTaskToProject = addCommonizerTaskToProject
+
+        if (!projectIsolationEnabled && rootProject.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(rootProject.dependencies.attributesSchema)
             KotlinNativeBundleArtifactFormat.setupTransform(rootProject)
             addKotlinNativeBundleConfiguration(rootProject)
             KotlinNativeBundleBuildService.registerIfAbsent(rootProject)
         }
-        return rootProject.locateOrRegisterTask(
+
+        return addCommonizerTaskToProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = {
-                /**
-                 * https://github.com/gradle/gradle/issues/13252
-                 * https://github.com/gradle/gradle/issues/20145
-                 * https://youtrack.jetbrains.com/issue/KT-51583
-                 */
-                if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
-                    rootProject.plugins.apply("jvm-ecosystem")
+                if (!projectIsolationEnabled) {
+                    /**
+                     * https://github.com/gradle/gradle/issues/13252
+                     * https://github.com/gradle/gradle/issues/20145
+                     * https://youtrack.jetbrains.com/issue/KT-51583
+                     */
+                    if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
+                        rootProject.plugins.apply("jvm-ecosystem")
+                    }
+                    rootProject.commonizeTask.dependsOn(this)
                 }
-
                 commonizeTask.dependsOn(this)
-                rootProject.commonizeTask.dependsOn(this)
                 cleanNativeDistributionCommonizerTask
             },
             configureTask = {
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"
 
-                commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
-                customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
-                kotlinNativeProvider.set(rootProject.provider {
-                    KotlinNativeProvider(
-                        rootProject,
-                        commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
-                        kotlinNativeBundleBuildService,
-                        enableDependenciesDownloading = false
-                    )
-                })
+                commonizerClasspath.from(addCommonizerTaskToProject.maybeCreateCommonizerClasspathConfiguration())
+                customJvmArgs.set(addCommonizerTaskToProject.kotlinPropertiesProvider.commonizerJvmArgs)
+                kotlinNativeProvider.set(
+                    addCommonizerTaskToProject.provider {
+                        KotlinNativeProvider(
+                            addCommonizerTaskToProject,
+                            commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
+                            kotlinNativeBundleBuildService,
+                            enableDependenciesDownloading = false
+                        )
+                    }
+                )
                 kotlinCompilerArgumentsLogLevel
-                    .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
+                    .value(addCommonizerTaskToProject.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
             }
         )
@@ -182,12 +213,14 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
 internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<CleanNativeDistributionCommonizerTask>?
     get() {
         val commonizeNativeDistributionTask = commonizeNativeDistributionTask ?: return null
-        return rootProject.locateOrRegisterTask(
+
+        return addCommonizerTaskToProject.locateOrRegisterTask(
             "cleanNativeDistributionCommonization",
             configureTask = {
                 group = "interop"
                 description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
 
+                dependsOn(commonizeNativeDistributionTask)
                 commonizerDirectory.set(commonizeNativeDistributionTask.flatMap { it.rootOutputDirectoryProperty.asFile })
             }
         )

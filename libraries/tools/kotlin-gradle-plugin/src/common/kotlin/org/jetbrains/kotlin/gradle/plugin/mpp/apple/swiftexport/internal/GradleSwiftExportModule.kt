@@ -12,6 +12,11 @@ internal enum class GradleSwiftExportModuleType : Serializable {
     SWIFT_ONLY, BRIDGES_TO_KOTLIN
 }
 
+internal data class GradleSwiftExportModules(
+    val modules: List<GradleSwiftExportModule>,
+    val timestamp: Long,
+) : Serializable
+
 internal sealed class GradleSwiftExportModule(
     open val name: String,
     val type: GradleSwiftExportModuleType,

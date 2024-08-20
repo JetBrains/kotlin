@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import java.nio.file.*
@@ -85,9 +86,8 @@ class CacheBuilder(
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
 
-        val stdlib = konanConfig.distribution.stdlib
         allLibraries.forEach { library ->
-            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.libraryName.startsWith(stdlib)
+            val isSubjectOfIC = !library.isDefault && !library.isExternal && !library.isNativeStdlib
             val cache = konanConfig.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
                 caches[library] = it
@@ -240,7 +240,7 @@ class CacheBuilder(
         val makePerFileCache = !isExternal && !library.isCInteropLibrary()
 
         val libraryCacheDirectory = when {
-            library.isDefault -> konanConfig.systemCacheDirectory
+            library.isDefault || library.isNativeStdlib -> konanConfig.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
                     konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
             else -> konanConfig.incrementalCacheDirectory!!
@@ -360,6 +360,7 @@ class CacheBuilder(
             put(KonanConfigKeys.NOSTDLIB, true)
             put(KonanConfigKeys.LIBRARY_FILES, libraries)
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
+                put(KonanConfigKeys.FRIEND_MODULES, konanConfig.friendModuleFiles.map { it.absolutePath })
                 put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
                 put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
                 configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }

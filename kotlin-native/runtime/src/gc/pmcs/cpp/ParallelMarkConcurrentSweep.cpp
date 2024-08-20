@@ -22,14 +22,12 @@ using namespace kotlin;
 
 namespace {
 
-[[clang::no_destroy]] std::mutex gcMutex;
-
 template<typename Body>
 ScopedThread createGCThread(const char* name, Body&& body) {
     return ScopedThread(ScopedThread::attributes().name(name), [name, body] {
-        RuntimeLogDebug({kTagGC}, "%s %d starts execution", name, konan::currentThreadId());
+        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " starts execution", name, konan::currentThreadId());
         body();
-        RuntimeLogDebug({kTagGC}, "%s %d finishes execution", name, konan::currentThreadId());
+        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " finishes execution", name, konan::currentThreadId());
     });
 }
 
@@ -64,7 +62,7 @@ bool gc::ParallelMarkConcurrentSweep::ThreadData::tryLockRootSet() {
     bool expected = false;
     bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
     if (locked) {
-        RuntimeLogDebug({kTagGC}, "Thread %d have exclusively acquired thread %d's root set", konan::currentThreadId(), threadData_.threadId());
+        RuntimeLogDebug({kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(), threadData_.threadId());
     }
     return locked;
 }
@@ -142,7 +140,8 @@ void gc::ParallelMarkConcurrentSweep::auxiliaryGCThreadBody() {
 }
 
 void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
-    std::unique_lock mainGCLock(gcMutex);
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
+
     auto gcHandle = GCHandle::create(epoch);
 
     markDispatcher_.beginMarkingEpoch(gcHandle);
@@ -226,7 +225,7 @@ void gc::ParallelMarkConcurrentSweep::reconfigure(std::size_t maxParallelism, bo
         RuntimeCheck(auxGCThreads == 0, "Auxiliary GC threads must not be created with gcMarkSingleThread");
         return;
     }
-    std::unique_lock mainGCLock(gcMutex);
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
     markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));

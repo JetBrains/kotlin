@@ -57,6 +57,7 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
+    val enableKmpProjectIsolation: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
         DISABLED,
@@ -99,6 +100,7 @@ data class BuildOptions(
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
         val cocoapodsArchs: String? = null,
+        val swiftExportEnabled: Boolean? = null,
         val distributionType: String? = null,
         val distributionDownloadFromMaven: Boolean? = true,
         val reinstall: Boolean? = null,
@@ -251,6 +253,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.compiler.arguments.log.level=$compilerArgumentsLogLevel")
         }
 
+        if (enableKmpProjectIsolation != null) {
+            arguments.add("-Pkotlin.kmp.project.isolation.enabled=$enableKmpProjectIsolation")
+        }
+
         arguments.addAll(freeArgs)
 
         return arguments.toList()
@@ -276,7 +282,9 @@ data class BuildOptions(
         nativeOptions.cocoapodsConfiguration?.let {
             arguments.add("-Pkotlin.native.cocoapods.configuration=${it}")
         }
-
+        nativeOptions.swiftExportEnabled?.let {
+            arguments.add("-Pkotlin.experimental.swift-export.enabled=${it}")
+        }
         nativeOptions.distributionDownloadFromMaven?.let {
             arguments.add("-Pkotlin.native.distribution.downloadFromMaven=${it}")
         }
@@ -338,3 +346,6 @@ fun BuildOptions.withBundledKotlinNative() = copy(
         version = null
     )
 )
+
+// TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
+fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)

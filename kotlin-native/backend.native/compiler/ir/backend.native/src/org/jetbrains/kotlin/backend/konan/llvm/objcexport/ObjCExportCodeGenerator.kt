@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -533,7 +534,7 @@ internal class ObjCExportCodeGenerator(
     )
 
     private fun emitSelectorsHolder() {
-        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
                 linkage = LLVMLinkage.LLVMInternalLinkage
@@ -696,7 +697,11 @@ private fun ObjCExportCodeGeneratorBase.buildWritableTypeInfoValue(
 }
 
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
-    get() = LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr)), isVararg = false)
+    get() = LlvmFunctionSignature(
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
+            listOf(LlvmParamType(codegen.kObjHeaderPtr)),
+            isVararg = false
+    )
 
 private val ObjCExportCodeGeneratorBase.objCToKotlinFunctionType: LLVMTypeRef
     get() = functionType(codegen.kObjHeaderPtr, false, llvm.int8PtrType, codegen.kObjHeaderPtrPtr)
@@ -740,7 +745,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
         // We consider this function fast enough, so don't switch thread state to Native.
         val instance = callFromBridge(objcAlloc, listOf(nsNumberSubclass))
-        val returnType = LlvmRetType(llvm.int8PtrType)
+        val returnType = LlvmRetType(llvm.int8PtrType, isObjectType = false)
         // We consider these methods fast enough, so don't switch thread state to Native.
         ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, value))
     }
@@ -934,7 +939,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         val llvmCallable = if (isVirtual) {
             codegen.getVirtualFunctionTrampoline(target as IrSimpleFunction)
         } else {
-            codegen.llvmFunction(target)
+            codegen.llvmFunction(target as? IrSimpleFunction ?: context.getLoweredConstructorFunction(target as IrConstructor))
         }
         call(llvmCallable, args, resultLifetime, exceptionHandler)
     }
@@ -1138,20 +1143,23 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
 private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
         target: IrConstructor,
         methodBridge: MethodBridge
-): LlvmCallable = generateObjCImp(methodBridge, bridgeSuffix = target.computeSymbolName(), isDirect = true) { args, resultLifetime, exceptionHandler ->
-    val arrayInstance = callFromBridge(
-            llvm.allocArrayFunction,
-            listOf(target.constructedClass.llvmTypeInfoPtr, args.first()),
-            resultLifetime = Lifetime.ARGUMENT
-    )
+): LlvmCallable {
+    val targetFunction = context.getLoweredConstructorFunction(target)
+    return generateObjCImp(methodBridge, bridgeSuffix = targetFunction.computeSymbolName(), isDirect = true) { args, resultLifetime, exceptionHandler ->
+        val arrayInstance = callFromBridge(
+                llvm.allocArrayFunction,
+                listOf(target.constructedClass.llvmTypeInfoPtr, args.first()),
+                resultLifetime = Lifetime.ARGUMENT
+        )
 
-    call(target.llvmFunction, listOf(arrayInstance) + args, resultLifetime, exceptionHandler)
-    arrayInstance
+        call(targetFunction.llvmFunction, listOf(arrayInstance) + args, resultLifetime, exceptionHandler)
+        arrayInstance
+    }
 }
 
 // TODO: cache bridges.
 private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
-        irFunction: IrFunction,
+        irFunction: IrSimpleFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ConstPointer {
     val baseIrFunction = baseMethod.owner
@@ -1413,7 +1421,7 @@ private fun MethodBridge.ReturnValue.isAutoreleasedObjCReference(): Boolean = wh
  * ```
  */
 private fun ObjCExportCodeGenerator.createReverseAdapter(
-        irFunction: IrFunction,
+        irFunction: IrSimpleFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>,
         vtableIndex: Int?,
         itablePlace: ClassLayoutBuilder.InterfaceTablePlace?
@@ -1927,9 +1935,12 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
     val llvm = generationState.llvm
     return when (this) {
         MethodBridge.ReturnValue.Suspend,
-        MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType)
+        MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType, isObjectType = false)
 
-        MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type)
+        MethodBridge.ReturnValue.HashCode -> LlvmRetType(
+                if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type,
+                isObjectType = false
+        )
         is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmRetType(llvm)
         MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmRetType(llvm)
 
@@ -1946,8 +1957,12 @@ private fun TypeBridge.toLlvmParamType(llvm: CodegenLlvmHelpers): LlvmParamType 
 }
 
 private fun TypeBridge.toLlvmRetType(llvm: CodegenLlvmHelpers): LlvmRetType = when (this) {
-    is ReferenceBridge, is BlockPointerBridge -> LlvmRetType(llvm.int8PtrType)
-    is ValueTypeBridge -> LlvmRetType(this.objCValueType.toLlvmType(llvm), this.objCValueType.defaultParameterAttributes)
+    is ReferenceBridge, is BlockPointerBridge -> LlvmRetType(llvm.int8PtrType, isObjectType = false)
+    is ValueTypeBridge -> LlvmRetType(
+            this.objCValueType.toLlvmType(llvm),
+            this.objCValueType.defaultParameterAttributes,
+            isObjectType = false
+    )
 }
 
 internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): String {

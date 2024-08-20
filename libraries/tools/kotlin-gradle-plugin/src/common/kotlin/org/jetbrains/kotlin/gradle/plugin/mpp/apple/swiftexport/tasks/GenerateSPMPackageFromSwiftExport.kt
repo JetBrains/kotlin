@@ -14,6 +14,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -72,8 +73,8 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
         val modulesFile = swiftModulesFile.getFile().readText()
-        val swiftModules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(modulesFile)
-        return swiftModules
+        val swiftModules = SerializationTools.readFromJson<GradleSwiftExportModules>(modulesFile)
+        return swiftModules.modules
     }
 
     private fun createSPMSources(modules: List<GradleSwiftExportModule>) {
@@ -167,7 +168,7 @@ internal object SPMManifestGenerator {
             products: [
                 .library(
                     name: "$swiftLibrary",
-                    targets: ${modules.firstOrNull()?.let { "[\"${it.name}\"]" } ?: "[]"}
+                    targets: [${modules.productTargets().joinToString(", ")}]
                 ),
             ],
             targets: [
@@ -184,6 +185,10 @@ internal object SPMManifestGenerator {
             is GradleSwiftExportModule.BridgesToKotlin -> dependencies + listOf(bridgeName, kotlinRuntime)
             is GradleSwiftExportModule.SwiftOnly -> dependencies + listOf(kotlinRuntime)
         }
+    }
+
+    private fun List<GradleSwiftExportModule>.productTargets(): List<String> {
+        return this.map { "\"${it.name}\"" }
     }
 
     private fun List<GradleSwiftExportModule>.targetDefinitions(kotlinRuntime: String): List<String> {

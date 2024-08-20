@@ -35,11 +35,11 @@ kotlin {
 fun createListDependenciesTask(sourceSetName: String) {
     tasks.create("list${sourceSetName.capitalize()}Dependencies") {
         val sourceSet = kotlin.sourceSets[sourceSetName] as DefaultKotlinSourceSet
-        val metadataConfiguration = project.configurations[sourceSet.intransitiveMetadataConfigurationName]
-        dependsOn(metadataConfiguration)
+        val metadataFiles = project.configurations[sourceSet.intransitiveMetadataConfigurationName].incoming.artifacts.artifactFiles
+        dependsOn(metadataFiles)
         dependsOn("cinteropDummyNativePlatform")
         doFirst {
-            metadataConfiguration.files.forEach { dependencyFile ->
+            metadataFiles.forEach { dependencyFile ->
                 logger.quiet("Dependency: $dependencyFile")
             }
         }

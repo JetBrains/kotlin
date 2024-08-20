@@ -145,7 +145,7 @@ private:
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor, true> parallelProcessor_{};
 
-    RWSpinLock<MutexThreadStateHandling::kIgnore> markTerminationMutex_;
+    RWSpinLock markTerminationMutex_;
 };
 
 namespace test_support {

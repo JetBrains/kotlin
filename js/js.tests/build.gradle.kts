@@ -25,7 +25,6 @@ node {
     }
 }
 
-val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
@@ -81,9 +80,6 @@ dependencies {
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
     testRuntimeOnly(project(":compiler:backend-common"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
-
-    antLauncherJar(commonDependency("org.apache.ant", "ant"))
-    antLauncherJar(toolsJar())
 
     testRuntimeOnly(libs.junit.vintage.engine)
 
@@ -331,14 +327,6 @@ fun Test.forwardProperties() {
 
 fun Test.setUpBoxTests() {
     workingDir = rootDir
-    dependsOn(antLauncherJar)
-    inputs.files(antLauncherJar)
-    val antLauncherJarPath = antLauncherJar.asPath
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJarPath)
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
-
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
     systemProperty(
         "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"

@@ -17,14 +17,17 @@ import kotlin.test.*
 
 class CommonizerTaskTests {
 
-    private val rootProject = ProjectBuilder.builder().build() as ProjectInternal
-    private val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
-
     companion object {
         const val JVM_ECOSYSTEM_PLUGIN_ID = "jvm-ecosystem"
     }
 
-    init {
+    private val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+    private val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
+
+    private fun configureDefaultTestProjects(enableProjectIsolationSupport: Boolean = true) {
+        rootProject.enableKmpProjectIsolationSupport(enableProjectIsolationSupport)
+        subproject.enableKmpProjectIsolationSupport(enableProjectIsolationSupport)
+
         subproject.applyMultiplatformPlugin().apply {
             linuxX64()
             linuxArm64()
@@ -43,6 +46,15 @@ class CommonizerTaskTests {
 
     @Test
     fun `test runCommonizer task`() {
+        configureDefaultTestProjects()
+        subproject.tasks.getByName("runCommonizer")
+            .assertDependsOn(subproject.tasks.getByName("commonize"))
+    }
+
+    @Test
+    fun `test runCommonizer task - with disabled project isolation support`() {
+        configureDefaultTestProjects(enableProjectIsolationSupport = false)
+
         subproject.tasks.getByName("runCommonizer")
             .assertDependsOn(subproject.tasks.getByName("commonize"))
 
@@ -56,6 +68,18 @@ class CommonizerTaskTests {
 
     @Test
     fun `test commonizeNativeDistributionTask`() {
+        configureDefaultTestProjects()
+        val commonizeNativeDistributionTaskName = "commonizeNativeDistribution"
+        /* Native Distribution Commonization should not be created in root project */
+        rootProject.assertContainsNoTaskWithName(commonizeNativeDistributionTaskName)
+        val commonizeNativeDistributionTask = subproject.assertContainsTaskWithName(commonizeNativeDistributionTaskName)
+        subproject.tasks.getByName("commonize").assertDependsOn(commonizeNativeDistributionTask)
+    }
+
+    @Test
+    fun `test commonizeNativeDistributionTask - with disabled project isolation support`() {
+        configureDefaultTestProjects(enableProjectIsolationSupport = false)
+
         val commonizeNativeDistributionTaskName = "commonizeNativeDistribution"
         subproject.assertContainsNoTaskWithName(commonizeNativeDistributionTaskName)
 
@@ -64,6 +88,7 @@ class CommonizerTaskTests {
         rootProject.tasks.getByName("commonize").assertDependsOn(rootProjectCommonizeNativeDistributionTask)
         subproject.tasks.getByName("commonize").assertDependsOn(rootProjectCommonizeNativeDistributionTask)
     }
+
 
     @Test
     fun `test commonizeNativeDistributionTask is not created eagerly`() {
@@ -89,9 +114,12 @@ class CommonizerTaskTests {
      * https://youtrack.jetbrains.com/issue/KT-51583
      */
     @Test
-    fun `test commonizeNativeDistributionTask applied jvm-ecosystem plugin`() {
+    fun `test commonizeNativeDistributionTask applied jvm-ecosystem plugin - with disabled project isolation support `() {
         val rootProject = ProjectBuilder.builder().build() as ProjectInternal
         val subproject = ProjectBuilder.builder().withParent(rootProject).build() as ProjectInternal
+        rootProject.enableKmpProjectIsolationSupport(false)
+        subproject.enableKmpProjectIsolationSupport(false)
+
 
         val jvmEcosystemPluginId = "jvm-ecosystem"
         assertNull(rootProject.plugins.findPlugin(jvmEcosystemPluginId))
@@ -112,6 +140,9 @@ class CommonizerTaskTests {
     fun `test commonizeNativeDistributionTask applied jvm-ecosystem plugin - jvm-ecosystem plugin is already applied`() {
         val rootProject = ProjectBuilder.builder().build() as ProjectInternal
         val subproject = ProjectBuilder.builder().withParent(rootProject).build() as ProjectInternal
+        rootProject.enableKmpProjectIsolationSupport(false)
+        subproject.enableKmpProjectIsolationSupport(false)
+
 
         rootProject.plugins.apply(JVM_ECOSYSTEM_PLUGIN_ID)
         assertNotNull(rootProject.plugins.findPlugin(JVM_ECOSYSTEM_PLUGIN_ID))
@@ -131,6 +162,8 @@ class CommonizerTaskTests {
     fun `test commonizeNativeDistributionTask applied jvm-ecosystem plugin - java plugin is already applied`() {
         val rootProject = ProjectBuilder.builder().build() as ProjectInternal
         val subproject = ProjectBuilder.builder().withParent(rootProject).build() as ProjectInternal
+        rootProject.enableKmpProjectIsolationSupport(false)
+        subproject.enableKmpProjectIsolationSupport(false)
 
         rootProject.plugins.apply("java")
         assertNotNull(rootProject.plugins.findPlugin(JVM_ECOSYSTEM_PLUGIN_ID))
@@ -148,6 +181,7 @@ class CommonizerTaskTests {
 
     @Test
     fun `test commonizeCInteropTask`() {
+        configureDefaultTestProjects()
         val commonizeCInteropTaskName = "commonizeCInterop"
         val commonizeCInteropTask = subproject.assertContainsTaskWithName(commonizeCInteropTaskName)
         subproject.tasks.getByName("commonize").assertDependsOn(commonizeCInteropTask)

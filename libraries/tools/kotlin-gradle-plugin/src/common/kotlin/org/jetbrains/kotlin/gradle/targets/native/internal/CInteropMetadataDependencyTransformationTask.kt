@@ -15,6 +15,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -107,12 +109,12 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 
 
 @DisableCachingByDefault(because = "Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load")
-internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
+internal abstract class CInteropMetadataDependencyTransformationTask @Inject constructor(
     @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val cleaning: Cleaning,
     objectFactory: ObjectFactory,
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
 
@@ -154,7 +156,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         with bad 'visibleSourceSetNamesExcludingDependsOn'. This is okay, since cinterop transformations do not look
         into this field
          */
-        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty)
+        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty, PreparedKotlinToolingDiagnosticsCollector.create(this))
         val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.resolutionsToTransform()
         val transformedLibraries = chooseVisibleSourceSets.flatMap { resolution ->
             materializeMetadata(resolution).map { (sourceSetName, cinteropFile) ->

@@ -70,6 +70,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiExpressionPsiTypeProvide
   }
 
   @Test
+  @TestMetadata("flexibleTypeWithArgumentUpperBound.kt")
+  public void testFlexibleTypeWithArgumentUpperBound() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/flexibleTypeWithArgumentUpperBound.kt");
+  }
+
+  @Test
   @TestMetadata("KTIJ25461.kt")
   public void testKTIJ25461() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/KTIJ25461.kt");

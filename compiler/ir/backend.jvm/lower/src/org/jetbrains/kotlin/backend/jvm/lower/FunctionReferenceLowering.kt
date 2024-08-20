@@ -270,7 +270,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val proxyParameter = buildValueParameter(proxyFun) {
                     updateFrom(originalParameter)
                     name = Name.identifier("p$proxyParameterIndex\$${originalParameter.name.asString()}")
-                    index = proxyParameterIndex
                     type = originalParameter.type.eraseTypeParameters()
                     proxyParameterIndex++
                 }.apply {
@@ -458,8 +457,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             functionSuperClass.owner.getSingleAbstractMethod()
                 ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
 
-        // This code is partially duplicated in IrUtils getAdapteeFromAdaptedForReferenceFunction
-        // The difference is utils version supports ReturnableBlock, but returns called function instead of call node.
         private val adapteeCall: IrFunctionAccessExpression? =
             if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
                 // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
@@ -738,8 +735,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // Inline the body of an anonymous function into the generated lambda subclass.
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations += callee.annotations
-            val valueParameterMap = callee.explicitParameters.withIndex().associate { (index, param) ->
-                param to param.copyTo(this, index = index)
+            val valueParameterMap = callee.explicitParameters.associate { param ->
+                param to param.copyTo(this)
             }
             valueParameters += valueParameterMap.values
             body = callee.moveBodyTo(this, valueParameterMap)
@@ -748,7 +745,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun IrSimpleFunction.createFunInterfaceConstructorInvokeMethod() {
             val adapterValueParameter = callee.valueParameters.singleOrNull()
                 ?: throw AssertionError("Single value parameter expected: ${callee.render()}")
-            val invokeValueParameter = adapterValueParameter.copyTo(this, index = 0)
+            val invokeValueParameter = adapterValueParameter.copyTo(this)
             val valueParameterMap = mapOf(adapterValueParameter to invokeValueParameter)
             valueParameters = listOf(invokeValueParameter)
             body = callee.moveBodyTo(this, valueParameterMap)

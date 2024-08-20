@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.build.androidsdkprovisioner.AndroidSdkProvisionerExtension
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -7,6 +6,7 @@ plugins {
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("android-sdk-provisioner")
+    id("asm-deprecating-transformer")
 }
 
 repositories {
@@ -27,6 +27,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl"
             )
         )
     }
@@ -134,7 +135,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-tooling-metadata"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
     commonCompileOnly(project(":native:swift:swift-export-standalone"))
-    commonCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
+    commonCompileOnly(libs.intellij.asm) { isTransitive = false }
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
@@ -157,7 +158,7 @@ dependencies {
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))
-    embedded(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
+    embedded(libs.intellij.asm) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
     embedded(libs.guava) { isTransitive = false }
     embedded(commonDependency("org.jetbrains.teamcity:serviceMessages")) { isTransitive = false }
@@ -172,8 +173,6 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
         "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
-        "gradle70Embedded"(project(":kotlin-build-tools-enum-compat"))
-        "gradle71Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle74Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle75Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle76Embedded"(project(":kotlin-build-tools-enum-compat"))
@@ -214,6 +213,53 @@ tasks {
 
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
+        val baseSourcePackage = "org.jetbrains.kotlin"
+        val baseTargetPackage = "org.jetbrains.kotlin.gradle.internal"
+        val packages: Map<String, List<String>> = mapOf(
+            "analyzer" to emptyList(),
+            "build" to listOf(
+                "org.jetbrains.kotlin.build.report.**",
+            ),
+            "builtins" to emptyList(),
+            "config" to listOf(
+                "org.jetbrains.kotlin.config.ApiVersion**", // used a lot in buildscripts
+                "org.jetbrains.kotlin.config.JvmTarget**", // used a lot in buildscripts
+                "org.jetbrains.kotlin.config.KotlinCompilerVersion", // used a lot in buildscripts
+                "org.jetbrains.kotlin.config.Services**", // required to initialize `CompilerEnvironment`
+            ),
+            "constant" to emptyList(),
+            "container" to emptyList(),
+            "contracts" to emptyList(),
+            "descriptors" to emptyList(),
+            "extensions" to emptyList(),
+            "idea" to emptyList(),
+            "ir" to emptyList(),
+            "kapt3.diagnostic" to emptyList(),
+            "load" to emptyList(),
+            "metadata" to emptyList(),
+            "modules" to emptyList(),
+            "mpp" to emptyList(),
+            "name" to emptyList(),
+            "platform" to emptyList(),
+            "progress" to emptyList(),
+            "renderer" to emptyList(),
+            "resolve" to emptyList(),
+            "serialization" to emptyList(),
+            "storage" to emptyList(),
+            "types" to emptyList(),
+            "type" to emptyList(),
+            "utils" to emptyList(),
+            "util" to listOf(
+                "org.jetbrains.kotlin.util.Logger", // symbol from a standalone published artifact, don't relocate usages
+                "org.jetbrains.kotlin.util.UtilKt", // class from kotlin-util-io which is a transitive API dependency of KGP-API, don't relocate usages
+                "org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt", // used in standalone published artifacts that the plugin depends on
+            ),
+        )
+        packages.forEach { (pkg, exclusions) ->
+            relocate("$baseSourcePackage.$pkg.", "$baseTargetPackage.$pkg.") {
+                exclusions.forEach { exclude(it) }
+            }
+        }
         transform(KotlinModuleMetadataVersionBasedSkippingTransformer::class.java) {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
@@ -221,6 +267,57 @@ tasks {
              * Hack for not limiting LV to 1.5 for those modules. To be removed after KT-70247
              */
             pivotVersion = KotlinMetadataPivotVersion(1, 6, 0)
+        }
+        asmDeprecation {
+            val exclusions = listOf(
+                "org.jetbrains.kotlin.gradle.**", // part of the plugin
+                "org.jetbrains.kotlin.project.model.**", // part of the plugin
+                "org.jetbrains.kotlin.statistics.**", // part of the plugin
+                "org.jetbrains.kotlin.tooling.**", // part of the plugin
+                "org.jetbrains.kotlin.org.**", // already shadowed dependencies
+                "org.jetbrains.kotlin.com.**", // already shadowed dependencies
+                "org.jetbrains.kotlin.it.unimi.**", // already shadowed dependencies
+                "org.jetbrains.kotlin.internal.**", // already internal package
+            )
+            val deprecationMessage = """
+                You're using a Kotlin compiler class bundled into KGP for its internal needs.
+                This is discouraged and will not be supported in future releases.
+                The class in this artifact is scheduled for removal in Kotlin 2.2. Please define dependency on it in an alternative way.
+                See https://kotl.in/gradle/internal-compiler-symbols for more details
+            """.trimIndent()
+            deprecateClassesByPattern("org.jetbrains.kotlin.**", deprecationMessage, exclusions)
+        }
+    }
+    GradlePluginVariant.values().forEach { variant ->
+        if (kotlinBuildProperties.isInJpsBuildIdeaSync) return@forEach
+        val sourceSet = sourceSets.getByName(variant.sourceSetName)
+        val taskSuffix = sourceSet.jarTaskName.capitalize()
+        val shadowJarTaskName = "$EMBEDDABLE_COMPILER_TASK_NAME$taskSuffix"
+        asmDeprecation {
+            val dumpTask = registerDumpDeprecationsTask(shadowJarTaskName, taskSuffix)
+            val dumpAllTask = getOrCreateTask<Task>("dumpDeprecations") {
+                dependsOn(dumpTask)
+            }
+            val expectedFileDoesNotExistMessage = """
+                The file with expected deprecations for the compiler modules bundled into KGP does not exist.
+                Run ./gradlew ${project.path}:${dumpTask.name} first to create it.
+                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
+                Context: https://youtrack.jetbrains.com/issue/KT-70251
+            """.trimIndent()
+            val checkFailureMessage = """
+                Expected deprecations applied to the compiler modules bundled into KGP does not match with the actually applied ones.
+                Run ./gradlew ${project.path}:${dumpTask.name} to see the difference.
+                You may also use ./gradlew ${project.path}:${dumpAllTask.name} to dump deprecations of all fat jars.
+                Use INFO level log for the exact deprecated classes set.
+                Either commit the difference or adjust the package relocation rules in ${buildFile.absolutePath}
+                Please be sure to leave a comment explaining any changes related to this failure clear enough.
+                Context: https://youtrack.jetbrains.com/issue/KT-70251
+            """.trimIndent()
+            val checkTask =
+                registerCheckDeprecationsTask(shadowJarTaskName, taskSuffix, expectedFileDoesNotExistMessage, checkFailureMessage)
+            named("check") {
+                dependsOn(checkTask)
+            }
         }
     }
 }
@@ -296,17 +393,19 @@ gradlePlugin {
 // Gradle plugins functional tests
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
+    val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
-        compileClasspath += mainSourceSet.output
-        runtimeClasspath += mainSourceSet.output
+        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
+        compileClasspath += gradlePluginVariantSourceSet.output
+        runtimeClasspath += gradlePluginVariantSourceSet.output
 
         configurations.getByName(implementationConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.implementationConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
         }
 
         configurations.getByName(runtimeOnlyConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.runtimeOnlyConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
         }
     }
@@ -321,7 +420,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
         }
     }
-    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
+    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
     tasks.register<Test>("functionalTest")

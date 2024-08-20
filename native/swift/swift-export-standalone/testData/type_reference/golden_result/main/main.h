@@ -57,11 +57,17 @@ uintptr_t __root___Demo_init_allocate();
 
 void __root___Demo_init_initialize__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t __kt, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
+uintptr_t __root___OPEN_CLASS_init_allocate();
+
+void __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
 uintptr_t __root___Object_without_package_get();
 
 void __root___combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
 uintptr_t __root___produce_DATA_OBJECT();
+
+uintptr_t __root___produce_OPEN_CLASS();
 
 uintptr_t __root___produce_class();
 
@@ -72,6 +78,8 @@ uintptr_t __root___produce_object();
 uintptr_t __root___produce_object_wp();
 
 void __root___recieve_DATA_OBJECT__TypesOfArguments__uintptr_t__(uintptr_t x);
+
+void __root___recieve_OPEN_CLASS__TypesOfArguments__uintptr_t__(uintptr_t x);
 
 void __root___recieve_class__TypesOfArguments__uintptr_t__(uintptr_t arg);
 

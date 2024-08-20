@@ -221,7 +221,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     addValueParameter {
                         name = BOUND_RECEIVER_NAME
                         type = it.type
-                        index = 0
                     }
                 }
 
@@ -232,7 +231,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     continuation = addValueParameter {
                         name = superContinuation.name
                         type = superContinuation.type
-                        index = if (boundReceiverParameter == null) 0 else 1
                     }
                 }
 
@@ -276,9 +274,8 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations = function.annotations
             val valueParameterMap = function.explicitParameters
-                .withIndex()
-                .associate { (index, param) ->
-                    param to param.copyTo(this, index = index)
+                .associate { param ->
+                    param to param.copyTo(this)
                 }
             valueParameters = valueParameterMap.values.toList()
             body = function.moveBodyTo(this, valueParameterMap)
@@ -398,7 +395,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                 buildValueParameter(this) {
                     name = Name.identifier("p$i")
                     type = t
-                    index = i
                 }
             }
 

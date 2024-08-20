@@ -1,0 +1,44 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C : A {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#m(B<out|kotlin.collections.List<kotlin.Number>>){}
+  //   Public signature: /C.m|5571098196978377519[0]
+  //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}
+  // CHECK JVM_IR:
+  //   Mangled name: C#m(B<out|kotlin.collections.List<kotlin.Number>>){}kotlin.Int
+  //   Public signature: /C.m|7006071752156301554[0]
+  //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}kotlin.Int
+  override fun m(x: B<out List<Number>>): Int
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#m(B<out|kotlin.collections.List<kotlin.Number>>){}
+  //   Public signature: /A.m|5571098196978377519[0]
+  //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}
+  // CHECK JVM_IR:
+  //   Mangled name: A#m(B<out|kotlin.collections.List<kotlin.Number>>){}kotlin.Int
+  //   Public signature: /A.m|7006071752156301554[0]
+  //   Public signature debug description: m(B<out|kotlin.collections.List<kotlin.Number>>){}kotlin.Int
+  abstract fun m(x: B<out List<Number>>): Int
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B<T : List<out Number>> {
+}
+

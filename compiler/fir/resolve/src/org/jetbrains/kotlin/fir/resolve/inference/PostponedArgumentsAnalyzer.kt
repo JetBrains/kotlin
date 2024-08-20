@@ -221,7 +221,8 @@ class PostponedArgumentsAnalyzer(
             }
 
             hasExpressionInReturnArguments = true
-            if (!builder.hasContradiction) {
+            // Nested lambdas need to be resolved even when we have a contradiction.
+            if (!builder.hasContradiction || atom is ConeResolutionAtomWithPostponedChild) {
                 ArgumentCheckingProcessor.resolveArgumentExpression(
                     candidate,
                     atom,

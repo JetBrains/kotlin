@@ -53,7 +53,7 @@ class WeakRef;
 // * During roots list traversal all nodes to the left are either marked or inserted into the mark queue.
 class SpecialRefRegistry : private Pinned {
     // TODO: Consider using a real mutex.
-    using Mutex = SpinLock<MutexThreadStateHandling::kIgnore>;
+    using Mutex = SpinLock;
 
     class Node : private Pinned {
     public:

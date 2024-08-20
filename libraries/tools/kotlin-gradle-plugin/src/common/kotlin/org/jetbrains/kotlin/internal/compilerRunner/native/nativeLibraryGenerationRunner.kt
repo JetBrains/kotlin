@@ -36,9 +36,9 @@ private fun ObjectFactory.kotlinToolSpec(
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
-    mainClass = property("org.jetbrains.kotlin.cli.utilities.MainKt"),
+    mainClass = nativeMainClass,
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
-    classpath = nativeCompilerClasspath(nativeProperties.kotlinNativeCompilerJar, nativeProperties.actualNativeHomeDirectory),
+    classpath = nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.shouldUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(nativeProperties.jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),

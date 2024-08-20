@@ -135,7 +135,7 @@ open class IrMethodOrderTest : MethodOrderTest() {
                 }
             """,
             "\$obj$1",
-            listOf( "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V", "f3()V")
+            listOf("<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V", "f3()V")
         )
     }
 
@@ -251,15 +251,6 @@ open class IrMethodOrderTest : MethodOrderTest() {
 open class IrReflectionClassLoaderTest : ReflectionClassLoaderTest() {
     override val backend: TargetBackend
         get() = JVM_IR
-}
-
-open class IrCustomScriptCodegenTest : CustomScriptCodegenTest() {
-    override val backend: TargetBackend
-        get() = JVM_IR
-
-    override fun testAnnotatedDefinition() {
-        // Discussing
-    }
 }
 
 open class IrSourceInfoGenTest : SourceInfoGenTest() {

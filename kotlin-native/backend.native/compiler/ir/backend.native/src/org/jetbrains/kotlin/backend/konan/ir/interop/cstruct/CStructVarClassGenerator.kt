@@ -197,7 +197,6 @@ internal class CStructVarClassGenerator(
                             buildValueParameter(this) {
                                 origin = IrDeclarationOrigin.DEFINED
                                 name = Name.identifier("field")
-                                index = 0
                                 type = cppType
                             }
                     )

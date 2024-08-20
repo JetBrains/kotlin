@@ -145,7 +145,7 @@ internal class ExpressionCopierImpl(
 
 fun IrExpression?.isRepeatableGetter(): Boolean = when (this) {
     null -> true
-    is IrConst<*> -> true
+    is IrConst -> true
     is IrGetValue -> true
     is IrGetField -> receiver.isRepeatableGetter()
     is IrTypeOperatorCallImpl -> this.argument.isRepeatableGetter()
@@ -155,7 +155,7 @@ fun IrExpression?.isRepeatableGetter(): Boolean = when (this) {
 
 fun IrExpression?.isRepeatableSetter(): Boolean = when (this) {
     null -> true
-    is IrConst<*> -> true
+    is IrConst -> true
     is IrSetValue -> value.isRepeatableGetter()
     is IrSetField -> receiver.isRepeatableGetter() && value.isRepeatableGetter()
     is IrTypeOperatorCallImpl -> this.argument.isRepeatableSetter()

@@ -105,7 +105,11 @@ open class KotlinCommonParserDefinition : ParserDefinition {
     }
 }
 
-class KotlinParserDefinition : KotlinCommonParserDefinition() {
+/*
+ * The class is open, so it can have a custom implementation for the language injection in the IDE.
+ * See KTIJ-31032
+ */
+open class KotlinParserDefinition : KotlinCommonParserDefinition() {
     override fun createFile(fileViewProvider: FileViewProvider): PsiFile {
         return KtFile(fileViewProvider, false)
     }

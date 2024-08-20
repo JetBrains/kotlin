@@ -93,21 +93,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            build(":cleanNativeDistributionCommonization")
+            build(":lib:cleanNativeDistributionCommonization")
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheStored()
             }
 
-            build("clean", ":cleanNativeDistributionCommonization") {
-                assertTasksExecuted(":cleanNativeDistributionCommonization")
+            build("clean", ":lib:cleanNativeDistributionCommonization") {
+                assertTasksExecuted(":lib:cleanNativeDistributionCommonization")
                 assertConfigurationCacheStored()
             }
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheReused()
             }

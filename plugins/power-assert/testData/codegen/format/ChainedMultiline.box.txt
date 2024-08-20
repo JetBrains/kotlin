@@ -3,15 +3,19 @@ assert(
     listOf("Hello", "World")
     |
     [Hello, World]
+
         .map { it.lowercase() }
          |
          [hello, world]
+
         .first { it.startsWith("w") }
          |
          world
+
         .length == 4
          |      |
          |      false
          5
+
 )
 ---

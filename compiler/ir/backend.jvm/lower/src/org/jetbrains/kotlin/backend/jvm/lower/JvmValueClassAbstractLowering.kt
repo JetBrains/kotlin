@@ -260,7 +260,7 @@ internal abstract class JvmValueClassAbstractLowering(
     final override fun visitSuspendableExpression(expression: IrSuspendableExpression) = super.visitSuspendableExpression(expression)
     final override fun visitSuspensionPoint(expression: IrSuspensionPoint) = super.visitSuspensionPoint(expression)
     final override fun visitExpression(expression: IrExpression): IrExpression = super.visitExpression(expression)
-    final override fun visitConst(expression: IrConst<*>) = super.visitConst(expression)
+    final override fun visitConst(expression: IrConst) = super.visitConst(expression)
     final override fun visitConstantValue(expression: IrConstantValue): IrConstantValue = super.visitConstantValue(expression)
     final override fun visitConstantObject(expression: IrConstantObject) = super.visitConstantObject(expression)
     final override fun visitConstantPrimitive(expression: IrConstantPrimitive) = super.visitConstantPrimitive(expression)

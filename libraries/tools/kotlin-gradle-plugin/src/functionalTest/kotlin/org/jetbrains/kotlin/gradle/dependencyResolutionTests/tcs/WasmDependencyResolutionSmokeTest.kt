@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
-import mockProjectStructureMetadataFileForProject
+import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -55,7 +55,7 @@ class WasmDependencyResolutionSmokeTest {
         producer.evaluate()
         consumer.evaluate()
 
-        mockProjectStructureMetadataFileForProject(producer)
+        producer.mockGenerateProjectStructureMetadataTaskOutputs()
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),

@@ -67,6 +67,7 @@ assert(
         | | 1
         | false
         2
+
         b < a -> b == a
         | | |    | |  |
         | | |    | |  2
@@ -75,6 +76,7 @@ assert(
         | | 2
         | true
         1
+
         else -> false
     }
 )
@@ -90,6 +92,7 @@ assert(
         | | 2
         | true
         1
+
         b < a -> b == a
         else -> false
     }
@@ -103,11 +106,13 @@ assert(
         | | 1
         | false
         1
+
         b < a -> b == a
         | | |
         | | 1
         | false
         1
+
         else -> false
     }
 )
@@ -117,11 +122,13 @@ assert(
     initial && when {
     |
     true
+
         a < b -> a == b
         | | |
         | | 1
         | false
         2
+
         b < a -> b == a
         | | |    | |  |
         | | |    | |  2
@@ -130,6 +137,7 @@ assert(
         | | 2
         | true
         1
+
         else -> false
     }
 )
@@ -139,6 +147,7 @@ assert(
     initial && when {
     |
     true
+
         a < b -> a == b
         | | |    | |  |
         | | |    | |  2
@@ -147,6 +156,7 @@ assert(
         | | 2
         | true
         1
+
         b < a -> b == a
         else -> false
     }
@@ -157,16 +167,19 @@ assert(
     initial && when {
     |
     true
+
         a < b -> a == b
         | | |
         | | 1
         | false
         1
+
         b < a -> b == a
         | | |
         | | 1
         | false
         1
+
         else -> false
     }
 )
@@ -176,6 +189,7 @@ assert(
     initial && when {
     |
     false
+
         a < b -> a == b
         b < a -> b == a
         else -> false

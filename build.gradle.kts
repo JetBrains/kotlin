@@ -9,10 +9,12 @@ buildscript {
     // see also configureCompilerClasspath@
     val bootstrapCompilerClasspath by configurations.creating
     val bootstrapBuildToolsApiClasspath by configurations.creating
+    val gradlePluginsBuildToolsApiClasspath by configurations.creating
 
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
         bootstrapBuildToolsApiClasspath(kotlin("build-tools-impl", bootstrapKotlinVersion))
+        gradlePluginsBuildToolsApiClasspath(kotlin("build-tools-impl", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
@@ -99,7 +101,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
-        "2.1.0-dev-2394"
+        "2.1.0-dev-5109"
     }
 }
 
@@ -346,6 +348,9 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":native:objcexport-header-generator",
                 ":native:objcexport-header-generator-analysis-api",
                 ":native:objcexport-header-generator-k1",
+            ) +
+            arrayOf(
+                ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
 
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
@@ -652,13 +657,6 @@ allprojects {
         }
 
         mavenCentral()
-
-        @Suppress("DEPRECATION")
-        jcenter {
-            content {
-                includeVersionByRegex("net\\.rubygrapefruit", ".+", "0\\.14")
-            }
-        }
     }
 }
 
@@ -777,7 +775,6 @@ tasks {
     register("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
         dependsOn(":js:js.tests:runMocha")
-        dependsOn(":kotlin-test-js-runner:test")
     }
 
     register("jsFirCompilerTest") {
@@ -881,6 +878,7 @@ tasks {
 
     register("miscCompilerTest") {
         dependsOn(":compiler:test")
+        dependsOn(":compiler:tests-integration:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
         dependsOn("jvmCompilerIntegrationTest")

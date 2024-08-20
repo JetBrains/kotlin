@@ -153,9 +153,6 @@ class KotlinCompilationNpmResolver(
             }
         }
 
-        // We don't have `kotlin-js-test-runner` in NPM yet
-        all.dependencies.add(rootResolver.versions.kotlinJsTestRunner.createDependency(project))
-
         return all
     }
 

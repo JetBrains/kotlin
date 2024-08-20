@@ -89,10 +89,15 @@ public class SirVisibilityCheckerImpl(
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inline classes are not supported yet.")
                 return@with false
             }
-            if (modality != KaSymbolModality.FINAL) {
-                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "non-final classes are not supported yet.")
+            if (modality == KaSymbolModality.ABSTRACT) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "abstract classes are not supported yet.")
                 return@with false
             }
+            if (modality == KaSymbolModality.SEALED) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "sealed classes are not supported yet.")
+                return@with false
+            }
+
             return true
         }
 

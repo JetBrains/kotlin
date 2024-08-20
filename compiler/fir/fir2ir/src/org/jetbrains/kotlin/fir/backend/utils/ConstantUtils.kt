@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-fun FirLiteralExpression.getIrConstKind(): IrConstKind<*> = when (kind) {
+fun FirLiteralExpression.getIrConstKind(): IrConstKind = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
         val type = resolvedType as ConeIntegerLiteralType
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
@@ -32,12 +32,10 @@ fun FirLiteralExpression.getIrConstKind(): IrConstKind<*> = when (kind) {
     else -> kind.toIrConstKind()
 }
 
-fun <T> FirLiteralExpression.toIrConst(irType: IrType): IrConst<T> {
+fun FirLiteralExpression.toIrConst(irType: IrType): IrConst {
     return convertWithOffsets { startOffset, endOffset ->
-        @Suppress("UNCHECKED_CAST")
-        val kind = getIrConstKind() as IrConstKind<T>
+        val kind = getIrConstKind()
 
-        @Suppress("UNCHECKED_CAST")
         val value = (value as? Long)?.let {
             when (kind) {
                 IrConstKind.Byte -> it.toByte()
@@ -47,18 +45,17 @@ fun <T> FirLiteralExpression.toIrConst(irType: IrType): IrConst<T> {
                 IrConstKind.Double -> it.toDouble()
                 else -> it
             }
-        } as T ?: value
-        @Suppress("UNCHECKED_CAST")
+        } ?: value
         IrConstImpl(
             startOffset, endOffset,
             // Strip all annotations (including special annotations such as @EnhancedNullability) from a constant type
             irType.removeAnnotations(),
-            kind, value as T
+            kind, value
         )
     }
 }
 
-private fun ConstantValueKind.toIrConstKind(): IrConstKind<*> = when (this) {
+private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
     ConstantValueKind.Null -> IrConstKind.Null
     ConstantValueKind.Boolean -> IrConstKind.Boolean
     ConstantValueKind.Char -> IrConstKind.Char

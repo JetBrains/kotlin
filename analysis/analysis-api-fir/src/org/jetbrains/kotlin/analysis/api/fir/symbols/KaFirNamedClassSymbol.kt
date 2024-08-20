@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
@@ -35,7 +36,7 @@ internal class KaFirNamedClassSymbol(
     override val analysisSession: KaFirSession,
 ) : KaFirNamedClassSymbolBase() {
     override val token: KaLifetimeToken get() = builder.token
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
@@ -62,9 +63,10 @@ internal class KaFirNamedClassSymbol(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotations by cached {
-        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
 
     override val isInner: Boolean get() = withValidityAssertion { firSymbol.isInner }
     override val isData: Boolean get() = withValidityAssertion { firSymbol.isData }
@@ -76,11 +78,12 @@ internal class KaFirNamedClassSymbol(
 
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
-    override val companionObject: KaFirNamedClassSymbol? by cached {
-        firSymbol.companionObjectSymbol?.let {
-            builder.classifierBuilder.buildNamedClassOrObjectSymbol(it)
+    override val companionObject: KaNamedClassSymbol?
+        get() = withValidityAssertion {
+            firSymbol.companionObjectSymbol?.let {
+                builder.classifierBuilder.buildNamedClassOrObjectSymbol(it)
+            }
         }
-    }
 
     override val typeParameters = withValidityAssertion {
         firSymbol.createRegularKtTypeParameters(builder)

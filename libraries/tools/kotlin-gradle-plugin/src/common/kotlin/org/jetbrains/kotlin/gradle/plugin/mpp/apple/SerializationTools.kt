@@ -27,9 +27,9 @@ internal object SerializationTools {
             .create()
     }
 
-    inline fun <reified T : List<Serializable>> writeToJson(objects: T): String = gson.toJson(objects)
+    inline fun <reified T : Serializable> writeToJson(objects: T): String = gson.toJson(objects)
 
-    inline fun <reified T : List<Serializable>> readFromJson(jsonString: String): T {
+    inline fun <reified T : Serializable> readFromJson(jsonString: String): T {
         val listType = object : TypeToken<T>() {}.type
         return gson.fromJson(jsonString, listType)
     }

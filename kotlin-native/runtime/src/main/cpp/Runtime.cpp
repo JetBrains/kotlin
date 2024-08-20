@@ -17,6 +17,7 @@
 #include "Worker.h"
 #include "KString.h"
 #include <atomic>
+#include <cstdint>
 #include <cstdlib>
 #include <thread>
 
@@ -385,8 +386,8 @@ RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
     return obj->local();
 }
 
-static void CallInitGlobalAwaitInitialized(int *state) {
-    int localState;
+static void CallInitGlobalAwaitInitialized(uintptr_t* state) {
+    uintptr_t localState;
     // Switch to the native state to avoid dead-locks.
     {
         kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
@@ -397,12 +398,12 @@ static void CallInitGlobalAwaitInitialized(int *state) {
     if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr);
 }
 
-NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
-    int localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
+NO_INLINE void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)()) {
+    uintptr_t localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
         ThrowFileFailedToInitializeException(nullptr);
-    int threadId = konan::currentThreadId();
+    uintptr_t threadId = konan::currentThreadId();
     if ((localState & 3) == FILE_BEING_INITIALIZED) {
         if ((localState & ~3) != (threadId << 2)) {
             CallInitGlobalAwaitInitialized(state);
@@ -426,7 +427,7 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
     }
 }
 
-void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)()) {
+void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)()) {
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
         ThrowFileFailedToInitializeException(nullptr);
     *localState = FILE_INITIALIZED;

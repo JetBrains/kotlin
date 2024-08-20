@@ -77,8 +77,6 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val disableMmap by booleanOption()
 
-    val disableAllocatorOverheadEstimate by booleanOption()
-
     val enableSafepointSignposts by booleanOption()
 
     val packFields by booleanOption()

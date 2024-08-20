@@ -1232,7 +1232,7 @@ private fun IrScript.toIrBasedDescriptor() = descriptor
 
 private fun IrElement.toConstantValue(): ConstantValue<*> {
     return when (this) {
-        is IrConst<*> -> when (kind) {
+        is IrConst -> when (kind) {
             IrConstKind.Null -> NullValue()
             IrConstKind.Boolean -> BooleanValue(value as Boolean)
             IrConstKind.Char -> CharValue(value as Char)

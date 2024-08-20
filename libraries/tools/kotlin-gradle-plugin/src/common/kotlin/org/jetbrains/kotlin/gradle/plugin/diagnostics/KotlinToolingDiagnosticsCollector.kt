@@ -32,30 +32,38 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         return rawDiagnosticsFromProject[project.path] ?: return emptyList()
     }
 
-    fun report(project: Project, diagnostic: ToolingDiagnostic) {
-        handleDiagnostic(project, diagnostic)
-    }
-
-    fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
-        report(task, task.logger, diagnostic)
-    }
-
-    fun report(from: UsesKotlinToolingDiagnosticsParameters, logger: Logger, diagnostic: ToolingDiagnostic) {
-        val options = from.diagnosticRenderingOptions.get()
-        if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, logger, options)
+    fun report(
+        project: Project,
+        diagnostic: ToolingDiagnostic,
+        reportOnce: Boolean = false,
+        key: ToolingDiagnosticId = diagnostic.id,
+    ) {
+        if (reportedIds.add(key) || !reportOnce){
+            handleDiagnostic(project, diagnostic)
         }
     }
 
-    fun reportOncePerGradleProject(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-        if (reportedIds.add("${fromProject.path}#$key")) {
-            handleDiagnostic(fromProject, diagnostic)
-        }
+    fun report(
+        task: UsesKotlinToolingDiagnostics,
+        diagnostic: ToolingDiagnostic,
+        reportOnce: Boolean = false,
+        key: ToolingDiagnosticId = diagnostic.id,
+    ) {
+        report(task, task.logger, diagnostic, reportOnce, key)
     }
 
-    fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-        if (reportedIds.add(":#$key")) {
-            handleDiagnostic(fromProject, diagnostic)
+    fun report(
+        from: UsesKotlinToolingDiagnosticsParameters,
+        logger: Logger,
+        diagnostic: ToolingDiagnostic,
+        reportOnce: Boolean = false,
+        key: ToolingDiagnosticId = diagnostic.id,
+    ) {
+        if (reportedIds.add(key) || !reportOnce) {
+            val options = from.diagnosticRenderingOptions.get()
+            if (!diagnostic.isSuppressed(options)) {
+                renderReportedDiagnostic(diagnostic, logger, options)
+            }
         }
     }
 
@@ -91,6 +99,22 @@ internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnostics
 
 internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
     kotlinToolingDiagnosticsCollector.report(this, diagnostic)
+}
+
+internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
+    fromProject: Project,
+    diagnostic: ToolingDiagnostic,
+    key: ToolingDiagnosticId = diagnostic.id,
+) {
+    report(fromProject, diagnostic, reportOnce = true, ":#$key")
+}
+
+internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
+    fromProject: Project,
+    diagnostic: ToolingDiagnostic,
+    key: ToolingDiagnosticId = diagnostic.id,
+) {
+    report(fromProject, diagnostic, reportOnce = true, "${fromProject.path}#$key")
 }
 
 internal fun Project.reportDiagnosticOncePerProject(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {

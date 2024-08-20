@@ -3,7 +3,7 @@
 import KotlinRuntime
 
 public extension ExportedKotlinPackages.dependency.four {
-    public class AnotherBar : KotlinRuntime.KotlinBase {
+    public final class AnotherBar : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = dependency_four_AnotherBar_init_allocate()
             super.init(__externalRCRef: __kt)

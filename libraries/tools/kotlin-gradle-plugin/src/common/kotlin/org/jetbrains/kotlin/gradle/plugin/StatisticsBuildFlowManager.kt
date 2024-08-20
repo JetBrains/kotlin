@@ -46,7 +46,7 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
         @get:ServiceReference
         val buildMetricService: Property<BuildMetricsService>
 
-        @get: Input
+        @get:Input
         val buildScanExtensionHolder: Property<BuildScanExtensionHolder>
     }
 

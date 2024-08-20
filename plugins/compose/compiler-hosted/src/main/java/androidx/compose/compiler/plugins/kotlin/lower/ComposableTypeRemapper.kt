@@ -20,7 +20,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.isComposableAnnotation
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.peek
@@ -96,7 +95,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
                 // so we potentially need to update composable types for it.
                 // if the function is in the current module, it should be updated eventually
                 // by this deep copy pass.
-                if (overriddenFn.needsComposableRemapping() && !overriddenFn.isDecoy()) {
+                if (overriddenFn.needsComposableRemapping()) {
                     overriddenFn.remapTypes(typeRemapper)
                 }
             }
@@ -412,7 +411,7 @@ class ComposerTypeRemapper(
         if (!name.startsWith("Function")) return false
         val packageFqName = cls.owner.packageFqName
         return packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
-            packageFqName == KotlinFunctionsBuiltInsPackageFqName
+                packageFqName == KotlinFunctionsBuiltInsPackageFqName
     }
 
     private fun IrType.isComposableFunction(): Boolean {
@@ -422,10 +421,6 @@ class ComposerTypeRemapper(
     override fun remapType(type: IrType): IrType {
         if (type !is IrSimpleType) return type
         if (!type.isComposableFunction()) return underlyingRemapType(type)
-        // do not convert types for decoys
-        if (scopeStack.peek()?.isDecoy() == true) {
-            return underlyingRemapType(type)
-        }
 
         val oldIrArguments = type.arguments
         val realParams = oldIrArguments.size - 1
@@ -442,8 +437,8 @@ class ComposerTypeRemapper(
         }
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +
-                extraArgs +
-                oldIrArguments.last()
+                    extraArgs +
+                    oldIrArguments.last()
 
         val newArgSize = oldIrArguments.size - 1 + extraArgs.size
         val functionCls = context.function(newArgSize)

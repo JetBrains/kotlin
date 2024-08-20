@@ -1667,4 +1667,26 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
       runTest("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/preresolvedNonEmptyInterfaceWithSuper.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("serializable_starImport.kt")
+    public void testSerializable_starImport() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/serializable_starImport.kt");
+    }
+
+    @Test
+    @TestMetadata("serializable_starImport_twoAnnotationsChain.kt")
+    public void testSerializable_starImport_twoAnnotationsChain() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled/serializable_starImport_twoAnnotationsChain.kt");
+    }
+  }
 }

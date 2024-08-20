@@ -215,11 +215,7 @@ class Fir2IrClassifierStorage(
 
         classCache[firClass] = symbol
         check(irParent.isExternalParent()) { "Source classes should be created separately before referencing" }
-        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
-        // NB: this is needed to prevent recursions in case of self bounds
-        irClass.prepareTypeParameters()
-
-        return irClass
+        return lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
@@ -404,10 +400,8 @@ class Fir2IrClassifierStorage(
         )!!
 
         val symbol = IrTypeAliasSymbolImpl()
-        val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         typeAliasCache[firTypeAlias] = symbol
-        irTypeAlias.prepareTypeParameters()
-
+        lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         return symbol
     }
 

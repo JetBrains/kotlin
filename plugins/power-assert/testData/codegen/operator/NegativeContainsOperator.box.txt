@@ -21,6 +21,7 @@ assert(
             listOf(" !in ")
             |
             [ !in ]
+
 )
 ---
 ---

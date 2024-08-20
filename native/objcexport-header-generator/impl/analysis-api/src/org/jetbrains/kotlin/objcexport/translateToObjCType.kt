@@ -174,17 +174,16 @@ internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<
         when (typeArgument) {
             is KaStarTypeProjection -> ObjCIdType
             is KaTypeArgumentWithVariance -> {
-                val isMarkedNullable = with(analysisSession) { typeArgument.type.isMarkedNullable }
+                val isNullable = with(analysisSession) { typeArgument.type.isMarkedNullable || typeArgument.type.canBeNull }
                 /*
                 Kotlin `null` keys and values are represented as `NSNull` singleton in collections
                 */
-                if (isKnownCollectionType && isMarkedNullable) return@map ObjCIdType
+                if (isKnownCollectionType && isNullable) return@map ObjCIdType
                 mapToReferenceTypeIgnoringNullability(typeArgument.type)
             }
         }
     }
 }
-
 
 /**
  * Types to be "hidden" during mapping, i.e., represented as `id`.

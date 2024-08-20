@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -222,7 +221,6 @@ internal class AdapterGenerator(
                         createAdapterParameter(
                             irAdapterFunction,
                             Name.identifier("receiver"),
-                            index = UNDEFINED_PARAMETER_INDEX,
                             boundReceiver.type,
                             IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                         )
@@ -231,7 +229,6 @@ internal class AdapterGenerator(
                 createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier("p$index"),
-                    index,
                     parameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                 )
@@ -243,7 +240,6 @@ internal class AdapterGenerator(
     private fun createAdapterParameter(
         adapterFunction: IrFunction,
         name: Name,
-        index: Int,
         type: IrType,
         origin: IrDeclarationOrigin
     ): IrValueParameter =
@@ -255,7 +251,6 @@ internal class AdapterGenerator(
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),
-            index = index,
             varargElementType = null,
             isCrossinline = false,
             isNoinline = false,
@@ -647,7 +642,6 @@ internal class AdapterGenerator(
             irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
                 irAdapterFunction,
                 Name.identifier("\$callee"),
-                UNDEFINED_PARAMETER_INDEX,
                 argumentType,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
             )
@@ -655,7 +649,6 @@ internal class AdapterGenerator(
                 createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier("p$index"),
-                    index,
                     parameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
                 )
@@ -770,7 +763,6 @@ internal class AdapterGenerator(
             val irFunctionParameter = createAdapterParameter(
                 irAdapterFunction,
                 functionParameter.name,
-                0,
                 irFunctionType,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
             )

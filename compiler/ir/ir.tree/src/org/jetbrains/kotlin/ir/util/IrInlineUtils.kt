@@ -9,9 +9,22 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
+
+/**
+ * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
+ * For example, in the JVM backend it is safe to check the original call of an inlined function, and on other backends it's not.
+ * To discourage usages of such APIs in non-JVM backends, this opt-in annotation was introduced.
+ */
+@RequiresOptIn(
+    message = "This API is supposed to be used only inside JVM backend.",
+)
+annotation class JvmIrInlineExperimental
+
+@JvmIrInlineExperimental
+var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(followAttributeOwner = true)
 
 val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
     get() = when (val element = inlinedElement) {
@@ -21,7 +34,8 @@ val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
         is IrPropertyReference -> element.symbol.owner
         else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
     }
-private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
+
+val IrInlinedFunctionBlock.inlineFunction: IrFunction?
     get() = when (val element = inlinedElement) {
         is IrFunction -> element
         is IrFunctionExpression -> element.function
@@ -39,10 +53,6 @@ fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
 
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
-val IrReturnableBlock.inlineFunction: IrFunction?
-    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunction?.fileOrNull?.symbol
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())

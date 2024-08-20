@@ -128,6 +128,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("constValFromLib.kt")
+    public void testConstValFromLib() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/constValFromLib.kt");
+    }
+
+    @Test
     @TestMetadata("customName.kt")
     public void testCustomName() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");

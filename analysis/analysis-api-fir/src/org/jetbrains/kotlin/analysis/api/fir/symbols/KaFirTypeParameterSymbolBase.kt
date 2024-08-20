@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
@@ -30,12 +29,13 @@ internal sealed class KaFirTypeParameterSymbolBase : KaTypeParameterSymbol(), Ka
         }
 
     @OptIn(UnexpandedTypeCheck::class)
-    override val upperBounds: List<KaType> by cached {
-        firSymbol.resolvedBounds.mapNotNull { type ->
-            if (type.isNullableAny) return@mapNotNull null
-            builder.typeBuilder.buildKtType(type)
+    override val upperBounds: List<KaType>
+        get() = withValidityAssertion {
+            firSymbol.resolvedBounds.mapNotNull { type ->
+                if (type.isNullableAny) return@mapNotNull null
+                builder.typeBuilder.buildKtType(type)
+            }
         }
-    }
 
     override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaTypeParameterSymbol>(this)?.let { return it }

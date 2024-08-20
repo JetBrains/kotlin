@@ -54,17 +54,6 @@ class CompilerArgumentsContentProspectorTest {
         assertContentEquals(arrayProperties, k2JSCompilerArgumentsArrayProperties)
     }
 
-    @Test
-    fun testJsDceArgumentsContent() {
-        val flagProperties = CompilerArgumentsContentProspector.getFlagCompilerArgumentProperties(K2JSDceArguments::class)
-        val stringProperties = CompilerArgumentsContentProspector.getStringCompilerArgumentProperties(K2JSDceArguments::class)
-        val arrayProperties = CompilerArgumentsContentProspector.getArrayCompilerArgumentProperties(K2JSDceArguments::class)
-
-        assertContentEquals(flagProperties, k2JSDceCompilerArgumentsFlagProperties)
-        assertContentEquals(stringProperties, k2JSDceCompilerArgumentsStringProperties)
-        assertContentEquals(arrayProperties, k2JSDceCompilerArgumentsArrayProperties)
-    }
-
     companion object {
 
         private val commonToolArgumentsFlagProperties = listOf(
@@ -238,18 +227,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::irDceRuntimeDiagnostic,
         )
         private val k2JSCompilerArgumentsArrayProperties = commonCompilerArgumentsArrayProperties
-
-        private val k2JSDceCompilerArgumentsFlagProperties = commonToolArgumentsFlagProperties + listOf(
-            K2JSDceArguments::devMode,
-            K2JSDceArguments::printReachabilityInfo,
-        )
-        private val k2JSDceCompilerArgumentsStringProperties = listOf(
-            K2JSDceArguments::outputDirectory,
-            K2JSDceArguments::devModeOverwritingStrategy,
-        )
-        private val k2JSDceCompilerArgumentsArrayProperties = listOf(
-            K2JSDceArguments::declarationsToKeep
-        )
 
         private fun assertContentEquals(expect: Collection<KProperty<*>>, actual: Collection<KProperty<*>>) {
             //assert(expect.count() == actual.count()) {

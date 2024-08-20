@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createConeType
@@ -71,6 +72,20 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(SERIALIZABLE_PREDICATE, CORE_SERIALIZER_PREDICATE)
+    }
+
+    override fun getNestedClassifiersNames(
+        classSymbol: FirClassSymbol<*>,
+        context: NestedClassGenerationContext,
+    ): Set<Name> {
+        // We don't need this call, but we do it here for test purposes,
+        // since the real Serialization plugin also does it.
+        // We are allowed to call this function at this point,
+        // and we do this to make sure that the lazy resolve
+        // does not go into an infinite loop in the Analysis API mode (see KT-67483)
+        classSymbol.resolvedCompilerAnnotationsWithClassIds
+
+        return super.getNestedClassifiersNames(classSymbol, context)
     }
 
     object Key : GeneratedDeclarationKey()

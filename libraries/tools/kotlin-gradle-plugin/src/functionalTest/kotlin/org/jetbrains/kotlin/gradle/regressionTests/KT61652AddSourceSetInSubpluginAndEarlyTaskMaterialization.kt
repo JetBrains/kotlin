@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
@@ -70,6 +71,8 @@ class KT61652AddSourceSetInSubpluginAndEarlyTaskMaterialization {
         val allProjectsData = gmtParams.projectData
         lib.evaluate()
 
-        assertDoesNotThrow { allProjectsData[":lib"]!!.sourceSetMetadataOutputs.getOrThrow() }
+        if (!app.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
+            assertDoesNotThrow { allProjectsData[":lib"]!!.sourceSetMetadataOutputs.getOrThrow() }
+        }
     }
 }

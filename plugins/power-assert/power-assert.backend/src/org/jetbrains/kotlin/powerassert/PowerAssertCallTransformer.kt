@@ -162,7 +162,7 @@ class PowerAssertCallTransformer(
         messageParameter: IrValueParameter,
     ): IrExpression? {
         return when (messageArgument) {
-            is IrConst<*> -> messageArgument
+            is IrConst -> messageArgument
             is IrStringConcatenation -> messageArgument
             is IrGetValue -> {
                 if (messageArgument.type.isAssignableTo(context.irBuiltIns.stringType)) {

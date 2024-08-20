@@ -69,7 +69,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     private fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
-            is IrConst<*> -> value is Number && compare((value as Number).toLong())
+            is IrConst -> value is Number && compare((value as Number).toLong())
             is IrGetValue -> compareConstValue { it.compareIntegerNumericConst(compare) }
             else -> false
         }
@@ -78,7 +78,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     private fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
-            is IrConst<*> -> value is Number && compare((value as Number).toDouble())
+            is IrConst -> value is Number && compare((value as Number).toDouble())
             is IrGetValue -> compareConstValue { it.compareFloatNumericConst(compare) }
             else -> false
         }

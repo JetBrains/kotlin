@@ -3,10 +3,10 @@ plugins {
 }
 
 kotlin {
-    ios()
+    iosX64()
 
     // Check that we can reenter the configuration method.
-    ios {
+    iosX64 {
         binaries.framework(listOf(DEBUG))
     }
 

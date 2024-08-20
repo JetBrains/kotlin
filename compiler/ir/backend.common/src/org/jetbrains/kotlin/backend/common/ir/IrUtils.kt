@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.inlineFunction
-import org.jetbrains.kotlin.ir.util.statements
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -32,7 +29,6 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
 inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        index = -1
         name = "this".synthesizedName
         factory.buildValueParameter(this, this@addDispatchReceiver).also { receiver ->
             dispatchReceiverParameter = receiver
@@ -43,7 +39,6 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.index = -1
         this.name = "receiver".synthesizedName
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
@@ -60,7 +55,7 @@ fun IrExpression?.isPure(
 
     fun IrExpression.isPureImpl(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrGetValue -> {
                 if (anyVariable) return true
                 val valueDeclaration = symbol.owner
@@ -126,28 +121,7 @@ fun CommonBackendContext.createArrayOfExpression(
 
 fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
 
-// This code is partially duplicated in jvm FunctionReferenceLowering::adapteeCall
-// The difference is jvm version doesn't support ReturnableBlock, but returns call node instead of called function.
-fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
-    if (origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) return null
-    // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
-    // applied to a either a call or ReturnableBlock produced from that call inlining.
-    // That call's target is the original function which we need to get.
-    fun unknownStructure(): Nothing = throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${dump()}")
-    val call = when (val statement = body?.statements?.singleOrNull() ?: unknownStructure()) {
-        is IrTypeOperatorCall -> {
-            if (statement.operator != IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) unknownStructure()
-            statement.argument
-        }
-        is IrReturn -> statement.value
-        else -> statement
-    }
-    if (call is IrReturnableBlock) return call.inlineFunction ?: unknownStructure()
-    if (call !is IrFunctionAccessExpression) unknownStructure()
-    return call.symbol.owner
-}
-
-fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst)?.value == true
 
 fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
     compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)

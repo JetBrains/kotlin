@@ -115,7 +115,6 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun IrExpression.getJsCode(): String? {
         val call = this as? IrCall ?: return null
         if (call.symbol != jsRelatedSymbols.jsCode) return null
-        @Suppress("UNCHECKED_CAST")
-        return (call.getValueArgument(0) as IrConst<String>).value
+        return (call.getValueArgument(0) as IrConst).value as String
     }
 }

@@ -24,9 +24,21 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("composeNavigationWithDataClass.kt")
+  public void testComposeNavigationWithDataClass() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/composeNavigationWithDataClass.kt");
+  }
+
+  @Test
   @TestMetadata("constExprInitializer.kt")
   public void testConstExprInitializer() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/constExprInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/dataClass.kt");
   }
 
   @Test
@@ -63,5 +75,11 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   @TestMetadata("propertyWithDelegateBackingField.kt")
   public void testPropertyWithDelegateBackingField() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/propertyWithDelegateBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("valueArgumentForLibraryConstructor.kt")
+  public void testValueArgumentForLibraryConstructor() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/valueArgumentForLibraryConstructor.kt");
   }
 }

@@ -65,9 +65,8 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
             returnType = klass.defaultType
         }.also { ctor ->
             ctor.parent = klass
-            ctor.valueParameters = properties.mapIndexed { index, property ->
+            ctor.valueParameters = properties.map { property ->
                 buildValueParameter(ctor) {
-                    this.index = index
                     type = property.getter!!.returnType
                     name = property.name
                 }

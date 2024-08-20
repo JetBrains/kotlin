@@ -219,7 +219,6 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("ParameterDescriptor")
         +field("isAssignable", boolean, mutable = false)
         +declaredSymbol(valueParameterSymbol)
-        +field("index", int)
         +field("varargElementType", irTypeType, nullable = true)
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
@@ -253,6 +252,17 @@ object IrTree : AbstractTreeBuilder() {
             """.trimIndent()
         }
         +field("defaultValue", expressionBody, nullable = true)
+
+        addImport(ArbitraryImportable(Packages.declarations, "DelicateIrParameterIndexSetter"))
+        generationCallback = {
+            println()
+            printPropertyDeclaration("index", int, VariableKind.VAR, initializer = "-1")
+            println()
+            withIndent {
+                println("@DelicateIrParameterIndexSetter")
+                println("set")
+            }
+        }
     }
     val `class`: Element by element(Declaration) {
         parent(declarationBase)
@@ -376,6 +386,8 @@ object IrTree : AbstractTreeBuilder() {
         +declaredSymbol(returnTargetSymbol)
     }
     val function: Element by sealedElement(Declaration) {
+        doPrint = false
+
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -394,7 +406,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("returnType", irTypeType)
         +field("dispatchReceiverParameter", valueParameter, nullable = true)
         +field("extensionReceiverParameter", valueParameter, nullable = true)
-        +listField("valueParameters", valueParameter, mutability = Var)
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int)
         +field("body", body, nullable = true)
@@ -638,6 +649,7 @@ object IrTree : AbstractTreeBuilder() {
         //diff: no accept
     }
     val memberAccessExpression: Element by element(Expression) {
+        doPrint = false
         nameInVisitorMethod = "MemberAccess"
         transformerReturnType = rootElement
         val s = +param("S", IrSymbolTree.rootElement)
@@ -653,65 +665,6 @@ object IrTree : AbstractTreeBuilder() {
         }
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
             visibility = Visibility.PROTECTED
-        }
-
-        generationCallback = {
-            addImport(ArbitraryImportable(Packages.exprs, "checkArgumentSlotAccess"))
-            val indexParam = FunctionParameter("index", StandardTypes.int)
-            val valueArgumentParam = FunctionParameter("valueArgument", expression.copy(nullable = true))
-            val typeArgumentParam = FunctionParameter("type", irTypeType.copy(nullable = true))
-
-            fun printSizeProperty(listName: String) {
-                println()
-                println("val ", listName, "Count: Int")
-                withIndent {
-                    println("get() = ", listName, ".size")
-                }
-            }
-
-            printSizeProperty("valueArguments")
-            printSizeProperty("typeArguments")
-
-            fun printFunction(
-                name: String,
-                additionalParameter: FunctionParameter?,
-                returnType: TypeRefWithNullability,
-                vararg statements: String,
-            ) {
-                println()
-                printFunctionWithBlockBody(name, listOf(indexParam) + listOfNotNull(additionalParameter), returnType) {
-                    statements.forEach { println(it) }
-                }
-            }
-
-            printFunction(
-                "getValueArgument",
-                null,
-                expression.copy(nullable = true),
-                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
-                "return valueArguments[index]",
-            )
-            printFunction(
-                "getTypeArgument",
-                null,
-                irTypeType.copy(nullable = true),
-                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
-                "return typeArguments[index]",
-            )
-            printFunction(
-                "putValueArgument",
-                valueArgumentParam,
-                StandardTypes.unit,
-                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
-                "valueArguments[index] = valueArgument",
-            )
-            printFunction(
-                "putTypeArgument",
-                typeArgumentParam,
-                StandardTypes.unit,
-                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
-                "typeArguments[index] = type",
-            )
         }
     }
     val functionAccessExpression: Element by sealedElement(Expression) {
@@ -789,7 +742,6 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
-        +field("inlineCall", functionAccessExpression, isChild = false)
         +field("inlinedElement", rootElement, isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
@@ -857,12 +809,10 @@ object IrTree : AbstractTreeBuilder() {
         +field("classType", irTypeType)
     }
     val const: Element by element(Expression) {
-        val t = +param("T")
-
         parent(expression)
 
-        +field("kind", type(Packages.exprs, "IrConstKind").withArgs(t))
-        +field("value", t)
+        +field("kind", type(Packages.exprs, "IrConstKind"))
+        +field("value", anyType, nullable = true)
     }
     val constantValue: Element by element(Expression) {
         transformByChildren = true
@@ -873,7 +823,7 @@ object IrTree : AbstractTreeBuilder() {
     val constantPrimitive: Element by element(Expression) {
         parent(constantValue)
 
-        +field("value", const.withArgs("T" to TypeRef.Star))
+        +field("value", const)
     }
     val constantObject: Element by element(Expression) {
         parent(constantValue)
@@ -1043,6 +993,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("catchParameter", variable)
         +field("result", expression)
+        +field("origin", statementOriginType, nullable = true)
     }
     val typeOperatorCall: Element by element(Expression) {
         nameInVisitorMethod = "TypeOperator"

@@ -14,7 +14,6 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.*
@@ -100,7 +99,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "BUILT_PRODUCTS_DIR" to interfacesPath.getFile().canonicalPath,
         )
 
-        val scheme = swiftApiModuleName.get()
+        val swiftModuleName = swiftApiModuleName.get()
 
         val buildArguments = mapOf(
             "ARCHS" to target.map { it.appleArchitecture }.get(),
@@ -110,7 +109,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             All object files will be merged in `lib${swiftApiModuleName}.a`
             More information can be found here: https://github.com/swiftlang/swift/pull/35936
              */
-            "OTHER_SWIFT_FLAGS" to "-Xfrontend -public-autolink-library -Xfrontend $scheme"
+            "OTHER_SWIFT_FLAGS" to "-Xfrontend -public-autolink-library -Xfrontend $swiftModuleName"
         )
 
         val derivedData = packageDerivedData.getFile()
@@ -118,7 +117,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val command = listOf(
             "xcodebuild",
             "-derivedDataPath", derivedData.relativeOrAbsolute(packageRootPath),
-            "-scheme", scheme,
+            "-scheme", swiftModuleName,
             "-destination", destination()
         ) + (intermediatesDestination + buildArguments).map { (k, v) -> "$k=$v" }
 

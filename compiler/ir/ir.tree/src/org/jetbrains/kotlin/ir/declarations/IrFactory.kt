@@ -399,7 +399,6 @@ open class IrFactory(
         type: IrType,
         isAssignable: Boolean,
         symbol: IrValueParameterSymbol,
-        index: Int,
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
@@ -411,7 +410,6 @@ open class IrFactory(
             origin = origin,
             symbol = symbol,
             name = name,
-            index = index,
             type = type,
             varargElementType = varargElementType,
             isCrossinline = isCrossinline,
@@ -420,6 +418,34 @@ open class IrFactory(
             isAssignable = isAssignable,
             factory = this
         ).declarationCreated()
+
+    @Suppress("unused") // Deprecated, parameter [index] is ignored. Kept for backward compatibility only.
+    fun createValueParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        type: IrType,
+        isAssignable: Boolean,
+        symbol: IrValueParameterSymbol,
+        index: Int,
+        varargElementType: IrType?,
+        isCrossinline: Boolean,
+        isNoinline: Boolean,
+        isHidden: Boolean,
+    ): IrValueParameter = createValueParameter(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        type = type,
+        isAssignable = isAssignable,
+        symbol = symbol,
+        varargElementType = varargElementType,
+        isCrossinline = isCrossinline,
+        isNoinline = isNoinline,
+        isHidden = isHidden,
+    )
 
     fun createExpressionBody(
         startOffset: Int,

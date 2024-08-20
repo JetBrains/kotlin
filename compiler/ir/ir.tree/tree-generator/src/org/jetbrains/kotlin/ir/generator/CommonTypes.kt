@@ -31,6 +31,7 @@ object Packages {
     const val util = "org.jetbrains.kotlin.ir.util"
 }
 
+val anyType = type<Any>()
 val elementBaseType = type(tree, "IrElementBase", TypeKind.Class)
 val statementOriginType = type(exprs, "IrStatementOrigin")
 val elementVisitorType = type(visitors, "IrElementVisitor")

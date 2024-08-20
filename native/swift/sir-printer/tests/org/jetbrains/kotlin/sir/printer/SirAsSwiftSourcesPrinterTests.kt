@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.printer
 
+import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
@@ -937,5 +938,54 @@ class SirAsSwiftSourcesPrinterTests {
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
+    }
+
+    @Test
+    fun `should elide extra visibility modifiers when modality spedified`() {
+        val module = buildModule {
+            name = "Test"
+
+            declarations.addAllIfNotNull(
+                buildClass {
+                    name = "OPEN_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    modality = SirClassModality.OPEN
+                },
+                buildClass {
+                    name = "FINAL_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    modality = SirClassModality.FINAL
+                },
+                buildClass {
+                    name = "UNSPECIDIED_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                },
+                buildClass {
+                    name = "OPEN_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                    modality = SirClassModality.OPEN
+                },
+                buildClass {
+                    name = "FINAL_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                    modality = SirClassModality.FINAL
+                },
+                buildClass {
+                    name = "UNSPECIFIED_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                },
+            )
+        }
+
+        runTest(
+            module,
+            "testData/modality"
+        )
     }
 }

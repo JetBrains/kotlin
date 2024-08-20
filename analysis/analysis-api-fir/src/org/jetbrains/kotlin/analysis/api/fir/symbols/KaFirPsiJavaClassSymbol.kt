@@ -83,20 +83,21 @@ internal class KaFirPsiJavaClassSymbol(
     val outerClass: KaFirPsiJavaClassSymbol?
         get() = psi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) }
 
-    override val typeParameters: List<KaTypeParameterSymbol> by cached {
-        // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type 
-        // parameters aren't relevant.
-        psi.typeParameters.mapIndexed { index, psiTypeParameter ->
-            KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession, origin) {
-                // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
-                val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
-                require(firTypeParameter != null) {
-                    "The FIR symbol's ${FirTypeParameter::class.simpleName}s should have an entry at $index."
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion {
+            // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type
+            // parameters aren't relevant.
+            psi.typeParameters.mapIndexed { index, psiTypeParameter ->
+                KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession, origin) {
+                    // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
+                    val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
+                    require(firTypeParameter != null) {
+                        "The FIR symbol's ${FirTypeParameter::class.simpleName}s should have an entry at $index."
+                    }
+                    firTypeParameter.symbol
                 }
-                firTypeParameter.symbol
             }
         }
-    }
 
     val annotationSimpleNames: List<String?>
         get() = psi.annotations.map { it.nameReferenceElement?.referenceName }
@@ -123,16 +124,12 @@ internal class KaFirPsiJavaClassSymbol(
     override val firSymbol: FirRegularClassSymbol by cached {
         val module = analysisSession.getModule(psi)
         val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider
-        val firClassSymbol = provider.getFirClass(psi)
+        provider.getFirClass(psi)
+    }
 
-        require(firClassSymbol != null) {
-            "A FIR class symbol should be available for ${KaFirPsiJavaClassSymbol::class.simpleName} `$classId`."
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            else KaBaseEmptyAnnotationList(token)
         }
-        firClassSymbol
-    }
-
-    override val annotations: KaAnnotationList by cached {
-        if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        else KaBaseEmptyAnnotationList(token)
-    }
 }

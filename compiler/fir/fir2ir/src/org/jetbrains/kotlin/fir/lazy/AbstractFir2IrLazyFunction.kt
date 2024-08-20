@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
@@ -24,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -108,16 +103,9 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
 
-    protected fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
+    internal fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
         return !fir.isStatic && !containingClass.isFacadeClass &&
                 (!containingClass.isObject || containingClass.isCompanion || !extensions.isTrueStatic(fir, session))
-    }
-
-    protected fun createThisReceiverParameter(thisType: IrType, explicitReceiver: FirReceiverParameter? = null): IrValueParameter {
-        declarationStorage.enterScope(this.symbol)
-        return declareThisReceiverParameter(c, thisType, origin, explicitReceiver = explicitReceiver).apply {
-            declarationStorage.leaveScope(this@AbstractFir2IrLazyFunction.symbol)
-        }
     }
 
     override val factory: IrFactory

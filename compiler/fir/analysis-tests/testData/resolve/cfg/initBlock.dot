@@ -99,6 +99,6 @@ digraph initBlock_kt {
     27 -> {28} [style=dotted];
     28 -> {29} [style=dotted];
     29 -> {30} [style=dotted];
-    30 -> {31} [style=dotted];
+    30 -> {31} [color=green style=dotted];
 
 }

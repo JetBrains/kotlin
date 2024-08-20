@@ -38,7 +38,7 @@ std::atomic<void (*)(mm::ThreadData&)> safePointAction = nullptr;
 class SafePointSignpostInterval : private Pinned {
 public:
     explicit SafePointSignpostInterval(mm::ThreadData& threadData) noexcept : id_(os_signpost_id_make_with_pointer(logObject, &threadData)) {
-        os_signpost_interval_begin(logObject, id_, SAFEPOINT_SIGNPOST_NAME, "thread id: %d", threadData.threadId());
+        os_signpost_interval_begin(logObject, id_, SAFEPOINT_SIGNPOST_NAME, "thread id: %" PRIuPTR, threadData.threadId());
     }
 
     ~SafePointSignpostInterval() {

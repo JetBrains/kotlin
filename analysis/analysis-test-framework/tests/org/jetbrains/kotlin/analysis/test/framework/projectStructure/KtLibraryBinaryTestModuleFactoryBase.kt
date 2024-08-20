@@ -27,8 +27,8 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        val binaryRoot = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots).artifact
-        val decompiledFiles = decompileToPsiFiles(binaryRoot, testServices, project)
+        val (binaryRoots, _) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
+        val decompiledFiles = binaryRoots.flatMap { decompileToPsiFiles(it, testServices, project) }
 
         return KtTestModule(
             testModuleKind,
@@ -37,12 +37,12 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
                 testModule.name,
                 testModule.targetPlatform,
                 StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                    listOf(binaryRoot),
+                    binaryRoots,
                     emptyList(),
                     testServices.environmentManager.getProjectEnvironment(),
                 ),
                 project,
-                binaryRoots = listOf(binaryRoot),
+                binaryRoots = binaryRoots,
                 librarySources = null,
                 isSdk = false,
             ),

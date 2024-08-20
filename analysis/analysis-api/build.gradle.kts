@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":analysis:kt-references"))
 
     api(intellijCore())
-    api(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    api(libs.intellij.asm)
     api(libs.guava)
 }
 

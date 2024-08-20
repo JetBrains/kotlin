@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
-import mockProjectStructureMetadataFileForProject
+import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmpty
@@ -40,7 +40,7 @@ class KT58319ProjectMetadataProvider {
         producerProject.evaluate()
         consumerProject.evaluate()
 
-        mockProjectStructureMetadataFileForProject(producerProject)
+        producerProject.mockGenerateProjectStructureMetadataTaskOutputs()
 
         /*
        Regression failure reported:

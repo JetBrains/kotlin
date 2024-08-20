@@ -1,3 +1,114 @@
+## 2.0.10
+
+### Apple Ecosystem
+
+- [`KT-68257`](https://youtrack.jetbrains.com/issue/KT-68257) Xcode incorrectly reuses embedAndSign framework when moving to and from 2.0.0
+
+### Compiler
+
+#### Fixes
+
+- [`KT-69876`](https://youtrack.jetbrains.com/issue/KT-69876) K2 Compile exception: Only IrBlockBody together with kotlinx serialization
+- [`KT-68521`](https://youtrack.jetbrains.com/issue/KT-68521) K2: Property's private setters can be bypassed when using plusAssign and minusAssign operators
+- [`KT-68667`](https://youtrack.jetbrains.com/issue/KT-68667) K2:  Compiler hangs on mapNotNull and elvis inside lambda
+- [`KT-68747`](https://youtrack.jetbrains.com/issue/KT-68747) K2: Long compilation time because of constraint solving when using typealias in different modules
+- [`KT-68940`](https://youtrack.jetbrains.com/issue/KT-68940) K2: "IllegalArgumentException: All variables should be fixed to something"
+- [`KT-68797`](https://youtrack.jetbrains.com/issue/KT-68797) K2 / Native: "java.lang.IllegalStateException: FIELD" caused by enabled caching
+- [`KT-68362`](https://youtrack.jetbrains.com/issue/KT-68362) False-positive ABSTRACT_MEMBER_NOT_IMPLEMENTED for inheritor of java class which directly implements java.util.Map
+- [`KT-68449`](https://youtrack.jetbrains.com/issue/KT-68449) K2: "when" expression returns Unit
+- [`KT-67072`](https://youtrack.jetbrains.com/issue/KT-67072) K2: inconsistent stability of open vals on receivers of final type
+- [`KT-68570`](https://youtrack.jetbrains.com/issue/KT-68570) K2: "Unresolved reference" in call with lambda argument and nested lambda argument
+- [`KT-69159`](https://youtrack.jetbrains.com/issue/KT-69159) K2: KotlinNothingValueException in Exposed
+- [`KT-68623`](https://youtrack.jetbrains.com/issue/KT-68623) K2: "Only safe or null-asserted calls are allowed" on safe call
+- [`KT-68193`](https://youtrack.jetbrains.com/issue/KT-68193) JDK 21: new MutableList.addFirst/addLast  methods allow adding nullable value for non-null types
+- [`KT-67804`](https://youtrack.jetbrains.com/issue/KT-67804) removeFirst and removeLast return type with Java 21
+- [`KT-68727`](https://youtrack.jetbrains.com/issue/KT-68727) K2: "Null argument in ExpressionCodegen for parameter VALUE_PARAMETER" caused by an enum class with default parameter in a different module
+- [`KT-68383`](https://youtrack.jetbrains.com/issue/KT-68383) K2: "Argument type mismatch: actual type is 'kotlin.String', but 'T & Any' was expected." with intersection types
+- [`KT-68546`](https://youtrack.jetbrains.com/issue/KT-68546) K2: false-positive conflicting overloads error on inheriting generic type with inherited generic and non-generic member overloads
+- [`KT-68626`](https://youtrack.jetbrains.com/issue/KT-68626) K2: "Conflicting Overloads" for function if inherited from generic type
+- [`KT-68351`](https://youtrack.jetbrains.com/issue/KT-68351) K2: "Suspension functions can only be called within coroutine body"
+- [`KT-68489`](https://youtrack.jetbrains.com/issue/KT-68489) K2: WRONG_ANNOTATION_TARGET with Java and Kotlin `@Target` annotation positions
+- [`KT-69058`](https://youtrack.jetbrains.com/issue/KT-69058) K2: Java-defined property annotations not persisted
+- [`KT-64515`](https://youtrack.jetbrains.com/issue/KT-64515) K2 IDE: [NEW_INFERENCE_ERROR] in a build.gradle.kts script while applying "jvm-test-suite" plugin and then configuring targets for test suites
+- [`KT-68016`](https://youtrack.jetbrains.com/issue/KT-68016) K2: Gradle repo test `should compile correctly with Kotlin explicit api mode` fails on K2
+- [`KT-68575`](https://youtrack.jetbrains.com/issue/KT-68575) K2: `@ParameterName` annotation is not erased when inferring the type of `it` in lambdas
+- [`KT-67999`](https://youtrack.jetbrains.com/issue/KT-67999) K2: lost flexibility on parameters of Java SAM
+- [`KT-59679`](https://youtrack.jetbrains.com/issue/KT-59679) K2: Investigate extracting uncompleted candidates from blocks
+- [`KT-68401`](https://youtrack.jetbrains.com/issue/KT-68401) K2: "IllegalAccessError: failed to access class" caused by package private super Java type, when inferencing a common super type of if or when branches on JVM
+- [`KT-68806`](https://youtrack.jetbrains.com/issue/KT-68806) K/Wasm RuntimeError: unreachable on Sequence::toList
+- [`KT-68455`](https://youtrack.jetbrains.com/issue/KT-68455) K2: False negative UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
+- [`KT-68538`](https://youtrack.jetbrains.com/issue/KT-68538) KJS/K2: using `while` with `break` inside inline lambdas leads to an endless cycle
+- [`KT-68798`](https://youtrack.jetbrains.com/issue/KT-68798) JVM compiler crashes on calling private expect constructor with a default parameter
+- [`KT-68734`](https://youtrack.jetbrains.com/issue/KT-68734) K2: enum class in KMP: Expect declaration `MMKVLogLevel` is incompatible with actual `MMKVLogLevel` because modality is different
+- [`KT-68674`](https://youtrack.jetbrains.com/issue/KT-68674) False positive ACTUAL_WITHOUT_EXPECT in K2
+- [`KT-68350`](https://youtrack.jetbrains.com/issue/KT-68350) K2: "Inapplicable candidate(s)" caused by parameter reference of local class with type parameters from function
+- [`KT-68571`](https://youtrack.jetbrains.com/issue/KT-68571) K2: "IllegalStateException: Fake override should have at least one overridden descriptor" caused by exceptions and when statement
+- [`KT-68523`](https://youtrack.jetbrains.com/issue/KT-68523) K2: FileAnalysisException when using Definitely non-nullable types
+- [`KT-68339`](https://youtrack.jetbrains.com/issue/KT-68339) K2: "Enum entry * is uninitialized here" caused by lazy property with enum in `when` expression
+- [`KT-66688`](https://youtrack.jetbrains.com/issue/KT-66688) K2: false-negative "upper bound violated" error in extension receiver
+- [`KT-68630`](https://youtrack.jetbrains.com/issue/KT-68630) DiagnosticsSuppressor is not invoked with Kotlin 2.0
+- [`KT-68222`](https://youtrack.jetbrains.com/issue/KT-68222) K2. KMP. False negative `Expected declaration must not have a body` for expected top-level property with getter/setter
+- [`KT-64103`](https://youtrack.jetbrains.com/issue/KT-64103) FirExpectActualDeclarationChecker reports diagnostic error for KtPsiSimpleDiagnostic with KtFakeSourceElement
+- [`KT-68191`](https://youtrack.jetbrains.com/issue/KT-68191) K2. Static fake-overrides are not generated for kotlin Fir2IrLazyClass
+- [`KT-68024`](https://youtrack.jetbrains.com/issue/KT-68024) K2: Gradle repo test `accessors to kotlin internal task types...` fails on K2
+- [`KT-64957`](https://youtrack.jetbrains.com/issue/KT-64957) K1: drop ModuleAnnotationResolver
+
+### Compose compiler
+
+- [`0c5a858`](https://github.com/JetBrains/kotlin/commit/0c5a858604da726792d5b3c16374bb6cba5baf2f) Fix memoization of captureless lambdas when K2 compiler is used [b/340582180](https://issuetracker.google.com/issue/340582180)
+- [`a8249d6`](https://github.com/JetBrains/kotlin/commit/a8249d60c7cd14a459469fe0ef2099721d3dd699) Allow memoizing lambdas in composable inline functions [b/340606661](https://issuetracker.google.com/issue/340606661)
+
+### Native
+
+- [`KT-68094`](https://youtrack.jetbrains.com/issue/KT-68094) K2/Native: Member inherits different '`@Throws`' when inheriting from generic type
+
+### Tools. Compiler Plugins
+
+- [`KT-69187`](https://youtrack.jetbrains.com/issue/KT-69187) Compose compiler for web doesn't support rememberComposableLambda
+- [`KT-68557`](https://youtrack.jetbrains.com/issue/KT-68557) K2. Supertypes resolution of KJK hierarchy fails in presence of allopen plugin
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-68850`](https://youtrack.jetbrains.com/issue/KT-68850) Compose lambda type not transformed with KGP 2 + new Compose plugin
+
+### Tools. Daemon
+
+- [`KT-68297`](https://youtrack.jetbrains.com/issue/KT-68297) KGP 2.0 regression: JAVA_TOOL_OPTIONS is not considered in Kotlin daemon creation
+
+### Tools. Gradle
+
+- [`KT-69330`](https://youtrack.jetbrains.com/issue/KT-69330) KotlinCompile friendPathsSet property is racy due causing build cache invalidation
+- [`KT-69026`](https://youtrack.jetbrains.com/issue/KT-69026) Mark AGP 8.5.0 as compatible with KGP
+- [`KT-68447`](https://youtrack.jetbrains.com/issue/KT-68447) ill-added intentionally-broken dependency source configurations
+- [`KT-69078`](https://youtrack.jetbrains.com/issue/KT-69078) Gradle: Add option to disable FUS Service
+- [`KT-68278`](https://youtrack.jetbrains.com/issue/KT-68278) Spring resource loading in combination with `java-test-fixtures` plugin broken
+- [`KT-66452`](https://youtrack.jetbrains.com/issue/KT-66452) Gradle produces false positive configuration cache problem for Project usage at execution time
+- [`KT-68242`](https://youtrack.jetbrains.com/issue/KT-68242) Run tests against AGP 8.4.0
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-68805`](https://youtrack.jetbrains.com/issue/KT-68805) KMP project (re-)import took a long time for downloading platform libs
+- [`KT-68248`](https://youtrack.jetbrains.com/issue/KT-68248) kotlin multiplatform project fail to build on Fedora with corretto
+
+### Tools. Gradle. Native
+
+- [`KT-68638`](https://youtrack.jetbrains.com/issue/KT-68638) KGP 2.0 breaks native test with api dependencies and configuration cache
+- [`KT-65761`](https://youtrack.jetbrains.com/issue/KT-65761) Missing JDK Platform ClassLoader when compiling Kotlin native in daemon
+
+### Tools. JPS
+
+- [`KT-69204`](https://youtrack.jetbrains.com/issue/KT-69204) Generate lookups in dumb mode for compatibility with ref index
+
+### Tools. Kapt
+
+- [`KT-68171`](https://youtrack.jetbrains.com/issue/KT-68171) K2KAPT: boxed return types in overridden methods changed to primitives
+
+### Tools. Scripts
+
+- [`KT-68681`](https://youtrack.jetbrains.com/issue/KT-68681) K2 / CLI / Script: "NullPointerException: getService(...) must not be null" caused by `@DependsOn`
+- [`KT-67747`](https://youtrack.jetbrains.com/issue/KT-67747) K2: regression in Spring unit tests using `javax.script.ScriptEngine`
+
+
 ## 2.0.0
 
 ### Analysis. API

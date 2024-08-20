@@ -13,6 +13,7 @@ import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.FileViewProviderFactory
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
+import com.intellij.psi.impl.compiled.ClsDecompilerImpl
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
@@ -42,6 +43,7 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
                 LoadingOrder.FIRST,
                 testServices.disposableProvider.getApplicationDisposable()
             )
+            registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
         }
     }
 }

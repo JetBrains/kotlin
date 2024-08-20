@@ -20,8 +20,26 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.addIfNotNull
+
+
+class FirLightTreeLinkageModeTest : JvmIrLinkageModeTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = FirParser.LightTree
+}
+
+class FirPsiLinkageModeTest : JvmIrLinkageModeTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = FirParser.Psi
+}
 
 open class JvmIrLinkageModeTest : CodegenTestCase() {
     override val backend: TargetBackend

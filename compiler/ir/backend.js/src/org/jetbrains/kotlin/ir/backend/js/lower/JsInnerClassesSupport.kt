@@ -90,12 +90,11 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         val newValueParameters = mutableListOf(buildValueParameter(newConstructor) {
             origin = SYNTHESIZED_DECLARATION
             name = Name.identifier(Namer.OUTER_NAME)
-            index = 0
             type = outerThisType
         })
 
         for (p in oldConstructor.valueParameters) {
-            newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
+            newValueParameters += p.copyTo(newConstructor)
         }
 
         newConstructor.valueParameters = newConstructor.valueParameters memoryOptimizedPlus newValueParameters

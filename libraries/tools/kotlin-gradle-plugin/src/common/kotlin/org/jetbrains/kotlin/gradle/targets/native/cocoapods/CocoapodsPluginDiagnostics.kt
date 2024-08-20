@@ -40,10 +40,6 @@ object CocoapodsPluginDiagnostics {
         )
     }
 
-    object UseLibrariesUsed : ToolingDiagnosticFactory(ERROR) {
-        operator fun invoke() = build("'useLibraries' mode is removed")
-    }
-
     object InteropBindingSelfDependency : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(podName: String) = build("Pod '$podName' has an interop-binding dependency on itself")
     }

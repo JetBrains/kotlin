@@ -117,6 +117,8 @@ abstract class VariableInitializationCheckProcessor {
         }
 
         for ((path, data) in getValue(node)) {
+            if (path == CapturedByValue) continue // CaptureByValue path does not contain enough information for captured initialization checks.
+
             for ((symbol, range) in data) {
                 if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
                 // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
@@ -184,10 +186,20 @@ abstract class VariableInitializationCheckProcessor {
         if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
         val symbol = node.fir.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return
-        if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver(this) && symbol in properties &&
-            getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
+        if (
+            !symbol.isLateInit &&
+            !symbol.isExternal &&
+            node.fir.hasMatchingReceiver(this) &&
+            symbol in properties &&
+            !symbol.isInitializedAt(node, data = this)
         ) {
             reportUninitializedVariable(reporter, node, symbol, context)
+        }
+    }
+
+    private fun FirVariableSymbol<*>.isInitializedAt(node: CFGNode<*>, data: VariableInitializationInfoData): Boolean {
+        return data.getValue(node).all { (key, value) ->
+            (key == CapturedByValue && !isCapturedByValue) || value[this]?.isDefinitelyVisited() == true
         }
     }
 
@@ -309,6 +321,9 @@ private val FirVariableSymbol<*>.isLocal: Boolean
         is FirPropertySymbol -> isLocal
         else -> false
     }
+
+val FirVariableSymbol<*>.isCapturedByValue: Boolean
+    get() = isVal && isLocal
 
 fun buildRecursionErrorMessage(
     problemNode: CFGNode<*>,

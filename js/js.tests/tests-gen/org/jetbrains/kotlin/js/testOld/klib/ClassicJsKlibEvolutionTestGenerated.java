@@ -190,6 +190,11 @@ public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEv
     runTest("compiler/testData/klib/evolution/newOverrideMember.kt");
   }
 
+  @TestMetadata("overrideByPrivateMembers.kt")
+  public void testOverrideByPrivateMembers() {
+    runTest("compiler/testData/klib/evolution/overrideByPrivateMembers.kt");
+  }
+
   @TestMetadata("removeAbstractFromClass.kt")
   public void testRemoveAbstractFromClass() {
     runTest("compiler/testData/klib/evolution/removeAbstractFromClass.kt");

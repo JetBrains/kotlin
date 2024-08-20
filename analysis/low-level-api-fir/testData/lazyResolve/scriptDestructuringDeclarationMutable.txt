@@ -1,0 +1,488 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|/X|.R|/X.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] scriptDestructuringDeclarationMutable.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptDestructuringDeclarationMutable.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var b: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|

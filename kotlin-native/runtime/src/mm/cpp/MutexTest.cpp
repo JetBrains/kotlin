@@ -15,12 +15,22 @@ using namespace kotlin;
 
 namespace {
 
-template <MutexThreadStateHandling Handling, ThreadState State>
-class Mode {
-public:
-    using Lock = SpinLock<Handling>;
-    static constexpr MutexThreadStateHandling threadStateHandling = Handling;
-    static constexpr ThreadState initialState = State;
+template <bool kThreadStateAware_, ThreadState kInitialState_>
+struct Mode {
+};
+
+template <ThreadState kInitialState_>
+struct Mode<false, kInitialState_> {
+    using Lock = SpinLock;
+    static constexpr bool kThreadStateAware = false;
+    static constexpr ThreadState initialState = kInitialState_;
+};
+
+template <ThreadState kInitialState_>
+struct Mode<true, kInitialState_> {
+    using Lock = ThreadStateAware<SpinLock>;
+    static constexpr bool kThreadStateAware = true;
+    static constexpr ThreadState initialState = kInitialState_;
 };
 
 } // namespace
@@ -29,10 +39,10 @@ template <typename T>
 class MutexTestNewMM : public testing::Test {};
 
 using TestModes = testing::Types<
-        Mode<MutexThreadStateHandling::kIgnore, ThreadState::kRunnable>,
-        Mode<MutexThreadStateHandling::kIgnore, ThreadState::kNative>,
-        Mode<MutexThreadStateHandling::kSwitchIfRegistered, ThreadState::kRunnable>,
-        Mode<MutexThreadStateHandling::kSwitchIfRegistered, ThreadState::kNative>>;
+        Mode<false, ThreadState::kRunnable>,
+        Mode<false, ThreadState::kNative>,
+        Mode<true, ThreadState::kRunnable>,
+        Mode<true, ThreadState::kNative>>;
 
 TYPED_TEST_SUITE(MutexTestNewMM, TestModes);
 
@@ -71,10 +81,7 @@ TYPED_TEST(MutexTestNewMM, SmokeAttachedThread) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             EXPECT_EQ(protectedCounter, 1);
 
-            auto expectedSecondThreadState =
-                    (TypeParam::threadStateHandling == MutexThreadStateHandling::kSwitchIfRegistered)
-                    ? ThreadState::kNative
-                    : initialThreadState;
+            auto expectedSecondThreadState = (TypeParam::kThreadStateAware) ? ThreadState::kNative : initialThreadState;
             EXPECT_EQ(secondThreadData->state(), expectedSecondThreadState);
         }
         secondThread.join();

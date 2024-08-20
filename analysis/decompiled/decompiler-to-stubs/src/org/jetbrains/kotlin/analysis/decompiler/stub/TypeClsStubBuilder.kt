@@ -110,6 +110,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
+        val abbreviatedType = type.abbreviatedType(c.typeTable)?.let { createKotlinClassTypeBean(it) }
+
         val shouldBuildAsFunctionType = isBuiltinFunctionClass(classId) && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val (extensionAnnotations, notExtensionAnnotations) = annotations.partition {
@@ -140,7 +142,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 }?.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
                     ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
 
             return
         }
@@ -148,7 +150,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         createTypeAnnotationStubs(parent, type, annotations)
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
-        val abbreviatedType = type.abbreviatedType(c.typeTable)?.let { createKotlinClassTypeBean(it) }
 
         createStubForTypeName(
             classId,
@@ -253,9 +254,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         isExtensionFunctionType: Boolean,
         isSuspend: Boolean,
         numContextReceivers: Int,
+        abbreviatedType: KotlinClassTypeBean?,
     ) {
         val typeArgumentList = type.argumentList
-        val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
+        val functionType = KotlinFunctionTypeStubImpl(parent, abbreviatedType)
         var processedTypes = 0
 
         if (numContextReceivers != 0) {

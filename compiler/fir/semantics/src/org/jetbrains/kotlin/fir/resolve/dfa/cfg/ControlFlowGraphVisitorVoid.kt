@@ -36,6 +36,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
+    open fun visitAnonymousFunctionCaptureNode(node: AnonymousFunctionCaptureNode) {
+        visitNode(node)
+    }
+
     open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode) {
         visitNode(node)
     }
@@ -303,6 +307,10 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: Nothing?) {
         visitMergePostponedLambdaExitsNode(node)
+    }
+
+    final override fun visitAnonymousFunctionCaptureNode(node: AnonymousFunctionCaptureNode, data: Nothing?) {
+        visitAnonymousFunctionCaptureNode(node)
     }
 
     final override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: Nothing?) {

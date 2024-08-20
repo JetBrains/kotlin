@@ -201,7 +201,7 @@ private fun getLiteralStringFromAnnotation(annotationCall: IrConstructorCall): S
     if (annotationCall.valueArgumentsCount < 1) return null
     return annotationCall.getValueArgument(0)?.let {
         when {
-            it is IrConst<*> && it.kind == IrConstKind.String -> it.value as String
+            it is IrConst && it.kind == IrConstKind.String -> it.value as String
             else -> null // TODO: getArgumentExpression().safeAs<KtStringTemplateExpression>()
         }
     }

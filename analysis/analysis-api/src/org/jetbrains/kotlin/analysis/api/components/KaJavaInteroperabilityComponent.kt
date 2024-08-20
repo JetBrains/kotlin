@@ -94,7 +94,7 @@ public interface KaJavaInteroperabilityComponent {
     /**
      * Maps the given [PsiClass] declaration to a Kotlin class symbol.
      *
-     * [namedClassSymbol] is always `null` for anonymous classes, type parameters (which are also [PsiClass]es),
+     * [namedClassSymbol] is always `null` for anonymous classes, local classes, type parameters (which are also [PsiClass]es),
      * and for Kotlin light classes.
      */
     public val PsiClass.namedClassSymbol: KaNamedClassSymbol?

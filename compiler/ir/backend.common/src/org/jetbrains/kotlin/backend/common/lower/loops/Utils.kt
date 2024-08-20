@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
 internal fun IrExpression.negate(): IrExpression {
-    return when (val value = (this as? IrConst<*>)?.value as? Number) {
+    return when (val value = (this as? IrConst)?.value as? Number) {
         is Int -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, -value)
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, -value)
         else -> {
@@ -49,7 +49,7 @@ internal fun IrExpression.negate(): IrExpression {
 
 /** Return `this - 1` if the expression is const, otherwise call dec(). */
 internal fun IrExpression.decrement(): IrExpression {
-    return when (val thisValue = (this as? IrConst<*>)?.value) {
+    return when (val thisValue = (this as? IrConst)?.value) {
         is Int -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, thisValue - 1)
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, thisValue - 1)
         is Char -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, thisValue - 1)
@@ -74,7 +74,7 @@ internal val IrExpression.canChangeValueDuringExecution: Boolean
     get() = when (this) {
         is IrGetValue ->
             !this.symbol.owner.isImmutable
-        is IrConst<*>,
+        is IrConst,
         is IrGetObjectValue,
         is IrGetEnumValue ->
             false
@@ -128,7 +128,7 @@ private fun Any?.toDouble(): Double? =
     }
 
 internal val IrExpression.constLongValue: Long?
-    get() = if (this is IrConst<*>) value.toLong() else null
+    get() = if (this is IrConst) value.toLong() else null
 
 /**
  * If [expression] can have side effects ([IrExpression.canHaveSideEffects]), this function creates a temporary local variable for that
@@ -174,7 +174,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
     when {
         // This expression's type could be Nothing from an exception throw.
         type == targetClass.defaultType || type.isNothing() -> this
-        this is IrConst<*> && targetClass.defaultType.isPrimitiveType() -> { // TODO: convert unsigned too?
+        this is IrConst && targetClass.defaultType.isPrimitiveType() -> { // TODO: convert unsigned too?
             val targetType = targetClass.defaultType
             when (targetType.getPrimitiveType()) {
                 PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, targetType, value.toByte()!!)
@@ -244,10 +244,18 @@ internal fun IrExpression.getMostPreciseTypeFromValInitializer(): IrType {
             }
         }
 
+    fun unwrapImplicitCast(expression: IrExpression): IrExpression? =
+        (expression as? IrTypeOperatorCall)?.let {
+            expression.argument.takeIf {
+                expression.operator.let { it == IrTypeOperator.IMPLICIT_CAST || it == IrTypeOperator.CAST }
+            }
+        }
+
     var temp = this
     do {
         unwrapValInitializer(temp)?.let { temp = it }
             ?: unwrapStatementContainer(temp)?.let { temp = it }
+            ?: unwrapImplicitCast(temp)?.let { temp = it }
             ?: return temp.type
     } while (true)
 }

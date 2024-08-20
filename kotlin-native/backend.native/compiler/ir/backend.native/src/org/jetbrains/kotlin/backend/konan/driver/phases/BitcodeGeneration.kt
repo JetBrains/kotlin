@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
@@ -33,7 +34,7 @@ internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<Native
 
 internal data class RTTIInput(
         val irModule: IrModuleFragment,
-        val referencedFunctions: Set<IrFunction>?
+        val referencedFunctions: Set<IrSimpleFunction>?
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule

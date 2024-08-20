@@ -481,6 +481,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("ranges.kt")
+  public void testRanges() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/ranges.kt");
+  }
+
+  @Test
   @TestMetadata("recursiveGenerics.kt")
   public void testRecursiveGenerics() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/recursiveGenerics.kt");

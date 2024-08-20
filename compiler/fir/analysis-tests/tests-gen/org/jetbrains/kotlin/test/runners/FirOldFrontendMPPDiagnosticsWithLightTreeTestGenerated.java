@@ -158,6 +158,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("delegationToTypeParameterWithBond.kt")
+  public void testDelegationToTypeParameterWithBond() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToTypeParameterWithBond.kt");
+  }
+
+  @Test
   @TestMetadata("delegationWithIntersectionAndTypeParameters.kt")
   public void testDelegationWithIntersectionAndTypeParameters() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/delegationWithIntersectionAndTypeParameters.kt");
@@ -1474,22 +1480,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecated")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Deprecated {
-    @Test
-    public void testAllFilesPresentInDeprecated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecated"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
-
-    @Test
-    @TestMetadata("header.kt")
-    public void testHeader() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/deprecated/header.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation")
   @TestDataPath("$PROJECT_ROOT")
   public class DeprecatedAnnotation {
@@ -2398,6 +2388,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @Test
     public void testAllFilesPresentInSmartCasts() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("classNoDefaultConstructor.kt")
+    public void testClassNoDefaultConstructor() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunction.kt")
+    public void testInlineFunction() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction.kt");
     }
 
     @Test

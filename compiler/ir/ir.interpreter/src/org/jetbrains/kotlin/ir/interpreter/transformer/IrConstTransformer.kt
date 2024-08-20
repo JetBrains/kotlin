@@ -146,7 +146,7 @@ internal abstract class IrConstTransformer(
 
         result.saveInConstTracker()
 
-        if (result is IrConst<*>) {
+        if (result is IrConst) {
             reportInlinedJavaConst(result)
         }
 
@@ -160,7 +160,7 @@ internal abstract class IrConstTransformer(
         )
     }
 
-    private fun IrExpression.reportInlinedJavaConst(result: IrConst<*>) {
+    private fun IrExpression.reportInlinedJavaConst(result: IrConst) {
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -183,7 +183,7 @@ internal abstract class IrConstTransformer(
     }
 }
 
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst<*>) {
+fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
     if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
     val path = irFile.path

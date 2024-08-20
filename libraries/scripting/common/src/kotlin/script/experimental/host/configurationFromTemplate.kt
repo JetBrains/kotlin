@@ -163,6 +163,7 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     }
     @Suppress("DEPRECATION_ERROR")
     fileNamePattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
+    filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }
 

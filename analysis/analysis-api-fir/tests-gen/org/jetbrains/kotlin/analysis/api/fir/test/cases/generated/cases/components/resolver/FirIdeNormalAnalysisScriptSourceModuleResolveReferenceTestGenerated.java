@@ -615,6 +615,26 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveReferenceTestGenerated
       public void testAllFilesPresentInMissingDependency() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/libraries")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Libraries {
+        @Test
+        public void testAllFilesPresentInLibraries() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/libraries"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/sources")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Sources {
+        @Test
+        public void testAllFilesPresentInSources() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/sources"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+      }
     }
 
     @Nested

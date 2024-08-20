@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -625,18 +622,37 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
     }
 }
 
-// Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
+fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
+    pullUpSafeCallIfNecessary(
+        FirQualifiedAccessExpression::explicitReceiver,
+        FirQualifiedAccessExpression::replaceExplicitReceiver
+    )
+
+// Turns a?.b.f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
 // Other patterns remain unchanged
-fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
-    if (this !is FirQualifiedAccessExpression) return this
-    val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
+fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
+    obtainReceiver: F.() -> FirExpression?,
+    replaceReceiver: F.(FirExpression) -> Unit,
+): FirExpression {
+    val safeCall = obtainReceiver() as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
 
-    replaceExplicitReceiver(safeCallSelector)
+    // (a?.b).f and `(a?.b)[3]` should be left as is
+    if (safeCall.isChildInParentheses()) return this
+
+    replaceReceiver(safeCallSelector)
     safeCall.replaceSelector(this)
 
     return safeCall
 }
+
+fun FirStatement.isChildInParentheses(): Boolean {
+    val sourceElement = source ?: error("Nullable source")
+    return sourceElement.isChildInParentheses()
+}
+
+fun KtSourceElement.isChildInParentheses() =
+    treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
 
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
@@ -679,8 +695,7 @@ val CharSequence.isUnderscore: Boolean
 
 data class CalleeAndReceiver(
     val reference: FirNamedReference,
-    val receiverExpression: FirExpression? = null,
-    val isImplicitInvoke: Boolean = false
+    val receiverForInvoke: FirExpression? = null,
 )
 
 /**

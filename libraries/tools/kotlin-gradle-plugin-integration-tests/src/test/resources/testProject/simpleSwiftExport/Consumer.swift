@@ -1,4 +1,4 @@
-@testable import Shared
+import Shared
 
 #if arch(arm64)
 com.github.jetbrains.swiftexport.iosSimulatorArm64Bar()

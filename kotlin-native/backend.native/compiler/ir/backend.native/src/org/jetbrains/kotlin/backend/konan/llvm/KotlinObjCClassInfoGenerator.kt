@@ -136,7 +136,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
         ).pointer
 
         val functionProto = LlvmFunctionSignature(
-                returnType = LlvmRetType(classDataPointer.llvmType),
+                returnType = LlvmRetType(classDataPointer.llvmType, isObjectType = false),
                 parameterTypes = listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
         ).toProto(
                 name = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal",

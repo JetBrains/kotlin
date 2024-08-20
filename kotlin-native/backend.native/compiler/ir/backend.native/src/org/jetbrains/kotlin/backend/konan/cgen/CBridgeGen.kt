@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -1167,7 +1166,6 @@ private class ObjCBlockPointerValuePassing(
                 type = symbols.nativePtrType,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = 0,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -1219,7 +1217,6 @@ private class ObjCBlockPointerValuePassing(
                     type = functionType.arguments[index].typeOrNull!!,
                     isAssignable = false,
                     symbol = IrValueParameterSymbolImpl(),
-                    index = index,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,

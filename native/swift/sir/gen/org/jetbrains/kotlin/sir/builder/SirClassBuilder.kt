@@ -22,6 +22,7 @@ class SirClassBuilder {
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     var superClass: SirType? = null
+    var modality: SirClassModality = SirClassModality.UNSPECIFIED
 
     fun build(): SirClass {
         return SirClassImpl(
@@ -31,6 +32,7 @@ class SirClassBuilder {
             name,
             declarations,
             superClass,
+            modality,
         )
     }
 
@@ -56,5 +58,6 @@ inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit):
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.superClass = original.superClass
+    copyBuilder.modality = original.modality
     return copyBuilder.apply(init).build()
 }

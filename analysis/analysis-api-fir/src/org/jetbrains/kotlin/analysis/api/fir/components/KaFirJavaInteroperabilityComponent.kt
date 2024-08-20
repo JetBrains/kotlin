@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.analysis.utils.isLocalClass
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -232,6 +233,7 @@ internal class KaFirJavaInteroperabilityComponent(
             if (this is PsiTypeParameter) return null
             if (this is KtLightClassMarker) return null
             if (isKotlinCompiledClass()) return null
+            if (isLocalClass()) return null
 
             return KaFirPsiJavaClassSymbol(this, analysisSession)
         }

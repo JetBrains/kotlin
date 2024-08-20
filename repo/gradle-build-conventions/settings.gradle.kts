@@ -13,7 +13,6 @@ pluginManagement {
 }
 
 plugins {
-    id("build-cache")
     id("develocity")
     id("jvm-toolchain-provisioning")
     id("kotlin-daemon-config")
@@ -32,3 +31,4 @@ include(":prepare-deps")
 include(":generators")
 include(":compiler-tests-convention")
 include(":android-sdk-provisioner")
+include(":asm-deprecating-transformer")

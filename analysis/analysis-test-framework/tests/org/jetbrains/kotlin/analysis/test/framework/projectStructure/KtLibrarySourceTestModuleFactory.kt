@@ -32,13 +32,13 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
     ): KtTestModule {
         Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
 
-        val (libraryJar, librarySourcesJar) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
+        val (libraryJars, librarySourcesJars) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
 
-        require(librarySourcesJar != null)
+        require(librarySourcesJars.isNotEmpty())
 
         return createKtLibrarySourceModule(
-            libraryJar = libraryJar,
-            librarySourcesJar = librarySourcesJar,
+            libraryJars = libraryJars,
+            librarySourcesJars = librarySourcesJars,
             testModule = testModule,
             project = project,
             testServices = testServices,
@@ -48,8 +48,8 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
 
 @OptIn(KaImplementationDetail::class)
 fun createKtLibrarySourceModule(
-    libraryJar: Path,
-    librarySourcesJar: Path,
+    libraryJars: List<Path>,
+    librarySourcesJars: List<Path>,
     testModule: TestModule,
     project: Project,
     testServices: TestServices,
@@ -58,17 +58,17 @@ fun createKtLibrarySourceModule(
         testModule.name,
         testModule.targetPlatform,
         StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-            listOf(libraryJar),
+            libraryJars,
             emptyList(),
             testServices.environmentManager.getProjectEnvironment(),
         ),
         project,
-        binaryRoots = listOf(libraryJar),
+        binaryRoots = libraryJars,
         librarySources = null,
         isSdk = false,
     )
 
-    val decompiledPsiFilesFromSourceJar = LibraryUtils.getAllPsiFilesFromJar(librarySourcesJar, project)
+    val decompiledPsiFilesFromSourceJar = librarySourcesJars.flatMap { LibraryUtils.getAllPsiFilesFromJar(it, project) }
     val librarySourceKtModule = KaLibrarySourceModuleImpl(
         testModule.name,
         testModule.targetPlatform,

@@ -40,15 +40,14 @@ class JsIrPathReplacer(testServices: TestServices) : DeclarationTransformer {
     private fun IrAnnotationContainer.replaceJsModulePath() {
         val jsModuleAnnotation = getAnnotation(JsAnnotations.jsModuleFqn) ?: return
 
-        @Suppress("UNCHECKED_CAST")
-        val stringLiteral = jsModuleAnnotation.getValueArgument(0) as IrConst<String>
+        val stringLiteral = jsModuleAnnotation.getValueArgument(0) as IrConst
         val pathReplacement = stringLiteral.getReplacement() ?: return
 
         jsModuleAnnotation.putValueArgument(0, pathReplacement)
     }
 
-    private fun IrConst<String>.getReplacement(): IrConst<String>? {
-        return IrConstImpl.string(startOffset, endOffset, type, replacements[value] ?: return null)
+    private fun IrConst.getReplacement(): IrConst? {
+        return IrConstImpl.string(startOffset, endOffset, type, replacements[value as String] ?: return null)
     }
 
     private fun TestServices.collectReplacementsMap(): Map<String, String> {

@@ -20,9 +20,10 @@ template <typename T>
 class MutexTest : public testing::Test {};
 
 using LockTypes = testing::Types<
-        SpinLock<MutexThreadStateHandling::kIgnore>,
-        SpinLock<MutexThreadStateHandling::kSwitchIfRegistered>,
-        RWSpinLock<MutexThreadStateHandling::kIgnore>
+        SpinLock,
+        ThreadStateAware<SpinLock>,
+        ThreadStateAware<std::mutex>,
+        RWSpinLock
 >;
 TYPED_TEST_SUITE(MutexTest, LockTypes);
 
@@ -78,7 +79,7 @@ TYPED_TEST(MutexTest, SmokeDetachedThread) {
 
 
 TEST(RWSpinLockTest, LockShared) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     mutex.lock_shared();
     mutex.lock_shared();
     mutex.unlock_shared();
@@ -88,7 +89,7 @@ TEST(RWSpinLockTest, LockShared) {
 }
 
 TEST(RWSpinLockTest, TryLockShared) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     EXPECT_TRUE(mutex.try_lock_shared());
     EXPECT_TRUE(mutex.try_lock_shared());
     mutex.unlock_shared();
@@ -98,7 +99,7 @@ TEST(RWSpinLockTest, TryLockShared) {
 }
 
 TEST(RWSpinLockTest, LockSharedWhileLocked) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     bool done = false;
     mutex.lock();
     ScopedThread thread([&] {
@@ -113,14 +114,14 @@ TEST(RWSpinLockTest, LockSharedWhileLocked) {
 }
 
 TEST(RWSpinLockTest, TryLockSharedWhileLocked) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     mutex.lock();
     EXPECT_FALSE(mutex.try_lock_shared());
     mutex.unlock();
 }
 
 TEST(RWSpinLockTest, LockWhileLockShared) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     bool done = false;
     mutex.lock_shared();
     ScopedThread thread([&] {
@@ -136,14 +137,14 @@ TEST(RWSpinLockTest, LockWhileLockShared) {
 }
 
 TEST(RWSpinLockTest, TryLockWhileLockShared) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     mutex.lock_shared();
     EXPECT_FALSE(mutex.try_lock());
     mutex.unlock_shared();
 }
 
 TEST(RWSpinLockTest, LockSharedWhileLockSharedWithPendingLock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     int state = 0;
     mutex.lock_shared();
     ScopedThread thread_lock([&] {
@@ -176,7 +177,7 @@ TEST(RWSpinLockTest, LockSharedWhileLockSharedWithPendingLock) {
 }
 
 TEST(RWSpinLockTest, LockSharedWhileLockSharedWithFailedPendingLock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     mutex.lock_shared();
     EXPECT_FALSE(mutex.try_lock());
     mutex.lock_shared();
@@ -185,7 +186,7 @@ TEST(RWSpinLockTest, LockSharedWhileLockSharedWithFailedPendingLock) {
 }
 
 TEST(RWSpinLockTest, TryLockSharedWhileLockSharedWithFailedPendingLock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     mutex.lock_shared();
     EXPECT_FALSE(mutex.try_lock());
     EXPECT_TRUE(mutex.try_lock_shared());
@@ -194,7 +195,7 @@ TEST(RWSpinLockTest, TryLockSharedWhileLockSharedWithFailedPendingLock) {
 }
 
 TEST(RWSpinLockTest, Counter) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
+    RWSpinLock mutex;
     // tsan will help catch if the lock breaks memory ordering.
     uint64_t counter = 0;
     constexpr uint64_t boundary = 10000;

@@ -292,6 +292,12 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
   }
 
+  @Test
+  @TestMetadata("uIntToUShort.kt")
+  public void testUIntToUShort() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/uIntToUShort.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
   @TestDataPath("$PROJECT_ROOT")
