@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 /**
  * This is a nested provider for all native tasks
@@ -47,8 +48,8 @@ internal class KotlinNativeProvider(
     val toolchainEnabled: Provider<Boolean> = project.nativeProperties.isToolchainEnabled
 
     @get:Internal
-    val bundleDirectory: DirectoryProperty = project.objects.directoryProperty()
-        .fileProvider(project.nativeProperties.actualNativeHomeDirectory)
+    //Using DirectoryProperty causes the native directory to be included in the configuration cache input.
+    internal val bundleDirectory: Provider<String> = project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath }
 
     @get:Internal
     val overriddenKonanHome: Provider<String> = project.nativeProperties.userProvidedNativeHome
@@ -69,7 +70,7 @@ internal class KotlinNativeProvider(
                 project,
                 kotlinNativeCompilerConfiguration,
                 kotlinNativeVersion,
-                bundleDir.asFile,
+                File(bundleDir),
                 reinstallFlag,
                 konanTargets,
                 overriddenKonanHome.orNull
@@ -85,7 +86,7 @@ internal class KotlinNativeProvider(
                 if (toolchainEnabled.get() && enableDependenciesDownloading) {
                     kotlinNativeBundleBuildService.get()
                         .downloadNativeDependencies(
-                            bundleDir.asFile,
+                            File(bundleDir),
                             konanDataDir.orNull,
                             konanTargets,
                             project.logger
@@ -115,5 +116,5 @@ internal class KotlinNativeProvider(
 
 internal val KotlinNativeProvider.konanDistribution
     get() = bundleDirectory.map {
-        Distribution(it.asFile.canonicalPath)
+        Distribution(it)
     }
