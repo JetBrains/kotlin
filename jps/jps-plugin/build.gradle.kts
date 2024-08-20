@@ -37,7 +37,7 @@ dependencies {
         .let { it as List<String> }
         .forEach { implementation(it) { isTransitive = false } }
 
-    implementation(project(":jps:jps-common"))
+//    implementation(project(":jps:jps-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(jpsModel())
     compileOnly(jpsBuild())

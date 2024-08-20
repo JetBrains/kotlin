@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.jps.build.KotlinBuilder
+//import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.Serializable
 import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject
@@ -25,7 +25,7 @@ class JpsCompilationResult : CompilationResults,
     private val buildMetricsReporter = BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>()
     val buildMetrics: BuildMetrics<JpsBuildTime, JpsBuildPerformanceMetric>
         get() = buildMetricsReporter.getMetrics()
-    private val log = JpsKotlinLogger(KotlinBuilder.LOG)
+//    private val log = JpsKotlinLogger(KotlinBuilder.LOG)
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
         when (compilationResultCategory) {

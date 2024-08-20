@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.messages.ProgressMessage
-import org.jetbrains.kotlin.jps.KotlinJpsBundle
+//import org.jetbrains.kotlin.jps.KotlinJpsBundle
 
 interface ProgressReporter {
     fun progress(message: String)
@@ -24,7 +24,7 @@ class ProgressReporterImpl(private val context: CompileContext, private val chun
     }
 
     override fun compilationStarted() {
-        progress(KotlinJpsBundle.message("progress.text.compiling.0", chunk.presentableShortName))
+//        progress(KotlinJpsBundle.message("progress.text.compiling.0", chunk.presentableShortName))
     }
 
     override fun clearProgress() {
