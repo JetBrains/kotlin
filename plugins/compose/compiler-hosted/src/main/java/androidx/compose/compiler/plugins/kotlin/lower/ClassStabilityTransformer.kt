@@ -92,9 +92,10 @@ class ClassStabilityTransformer(
             val classesConcatenated = classIds.sorted().joinToString("\n")
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "Due to some of dependencies were built using older compiler plugin, stability of following classes " +
-                        "is considered `Unstable`, which may cause additional recompositions happening at runtime on non-JVM targets. " +
-                        "To prevent that consider updating dependency libraries to a newer version built with newer compose compiler plugin.\n" +
+                "Some of the dependencies were build using an older version of the Compose compiler plugin, " +
+                        "which may cause additional (or endless) recompositions on non-JVM targets. " +
+                        "To prevent that consider updating dependency libraries to versions built with a newer Compose compiler. " +
+                        "Right now, the following classes are considered `Unstable`:\n" +
                         classesConcatenated
             )
         }
