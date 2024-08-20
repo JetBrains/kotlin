@@ -124,9 +124,8 @@ internal fun createLTOFinalPipelineConfig(
         context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
-    // TODO(KT-66501): investigate, why sizeLevel is essentially === to NONE (and inline it if it's OK)
     val sizeLevel: LlvmSizeLevel = when {
-        // We try to optimize code as much as possible on embedded targets.
+        // Only optimize for size, if specified on the command line. Any level != NONE gives LLVM opt level "Os".
         config.smallBinary -> LlvmSizeLevel.AGGRESSIVE
         else -> LlvmSizeLevel.NONE
     }
