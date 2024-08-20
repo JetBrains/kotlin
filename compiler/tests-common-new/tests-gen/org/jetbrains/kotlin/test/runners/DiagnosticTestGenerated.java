@@ -14623,6 +14623,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt")
+      public void testNoInconsistentTypeParameterBoundsWithDifferentProjectionKinds() {
+        runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt");
+      }
+
+      @Test
       @TestMetadata("noInconsistentTypeParameterBoundsWithStarProjections.kt")
       public void testNoInconsistentTypeParameterBoundsWithStarProjections() {
         runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithStarProjections.kt");

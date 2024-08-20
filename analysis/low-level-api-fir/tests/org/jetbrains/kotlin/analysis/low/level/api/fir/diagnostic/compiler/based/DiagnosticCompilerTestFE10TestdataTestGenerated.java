@@ -14623,6 +14623,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt")
+      public void testNoInconsistentTypeParameterBoundsWithDifferentProjectionKinds() {
+        runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt");
+      }
+
+      @Test
       @TestMetadata("noInconsistentTypeParameterBoundsWithStarProjections.kt")
       public void testNoInconsistentTypeParameterBoundsWithStarProjections() {
         runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithStarProjections.kt");
