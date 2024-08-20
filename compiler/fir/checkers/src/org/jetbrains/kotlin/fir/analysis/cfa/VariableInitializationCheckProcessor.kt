@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -101,9 +103,10 @@ abstract class VariableInitializationCheckProcessor {
         fun CFGNode<*>.reportErrorsOnInitializationsInInputs(
             symbol: FirVariableSymbol<*>,
             path: EdgeLabel,
-            visited: MutableSet<CFGNode<*>>,
+            visited: PersistentSet<CFGNode<*>>,
         ) {
-            require(visited.add(this)) { buildRecursionErrorMessage(this, symbol, context) }
+            val newVisited = visited.add(this)
+            require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol, context) }
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
@@ -111,7 +114,7 @@ abstract class VariableInitializationCheckProcessor {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol, reporter, context)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
-                        assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, visited)
+                        assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, newVisited)
                 }
             }
         }
@@ -125,7 +128,7 @@ abstract class VariableInitializationCheckProcessor {
                 // At each assignment it was only considered in isolation, but now that we're merging their control flows,
                 // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
                 if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
-                    node.reportErrorsOnInitializationsInInputs(symbol, path, visited = mutableSetOf())
+                    node.reportErrorsOnInitializationsInInputs(symbol, path, visited = persistentSetOf())
                 }
             }
         }
