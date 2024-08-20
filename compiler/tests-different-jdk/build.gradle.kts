@@ -9,7 +9,7 @@ dependencies {
     testRuntimeOnly(projectTests(":compiler"))
 
     testImplementation(libs.junit4)
-    testImplementation(project(":kotlin-stdlib"))
+    testImplementation(kotlinStdlib())
     testImplementation(project(":libraries:tools:abi-comparator"))
 
     testApi(platform(libs.junit.bom))
