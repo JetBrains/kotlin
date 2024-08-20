@@ -626,10 +626,10 @@ if (attachedIntellijVersion == "master") {
     intellij "plugins/groovy/groovy-uast-tests/intellij.groovy.uast.tests.iml"
 }
 
-include ":jps:jps-common",
-        ":jps:jps-plugin",
-        ":prepare:kotlin-jps-plugin",
-        ":jps:jps-platform-api-signatures"
+//include ":jps:jps-common",
+//        ":jps:jps-plugin",
+//        ":prepare:kotlin-jps-plugin",
+//        ":jps:jps-platform-api-signatures"
 
 include ":generators:analysis-api-generator",
         ":analysis",
