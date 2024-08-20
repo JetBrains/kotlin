@@ -2,4 +2,4 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":jps:jps-common"))
+//publishJarsForIde(listOf(":jps:jps-common"))
