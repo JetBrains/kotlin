@@ -16373,6 +16373,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("crashWithNestedLambdasRedCode.kt")
+      public void testCrashWithNestedLambdasRedCode() {
+        runTest("compiler/testData/diagnostics/tests/inference/crashWithNestedLambdasRedCode.kt");
+      }
+
+      @Test
       @TestMetadata("cstFromErrorAndNonErrorTypes.kt")
       public void testCstFromErrorAndNonErrorTypes() {
         runTest("compiler/testData/diagnostics/tests/inference/cstFromErrorAndNonErrorTypes.kt");

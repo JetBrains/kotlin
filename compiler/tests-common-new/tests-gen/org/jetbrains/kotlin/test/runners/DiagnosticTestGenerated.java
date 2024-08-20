@@ -16373,6 +16373,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("crashWithNestedLambdasRedCode.kt")
+      public void testCrashWithNestedLambdasRedCode() {
+        runTest("compiler/testData/diagnostics/tests/inference/crashWithNestedLambdasRedCode.kt");
+      }
+
+      @Test
       @TestMetadata("cstFromErrorAndNonErrorTypes.kt")
       public void testCstFromErrorAndNonErrorTypes() {
         runTest("compiler/testData/diagnostics/tests/inference/cstFromErrorAndNonErrorTypes.kt");
