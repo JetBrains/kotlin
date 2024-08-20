@@ -20028,6 +20028,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
           runTest("compiler/testData/codegen/box/inference/pcla/issues/kt43710.kt");
         }
 
+        @TestMetadata("kt43710b.kt")
+        public void testKt43710b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt43710b.kt");
+        }
+
         @TestMetadata("kt44241.kt")
         public void testKt44241() {
           runTest("compiler/testData/codegen/box/inference/pcla/issues/kt44241.kt");
