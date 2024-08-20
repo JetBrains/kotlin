@@ -242,7 +242,7 @@ data class BuildOptions(
         }
 
         konanDataDir?.let {
-            arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+            arguments.add("-Pkotlin.native.home=${konanDataDir.toAbsolutePath().normalize()}")
         }
 
         if (kotlinUserHome != null) {
