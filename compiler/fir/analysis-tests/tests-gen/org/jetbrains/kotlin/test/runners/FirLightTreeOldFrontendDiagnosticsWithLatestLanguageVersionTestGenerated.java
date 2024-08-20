@@ -19547,6 +19547,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
           }
 
           @Test
+          @TestMetadata("kt43710b.kt")
+          public void testKt43710b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt43710b.kt");
+          }
+
+          @Test
           @TestMetadata("kt47744.kt")
           public void testKt47744() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47744.kt");
