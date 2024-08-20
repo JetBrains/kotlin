@@ -146,10 +146,10 @@ configurations.all {
 
 dependencies {
     api(kotlinStdlib("jdk8"))
-    api(project(":kotlin-script-runtime"))
-    api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    api(libs.kotlinx.coroutines.core)
+    implementation(project(":kotlin-script-runtime"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
+    implementation(libs.kotlinx.coroutines.core)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
