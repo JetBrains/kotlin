@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 @KaImplementationDetail
-sealed class KaPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
-    private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>
+sealed class KaBasePropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
+    private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : KaSymbolPointer<T>() {
     protected fun restorePropertySymbol(analysisSession: KaSession): KaPropertySymbol? = with(analysisSession) {
         return propertySymbolPointer.restoreSymbol()
@@ -20,16 +20,16 @@ sealed class KaPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
         return this === other ||
-                other is KaPropertyAccessorSymbolPointer<*> &&
+                other is KaBasePropertyAccessorSymbolPointer<*> &&
                 other.javaClass == javaClass &&
                 other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
     }
 }
 
 @KaImplementationDetail
-class KaPropertyGetterSymbolPointer(
+class KaBasePropertyGetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
-) : KaPropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer) {
+) : KaBasePropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer) {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaPropertyGetterSymbol? {
         return restorePropertySymbol(analysisSession)?.getter
@@ -37,9 +37,9 @@ class KaPropertyGetterSymbolPointer(
 }
 
 @KaImplementationDetail
-class KaPropertySetterSymbolPointer(
+class KaBasePropertySetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
-) : KaPropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer) {
+) : KaBasePropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer) {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaPropertySetterSymbol? {
         return restorePropertySymbol(analysisSession)?.setter

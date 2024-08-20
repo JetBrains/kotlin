@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 @KaImplementationDetail
-class KaValueParameterFromDefaultSetterSymbolPointer(
+class KaBaseValueParameterFromDefaultSetterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : KaSymbolPointer<KaValueParameterSymbol>() {
     @KaImplementationDetail
@@ -24,6 +24,6 @@ class KaValueParameterFromDefaultSetterSymbolPointer(
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
-            other is KaValueParameterFromDefaultSetterSymbolPointer &&
+            other is KaBaseValueParameterFromDefaultSetterSymbolPointer &&
             other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }
