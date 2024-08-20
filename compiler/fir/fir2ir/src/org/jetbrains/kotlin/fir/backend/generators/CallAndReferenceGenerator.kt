@@ -239,14 +239,16 @@ class CallAndReferenceGenerator(
             return kotlinType
         if (kotlinType.typeArguments.none { it.type is ConeIntersectionType })
             return kotlinType
-        val functionParameterTypes = kotlinType.typeArguments.take(kotlinType.typeArguments.size - 1)
-        val functionReturnType = kotlinType.typeArguments.last()
-        return ConeClassLikeTypeImpl(
-            (kotlinType as ConeClassLikeType).lookupTag,
-            (functionParameterTypes.map { approximateFunctionReferenceParameterType(it) } + functionReturnType).toTypedArray(),
-            kotlinType.isNullable,
-            kotlinType.attributes
-        )
+
+        val typeArguments = kotlinType.typeArguments
+        return kotlinType.withArguments(Array(typeArguments.size) { i ->
+            val projection = typeArguments[i]
+            if (i < typeArguments.lastIndex) {
+                approximateFunctionReferenceParameterType(projection)
+            } else {
+                projection
+            }
+        })
     }
 
     private fun approximateFunctionReferenceParameterType(typeProjection: ConeTypeProjection): ConeTypeProjection {
