@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
+@Execution(ExecutionMode.SAME_THREAD) // the tests work with system property `CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS`, so it's undesirable to run them concurrently
 class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     @DisplayName("Default jvm arguments contain expected gc and code cache options")
     @Test
@@ -93,20 +96,12 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     @DisplayName("Third startup attempt goes without auto-selection during any problems")
     @Test
     fun testUnknownProblemsCauseDisablingGcAutoSelection() {
-        /*
-         * Simulate the case that another GC was selected by an implicit way like a non-standard environment variable,
-         * and our logic based on log messages did not catch it to disable auto-selection
-         */
-        try {
-            val logs =
-                leaseSessionAndExtractLogs(listOf("-XmxInvalidValue"), leaseExceptionHandler = { /* no-op, lease is expected to fail */ })
-            val numberOfGcListenerMessages =
-                logs.count { it.message.contains("GC auto-selection logic is disabled temporary for the next daemon startup") }
-            assert(numberOfGcListenerMessages == 1) {
-                "Expected to have exactly one message about disabling GC auto-selection, got $numberOfGcListenerMessages: $logs"
-            }
-        } finally {
-            CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.clear()
+        val logs =
+            leaseSessionAndExtractLogs(listOf("-XmxInvalidValue"), leaseExceptionHandler = { /* no-op, lease is expected to fail */ })
+        val numberOfGcListenerMessages =
+            logs.count { it.message.contains("GC auto-selection logic is disabled temporary for the next daemon startup") }
+        assert(numberOfGcListenerMessages == 1) {
+            "Expected to have exactly one message about disabling GC auto-selection, got $numberOfGcListenerMessages: $logs"
         }
     }
 
