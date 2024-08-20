@@ -30,7 +30,6 @@ dependencies {
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-platform-interface"))
-    implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":kotlin-scripting-compiler"))
@@ -47,6 +46,8 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
+    testImplementation(kotlinStdlib())
+    testImplementation(project(":libraries:tools:abi-comparator"))
     testImplementation(libs.opentest4j)
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testCompileOnly(toolsJarApi())
