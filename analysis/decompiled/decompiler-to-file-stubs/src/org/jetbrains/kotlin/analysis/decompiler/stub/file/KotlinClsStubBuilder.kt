@@ -13,6 +13,8 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
+import org.jetbrains.kotlin.constant.AnnotationValue
+import org.jetbrains.kotlin.constant.ArrayValue
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -167,18 +169,22 @@ private class AnnotationLoaderForClassFileStubBuilder(
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         return object : AnnotationMemberDefaultValueVisitor() {
             override fun visitEnd() {
-                if (!isRepeatableWithImplicitContainer(annotationClassId, args)) {
+                if (!isImplicitRepeatableContainer(annotationClassId)) {
                     result.add(AnnotationWithArgs(annotationClassId, args))
+                } else {
+                    extractRepeatableAnnotationsFromRepeatableContainer()
+                }
+            }
+
+            private fun extractRepeatableAnnotationsFromRepeatableContainer() {
+                val arrayValue = args[Name.identifier("value")] as? ArrayValue ?: return
+                for (annotationValue in arrayValue.value) {
+                    if (annotationValue !is AnnotationValue) continue
+                    val value = annotationValue.value
+                    result += AnnotationWithArgs(value.classId, value.argumentsMapping)
                 }
             }
         }
-    }
-
-    protected fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
-        if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
-
-        val containerKClassValue = arguments[JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME] as? KClassValue ?: return false
-        return isImplicitRepeatableContainer((containerKClassValue.value as KClassValue.Value.NormalClass).classId)
     }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>> {
