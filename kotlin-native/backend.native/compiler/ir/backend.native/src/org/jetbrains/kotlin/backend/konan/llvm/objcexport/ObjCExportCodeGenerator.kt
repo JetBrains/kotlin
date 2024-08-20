@@ -449,7 +449,10 @@ internal class ObjCExportCodeGenerator(
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
 
         objCTypeAdapters.forEach { adapter ->
-            val typeAdapter = staticData.placeGlobal("", adapter).pointer
+            val typeAdapter = staticData.placeGlobal(
+                adapter.irClass?.fqNameForIrSerialization.let { "kobjctypeadapter:$it" } ?: "",
+                adapter
+            ).pointer
             val irClass = adapter.irClass
 
             val descriptorToAdapter = if (irClass?.isInterface == true) {
@@ -606,34 +609,38 @@ internal class ObjCExportCodeGenerator(
             vtable,
             llvm.constInt32(vtableSize),
 
-            staticData.placeGlobalConstArray("", runtime.interfaceTableRecordType, itable),
+            staticData.placeGlobalConstArray(
+                irClass?.let {"kitablerecs:${it.fqNameForIrSerialization}" } ?: "",
+                runtime.interfaceTableRecordType,
+                itable
+            ),
             llvm.constInt32(itableSize),
 
             staticData.cStringLiteral(objCName),
 
             staticData.placeGlobalConstArray(
-                    "",
+                    irClass?.let { "kdirectadapters:${it.fqNameForIrSerialization}" } ?: "",
                     runtime.objCToKotlinMethodAdapter,
                     directAdapters
             ),
             llvm.constInt32(directAdapters.size),
 
             staticData.placeGlobalConstArray(
-                    "",
+                    irClass?.let {"kclassadapters:${it.fqNameForIrSerialization}" } ?: "",
                     runtime.objCToKotlinMethodAdapter,
                     classAdapters
             ),
             llvm.constInt32(classAdapters.size),
 
             staticData.placeGlobalConstArray(
-                    "",
+                    irClass?.let { "kvirtualadapter:${it.fqNameForIrSerialization}" } ?: "",
                     runtime.objCToKotlinMethodAdapter,
                     virtualAdapters
             ),
             llvm.constInt32(virtualAdapters.size),
 
             staticData.placeGlobalConstArray(
-                    "",
+                    irClass?.let { "kreverseadapters:${it.fqNameForIrSerialization}" } ?: "",
                     runtime.kotlinToObjCMethodAdapter,
                     reverseAdapters
             ),
