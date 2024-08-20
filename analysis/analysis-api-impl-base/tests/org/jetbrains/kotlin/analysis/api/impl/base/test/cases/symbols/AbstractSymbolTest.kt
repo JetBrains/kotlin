@@ -422,6 +422,10 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
             }
         }
 
+        if (ktSymbol is KaCallableSymbol) {
+            yieldAll(ktSymbol.receiverParameter.withImplicitSymbols())
+        }
+
         if (ktSymbol is KaPropertySymbol) {
             yieldAll(ktSymbol.getter.withImplicitSymbols())
             yieldAll(ktSymbol.setter.withImplicitSymbols())
@@ -465,14 +469,15 @@ private fun SymbolsData.dropBackingPsi() {
  */
 private fun KaSymbol.dropBackingPsi() {
     val interfaceInstance = Class.forName("org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiSymbol")
-    val interfaceType = interfaceInstance.kotlin.starProjectedType
+    val symbolType = KaSymbol::class.createType()
 
     val thisClass = this::class
     for (property in thisClass.declaredMemberProperties) {
-        if (!property.returnType.isSubtypeOf(interfaceType)) continue
-
         // Some symbols may have owning symbols, so they should be invalidated as well
-        (property.getter.call(this) as KaSymbol).dropBackingPsi()
+        if (!property.name.startsWith("owning") || !property.returnType.isSubtypeOf(symbolType)) continue
+
+        val symbol = property.getter.call(this) as KaSymbol
+        symbol.dropBackingPsi()
     }
 
     if (!interfaceInstance.isInstance(this)) return

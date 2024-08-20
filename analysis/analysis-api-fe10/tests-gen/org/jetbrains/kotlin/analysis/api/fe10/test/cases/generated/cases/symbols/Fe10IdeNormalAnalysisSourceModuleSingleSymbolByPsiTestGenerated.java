@@ -460,6 +460,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("delegatedPropertyWithAccessors.kt")
+    public void testDelegatedPropertyWithAccessors() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/delegatedPropertyWithAccessors.kt");
+    }
+
+    @Test
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/incompleteFunctionTypeParameter.kt");

@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
+// DO_NOT_CHECK_SYMBOL_RESTORE_K1
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("NotMultiFilePartKt")
 

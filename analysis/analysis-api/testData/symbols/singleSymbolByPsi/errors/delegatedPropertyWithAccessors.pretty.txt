@@ -1,0 +1,3 @@
+var lazyProp: ERROR_TYPE(Unresolved name: getValue)
+  private get()
+  internal set(lazyProp: ERROR_TYPE(Unresolved name: getValue))
