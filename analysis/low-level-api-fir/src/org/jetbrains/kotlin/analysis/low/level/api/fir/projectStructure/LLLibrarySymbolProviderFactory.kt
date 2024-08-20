@@ -61,6 +61,15 @@ internal interface LLLibrarySymbolProviderFactory {
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
+    fun createWasmLibrarySymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider,
+        moduleDataProvider: SingleModuleDataProvider,
+        scope: GlobalSearchScope,
+        isFallbackDependenciesProvider: Boolean,
+    ): List<FirSymbolProvider>
+
     fun createBuiltinsSymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
 object TestFirWasmSessionFactory {
@@ -49,6 +50,7 @@ object TestFirWasmSessionFactory {
             moduleDataProvider,
             extensionRegistrars,
             languageVersionSettings,
+            configuration.wasmTarget,
         )
     }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 @OptIn(SessionConfiguration::class)
-object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessionFactory.Context>() {
+object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.Context, FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 
@@ -37,9 +37,10 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessio
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        wasmTarget: WasmTarget,
     ): FirSession = createLibrarySession(
         mainModuleName,
-        context = null,
+        Context(wasmTarget),
         sessionProvider,
         moduleDataProvider,
         languageVersionSettings,
@@ -57,8 +58,9 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessio
         return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
     }
 
-    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+    override fun FirSession.registerLibrarySessionComponents(c: FirWasmSessionFactory.Context) {
         registerDefaultComponents()
+        registerWasmComponents(c.wasmTarget)
     }
 
     // ==================================== Platform session ====================================
@@ -73,10 +75,9 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessio
         icData: KlibIcData? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
-        val context = Context(wasmTarget)
         return createModuleBasedSession(
             moduleData,
-            context,
+            Context(wasmTarget),
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
@@ -115,10 +116,16 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessio
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerDefaultComponents()
-        register(
-            FirDefaultImportProviderHolder::class,
-            FirDefaultImportProviderHolder(if (c.wasmTarget == WasmTarget.JS) WasmPlatformAnalyzerServices else WasmWasiPlatformAnalyzerServices)
-        )
+        registerWasmComponents(c.wasmTarget)
+    }
+
+    @OptIn(SessionConfiguration::class)
+    fun FirSession.registerWasmComponents(wasmTarget: WasmTarget) {
+        val analyzerServices = when (wasmTarget) {
+            WasmTarget.JS -> WasmPlatformAnalyzerServices
+            WasmTarget.WASI -> WasmWasiPlatformAnalyzerServices
+        }
+        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(analyzerServices))
     }
 
     // ==================================== Common parts ====================================
