@@ -23299,6 +23299,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("overrideForMemberExtensionProp.kt")
+      public void testOverrideForMemberExtensionProp() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideForMemberExtensionProp.kt");
+      }
+
+      @Test
       @TestMetadata("overrideRawType.kt")
       public void testOverrideRawType() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideRawType.kt");
@@ -36683,6 +36689,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("reassignedInRhs.kt")
         public void testReassignedInRhs() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedInRhs.kt");
+        }
+
+        @Test
+        @TestMetadata("reassignment.kt")
+        public void testReassignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignment.kt");
         }
 
         @Test

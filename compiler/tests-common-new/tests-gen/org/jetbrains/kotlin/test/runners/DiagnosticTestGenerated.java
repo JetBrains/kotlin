@@ -23305,6 +23305,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("overrideForMemberExtensionProp.kt")
+      public void testOverrideForMemberExtensionProp() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideForMemberExtensionProp.kt");
+      }
+
+      @Test
       @TestMetadata("overrideRawType.kt")
       public void testOverrideRawType() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideRawType.kt");
@@ -28613,6 +28619,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @Test
         public void testAllFilesPresentInSmartCasts() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("classNoDefaultConstructor.kt")
+        public void testClassNoDefaultConstructor() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineFunction.kt")
+        public void testInlineFunction() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction.kt");
         }
 
         @Test
@@ -39377,6 +39395,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("reassignedInRhs.kt")
         public void testReassignedInRhs() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedInRhs.kt");
+        }
+
+        @Test
+        @TestMetadata("reassignment.kt")
+        public void testReassignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignment.kt");
         }
 
         @Test

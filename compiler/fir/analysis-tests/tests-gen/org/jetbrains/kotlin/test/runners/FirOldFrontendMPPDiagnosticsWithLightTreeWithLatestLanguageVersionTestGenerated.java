@@ -2391,6 +2391,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     }
 
     @Test
+    @TestMetadata("classNoDefaultConstructor.kt")
+    public void testClassNoDefaultConstructor() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunction.kt")
+    public void testInlineFunction() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction.kt");
+    }
+
+    @Test
     @TestMetadata("kt61340_commonCode.kt")
     public void testKt61340_commonCode() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/kt61340_commonCode.kt");
