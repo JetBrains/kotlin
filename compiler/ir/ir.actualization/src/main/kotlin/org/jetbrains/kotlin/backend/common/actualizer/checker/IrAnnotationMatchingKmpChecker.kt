@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
 import org.jetbrains.kotlin.backend.common.actualizer.reportActualAnnotationsNotMatchExpect
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 
-internal object IrExpectActualAnnotationMatchingChecker : IrExpectActualChecker {
+internal object IrAnnotationMatchingKmpChecker : IrExpectActualChecker {
 
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         val languageVersionSettings = diagnosticsReporter.languageVersionSettings

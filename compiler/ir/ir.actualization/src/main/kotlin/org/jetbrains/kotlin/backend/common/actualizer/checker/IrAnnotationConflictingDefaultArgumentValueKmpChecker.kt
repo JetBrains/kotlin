@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 
-internal object IrExpectActualAnnotationConflictingDefaultArgumentValueChecker : IrExpectActualChecker {
+internal object IrAnnotationConflictingDefaultArgumentValueKmpChecker : IrExpectActualChecker {
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         for ((expectSymbol, actualSymbol) in expectActualMap.expectToActual) {
             if (expectSymbol !is IrConstructorSymbol || actualSymbol !is IrConstructorSymbol) continue
