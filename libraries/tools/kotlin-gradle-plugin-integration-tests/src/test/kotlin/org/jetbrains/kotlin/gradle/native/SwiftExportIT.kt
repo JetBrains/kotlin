@@ -110,7 +110,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir")
+            val builtProductsDir = testBuildDir.resolve("builtProductsDir")
 
             val nmOutput = runProcess(
                 listOf("nm", "libShared.a"),
@@ -151,7 +151,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir")
+            val builtProductsDir = testBuildDir.resolve("builtProductsDir")
 
             val lipoOutput = runProcess(
                 listOf("lipo", "-archs", "libShared.a"),
@@ -229,7 +229,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }
 
-            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir").toFile()
+            val builtProductsDir = testBuildDir.resolve("builtProductsDir").toFile()
 
             //get x64 slice
             runProcess(
@@ -289,7 +289,7 @@ class SwiftExportIT : KGPBaseTest() {
 }
 
 @OptIn(EnvironmentalVariablesOverride::class)
-fun GradleProject.swiftExportEmbedAndSignEnvVariables(
+fun swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos123",
@@ -299,9 +299,9 @@ fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     "ARCHS" to archs.joinToString(" "),
     "ONLY_ACTIVE_ARCH" to "YES",
     "TARGET_BUILD_DIR" to testBuildDir.absolutePathString(),
-    "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
+    "FRAMEWORKS_FOLDER_PATH" to testBuildDir.resolve("xcode-derived").absolutePathString(),
     "PLATFORM_NAME" to "iphoneos",
-    "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").absolutePathString(),
+    "BUILT_PRODUCTS_DIR" to testBuildDir.resolve("builtProductsDir").absolutePathString(),
 )
 
 private fun swiftCompile(workingDir: File, libDir: File, target: String) = runProcess(
