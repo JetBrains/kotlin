@@ -134,6 +134,10 @@ public annotation class KotlinActual
 @ExperimentalMultiplatform
 @MustBeDocumented
 @SinceKotlin("1.9")
+@Deprecated(
+    "Please migrate to kotlin.jvm.KotlinActual. ImplicitlyActualizedByJvmDeclaration will be dropped in future versions of Kotlin",
+    level = DeprecationLevel.ERROR
+)
 public actual annotation class ImplicitlyActualizedByJvmDeclaration
 
 /**
