@@ -198,6 +198,11 @@ func depsObjectsTravelBridgeAsAny2() throws {
     try assertTrue(isSavedDepsObject_2(obj: obj))
 }
 
+func classWithFactory() throws {
+    try assertEquals(actual: classWithFactory(longValue: 42).value, expected: 42)
+    try assertEquals(actual: ClassWithFactory(value: 11).value, expected: 11)
+}
+
 func objectsHashProperly() throws {
     let one: KotlinBase = getHashableObject(value: 1)
     let ein: KotlinBase = getHashableObject(value: 1)
@@ -289,6 +294,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "anyPersistsAsProperty", method: withAutorelease(anyPersistsAsProperty)),
             TestCase(name: "depsObjectsTravelBridgeAsAny", method: withAutorelease(depsObjectsTravelBridgeAsAny)),
             TestCase(name: "depsObjectsTravelBridgeAsAny2", method: withAutorelease(depsObjectsTravelBridgeAsAny2)),
+            TestCase(name: "classWithFactory", method: withAutorelease(classWithFactory)),
             TestCase(name: "objectsHashProperly", method: withAutorelease(objectsHashProperly)),
             TestCase(name: "openClassesAreInheritable", method: withAutorelease(openClassesAreInheritable)),
         ]

@@ -1,0 +1,48 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+int32_t ClassWithFactoryWithoutParameters_value_get(uintptr_t self);
+
+uintptr_t __root___ClassWithFactoryWithoutParameters();
+
+uintptr_t __root___ClassWithFactoryWithoutParameters_init_allocate();
+
+void __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr_t __kt, int32_t value);
+
+uintptr_t __root___FlattenedPackageClass__TypesOfArguments__float__(float f);
+
+uintptr_t __root___ObjectWithFactory();
+
+uintptr_t __root___ObjectWithFactory_get();
+
+uintptr_t __root___UtcOffset__TypesOfArguments__int32_t__(int32_t x);
+
+uintptr_t __root___UtcOffset_init_allocate();
+
+void __root___UtcOffset_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t test_factory_ClassWithFactoryInAPackage__TypesOfArguments__uintptr_t__(uintptr_t arg);
+
+uintptr_t test_factory_ClassWithFactoryInAPackage_init_allocate();
+
+void test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t test_factory_Nested();
+
+uintptr_t test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t arg);
+
+uintptr_t test_factory_Outer_Nested__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t x);
+
+uintptr_t test_factory_Outer_Nested_init_allocate();
+
+void test_factory_Outer_Nested_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t test_factory_Outer_init_allocate();
+
+void test_factory_Outer_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t test_factory_modules_ClassFromDependency__TypesOfArguments__uintptr_t__(uintptr_t arg);
+
+uintptr_t test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__uintptr_t__(uintptr_t arg);
+
+uintptr_t typealiases_TypealiasWithFactoryWithoutParameters();
