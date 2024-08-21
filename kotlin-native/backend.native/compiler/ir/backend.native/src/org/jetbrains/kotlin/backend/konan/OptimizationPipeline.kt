@@ -125,7 +125,7 @@ internal fun createLTOFinalPipelineConfig(
         else -> LlvmOptimizationLevel.DEFAULT
     }
     val sizeLevel: LlvmSizeLevel = when {
-        // Only optimize for size, when required by configuration. Any level != NONE gives LLVM opt level "Os".
+        // Only optimize for size, when required by configuration. LlvmSizeLevel.AGGRESSIVE will translate to "Oz"
         config.smallBinary -> LlvmSizeLevel.AGGRESSIVE
         else -> LlvmSizeLevel.NONE
     }
@@ -184,9 +184,10 @@ abstract class LlvmOptimizationPipeline(
 
     abstract val pipelineName: String
     abstract val passes: List<String>
-    val optimizationFlag = when {
-        config.sizeLevel != LlvmSizeLevel.NONE -> "Os"
-        else -> "O${config.optimizationLevel.value}"
+    val optimizationFlag = when (config.sizeLevel) {
+        LlvmSizeLevel.NONE -> "O${config.optimizationLevel.value}"
+        LlvmSizeLevel.DEFAULT -> "Os"
+        LlvmSizeLevel.AGGRESSIVE -> "Oz"
     }
 
     private val arena = Arena()

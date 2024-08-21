@@ -30,7 +30,7 @@ interface ConfigChecks {
 
     fun shouldOptimize() = config.optimizationsEnabled
 
-    fun shouldInlineSafepoints() = !config.smallBinary
+    fun shouldInlineSafepoints() = !config.debug && !config.smallBinary
 
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
