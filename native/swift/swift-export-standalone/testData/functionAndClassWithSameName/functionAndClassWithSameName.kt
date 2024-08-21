@@ -55,6 +55,8 @@ fun ObjectWithFactory() = ObjectWithFactory
 // FILE: typealias.kt
 package typealiases
 
+import ClassWithFactoryWithoutParameters
+
 typealias TypealiasWithFactoryWithoutParameters = ClassWithFactoryWithoutParameters
 fun TypealiasWithFactoryWithoutParameters(): TypealiasWithFactoryWithoutParameters =
     TypealiasWithFactoryWithoutParameters(123)
