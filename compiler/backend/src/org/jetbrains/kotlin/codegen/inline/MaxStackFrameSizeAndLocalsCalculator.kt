@@ -46,6 +46,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.utils.SmartIdentityTable
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.*
 import java.util.*
 import kotlin.math.max
@@ -59,41 +60,16 @@ import kotlin.math.max
  */
 class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: String?, mv: MethodVisitor?) :
     MaxLocalsCalculator(api, access, descriptor, mv) {
-    private val labelWrappersTable = SmartIdentityTable<Label, LabelWrapper>()
-    private val exceptionHandlers: MutableCollection<ExceptionHandler> = LinkedList()
 
-    private val firstLabel: LabelWrapper
+    private val basicBlocks = SmartIdentityTable<Label, BasicBlock>()
+    private val stack = Stack<BasicBlock>()
 
-    /**
-     * The (relative) stack size after the last visited instruction. This size
-     * is relative to the beginning of the current basic block, i.e., the true
-     * stack size after the last visited instruction is equal to the
-     * [MaxStackFrameSizeAndLocalsCalculator.LabelWrapper.inputStackSize] of the current basic block
-     * plus <tt>stackSize</tt>.
-     */
-    private var stackSize = 0
+    private var currentBlockStackDelta = 0
+    private var currentBlock: BasicBlock? = BasicBlock().apply { fixInputStackSize(0) }
 
-    /**
-     * The (relative) maximum stack size after the last visited instruction.
-     * This size is relative to the beginning of the current basic block, i.e.,
-     * the true maximum stack size after the last visited instruction is equal
-     * to the [MaxStackFrameSizeAndLocalsCalculator.LabelWrapper.inputStackSize] of the current basic
-     * block plus <tt>stackSize</tt>.
-     */
-    private var maxStackSize = 0
-
-    /**
-     * Maximum stack size of this method.
-     */
-    private var maxStack = 0
-
-    private var currentBlock: LabelWrapper? = null
-    private var previousBlock: LabelWrapper? = null
-
-    init {
-        firstLabel = getLabelWrapper(Label())
-        processLabel(firstLabel.label)
-    }
+    // Occasionally TransformationMethodVisitor re-invokes visitMaxs (it assumes 0 could mean an invalid
+    // stack size, which may or may not be false), so cache the result
+    private var result = 0
 
     override fun visitFrame(type: Int, nLocal: Int, local: Array<Any>, nStack: Int, stack: Array<Any>) {
         throw AssertionError("We don't support visitFrame because currently nobody needs")
@@ -101,16 +77,14 @@ class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: St
 
     override fun visitInsn(opcode: Int) {
         increaseStackSize(FRAME_SIZE_CHANGE_BY_OPCODE[opcode])
-        // if opcode == ATHROW or xRETURN, ends current block (no successor)
         if ((opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) || opcode == Opcodes.ATHROW) {
-            noSuccessor()
+            currentBlock = null
         }
         super.visitInsn(opcode)
     }
 
     override fun visitIntInsn(opcode: Int, operand: Int) {
-        // BIPUSH and SIPUSH add a value, NEWARRAY does not
-        if (opcode != Opcodes.NEWARRAY) {
+        if (opcode != Opcodes.NEWARRAY) { // BIPUSH or SIPUSH
             increaseStackSize(1)
         }
         super.visitIntInsn(opcode, operand)
@@ -122,10 +96,9 @@ class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: St
     }
 
     override fun visitTypeInsn(opcode: Int, type: String) {
-        // ANEWARRAY, CHECKCASH, and INSTANCEOF don't change the stack
         if (opcode == Opcodes.NEW) {
             increaseStackSize(1)
-        }
+        } // else ANEWARRAY, CHECKCAST, or INSTANCEOF
         super.visitTypeInsn(opcode, type)
     }
 
@@ -154,36 +127,22 @@ class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: St
     }
 
     override fun visitJumpInsn(opcode: Int, label: Label) {
-        if (currentBlock != null) {
-            // This is always negative so no need to update the maximum
-            stackSize += FRAME_SIZE_CHANGE_BY_OPCODE[opcode]
-            addSuccessor(getLabelWrapper(label), stackSize)
+        // This is always negative so no need to update the maximum
+        currentBlock?.let {
+            currentBlockStackDelta += FRAME_SIZE_CHANGE_BY_OPCODE[opcode]
+            it.addSuccessor(label)
             if (opcode == Opcodes.GOTO) {
-                noSuccessor()
+                currentBlock = null
             }
         }
         super.visitJumpInsn(opcode, label)
     }
 
     override fun visitLabel(label: Label) {
-        processLabel(label)
+        currentBlock?.addSuccessor(label)
+        currentBlock = getBasicBlockAt(label)
+        currentBlockStackDelta = 0
         super.visitLabel(label)
-    }
-
-    private fun processLabel(label: Label) {
-        val wrapper = getLabelWrapper(label)
-
-        if (currentBlock != null) {
-            // ends current block (with one new successor)
-            currentBlock!!.outputStackMax = maxStackSize
-            addSuccessor(wrapper, stackSize)
-        }
-
-        currentBlock = wrapper
-        stackSize = 0
-        maxStackSize = 0
-        previousBlock?.nextLabel = wrapper
-        previousBlock = wrapper
     }
 
     override fun visitLdcInsn(cst: Any?) {
@@ -202,129 +161,77 @@ class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: St
     }
 
     private fun visitSwitchInsn(dflt: Label, labels: Array<out Label>) {
-        if (currentBlock != null) {
-            --stackSize
-            addSuccessor(getLabelWrapper(dflt), stackSize)
+        currentBlock?.let {
+            --currentBlockStackDelta
+            it.addSuccessor(dflt)
             for (label in labels) {
-                addSuccessor(getLabelWrapper(label), stackSize)
+                it.addSuccessor(label)
             }
-            noSuccessor()
         }
+        currentBlock = null
     }
 
     override fun visitMultiANewArrayInsn(desc: String, dims: Int) {
-        if (currentBlock != null) {
-            increaseStackSize(dims - 1)
-        }
-
+        increaseStackSize(dims - 1)
         super.visitMultiANewArrayInsn(desc, dims)
     }
 
     override fun visitMaxs(maxStack: Int, maxLocals: Int) {
-        for (handler in exceptionHandlers) {
-            var l: LabelWrapper? = handler.start
-            val e = handler.end
-
-            while (l !== e) {
-                checkNotNull(l) { "Bad exception handler end" }
-
-                l.addSuccessor(handler.handlerLabel, 0, true)
-                l = l.nextLabel
-            }
-        }
-
-        /*
-         * control flow analysis algorithm: while the block stack is not
-         * empty, pop a block from this stack, update the max stack size,
-         * compute the true (non relative) begin stack size of the
-         * successors of this block, and push these successors onto the
-         * stack (unless they have already been pushed onto the stack).
-         * Note: by hypothesis, the {@link LabelWrapper#inputStackSize} of the
-         * blocks in the block stack are the true (non relative) beginning
-         * stack sizes of these blocks.
-         */
-        var max = 0
-        val stack = Stack<LabelWrapper>()
-        val pushed: MutableSet<LabelWrapper> = HashSet()
-
-        stack.push(firstLabel)
-        pushed.add(firstLabel)
-
+        var max = result
+        // Put normal path before exception handlers (this makes the failsafe below trigger less)
+        stack.reverse()
+        // Blocks should be entered with a consistent stack state, otherwise the frame map
+        // will not be valid. This means we can use a simple DFS/BFS because the moment
+        // we reach a block through any path we know the size of the stack for all paths.
         while (!stack.empty()) {
             val current = stack.pop()
             val start = current.inputStackSize
-
-            val blockMax = start + current.outputStackMax
-            if (blockMax > max) {
-                max = blockMax
-            }
-
-            for (edge in current.successors) {
-                val successor = edge.successor
-                if (!pushed.contains(successor)) {
-                    successor.inputStackSize = if (edge.isExceptional) 1 else start + edge.outputStackSize
-                    pushed.add(successor)
-                    stack.push(successor)
-                }
+            max = max(max, start + current.maxStackDelta)
+            for ((successor, deltaAtJump) in current.successors) {
+                // Fix-stack pseudoinstructions can sometimes cause this to go into the negative.
+                // In this case we can just treat that as 0, as the fix-stack transformer
+                // will reserve the extra stack space unconditionally.
+                successor.fixInputStackSize(max(0, start + deltaAtJump))
             }
         }
-
-        this.maxStack = max(this.maxStack, max(maxStack, max))
-        super.visitMaxs(this.maxStack, maxLocals)
+        result = max
+        super.visitMaxs(max(maxStack, max), maxLocals)
     }
 
     override fun visitTryCatchBlock(start: Label, end: Label, handler: Label, type: String?) {
-        exceptionHandlers.add(ExceptionHandler(getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)))
+        getBasicBlockAt(handler).fixInputStackSize(1)
         super.visitTryCatchBlock(start, end, handler, type)
     }
 
-    private class ExceptionHandler(val start: LabelWrapper, val end: LabelWrapper, val handlerLabel: LabelWrapper)
-
-    private class ControlFlowEdge(val successor: LabelWrapper, val outputStackSize: Int, val isExceptional: Boolean)
-
-    private class LabelWrapper(val label: Label, private val index: Int) {
-        var nextLabel: LabelWrapper? = null
-        val successors: MutableCollection<ControlFlowEdge> = LinkedList()
-
-        var outputStackMax: Int = 0
-        var inputStackSize: Int = 0
-
-        fun addSuccessor(successor: LabelWrapper, outputStackSize: Int, isExceptional: Boolean) {
-            successors.add(ControlFlowEdge(successor, outputStackSize, isExceptional))
-        }
-
-        override fun equals(other: Any?): Boolean = other is LabelWrapper && other.index == index
-        override fun hashCode(): Int = index
+    private class BasicBlock {
+        val successors: MutableList<Pair<BasicBlock, Int>> = SmartList()
+        var inputStackSize: Int = -1 // negative means unknown because no predecessors have been processed yet
+        var maxStackDelta: Int = 0
     }
 
-    // ------------------------------------------------------------------------
-    // Utility methods
-    // ------------------------------------------------------------------------
-    private fun getLabelWrapper(label: Label): LabelWrapper {
-        return labelWrappersTable.getOrCreate(label) { LabelWrapper(label, labelWrappersTable.size) }
+    private fun getBasicBlockAt(label: Label): BasicBlock {
+        return basicBlocks.getOrCreate(label) { BasicBlock() }
     }
 
     private fun increaseStackSize(variation: Int) {
-        val size = stackSize + variation
-        if (size > maxStackSize) {
-            maxStackSize = size
+        currentBlock?.let {
+            val size = currentBlockStackDelta + variation
+            if (variation > 0 && it.maxStackDelta < size) {
+                it.maxStackDelta = size
+            }
+            currentBlockStackDelta = size
         }
-        stackSize = size
     }
 
-    private fun addSuccessor(successor: LabelWrapper, outputStackSize: Int) {
-        currentBlock!!.addSuccessor(successor, outputStackSize, false)
+    private fun BasicBlock.addSuccessor(label: Label) {
+        successors.add(getBasicBlockAt(label) to currentBlockStackDelta)
     }
 
-    /**
-     * Ends the current basic block. This method must be used in the case where
-     * the current basic block does not have any successor.
-     */
-    private fun noSuccessor() {
-        if (currentBlock != null) {
-            currentBlock!!.outputStackMax = maxStackSize
-            currentBlock = null
-        }
+    private fun BasicBlock.fixInputStackSize(value: Int) {
+        if (inputStackSize < 0) {
+            inputStackSize = value
+            stack.add(this)
+        } // else assert(inputStackSize == value)
     }
 
     companion object {
