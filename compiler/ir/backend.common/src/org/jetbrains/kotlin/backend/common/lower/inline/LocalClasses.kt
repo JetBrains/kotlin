@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 
 /*
@@ -137,35 +136,47 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
     }
 }
 
-private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: MutableSet<IrClass>) {
-    if (!isInline) return
+/**
+ * A cache of local classes declared in `this` that will need to be extracted later.
+ */
+private var IrFunction.localClassesToExtract: Set<IrClass>? by irAttribute(followAttributeOwner = false)
+
+fun IrFunction.extractableLocalClasses(): Set<IrClass> {
+    localClassesToExtract?.let { return it }
+
+    if (!isInline) return emptySet()
     // Conservatively assume that functions with reified type parameters must be copied.
-    if (typeParameters.any { it.isReified }) return
+    if (typeParameters.any { it.isReified }) return emptySet()
 
     val crossinlineParameters = valueParameters.filter { it.isCrossinline }.toSet()
-    acceptChildrenVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
 
-        override fun visitClass(declaration: IrClass) {
-            var canExtract = true
-            if (crossinlineParameters.isNotEmpty()) {
-                declaration.acceptVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitGetValue(expression: IrGetValue) {
-                        if (expression.symbol.owner in crossinlineParameters)
-                            canExtract = false
-                    }
-                })
+    return buildSet {
+        acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
             }
-            if (canExtract)
-                classesToExtract.add(declaration)
-        }
-    })
+
+            override fun visitClass(declaration: IrClass) {
+                var canExtract = true
+                if (crossinlineParameters.isNotEmpty()) {
+                    declaration.acceptVoid(object : IrElementVisitorVoid {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitGetValue(expression: IrGetValue) {
+                            if (expression.symbol.owner in crossinlineParameters)
+                                canExtract = false
+                        }
+                    })
+                }
+                if (canExtract)
+                    add(declaration)
+            }
+        })
+    }.also {
+        localClassesToExtract = it
+    }
 }
 
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
@@ -175,8 +186,7 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = container as? IrFunction ?: return
-        val classesToExtract = mutableSetOf<IrClass>()
-        function.collectExtractableLocalClassesInto(classesToExtract)
+        val classesToExtract = function.extractableLocalClasses()
         if (classesToExtract.isEmpty())
             return
 
