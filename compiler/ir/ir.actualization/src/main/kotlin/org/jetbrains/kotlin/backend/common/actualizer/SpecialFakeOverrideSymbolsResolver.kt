@@ -104,7 +104,7 @@ class SpecialFakeOverrideSymbolsResolver(val expectActualMap: IrExpectActualMap)
     }
 
     private fun IrSymbol.actualize(): IrSymbol {
-        return expectActualMap.regularSymbols[this] ?: this
+        return expectActualMap.expectToActual[this] ?: this
     }
 
     private fun processClass(irClass: IrClass) {
