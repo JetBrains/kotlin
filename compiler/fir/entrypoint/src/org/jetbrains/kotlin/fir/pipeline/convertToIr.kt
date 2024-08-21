@@ -295,6 +295,9 @@ private class Fir2IrPipeline(
         if (!componentsStorage.configuration.skipBodies) {
             delegatedMembersGenerationStrategy.generateDelegatedBodies()
         }
+        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
+        componentsStorage.symbolsMappingForLazyClasses.unregisterRemapper()
+
         val fakeOverrideStrategy = fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy
         return fakeOverrideStrategy to delegatedMembersGenerationStrategy
     }
@@ -302,6 +305,8 @@ private class Fir2IrPipeline(
     private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {
         val temporaryResolver = SpecialFakeOverrideSymbolsResolver(IrExpectActualMap())
         fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
+        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
+        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(temporaryResolver)
     }
 
     private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
@@ -313,7 +318,7 @@ private class Fir2IrPipeline(
         }
 
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
+        componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(fakeOverrideResolver)
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
