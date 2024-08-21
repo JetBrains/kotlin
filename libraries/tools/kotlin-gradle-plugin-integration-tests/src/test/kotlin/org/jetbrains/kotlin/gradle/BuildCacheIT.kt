@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.native.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
@@ -34,7 +36,6 @@ import kotlin.io.path.writeText
 
 @ExperimentalPathApi
 @DisplayName("Local build cache")
-@JvmGradlePluginTests
 class BuildCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions =
@@ -42,6 +43,7 @@ class BuildCacheIT : KGPBaseTest() {
 
     private val localBuildCacheDir get() = workingDir.resolve("custom-jdk-build-cache")
 
+    @JvmGradlePluginTests
     @DisplayName("kotlin.caching.enabled flag should enable caching for Kotlin tasks")
     @GradleTest
     fun testKotlinCachingEnabledFlag(gradleVersion: GradleVersion) {
@@ -58,6 +60,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Kotlin JVM task should be taken from cache")
     @GradleTest
     fun testCacheHitAfterClean(gradleVersion: GradleVersion) {
@@ -74,6 +77,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should correctly handle modification/restoration of source file")
     @GradleTest
     fun testCacheHitAfterCacheHit(gradleVersion: GradleVersion) {
@@ -110,6 +114,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Debug log level should not break build cache")
     @GradleTest
     fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
@@ -129,6 +134,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Enabled statistic should not break build cache")
     @GradleTest
     fun testCacheWithStatistic(gradleVersion: GradleVersion) {
@@ -150,6 +156,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Changing native toolchain location should not break build cache")
     @GradleTest
     fun testNativeToolchainWithBuildCache(gradleVersion: GradleVersion, @TempDir customNativeHomePath: Path) {
@@ -178,6 +185,7 @@ class BuildCacheIT : KGPBaseTest() {
     }
 
     //doesn't work for build history files approach
+    @JvmGradlePluginTests
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
@@ -199,6 +207,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Restore from build cache and consequent compilation error should not break incremental compilation")
     @GradleTest
     fun testIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
@@ -234,6 +243,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("A compilation error doesn't break kapt incremental compilation after restoring from build cache")
     @GradleTest
     fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
@@ -282,6 +292,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("A compilation error doesn't break kapt incremental compilation in test sources after restoring from build cache")
     @GradleTest
     fun testKaptIncrementalCompilationInTestSourcesAfterCacheHit(gradleVersion: GradleVersion) {
@@ -318,6 +329,58 @@ class BuildCacheIT : KGPBaseTest() {
                 assertCompiledKotlinTestSourcesAreHandledByKapt3(
                     listOf(projectPath.relativize(testFileToEdit)),
                     ":app"
+                )
+            }
+        }
+    }
+
+    @SwiftExportGradlePluginTests
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("SwiftExport cache test")
+    @GradleTest
+    fun testBuildCacheSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    swiftExportEnabled = true,
+                )
+            )
+        ) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            build(
+                ":shared:embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksPackedToCache(
+                    ":shared:compileKotlinIosArm64",
+                    ":shared:compileSwiftExportMainKotlinIosArm64",
+                    ":shared:iosArm64DebugBuildSPMPackage",
+                    ":shared:iosArm64DebugGenerateSPMPackage",
+                    ":shared:iosArm64DebugSwiftExport",
+                    ":shared:linkSwiftExportBinaryDebugStaticIosArm64",
+                    ":shared:mergeIosDebugSwiftExportLibraries",
+                )
+            }
+
+            build(
+                "clean", ":shared:embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksFromCache(
+                    ":shared:compileKotlinIosArm64",
+                    ":shared:compileSwiftExportMainKotlinIosArm64",
+                    ":shared:iosArm64DebugBuildSPMPackage",
+                    ":shared:iosArm64DebugGenerateSPMPackage",
+                    ":shared:iosArm64DebugSwiftExport",
+                    ":shared:linkSwiftExportBinaryDebugStaticIosArm64",
+                    ":shared:mergeIosDebugSwiftExportLibraries",
                 )
             }
         }
