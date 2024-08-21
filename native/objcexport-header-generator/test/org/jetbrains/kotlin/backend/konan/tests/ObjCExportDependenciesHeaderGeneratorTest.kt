@@ -111,7 +111,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
      * See KT-68480
      */
     @Test
-    @TodoAnalysisApi
+    //@TodoAnalysisApi
     fun `test - kotlinxCoroutines`() {
         doTest(
             dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
@@ -224,6 +224,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("mapLikeSerializer"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    @Test
+    fun `test - top level function and extension with the same dependency doesn't generate duplicate`() {
+        doTest(
+            dependenciesDir.resolve("topLevelFunctionAndExtensionWithDependency"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile)
             )
         )
     }
