@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
@@ -477,7 +478,11 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerDefaultComponents()
 
-            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            val kotlinScopeProvider = when {
+                platform.isJvm() -> FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+                else -> FirKotlinScopeProvider()
+            }
+
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val symbolProvider = createLibraryProvidersForScope(
