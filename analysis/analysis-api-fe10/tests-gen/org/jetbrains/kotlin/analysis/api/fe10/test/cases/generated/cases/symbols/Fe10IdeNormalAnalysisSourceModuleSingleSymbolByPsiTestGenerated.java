@@ -71,6 +71,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("functionFromInitBlock.kt")
+  public void testFunctionFromInitBlock() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionFromInitBlock.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithReceiverAnnotation.kt")
   public void testFunctionWithReceiverAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");
@@ -98,6 +104,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   @TestMetadata("nestedTypeAnnotationWithTypeAliasAsAnnotation.kt")
   public void testNestedTypeAnnotationWithTypeAliasAsAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAliasAsAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyFromInitBlock.kt")
+  public void testPropertyFromInitBlock() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyFromInitBlock.kt");
   }
 
   @Test

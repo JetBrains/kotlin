@@ -46,6 +46,24 @@ public class FirIdeNormalAnalysisScriptSourceModuleSingleSymbolByPsiTestGenerate
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
+  @Test
+  @TestMetadata("functionFromScriptStatement.kts")
+  public void testFunctionFromScriptStatement() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionFromScriptStatement.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelScriptFunction.kts")
+  public void testTopLevelScriptFunction() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/topLevelScriptFunction.kts");
+  }
+
+  @Test
+  @TestMetadata("variableFromScriptStatement.kts")
+  public void testVariableFromScriptStatement() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/variableFromScriptStatement.kts");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
   @TestDataPath("$PROJECT_ROOT")
