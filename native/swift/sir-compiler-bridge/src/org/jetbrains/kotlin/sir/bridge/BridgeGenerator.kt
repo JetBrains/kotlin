@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.sir.bridge.impl.*
 /**
  * Description of a Kotlin callable for which we are creating the bridge.
  */
-public class BridgeRequest(
+public class FunctionBridgeRequest(
     /**
      * SIR callable we are generating bridge for.
      */
@@ -24,8 +24,8 @@ public class BridgeRequest(
      * Fully Qualified Name of Kotlin callable.
      */
     public val fqName: List<String>,
-) : Comparable<BridgeRequest> {
-    public override fun compareTo(other: BridgeRequest): Int {
+) : Comparable<FunctionBridgeRequest> {
+    public override fun compareTo(other: FunctionBridgeRequest): Int {
         return bridgeName.compareTo(other.bridgeName)
     }
 }
@@ -66,8 +66,8 @@ public class KotlinFunctionBridge(
  * Generates [FunctionBridge] and [SirFunctionBody] that binds SIR function to its Kotlin origin.
  */
 public interface BridgeGenerator {
-    public fun generateFunctionBridges(request: BridgeRequest): List<FunctionBridge>
-    public fun generateSirFunctionBody(request: BridgeRequest): SirFunctionBody
+    public fun generateFunctionBridges(request: FunctionBridgeRequest): List<FunctionBridge>
+    public fun generateSirFunctionBody(request: FunctionBridgeRequest): SirFunctionBody
 }
 
 /**

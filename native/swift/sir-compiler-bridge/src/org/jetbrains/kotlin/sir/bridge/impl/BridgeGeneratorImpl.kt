@@ -15,7 +15,7 @@ private const val stdintHeader = "stdint.h"
 private const val foundationHeader = "Foundation/Foundation.h"
 
 internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : BridgeGenerator {
-    override fun generateFunctionBridges(request: BridgeRequest) = buildList {
+    override fun generateFunctionBridges(request: FunctionBridgeRequest) = buildList {
         when (request.callable) {
             is SirFunction -> {
                 add(
@@ -55,7 +55,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
         }
     }
 
-    override fun generateSirFunctionBody(request: BridgeRequest) = SirFunctionBody(buildList {
+    override fun generateSirFunctionBody(request: FunctionBridgeRequest) = SirFunctionBody(buildList {
         when (request.callable) {
             is SirFunction, is SirGetter, is SirSetter -> {
                 add("return ${request.descriptor(typeNamer).swiftCall(typeNamer)}")
@@ -91,7 +91,7 @@ private class BridgeFunctionDescriptor(
         }
 }
 
-private fun BridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
     require(callable !is SirInit) { "Use allocationDescriptor and initializationDescriptor instead" }
     return BridgeFunctionDescriptor(
         baseBridgeName = bridgeName,
@@ -112,7 +112,7 @@ private fun BridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDes
 
 private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.uint)))
 
-private fun BridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+private fun FunctionBridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
     require(callable is SirInit) { "Use descriptor instead" }
     return BridgeFunctionDescriptor(
         bridgeName + "_allocate",
@@ -124,7 +124,7 @@ private fun BridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeF
     )
 }
 
-private fun BridgeRequest.initializationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+private fun FunctionBridgeRequest.initializationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
     require(callable is SirInit) { "Use descriptor instead" }
     return BridgeFunctionDescriptor(
         bridgeName + "_initialize",

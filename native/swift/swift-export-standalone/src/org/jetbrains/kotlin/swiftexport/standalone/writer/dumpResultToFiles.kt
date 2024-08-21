@@ -21,7 +21,7 @@ internal fun dumpTextAtPath(
 
 internal fun generateBridgeSources(
     bridgeGenerator: BridgeGenerator,
-    requests: List<BridgeRequest>,
+    requests: List<FunctionBridgeRequest>,
     stableDeclarationsOrder: Boolean,
 ): BridgeSources {
     val kotlinBridgePrinter = createKotlinBridgePrinter()

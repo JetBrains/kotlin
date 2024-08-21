@@ -55,7 +55,7 @@ abstract class AbstractKotlinSirBridgeTest {
 
 private val lineSeparator: String = System.getProperty("line.separator")
 
-private fun parseRequestsFromTestDir(testDir: File): List<BridgeRequest> =
+private fun parseRequestsFromTestDir(testDir: File): List<FunctionBridgeRequest> =
     testDir.listFiles()
         ?.filter { it.extension == "properties" && it.name.startsWith("request") }
         ?.map { readRequestFromFile(it) }
@@ -85,7 +85,7 @@ private fun parseType(typeName: String): SirType {
     }.let { SirNominalType(it) }
 }
 
-private fun readRequestFromFile(file: File): BridgeRequest {
+private fun readRequestFromFile(file: File): FunctionBridgeRequest {
     val properties = Properties()
     file.bufferedReader().use(properties::load)
     val fqName = properties.getProperty("fqName").split('.')
@@ -145,7 +145,7 @@ private fun readRequestFromFile(file: File): BridgeRequest {
         }
     }
 
-    return BridgeRequest(callable, bridgeName, fqName)
+    return FunctionBridgeRequest(callable, bridgeName, fqName)
 }
 
 private enum class BridgeRequestKind {
