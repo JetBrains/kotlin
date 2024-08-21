@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenPlatform.Companion.parseBinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension.Companion.EXTENSION_NAME
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
@@ -49,9 +48,7 @@ open class BinaryenRootPlugin : Plugin<Project> {
     }
 
     private fun addPlatform(project: Project, extension: BinaryenRootExtension) {
-        val uname = project.variantImplementationFactory<UnameExecutor.UnameExecutorVariantFactory>()
-            .getInstance(project)
-            .unameExecResult
+        val uname = project.providers.unameExecResult
 
         extension.platform.value(
             project.providers.systemProperty("os.name")
