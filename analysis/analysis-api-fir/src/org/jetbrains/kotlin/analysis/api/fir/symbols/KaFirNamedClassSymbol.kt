@@ -8,21 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModality
-import org.jetbrains.kotlin.analysis.api.fir.location
-import org.jetbrains.kotlin.analysis.api.fir.visibility
+import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.asKaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -136,7 +126,13 @@ internal class KaFirNamedClassSymbol private constructor(
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
-    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver>
+        get() = withValidityAssertion {
+            if (backingPsi?.contextReceivers?.isEmpty() == true)
+                emptyList()
+            else
+                firSymbol.createContextReceivers(builder)
+        }
 
     override val companionObject: KaNamedClassSymbol?
         get() = withValidityAssertion {

@@ -85,7 +85,8 @@ internal class KaFirNamedFunctionSymbol private constructor(
             KaFirReceiverParameterSymbol(backingPsi, analysisSession, this)
         }
 
-    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver>
+        get() = withValidityAssertion { createContextReceivers() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {

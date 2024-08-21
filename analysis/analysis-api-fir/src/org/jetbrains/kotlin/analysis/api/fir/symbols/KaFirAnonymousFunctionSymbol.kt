@@ -67,7 +67,9 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
             )
         }
 
-    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver>
+        get() = withValidityAssertion { createContextReceivers() }
+
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 

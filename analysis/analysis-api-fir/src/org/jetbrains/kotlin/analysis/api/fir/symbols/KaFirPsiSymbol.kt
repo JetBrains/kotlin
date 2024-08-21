@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.psi.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -88,6 +90,11 @@ internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(): KaAnnotationL
     }
 
     return KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+}
+
+internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.createContextReceivers(): List<KaContextReceiver> {
+    if (backingPsi?.contextReceivers?.isEmpty() == true) return emptyList()
+    return firSymbol.createContextReceivers(builder)
 }
 
 /**
