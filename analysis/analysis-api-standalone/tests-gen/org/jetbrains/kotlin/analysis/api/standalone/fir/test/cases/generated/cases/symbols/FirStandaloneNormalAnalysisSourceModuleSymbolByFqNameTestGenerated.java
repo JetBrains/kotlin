@@ -46,6 +46,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("any.kt")
+  public void testAny() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/any.kt");
+  }
+
+  @Test
+  @TestMetadata("array.kt")
+  public void testArray() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/array.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/class.kt");
@@ -67,6 +79,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("intArray.kt")
+  public void testIntArray() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/intArray.kt");
   }
 
   @Test
@@ -103,6 +121,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nothing.kt")
+  public void testNothing() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nothing.kt");
   }
 
   @Test
