@@ -314,6 +314,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":wasm:wasm.tests",
         ":wasm:wasm.frontend",
         ":wasm:wasm.config",
+        ":wasm:wasm.debug.browsers",
         ":repo:codebase-tests",
         ":repo:artifacts-tests"
 

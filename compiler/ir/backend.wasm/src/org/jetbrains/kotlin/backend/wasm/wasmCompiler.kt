@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class WasmCompilerResult(
     val wat: String?,
@@ -122,6 +125,7 @@ fun compileWasm(
     allowIncompleteImplementations: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
+    useDebuggerCustomFormatters: Boolean = false
 ): WasmCompilerResult {
     val useJsTag = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
 
@@ -175,7 +179,8 @@ fun compileWasm(
         )
         jsWrapper = compiledWasmModule.generateEsmExportsWrapper(
             "./$baseFileName.uninstantiated.mjs",
-            backendContext.jsModuleAndQualifierReferences
+            backendContext.jsModuleAndQualifierReferences,
+            useDebuggerCustomFormatters
         )
     } else {
         jsUninstantiatedWrapper = null
@@ -361,7 +366,8 @@ For more information, see https://kotl.in/wasm-help
 
 fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
     asyncWrapperFileName: String,
-    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
+    useCustomFormatters: Boolean
 ): String {
     val importedModules = jsModuleImports
         .map {
@@ -405,6 +411,7 @@ fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
     return """
 $importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
+${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
 const exports = (await instantiate({
 $imports
@@ -416,7 +423,8 @@ ${generateExports()}
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String
+    fileNameBase: String,
+    useDebuggerCustomFormatters: Boolean
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -434,6 +442,13 @@ fun writeCompilationResult(
     }
     result.debugInformation?.sourceMapForText?.let {
         File(dir, "$fileNameBase.wat.map").writeText(it)
+    }
+    if (useDebuggerCustomFormatters) {
+        val fileName = "custom-formatters.js"
+        val systemClassLoader = ClassLoader.getSystemClassLoader()
+        val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName)
+
+        Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
     }
 
     if (result.dts != null) {

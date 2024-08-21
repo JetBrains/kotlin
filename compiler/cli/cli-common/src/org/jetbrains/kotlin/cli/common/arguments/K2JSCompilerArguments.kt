@@ -83,6 +83,16 @@ class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xwasm-debugger-custom-formatters",
+        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values"
+    )
+    var debuggerCustomFormatters = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,

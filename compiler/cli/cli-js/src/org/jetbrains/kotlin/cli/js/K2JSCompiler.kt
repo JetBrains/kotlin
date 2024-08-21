@@ -407,6 +407,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.wasm) {
             val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
             val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+            val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
             val irModuleInfo = loadIr(
                 depsDescriptors = module,
@@ -443,6 +444,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 allowIncompleteImplementations = arguments.irDce,
                     generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 generateSourceMaps = generateSourceMaps,
+                useDebuggerCustomFormatters = useDebuggerCustomFormatters
             )
             performanceManager?.notifyIRGenerationFinished()
             performanceManager?.notifyGenerationFinished()
@@ -451,6 +453,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 result = res,
                 dir = outputDir,
                 fileNameBase = outputName,
+                useDebuggerCustomFormatters = useDebuggerCustomFormatters
             )
 
             return OK
@@ -785,6 +788,10 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         services: Services
     ) {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        if (arguments.debuggerCustomFormatters) {
+            configuration.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, true)
+        }
 
         if (arguments.sourceMap) {
             configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
