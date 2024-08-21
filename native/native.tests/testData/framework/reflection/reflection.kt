@@ -1,8 +1,13 @@
+import kotlin.native.internal.reflect.objCNameOrNull
 import kotlin.test.*
 
 open class MyOpenClass
 
-fun checkMyOpenClass(instance: MyOpenClass): String {
+fun getMyOpenClassObjCName(): String {
+    return MyOpenClass::class.objCNameOrNull!!
+}
+
+fun checkMyClass(instance: MyOpenClass): String {
     val kclass = instance::class
     // isInstance
     assertTrue(MyOpenClass::class.isInstance(instance))
@@ -13,5 +18,6 @@ fun checkMyOpenClass(instance: MyOpenClass): String {
     assertEquals("MyClass", kclass.simpleName)
     assertNull(kclass.qualifiedName)
     assertEquals("class swiftTestExecutable.MyClass", kclass.toString())
+    assertNull(kclass.objCNameOrNull)
     return "OK"
 }

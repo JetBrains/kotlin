@@ -11672,6 +11672,10 @@ final val kotlin.native.concurrent/isFrozen // kotlin.native.concurrent/isFrozen
     final fun (kotlin/Any?).<get-isFrozen>(): kotlin/Boolean // kotlin.native.concurrent/isFrozen.<get-isFrozen>|<get-isFrozen>@kotlin.Any?(){}[0]
 
 // Targets: [native]
+final val kotlin.native.internal.reflect/objCNameOrNull // kotlin.native.internal.reflect/objCNameOrNull|@kotlin.reflect.KClass<*>{}objCNameOrNull[0]
+    final fun (kotlin.reflect/KClass<*>).<get-objCNameOrNull>(): kotlin/String? // kotlin.native.internal.reflect/objCNameOrNull.<get-objCNameOrNull>|<get-objCNameOrNull>@kotlin.reflect.KClass<*>(){}[0]
+
+// Targets: [native]
 final val kotlin.test/asserter // kotlin.test/asserter|{}asserter[0]
     final fun <get-asserter>(): kotlin.test/Asserter // kotlin.test/asserter.<get-asserter>|<get-asserter>(){}[0]
 

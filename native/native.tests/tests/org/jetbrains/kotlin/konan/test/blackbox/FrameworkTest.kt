@@ -363,7 +363,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testReflection() {
         val testName = "reflection"
-        val testCase = generateObjCFramework(testName)
+        val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
         compileAndRunSwift(testName, testCase)
     }
 
