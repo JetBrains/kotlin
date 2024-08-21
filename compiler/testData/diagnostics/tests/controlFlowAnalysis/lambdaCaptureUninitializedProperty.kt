@@ -1,4 +1,4 @@
-// DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER, -NOTHING_TO_INLINE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // ISSUE: KT-70133
 
@@ -15,6 +15,18 @@ fun invokeInPlace(x: () -> Int, y: String) {
 }
 
 fun invokeLater(x: () -> Int, y: String) {
+    x()
+}
+
+inline fun invokeInlineWithNoinline(noinline x: () -> Int, y: String) {
+    x()
+}
+
+inline fun invokeInlineWithCrossinline(crossinline x: () -> Int, y: String) {
+    x()
+}
+
+inline fun <T> invokeInlineWithT(x: () -> T, y: T) {
     x()
 }
 
@@ -37,6 +49,30 @@ fun immutableInitAfterCaptureInPlace() {
 fun immutableInitAfterCaptureLater() {
     val x: String
     invokeLater(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
+fun immutableInitAfterCaptureInlineWithNoinline() {
+    val x: String
+    invokeInlineWithNoinline(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
+fun immutableInitAfterCaptureInlineWithCrossinline() {
+    val x: String
+    invokeInlineWithCrossinline(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
+fun immutableInitAfterCaptureInlineWithT() {
+    val x: String
+    invokeInlineWithT(
         x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
@@ -66,6 +102,30 @@ fun immutableInitBeforeCaptureLater() {
     )
 }
 
+fun immutableInitBeforeCaptureInlineWithNoinline() {
+    val x: String
+    invokeInlineWithNoinline(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
+fun immutableInitBeforeCaptureInlineWithCrossinline() {
+    val x: String
+    invokeInlineWithCrossinline(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
+fun immutableInitBeforeCaptureInlineWithT() {
+    val x: String
+    invokeInlineWithT(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
 fun mutableInitAfterCaptureInline() {
     var x: String
     invokeInline(
@@ -90,6 +150,30 @@ fun mutableInitAfterCaptureLater() {
     )
 }
 
+fun mutableInitAfterCaptureInlineWithNoinline() {
+    var x: String
+    invokeInlineWithNoinline(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
+fun mutableInitAfterCaptureInlineWithCrossinline() {
+    var x: String
+    invokeInlineWithCrossinline(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
+fun mutableInitAfterCaptureInlineWithT() {
+    var x: String
+    invokeInlineWithT(
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+    )
+}
+
 fun mutableInitBeforeCaptureInline() {
     var x: String
     invokeInline(
@@ -109,6 +193,30 @@ fun mutableInitBeforeCaptureInPlace() {
 fun mutableInitBeforeCaptureLater() {
     var x: String
     invokeLater(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
+fun mutableInitBeforeCaptureInlineWithNoinline() {
+    var x: String
+    invokeInlineWithNoinline(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
+fun mutableInitBeforeCaptureInlineWithCrossinline() {
+    var x: String
+    invokeInlineWithCrossinline(
+        y = if (true) { x = ""; "" } else { x = ""; "" },
+        x = { x.length },
+    )
+}
+
+fun mutableInitBeforeCaptureInlineWithT() {
+    var x: String
+    invokeInlineWithT(
         y = if (true) { x = ""; "" } else { x = ""; "" },
         x = { x.length },
     )
@@ -186,6 +294,84 @@ class Later {
             y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
         )
         invokeLater(
+            y = if (true) { mutableAfter = ""; "" } else { mutableAfter = ""; "" },
+            x = { mutableAfter.length },
+        )
+    }
+}
+
+class NoInline {
+    val immutableBefore: String
+    val immutableAfter: String
+    var mutableBefore: String
+    var mutableAfter: String
+
+    init {
+        invokeInlineWithNoinline(
+            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
+        )
+        invokeInlineWithNoinline(
+            y = if (true) { immutableAfter = ""; "" } else { immutableAfter = ""; "" },
+            x = { immutableAfter.length },
+        )
+        invokeInlineWithNoinline(
+            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
+        )
+        invokeInlineWithNoinline(
+            y = if (true) { mutableAfter = ""; "" } else { mutableAfter = ""; "" },
+            x = { mutableAfter.length },
+        )
+    }
+}
+
+class CrossInline {
+    val immutableBefore: String
+    val immutableAfter: String
+    var mutableBefore: String
+    var mutableAfter: String
+
+    init {
+        invokeInlineWithCrossinline(
+            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
+        )
+        invokeInlineWithCrossinline(
+            y = if (true) { immutableAfter = ""; "" } else { immutableAfter = ""; "" },
+            x = { immutableAfter.length },
+        )
+        invokeInlineWithCrossinline(
+            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
+        )
+        invokeInlineWithCrossinline(
+            y = if (true) { mutableAfter = ""; "" } else { mutableAfter = ""; "" },
+            x = { mutableAfter.length },
+        )
+    }
+}
+
+class InlineWithT {
+    val immutableBefore: String
+    val immutableAfter: String
+    var mutableBefore: String
+    var mutableAfter: String
+
+    init {
+        invokeInlineWithT(
+            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
+        )
+        invokeInlineWithT(
+            y = if (true) { immutableAfter = ""; "" } else { immutableAfter = ""; "" },
+            x = { immutableAfter.length },
+        )
+        invokeInlineWithT(
+            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
+        )
+        invokeInlineWithT(
             y = if (true) { mutableAfter = ""; "" } else { mutableAfter = ""; "" },
             x = { mutableAfter.length },
         )

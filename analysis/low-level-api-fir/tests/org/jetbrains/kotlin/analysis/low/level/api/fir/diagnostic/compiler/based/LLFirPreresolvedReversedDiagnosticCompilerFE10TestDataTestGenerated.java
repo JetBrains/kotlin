@@ -7849,6 +7849,36 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("lambdaCaptureInConstructor.kt")
+      public void testLambdaCaptureInConstructor() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInExtensionReceiver.kt")
+      public void testLambdaCaptureInExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInJavaFunction.kt")
+      public void testLambdaCaptureInJavaFunction() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInJavaFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInitializedPropertyInOtherArgument.kt")
+      public void testLambdaCaptureInitializedPropertyInOtherArgument() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInitializedPropertyInOtherArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureUninitializedInOtherArgument.kt")
+      public void testLambdaCaptureUninitializedInOtherArgument() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedInOtherArgument.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaCaptureUninitializedProperty.kt")
       public void testLambdaCaptureUninitializedProperty() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedProperty.kt");
