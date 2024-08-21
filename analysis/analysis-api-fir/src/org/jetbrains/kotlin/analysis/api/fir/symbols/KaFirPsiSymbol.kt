@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.psi.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -30,7 +32,7 @@ import kotlin.contracts.contract
  * A [KaFirSymbol] that is possibly backed by some [PsiElement] and builds [firSymbol] lazily (by convention),
  * allowing some properties to be calculated without the need to build a [firSymbol].
  */
-internal interface KaFirPsiSymbol<P : PsiElement, out S : FirBasedSymbol<*>> : KaFirSymbol<S> {
+internal interface KaFirPsiSymbol<out P : PsiElement, out S : FirBasedSymbol<*>> : KaFirSymbol<S> {
     /**
      * The [PsiElement] which can be used as a source of truth for some other property implementations.
      *
@@ -55,7 +57,7 @@ internal interface KaFirPsiSymbol<P : PsiElement, out S : FirBasedSymbol<*>> : K
     override val firSymbol: S get() = lazyFirSymbol.value
 }
 
-internal interface KaFirKtBasedSymbol<P : KtElement, out S : FirBasedSymbol<*>> : KaFirPsiSymbol<P, S> {
+internal interface KaFirKtBasedSymbol<out P : KtElement, out S : FirBasedSymbol<*>> : KaFirPsiSymbol<P, S> {
     override val origin: KaSymbolOrigin get() = withValidityAssertion { psiOrSymbolOrigin() }
 }
 
@@ -153,16 +155,25 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifNotLibrarySource(action: () -> R)
     return if (analysisSession.useSiteModule is KaLibrarySourceModule) null else action()
 }
 
-internal fun KaFirKtBasedSymbol<out KtCallableDeclaration, *>.createKaValueParameters(): List<KaValueParameterSymbol>? =
+internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameters(): List<KaValueParameterSymbol>? =
     ifNotLibrarySource {
         with(analysisSession) {
             backingPsi?.valueParameters?.map { it.symbol as KaValueParameterSymbol }
         }
     }
 
-internal fun KaFirKtBasedSymbol<out KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
+internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
     ifNotLibrarySource {
         with(analysisSession) {
             backingPsi?.typeParameters?.map { it.symbol }
         }
     }
+
+internal fun KaFirKtBasedSymbol<KtDeclarationWithBody, FirCallableSymbol<*>>.createReturnType(): KaType {
+    val backingPsi = backingPsi
+    if (backingPsi?.hasBlockBody() == true && !backingPsi.hasDeclaredReturnType()) {
+        return analysisSession.builtinTypes.unit
+    }
+
+    return firSymbol.returnType(builder)
+}

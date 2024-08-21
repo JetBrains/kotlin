@@ -77,7 +77,8 @@ internal class KaFirNamedFunctionSymbol private constructor(
             }
         }
 
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val returnType: KaType
+        get() = withValidityAssertion { createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {

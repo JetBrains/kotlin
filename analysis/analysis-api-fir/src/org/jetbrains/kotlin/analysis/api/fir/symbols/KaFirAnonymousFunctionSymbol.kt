@@ -55,7 +55,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
     override val annotations: KaAnnotationList get() = withValidityAssertion { psiOrSymbolAnnotationList() }
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
+    override val returnType: KaType get() = withValidityAssertion { createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {

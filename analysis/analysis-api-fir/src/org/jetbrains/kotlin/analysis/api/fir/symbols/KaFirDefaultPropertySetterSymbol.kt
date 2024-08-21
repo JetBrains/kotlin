@@ -108,7 +108,7 @@ internal class KaFirDefaultPropertySetterSymbol(
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { analysisSession.builtinTypes.unit }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
