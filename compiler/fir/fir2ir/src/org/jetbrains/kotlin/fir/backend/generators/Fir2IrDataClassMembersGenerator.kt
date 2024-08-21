@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_DATA_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -167,7 +168,7 @@ class Fir2IrDataClassMembersGenerator(
             isOperator: Boolean = false,
         ): IrSimpleFunction {
             val symbol = c.declarationStorage.createFunctionSymbol()
-            return c.irFactory.createSimpleFunction(
+            return IrFactoryImpl.createSimpleFunction(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = origin,
@@ -199,7 +200,7 @@ class Fir2IrDataClassMembersGenerator(
         }
 
         private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType): IrValueParameter =
-            c.irFactory.createValueParameter(
+            IrFactoryImpl.createValueParameter(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.DEFINED,

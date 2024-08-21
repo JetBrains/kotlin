@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -123,5 +124,5 @@ class Fir2IrLazyPropertyForPureField(
     override var originalBeforeInline: IrAttributeContainer? = null
 
     override val factory: IrFactory
-        get() = c.irFactory
+        get() = IrFactoryImpl
 }

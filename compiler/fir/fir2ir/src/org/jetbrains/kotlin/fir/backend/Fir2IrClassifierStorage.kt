@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -247,7 +248,7 @@ class Fir2IrClassifierStorage(
 
         return fieldsForContextReceivers.getOrPut(irClass) {
             klass.contextReceivers.withIndex().map { (index, contextReceiver) ->
-                c.irFactory.createField(
+                IrFactoryImpl.createField(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,

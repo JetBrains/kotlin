@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toConstKind
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -82,5 +83,5 @@ private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
 fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents, expectedType: ConeKotlinType? = null): IrExpressionBody {
     val visitor = Fir2IrVisitor(components, Fir2IrConversionScope(components.configuration))
     val expression = visitor.convertToIrExpression(this, expectedType = expectedType)
-    return components.irFactory.createExpressionBody(expression)
+    return IrFactoryImpl.createExpressionBody(expression)
 }

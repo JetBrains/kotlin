@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
     val session: FirSession
@@ -34,7 +31,6 @@ interface Fir2IrComponents {
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
     val irMangler: KotlinMangler.IrMangler
 
-    val irFactory: IrFactory
     val irProviders: List<IrProvider>
     val lock: IrLock
 

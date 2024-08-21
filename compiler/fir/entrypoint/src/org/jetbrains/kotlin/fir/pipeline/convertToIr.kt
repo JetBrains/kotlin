@@ -144,7 +144,6 @@ private class Fir2IrPipeline(
                 it.session,
                 it.scopeSession,
                 it.fir,
-                IrFactoryImpl,
                 fir2IrExtensions,
                 fir2IrConfiguration,
                 visibilityConverter,

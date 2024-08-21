@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
@@ -252,7 +253,7 @@ internal class ClassMemberGenerator(
             declarationStorage.enterScope(irField.symbol)
             val initializerExpression = field.initializer
             if (irField.initializer == null && initializerExpression != null && !configuration.skipBodies) {
-                irField.initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
+                irField.initializer = IrFactoryImpl.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
             }
             declarationStorage.leaveScope(irField.symbol)
         }
@@ -270,7 +271,7 @@ internal class ClassMemberGenerator(
                 declarationStorage.enterScope(this@initializeBackingField.symbol)
                 // NB: initializer can be already converted
                 if (initializer == null && initializerExpression != null) {
-                    initializer = irFactory.createExpressionBody(
+                    initializer = IrFactoryImpl.createExpressionBody(
                         run {
                             val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
                             if (property.delegate == null) {

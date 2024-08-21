@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -256,7 +257,7 @@ class Fir2IrConverter(
         declarationStorage.enterScope(irClass.symbol)
 
         IrConstructorSymbolImpl().let { irSymbol ->
-            irFactory.createConstructor(
+            IrFactoryImpl.createConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 Name.special("<init>"),
@@ -272,7 +273,7 @@ class Fir2IrConverter(
                 addDeclarationToParent(this, irClass)
                 val firAnyConstructor = session.builtinTypes.anyType.toRegularClassSymbol(session)!!.fir.primaryConstructorIfAny(session)!!
                 val irAnyConstructor = declarationStorage.getIrConstructorSymbol(firAnyConstructor)
-                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+                body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
                     statements += IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         builtins.unitType,
@@ -288,7 +289,7 @@ class Fir2IrConverter(
             val lastStatement = codeFragment.block.statements.lastOrNull()
             val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
 
-            irFactory.createSimpleFunction(
+            IrFactoryImpl.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 conversionData.methodName,
@@ -311,7 +312,7 @@ class Fir2IrConverter(
                 valueParameters = conversionData.injectedValues.mapIndexed { index, injectedValue ->
                     val isMutated = injectedValue.isMutated
 
-                    irFactory.createValueParameter(
+                    IrFactoryImpl.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
                         Name.identifier("p$index"),

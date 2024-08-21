@@ -22,7 +22,6 @@ class Fir2IrComponentsStorage(
     override val session: FirSession,
     override val scopeSession: ScopeSession,
     val fir: List<FirFile>,
-    override val irFactory: IrFactory,
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,

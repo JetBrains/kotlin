@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
@@ -111,7 +112,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             else function.isSuspend
         val created = function.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(function)
-            irFactory.createSimpleFunction(
+            IrFactoryImpl.createSimpleFunction(
                 startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
                 endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
                 origin = updatedOrigin,
@@ -184,7 +185,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(constructor)
-            irFactory.createConstructor(
+            IrFactoryImpl.createConstructor(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -243,7 +244,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
         return property.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(property)
-            irFactory.createProperty(
+            IrFactoryImpl.createProperty(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -374,7 +375,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         parent: IrDeclarationParent,
     ): IrProperty {
         val property = propertySymbol.fir
-        return irFactory.createProperty(
+        return IrFactoryImpl.createProperty(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE,
@@ -414,7 +415,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val visibility = propertyAccessor?.visibility?.let {
             c.visibilityConverter.convertToDescriptorVisibility(it)
         }
-        return irFactory.createSimpleFunction(
+        return IrFactoryImpl.createSimpleFunction(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
@@ -482,7 +483,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrField = convertCatching(firProperty) {
         val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType(c)
         return (firProperty.delegate ?: firProperty.backingField ?: firProperty).convertWithOffsets { startOffset: Int, endOffset: Int ->
-            irFactory.createField(
+            IrFactoryImpl.createField(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -532,7 +533,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
 
         return field.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createField(
+            IrFactoryImpl.createField(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -580,7 +581,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         isCrossinline: Boolean = false,
         isNoinline: Boolean = false,
     ): IrValueParameter {
-        return irFactory.createValueParameter(
+        return IrFactoryImpl.createValueParameter(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.DEFINED,
@@ -618,7 +619,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrValueParameter = convertCatching(contextReceiver) {
         val type = contextReceiver.typeRef.toIrType(c)
         return contextReceiver.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createValueParameter(
+            IrFactoryImpl.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = IrDeclarationOrigin.DEFINED,
@@ -738,7 +739,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val origin = valueParameter.computeIrOrigin(predefinedOrigin)
         val type = valueParameter.returnTypeRef.toIrType(c, typeOrigin)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createValueParameter(
+            IrFactoryImpl.createValueParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -782,7 +783,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val type = property.returnTypeRef.toIrType(c)
         val origin = IrDeclarationOrigin.DEFINED
         val irProperty = property.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createLocalDelegatedProperty(
+            IrFactoryImpl.createLocalDelegatedProperty(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -861,7 +862,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         irParent: IrClass
     ): IrAnonymousInitializer = convertCatching(anonymousInitializer) {
         return anonymousInitializer.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createAnonymousInitializer(
+            IrFactoryImpl.createAnonymousInitializer(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED,
                 IrAnonymousInitializerSymbolImpl()
             ).apply {
@@ -874,7 +875,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     // ------------------------------------ scripts ------------------------------------
 
     fun createIrScript(script: FirScript, symbol: IrScriptSymbol): IrScript = script.convertWithOffsets { startOffset, endOffset ->
-        IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
+        IrScriptImpl(symbol, script.name, IrFactoryImpl, startOffset, endOffset).also { irScript ->
             irScript.origin = SCRIPT_K2_ORIGIN
             irScript.metadata = FirMetadataSource.Script(script)
             irScript.implicitReceiversParameters = emptyList()
