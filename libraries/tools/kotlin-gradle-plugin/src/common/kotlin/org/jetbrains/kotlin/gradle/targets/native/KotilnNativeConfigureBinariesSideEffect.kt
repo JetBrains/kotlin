@@ -91,7 +91,7 @@ private fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration 
         .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", apiConfiguration.name)) {
             extendsFrom(apiConfiguration)
             val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
-            compileConfiguration.copyAttributesTo(project, this)
+            compileConfiguration.copyAttributesTo(project.providers, this)
         }
 }
 

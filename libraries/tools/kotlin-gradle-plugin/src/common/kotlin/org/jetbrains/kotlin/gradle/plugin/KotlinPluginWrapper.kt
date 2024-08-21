@@ -170,11 +170,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             ConfigurationCacheStartParameterAccessor.Factory::class,
             DefaultConfigurationCacheStartParameterAccessorVariantFactory()
         )
-
-        factories.putIfAbsent(
-            AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class,
-            DefaultAttributeConfigurationHelperVariantFactory()
-        )
     }
 
     protected fun setupAttributeMatchingStrategy(

@@ -83,7 +83,7 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
             attributes.setAttribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         } else {
             attributes.setAttributeProvider<KotlinWasmTargetAttribute>(
-                target.project,
+                target.project.providers,
                 KotlinWasmTargetAttribute.wasmTargetAttribute,
             ) { target.wasmTargetType!!.toAttribute() }
         }

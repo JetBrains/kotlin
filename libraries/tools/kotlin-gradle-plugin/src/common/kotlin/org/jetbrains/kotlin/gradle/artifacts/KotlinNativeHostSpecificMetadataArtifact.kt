@@ -36,7 +36,7 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
 
         target.project.launchInStage(AfterFinaliseDsl) {
             apiElements.copyAttributesTo(
-                target.project,
+                target.project.providers,
                 dest = configuration.attributes
             )
             configuration.setAttribute(

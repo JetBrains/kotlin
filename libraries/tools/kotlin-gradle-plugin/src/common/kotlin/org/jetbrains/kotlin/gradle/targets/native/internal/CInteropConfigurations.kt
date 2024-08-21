@@ -56,7 +56,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
-            compilation.copyAttributesTo(project, dest = attributes)
+            compilation.copyAttributesTo(project.providers, dest = attributes)
             attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -80,7 +80,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
         /* Deferring attributes to wait for target.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)
-            target.copyAttributesTo(project, dest = attributes)
+            target.copyAttributesTo(project.providers, dest = attributes)
             attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))

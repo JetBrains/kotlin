@@ -194,7 +194,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             description = "Host-specific Metadata dependencies for '$compilationCoordinates'."
             extendsFrom(compileDependencyConfiguration)
             compileDependencyConfiguration.copyAttributesTo(
-                target.project,
+                target.project.providers,
                 dest = this
             )
             setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))

@@ -209,7 +209,7 @@ class DefaultKotlinUsageContext(
         val result = project.configurations.detachedResolvable().attributes
 
         configurationAttributes.copyAttributesTo(
-            project,
+            project.providers,
             dest = result,
             keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
         )
