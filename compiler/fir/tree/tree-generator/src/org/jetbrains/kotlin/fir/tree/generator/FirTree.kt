@@ -769,6 +769,18 @@ object FirTree : AbstractFirTreeBuilder() {
         +field(block, withReplace = true, withTransform = true)
     }
 
+    val replSnippet: Element by element(Declaration) {
+        parent(declaration)
+        parent(controlFlowGraphOwner)
+
+        +FieldSets.name
+        +declaredSymbol(replSnippetSymbolType)
+
+        +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
+        +field("body", block, nullable = false, withTransform = true, withReplace = true)
+        +field("resultTypeRef", typeRef, withReplace = true, withTransform = true)
+    }
+
     val packageDirective: Element by element(Other) {
         +field("packageFqName", fqNameType)
     }

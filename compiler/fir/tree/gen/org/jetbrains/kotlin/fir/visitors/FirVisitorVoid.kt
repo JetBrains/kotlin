@@ -723,6 +723,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(codeFragment)
     }
 
+    final override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Nothing?) {
+        visitReplSnippet(replSnippet)
+    }
+
+    open fun visitReplSnippet(replSnippet: FirReplSnippet) {
+        visitElement(replSnippet)
+    }
+
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
         visitPackageDirective(packageDirective)
     }

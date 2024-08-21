@@ -284,6 +284,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): R =
         visitElement(codeFragment, data)
 
+    open fun visitReplSnippet(replSnippet: FirReplSnippet, data: D): R =
+        visitElement(replSnippet, data)
+
     open fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R =
         visitElement(packageDirective, data)
 

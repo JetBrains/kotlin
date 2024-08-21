@@ -183,10 +183,9 @@ object FirOptInUsageBaseChecker {
                 )
             is FirClassLikeDeclaration ->
                 fir.loadClassLikeSpecificExperimentalities(this, context, visited, result)
-            is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter, is FirScript, is FirCodeFragment,
-            is FirReceiverParameter, is FirContextReceiver,
-                -> {
-            }
+            is FirAnonymousInitializer, is FirDanglingModifierList, is FirFile, is FirTypeParameter,
+            is FirScript, is FirReplSnippet, is FirCodeFragment, is FirReceiverParameter, is FirContextReceiver,
+                -> {}
         }
 
         lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)

@@ -107,6 +107,7 @@ val anonymousInitializerSymbolType = type("fir.symbols.impl", "FirAnonymousIniti
 val danglingModifierSymbolType = type("fir.symbols.impl", "FirDanglingModifierSymbol")
 val fileSymbolType = type("fir.symbols.impl", "FirFileSymbol")
 val scriptSymbolType = type("fir.symbols.impl", "FirScriptSymbol")
+val replSnippetSymbolType = type("fir.symbols.impl", "FirReplSnippetSymbol")
 val codeFragmentSymbolType = type("fir.symbols.impl", "FirCodeFragmentSymbol")
 val emptyArgumentListType = type("fir.expressions", "FirEmptyArgumentList")
 val firScopeProviderType = type("fir.scopes", "FirScopeProvider")

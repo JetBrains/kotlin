@@ -271,9 +271,11 @@ open class PsiRawFirBuilder(
         fun convertProperty(
             property: KtProperty,
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
+            forceLocal: Boolean = false,
         ): FirProperty = property.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol,
-            context
+            context,
+            forceLocal
         )
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
@@ -1231,20 +1233,7 @@ open class PsiRawFirBuilder(
                 } else {
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
-                            is KtScript -> {
-                                requireWithAttachment(
-                                    file.declarations.size == 1,
-                                    message = { "Expect the script to be the only declaration in the file" },
-                                ) {
-                                    withEntry("fileName", file.name)
-                                }
-
-                                convertScript(declaration, name, sourceFile) {
-                                    for (configurator in baseSession.extensionService.scriptConfigurators) {
-                                        with(configurator) { configureContainingFile(this@buildFile) }
-                                    }
-                                }
-                            }
+                            is KtScript -> convertScriptOrSnippets(declaration, this@buildFile)
                             is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
                             else -> declaration.convert()
                         }
@@ -1252,6 +1241,47 @@ open class PsiRawFirBuilder(
 
                     for (danglingModifierList in file.danglingModifierLists) {
                         declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
+                    }
+                }
+            }
+        }
+
+        private fun convertScriptOrSnippets(declaration: KtScript, fileBuilder: FirFileBuilder): FirDeclaration {
+            val file = declaration.parent as? KtFile
+            requireWithAttachment(
+                file?.declarations?.size == 1,
+                message = { "Expect the script to be the only declaration in the file ${file?.name}" },
+            ) {
+                withEntry("fileName", fileBuilder.name)
+            }
+
+            val scriptSource = declaration.toFirSourceElement()
+
+            val repSnippetConfigurator =
+                baseSession.extensionService.replSnippetConfigurators.filter {
+                    it.isReplSnippetsSource(fileBuilder.sourceFile, scriptSource)
+                }.let {
+                    requireWithAttachment(
+                        it.size <= 1,
+                        message = { "More than one REPL snippet configurator is found for the file" },
+                    ) {
+                        withEntry("fileName", fileBuilder.name)
+                        withEntry("configurators", it.joinToString { "${it::class.java.name}" })
+                    }
+                    it.firstOrNull()
+                }
+
+            return if (repSnippetConfigurator != null) {
+                convertReplSnippet(declaration, scriptSource, fileBuilder.name) {
+                    with (repSnippetConfigurator) {
+                        configureContainingFile(fileBuilder)
+                        configure(fileBuilder.sourceFile, context)
+                    }
+                }
+            } else {
+                convertScript(declaration, scriptSource, fileBuilder.name, fileBuilder.sourceFile) {
+                    for (configurator in baseSession.extensionService.scriptConfigurators) {
+                        with(configurator) { configureContainingFile(fileBuilder) }
                     }
                 }
             }
@@ -1297,6 +1327,7 @@ open class PsiRawFirBuilder(
 
         private fun convertScript(
             script: KtScript,
+            scriptSource: KtPsiSourceElement,
             fileName: String,
             sourceFile: KtSourceFile?,
             setup: FirScriptBuilder.() -> Unit = {},
@@ -1305,7 +1336,7 @@ open class PsiRawFirBuilder(
             val scriptSymbol = FirScriptSymbol(context.packageFqName.child(scriptName))
 
             return buildScript {
-                source = script.toFirSourceElement()
+                source = scriptSource
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = scriptName
@@ -1364,6 +1395,79 @@ open class PsiRawFirBuilder(
                         }
                     }
                 }
+            }
+        }
+
+        private fun convertReplSnippet(
+            script: KtScript,
+            scriptSource: KtPsiSourceElement,
+            fileName: String,
+            setup: FirReplSnippetBuilder.() -> Unit = {},
+        ): FirReplSnippet {
+            val snippetName = Name.special("<snippet-$fileName>")
+            val snippetSymbol = FirReplSnippetSymbol(snippetName)
+
+            return buildReplSnippet {
+                source = scriptSource
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                name = snippetName
+                symbol = snippetSymbol
+
+                body = buildOrLazyBlock {
+                    withContainerSymbol(snippetSymbol, isLocal = true) {
+                        buildBlock {
+                            script.declarations.forEach { declaration ->
+                                when (declaration) {
+                                    is KtScriptInitializer -> {
+                                        val initializer = buildAnonymousInitializer(
+                                            initializer = declaration,
+                                            containingDeclarationSymbol = snippetSymbol,
+                                            allowLazyBody = true,
+                                            isLocal = true,
+                                        )
+
+                                        statements.addAll(initializer.body!!.statements)
+                                    }
+                                    is KtDestructuringDeclaration -> {
+                                        val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
+                                        statements.add(destructuringContainerVar)
+
+                                        addDestructuringVariables(
+                                            statements,
+                                            this@Visitor,
+                                            baseModuleData,
+                                            declaration,
+                                            destructuringContainerVar,
+                                            tmpVariable = false,
+                                            forceLocal = false,
+                                        ) {
+                                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                        }
+                                    }
+                                    is KtProperty -> {
+                                        withForcedLocalContext {
+                                            val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                            statements.add(firProperty)
+                                        }
+                                    }
+                                    else -> {
+                                        val firStatement = declaration.toFirStatement()
+                                        if (firStatement is FirDeclaration) {
+                                            statements.add(firStatement)
+                                        } else {
+                                            error("unexpected declaration type in script")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // TODO: proper lazy support - see the script
+                resultTypeRef =
+                    if (body.statements.lastOrNull() is FirDeclaration) implicitUnitType else FirImplicitTypeRefImplWithoutSource
+                setup()
             }
         }
 
@@ -1431,7 +1535,7 @@ open class PsiRawFirBuilder(
             val ktFile = script.containingKtFile
             val fileName = ktFile.name
             val fileForSource = (data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile
-            return convertScript(script, fileName, KtPsiSourceFile(fileForSource))
+            return convertScript(script, script.toFirSourceElement(), fileName, KtPsiSourceFile(fileForSource))
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(
@@ -2138,6 +2242,7 @@ open class PsiRawFirBuilder(
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             context: Context<T>,
+            forceLocal: Boolean = false,
         ): FirProperty {
             val propertyName = nameAsSafeName
             val propertySymbol = if (isLocal) {
@@ -2207,7 +2312,7 @@ open class PsiRawFirBuilder(
                             )
                         }
                     } else {
-                        isLocal = false
+                        isLocal = forceLocal
                         symbol = propertySymbol
                         dispatchReceiverType = currentDispatchReceiverType()
                         extractTypeParametersTo(this, symbol)
