@@ -23,6 +23,7 @@ internal class IrExpectActualCheckers(
     private val checkers: Set<IrExpectActualChecker> = setOf(
         IrExpectActualAnnotationMatchingChecker,
         IrExpectActualAnnotationConflictingDefaultArgumentValueChecker,
+        IrKotlinActualAnnotationOnJavaKmpChecker,
     )
 
     override val matchingContext = object : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
