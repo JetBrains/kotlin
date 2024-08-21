@@ -78,6 +78,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 fun <T> KotlinTypeFacade.interpret(
     functionCall: FirFunctionCall,
@@ -374,19 +375,23 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
     }
 }
 
-private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol, ConeTypeProjection>): SimpleCol? =
-    when {
+private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol, ConeTypeProjection>): SimpleCol? {
+    val annotation = it.getAnnotationByClassId(Names.COLUMN_NAME_ANNOTATION, session)
+    val columnName = (annotation?.argumentMapping?.mapping?.get(Names.COLUMN_NAME_ARGUMENT) as? FirLiteralExpression)?.value as? String
+    val name = columnName ?: it.name.identifier
+    return when {
         shouldBeConvertedToFrameColumn(it) -> {
-                val nestedColumns = it.resolvedReturnType.typeArguments[0].type
-                    ?.toRegularClassSymbol(session)
-                    ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
-                    ?.collectAllProperties()
-                    ?.filterIsInstance<FirPropertySymbol>()
-                    ?.mapNotNull { columnOf(it, mapping) }
-                    ?: emptyList()
+            val nestedColumns = it.resolvedReturnType.typeArguments[0].type
+                ?.toRegularClassSymbol(session)
+                ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
+                ?.collectAllProperties()
+                ?.filterIsInstance<FirPropertySymbol>()
+                ?.mapNotNull { columnOf(it, mapping) }
+                ?: emptyList()
 
-                SimpleFrameColumn(it.name.identifier, nestedColumns)
-            }
+            SimpleFrameColumn(name, nestedColumns)
+        }
+
         shouldBeConvertedToColumnGroup(it) -> {
             val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
             val nestedColumns = type
@@ -396,8 +401,9 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
-            SimpleColumnGroup(it.name.identifier, nestedColumns)
+            SimpleColumnGroup(name, nestedColumns)
         }
+
         else -> {
             val type = when (val type = it.resolvedReturnType) {
                 is ConeTypeParameterType -> {
@@ -408,13 +414,15 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                         projection as? ConeKotlinType
                     }
                 }
+
                 else -> type
             }
-            type?.let { type -> SimpleDataColumn(it.name.identifier,
-                org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation(type)
-            ) }
+            type?.let { type ->
+                SimpleDataColumn(name, TypeApproximation(type))
+            }
         }
     }
+}
 
 private fun KotlinTypeFacade.shouldBeConvertedToColumnGroup(it: FirPropertySymbol) =
     isDataRow(it) ||
