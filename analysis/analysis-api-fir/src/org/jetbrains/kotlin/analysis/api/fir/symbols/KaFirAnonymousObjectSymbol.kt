@@ -46,7 +46,8 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
             psiOrSymbolAnnotationList()
         }
 
-    override val superTypes: List<KaType> get() = withValidityAssertion { firSymbol.superTypesList(builder) }
+    override val superTypes: List<KaType>
+        get() = withValidityAssertion { createSuperTypes() }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>()?.let { return it }

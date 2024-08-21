@@ -16,12 +16,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnota
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -135,5 +131,10 @@ internal class KaFirPsiJavaClassSymbol(
         get() = withValidityAssertion {
             if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             else KaBaseEmptyAnnotationList(token)
+        }
+
+    override val superTypes: List<KaType>
+        get() = withValidityAssertion {
+            firSymbol.superTypesList(builder)
         }
 }

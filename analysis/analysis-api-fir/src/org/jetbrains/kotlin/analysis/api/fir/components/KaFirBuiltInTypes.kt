@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 internal class KaFirBuiltInTypes(
     builtinTypes: BuiltinTypes,
     private val builder: KaSymbolByFirBuilder,
-    override val token: KaLifetimeToken
+    override val token: KaLifetimeToken,
 ) : KaBuiltinTypes() {
 
     override val int: KaType by cachedBuiltin(builtinTypes.intType)
@@ -39,6 +39,8 @@ internal class KaFirBuiltInTypes(
     override val throwable: KaType by cachedBuiltin(builtinTypes.throwableType)
     override val nullableAny: KaType by cachedBuiltin(builtinTypes.nullableAnyType)
     override val nullableNothing: KaType by cachedBuiltin(builtinTypes.nullableNothingType)
+
+    override val annotationType: KaType by cachedBuiltin(builtinTypes.annotationType)
 
     private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KaType> = cached {
         builder.typeBuilder.buildKtType(builtinTypeRef)

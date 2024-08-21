@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 /**
@@ -32,11 +31,6 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Shared Operations
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override val superTypes: List<KaType>
-        get() = withValidityAssertion {
-            firSymbol.superTypesList(builder)
-        }
-
     override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
         if (this is KaFirKtBasedSymbol<*, *>) {
             psiBasedSymbolPointerOfTypeIfSource<KaNamedClassSymbol>()?.let { return it }

@@ -13,19 +13,21 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -95,6 +97,50 @@ internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(): KaAnnotationL
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.createContextReceivers(): List<KaContextReceiver> {
     if (backingPsi?.contextReceivers?.isEmpty() == true) return emptyList()
     return firSymbol.createContextReceivers(builder)
+}
+
+internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {
+    /**
+     * There is no so much profit to analyze PSI from libraries, but it requires additional logic
+     * as we may have additional providers like [org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension]
+     * or [org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded].
+     */
+    val backingPsi = ifSource { backingPsi }
+
+    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false ||
+        // We cannot optimize super types by psi if at least one compiler plugin may generate additional types
+        analysisSession.firSession.extensionService.supertypeGenerators.isNotEmpty()
+    ) {
+        return firSymbol.superTypesList(builder)
+    }
+
+    val specialSuperType = when {
+        backingPsi !is KtClass || this !is KaNamedClassSymbol -> null
+        backingPsi.isAnnotation() -> analysisSession.builtinTypes.annotationType
+        backingPsi.isEnum() -> with(analysisSession) {
+            val enumFirSymbol = firSession.builtinTypes.enumType.toRegularClassSymbol(firSession)
+                ?: return firSymbol.superTypesList(builder) // something goes wrong here
+
+            val enumKaSymbol = builder.classifierBuilder.buildNamedClassOrObjectSymbol(enumFirSymbol)
+            buildClassType(enumKaSymbol) {
+                argument(defaultType)
+            }
+        }
+
+        backingPsi.isData() && JvmStandardClassIds.Annotations.JvmRecord in annotations -> {
+            val jvmRecordSymbol = analysisSession.findClass(JvmStandardClassIds.Java.Record) as? KaNamedClassSymbol
+            with(analysisSession) {
+                jvmRecordSymbol?.defaultType
+            }
+        }
+
+        else -> when (classId) {
+            StandardClassIds.Any, StandardClassIds.Nothing -> return emptyList()
+            else -> null
+        }
+    }
+
+    return listOf(specialSuperType ?: analysisSession.builtinTypes.any)
 }
 
 /**

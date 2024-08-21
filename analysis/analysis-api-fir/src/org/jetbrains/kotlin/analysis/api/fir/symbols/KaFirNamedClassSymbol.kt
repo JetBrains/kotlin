@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -62,7 +63,11 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
 
-    override val name: Name get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+    override val name: Name
+        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+
+    override val superTypes: List<KaType>
+        get() = withValidityAssertion { createSuperTypes() }
 
     override val classId: ClassId?
         get() = withValidityAssertion {

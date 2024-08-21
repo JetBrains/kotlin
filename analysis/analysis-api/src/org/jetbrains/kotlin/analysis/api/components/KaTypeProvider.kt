@@ -298,6 +298,9 @@ public abstract class KaBuiltinTypes : KaLifetimeOwner {
     @Deprecated("Use 'nullableNothing' instead.", replaceWith = ReplaceWith("nullableNothing"))
     public val NULLABLE_NOTHING: KaType
         get() = nullableNothing
+
+    /** The [Annotation] type. */
+    public abstract val annotationType: KaType
 }
 
 @Deprecated("Use 'KaBuiltinTypes' instead.", replaceWith = ReplaceWith("KaBuiltinTypes"))
