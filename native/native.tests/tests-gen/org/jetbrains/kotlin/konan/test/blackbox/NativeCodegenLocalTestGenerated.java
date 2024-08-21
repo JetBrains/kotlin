@@ -1569,6 +1569,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("bindClassToObjCName.kt")
+    public void testBindClassToObjCName() {
+      runTest("native/native.tests/testData/codegen/kclass/bindClassToObjCName.kt");
+    }
+
+    @Test
     @TestMetadata("kclass0.kt")
     public void testKclass0() {
       runTest("native/native.tests/testData/codegen/kclass/kclass0.kt");

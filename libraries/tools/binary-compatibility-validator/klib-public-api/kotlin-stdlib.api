@@ -9535,6 +9535,16 @@ open annotation class kotlin.native.concurrent/ThreadLocal : kotlin/Annotation {
 }
 
 // Targets: [native]
+open annotation class kotlin.native.internal.objc/BindClassToObjCName : kotlin/Annotation { // kotlin.native.internal.objc/BindClassToObjCName|null[0]
+    constructor <init>(kotlin.reflect/KClass<*>, kotlin/String) // kotlin.native.internal.objc/BindClassToObjCName.<init>|<init>(kotlin.reflect.KClass<*>;kotlin.String){}[0]
+
+    final val kotlinClass // kotlin.native.internal.objc/BindClassToObjCName.kotlinClass|{}kotlinClass[0]
+        final fun <get-kotlinClass>(): kotlin.reflect/KClass<*> // kotlin.native.internal.objc/BindClassToObjCName.kotlinClass.<get-kotlinClass>|<get-kotlinClass>(){}[0]
+    final val objCName // kotlin.native.internal.objc/BindClassToObjCName.objCName|{}objCName[0]
+        final fun <get-objCName>(): kotlin/String // kotlin.native.internal.objc/BindClassToObjCName.objCName.<get-objCName>|<get-objCName>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native.internal/CanBePrecreated : kotlin/Annotation { // kotlin.native.internal/CanBePrecreated|null[0]
     constructor <init>() // kotlin.native.internal/CanBePrecreated.<init>|<init>(){}[0]
 }

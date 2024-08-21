@@ -16,7 +16,8 @@ import kotlin.native.internal.typeInfoPtr
 import kotlin.reflect.KClass
 
 /**
- * Get ObjC name of the class if it was bound to [KClass] by ObjC Export.
+ * Get ObjC name of the class if it was bound to [KClass] by ObjC Export or by
+ * [@BindClassToObjCName][kotlin.native.internal.objc.BindClassToObjCName] annotation.
  */
 @InternalForKotlinNative
 public val KClass<*>.objCNameOrNull: String?
