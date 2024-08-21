@@ -525,10 +525,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
-    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
+    fun struct(vararg elements: ConstValue, packed: Boolean = false) =
+            Struct(structType(elements.map { it.llvmType }, packed), *elements)
 
-    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
+    private fun structType(types: List<LLVMTypeRef>, packed: Boolean = false): LLVMTypeRef =
+            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, if (packed) 1 else 0)!!
 
     fun constInt1(value: Boolean) = ConstInt1(this, value)
     fun constInt8(value: Byte) = ConstInt8(this, value)

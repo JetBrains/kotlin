@@ -13,63 +13,87 @@
 
 namespace {
 
-// Header for strings. The extra data added here is counted as part of the array's size;
-// if the array is not large enough to contain this header as well as at least one Char
-// of data, then the header is inferred to be zero. In particular, the only way to encode
-// an empty string is an empty array, while strings shorter than the header have a "short"
-// form without the header and a "long" form with it.
-struct StringHeader {
-    int32_t hashCode_;
-    int32_t flags_;
+// Having this structure as packed serves two purposes:
+// 1. it avoids trailing padding due to `ArrayHeader` starting with a pointer;
+// 2. it makes the padding before `hashCode_` explicit, which is necessary for
+//  emitting it properly in KotlinStaticData.
+struct __attribute__((packed)) StringHeader {
+    ArrayHeader array_;
+    union {
+        char arrayData_[];
+        struct __attribute__((packed)) {
+            uint16_t flags_;
+            union {
+                char dataWithoutHashCode_[];
+                struct __attribute__((packed)) {
+                    int16_t padding_; // align to 4 bytes
+                    int32_t hashCode_;
+                    char data_[];
+                };
+            };
+        };
+    };
 
     enum {
-        HASHCODE_COMPUTED = 1,
-        IGNORE_LAST_BYTE = 2,
+        // Don't forget to modify KotlinStaticData.createKotlinStringLiteral if changing these.
+        HASHCODE_CACHEABLE = 1 << 0,
+        HASHCODE_COMPUTED = 1 << 1,
+        IGNORE_LAST_BYTE = 1 << 2,
 
-        ENCODING_OFFSET = 6,
+        ENCODING_OFFSET = 12,
         ENCODING_UTF16 = 0,
         ENCODING_LATIN1 = 1,
         // ENCODING_UTF8 = 2 ?
     };
 
-    bool ignoreLastByte() const { return (flags_ & IGNORE_LAST_BYTE) != 0; }
-    int encoding() const { return flags_ >> ENCODING_OFFSET; }
+    ALWAYS_INLINE int encoding() const {
+        return array_.count_ == 0 ? ENCODING_UTF16 : flags_ >> ENCODING_OFFSET;
+    }
+
+    ALWAYS_INLINE char *data() {
+        return array_.count_ == 0 ? arrayData_ : flags_ & HASHCODE_CACHEABLE ? data_ : dataWithoutHashCode_;
+    }
+
+    ALWAYS_INLINE const char *data() const {
+        return const_cast<StringHeader*>(this)->data();
+    }
+
+    PERFORMANCE_INLINE size_t size() const {
+        return array_.count_ == 0 ? 0 : array_.count_ * sizeof(KChar) - extraLength(flags_);
+    }
+
+    ALWAYS_INLINE static StringHeader* of(KRef string) {
+        return reinterpret_cast<StringHeader*>(string);
+    }
+
+    ALWAYS_INLINE static const StringHeader* of(KConstRef string) {
+        return reinterpret_cast<const StringHeader*>(string);
+    }
+
+    ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
+        return (flags & HASHCODE_CACHEABLE ? offsetof(StringHeader, data_) : offsetof(StringHeader, dataWithoutHashCode_))
+            - offsetof(StringHeader, arrayData_) + !!(flags & IGNORE_LAST_BYTE);
+    }
 };
 
-static constexpr const size_t STRING_HEADER_SIZE = (sizeof(StringHeader) + sizeof(KChar) - 1) / sizeof(KChar);
-
-inline size_t StringRawDataOffset(KConstRef kstring) {
-    return kstring->array()->count_ > STRING_HEADER_SIZE ? STRING_HEADER_SIZE : 0;
-}
-
-inline const StringHeader* StringHeaderOf(KConstRef kstring) {
-    return kstring->array()->count_ > STRING_HEADER_SIZE
-        ? reinterpret_cast<const StringHeader*>(CharArrayAddressOfElementAt(kstring->array(), 0)) : nullptr;
-}
-
-inline char* StringRawData(KRef kstring) {
-    return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
-}
-
-inline const char* StringRawData(KConstRef kstring) {
-    return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
-}
-
-inline size_t StringRawSize(KConstRef kstring, bool ignoreLastByte) {
-    return (kstring->array()->count_ - StringRawDataOffset(kstring)) * sizeof(KChar) - ignoreLastByte;
-}
+// These constants are hardcoded here because they're also hardcoded there...
+// ...can LLVM APIs be used to get these values from Kotlin?..
+// ...but this also ensures the header is as small as possible, so maybe constants are fine...
+static_assert(StringHeader::extraLength(0) == 1 * 2, "check createKotlinStringLiteral before changing this assert");
+static_assert(StringHeader::extraLength(StringHeader::HASHCODE_CACHEABLE) == 4 * 2,
+              "check createKotlinStringLiteral before changing this assert");
 
 } // namespace
 
 extern "C" {
 
 OBJ_GETTER(CreateStringFromCString, const char* cstring);
-OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes);
-OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes);
-OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars);
+OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t length);
+OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t length);
+OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length);
 
-OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars);
-OBJ_GETTER(CreateUninitializedLatin1String, uint32_t lengthBytes);
+OBJ_GETTER(CreateUninitializedUtf16String, uint32_t length);
+OBJ_GETTER(CreateUninitializedLatin1String, uint32_t length);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);

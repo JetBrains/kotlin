@@ -17,12 +17,11 @@ using namespace kotlin;
 template <typename Unit>
 void checkConversionResult(const char* ascii, const Unit* expected) {
     auto actual = CreatePermanentStringFromCString(ascii);
-    auto header = StringHeaderOf(actual);
-    auto encoding = header ? header->encoding() : StringHeader::ENCODING_UTF16;
-    EXPECT_THAT(encoding, sizeof(Unit) == 1 ? StringHeader::ENCODING_LATIN1 : StringHeader::ENCODING_UTF16);
-    size_t size = StringRawSize(actual, sizeof(Unit) == 1 && header->ignoreLastByte()) / sizeof(Unit);
+    auto header = StringHeader::of(actual);
+    EXPECT_THAT(header->encoding(), sizeof(Unit) == 1 ? StringHeader::ENCODING_LATIN1 : StringHeader::ENCODING_UTF16);
+    size_t size = header->size() / sizeof(Unit);
     EXPECT_THAT(size, std::char_traits<Unit>::length(expected));
-    auto* data = reinterpret_cast<const Unit*>(StringRawData(actual));
+    auto* data = reinterpret_cast<const Unit*>(header->data());
     for (size_t i=0; i<size; i++) {
         EXPECT_THAT(data[i], expected[i]);
     }
@@ -55,9 +54,7 @@ TEST(KStringTest, CreatePermanentStringFromCString_surrogates) {
 TEST(KStringTest, CreatePermanentStringFromCString_empty) {
     const char* empty = "";
     EXPECT_THAT(strlen(empty), 0);
-    const char16_t* expected = u"";
-    EXPECT_THAT(std::char_traits<char16_t>::length(expected), 0);
-    checkConversionResult(empty, expected);
+    checkConversionResult(empty, empty);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_impossible) {
