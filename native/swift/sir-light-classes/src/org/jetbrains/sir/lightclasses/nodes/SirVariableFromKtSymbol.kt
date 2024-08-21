@@ -64,6 +64,8 @@ internal class SirVariableFromKtSymbol(
         }
         set(_) = Unit
 
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+
     private val accessorKind by lazy {
         ktSymbol.sirCallableKind
     }

@@ -69,6 +69,8 @@ internal class SirClassFromKtSymbol(
         SirNominalType(KotlinRuntimeModule.kotlinBase)
     }
 
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+
     private fun childDeclarations(): List<SirDeclaration> = withSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations(useSiteSession)

@@ -47,4 +47,6 @@ internal class SirTypealiasFromKtSymbol(
             ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
+
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
 }
