@@ -27730,6 +27730,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("directJavaActualization_actualClassWithoutExpect_sharedActual.kt")
+        public void testDirectJavaActualization_actualClassWithoutExpect_sharedActual() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualClassWithoutExpect_sharedActual.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_actualMemberWithoutExpect_sharedActual.kt")
+        public void testDirectJavaActualization_actualMemberWithoutExpect_sharedActual() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualMemberWithoutExpect_sharedActual.kt");
+        }
+
+        @Test
         @TestMetadata("directJavaActualization_actualWithoutExpect.kt")
         public void testDirectJavaActualization_actualWithoutExpect() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualWithoutExpect.kt");
