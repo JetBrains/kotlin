@@ -52,10 +52,12 @@ public actual open class Throwable internal constructor(
     }
 }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
     get() = this.suppressedExceptionsList
     set(value) { this.suppressedExceptionsList = value }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 internal actual val Throwable.stack: String get() = this.stack
 
 internal fun captureStackTrace(): ExternalInterfaceType =

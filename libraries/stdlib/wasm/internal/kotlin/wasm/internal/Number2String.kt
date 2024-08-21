@@ -98,8 +98,7 @@ private fun utoaDecSimple64(buffer: WasmCharArray, numInput: ULong, offsetInput:
 }
 
 
-private fun Boolean.toInt() = if (this) 1 else 0
-private fun Boolean.toLong() = if (this) 1L else 0L
+private fun Boolean.toLong() = toInt().toLong()
 
 private fun decimalCount32(value: UInt): Int {
     if (value < 100000u) {
