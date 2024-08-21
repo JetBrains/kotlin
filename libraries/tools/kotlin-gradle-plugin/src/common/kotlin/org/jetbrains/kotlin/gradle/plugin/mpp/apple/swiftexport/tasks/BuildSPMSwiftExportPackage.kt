@@ -11,7 +11,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
+@CacheableTask
 internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     providerFactory: ProviderFactory,
     objectFactory: ObjectFactory,

@@ -11,7 +11,6 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
+@CacheableTask
 internal abstract class SwiftExportTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     private val fileSystem: FileSystemOperations,

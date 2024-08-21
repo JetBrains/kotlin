@@ -10,7 +10,6 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
+@CacheableTask
 internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     objectFactory: ObjectFactory,
     private val fileSystem: FileSystemOperations,
