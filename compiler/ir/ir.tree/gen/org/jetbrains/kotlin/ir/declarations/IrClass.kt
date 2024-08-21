@@ -39,6 +39,8 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
 
     abstract var isValue: Boolean
 
+    abstract val isJavaClass: Boolean
+
     abstract var isExpect: Boolean
 
     abstract var isFun: Boolean

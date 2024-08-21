@@ -60,6 +60,8 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     override var isValue: Boolean = false
 
+    override val isJavaClass: Boolean = false
+
     override var isExpect: Boolean = false
 
     override var isFun: Boolean = false

@@ -50,6 +50,8 @@ class IrLazyClass(
         }
     }
 
+    override val isJavaClass: Boolean = false
+
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var thisReceiver: IrValueParameter? by lazyVar(stubGenerator.lock) {

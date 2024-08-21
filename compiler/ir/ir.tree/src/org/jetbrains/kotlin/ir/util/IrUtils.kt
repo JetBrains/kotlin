@@ -701,9 +701,13 @@ val IrDeclaration.isFileClass: Boolean
                 origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS ||
                 origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS
 
-fun IrDeclaration.isFromJava(): Boolean =
-    origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
-            parent is IrDeclaration && (parent as IrDeclaration).isFromJava()
+fun IrDeclaration.isFromJava(): Boolean { // I don't know why it has to be so complicated
+    return when (this) {
+        is IrClass -> isJavaClass
+        else -> origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+                parent is IrDeclaration && (parent as IrDeclaration).isFromJava()
+    }
+}
 
 val IrValueDeclaration.isImmutable: Boolean
     get() = this is IrValueParameter || this is IrVariable && !isVar
