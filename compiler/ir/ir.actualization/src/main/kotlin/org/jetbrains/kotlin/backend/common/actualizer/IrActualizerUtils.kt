@@ -26,7 +26,7 @@ internal fun recordActualForExpectDeclaration(
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = expectActualMap.regularSymbols.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.expectToActual.put(expectSymbol, actualSymbol)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
@@ -39,7 +39,7 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.getter?.let { expectGetter ->
             val actualGetter = actualDeclaration.getter
             if (actualGetter != null) {
-                expectActualMap.regularSymbols[expectGetter.symbol] = actualGetter.symbol
+                expectActualMap.expectToActual[expectGetter.symbol] = actualGetter.symbol
                 recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter)
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no getter.
@@ -53,7 +53,7 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.setter?.let { expectSetter ->
             val actualSetter = actualDeclaration.setter
             if (actualSetter != null) {
-                expectActualMap.regularSymbols[expectSetter.symbol] = actualSetter.symbol
+                expectActualMap.expectToActual[expectSetter.symbol] = actualSetter.symbol
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no setter.
                 // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
@@ -73,7 +73,7 @@ private fun recordTypeParametersMapping(
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            expectActualMap.regularSymbols[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.expectToActual[expectTypeParameter.symbol] = actualTypeParameter.symbol
         }
 }
 

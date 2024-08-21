@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class IrExpectActualMap {
-    val regularSymbols: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
+    val expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
     val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol> = mutableMapOf()
 }
