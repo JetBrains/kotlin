@@ -21,8 +21,8 @@ internal class IrExpectActualCheckers(
 ) : IrExpectActualChecker.Context {
 
     private val checkers: Set<IrExpectActualChecker> = setOf(
-        IrExpectActualAnnotationMatchingChecker,
-        IrExpectActualAnnotationConflictingDefaultArgumentValueChecker,
+        IrAnnotationMatchingKmpChecker,
+        IrAnnotationConflictingDefaultArgumentValueKmpChecker,
         IrKotlinActualAnnotationOnJavaKmpChecker,
     )
 
