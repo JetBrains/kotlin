@@ -243,16 +243,42 @@ abstract class TypeCheckerStateForConstraintSystem(
                                 typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
                                 !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
 
+                        fun KotlinTypeMarker.withCapturedNonNullProjection(): KotlinTypeMarker =
+                            if (isInferenceCompatibilityEnabled && this is CapturedTypeMarker) {
+                                withNotNullProjection()
+                            } else {
+                                this
+                            }
+
                         val resultType = if (needToMakeDefNotNull) {
                             subType.makeDefinitelyNotNullOrNotNull()
                         } else {
-                            if (!isInferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
+                            val notNullType = if (!isInferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
                                 subType.withNotNullProjection()
                             } else {
                                 subType.withNullability(false)
                             }
+                            if (isK2) {
+                                val variantTypes = listOf(notNullType, subType.makeDefinitelyNotNullOrNotNull()).distinct()
+                                when (variantTypes.size) {
+                                    1 -> variantTypes.single()
+                                    else -> {
+                                        runForkingPoint {
+                                            for (variant in variantTypes.map { it.withCapturedNonNullProjection() }) {
+                                                fork {
+                                                    addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint)
+                                                    true
+                                                }
+                                            }
+                                        }
+                                        return true
+                                    }
+                                }
+                            } else {
+                                notNullType
+                            }
                         }
-                        if (isInferenceCompatibilityEnabled && resultType is CapturedTypeMarker) resultType.withNotNullProjection() else resultType
+                        resultType.withCapturedNonNullProjection()
                     }
                     // Foo <: T => Foo <: T
                     else -> subType
