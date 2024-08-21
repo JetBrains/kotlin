@@ -131,6 +131,30 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("overriddenPropertyWithoutOverriddenSetter_param.kt")
+  public void testOverriddenPropertyWithoutOverriddenSetter_param() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/overriddenPropertyWithoutOverriddenSetter_param.kt");
+  }
+
+  @Test
+  @TestMetadata("overriddenPropertyWithoutOverriddenSetter_property.kt")
+  public void testOverriddenPropertyWithoutOverriddenSetter_property() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/overriddenPropertyWithoutOverriddenSetter_property.kt");
+  }
+
+  @Test
+  @TestMetadata("overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt")
+  public void testOverriddenPropertyWithoutOverriddenSetter_property_private_setter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt");
+  }
+
+  @Test
+  @TestMetadata("overriddenPropertyWithoutOverriddenSetter_property_setter.kt")
+  public void testOverriddenPropertyWithoutOverriddenSetter_property_setter() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/overriddenPropertyWithoutOverriddenSetter_property_setter.kt");
+  }
+
+  @Test
   @TestMetadata("propertyFromInitBlock.kt")
   public void testPropertyFromInitBlock() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyFromInitBlock.kt");
