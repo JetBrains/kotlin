@@ -199,7 +199,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
-        FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded,
+        FirExtraActualDeclarationExtractor.Companion::initializeIfNeeded,
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 
