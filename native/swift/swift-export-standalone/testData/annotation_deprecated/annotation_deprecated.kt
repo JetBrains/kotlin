@@ -1,3 +1,9 @@
+// KIND: STANDALONE
+// MODULE: main
+// SWIFT_EXPORT_CONFIG: packageRoot=org.kotlin.foo
+
+package org.kotlin.foo
+
 @Deprecated("This function is deprecated and hidden", level = DeprecationLevel.HIDDEN)
 fun hiddenDeprecatedFunction() {}
 

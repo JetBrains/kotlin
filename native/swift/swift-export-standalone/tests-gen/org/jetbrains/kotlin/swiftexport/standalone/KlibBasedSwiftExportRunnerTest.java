@@ -30,6 +30,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("annotation_deprecated")
+  public void testAnnotation_deprecated() {
+    runTest("native/swift/swift-export-standalone/testData/annotation_deprecated/");
+  }
+
+  @Test
   @TestMetadata("any")
   public void testAny() {
     runTest("native/swift/swift-export-standalone/testData/any/");
@@ -69,12 +75,6 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("inner_classes")
   public void testInner_classes() {
     runTest("native/swift/swift-export-standalone/testData/inner_classes/");
-  }
-
-  @Test
-  @TestMetadata("kt-70067")
-  public void testKt_70067() {
-    runTest("native/swift/swift-export-standalone/testData/kt-70067/");
   }
 
   @Test
