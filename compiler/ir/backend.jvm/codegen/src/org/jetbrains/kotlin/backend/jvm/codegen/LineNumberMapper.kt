@@ -216,6 +216,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
         return firstFunctionInlineBlock?.inlineDeclaration?.parentClassOrNull ?: irFunction.parentAsClass
     }
 
+    // TODO KT-69366 This function is not working correctly if default argument was a reference
     private fun IrInlinedFunctionBlock.isInvokeOnDefaultArg(): Boolean {
         val call = this.inlineCall!!
         val expected = this.inlineDeclaration
