@@ -74,6 +74,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
@@ -190,6 +192,8 @@ internal inline fun <reified T> String.load(): T {
         "ReadExcel" -> ReadExcel()
         "FillNulls0" -> FillNulls0()
         "UpdateWith0" -> UpdateWith0()
+        "Flatten0" -> Flatten0()
+        "FlattenDefault" -> FlattenDefault()
         else -> error("$this")
     } as T
 }
