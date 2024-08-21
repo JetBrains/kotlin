@@ -61,6 +61,9 @@ class Fir2IrLazyClass(
     override val source: SourceElement
         get() = fir.sourceElement ?: SourceElement.NO_SOURCE
 
+    override val isJavaClass: Boolean
+        get() = fir.isJava
+
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor

@@ -281,6 +281,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isInner", boolean)
         +field("isData", boolean)
         +field("isValue", boolean)
+        +field("isJavaClass", boolean, mutable = false)
         +field("isExpect", boolean)
         +field("isFun", boolean)
         +field("hasEnumEntries", boolean) {
