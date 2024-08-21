@@ -10,7 +10,10 @@ data class Record(
 )
 
 fun box(): String {
-    val df = dataFrameOf("a")(1).cast<Record>()
+    val df = dataFrameOf("a")("1").cast<Record>()
     df.abc
+
+    val df1 = df.add("b") { 1 }
+    df1.a
     return "OK"
 }
