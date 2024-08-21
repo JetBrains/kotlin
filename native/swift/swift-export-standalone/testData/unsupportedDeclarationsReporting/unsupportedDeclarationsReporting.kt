@@ -8,11 +8,19 @@ class Foo {
     class Nested {
         operator fun plus(other: Int): Nested = this
     }
+
+    val Unit.extPropMember
+        get() = Unit
+
+    fun Unit.extFunMember() {}
 }
 
 interface MyInterface
 
 fun Foo.ext() {}
+
+val Foo.extProp
+    get() = Unit
 
 inline fun foo() {}
 
