@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -86,6 +85,7 @@ open class FunctionInlining(
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
+    private val extractLocalClasses: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -133,7 +133,10 @@ open class FunctionInlining(
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
-            produceOuterThisFields
+            produceOuterThisFields,
+            // Only use lifted local classes if there's no cross-module inlining,
+            // otherwise lifted local classes would become public ABI, which we don't want.
+            useLiftedLocalClasses = extractLocalClasses && currentFile.module == actualCallee.fileOrNull?.module,
         )
         return inliner.inline().markAsRegenerated()
     }
@@ -163,7 +166,8 @@ open class FunctionInlining(
         val context: CommonBackendContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val insertAdditionalImplicitCasts: Boolean,
-        private val produceOuterThisFields: Boolean
+        private val produceOuterThisFields: Boolean,
+        private val useLiftedLocalClasses: Boolean,
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
@@ -177,7 +181,7 @@ open class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            InlineFunctionBodyPreprocessor(typeArguments, parent)
+            InlineFunctionBodyPreprocessor(context, typeArguments, parent, useLiftedLocalClasses)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()

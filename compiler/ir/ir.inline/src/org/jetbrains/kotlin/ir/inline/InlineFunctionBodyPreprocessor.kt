@@ -5,19 +5,29 @@
 
 package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.inline.localClassSymbolRemapper
+import org.jetbrains.kotlin.backend.common.lower.inline.useExtractedCopy
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class InlineFunctionBodyPreprocessor(
+    val context: CommonBackendContext,
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
     val parent: IrDeclarationParent?,
+    private val useLiftedLocalClasses: Boolean,
 ) {
     private val symbolRemapper = SymbolRemapperImpl()
 
@@ -30,11 +40,19 @@ internal class InlineFunctionBodyPreprocessor(
         // Create new symbols.
         irElement.acceptVoid(symbolRemapper)
 
+        if (useLiftedLocalClasses) {
+            irElement.localClassSymbolRemapper?.let(symbolRemapper::addMappingsFrom)
+        }
+
         // Make symbol remapper aware of the callsite's type arguments.
         symbolRemapper.typeArguments = typeArguments
 
         // Copy IR.
         val result = irElement.transform(copier, data = null)
+
+        if (useLiftedLocalClasses) {
+            result.transform(ExtractedLocalClassEliminator(), null)
+        }
 
         result.patchDeclarationParents(parent)
         return result as IrFunction
@@ -56,5 +74,14 @@ internal class InlineFunctionBodyPreprocessor(
                 return result
             return typeArguments?.get(result)?.classifierOrNull ?: result
         }
+    }
+
+    private inner class ExtractedLocalClassEliminator : IrElementTransformerVoid() {
+        override fun visitClass(declaration: IrClass): IrStatement =
+            if (declaration.useExtractedCopy) {
+                IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
+            } else {
+                super.visitClass(declaration)
+            }
     }
 }

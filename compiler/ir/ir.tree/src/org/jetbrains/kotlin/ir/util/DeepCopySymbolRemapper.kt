@@ -36,6 +36,24 @@ open class DeepCopySymbolRemapper(
     protected val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
     protected val typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
 
+    fun addMappingsFrom(other: DeepCopySymbolRemapper) {
+        classes += other.classes
+        scripts += other.scripts
+        constructors += other.constructors
+        enumEntries += other.enumEntries
+        externalPackageFragments += other.externalPackageFragments
+        fields += other.fields
+        files += other.files
+        functions += other.functions
+        properties += other.properties
+        returnableBlocks += other.returnableBlocks
+        typeParameters += other.typeParameters
+        valueParameters += other.valueParameters
+        variables += other.variables
+        localDelegatedProperties += other.localDelegatedProperties
+        typeAliases += other.typeAliases
+    }
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.locationForExtraction
+import org.jetbrains.kotlin.backend.common.lower.moveTo
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -15,11 +17,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /*
  Here we're extracting some local classes from inline bodies.
@@ -179,6 +183,25 @@ fun IrFunction.extractableLocalClasses(): Set<IrClass> {
     }
 }
 
+/**
+ * Remaps symbols in local classes inside `this` to their corresponding lifted classes.
+ */
+var IrFunction.localClassSymbolRemapper: DeepCopySymbolRemapper? by irAttribute(followAttributeOwner = false)
+
+/**
+ * Used to mark local classes for which we lifted their copies.
+ * These local classes should be eliminated during inlining.
+ */
+var IrClass.useExtractedCopy: Boolean by irFlag(followAttributeOwner = true)
+
+/**
+ * Runs [LocalClassPopupLowering] so that extractable local classes are lowered to the point when they no longer capture any local context,
+ * and then lift copies of those local classes out of the inline function so that those lifted copies could be reused across
+ * call sites in the same module as the inline function.
+ *
+ * The inline function itself still uses the original local classes, not their copies.
+ * The usages of copies are inserted to call sites during inlining.
+ */
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -191,5 +214,18 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
             return
 
         LocalDeclarationsLowering(context).lower(function, function, classesToExtract)
+
+        // TODO: Test a case when one local class references another local class
+        val symbolRemapper = function::localClassSymbolRemapper.getOrSetIfNull(::DeepCopySymbolRemapper)
+        for (klass in classesToExtract) {
+            val locationForExtraction = klass.locationForExtraction()
+
+            // Create new symbols and keep them in `function.localClassSymbolRemapper`, so that later during
+            // inlining we could use that same remapper to replace usages of local classes with usages of lifted classes.
+            klass.acceptVoid(symbolRemapper)
+            val classCopy = klass.transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null) as IrClass
+            classCopy.moveTo(locationForExtraction)
+            klass.useExtractedCopy = true
+        }
     }
 }
