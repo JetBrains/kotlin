@@ -1,3 +1,4 @@
+// LANGUAGE:+DirectJavaActualization
 // WITH_STDLIB
 
 // MODULE: m1-common

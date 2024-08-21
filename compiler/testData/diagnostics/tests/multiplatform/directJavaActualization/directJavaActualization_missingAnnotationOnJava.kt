@@ -1,3 +1,4 @@
+// LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
 

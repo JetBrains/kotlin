@@ -1,6 +1,7 @@
-// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6, NATIVE, JVM_IR
+// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6, NATIVE
 // WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +DirectJavaActualization
 
 // MODULE: common
 // TARGET_PLATFORM: Common

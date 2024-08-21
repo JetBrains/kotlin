@@ -1,22 +1,23 @@
+// LANGUAGE:+DirectJavaActualization
 // WITH_STDLIB
 
 // MODULE: m1-common
 // FILE: common.kt
 interface I
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class A<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect value class B(val x: Int)<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface C1 { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun interface C2 { fun foo() }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class D1 : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class D2 : I<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class E1 { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class E2 { ONE, TWO }<!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Outer {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class A<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect value class B(val x: Int)<!>
+expect fun interface C1 { fun foo() }
+expect fun interface C2 { fun foo() }
+expect class D1 : I
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class D2 : I<!>
+expect enum class E1 { ONE, TWO }
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect enum class E2 { ONE, <!NO_ACTUAL_FOR_EXPECT{JVM}!>TWO<!> }<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Outer {
     class F1
     inner class F2
-    inner class F3
-    class F4
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>inner class F3<!>
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>class F4<!>
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)
