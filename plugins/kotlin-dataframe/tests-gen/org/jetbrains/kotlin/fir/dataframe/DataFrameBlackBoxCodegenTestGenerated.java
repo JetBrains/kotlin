@@ -59,6 +59,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("convert_to.kt")
+  public void testConvert_to() {
+    runTest("testData/box/convert_to.kt");
+  }
+
+  @Test
   @TestMetadata("dataFrameOf.kt")
   public void testDataFrameOf() {
     runTest("testData/box/dataFrameOf.kt");
