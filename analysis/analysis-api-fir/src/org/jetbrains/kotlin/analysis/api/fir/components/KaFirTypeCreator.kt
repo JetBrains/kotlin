@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeParameterTypeBuilder
@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirTypeCreator(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseTypeCreator<KaFirSession>(), KaFirSessionComponent {
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
@@ -47,8 +47,7 @@ internal class KaFirTypeCreator(
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
-                check(symbol is KaFirSymbol<*>)
-                (symbol.firSymbol as FirClassLikeSymbol<*>).toLookupTag()
+                symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
             }
         }
 
