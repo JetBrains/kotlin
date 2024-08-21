@@ -21,7 +21,7 @@ annotation class MyOptIn
 expect fun skippedAnnotationsOnExpectOnly()
 
 @OptIn(ExperimentalMultiplatform::class)
-@kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
+@<!DEPRECATION_ERROR!>kotlin.jvm.ImplicitlyActualizedByJvmDeclaration<!>
 expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 
 // MODULE: m1-jvm()()(m1-common)

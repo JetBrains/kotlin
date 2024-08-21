@@ -3,10 +3,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
+import kotlin.jvm.<!DEPRECATION_ERROR{JVM}!>ImplicitlyActualizedByJvmDeclaration<!>
 
 @OptIn(ExperimentalMultiplatform::class)
-@ImplicitlyActualizedByJvmDeclaration
+@<!DEPRECATION_ERROR{JVM}!>ImplicitlyActualizedByJvmDeclaration<!>
 expect class Foo() {
     fun foo()
 }
