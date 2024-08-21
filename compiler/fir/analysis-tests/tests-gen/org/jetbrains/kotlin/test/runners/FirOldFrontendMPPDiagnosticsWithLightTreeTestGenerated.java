@@ -1505,6 +1505,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("directJavaActualization_actualClassWithoutExpect_sharedActual.kt")
+    public void testDirectJavaActualization_actualClassWithoutExpect_sharedActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualClassWithoutExpect_sharedActual.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_actualMemberWithoutExpect_sharedActual.kt")
+    public void testDirectJavaActualization_actualMemberWithoutExpect_sharedActual() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualMemberWithoutExpect_sharedActual.kt");
+    }
+
+    @Test
     @TestMetadata("directJavaActualization_actualWithoutExpect.kt")
     public void testDirectJavaActualization_actualWithoutExpect() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_actualWithoutExpect.kt");
@@ -1520,6 +1532,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("directJavaActualization_classifierIncompatibilities.kt")
     public void testDirectJavaActualization_classifierIncompatibilities() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_classifierIncompatibilities.kt");
+    }
+
+    @Test
+    @TestMetadata("directJavaActualization_funInterface_fakeOverrideInJava.kt")
+    public void testDirectJavaActualization_funInterface_fakeOverrideInJava() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_funInterface_fakeOverrideInJava.kt");
     }
 
     @Test

@@ -4,6 +4,9 @@
 
 expect class Foo() {
     fun foo()
+    override fun equals(other: Any?): Boolean
+    class Nested
+    inner class Inner
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -12,4 +15,6 @@ expect class Foo() {
 public class Foo {
     public void foo() {
     }
+    public static class Nested {}
+    public class Inner {}
 }
