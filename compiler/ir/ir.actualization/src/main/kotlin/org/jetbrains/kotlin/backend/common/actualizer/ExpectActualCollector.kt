@@ -380,9 +380,9 @@ private class ExpectActualLinkCollector {
                 typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, expectActualMap
             )
 
-        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol, direct: Boolean) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)
-            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter)
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter, direct)
         }
 
         override fun onIncompatibleMembersFromClassScope(
