@@ -21,6 +21,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -108,6 +110,59 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                 ":compileKotlinJs",
                 ":compileTestKotlinJs"
             )
+        )
+    }
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @SwiftExportGradlePluginTests
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("SwiftExport cache relocation test")
+    @GradleTest
+    fun testRelocationSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        val localRepoDir = defaultLocalRepo(gradleVersion)
+        val xcodeBuildDir = testBuildDir.resolve(gradleVersion.version)
+        val buildOptions = defaultBuildOptions.copy(
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                swiftExportEnabled = true,
+            )
+        )
+
+        val (firstProject, secondProject) = prepareTestProjects(
+            "simpleSwiftExport",
+            gradleVersion,
+            buildOptions = buildOptions,
+            localRepoDir = localRepoDir
+        )
+
+        val swiftExportEnv = EnvironmentalVariables(
+            "CONFIGURATION" to "Debug",
+            "SDK_NAME" to "iphoneos123",
+            "ARCHS" to "arm64",
+            "ONLY_ACTIVE_ARCH" to "YES",
+            "TARGET_BUILD_DIR" to xcodeBuildDir.absolutePathString(),
+            "FRAMEWORKS_FOLDER_PATH" to xcodeBuildDir.resolve("xcode-derived").absolutePathString(),
+            "PLATFORM_NAME" to "iphoneos",
+            "BUILT_PRODUCTS_DIR" to xcodeBuildDir.resolve("builtProductsDir").absolutePathString(),
+        )
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf(":shared:embedSwiftExportForXcode"),
+            listOf(
+                ":shared:compileKotlinIosArm64",
+                ":shared:compileSwiftExportMainKotlinIosArm64",
+                ":shared:iosArm64DebugBuildSPMPackage",
+                ":shared:iosArm64DebugGenerateSPMPackage",
+                ":shared:iosArm64DebugSwiftExport",
+                ":shared:linkSwiftExportBinaryDebugStaticIosArm64",
+                ":shared:mergeIosDebugSwiftExportLibraries",
+            ),
+            swiftExportEnv
         )
     }
 
@@ -288,21 +343,23 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         return firstProject to secondProject
     }
 
+    @OptIn(EnvironmentalVariablesOverride::class)
     private fun checkBuildCacheRelocation(
         firstProject: TestProject,
         secondProject: TestProject,
         tasksToExecute: List<String>,
         cacheableTasks: List<String>,
+        environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
         additionalAssertions: BuildResult.() -> Unit = {},
     ) {
-        firstProject.build(*tasksToExecute.toTypedArray()) {
+        firstProject.build(*tasksToExecute.toTypedArray(), environmentVariables = environmentVariables) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()
         }
 
-        firstProject.build("clean")
+        firstProject.build("clean", environmentVariables = environmentVariables)
 
-        secondProject.build(*tasksToExecute.toTypedArray()) {
+        secondProject.build(*tasksToExecute.toTypedArray(), environmentVariables = environmentVariables) {
             assertTasksFromCache(*cacheableTasks.toTypedArray())
             additionalAssertions()
         }
