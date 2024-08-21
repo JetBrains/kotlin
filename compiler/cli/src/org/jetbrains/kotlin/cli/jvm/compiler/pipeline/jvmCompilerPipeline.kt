@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -199,7 +200,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
-        FirExtraActualDeclarationExtractor.Companion::initializeIfNeeded,
+        ::FirExtraActualDeclarationExtractor,
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }
 

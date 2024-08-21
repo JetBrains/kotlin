@@ -202,6 +202,7 @@ object StandardClassIds {
 
         val OptionalExpectation = "OptionalExpectation".baseId()
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
+        val KotlinActual = "KotlinActual".jvmId()
 
         val jvmStatic = "JvmStatic".jvmId()
 

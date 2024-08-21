@@ -1,9 +1,10 @@
+// LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo(i: Int) {
+expect class Foo(i: Int) {
     fun foo()
-}<!>
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
