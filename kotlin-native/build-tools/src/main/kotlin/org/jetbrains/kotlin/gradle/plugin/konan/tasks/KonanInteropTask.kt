@@ -14,6 +14,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
@@ -35,7 +36,7 @@ abstract class KonanInteropTask @Inject constructor(
         private val execOperations: ExecOperations,
 ): DefaultTask() {
     init {
-        this.notCompatibleWithConfigurationCache("Unsupported inputs")
+        KonanCliRunnerIsolatedClassLoadersService.registerIfAbsent(project)
     }
 
     @get:Input
@@ -75,8 +76,8 @@ abstract class KonanInteropTask @Inject constructor(
         }
     }
 
-    @get:Internal
-    val isolatedClassLoadersService = KonanCliRunnerIsolatedClassLoadersService.attachingToTask(this)
+    @ServiceReference("KonanCliRunnerIsolatedClassLoadersService")
+    abstract fun getIsolatedClassLoadersService(): Property<KonanCliRunnerIsolatedClassLoadersService>
 
     private val allowRunningCInteropInProcess = project.kotlinBuildProperties.getBoolean("kotlin.native.allowRunningCinteropInProcess")
 
@@ -87,7 +88,7 @@ abstract class KonanInteropTask @Inject constructor(
                 execOperations,
                 logger,
                 layout,
-                isolatedClassLoadersService,
+                getIsolatedClassLoadersService().get(),
                 compilerDistributionPath.get(),
                 konanTarget.get(),
                 allowRunningCInteropInProcess
