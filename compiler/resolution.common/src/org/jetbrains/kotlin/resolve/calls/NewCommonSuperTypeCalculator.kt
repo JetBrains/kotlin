@@ -108,7 +108,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedStubTypeForVariableInSubtyping(type: RigidTypeMarker) =
-        type.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
+        type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
             ?.getType()?.asRigidType()?.isStubTypeForVariableInSubtyping() == true
 
     private fun TypeSystemCommonSuperTypesContext.refineNullabilityForUndefinedNullability(

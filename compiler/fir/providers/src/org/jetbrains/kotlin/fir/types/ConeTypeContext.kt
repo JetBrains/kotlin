@@ -124,7 +124,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.lowerBound
     }
 
-    override fun RigidTypeMarker.asCapturedType(): CapturedTypeMarker? {
+    override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? {
         return this as? ConeCapturedType
     }
 

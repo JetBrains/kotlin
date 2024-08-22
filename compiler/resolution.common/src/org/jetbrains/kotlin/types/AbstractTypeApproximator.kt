@@ -496,6 +496,8 @@ abstract class AbstractTypeApproximator(
             return approximateDefinitelyNotNullType(definitelyNotNullType, conf, toSuper, depth)
         }
 
+        // DNN case is handled above
+        require(type is SimpleTypeMarker)
         val typeConstructor = type.typeConstructor()
 
         if (typeConstructor.isCapturedTypeConstructor()) {

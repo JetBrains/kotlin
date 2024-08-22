@@ -566,7 +566,7 @@ object AbstractTypeChecker {
             return state.isStubTypeEqualsToAnything
 
         // superType might be a definitely notNull type (see KT-42824)
-        val superOriginalType = superType.asDefinitelyNotNullType()?.original() ?: superType
+        val superOriginalType = superType.originalIfDefinitelyNotNullable()
         val superTypeCaptured = superOriginalType.asCapturedType()
         val lowerType = superTypeCaptured?.lowerType()
         if (superTypeCaptured != null && lowerType != null) {

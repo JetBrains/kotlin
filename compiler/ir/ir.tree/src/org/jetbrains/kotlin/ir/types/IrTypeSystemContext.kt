@@ -73,7 +73,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         }
     }
 
-    override fun RigidTypeMarker.asCapturedType(): CapturedTypeMarker? = this as? IrCapturedType
+    override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? = this as? IrCapturedType
 
     override fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 

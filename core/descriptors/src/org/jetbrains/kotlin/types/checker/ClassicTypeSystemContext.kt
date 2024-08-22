@@ -172,7 +172,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.lowerBound
     }
 
-    override fun RigidTypeMarker.asCapturedType(): CapturedTypeMarker? {
+    override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? {
         require(this is SimpleType, this::errorMessage)
         return if (this is SimpleTypeWithEnhancement) origin.asCapturedType() else this as? NewCapturedType
     }
