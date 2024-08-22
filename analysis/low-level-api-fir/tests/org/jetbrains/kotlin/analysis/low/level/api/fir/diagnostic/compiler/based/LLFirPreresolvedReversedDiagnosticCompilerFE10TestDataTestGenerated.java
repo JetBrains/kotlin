@@ -526,6 +526,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("extensionShadowedByMemberWithMpp.kt")
+    public void testExtensionShadowedByMemberWithMpp() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberWithMpp.kt");
+    }
+
+    @Test
     @TestMetadata("ExternalAccessors.kt")
     public void testExternalAccessors() {
       runTest("compiler/testData/diagnostics/tests/ExternalAccessors.kt");
