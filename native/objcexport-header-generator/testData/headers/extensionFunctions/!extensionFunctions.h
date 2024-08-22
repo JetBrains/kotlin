@@ -34,6 +34,12 @@ __attribute__((objc_subclassing_restricted))
 - (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
+__attribute__((objc_subclassing_restricted))
+@interface FooKt : Base
++ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
++ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
+@end
+
 @interface ClazzA (Extensions)
 - (void)extensionFunA1 __attribute__((swift_name("extensionFunA1()")));
 - (void)extensionFunA2 __attribute__((swift_name("extensionFunA2()")));
@@ -42,12 +48,6 @@ __attribute__((objc_subclassing_restricted))
 @interface ClazzB (Extensions)
 - (void)extensionFunB1 __attribute__((swift_name("extensionFunB1()")));
 - (void)extensionFunB2 __attribute__((swift_name("extensionFunB2()")));
-@end
-
-__attribute__((objc_subclassing_restricted))
-@interface FooKt : Base
-+ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
-+ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

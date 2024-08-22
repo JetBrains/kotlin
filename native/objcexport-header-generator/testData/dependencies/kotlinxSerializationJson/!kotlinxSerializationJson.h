@@ -265,68 +265,6 @@ __attribute__((swift_name("JsonPrimitive.Companion")))
 - (void)writeQuotedText:(NSString *)text __attribute__((swift_name("writeQuoted(text:)")));
 @end
 
-@interface Json (Extensions)
-- (id _Nullable)decodeFromJsonElementJson:(JsonElement *)json __attribute__((swift_name("decodeFromJsonElement(json:)")));
-- (JsonElement *)encodeToJsonElementValue:(id _Nullable)value __attribute__((swift_name("encodeToJsonElement(value:)")));
-@end
-
-@interface JsonArrayBuilder (Extensions)
-- (BOOL)addValue:(Boolean * _Nullable)value __attribute__((swift_name("add(value:)")));
-- (BOOL)addValue_:(KotlinNothing * _Nullable)value __attribute__((swift_name("add(value_:)")));
-- (BOOL)addValue__:(id _Nullable)value __attribute__((swift_name("add(value__:)")));
-- (BOOL)addValue___:(NSString * _Nullable)value __attribute__((swift_name("add(value___:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="addAllBooleans")
-*/
-- (BOOL)addAllValues:(id)values __attribute__((swift_name("addAll(values:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="addAllNumbers")
-*/
-- (BOOL)addAllValues_:(id)values __attribute__((swift_name("addAll(values_:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="addAllStrings")
-*/
-- (BOOL)addAllValues__:(id)values __attribute__((swift_name("addAll(values__:)")));
-- (BOOL)addJsonArrayBuilderAction:(void (^)(JsonArrayBuilder *))builderAction __attribute__((swift_name("addJsonArray(builderAction:)")));
-- (BOOL)addJsonObjectBuilderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("addJsonObject(builderAction:)")));
-@end
-
-@interface JsonElement (Extensions)
-@property (readonly) NSArray<JsonElement *> *jsonArray __attribute__((swift_name("jsonArray")));
-@property (readonly) JsonNull *jsonNull __attribute__((swift_name("jsonNull")));
-@property (readonly) NSDictionary<NSString *, JsonElement *> *jsonObject __attribute__((swift_name("jsonObject")));
-@property (readonly) JsonPrimitive *jsonPrimitive __attribute__((swift_name("jsonPrimitive")));
-@end
-
-@interface JsonObjectBuilder (Extensions)
-- (JsonElement * _Nullable)putKey:(NSString *)key value:(Boolean * _Nullable)value __attribute__((swift_name("put(key:value:)")));
-- (JsonElement * _Nullable)putKey:(NSString *)key value_:(KotlinNothing * _Nullable)value __attribute__((swift_name("put(key:value_:)")));
-- (JsonElement * _Nullable)putKey:(NSString *)key value__:(id _Nullable)value __attribute__((swift_name("put(key:value__:)")));
-- (JsonElement * _Nullable)putKey:(NSString *)key value___:(NSString * _Nullable)value __attribute__((swift_name("put(key:value___:)")));
-- (JsonElement * _Nullable)putJsonArrayKey:(NSString *)key builderAction:(void (^)(JsonArrayBuilder *))builderAction __attribute__((swift_name("putJsonArray(key:builderAction:)")));
-- (JsonElement * _Nullable)putJsonObjectKey:(NSString *)key builderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("putJsonObject(key:builderAction:)")));
-@end
-
-@interface JsonPrimitive (Extensions)
-@property (readonly) BOOL boolean __attribute__((swift_name("boolean")));
-@property (readonly) Boolean * _Nullable booleanOrNull __attribute__((swift_name("booleanOrNull")));
-@property (readonly) NSString * _Nullable contentOrNull __attribute__((swift_name("contentOrNull")));
-@property (readonly, getter=double) double double_ __attribute__((swift_name("double_")));
-@property (readonly) Double * _Nullable doubleOrNull __attribute__((swift_name("doubleOrNull")));
-@property (readonly, getter=float) float float_ __attribute__((swift_name("float_")));
-@property (readonly) Float * _Nullable floatOrNull __attribute__((swift_name("floatOrNull")));
-@property (readonly, getter=int) int32_t int_ __attribute__((swift_name("int_")));
-@property (readonly) Int * _Nullable intOrNull __attribute__((swift_name("intOrNull")));
-@property (readonly, getter=long) int64_t long_ __attribute__((swift_name("long_")));
-@property (readonly) Long * _Nullable longOrNull __attribute__((swift_name("longOrNull")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface JsonKt : Base
 + (Json *)JsonFrom:(Json *)from builderAction:(void (^)(JsonBuilder *))builderAction __attribute__((swift_name("Json(from:builderAction:)")));
@@ -478,6 +416,68 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id)next __attribute__((swift_name("next()")));
 - (unichar)nextChar __attribute__((swift_name("nextChar()")));
+@end
+
+@interface Json (Extensions)
+- (id _Nullable)decodeFromJsonElementJson:(JsonElement *)json __attribute__((swift_name("decodeFromJsonElement(json:)")));
+- (JsonElement *)encodeToJsonElementValue:(id _Nullable)value __attribute__((swift_name("encodeToJsonElement(value:)")));
+@end
+
+@interface JsonArrayBuilder (Extensions)
+- (BOOL)addValue:(Boolean * _Nullable)value __attribute__((swift_name("add(value:)")));
+- (BOOL)addValue_:(KotlinNothing * _Nullable)value __attribute__((swift_name("add(value_:)")));
+- (BOOL)addValue__:(id _Nullable)value __attribute__((swift_name("add(value__:)")));
+- (BOOL)addValue___:(NSString * _Nullable)value __attribute__((swift_name("add(value___:)")));
+
+/**
+ * @note annotations
+ *   kotlin.jvm.JvmName(name="addAllBooleans")
+*/
+- (BOOL)addAllValues:(id)values __attribute__((swift_name("addAll(values:)")));
+
+/**
+ * @note annotations
+ *   kotlin.jvm.JvmName(name="addAllNumbers")
+*/
+- (BOOL)addAllValues_:(id)values __attribute__((swift_name("addAll(values_:)")));
+
+/**
+ * @note annotations
+ *   kotlin.jvm.JvmName(name="addAllStrings")
+*/
+- (BOOL)addAllValues__:(id)values __attribute__((swift_name("addAll(values__:)")));
+- (BOOL)addJsonArrayBuilderAction:(void (^)(JsonArrayBuilder *))builderAction __attribute__((swift_name("addJsonArray(builderAction:)")));
+- (BOOL)addJsonObjectBuilderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("addJsonObject(builderAction:)")));
+@end
+
+@interface JsonElement (Extensions)
+@property (readonly) NSArray<JsonElement *> *jsonArray __attribute__((swift_name("jsonArray")));
+@property (readonly) JsonNull *jsonNull __attribute__((swift_name("jsonNull")));
+@property (readonly) NSDictionary<NSString *, JsonElement *> *jsonObject __attribute__((swift_name("jsonObject")));
+@property (readonly) JsonPrimitive *jsonPrimitive __attribute__((swift_name("jsonPrimitive")));
+@end
+
+@interface JsonObjectBuilder (Extensions)
+- (JsonElement * _Nullable)putKey:(NSString *)key value:(Boolean * _Nullable)value __attribute__((swift_name("put(key:value:)")));
+- (JsonElement * _Nullable)putKey:(NSString *)key value_:(KotlinNothing * _Nullable)value __attribute__((swift_name("put(key:value_:)")));
+- (JsonElement * _Nullable)putKey:(NSString *)key value__:(id _Nullable)value __attribute__((swift_name("put(key:value__:)")));
+- (JsonElement * _Nullable)putKey:(NSString *)key value___:(NSString * _Nullable)value __attribute__((swift_name("put(key:value___:)")));
+- (JsonElement * _Nullable)putJsonArrayKey:(NSString *)key builderAction:(void (^)(JsonArrayBuilder *))builderAction __attribute__((swift_name("putJsonArray(key:builderAction:)")));
+- (JsonElement * _Nullable)putJsonObjectKey:(NSString *)key builderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("putJsonObject(key:builderAction:)")));
+@end
+
+@interface JsonPrimitive (Extensions)
+@property (readonly) BOOL boolean __attribute__((swift_name("boolean")));
+@property (readonly) Boolean * _Nullable booleanOrNull __attribute__((swift_name("booleanOrNull")));
+@property (readonly) NSString * _Nullable contentOrNull __attribute__((swift_name("contentOrNull")));
+@property (readonly, getter=double) double double_ __attribute__((swift_name("double_")));
+@property (readonly) Double * _Nullable doubleOrNull __attribute__((swift_name("doubleOrNull")));
+@property (readonly, getter=float) float float_ __attribute__((swift_name("float_")));
+@property (readonly) Float * _Nullable floatOrNull __attribute__((swift_name("floatOrNull")));
+@property (readonly, getter=int) int32_t int_ __attribute__((swift_name("int_")));
+@property (readonly) Int * _Nullable intOrNull __attribute__((swift_name("intOrNull")));
+@property (readonly, getter=long) int64_t long_ __attribute__((swift_name("long_")));
+@property (readonly) Long * _Nullable longOrNull __attribute__((swift_name("longOrNull")));
 @end
 
 #pragma pop_macro("_Nullable_result")

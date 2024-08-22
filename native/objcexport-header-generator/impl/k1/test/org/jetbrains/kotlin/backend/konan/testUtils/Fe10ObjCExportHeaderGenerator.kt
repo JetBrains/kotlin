@@ -58,7 +58,11 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
         }
 
         headerGenerator.translateModuleDeclarations()
-        return headerGenerator.buildHeader()
+        val header = headerGenerator.buildHeader()
+        return header.copy(
+            /** To match AA implementation we sort stubs in the same way. See more at [ObjCInterfaceOrder] */
+            stubs = header.stubs.sortedWith(ObjCInterfaceOrder)
+        )
     }
 
     private fun createObjCExportHeaderGenerator(
@@ -92,7 +96,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             .filter { descriptor ->
                 val origin = descriptor.getCapability(KlibModuleOrigin.CAPABILITY) ?: return@filter true
                 origin is DeserializedKlibModuleOrigin &&
-                    origin.library.libraryFile.javaFile().toPath() in configuration.exportedDependencies
+                        origin.library.libraryFile.javaFile().toPath() in configuration.exportedDependencies
             }
 
         val namer = ObjCExportNamerImpl(

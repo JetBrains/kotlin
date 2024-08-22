@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Clazz;
+@class Foo;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -21,23 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 __attribute__((objc_subclassing_restricted))
-@interface Clazz : Base
+@interface Foo : Base
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)memberFun __attribute__((swift_name("memberFun()")));
 @end
 
-__attribute__((objc_subclassing_restricted))
-@interface FooKt : Base
-@property (class, readonly) int32_t topLevelPropA __attribute__((swift_name("topLevelPropA")));
-@property (class, readonly) int32_t topLevelPropB __attribute__((swift_name("topLevelPropB")));
-@end
-
-@interface Clazz (Extensions)
-@property (readonly) int32_t extensionValA __attribute__((swift_name("extensionValA")));
-@property (readonly) int32_t extensionValB __attribute__((swift_name("extensionValB")));
-@property int32_t extensionVarA __attribute__((swift_name("extensionVarA")));
-@property int32_t extensionVarB __attribute__((swift_name("extensionVarB")));
+@interface Foo (Extensions)
+- (void)bar __attribute__((swift_name("bar()")));
+- (void)extensionA __attribute__((swift_name("extensionA()")));
+- (void)extensionB __attribute__((swift_name("extensionB()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

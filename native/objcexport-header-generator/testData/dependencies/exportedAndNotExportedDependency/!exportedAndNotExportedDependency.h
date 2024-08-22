@@ -27,19 +27,12 @@ __attribute__((swift_name("KotlinBase")))
 + (void)initialize __attribute__((objc_requires_super));
 @end
 
-@interface MyAppBase (MyAppBaseCopying) <NSCopying>
-@end
-
 __attribute__((swift_name("KotlinMutableSet")))
 @interface MyAppMutableSet<ObjectType> : NSMutableSet<ObjectType>
 @end
 
 __attribute__((swift_name("KotlinMutableDictionary")))
 @interface MyAppMutableDictionary<KeyType, ObjectType> : NSMutableDictionary<KeyType, ObjectType>
-@end
-
-@interface NSError (NSErrorMyAppKotlinException)
-@property (readonly) id _Nullable kotlinException;
 @end
 
 __attribute__((swift_name("KotlinNumber")))
@@ -171,6 +164,13 @@ __attribute__((swift_name("TLBMyLibraryB")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (int32_t)returnInt __attribute__((swift_name("returnInt()")));
 - (MyAppTLBMyLibraryB *)returnMe __attribute__((swift_name("returnMe()")));
+@end
+
+@interface MyAppBase (MyAppBaseCopying) <NSCopying>
+@end
+
+@interface NSError (NSErrorMyAppKotlinException)
+@property (readonly) id _Nullable kotlinException;
 @end
 
 #pragma pop_macro("_Nullable_result")

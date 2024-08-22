@@ -228,6 +228,26 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test - top level function and extension with the same dependency doesn't generate duplicate`() {
+        doTest(
+            dependenciesDir.resolve("topLevelFunctionAndExtensionWithDependency"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile)
+            )
+        )
+    }
+
+    @Test
+    fun `test - one type extensions from multiple files merged into the same category`() {
+        doTest(
+            dependenciesDir.resolve("oneTypeExtensionsFromMultipleFilesMergedIntoTheSameCategory"),
+            configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile),
+                exportedDependencies = setOf(testExtensionsKlibFile)
+            )
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

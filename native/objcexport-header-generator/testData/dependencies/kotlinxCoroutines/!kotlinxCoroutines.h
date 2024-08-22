@@ -1120,10 +1120,6 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) int32_t size __attribute__((swift_name("size")));
 @end
 
-@interface KotlinArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface KotlinIntArray : Base
 + (instancetype)arrayWithSize:(int32_t)size __attribute__((swift_name("init(size:)")));
@@ -1136,10 +1132,6 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) int32_t size __attribute__((swift_name("size")));
 @end
 
-@interface KotlinIntArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface KotlinLongArray : Base
 + (instancetype)arrayWithSize:(int32_t)size __attribute__((swift_name("init(size:)")));
@@ -1150,10 +1142,6 @@ __attribute__((objc_subclassing_restricted))
 - (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(int64_t)value __attribute__((swift_name("set(index:value:)")));
 @property (readonly) int32_t size __attribute__((swift_name("size")));
-@end
-
-@interface KotlinLongArray (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
 @protocol KotlinIterable
@@ -1214,10 +1202,6 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly, getter=start_) Int *start __attribute__((swift_name("start")));
 @end
 
-@interface KotlinIntRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
 @interface KotlinLongProgression : Base <KotlinIterable>
 @property (class, readonly, getter=companion) KotlinLongProgressionCompanion *companion __attribute__((swift_name("companion")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
@@ -1248,27 +1232,6 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) Long *endExclusive __attribute__((swift_name("endExclusive"))) __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
 @property (readonly) Long *endInclusive __attribute__((swift_name("endInclusive")));
 @property (readonly, getter=start_) Long *start __attribute__((swift_name("start")));
-@end
-
-@interface KotlinLongRange (Extensions)
-- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
-@end
-
-@interface CoroutineDispatcher (Extensions)
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-- (void)invokeBlock:(id<KotlinSuspendFunction1>)block completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(block:completionHandler:)")));
-@end
-
-@interface Dispatchers (Extensions)
-@property (readonly) CoroutineDispatcher *IO __attribute__((swift_name("IO")));
-@end
-
-@interface SharingStartedCompanion (Extensions)
-- (id<SharingStarted>)WhileSubscribedStopTimeout:(int64_t)stopTimeout replayExpiration:(int64_t)replayExpiration __attribute__((swift_name("WhileSubscribed(stopTimeout:replayExpiration:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -2302,6 +2265,43 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 - (void)invokeP1:(id _Nullable)p1 p2:(id _Nullable)p2 p3:(id _Nullable)p3 p4:(id _Nullable)p4 p5:(id _Nullable)p5 p6:(id _Nullable)p6 completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(p1:p2:p3:p4:p5:p6:completionHandler:)")));
+@end
+
+@interface KotlinIntArray (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinLongArray (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinIntRange (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface KotlinLongRange (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
+@end
+
+@interface CoroutineDispatcher (Extensions)
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)invokeBlock:(id<KotlinSuspendFunction1>)block completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(block:completionHandler:)")));
+@end
+
+@interface Dispatchers (Extensions)
+@property (readonly) CoroutineDispatcher *IO __attribute__((swift_name("IO")));
+@end
+
+@interface SharingStartedCompanion (Extensions)
+- (id<SharingStarted>)WhileSubscribedStopTimeout:(int64_t)stopTimeout replayExpiration:(int64_t)replayExpiration __attribute__((swift_name("WhileSubscribed(stopTimeout:replayExpiration:)")));
+@end
+
+@interface KotlinArray (Extensions)
+- (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

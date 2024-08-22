@@ -999,118 +999,12 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) SerialDescriptor *descriptor __attribute__((swift_name("descriptor")));
 @end
 
-@interface DatePeriod (Extensions)
-- (DatePeriod *)plusOther:(DatePeriod *)other __attribute__((swift_name("plus(other:)")));
-@end
-
-@interface DateTimePeriod (Extensions)
-- (DateTimePeriod *)plusOther_:(DateTimePeriod *)other __attribute__((swift_name("plus(other_:)")));
-@end
-
-@interface DayOfWeek (Extensions)
-@property (readonly) int32_t isoDayNumber __attribute__((swift_name("isoDayNumber")));
-@end
-
-@interface Instant (Extensions)
-- (int32_t)daysUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("daysUntil(other:timeZone:)")));
-- (NSString *)formatFormat:(id<DateTimeFormat>)format offset:(UtcOffset *)offset __attribute__((swift_name("format(format:offset:)")));
-- (Instant *)minusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
-- (Instant *)minusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit:)")));
-- (Instant *)minusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
-- (Instant *)minusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(period:timeZone:)")));
-- (Instant *)minusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(unit:timeZone:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
-- (int64_t)minusOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(other:unit:)")));
-- (DateTimePeriod *)minusOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(other:timeZone:)")));
-- (Instant *)minusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(value:unit:timeZone:)")));
-- (Instant *)minusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("minus(value:unit:timeZone_:)")));
-- (int64_t)minusOther:(Instant *)other unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(other:unit:timeZone:)")));
-- (int32_t)monthsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("monthsUntil(other:timeZone:)")));
-- (UtcOffset *)offsetInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("offsetIn(timeZone:)")));
-- (DateTimePeriod *)periodUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("periodUntil(other:timeZone:)")));
-- (Instant *)plusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
-- (Instant *)plusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit:)")));
-- (Instant *)plusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
-- (Instant *)plusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(period:timeZone:)")));
-- (Instant *)plusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(unit:timeZone:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
-- (Instant *)plusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone:)")));
-- (Instant *)plusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone_:)")));
-- (LocalDateTime *)toLocalDateTimeTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toLocalDateTime(timeZone:)")));
-- (NSDate *)toNSDate __attribute__((swift_name("toNSDate()")));
-- (int64_t)untilOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("until(other:unit:)")));
-- (int64_t)untilOther:(Instant *)other unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("until(other:unit:timeZone:)")));
-- (int32_t)yearsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("yearsUntil(other:timeZone:)")));
-@property (readonly) BOOL isDistantFuture __attribute__((swift_name("isDistantFuture")));
-@property (readonly) BOOL isDistantPast __attribute__((swift_name("isDistantPast")));
-@end
-
-@interface LocalDate (Extensions)
-- (Instant *)atStartOfDayInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("atStartOfDayIn(timeZone:)")));
-- (LocalDateTime *)atTimeTime:(LocalTime *)time __attribute__((swift_name("atTime(time:)")));
-- (LocalDateTime *)atTimeHour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("atTime(hour:minute:second:nanosecond:)")));
-- (int32_t)daysUntilOther:(LocalDate *)other __attribute__((swift_name("daysUntil(other:)")));
-- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
-- (LocalDate *)minusPeriod:(DatePeriod *)period __attribute__((swift_name("minus(period:)")));
-- (LocalDate *)minusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
-- (DatePeriod *)minusOther:(LocalDate *)other __attribute__((swift_name("minus(other:)")));
-- (LocalDate *)minusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit:)")));
-- (LocalDate *)minusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
-- (int32_t)monthsUntilOther:(LocalDate *)other __attribute__((swift_name("monthsUntil(other:)")));
-- (DatePeriod *)periodUntilOther:(LocalDate *)other __attribute__((swift_name("periodUntil(other:)")));
-- (LocalDate *)plusPeriod:(DatePeriod *)period __attribute__((swift_name("plus(period:)")));
-- (LocalDate *)plusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
-- (LocalDate *)plusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit:)")));
-- (LocalDate *)plusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
-- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
-- (int32_t)untilOther:(LocalDate *)other unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("until(other:unit:)")));
-- (int32_t)yearsUntilOther:(LocalDate *)other __attribute__((swift_name("yearsUntil(other:)")));
-@end
-
-@interface LocalDateTime (Extensions)
-- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
-- (Instant *)toInstantTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toInstant(timeZone:)")));
-- (Instant *)toInstantOffset:(UtcOffset *)offset __attribute__((swift_name("toInstant(offset:)")));
-- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
-@end
-
-@interface LocalTime (Extensions)
-- (LocalDateTime *)atDateDate:(LocalDate *)date __attribute__((swift_name("atDate(date:)")));
-- (LocalDateTime *)atDateYear:(int32_t)year monthNumber:(int32_t)monthNumber dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:monthNumber:dayOfMonth:)")));
-- (LocalDateTime *)atDateYear:(int32_t)year month:(Month *)month dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:month:dayOfMonth:)")));
-- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
-@end
-
-@interface Month (Extensions)
-@property (readonly) int32_t number __attribute__((swift_name("number")));
-@end
-
-@interface TimeZone (Extensions)
-- (UtcOffset *)offsetAtInstant:(Instant *)instant __attribute__((swift_name("offsetAt(instant:)")));
-- (NSTimeZone *)toNSTimeZone __attribute__((swift_name("toNSTimeZone()")));
-@end
-
-@interface UtcOffset (Extensions)
-- (FixedOffsetTimeZone *)asTimeZone __attribute__((swift_name("asTimeZone()")));
-- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
-@end
-
-@interface DateTimeComponentsCompanion (Extensions)
-- (DateTimeComponents *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface NSDate : Base
 @end
 
-@interface NSDate (Extensions)
-- (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface NSTimeZone : Base
-@end
-
-@interface NSTimeZone (Extensions)
-- (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1320,6 +1214,112 @@ __attribute__((objc_subclassing_restricted))
 - (BOOL)hasPassedNow __attribute__((swift_name("hasPassedNow()")));
 - (id<KotlinTimeMark>)minusDuration:(int64_t)duration __attribute__((swift_name("minus(duration:)")));
 - (id<KotlinTimeMark>)plusDuration:(int64_t)duration __attribute__((swift_name("plus(duration:)")));
+@end
+
+@interface NSDate (Extensions)
+- (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
+@end
+
+@interface NSTimeZone (Extensions)
+- (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
+@end
+
+@interface DatePeriod (Extensions)
+- (DatePeriod *)plusOther:(DatePeriod *)other __attribute__((swift_name("plus(other:)")));
+@end
+
+@interface DateTimePeriod (Extensions)
+- (DateTimePeriod *)plusOther_:(DateTimePeriod *)other __attribute__((swift_name("plus(other_:)")));
+@end
+
+@interface DayOfWeek (Extensions)
+@property (readonly) int32_t isoDayNumber __attribute__((swift_name("isoDayNumber")));
+@end
+
+@interface Instant (Extensions)
+- (int32_t)daysUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("daysUntil(other:timeZone:)")));
+- (NSString *)formatFormat:(id<DateTimeFormat>)format offset:(UtcOffset *)offset __attribute__((swift_name("format(format:offset:)")));
+- (Instant *)minusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
+- (Instant *)minusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit:)")));
+- (Instant *)minusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
+- (Instant *)minusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(period:timeZone:)")));
+- (Instant *)minusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(unit:timeZone:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
+- (int64_t)minusOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(other:unit:)")));
+- (DateTimePeriod *)minusOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(other:timeZone:)")));
+- (Instant *)minusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(value:unit:timeZone:)")));
+- (Instant *)minusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("minus(value:unit:timeZone_:)")));
+- (int64_t)minusOther:(Instant *)other unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(other:unit:timeZone:)")));
+- (int32_t)monthsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("monthsUntil(other:timeZone:)")));
+- (UtcOffset *)offsetInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("offsetIn(timeZone:)")));
+- (DateTimePeriod *)periodUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("periodUntil(other:timeZone:)")));
+- (Instant *)plusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
+- (Instant *)plusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit:)")));
+- (Instant *)plusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
+- (Instant *)plusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(period:timeZone:)")));
+- (Instant *)plusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(unit:timeZone:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
+- (Instant *)plusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone:)")));
+- (Instant *)plusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone_:)")));
+- (LocalDateTime *)toLocalDateTimeTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toLocalDateTime(timeZone:)")));
+- (NSDate *)toNSDate __attribute__((swift_name("toNSDate()")));
+- (int64_t)untilOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("until(other:unit:)")));
+- (int64_t)untilOther:(Instant *)other unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("until(other:unit:timeZone:)")));
+- (int32_t)yearsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("yearsUntil(other:timeZone:)")));
+@property (readonly) BOOL isDistantFuture __attribute__((swift_name("isDistantFuture")));
+@property (readonly) BOOL isDistantPast __attribute__((swift_name("isDistantPast")));
+@end
+
+@interface LocalDate (Extensions)
+- (Instant *)atStartOfDayInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("atStartOfDayIn(timeZone:)")));
+- (LocalDateTime *)atTimeTime:(LocalTime *)time __attribute__((swift_name("atTime(time:)")));
+- (LocalDateTime *)atTimeHour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("atTime(hour:minute:second:nanosecond:)")));
+- (int32_t)daysUntilOther:(LocalDate *)other __attribute__((swift_name("daysUntil(other:)")));
+- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
+- (LocalDate *)minusPeriod:(DatePeriod *)period __attribute__((swift_name("minus(period:)")));
+- (LocalDate *)minusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
+- (DatePeriod *)minusOther:(LocalDate *)other __attribute__((swift_name("minus(other:)")));
+- (LocalDate *)minusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit:)")));
+- (LocalDate *)minusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
+- (int32_t)monthsUntilOther:(LocalDate *)other __attribute__((swift_name("monthsUntil(other:)")));
+- (DatePeriod *)periodUntilOther:(LocalDate *)other __attribute__((swift_name("periodUntil(other:)")));
+- (LocalDate *)plusPeriod:(DatePeriod *)period __attribute__((swift_name("plus(period:)")));
+- (LocalDate *)plusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
+- (LocalDate *)plusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit:)")));
+- (LocalDate *)plusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
+- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
+- (int32_t)untilOther:(LocalDate *)other unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("until(other:unit:)")));
+- (int32_t)yearsUntilOther:(LocalDate *)other __attribute__((swift_name("yearsUntil(other:)")));
+@end
+
+@interface LocalDateTime (Extensions)
+- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
+- (Instant *)toInstantTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toInstant(timeZone:)")));
+- (Instant *)toInstantOffset:(UtcOffset *)offset __attribute__((swift_name("toInstant(offset:)")));
+- (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
+@end
+
+@interface LocalTime (Extensions)
+- (LocalDateTime *)atDateDate:(LocalDate *)date __attribute__((swift_name("atDate(date:)")));
+- (LocalDateTime *)atDateYear:(int32_t)year monthNumber:(int32_t)monthNumber dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:monthNumber:dayOfMonth:)")));
+- (LocalDateTime *)atDateYear:(int32_t)year month:(Month *)month dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:month:dayOfMonth:)")));
+- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
+@end
+
+@interface Month (Extensions)
+@property (readonly) int32_t number __attribute__((swift_name("number")));
+@end
+
+@interface TimeZone (Extensions)
+- (UtcOffset *)offsetAtInstant:(Instant *)instant __attribute__((swift_name("offsetAt(instant:)")));
+- (NSTimeZone *)toNSTimeZone __attribute__((swift_name("toNSTimeZone()")));
+@end
+
+@interface UtcOffset (Extensions)
+- (FixedOffsetTimeZone *)asTimeZone __attribute__((swift_name("asTimeZone()")));
+- (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
+@end
+
+@interface DateTimeComponentsCompanion (Extensions)
+- (DateTimeComponents *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 @end
 
 #pragma pop_macro("_Nullable_result")

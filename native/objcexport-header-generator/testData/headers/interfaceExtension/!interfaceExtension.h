@@ -32,13 +32,13 @@ __attribute__((objc_subclassing_restricted))
 @required
 @end
 
-@interface FooClass (Extensions)
-- (void)bar __attribute__((swift_name("bar()")));
-@end
-
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
 + (void)bar:(id<FooInterface>)receiver __attribute__((swift_name("bar(_:)")));
+@end
+
+@interface FooClass (Extensions)
+- (void)bar __attribute__((swift_name("bar()")));
 @end
 
 #pragma pop_macro("_Nullable_result")

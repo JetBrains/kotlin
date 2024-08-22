@@ -55,9 +55,10 @@ private class KtObjCExportHeaderGenerator(
     private val objCStubsByClassId = hashMapOf<ClassId, ObjCClass?>()
 
     /**
-     * An index of already translated classes (by ObjC name)
+     * An index of already translated classes by [ObjCClassKey]
+     * @see [addObjCStubIfNotTranslated]
      */
-    private val objCStubsByClassName = hashMapOf<String, ObjCClass>()
+    private val objCStubsByClassKey = hashMapOf<ObjCClassKey, ObjCClass>()
 
     /**
      * The mutable aggregate of all protocol names that shall later be rendered as forward declarations
@@ -168,7 +169,6 @@ private class KtObjCExportHeaderGenerator(
 
         /* Note: It is important to add *this* stub to the result list only after translating/processing the superclass symbols */
         addObjCStubIfNotTranslated(objCClass)
-        objCStubsByClassName[objCClass.name] = objCClass
         enqueueDependencyClasses(objCClass)
         return objCClass
     }
@@ -222,7 +222,7 @@ private class KtObjCExportHeaderGenerator(
      * carry any generics.
      */
     private fun resolveObjCClassForwardDeclaration(className: String): ObjCClassForwardDeclaration {
-        objCStubsByClassName[className]
+        objCStubsByClassKey[ObjCClassKey(className)]
             .let { it as? ObjCInterface }
             ?.let { objCClass -> return ObjCClassForwardDeclaration(objCClass.name, objCClass.generics) }
 
@@ -242,7 +242,7 @@ private class KtObjCExportHeaderGenerator(
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
-            stubs = stubs,
+            stubs = stubs.sortedWith(ObjCInterfaceOrder),
             classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()
@@ -255,7 +255,7 @@ private class KtObjCExportHeaderGenerator(
      * ObjC categories are used to translate extensions,
      * so having two classes with the same name but different categories is a valid case.
      *
-     * ```
+     * ```objective-c
      * @interface Foo
      * @interface Foo (Extension)
      * ```
@@ -264,10 +264,12 @@ private class KtObjCExportHeaderGenerator(
      * See the usage of [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator.generatedClasses].
      */
     private fun addObjCStubIfNotTranslated(objCClass: ObjCClass) {
-        val translatedClass = objCStubsByClassName[objCClass.name]
-        val equalName = objCClass.name == translatedClass?.name
-        val equalCategory = (translatedClass as? ObjCInterface)?.categoryName == (objCClass as? ObjCInterface)?.categoryName
-        if (equalName && equalCategory) return
-        else objCStubs += objCClass
+        val key = ObjCClassKey(objCClass.name, (objCClass as? ObjCInterface)?.categoryName)
+        val translatedClass = objCStubsByClassKey[key]
+        if (translatedClass != null) return
+        objCStubsByClassKey[key] = objCClass
+        objCStubs += objCClass
     }
 }
+
+private data class ObjCClassKey(val className: String, val categoryName: String? = null)
