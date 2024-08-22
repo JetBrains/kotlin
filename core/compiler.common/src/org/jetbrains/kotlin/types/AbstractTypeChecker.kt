@@ -532,8 +532,8 @@ object AbstractTypeChecker {
     }
 
     private fun TypeSystemContext.isStubTypeSubtypeOfAnother(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
-        val originalA = a.asDefinitelyNotNullType()?.original() ?: a
-        val originalB = b.asDefinitelyNotNullType()?.original() ?: b
+        val originalA = a.originalIfDefinitelyNotNullable()
+        val originalB = b.originalIfDefinitelyNotNullable()
 
         if (originalA.typeConstructor() !== originalB.typeConstructor()) return false
         if (!a.isDefinitelyNotNullType() && b.isDefinitelyNotNullType()) return false

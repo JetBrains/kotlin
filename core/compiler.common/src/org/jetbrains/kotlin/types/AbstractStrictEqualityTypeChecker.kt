@@ -40,7 +40,7 @@ object AbstractStrictEqualityTypeChecker {
     private fun TypeSystemContext.strictEqualRigidTypes(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
         if (a.argumentsCount() != b.argumentsCount()
             || a.isMarkedNullable() != b.isMarkedNullable()
-            || (a.asDefinitelyNotNullType() == null) != (b.asDefinitelyNotNullType() == null)
+            || a.isDefinitelyNotNullType() != b.isDefinitelyNotNullType()
             || !areEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())
         ) {
             return false
