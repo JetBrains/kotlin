@@ -48,7 +48,9 @@ internal open class LLFirDiagnosticVisitor(
         checkCanceled()
         suppressAndLogExceptions {
             element.accept(components.reportCommitter, context)
+        }
 
+        suppressAndLogExceptions {
             commitPendingDiagnosticsOnNestedDeclarations(element)
         }
     }
@@ -120,22 +122,23 @@ internal open class LLFirDiagnosticVisitor(
         }
     }
 
-    /**
-     * We don't want to throw exceptions right away to not interrupt other checkers there possible.
-     * It is better to report as much as possible and not crash the entire visitor.
-     *
-     * By default, a logger throws exceptions, but it is up to the user code to provide
-     * an alternative handler.
-     *
-     * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
-     */
-    private inline fun suppressAndLogExceptions(block: () -> Unit) {
-        try {
+    companion object {
+        /**
+         * We don't want to throw exceptions right away to not interrupt other checkers there possible.
+         * It is better to report as much as possible and not crash the entire visitor.
+         *
+         * By default, a logger throws exceptions, but it is up to the user code to provide
+         * an alternative handler.
+         *
+         * For instance, the IntelliJ plugin reports such exceptions and doesn't interrupt the execution flow.
+         */
+        inline fun <T> suppressAndLogExceptions(block: () -> T): T? = try {
             block()
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
 
             thisLogger().error("The diagnostic collector has been interrupted by an exception. The result may be incomplete", e)
+            null
         }
     }
 }
