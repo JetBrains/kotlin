@@ -12,6 +12,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -104,6 +106,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val buildArguments = mapOf(
             "ARCHS" to target.map { it.appleArchitecture }.get(),
             "CONFIGURATION" to configuration.get(),
+
             /*
             We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
             All object files will be merged in `lib${swiftApiModuleName}.a`
@@ -126,6 +129,14 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             command,
             logger = logger,
             processConfiguration = {
+                environment().apply {
+                    keys.filter {
+                        AppleSdk.xcodeEnvironmentDebugDylibVars.contains(it)
+                    }.forEach {
+                        remove(it)
+                    }
+                }
+
                 directory(packageRootPath)
             }
         )

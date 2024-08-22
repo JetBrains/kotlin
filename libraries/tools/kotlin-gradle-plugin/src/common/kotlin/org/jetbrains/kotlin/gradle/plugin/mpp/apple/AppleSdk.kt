@@ -84,6 +84,13 @@ internal object AppleSdk {
 
         return targets.toList()
     }
+
+    val xcodeEnvironmentDebugDylibVars = setOf(
+        "ENABLE_DEBUG_DYLIB",
+        "EXECUTABLE_BLANK_INJECTION_DYLIB_PATH",
+        "EXECUTABLE_DEBUG_DYLIB_INSTALL_NAME",
+        "EXECUTABLE_DEBUG_DYLIB_PATH"
+    )
 }
 
 internal val KonanTarget.appleArchitecture: String
@@ -95,13 +102,13 @@ internal val KonanTarget.appleArchitecture: String
         KonanTarget.TVOS_SIMULATOR_ARM64,
         KonanTarget.WATCHOS_DEVICE_ARM64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
-        -> "arm64"
+            -> "arm64"
 
         KonanTarget.IOS_X64,
         KonanTarget.MACOS_X64,
         KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_X64,
-        -> "x86_64"
+            -> "x86_64"
 
         KonanTarget.WATCHOS_ARM32 -> "armv7k"
         KonanTarget.WATCHOS_ARM64 -> "arm64_32"
@@ -113,7 +120,8 @@ internal val KotlinNativeTarget.appleTarget: AppleTarget
     get() = konanTarget.appleTarget
 
 internal val KonanTarget.appleTarget: AppleTarget
-    get() = AppleTarget.values().singleOrNull { it.targets.contains(this) } ?: throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
+    get() = AppleTarget.values().singleOrNull { it.targets.contains(this) }
+        ?: throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
 
 internal val AppleTarget.applePlatform: String
     get() = when (this) {
