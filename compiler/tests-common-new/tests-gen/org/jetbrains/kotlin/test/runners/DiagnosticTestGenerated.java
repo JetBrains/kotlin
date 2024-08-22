@@ -274,6 +274,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("compilerCrashInRedCode.kt")
+    public void testCompilerCrashInRedCode() {
+      runTest("compiler/testData/diagnostics/tests/compilerCrashInRedCode.kt");
+    }
+
+    @Test
     @TestMetadata("compilerCrashInTypeParameterBoundsChecker.kt")
     public void testCompilerCrashInTypeParameterBoundsChecker() {
       runTest("compiler/testData/diagnostics/tests/compilerCrashInTypeParameterBoundsChecker.kt");

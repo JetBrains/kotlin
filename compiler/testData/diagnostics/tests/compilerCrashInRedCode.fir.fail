@@ -1,0 +1,3 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected FirResolvedTypeRef with ConeKotlinType but was FirImplicitTypeRefImplWithoutSource
+        at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.getConeType(FirTypeUtils.kt:191)
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDynamicReceiverChecker.check(FirDynamicReceiverChecker.kt:23)
