@@ -738,7 +738,7 @@ tasks {
 
     val jvmTest by existing(Test::class)
 
-    listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_10_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
+    listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
             group = "verification"
             javaLauncher.set(getToolchainLauncherFor(jvmVersion))
