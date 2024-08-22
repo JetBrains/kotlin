@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.fir.types.captureArguments
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeApproximator
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -178,7 +178,7 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
 ): Sequence<ConeKotlinType> {
     val typeParameterSymbols = symbol.typeParameterSymbols ?: return superTypes.asSequence()
     val argumentTypes = (session.typeContext.captureArguments(this, CaptureStatus.FROM_EXPRESSION)?.toList()
-        ?: this.typeArguments.mapNotNull { it.type })
+        ?: this.typeArgumentsOfLowerBoundIfFlexible.mapNotNull { it.type })
 
     if (typeParameterSymbols.size != argumentTypes.size) {
         // Should not happen in valid code

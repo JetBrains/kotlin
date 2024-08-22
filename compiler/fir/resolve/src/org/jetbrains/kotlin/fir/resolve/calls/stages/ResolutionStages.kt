@@ -405,7 +405,7 @@ object CheckDslScopeViolation : ResolutionStage() {
 
                 // Collect the annotation on the extension receiver, or `@B` in the example above.
                 if (CompilerConeAttributes.ExtensionFunctionType in it.attributes) {
-                    it.typeArguments.firstOrNull()?.type?.let { receiverType ->
+                    it.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.type?.let { receiverType ->
                         collectDslMarkerAnnotations(context, receiverType)
                     }
                 }

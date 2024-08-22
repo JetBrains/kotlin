@@ -51,7 +51,7 @@ inline fun ConeKotlinType.forEachType(
 
             is ConeDefinitelyNotNullType -> stack.add(next.original)
             is ConeIntersectionType -> stack.addAll(next.intersectedTypes)
-            else -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
+            else -> next.typeArgumentsOfLowerBoundIfFlexible.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
         }
     }
 }
@@ -70,7 +70,7 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
         is ConeCapturedType -> constructor.projection.type?.contains(predicate, visited) == true
-        else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
+        else -> typeArgumentsOfLowerBoundIfFlexible.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
     }
 }
 
@@ -170,9 +170,9 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
     }
 }
 
-val ConeKotlinType.typeArguments: Array<out ConeTypeProjection>
+val ConeKotlinType.typeArgumentsOfLowerBoundIfFlexible: Array<out ConeTypeProjection>
     get() = when(this) {
         is ConeClassLikeType -> typeArguments
-        is ConeFlexibleType -> lowerBound.typeArguments
+        is ConeFlexibleType -> lowerBound.typeArgumentsOfLowerBoundIfFlexible
         else -> ConeTypeProjection.EMPTY_ARRAY
     }

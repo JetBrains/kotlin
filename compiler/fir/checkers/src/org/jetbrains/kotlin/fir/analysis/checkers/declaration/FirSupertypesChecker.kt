@@ -142,7 +142,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
     ): Boolean {
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return false
         var result = false
-        for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
+        for ((index, typeArgument) in coneType.typeArgumentsOfLowerBoundIfFlexible.withIndex()) {
             if (typeArgument.isConflictingOrNotInvariant) {
                 val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
                 reporter.reportOn(
@@ -164,7 +164,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         context: CheckerContext,
     ) {
         if (coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
-            fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
+            fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible.any { it.isConflictingOrNotInvariant }
         ) {
             reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
         }

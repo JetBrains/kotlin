@@ -65,7 +65,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             val expectedType = typeParameterSubstitutor.substituteOrSelf(param.returnTypeRef.coneType)
 
             // optimization: if no arguments or flexibility, everything is OK
-            if (expectedType !is ConeFlexibleType || expectedType.typeArguments.isEmpty()) continue
+            if (expectedType !is ConeFlexibleType || expectedType.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) continue
 
             // Anything is acceptable for raw types
             if (expectedType is ConeRawType) continue

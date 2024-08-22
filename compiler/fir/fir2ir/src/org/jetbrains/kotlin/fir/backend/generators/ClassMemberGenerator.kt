@@ -362,7 +362,7 @@ internal class ClassMemberGenerator(
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
+            val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArgumentsOfLowerBoundIfFlexible
             val constructor = constructorSymbol.fir
             /*
              * We should generate enum constructor call only if it is used to create new enum entry (so it's a super constructor call)

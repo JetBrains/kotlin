@@ -244,7 +244,7 @@ fun ConeKotlinType.serializerForType(session: FirSession): ConeKotlinType? {
         .toRegularClassSymbol(session)
         ?.getAllSubstitutedSupertypes(session)
         ?.find { it.isKSerializer }
-        ?.typeArguments
+        ?.typeArgumentsOfLowerBoundIfFlexible
         ?.firstOrNull()
         ?.type
 }

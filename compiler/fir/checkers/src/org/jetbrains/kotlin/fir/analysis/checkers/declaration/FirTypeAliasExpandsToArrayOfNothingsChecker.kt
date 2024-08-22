@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAliasExpandsToArrayOfNothingsChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
@@ -30,10 +30,10 @@ object FirTypeAliasExpandsToArrayOfNothingsChecker : FirTypeAliasChecker(MppChec
 
     private fun ConeKotlinType.isMalformed(context: CheckerContext): Boolean =
         fullyExpandedClassId(context.session) == StandardClassIds.Array
-                && typeArguments.singleOrNull()?.type?.fullyExpandedClassId(context.session) == StandardClassIds.Nothing
+                && typeArgumentsOfLowerBoundIfFlexible.singleOrNull()?.type?.fullyExpandedClassId(context.session) == StandardClassIds.Nothing
                 || containsMalformedArgument(context)
 
     private fun ConeKotlinType.containsMalformedArgument(context: CheckerContext) =
-        typeArguments.any { it.type?.isMalformed(context) == true }
+        typeArgumentsOfLowerBoundIfFlexible.any { it.type?.isMalformed(context) == true }
 
 }

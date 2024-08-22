@@ -525,7 +525,7 @@ class ConeOverloadConflictResolver(
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
-                typeForCallableReference.typeArguments.dropLast(1)
+                typeForCallableReference.typeArgumentsOfLowerBoundIfFlexible.dropLast(1)
                     .mapTo(this) {
                         TypeWithConversion((it as ConeKotlinType).prepareType(session, call).removeTypeVariableTypes(session.typeContext))
                     }

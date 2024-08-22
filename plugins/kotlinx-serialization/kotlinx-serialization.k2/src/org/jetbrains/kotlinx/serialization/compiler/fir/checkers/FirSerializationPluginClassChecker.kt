@@ -97,7 +97,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         val declarations = classSymbol.declarationSymbols
 
-        val parametersCount = serializableKType.typeArguments.size
+        val parametersCount = serializableKType.typeArgumentsOfLowerBoundIfFlexible.size
         if (parametersCount > 0) {
             val hasSuitableConstructor = declarations.filterIsInstance<FirConstructorSymbol>().any { constructor ->
                 constructor.valueParameterSymbols.size == parametersCount
@@ -494,7 +494,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkGenericArrayType(propertyType: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
-        if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
+        if (propertyType.isNonPrimitiveArray && propertyType.typeArgumentsOfLowerBoundIfFlexible.first().type?.isTypeParameter == true) {
             reporter.reportOn(
                 source,
                 FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
@@ -623,10 +623,10 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             // it is allowed that parameters are not passed in regular serializers at all
             && primaryConstructor.valueParameterSymbols.isNotEmpty()
             // if the parameters are still specified, then their number must match in the serializable class and constructor
-            && serializerForType.typeArguments.size != primaryConstructor.valueParameterSymbols.size
+            && serializerForType.typeArgumentsOfLowerBoundIfFlexible.size != primaryConstructor.valueParameterSymbols.size
         ) {
-            val message = if (serializerForType.typeArguments.isNotEmpty()) {
-                "expected no parameters or ${serializerForType.typeArguments.size}, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
+            val message = if (serializerForType.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty()) {
+                "expected no parameters or ${serializerForType.typeArgumentsOfLowerBoundIfFlexible.size}, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             } else {
                 "expected no parameters but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             }

@@ -240,7 +240,7 @@ private fun FirTypeParameter.getTypeParameterFromExpandedClass(index: Int, sessi
     } else if (containingDeclaration is FirTypeAlias) {
         val typeParameterConeType = toConeType()
         val expandedConeType = containingDeclaration.expandedTypeRef.coneType
-        val typeArgumentIndex = expandedConeType.typeArguments.indexOfFirst { it.type == typeParameterConeType }
+        val typeArgumentIndex = expandedConeType.typeArgumentsOfLowerBoundIfFlexible.indexOfFirst { it.type == typeParameterConeType }
         val expandedTypeFir = expandedConeType.toSymbol(session)?.fir
         if (expandedTypeFir is FirTypeParameterRefsOwner) {
             val typeParameterFir = expandedTypeFir.typeParameters.elementAtOrNull(typeArgumentIndex)?.symbol?.fir ?: return this

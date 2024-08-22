@@ -173,17 +173,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.argumentsCount(): Int {
         require(this is ConeKotlinType)
-        return this.typeArguments.size
+        return this.typeArgumentsOfLowerBoundIfFlexible.size
     }
 
     override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker {
         require(this is ConeKotlinType)
-        return this.typeArguments.getOrNull(index) ?: ConeStarProjection
+        return this.typeArgumentsOfLowerBoundIfFlexible.getOrNull(index) ?: ConeStarProjection
     }
 
     override fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker> {
         require(this is ConeKotlinType)
-        return this.typeArguments.toList()
+        return this.typeArgumentsOfLowerBoundIfFlexible.toList()
     }
 
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
@@ -389,7 +389,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun identicalArguments(a: SimpleTypeMarker, b: SimpleTypeMarker): Boolean {
         require(a is ConeKotlinType)
         require(b is ConeKotlinType)
-        return a.typeArguments === b.typeArguments
+        return a.typeArgumentsOfLowerBoundIfFlexible === b.typeArgumentsOfLowerBoundIfFlexible
     }
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
@@ -616,7 +616,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         val substitutor = if (declaration is FirTypeParameterRefsOwner) {
             val substitution =
-                declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
+                declaration.typeParameters.zip(type.typeArgumentsOfLowerBoundIfFlexible).associate { (parameter, argument) ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.coneType)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }

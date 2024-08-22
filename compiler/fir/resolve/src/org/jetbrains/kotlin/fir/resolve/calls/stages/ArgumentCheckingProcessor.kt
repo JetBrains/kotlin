@@ -317,7 +317,7 @@ internal object ArgumentCheckingProcessor {
             it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
         }?.type as ConeKotlinType?
 
-        return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
+        return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty()) {
             ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
                 candidate.addPostponedAtom(it)
                 atom.subAtom = it
@@ -441,7 +441,7 @@ internal object ArgumentCheckingProcessor {
             .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
             ?.firstOrNull() as? ConeKotlinType ?: return null
 
-        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }.ifEmpty { return null }
+        val typeArguments = functionType.typeArgumentsOfLowerBoundIfFlexible.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }.ifEmpty { return null }
         return createFunctionType(
             kind = expectedTypeKind,
             parameters = typeArguments.subList(0, typeArguments.lastIndex),

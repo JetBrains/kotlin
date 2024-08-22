@@ -38,7 +38,7 @@ open class ConeTypeRenderer(
             builder.append(it)
             builder.append(" ")
         }
-        val typeArguments = type.typeArguments
+        val typeArguments = type.typeArgumentsOfLowerBoundIfFlexible
         val isExtension = type.isExtensionFunctionType
         val (receiver, otherTypeArguments) = if (isExtension && typeArguments.size >= 2 && typeArguments.first() != ConeStarProjection) {
             typeArguments.first() to typeArguments.drop(1)

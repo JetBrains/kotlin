@@ -145,13 +145,13 @@ internal interface FirMissingDependencyClassProxy {
             // We report an error MISSING_DEPENDENCY_CLASS generally,
             // but report a deprecation warning in two corner cases instead to avoid breaking code immediately
             when {
-                missingTypeOrigin is LambdaParameter && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaParameter && missingType.typeArgumentsOfLowerBoundIfFlexible.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(
                         source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, missingTypeOrigin.name, context
                     )
                 }
-                missingTypeOrigin is LambdaReceiver && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaReceiver && missingType.typeArgumentsOfLowerBoundIfFlexible.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, withoutArguments, context)
                 }

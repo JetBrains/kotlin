@@ -77,7 +77,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
 
     private fun extractImmediateTypeArgumentData(typeRef: FirTypeRef): List<TypeArgumentData> =
         extractArgumentsTypeRefAndSource(typeRef)
-            ?.let { typeRef.coneType.abbreviatedTypeOrSelf.typeArguments.zip(it) }
+            ?.let { typeRef.coneType.abbreviatedTypeOrSelf.typeArgumentsOfLowerBoundIfFlexible.zip(it) }
             ?.mapIndexed { index, it ->
                 TypeArgumentData(typeRef.coneType.abbreviatedTypeOrSelf, index, it.first, it.second)
             }
@@ -128,7 +128,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
         return buildList {
             collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
                 symbol, coneType, ConeSubstitutor.Empty, this, session,
-                argumentIndexToSource = { projectionToSource[coneType.typeArguments[it]] },
+                argumentIndexToSource = { projectionToSource[coneType.typeArgumentsOfLowerBoundIfFlexible[it]] },
             )
         }
     }

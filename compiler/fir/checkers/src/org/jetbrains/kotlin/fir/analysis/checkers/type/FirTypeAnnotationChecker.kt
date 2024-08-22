@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
@@ -44,7 +44,7 @@ object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
                         reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING, context)
                     }
 
-                } else if (typeRef.coneType.typeArguments.size <= 1) {
+                } else if (typeRef.coneType.typeArgumentsOfLowerBoundIfFlexible.size <= 1) {
                     reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
                 }
             }

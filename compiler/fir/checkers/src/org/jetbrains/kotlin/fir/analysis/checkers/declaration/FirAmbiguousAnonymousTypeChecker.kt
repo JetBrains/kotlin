@@ -77,7 +77,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
                 context
             )
         }
-        for (typeArgument in type.typeArguments) {
+        for (typeArgument in type.typeArgumentsOfLowerBoundIfFlexible) {
             checkTypeAndArguments(
                 typeArgument.type ?: continue,
                 context, reporter, reportOn

@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 
 object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!typeRef.coneType.isSomeFunctionType(context.session)) return
 
-        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1).groupBy {
+        val nameToArgumentProjection = typeRef.coneType.typeArgumentsOfLowerBoundIfFlexible.dropLast(1).groupBy {
             val type = it.type ?: return@groupBy null
             val annotation = type.customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, context.session)
             val nameEntry = annotation?.argumentMapping?.mapping?.get(StandardNames.NAME)

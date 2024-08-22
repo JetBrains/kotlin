@@ -49,7 +49,7 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
                 if (!superType.isAny && result.add(TypeWithOrigin(superType, origin))) {
                     superType.toClassSymbol(session)?.let { collect(it, origin) }
                 }
-                for (typeArgument in superType.typeArguments) {
+                for (typeArgument in superType.typeArgumentsOfLowerBoundIfFlexible) {
                     if (typeArgument !is ConeKotlinTypeProjection) continue
                     val type = typeArgument.type
                     if (!type.isAny && result.add(TypeWithOrigin(type, SupertypeOrigin.TYPE_ARGUMENT))) {

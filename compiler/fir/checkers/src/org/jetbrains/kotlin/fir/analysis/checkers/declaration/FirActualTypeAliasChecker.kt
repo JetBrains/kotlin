@@ -54,7 +54,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
                         reportActualTypeAliasWithComplexSubstitution = true
                         break
                     }
-                } else if (typeArgument is ConeKotlinType && typeArgument.typeArguments.isNotEmpty()) {
+                } else if (typeArgument is ConeKotlinType && typeArgument.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty()) {
                     reportActualTypeAliasWithComplexSubstitution = true
                     break
                 }

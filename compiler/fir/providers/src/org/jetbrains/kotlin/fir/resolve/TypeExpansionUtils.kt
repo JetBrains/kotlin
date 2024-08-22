@@ -149,7 +149,7 @@ private fun ConeClassLikeType.applyAttributesFrom(
 }
 
 fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeKotlinType): List<Pair<FirTypeParameterSymbol, ConeTypeProjection>> =
-    typeParameters.map { it.symbol }.zip(type.typeArguments)
+    typeParameters.map { it.symbol }.zip(type.typeArgumentsOfLowerBoundIfFlexible)
 
 fun createParametersSubstitutor(
     useSiteSession: FirSession,

@@ -29,7 +29,7 @@ internal fun ConeKotlinType.enhance(session: FirSession, qualifiers: IndexedJava
 private fun ConeKotlinType.computeSubtreeSizes(result: MutableList<Int>): Int {
     val index = result.size
     result.add(0) // reserve space at index
-    result[index] = 1 + typeArguments.sumOf {
+    result[index] = 1 + typeArgumentsOfLowerBoundIfFlexible.sumOf {
         // Star projections take up one (empty) entry.
         it.type?.computeSubtreeSizes(result) ?: 1.also { result.add(1) }
     }
@@ -98,7 +98,7 @@ private fun ConeRigidType.enhanceInflexibleType(
     }
 
     val shouldEnhance = position.shouldEnhance()
-    if ((!shouldEnhance && typeArguments.isEmpty()) || this !is ConeLookupTagBasedType) {
+    if ((!shouldEnhance && typeArgumentsOfLowerBoundIfFlexible.isEmpty()) || this !is ConeLookupTagBasedType) {
         return null
     }
 
@@ -131,9 +131,9 @@ private fun ConeRigidType.enhanceInflexibleType(
 
         if (enhancedTag != lookupTag) {
             // Handle case when mutability was enhanced and nullability was enhanced for warning.
-            enhancedTag.constructType(enhanced.typeArguments, isNullable, newAttributes)
+            enhancedTag.constructType(enhanced.typeArgumentsOfLowerBoundIfFlexible, isNullable, newAttributes)
         } else {
-            this.withAttributes(newAttributes).withArguments(enhanced.typeArguments)
+            this.withAttributes(newAttributes).withArguments(enhanced.typeArgumentsOfLowerBoundIfFlexible)
         }.applyIf(isFromDefinitelyNotNullType) {
             // If the original type was DNN, we need to wrap the result in a DNN type because `this` is the non-DNN part of the original.
             // In the non-warning case, this happens in the nested call and so `enhanced` is already DNN.
@@ -173,7 +173,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     }
 
     var globalArgIndex = index + 1
-    val enhancedArguments = typeArguments.mapIndexed { currentArgLocalIndex, arg ->
+    val enhancedArguments = typeArgumentsOfLowerBoundIfFlexible.mapIndexed { currentArgLocalIndex, arg ->
         val currentArgGlobalIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
         if (arg.type == null && qualifiers(currentArgGlobalIndex).nullability == NullabilityQualifier.FORCE_FLEXIBILITY) {
             // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
@@ -205,7 +205,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
         return null // absolutely no changes
     }
 
-    val mergedArguments = Array(typeArguments.size) { enhancedArguments[it] ?: typeArguments[it] }
+    val mergedArguments = Array(typeArgumentsOfLowerBoundIfFlexible.size) { enhancedArguments[it] ?: typeArgumentsOfLowerBoundIfFlexible[it] }
     val mergedAttributes = if (shouldAddAttribute) attributes.add(CompilerConeAttributes.EnhancedNullability) else attributes
     val enhancedType = enhancedTag.constructType(mergedArguments, enhancedIsNullable, mergedAttributes)
     return if (isDefinitelyNotNull || (isFromDefinitelyNotNullType && nullabilityFromQualifiers == null))

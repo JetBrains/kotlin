@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.utils.DFS
 
 /**
@@ -73,10 +72,10 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
                 if (visitedSymbols.add(symbol)) {
                     parameters.forEach { visit(it.toConeType()) }
                 }
-                if (parameters.size != type.typeArguments.size) continue
+                if (parameters.size != type.typeArgumentsOfLowerBoundIfFlexible.size) continue
 
                 for (i in parameters.indices) {
-                    if (type.typeArguments[i].kind != ProjectionKind.INVARIANT) {
+                    if (type.typeArgumentsOfLowerBoundIfFlexible[i].kind != ProjectionKind.INVARIANT) {
                         val parameter = parameters[i].toConeType()
                         edges.getOrPut(coneType) { mutableSetOf() }.add(parameter)
                         edges.getOrPut(parameter) { mutableSetOf() }

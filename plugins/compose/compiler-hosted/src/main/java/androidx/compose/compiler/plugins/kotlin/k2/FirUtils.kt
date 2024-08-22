@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.isMaybeMainFunction
+import org.jetbrains.kotlin.fir.java.findJvmNameValue
+import org.jetbrains.kotlin.fir.java.findJvmStaticAnnotation
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -50,7 +53,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeArguments
+import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 fun FirAnnotationContainer.hasComposableAnnotation(session: FirSession): Boolean =
@@ -150,8 +153,8 @@ fun FirFunctionSymbol<*>.isMain(session: FirSession): Boolean {
         }
         1 -> {
             val type = parameterTypes.single()
-            if (!type.isArrayType || type.typeArguments.size != 1) return false
-            val elementType = type.typeArguments[0].takeIf { it.kind != ProjectionKind.IN }?.type
+            if (!type.isArrayType || type.typeArgumentsOfLowerBoundIfFlexible.size != 1) return false
+            val elementType = type.typeArgumentsOfLowerBoundIfFlexible[0].takeIf { it.kind != ProjectionKind.IN }?.type
                 ?: return false
             if (!elementType.isString) return false
         }

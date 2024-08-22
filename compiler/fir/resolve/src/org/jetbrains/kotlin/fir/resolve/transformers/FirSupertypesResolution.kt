@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -773,7 +772,7 @@ open class SupertypeComputationSession {
                     fun checkTypeArgumentsRecursively(type: ConeKotlinType, visitedTypes: MutableSet<ConeKotlinType>) {
                         if (type in visitedTypes) return
                         visitedTypes += type
-                        for (typeArgument in type.typeArguments) {
+                        for (typeArgument in type.typeArgumentsOfLowerBoundIfFlexible) {
                             val typeToCheck = typeArgument.type as? ConeClassLikeType ?: continue
                             checkIsInLoop(
                                 typeToCheck.lookupTag.toSymbol(session)?.fir,

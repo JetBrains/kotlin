@@ -206,7 +206,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         currentlyProcessed: MutableSet<ConeKotlinType>,
         isFunctionType: Boolean
     ): Boolean {
-        if (typeArguments.isEmpty()) {
+        if (this !is ConeClassLikeType || typeArguments.isEmpty()) {
             return true
         }
         for (i in 0 until typeArguments.lastIndex) {

@@ -1556,7 +1556,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private fun convertFirGetClassCall(expression: FirExpression): JCExpression? {
         if (expression !is FirGetClassCall) return null
         val kClassType = expression.resolvedType
-        val type = kClassType.typeArguments.single().type ?: return null
+        val type = kClassType.typeArgumentsOfLowerBoundIfFlexible.single().type ?: return null
         val typeExpression = convertFirType(type)
         return treeMaker.Select(typeExpression, treeMaker.name("class"))
     }

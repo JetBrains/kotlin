@@ -172,7 +172,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
 
         var maxArgumentDepth = 0
-        for (arg in typeArguments) {
+        for (arg in typeArgumentsOfLowerBoundIfFlexible) {
             val current = if (arg is ConeStarProjection) 1 else (arg as ConeKotlinTypeProjection).type.typeDepth()
             if (current > maxArgumentDepth) {
                 maxArgumentDepth = current
