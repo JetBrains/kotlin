@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiUtilCore.getElementType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
@@ -320,6 +322,8 @@ open class PsiRawFirBuilder(
                 }
             }
         }
+
+
 
         private fun KtElement.checkSelectorInvariant(result: FirExpression): FirExpression {
             val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
@@ -2864,22 +2868,126 @@ open class PsiRawFirBuilder(
             }.bindLabel(expression).build()
         }
 
-        override fun visitBinaryExpression(expression: KtBinaryExpression, data: FirElement?): FirElement {
-            val operationToken = expression.operationToken
+        private fun foldOrConvertExpression(expression: KtElement, data: FirElement?, source: KtPsiSourceElement): FirElement? {
 
-            if (operationToken == IDENTIFIER) {
-                context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
-            } else {
-                context.calleeNamesForLambda += null
+            fun KtElement?.toFirExpressionWithFold(
+                errorReason: String,
+                kind: DiagnosticKind = DiagnosticKind.ExpressionExpected,
+                sourceWhenNotNull: () -> KtPsiSourceElement = { this!!.toFirSourceElement() }
+            ): FirExpression? {
+                val diag = { ConeSimpleDiagnostic(errorReason, kind) }
+                if (this == null) {
+                    return buildErrorExpression(source = null, diag())
+                }
+
+                val ktSource = sourceWhenNotNull()
+                return when (val fir = foldOrConvertExpression(this, null, ktSource)) {
+                    is FirExpression -> when {
+                        !fir.isStatementLikeExpression -> checkSelectorInvariant(fir)
+                        else -> buildErrorExpression {
+                            nonExpressionElement = fir
+                            diagnostic = diag()
+                            this.source = ktSource
+                        }
+                    }
+                    null -> null
+                    else -> buildErrorExpression {
+                        nonExpressionElement = fir
+                        diagnostic = diag()
+                        this.source = fir.source?.realElement() ?: ktSource
+                    }
+                }
             }
 
-            val leftArgument = expression.left.toFirExpression("No left operand")
-            val rightArgument = expression.right.toFirExpression("No right operand")
+            when (expression) {
+                is KtStringTemplateExpression -> {
+                    if (expression.entries.size == 1 && getElementType(expression.entries[0]) == LITERAL_STRING_TEMPLATE_ENTRY && context.folder.canFold()) {
+                        context.folder.fold(expression.entries[0].asText)
+                        return null
+                    } else {
+                        context.folder.disable()
+                        return expression.accept(this, data)
+                    }
+                }
+                is KtBinaryExpression -> {
+                    val operationToken = expression.operationToken
+                    if (operationToken != PLUS) {
+                        context.folder.disable()
+                    }
 
-            // No need for the callee name since arguments are already generated
-            context.calleeNamesForLambda.removeLast()
+                    if (operationToken == IDENTIFIER) {
+                        context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
+                    } else {
+                        context.calleeNamesForLambda += null
+                    }
 
+                    val leftArgument = expression.left
+                    val rightArgument = expression.right
+                    var lhs: FirElement? = null
+
+                    val checkpoint: StringLiteralsFolder.StringLiteralsFolderCheckpoint? =
+                        if (context.folder.canFold()) context.folder.checkpoint() else null
+
+                    lhs = leftArgument.toFirExpressionWithFold("no left operand", DiagnosticKind.ExpressionExpected)
+
+                    val rhs = if (lhs != null) {
+                        if (context.folder.canInitialize() && rightArgument != null) {
+                            val rightSource = rightArgument.toFirSourceElement()
+                            context.folder.initialize(rightSource)
+                            rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected, { rightSource })
+                                ?: getFoldedStringLiterals()
+                        } else {
+                            context.folder.disable()
+                            rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected)
+                        }
+                    } else {
+                        rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected)
+                    }
+
+                    if (rhs != null && lhs == null) {
+                        if (checkpoint!!.isStart()) {
+                            lhs = getFoldedStringLiterals()
+                        } else {
+                            checkpoint.rollback(context.folder)
+                            context.folder.disable()
+                            lhs = leftArgument.toFirExpressionWithFold("no left operand", DiagnosticKind.ExpressionExpected)
+                        }
+                    }
+
+                    context.calleeNamesForLambda.removeLast()
+
+                    if (rhs == null && lhs == null) {
+                        return null
+                    }
+
+                    return createBinaryExpression(expression, data, lhs as FirExpression, rhs as FirExpression, source)
+                }
+                is KtParenthesizedExpression -> {
+                    context.forwardLabelUsagePermission(expression, expression.expression)
+                    return expression.expression.toFirExpressionWithFold("Empty parentheses")
+                }
+                else -> {
+                    context.folder.disable()
+                    return expression.accept(this, data)
+                }
+            }
+        }
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression, data: FirElement?): FirElement {
             val source = expression.toFirSourceElement()
+            if (context.folder.canInitialize())
+                context.folder.initialize(source)
+            return foldOrConvertExpression(expression, data, source) ?: getFoldedStringLiterals()
+        }
+
+        private fun createBinaryExpression(
+            expression: KtBinaryExpression,
+            data: FirElement?,
+            leftArgument: FirExpression,
+            rightArgument: FirExpression,
+            source: KtPsiSourceElement,
+        ): FirElement {
+            val operationToken = expression.operationToken
 
             when (operationToken) {
                 ELVIS ->
@@ -2899,30 +3007,15 @@ open class PsiRawFirBuilder(
             }
             val conventionCallName = operationToken.toBinaryName()
             return if (conventionCallName != null || operationToken == IDENTIFIER) {
-                if (operationToken == PLUS
-                    && leftArgument is FirLiteralExpression
-                    && leftArgument.kind == ConstantValueKind.String
-                    && rightArgument is FirLiteralExpression
-                    && rightArgument.kind == ConstantValueKind.String
-                ) {
-                    // Let's fold literal strings concatenation
-                    buildLiteralExpression(
-                        source,
-                        ConstantValueKind.String,
-                        leftArgument.value as String + rightArgument.value as String,
-                        setType = false,
-                    )
-                } else {
-                    buildFunctionCall {
-                        this.source = source
-                        calleeReference = buildSimpleNamedReference {
-                            this.source = expression.operationReference.toFirSourceElement()
-                            name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
-                        }
-                        explicitReceiver = leftArgument
-                        argumentList = buildUnaryArgumentList(rightArgument)
-                        origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
+                buildFunctionCall {
+                    this.source = source
+                    calleeReference = buildSimpleNamedReference {
+                        this.source = expression.operationReference.toFirSourceElement()
+                        name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
                     }
+                    explicitReceiver = leftArgument
+                    argumentList = buildUnaryArgumentList(rightArgument)
+                    origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()

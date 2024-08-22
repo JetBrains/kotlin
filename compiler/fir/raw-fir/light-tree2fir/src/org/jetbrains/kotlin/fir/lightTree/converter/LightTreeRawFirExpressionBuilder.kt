@@ -268,96 +268,181 @@ class LightTreeRawFirExpressionBuilder(
         }
     }
 
+    private fun foldOrConvertExpression(expression: LighterASTNode, source: KtLightSourceElement): FirStatement? {
+        fun LighterASTNode?.getAsFirExpressionWithFold(errorReason: String = "", sourceWhenNotNull: () -> KtLightSourceElement = { this!!.toFirSourceElement() }): FirExpression? {
+            if (this == null) {
+                return buildErrorExpression(
+                    source = null,
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+                )
+            }
+
+            val exprSource = sourceWhenNotNull()
+            return when (val converted = foldOrConvertExpression(this, exprSource)) {
+                is FirExpression -> when {
+                    !converted.isStatementLikeExpression -> converted
+                    else -> buildErrorExpression(
+                        exprSource,
+                        ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                        converted)
+                }
+                null -> null
+                else -> buildErrorExpression(
+                    converted.source?.realElement() ?: this.toFirSourceElement(),
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                    converted,
+                )
+            }
+        }
+
+        when (expression.tokenType) {
+            STRING_TEMPLATE -> {
+                val children = expression.getChildrenAsArray().filter { it != null && it.tokenType != OPEN_QUOTE && it.tokenType != CLOSING_QUOTE }
+                if (children.size == 1 && children[0]!!.tokenType == LITERAL_STRING_TEMPLATE_ENTRY && context.folder.canFold()) {
+                    context.folder.fold(children[0]!!.asText)
+                    return null
+                } else {
+                    context.folder.disable()
+                    return convertStringTemplate(expression)
+                }
+            }
+            BINARY_EXPRESSION -> {
+                var isLeftArgument = true
+                lateinit var operationTokenName: String
+                var leftArgNode: LighterASTNode? = null
+                var rightArg: LighterASTNode? = null
+                var operationReferenceSource: KtLightSourceElement? = null
+                expression.forEachChildren {
+                    when (it.tokenType) {
+                        OPERATION_REFERENCE -> {
+                            isLeftArgument = false
+                            operationTokenName = it.asText
+                            operationReferenceSource = it.toFirSourceElement()
+                        }
+                        else -> if (it.isExpression()) {
+                            if (isLeftArgument) {
+                                leftArgNode = it
+                            } else {
+                                rightArg = it
+                            }
+                        }
+                    }
+                }
+                val operationToken = operationTokenName.getOperationSymbol()
+
+                if (operationToken != PLUS) {
+                    context.folder.disable()
+                }
+
+                if (operationToken == IDENTIFIER) {
+                    context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
+                } else {
+                    context.calleeNamesForLambda += null
+                }
+
+                var lhs: FirElement? = null
+                val checkpoint: StringLiteralsFolder.StringLiteralsFolderCheckpoint? =
+                    if (context.folder.canFold()) context.folder.checkpoint() else null
+
+                lhs = leftArgNode.getAsFirExpressionWithFold("no left operand")
+
+                val rhs = if (lhs != null) {
+                    if (context.folder.canInitialize() && rightArg != null) {
+                        val rightSource = rightArg!!.toFirSourceElement()
+                        context.folder.initialize(rightSource)
+                        rightArg.getAsFirExpressionWithFold("no right operand", { rightSource })
+                            ?: getFoldedStringLiterals()
+                    } else {
+                        context.folder.disable()
+                        rightArg.getAsFirExpressionWithFold("no right operand")
+                    }
+                } else {
+                    rightArg.getAsFirExpressionWithFold("no right operand")
+                }
+
+                context.calleeNamesForLambda.removeLast()
+
+                if (rhs != null && lhs == null) {
+                    if (checkpoint!!.isStart()) {
+                        lhs = getFoldedStringLiterals()
+                    } else {
+                        checkpoint.rollback(context.folder)
+                        context.folder.disable()
+                        lhs = leftArgNode.getAsFirExpressionWithFold("no left operand")
+                    }
+                }
+
+                if (rhs == null && lhs == null) {
+                    return null
+                }
+
+                return createBinaryExpression(expression, lhs as FirExpression, rhs as FirExpression, operationTokenName, operationReferenceSource, leftArgNode, rightArg, source)
+            }
+            PARENTHESIZED -> {
+                val content = expression.getExpressionInParentheses()
+                context.forwardLabelUsagePermission(expression, content)
+                return content.getAsFirExpressionWithFold("Empty parentheses")
+            }
+            else -> {
+                context.folder.disable()
+                return getAsFirStatement(expression, "")
+            }
+        }
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseBinaryExpression
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitBinaryExpression
      */
     private fun convertBinaryExpression(binaryExpression: LighterASTNode): FirStatement {
-        var isLeftArgument = true
-        lateinit var operationTokenName: String
-        var leftArgNode: LighterASTNode? = null
-        var rightArg: LighterASTNode? = null
-        var operationReferenceSource: KtLightSourceElement? = null
-        binaryExpression.forEachChildren {
-            when (it.tokenType) {
-                OPERATION_REFERENCE -> {
-                    isLeftArgument = false
-                    operationTokenName = it.asText
-                    operationReferenceSource = it.toFirSourceElement()
-                }
-                else -> if (it.isExpression()) {
-                    if (isLeftArgument) {
-                        leftArgNode = it
-                    } else {
-                        rightArg = it
-                    }
-                }
-            }
-        }
+        val source = binaryExpression.toFirSourceElement()
+        if (context.folder.canInitialize())
+            context.folder.initialize(source)
+        return foldOrConvertExpression(binaryExpression, source) ?: getFoldedStringLiterals()
+    }
 
-        val baseSource = binaryExpression.toFirSourceElement()
+    private fun createBinaryExpression(
+        binaryExpression: LighterASTNode,
+        leftArgument: FirExpression,
+        rightArgument: FirExpression,
+        operationTokenName: String,
+        operationReferenceSource: KtLightSourceElement?,
+        leftArgNode: LighterASTNode?,
+        rightArg: LighterASTNode?,
+        source: KtLightSourceElement,
+    ): FirStatement {
         val operationToken = operationTokenName.getOperationSymbol()
-        if (operationToken == IDENTIFIER) {
-            context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
-        } else {
-            context.calleeNamesForLambda += null
-        }
-
-        val rightArgAsFir =
-            if (rightArg != null)
-                getAsFirExpression<FirExpression>(rightArg, "No right operand")
-            else
-                buildErrorExpression(null, ConeSyntaxDiagnostic("No right operand"))
-
-        val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
-
-        // No need for the callee name since arguments are already generated
-        context.calleeNamesForLambda.removeLast()
-
         when (operationToken) {
             ELVIS ->
-                return leftArgAsFir.generateNotNullOrOther(rightArgAsFir, baseSource)
+                return leftArgument.generateNotNullOrOther(rightArgument, source)
             ANDAND, OROR ->
-                return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == ANDAND, baseSource)
+                return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
             in OperatorConventions.IN_OPERATIONS ->
-                return rightArgAsFir.generateContainsOperation(leftArgAsFir, operationToken == NOT_IN, baseSource, operationReferenceSource)
+                return rightArgument.generateContainsOperation(leftArgument, operationToken == NOT_IN, source, operationReferenceSource)
             in OperatorConventions.COMPARISON_OPERATIONS ->
-                return leftArgAsFir.generateComparisonExpression(rightArgAsFir, operationToken, baseSource, operationReferenceSource)
+                return leftArgument.generateComparisonExpression(rightArgument, operationToken, source, operationReferenceSource)
         }
         val conventionCallName = operationToken.toBinaryName()
         return if (conventionCallName != null || operationToken == IDENTIFIER) {
-            if (operationToken == PLUS
-                && leftArgAsFir is FirLiteralExpression && leftArgAsFir.kind == ConstantValueKind.String
-                && rightArgAsFir is FirLiteralExpression && rightArgAsFir.kind == ConstantValueKind.String
-            ) {
-                // Let's fold literal strings concatenation
-                buildLiteralExpression(
-                    binaryExpression.toFirSourceElement(),
-                    ConstantValueKind.String,
-                    leftArgAsFir.value as String + rightArgAsFir.value as String,
-                    setType = false,
-                )
-            } else {
-                buildFunctionCall {
-                    source = binaryExpression.toFirSourceElement()
-                    calleeReference = buildSimpleNamedReference {
-                        source = operationReferenceSource ?: this@buildFunctionCall.source
-                        name = conventionCallName ?: operationTokenName.nameAsSafeName()
-                    }
-                    explicitReceiver = leftArgAsFir
-                    argumentList = buildUnaryArgumentList(rightArgAsFir)
-                    origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
+            buildFunctionCall {
+                this.source = source
+                calleeReference = buildSimpleNamedReference {
+                    this.source = operationReferenceSource ?: this@buildFunctionCall.source
+                    name = conventionCallName ?: operationTokenName.nameAsSafeName()
                 }
+                explicitReceiver = leftArgument
+                argumentList = buildUnaryArgumentList(rightArgument)
+                origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
             }
         } else {
             val firOperation = operationToken.toFirOperation()
             if (firOperation in FirOperation.ASSIGNMENTS) {
                 return leftArgNode.generateAssignment(
-                    binaryExpression.toFirSourceElement(),
+                    source,
                     leftArgNode?.toFirSourceElement(),
-                    rightArgAsFir,
+                    rightArgument,
                     firOperation,
-                    leftArgAsFir.annotations,
+                    leftArgument.annotations,
                     rightArg,
                     leftArgNode?.tokenType in UNWRAPPABLE_TOKEN_TYPES,
                 ) {
@@ -370,9 +455,9 @@ class LightTreeRawFirExpressionBuilder(
                 }
             } else {
                 buildEqualityOperatorCall {
-                    source = binaryExpression.toFirSourceElement()
+                    this.source = source
                     operation = firOperation
-                    argumentList = buildBinaryArgumentList(leftArgAsFir, rightArgAsFir)
+                    argumentList = buildBinaryArgumentList(leftArgument, rightArgument)
                 }
             }
         }

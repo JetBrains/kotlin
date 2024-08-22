@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
@@ -1246,6 +1247,18 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         SETTER(shouldExplicitParameterTypeBePresent = false),
         LAMBDA(shouldExplicitParameterTypeBePresent = false),
         FOR_LOOP(shouldExplicitParameterTypeBePresent = false),
+    }
+
+    // String literals folding helpers
+
+    fun getFoldedStringLiterals(): FirStatement {
+        val (str, source) = context.folder.release()
+        return buildLiteralExpression(
+            source,
+            ConstantValueKind.String,
+            setType = false,
+            value = str
+        )
     }
 }
 
