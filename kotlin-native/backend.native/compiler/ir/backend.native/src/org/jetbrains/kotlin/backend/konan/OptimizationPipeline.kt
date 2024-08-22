@@ -215,7 +215,9 @@ abstract class LlvmOptimizationPipeline(
         try {
             initLLVMOnce()
             config.inlineThreshold?.let { threshold ->
-                LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+                if (threshold >= 0) {
+                    LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+                }
             }
             LLVMPassBuilderOptionsSetMaxDevirtIterations(options, 0)
             if (config.timePasses) {
