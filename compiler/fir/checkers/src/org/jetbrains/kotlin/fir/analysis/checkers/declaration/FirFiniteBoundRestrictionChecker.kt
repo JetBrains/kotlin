@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.typeArguments
 import org.jetbrains.kotlin.utils.DFS
 
 /**

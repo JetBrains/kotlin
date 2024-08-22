@@ -20,8 +20,6 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
-    abstract val typeArguments: Array<out ConeTypeProjection>
-
     final override val type: ConeKotlinType
         get() = this
 
@@ -82,6 +80,7 @@ abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
 }
 
 abstract class ConeClassLikeType : ConeLookupTagBasedType() {
+    abstract val typeArguments: Array<out ConeTypeProjection>
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
@@ -92,9 +91,6 @@ open class ConeFlexibleType(
     val lowerBound: ConeRigidType,
     val upperBound: ConeRigidType
 ) : ConeKotlinType(), FlexibleTypeMarker {
-
-    final override val typeArguments: Array<out ConeTypeProjection>
-        get() = lowerBound.typeArguments
 
     final override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
@@ -168,9 +164,6 @@ data class ConeCapturedType(
         )
     )
 
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -203,9 +196,6 @@ data class ConeCapturedType(
 data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType
 ) : ConeRigidType(), DefinitelyNotNullTypeMarker {
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = original.typeArguments
-
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
 
@@ -265,8 +255,6 @@ class ConeIntersectionType(
     val upperBoundForApproximation: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL

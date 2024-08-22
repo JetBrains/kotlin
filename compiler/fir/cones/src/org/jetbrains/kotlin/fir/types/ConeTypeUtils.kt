@@ -169,3 +169,10 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
         is ConeIntegerLiteralType -> this
     }
 }
+
+val ConeKotlinType.typeArguments: Array<out ConeTypeProjection>
+    get() = when(this) {
+        is ConeClassLikeType -> typeArguments
+        is ConeFlexibleType -> lowerBound.typeArguments
+        else -> ConeTypeProjection.EMPTY_ARRAY
+    }

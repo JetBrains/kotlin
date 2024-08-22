@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.typeArguments
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 fun FirAnnotationContainer.hasComposableAnnotation(session: FirSession): Boolean =
