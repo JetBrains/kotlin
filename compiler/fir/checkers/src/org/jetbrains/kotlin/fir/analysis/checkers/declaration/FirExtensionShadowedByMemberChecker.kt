@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInfix
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -45,7 +42,9 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         if (
             declaration.hasAnnotation(StandardClassIds.Annotations.HidesMembers, context.session) ||
             declaration.receiverParameter?.typeRef?.coneType?.isNullable != false ||
-            declaration.nameOrSpecialName == NO_NAME_PROVIDED
+            declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
+            // A common pattern, KT-70012
+            declaration.isActual
         ) {
             return
         }
