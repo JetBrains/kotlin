@@ -107,8 +107,8 @@ fun <L> main(x: L?, y: L) {
         foo15(y, Bar())
     }
 
-    <!NEW_INFERENCE_ERROR!>foo16(x, Bar())<!>
-    <!NEW_INFERENCE_ERROR!>foo16(y, Bar())<!>
+    foo16(x, Bar())
+    foo16(y, Bar())
     if (x != null && y != null) {
         foo16(x, Bar())
         foo16(y, Bar())

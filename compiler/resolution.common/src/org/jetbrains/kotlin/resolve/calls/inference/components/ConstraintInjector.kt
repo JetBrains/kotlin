@@ -158,11 +158,13 @@ class ConstraintInjector(
         constraintSet: Collection<Pair<TypeVariableMarker, Constraint>>,
         position: IncorporationConstraintPosition
     ) {
+        val typeCheckerState = TypeCheckerStateForConstraintInjector(c, position)
         processGivenConstraints(
             c,
-            TypeCheckerStateForConstraintInjector(c, position),
+            typeCheckerState,
             constraintSet,
         )
+        processConstraintsIgnoringForksData(typeCheckerState, c, skipProperEqualityConstraints = true)
     }
 
     private fun processConstraints(
