@@ -9,7 +9,7 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions {
         apiVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
@@ -17,6 +17,8 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
+
+configureRunViaKotlinBuildToolsApi()
 
 kotlin.sourceSets.configureEach {
     languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
