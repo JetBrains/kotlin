@@ -169,13 +169,16 @@ internal fun Project.registerEmbedSwiftExportTask(
             return
         }
 
+        val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+
         val swiftExportTask = registerSwiftExportTask(
             swiftExportExtension,
             SwiftExportDSLConstants.TASK_GROUP,
             binary
-        ).apply {
-            dependsOn(checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled))
-        }
+        )
+
+        swiftExportTask.dependsOn(sandBoxTask)
+        binary.linkTaskProvider.dependsOn(sandBoxTask)
 
         registerEmbedTask(binary, binaryTaskName, environment, swiftExportTask) { false }
     }
@@ -193,9 +196,11 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         return
     }
 
-    val assembleTask = registerAssembleAppleFrameworkTask(framework, environment)?.apply {
-        dependsOn(checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled))
-    } ?: return
+    val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+    val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
+
+    assembleTask.dependsOn(sandBoxTask)
+    framework.linkTaskProvider.dependsOn(sandBoxTask)
 
     registerEmbedTask(framework, frameworkTaskName, environment, assembleTask) { !framework.isStatic }
 }
