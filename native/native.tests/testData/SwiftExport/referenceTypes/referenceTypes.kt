@@ -110,6 +110,15 @@ open class Base {
     fun test(): Int = 42
 }
 
+open class Derived : Base()
+
+var polymorphicObject: Base = Derived()
+
+fun identity(obj: Base): Base = obj
+
+fun getDerived(): Derived = Derived()
+fun getBase(): Base = Base()
+
 // FILE: dependency_usage.kt
 import dependency.*
 

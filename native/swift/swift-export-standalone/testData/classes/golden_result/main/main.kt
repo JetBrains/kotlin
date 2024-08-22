@@ -206,18 +206,6 @@ public fun __root___OBJECT_NO_PACKAGE_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___OPEN_CLASS_init_allocate")
-public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<OPEN_CLASS>()
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___OPEN_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
-    kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
-}
-
 @ExportedBridge("namespace_Foo_INSIDE_CLASS_init_allocate")
 public fun namespace_Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.Foo.INSIDE_CLASS>()

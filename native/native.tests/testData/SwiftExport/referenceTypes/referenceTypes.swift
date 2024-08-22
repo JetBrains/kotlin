@@ -248,10 +248,15 @@ func objectsHashProperly() throws {
 }
 
 func openClassesAreInheritable() throws {
-    class Child: Base {}
+    class Child: Derived {}
 
     let base = Base()
+    let derived = Derived()
     let child = Child()
+
+    try assertSame(actual: identity(obj: base), expected: base)
+    try assertSame(actual: identity(obj: derived), expected: derived)
+    try assertSame(actual: identity(obj: child), expected: child)
 
     try assertFalse(base === child)
     try assertEquals(actual: ObjectIdentifier(type(of: base)), expected: ObjectIdentifier(Base.self))
@@ -259,6 +264,31 @@ func openClassesAreInheritable() throws {
 
     try assertEquals(actual: base.test(), expected: 42)
     try assertEquals(actual: child.test(), expected: 42)
+}
+
+func openClassesAdhereToLSP() throws {
+    // NOTE: KT-69636 blocks some aspects of LSP support
+    // This test should be expanded after proper wrapper support arrives
+
+    class Child: Derived {}
+
+    let base: Base = getBase()
+    try assertTrue(type(of: base) == Base.self)
+
+    let derived: Base = getDerived()
+    try assertTrue(type(of: derived) == Derived.self)
+
+    let child: Base = Child()
+    try assertTrue(type(of: child) == Child.self)
+
+    try assertTrue(type(of: polymorphicObject) == Base.self)
+    try assertTrue(polymorphicObject !== base)
+    polymorphicObject = base
+    try assertSame(actual: polymorphicObject, expected: base)
+    polymorphicObject = derived
+    try assertSame(actual: polymorphicObject, expected: derived)
+    polymorphicObject = child
+    try assertSame(actual: polymorphicObject, expected: child)
 }
 
 class ReferenceTypesTests : TestProvider {
@@ -297,6 +327,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "classWithFactory", method: withAutorelease(classWithFactory)),
             TestCase(name: "objectsHashProperly", method: withAutorelease(objectsHashProperly)),
             TestCase(name: "openClassesAreInheritable", method: withAutorelease(openClassesAreInheritable)),
+            TestCase(name: "openClassesAdhereToLSP", method: withAutorelease(openClassesAdhereToLSP)),
         ]
     }
 }

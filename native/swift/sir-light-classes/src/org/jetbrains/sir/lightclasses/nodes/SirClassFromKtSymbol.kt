@@ -5,10 +5,14 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
+import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -63,10 +68,20 @@ internal class SirClassFromKtSymbol(
     }
 
     override val superClass: SirType? by lazyWithSessions {
-        // For now, we support only `class C : Kotlin.Any()` class declarations, and
-        // translate Kotlin.Any to KotlinRuntime.KotlinBase.
-        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
-        SirNominalType(KotlinRuntimeModule.kotlinBase)
+        ktSymbol.superTypes
+            .mapNotNull { it.symbol as? KaClassSymbol }
+            .firstOrNull { it.classKind == KaClassKind.CLASS }
+            ?.let {
+                if (it.classId == DefaultTypeClassIds.ANY) {
+                    SirNominalType(KotlinRuntimeModule.kotlinBase).also {
+                        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+                    }
+                } else {
+                    (it.sirDeclaration() as? SirNamedDeclaration)
+                        ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
+                        ?.let { SirNominalType(it) }
+                }
+            }
     }
 
     override val attributes: MutableList<SirAttribute> = mutableListOf()

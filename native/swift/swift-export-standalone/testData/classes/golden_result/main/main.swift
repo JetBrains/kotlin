@@ -186,18 +186,6 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
-open class OPEN_CLASS : KotlinRuntime.KotlinBase {
-    public override init() {
-        let __kt = __root___OPEN_CLASS_init_allocate()
-        super.init(__externalRCRef: __kt)
-        __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
-    }
-    public override init(
-        __externalRCRef: Swift.UInt
-    ) {
-        super.init(__externalRCRef: __externalRCRef)
-    }
-}
 public extension ExportedKotlinPackages.namespace.deeper {
     public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {

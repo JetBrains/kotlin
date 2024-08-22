@@ -210,14 +210,6 @@ fun foo() = CLASS_WITH_SAME_NAME()
  */
 fun bar() = foo().foo()
 
-// FILE: inheritance.kt
-
-open class OPEN_CLASS
-
-class INHERITANCE_SINGLE_CLASS : OPEN_CLASS()
-
-object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
-
 // FILE: should_be_ignored.kt
 public annotation class OptIn
 
@@ -227,11 +219,20 @@ enum class ENUM {
 }
 
 interface OUTSIDE_PROTO {
+    // FIXME: KT-70541
+    // We can not properly detect nested classes as unsopported
+     /*
     open class INSIDE_PROTO
+     */
 }
 
-class INHERITANCE_COUPLE : OUTSIDE_PROTO.INSIDE_PROTO(), OUTSIDE_PROTO
-class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
+// FIXME: See the commend above on OUTSIDE_PROTO.INSIDE_PROTO
+/*
+    class INHERITANCE_COUPLE : OUTSIDE_PROTO.INSIDE_PROTO(), OUTSIDE_PROTO
+    class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
+*/
+
+object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 
 data class DATA_CLASS(val a: Int)
 
@@ -247,8 +248,6 @@ sealed class SEALED {
     object O : SEALED()
 }
 
-object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
-
 // copied from std, the simpliest generic inheritance that I could come up with.
 object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -258,3 +257,25 @@ object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {
     override fun next(): Nothing = throw NoSuchElementException()
     override fun previous(): Nothing = throw NoSuchElementException()
 }
+
+open class GENERIC_CLASS<T>
+
+open class INHERITANCE_GENERIC : GENERIC_CLASS<Int>()
+
+class INHERITANCE_UNSUPPORTED_BASE : INHERITANCE_GENERIC()
+
+// MODULE: inheritance
+// EXPORT_TO_SWIFT
+// FILE: inheritance.kt
+
+open class OPEN_CLASS()
+
+class INHERITANCE_SINGLE_CLASS(var value: Int = 42) : OPEN_CLASS()
+
+object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
+
+// MODULE: cross_module_inheritance(inheritance)
+// EXPORT_TO_SWIFT
+// FILE: inheritance_across_modules.kt
+
+class CLASS_ACROSS_MODULES(var value: Int): OPEN_CLASS()
