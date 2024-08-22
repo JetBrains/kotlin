@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.utils.checkWithAttachment
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 @JvmOverloads
 @JvmName("KtPsiFactory")
@@ -477,9 +476,32 @@ class KtPsiFactory private constructor(
         return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
     }
 
+    /**
+     * @param expression expression in curly braces
+     * @param prefixLength interpolation prefix length
+     */
+    fun createMultiDollarBlockStringTemplateEntry(expression: KtExpression, prefixLength: Int): KtStringTemplateEntryWithExpression {
+        checkInterpolationPrefixLength(prefixLength)
+        // '$' is a special character, the second '$' is necessary for escaping it in the pattern. See createExpressionByPattern
+        val prefix = "$$".repeat(prefixLength)
+        val stringTemplateExpression =
+            createExpressionByPattern("$prefix\"$prefix{$0}\"", expression, reformat = false) as KtStringTemplateExpression
+        return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
+    }
+
     fun createSimpleNameStringTemplateEntry(@NonNls name: String): KtSimpleNameStringTemplateEntry {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
         return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
+    }
+
+    /**
+     * @param name name expression string
+     * @param prefixLength interpolation prefix length
+     */
+    fun createMultiDollarSimpleNameStringTemplateEntry(@NonNls name: String, prefixLength: Int): KtSimpleNameStringTemplateEntry {
+        checkInterpolationPrefixLength(prefixLength)
+        val prefix = "$".repeat(prefixLength)
+        return createMultiDollarStringTemplate("$prefix$name", prefixLength).entries[0] as KtSimpleNameStringTemplateEntry
     }
 
     fun createLiteralStringTemplateEntry(@NonNls literal: String): KtLiteralStringTemplateEntry {
@@ -488,6 +510,26 @@ class KtPsiFactory private constructor(
     }
 
     fun createStringTemplate(@NonNls content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
+
+    /**
+     * @param content string template content
+     * @param prefixLength interpolation prefix length
+     * @param forceMultiQuoted if set to `true`, a triple-quoted string will be created even for single-line content
+     */
+    fun createMultiDollarStringTemplate(
+        @NonNls content: String,
+        prefixLength: Int,
+        forceMultiQuoted: Boolean = false,
+    ): KtStringTemplateExpression {
+        checkInterpolationPrefixLength(prefixLength)
+        val quote = if (content.lines().size > 1 || forceMultiQuoted) "\"\"\"" else "\""
+        val prefix = "$".repeat(prefixLength)
+        return createExpression("$prefix$quote$content$quote") as KtStringTemplateExpression
+    }
+
+    private fun checkInterpolationPrefixLength(prefixLength: Int) {
+        check(prefixLength > 0) { "Interpolation prefix length should be more than 0, got $prefixLength" }
+    }
 
     fun createPackageDirective(fqName: FqName): KtPackageDirective {
         return createFile("package ${fqName.asString()}").packageDirective!!
