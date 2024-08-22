@@ -37,10 +37,17 @@ internal class CoreJrtVirtualFile(
     // TODO: catch IOException?
     private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
 
+    /**
+     * [JrtPath.getFileName][jdk.internal.jrtfs.JrtPath.getFileName] can be slow as it performs string manipulation, so we cache the name.
+     */
+    private var _name: String? = null
+
     override fun getFileSystem(): VirtualFileSystem = virtualFileSystem
 
-    override fun getName(): String =
-        path.fileName.toString()
+    override fun getName(): String {
+        _name?.let { return it }
+        return path.fileName.toString().also { _name = it }
+    }
 
     override fun getPath(): String =
         FileUtil.toSystemIndependentName(jdkHomePath + URLUtil.JAR_SEPARATOR + path)
@@ -60,7 +67,7 @@ internal class CoreJrtVirtualFile(
     private fun computeChildren(): Array<out VirtualFile> {
         val paths = try {
             Files.newDirectoryStream(path).use(Iterable<Path>::toList)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             emptyList<Path>()
         }
         return when {
