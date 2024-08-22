@@ -212,7 +212,9 @@ abstract class LlvmOptimizationPipeline(
         try {
             initLLVMOnce()
             config.inlineThreshold?.let { threshold ->
-                LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+                if (threshold >= 0) {
+                    LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
+                }
             }
             if (config.timePasses) {
                 LLVMSetTimePasses(1)
