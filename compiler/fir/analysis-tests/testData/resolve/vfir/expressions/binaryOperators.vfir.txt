@@ -19,9 +19,67 @@ FirFileImpl
    FirPropertyImpl
     FirResolvedDeclarationStatusImpl
     FirResolvedTypeRefImpl
-    FirIntegerLiteralOperatorCallImpl
-     FirIntegerLiteralOperatorCallImpl
-      FirLiteralExpressionImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListImpl
+      FirPropertyAccessExpressionImpl
+       FirResolvedNamedReferenceImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListImpl
+      FirPropertyAccessExpressionImpl
+       FirResolvedNamedReferenceImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListImpl
+      FirPropertyAccessExpressionImpl
+       FirResolvedNamedReferenceImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirFunctionCallImpl
+      FirPropertyAccessExpressionImpl
+       FirResolvedNamedReferenceImpl
       FirResolvedArgumentListImpl
        FirLiteralExpressionImpl
       FirResolvedNamedReferenceImpl
@@ -34,7 +92,43 @@ FirFileImpl
    FirPropertyImpl
     FirResolvedDeclarationStatusImpl
     FirResolvedTypeRefImpl
-    FirLiteralExpressionImpl
+    FirFunctionCallImpl
+     FirPropertyAccessExpressionImpl
+      FirResolvedNamedReferenceImpl
+     FirResolvedArgumentListImpl
+      FirLiteralExpressionImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirFunctionCallImpl
+      FirLiteralExpressionImpl
+      FirResolvedArgumentListImpl
+       FirPropertyAccessExpressionImpl
+        FirResolvedNamedReferenceImpl
+      FirResolvedNamedReferenceImpl
+     FirResolvedArgumentListImpl
+      FirLiteralExpressionImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirIntegerLiteralOperatorCallImpl
+     FirIntegerLiteralOperatorCallImpl
+      FirLiteralExpressionImpl
+      FirResolvedArgumentListImpl
+       FirLiteralExpressionImpl
+      FirResolvedNamedReferenceImpl
+     FirResolvedArgumentListImpl
+      FirLiteralExpressionImpl
+     FirResolvedNamedReferenceImpl
     FirDefaultPropertyBackingField
      FirResolvedTypeRefImpl
      FirResolvedDeclarationStatusImpl
@@ -56,3 +150,74 @@ FirFileImpl
     FirDefaultPropertyBackingField
      FirResolvedTypeRefImpl
      FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirLiteralExpressionImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirErrorTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListForErrorCall
+      FirLiteralExpressionImpl
+     FirErrorNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirErrorTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirFunctionCallImpl
+      FirErrorExpressionImpl
+       FirWhileLoopImpl
+        FirLiteralExpressionImpl
+        FirBlockImpl
+        {
+         source.kind: KtRealSourceElementKind
+        }
+      FirResolvedArgumentListImpl
+       FirLiteralExpressionImpl
+      FirResolvedNamedReferenceImpl
+     FirResolvedArgumentListImpl
+      FirLiteralExpressionImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListImpl
+      FirFunctionCallImpl
+       FirResolvedArgumentListImpl
+        FirFunctionCallImpl
+         FirLiteralExpressionImpl
+         FirResolvedArgumentListImpl
+          FirLiteralExpressionImpl
+         FirResolvedNamedReferenceImpl
+       FirResolvedNamedReferenceImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
+ FirSimpleFunctionImpl
+  FirResolvedDeclarationStatusImpl
+  FirResolvedTypeRefImpl
+  FirControlFlowGraphReferenceImpl
+  FirValueParameterImpl
+   FirResolvedDeclarationStatusImpl
+   FirResolvedTypeRefImpl
+  FirSingleExpressionBlock
+  {
+   source.kind: SingleExpressionBlock
+  }
+   FirReturnExpressionImpl
+    FirPropertyAccessExpressionImpl
+     FirResolvedNamedReferenceImpl
