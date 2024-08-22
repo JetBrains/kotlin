@@ -48,6 +48,7 @@ import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsFirTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmFirLightTreeTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 
 
 private class ExcludePattern {
@@ -213,6 +214,12 @@ fun main(args: Array<String>) {
         testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
+            }
+        }
+
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData/") {
+            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
+                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
     }
