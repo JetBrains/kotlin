@@ -75,19 +75,23 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
     )
 }
 
+/**
+ * See K1 implementation as [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getEnumEntryName]
+ */
 private fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
 
-    val propertyName: String = getObjCPropertyName(symbol).run {
+    val name = getObjCPropertyName(symbol).run {
         when {
             forSwift -> this.swiftName
             else -> this.objCName
         }
-    }
-
-    // FOO_BAR_BAZ -> fooBarBaz:
-    val name = propertyName.split('_').mapIndexed { index, s ->
+    }.split('_').mapIndexed { index, s ->
+        // FOO_BAR_BAZ -> fooBarBaz:
         val lower = s.lowercase()
         if (index == 0) lower else lower.replaceFirstChar(Char::uppercaseChar)
     }.joinToString("").toIdentifier()
-    return name
+
+    return if (name in objCSpecialNames) name.handleSpecialNames("the")
+    else if (name.isReservedPropertyName) name + "_"
+    else name
 }
