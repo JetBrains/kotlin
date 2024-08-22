@@ -4,7 +4,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-@OptIn(org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl::class)
+@OptIn(org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl::class)
 kotlin {
     iosX64()
     iosArm64()
