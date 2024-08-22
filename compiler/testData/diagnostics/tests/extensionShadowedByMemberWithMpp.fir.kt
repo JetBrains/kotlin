@@ -4,7 +4,7 @@
 
 expect class Test
 
-expect val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>number<!>: Int
+expect val Test.number: Int
 
 // MODULE: jvm()()(common)
 
