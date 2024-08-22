@@ -206,10 +206,12 @@ open class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
+            val returnType = inlineFunctionBodyPreprocessor.remapType(callee.returnType)
+
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
-                type = callSite.type,
+                type = returnType,
                 inlineCall = callSite,
                 inlinedElement = originalInlinedElement,
                 origin = null,
@@ -221,7 +223,7 @@ open class FunctionInlining(
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
-                type = callSite.type,
+                type = returnType,
                 symbol = irReturnableBlockSymbol,
                 origin = null,
                 statements = listOf(inlinedBlock),
@@ -231,7 +233,7 @@ open class FunctionInlining(
                         expression.transformChildrenVoid(this)
 
                         if (expression.returnTargetSymbol == copiedCallee.symbol) {
-                            val expr = expression.value.doImplicitCastIfNeededTo(callSite.type)
+                            val expr = expression.value.doImplicitCastIfNeededTo(returnType)
                             return irBuilder.at(expression).irReturn(expr)
                         }
                         return expression

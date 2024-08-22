@@ -48,6 +48,8 @@ internal class InlineFunctionBodyPreprocessor(
         return result as IrFunction
     }
 
+    fun remapType(type: IrType) = typeRemapper.remapType(type)
+
     private inner class InlinerTypeRemapper(
         val symbolRemapper: SymbolRemapper,
         val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
