@@ -74,8 +74,9 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         assertEquals(ExitCode.OK, resultC.exitCode)
 
         val resultJS = compileToJs(cKlib, dependency = bKlib, outputFile = cKlib)
-        assertEquals(ExitCode.COMPILATION_ERROR, resultJS.exitCode)
-        assertTrue(resultJS.output.startsWith("error: KLIB resolver: Could not find \"a\" in "))
+        assertEquals(ExitCode.OK, resultJS.exitCode)
+        assertTrue(resultJS.output.contains("warning: KLIB resolver: Could not find \"a\" in "))
+        assertTrue(resultJS.output.contains("No function found for symbol 'a/a|a(kotlin.Int){}[0]'"))
     }
 
     private data class Module(val name: String, val dependencyNames: List<String>) {
