@@ -242,7 +242,7 @@ private class KtObjCExportHeaderGenerator(
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
-            stubs = stubs,
+            stubs = stubs.reorderExtensionsIfNeeded(),
             classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()
