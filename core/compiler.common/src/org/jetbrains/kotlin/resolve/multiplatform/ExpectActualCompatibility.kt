@@ -89,6 +89,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
         val incompatibleMembers: List<Pair</* expect */ D, Map<Incompatible<D>, /* actuals */ Collection<D>>>>,
     ) : Incompatible<D>("some expected members have no actual ones")
     object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
+    object IllegalRequiresOpt : Incompatible<Nothing>("opt-in annotations are prohibited to be 'expect' or 'actual'. Instead, declare annotation once in common sources.")
 
     // Common
     object Modality : Incompatible<Nothing>("modality is different")
