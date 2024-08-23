@@ -1,9 +1,18 @@
+// WITH_STDLIB
+// WITH_COROUTINES
 // TARGET_BACKEND: WASM
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 
-fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
-fun throwSomeJsPrimitive(): Int = js("{ throw 'Test'; }")
-fun throwSomeKotlinException(): Int = throw IllegalStateException("Test")
+import helpers.*
+import kotlin.coroutines.*
+
+fun throwJsException(): Int = js("{ throw new TypeError('Test'); }")
+fun throwJsPrimitive(): Int = js("{ throw 'Test'; }")
+fun throwKotlinException(): Int = throw IllegalStateException("Test")
+
+suspend fun throwSomeJsException(): Int = throwJsException()
+suspend fun throwSomeJsPrimitive(): Int = throwJsPrimitive()
+suspend fun throwSomeKotlinException(): Int = throwKotlinException()
 inline fun <reified T: Throwable> wasThrown(fn: () -> Any?): Boolean {
     try {
         fn()
@@ -15,7 +24,7 @@ inline fun <reified T: Throwable> wasThrown(fn: () -> Any?): Boolean {
 }
 
 // Finally only
-fun jsPrimitiveWithFinally(): Boolean {
+suspend fun jsPrimitiveWithFinally(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -24,7 +33,7 @@ fun jsPrimitiveWithFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithFinally(): Boolean {
+suspend fun jsExceptionWithFinally(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -33,7 +42,7 @@ fun jsExceptionWithFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithFinally(): Boolean {
+suspend fun kotlinExceptionWithFinally(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -44,7 +53,7 @@ fun kotlinExceptionWithFinally(): Boolean {
 }
 
 // Catch Throwable only
-fun jsPrimitiveWithCatchThrowable(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowable(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -53,7 +62,7 @@ fun jsPrimitiveWithCatchThrowable(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowable(): Boolean {
+suspend fun jsExceptionWithCatchThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -62,7 +71,7 @@ fun jsExceptionWithCatchThrowable(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowable(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowable(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -73,7 +82,7 @@ fun kotlinExceptionWithCatchThrowable(): Boolean {
 }
 
 // Catch JsException only
-fun jsPrimitiveWithCatchJsException(): Boolean {
+suspend fun jsPrimitiveWithCatchJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -82,7 +91,7 @@ fun jsPrimitiveWithCatchJsException(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchJsException(): Boolean {
+suspend fun jsExceptionWithCatchJsException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -91,7 +100,7 @@ fun jsExceptionWithCatchJsException(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchJsException(): Boolean {
+suspend fun kotlinExceptionWithCatchJsException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -102,7 +111,7 @@ fun kotlinExceptionWithCatchJsException(): Boolean {
 }
 
 // Catch IllegalStateException only
-fun jsPrimitiveWithCatchIllegalStateException(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -111,7 +120,7 @@ fun jsPrimitiveWithCatchIllegalStateException(): Boolean {
     }
     return true
 }
-fun jsExceptionWithCatchIllegalStateException(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -120,7 +129,7 @@ fun jsExceptionWithCatchIllegalStateException(): Boolean {
     }
     return true
 }
-fun kotlinExceptionWithCatchIllegalStateException(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -131,7 +140,7 @@ fun kotlinExceptionWithCatchIllegalStateException(): Boolean {
 }
 
 // Catch Throwable and finally
-fun jsPrimitiveWithCatchThrowableAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndFinally(): Boolean {
     var finalException: Throwable? = null
     try {
         throwSomeJsPrimitive()
@@ -143,7 +152,7 @@ fun jsPrimitiveWithCatchThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndFinally(): Boolean {
     var finalException: Throwable? = null
     try {
         throwSomeJsException()
@@ -155,7 +164,7 @@ fun jsExceptionWithCatchThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndFinally(): Boolean {
     var finalException: Throwable? = null
     try {
         throwSomeKotlinException()
@@ -169,7 +178,7 @@ fun kotlinExceptionWithCatchThrowableAndFinally(): Boolean {
 }
 
 // Catch JsException and finally
-fun jsPrimitiveWithCatchJsExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     try {
         throwSomeJsPrimitive()
@@ -181,7 +190,7 @@ fun jsPrimitiveWithCatchJsExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     try {
         throwSomeJsException()
@@ -193,7 +202,7 @@ fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     try {
         throwSomeKotlinException()
@@ -207,7 +216,7 @@ fun kotlinExceptionWithCatchJsExceptionAndFinally(): Boolean {
 }
 
 // Catch IllegalStateException and finally
-fun jsPrimitiveWithCatchIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     try {
         throwSomeJsPrimitive()
@@ -219,7 +228,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndFinally(): Boolean {
     }
     return true
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     try {
         throwSomeJsException()
@@ -231,7 +240,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
     }
     return true
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     try {
         throwSomeKotlinException()
@@ -245,7 +254,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndFinally(): Boolean {
 }
 
 // Catch JsException and Throwable
-fun jsPrimitiveWithCatchJsExceptionAndThrowable(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -256,7 +265,7 @@ fun jsPrimitiveWithCatchJsExceptionAndThrowable(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndThrowable(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -267,7 +276,7 @@ fun jsExceptionWithCatchJsExceptionAndThrowable(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndThrowable(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -280,7 +289,7 @@ fun kotlinExceptionWithCatchJsExceptionAndThrowable(): Boolean {
 }
 
 // Catch IllegalStateException and Throwable
-fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -291,7 +300,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -302,7 +311,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -315,7 +324,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
 }
 
 // Catch Throwable and JsException
-fun jsPrimitiveWithCatchThrowableAndJsException(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -326,7 +335,7 @@ fun jsPrimitiveWithCatchThrowableAndJsException(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndJsException(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndJsException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -337,7 +346,7 @@ fun jsExceptionWithCatchThrowableAndJsException(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndJsException(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndJsException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -350,7 +359,7 @@ fun kotlinExceptionWithCatchThrowableAndJsException(): Boolean {
 }
 
 // Catch IllegalStateException and JsException
-fun jsPrimitiveWithCatchIllegalStateExceptionAndJsException(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -361,7 +370,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndJsException(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -372,7 +381,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -385,7 +394,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
 }
 
 // Catch Throwable and IllegalStateException
-fun jsPrimitiveWithCatchThrowableAndIllegalStateException(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -396,7 +405,7 @@ fun jsPrimitiveWithCatchThrowableAndIllegalStateException(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -407,7 +416,7 @@ fun jsExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -420,7 +429,7 @@ fun kotlinExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
 }
 
 // Catch JsException and IllegalStateException
-fun jsPrimitiveWithCatchJsExceptionAndIllegalStateException(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -431,7 +440,7 @@ fun jsPrimitiveWithCatchJsExceptionAndIllegalStateException(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -442,7 +451,7 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -455,7 +464,7 @@ fun kotlinExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
 }
 
 // Catch JsException and Throwable and finally
-fun jsPrimitiveWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -472,7 +481,7 @@ fun jsPrimitiveWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -489,7 +498,7 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -508,7 +517,7 @@ fun kotlinExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
 }
 
 // Catch IllegalStateException and Throwable and finally
-fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -525,7 +534,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -542,7 +551,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -561,7 +570,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndFinally(): Boole
 }
 
 // Catch Throwable and JsException and finally
-fun jsPrimitiveWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -578,7 +587,7 @@ fun jsPrimitiveWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -595,7 +604,7 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -614,7 +623,7 @@ fun kotlinExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
 }
 
 // Catch IllegalStateException and JsException and finally
-fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -631,7 +640,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -648,7 +657,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -667,7 +676,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndFinally(): Boo
 }
 
 // Catch Throwable and IllegalStateException and finally
-fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -684,7 +693,7 @@ fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -701,7 +710,7 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -720,7 +729,7 @@ fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boole
 }
 
 // Catch JsException and IllegalStateException and finally
-fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -737,7 +746,7 @@ fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -754,7 +763,7 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -773,7 +782,7 @@ fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boo
 }
 
 // Catch JsException and Throwable and IllegalStateException
-fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -786,7 +795,7 @@ fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -799,7 +808,7 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -814,7 +823,7 @@ fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): B
 }
 
 // Catch IllegalStateException and Throwable and JsException
-fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -827,7 +836,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -840,7 +849,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -855,7 +864,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): B
 }
 
 // Catch Throwable and JsException and IllegalStateException
-fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -868,7 +877,7 @@ fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -881,7 +890,7 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -896,7 +905,7 @@ fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): B
 }
 
 // Catch IllegalStateException and JsException and Throwable
-fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -909,7 +918,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -922,7 +931,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -937,7 +946,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): B
 }
 
 // Catch Throwable and IllegalStateException and JsException
-fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -950,7 +959,7 @@ fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -963,7 +972,7 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -978,7 +987,7 @@ fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): B
 }
 
 // Catch JsException and IllegalStateException and Throwable
-fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsPrimitive()
         return false
@@ -991,7 +1000,7 @@ fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boole
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeJsException()
         return false
@@ -1004,7 +1013,7 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boole
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boolean {
     try {
         throwSomeKotlinException()
         return false
@@ -1019,7 +1028,7 @@ fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): B
 }
 
 // Catch JsException and Throwable and IllegalStateException and finally
-fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1039,7 +1048,7 @@ fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1059,7 +1068,7 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1081,7 +1090,7 @@ fun kotlinExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFi
 }
 
 // Catch IllegalStateException and Throwable and JsException and finally
-fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1101,7 +1110,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1121,7 +1130,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1143,7 +1152,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndThrowableAndJsExceptionAndFi
 }
 
 // Catch Throwable and JsException and IllegalStateException and finally
-fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1163,7 +1172,7 @@ fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1183,7 +1192,7 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1205,7 +1214,7 @@ fun kotlinExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFi
 }
 
 // Catch IllegalStateException and JsException and Throwable and finally
-fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1225,7 +1234,7 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1245,7 +1254,7 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     var somethingWasCaught = false
     try {
@@ -1267,7 +1276,7 @@ fun kotlinExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowableAndFi
 }
 
 // Catch Throwable and IllegalStateException and JsException and finally
-fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1287,7 +1296,7 @@ fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1307,7 +1316,7 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally(): Boolean {
     var finalException: Throwable? = null
     var somethingWasCaught = false
     try {
@@ -1329,7 +1338,7 @@ fun kotlinExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFi
 }
 
 // Catch JsException and IllegalStateException and Throwable and finally
-fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1349,7 +1358,7 @@ fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinall
     }
     return false
 }
-fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1369,7 +1378,7 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinall
     }
     return false
 }
-fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
+suspend fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally(): Boolean {
     var finalException: JsException? = null
     var somethingWasCaught = false
     try {
@@ -1390,7 +1399,7 @@ fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFi
     return false
 }
 
-fun box(): String {
+suspend fun test(): String {
     // Finally only
     if (!jsPrimitiveWithFinally()) return "Issue with try with finally on a JS primitive thrown"
     if (!jsExceptionWithFinally()) return "Issue with try with finally on a JS Error thrown"
@@ -1547,4 +1556,18 @@ fun box(): String {
     if (!kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally()) return "Issue with try with catch JsException and IllegalStateException and Throwable and finally on a Kotlin Exception thrown"
 
     return "OK"
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
+}
+
+fun box(): String {
+    var result: String = ""
+
+    builder {
+        result = test()
+    }
+
+    return result
 }

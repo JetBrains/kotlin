@@ -235,7 +235,7 @@ class BodyGenerator(
         val firstCatchParameterIsJsException = context.backendContext.isWasmJsTarget &&
                 firstCatchBlock.catchParameter.type == wasmSymbols.jsRelatedSymbols.jsException.defaultType
 
-        val nestedCatchLabel = runIf(!hasOnlySingleCatchBlock || (firstCatchParameterIsJsException && !canUseJsTag)) {
+        val nestedCatchLabel = runIf(!needCatchAllOnly && firstCatchParameterIsJsException && (!hasOnlySingleCatchBlock || !canUseJsTag)) {
             body.buildBlock(context.transformBlockResultType(irBuiltIns.throwableType))
         }
 

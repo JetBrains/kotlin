@@ -103,9 +103,21 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsExceptionInSuspendFunction.kt")
+  public void testJsExceptionInSuspendFunction() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionInSuspendFunction.kt");
+  }
+
+  @Test
   @TestMetadata("jsExceptionNewProposal.kt")
   public void testJsExceptionNewProposal() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionNewProposal.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionNewProposalInSuspendFunction.kt")
+  public void testJsExceptionNewProposalInSuspendFunction() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionNewProposalInSuspendFunction.kt");
   }
 
   @Test
@@ -115,9 +127,21 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsExceptionNewProposalWithThrownValueAttachedInSuspendFunction.kt")
+  public void testJsExceptionNewProposalWithThrownValueAttachedInSuspendFunction() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionNewProposalWithThrownValueAttachedInSuspendFunction.kt");
+  }
+
+  @Test
   @TestMetadata("jsExceptionWithThrownValueAttached.kt")
   public void testJsExceptionWithThrownValueAttached() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithThrownValueAttached.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionWithThrownValueAttachedInSuspendFunction.kt")
+  public void testJsExceptionWithThrownValueAttachedInSuspendFunction() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithThrownValueAttachedInSuspendFunction.kt");
   }
 
   @Test

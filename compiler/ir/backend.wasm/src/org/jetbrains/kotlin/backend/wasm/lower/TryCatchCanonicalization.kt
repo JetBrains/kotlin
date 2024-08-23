@@ -99,7 +99,10 @@ internal class JsExceptionHandlerForThrowableOnly(private val ctx: WasmBackendCo
         aTry.transformChildrenVoid(this)
 
         val throwableHandlerIndex = aTry.catches.indexOfFirst { it.catchParameter.type == ctx.irBuiltIns.throwableType }
-        val activeCatches = if (throwableHandlerIndex == -1) aTry.catches else aTry.catches.subList(0, throwableHandlerIndex + 1)
+        val activeCatches = when (throwableHandlerIndex) {
+            -1 -> aTry.catches
+            else -> aTry.catches.subList(0, throwableHandlerIndex + 1)
+        }
         // Nothing to do
         if (activeCatches.isEmpty() ||
             activeCatches.any { it.catchParameter.type == ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType } ||
@@ -142,7 +145,11 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
         aTry.transformChildrenVoid(this)
 
         val throwableHandlerIndex = aTry.catches.indexOfFirst { it.catchParameter.type == ctx.irBuiltIns.throwableType }
-        val activeCatches = if (throwableHandlerIndex == -1) aTry.catches else aTry.catches.subList(0, throwableHandlerIndex + 1)
+        val activeCatches = aTry.catches.apply {
+            if (throwableHandlerIndex != -1 && throwableHandlerIndex != lastIndex) {
+                subList(throwableHandlerIndex + 1, size).clear()
+            }
+        }
 
         // Nothing to do
         if (activeCatches.isEmpty() || activeCatches.all { it.catchParameter.type in allowedCatchParameterTypes })

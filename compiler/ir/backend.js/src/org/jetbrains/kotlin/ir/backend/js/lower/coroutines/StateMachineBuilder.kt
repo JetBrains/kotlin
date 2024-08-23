@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isSuspend
@@ -96,7 +93,7 @@ class StateMachineBuilder(
 
     val entryState = SuspendState(unit)
     val rootExceptionTrap = buildExceptionTrapState()
-    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbolGetter.returnType, function.owner, "e")
+    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbolGetter.returnType.makeNotNull(), function.owner, "e")
     lateinit var globalCatch: IrCatch
 
     fun finalizeStateMachine() {

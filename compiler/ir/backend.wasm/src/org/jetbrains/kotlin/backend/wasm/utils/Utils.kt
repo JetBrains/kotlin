@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.ir.types.defaultType
 // }
 // no-finally
 internal fun IrTry.isCanonical(context: WasmBackendContext) =
-    catches.all { it.catchParameter.type == context.irBuiltIns.throwableType || it.catchParameter.type == context.wasmSymbols.jsRelatedSymbols.jsException.defaultType } &&
-    finallyExpression == null
+    catches.size <= 2 &&
+            catches.all { it.catchParameter.type == context.irBuiltIns.throwableType || it.catchParameter.type == context.wasmSymbols.jsRelatedSymbols.jsException.defaultType } &&
+            finallyExpression == null
 
 internal val IrClass.isAbstractOrSealed
     get() = modality == Modality.ABSTRACT || modality == Modality.SEALED
