@@ -1,4 +1,4 @@
-FILE: incGenericExtensionProperty.fir.kt
+FILE: incGenericExtensionProperty.kt
     public abstract interface Context : R|kotlin/Any| {
         public abstract var <V> R|Variable<V>|.value: R|V|
             public get(): R|V|
