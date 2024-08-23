@@ -13,26 +13,13 @@
 
 namespace {
 
-// Having this structure as packed serves two purposes:
-// 1. it avoids trailing padding due to `ArrayHeader` starting with a pointer;
-// 2. it makes the padding before `hashCode_` explicit, which is necessary for
-//  emitting it properly in KotlinStaticData.
-struct __attribute__((packed)) StringHeader {
+struct StringHeader {
     ArrayHeader array_;
-    union {
-        char arrayData_[];
-        struct __attribute__((packed)) {
-            uint16_t flags_;
-            union {
-                char dataWithoutHashCode_[];
-                struct __attribute__((packed)) {
-                    int16_t padding_; // align to 4 bytes
-                    int32_t hashCode_;
-                    char data_[];
-                };
-            };
-        };
-    };
+    uint16_t flags_;
+    // <-- string data without hashcode starts here
+    int32_t hashCode_;
+    // <-- string data with hashcode starts here
+    char data_[];
 
     enum {
         // Don't forget to modify KotlinStaticData.createKotlinStringLiteral if changing these.
@@ -47,11 +34,11 @@ struct __attribute__((packed)) StringHeader {
     };
 
     ALWAYS_INLINE int encoding() const {
-        return array_.count_ == 0 ? ENCODING_UTF16 : flags_ >> ENCODING_OFFSET;
+        return flags_ >> ENCODING_OFFSET;
     }
 
     ALWAYS_INLINE char *data() {
-        return array_.count_ == 0 ? arrayData_ : flags_ & HASHCODE_CACHEABLE ? data_ : dataWithoutHashCode_;
+        return reinterpret_cast<char*>(&flags_) + startOffset(flags_);
     }
 
     ALWAYS_INLINE const char *data() const {
@@ -59,7 +46,7 @@ struct __attribute__((packed)) StringHeader {
     }
 
     PERFORMANCE_INLINE size_t size() const {
-        return array_.count_ == 0 ? 0 : array_.count_ * sizeof(KChar) - extraLength(flags_);
+        return array_.count_ * sizeof(KChar) - extraLength(flags_);
     }
 
     ALWAYS_INLINE static StringHeader* of(KRef string) {
@@ -70,17 +57,22 @@ struct __attribute__((packed)) StringHeader {
         return reinterpret_cast<const StringHeader*>(string);
     }
 
+    ALWAYS_INLINE constexpr static size_t startOffset(int flags) {
+        return flags & HASHCODE_CACHEABLE
+            ? offsetof(StringHeader, data_) - offsetof(StringHeader, flags_)
+            : sizeof(flags_);
+    }
+
     ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
-        return (flags & HASHCODE_CACHEABLE ? offsetof(StringHeader, data_) : offsetof(StringHeader, dataWithoutHashCode_))
-            - offsetof(StringHeader, arrayData_) + !!(flags & IGNORE_LAST_BYTE);
+        return startOffset(flags) + !!(flags & IGNORE_LAST_BYTE);
     }
 };
 
 // These constants are hardcoded here because they're also hardcoded there...
 // ...can LLVM APIs be used to get these values from Kotlin?..
 // ...but this also ensures the header is as small as possible, so maybe constants are fine...
-static_assert(StringHeader::extraLength(0) == 1 * 2, "check createKotlinStringLiteral before changing this assert");
-static_assert(StringHeader::extraLength(StringHeader::HASHCODE_CACHEABLE) == 4 * 2,
+static_assert(StringHeader::startOffset(0) == 1 * 2, "check createKotlinStringLiteral before changing this assert");
+static_assert(StringHeader::startOffset(StringHeader::HASHCODE_CACHEABLE) == 4 * 2,
               "check createKotlinStringLiteral before changing this assert");
 
 } // namespace

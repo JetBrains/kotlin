@@ -46,8 +46,6 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        if (value.isEmpty()) return createConstKotlinArray(context.ir.symbols.string.owner, emptyList<ConstValue>())
-
         val useLatin1 = value.all { it.code in 0..255 }
         val useHashcodeCache = value.length > (if (useLatin1) 16 else 8) // arbitrary bound...
         // See KString.h for the meanings and native equivalents of these constants.

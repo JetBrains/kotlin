@@ -263,8 +263,8 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     RuntimeAssert(other != nullptr, "other cannot be null");
     RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
     RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-    if (thiz->array()->count_ == 0) RETURN_OBJ(const_cast<KRef>(other));
-    if (other->array()->count_ == 0) RETURN_OBJ(const_cast<KRef>(thiz));
+    if (StringHeader::of(thiz)->size() == 0) RETURN_OBJ(const_cast<KRef>(other));
+    if (StringHeader::of(other)->size() == 0) RETURN_OBJ(const_cast<KRef>(thiz));
     return encodingAware(thiz, other, [=](auto thiz, auto other) {
         RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
         RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
@@ -544,9 +544,9 @@ extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other,
 }
 
 extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    if (thiz->array()->count_ == 0) return 0;
-
     auto header = StringHeader::of(thiz);
+    if (header->size() == 0) return 0;
+
     auto flags = kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire);
     if (flags & StringHeader::HASHCODE_COMPUTED) {
         // The condition only enforces an ordering with the first thread to write the hash code,
