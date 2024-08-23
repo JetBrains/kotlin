@@ -89,3 +89,13 @@ void* kotlin::mm::permanentObjectAsExternalRCRef(KRef obj) noexcept {
     RuntimeAssert(obj->permanent(), "Object %p must be permanent", obj);
     return setPointerBits(obj, kPermanentTag);
 }
+
+const TypeInfo* kotlin::mm::externalRCRefType(void* ref) noexcept {
+       RuntimeAssert(ref != nullptr, "Cannot handle nullptr");
+    if (hasPointerBits(ref, kPermanentTag)) {
+        auto obj = clearPointerBits(static_cast<KRef>(ref), kPermanentTag);
+        RuntimeAssert(obj->permanent(), "Permanent ExternalRCRef for non-permanent object %p", obj);
+        return obj->type_info();
+    }
+    return mm::ObjCBackRef(static_cast<mm::RawSpecialRef*>(ref)).typeInfo();
+}

@@ -18,4 +18,7 @@ KRef externalRCRefAsPermanentObject(void* ref) noexcept;
 // kotlin.native.internal.ref.ExternalRCRef for the given permanent object.
 void* permanentObjectAsExternalRCRef(KRef obj) noexcept;
 
+// TypeInfo of the given kotlin.native.internal.ref.ExternalRCRef.
+const TypeInfo* externalRCRefType(void* ref) noexcept;
+
 }

@@ -1,0 +1,1 @@
+.*Inheritance from Kotlin exported classes is not supported: _TtCF19swiftTestExecutable22inhertianceIsForbiddenFzT_T_L_7Derived inherits from Inheritance\.Base.*

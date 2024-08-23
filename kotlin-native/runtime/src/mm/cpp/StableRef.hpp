@@ -48,6 +48,12 @@ public:
         return node_->ref();
     }
 
+    // Get the type of underlying object.
+    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
+        RuntimeAssert(node_, "typeInfo on null StableRef");
+        return node_->typeInfo();
+    }
+
     static StableRef& reinterpret(RawSpecialRef*& raw) noexcept { return reinterpret_cast<StableRef&>(raw); }
 
     static const StableRef& reinterpret(RawSpecialRef* const& raw) noexcept { return reinterpret_cast<const StableRef&>(raw); }

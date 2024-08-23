@@ -110,6 +110,14 @@ class SpecialRefRegistry : private Pinned {
             return objAtomic().load(std::memory_order_relaxed);
         }
 
+        [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
+            if (compiler::runtimeAssertsEnabled()) {
+                auto rc = rc_.load(std::memory_order_relaxed);
+                RuntimeAssert(rc > 0, "Getting typeInfo of StableRef@%p with rc %d", this, rc);
+            }
+            return objAtomic().load(std::memory_order_relaxed)->type_info();
+        }
+
         OBJ_GETTER0(tryRef) noexcept {
             AssertThreadState(ThreadState::kRunnable);
             RETURN_RESULT_OF(mm::weakRefReadBarrier, objAtomic());

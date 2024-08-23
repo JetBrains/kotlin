@@ -14,13 +14,17 @@ struct ObjHeader;
 
 + (instancetype)createRetainedWrapper:(struct ObjHeader *)obj;
 
-// Initialize this class with kotlin.native.ref.ExternalRCRef
-// Does not retain `ref` itself.
-// If `ref` already points to another `KotlinBase` instance,
-// this returns that instance.
+// Given kotlin.native.internal.ref.ExternalRCRef `ref`:
+// * if it's already bound to another `KotlinBase` instance, replaces `self` with that instance
+// * otherwise:
+//   * find the best-fitting Obj-C class corresponding to `ref`'s Kotlin class
+//   * construct its instance and replace `self`
+// The code panics if the determined best-fitting class is not a subclass of `self`'s type.
+// This situation happens if there's some unexported Swift class inheriting from an exported
+// open class: this is not currently supported.
 - (instancetype)initWithExternalRCRef:(uintptr_t)ref NS_REFINED_FOR_SWIFT;
 
-// Return kotlin.native.ref.ExternalRCRef stored in this class
+// Return kotlin.native.internal.ref.ExternalRCRef stored in this class
 - (uintptr_t)externalRCRef NS_REFINED_FOR_SWIFT;
 
 @end

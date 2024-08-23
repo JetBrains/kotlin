@@ -85,6 +85,13 @@ public:
         return node_->ref();
     }
 
+    // Get the type of underlying object.
+    // Can only be called if refcount > 0.
+    [[nodiscard("expensive pure function")]] const TypeInfo* typeInfo() const noexcept {
+        RuntimeAssert(node_, "typeInfo on null ObjCBackRef");
+        return node_->typeInfo();
+    }
+
     bool tryRetainForTests() noexcept { return tryRetainIgnoreState(); }
 
     static ObjCBackRef& reinterpret(RawSpecialRef*& raw) noexcept { return reinterpret_cast<ObjCBackRef&>(raw); }

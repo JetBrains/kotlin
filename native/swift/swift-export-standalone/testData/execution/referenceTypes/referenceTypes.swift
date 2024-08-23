@@ -247,48 +247,34 @@ func objectsHashProperly() throws {
     try testEquality(ein, two)
 }
 
-func openClassesAreInheritable() throws {
-    class Child: Derived {}
-
+func openClasses() throws {
     let base = Base()
     let derived = Derived()
-    let child = Child()
 
     try assertSame(actual: identity(obj: base), expected: base)
     try assertSame(actual: identity(obj: derived), expected: derived)
-    try assertSame(actual: identity(obj: child), expected: child)
 
-    try assertFalse(base === child)
+    try assertFalse(base === derived)
     try assertEquals(actual: ObjectIdentifier(type(of: base)), expected: ObjectIdentifier(Base.self))
-    try assertEquals(actual: ObjectIdentifier(type(of: child)), expected: ObjectIdentifier(Child.self))
+    try assertEquals(actual: ObjectIdentifier(type(of: derived)), expected: ObjectIdentifier(Derived.self))
 
     try assertEquals(actual: base.test(), expected: 42)
-    try assertEquals(actual: child.test(), expected: 42)
+    try assertEquals(actual: derived.test(), expected: 42)
 }
 
 func openClassesAdhereToLSP() throws {
-    // NOTE: KT-69636 blocks some aspects of LSP support
-    // This test should be expanded after proper wrapper support arrives
-
-    class Child: Derived {}
-
     let base: Base = getBase()
     try assertTrue(type(of: base) == Base.self)
 
     let derived: Base = getDerived()
     try assertTrue(type(of: derived) == Derived.self)
 
-    let child: Base = Child()
-    try assertTrue(type(of: child) == Child.self)
-
-    try assertTrue(type(of: polymorphicObject) == Base.self)
+    try assertTrue(type(of: polymorphicObject) == Derived.self)
     try assertTrue(polymorphicObject !== base)
     polymorphicObject = base
     try assertSame(actual: polymorphicObject, expected: base)
     polymorphicObject = derived
     try assertSame(actual: polymorphicObject, expected: derived)
-    polymorphicObject = child
-    try assertSame(actual: polymorphicObject, expected: child)
 }
 
 func companionObject() throws {
@@ -332,7 +318,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "depsObjectsTravelBridgeAsAny2", method: withAutorelease(depsObjectsTravelBridgeAsAny2)),
             TestCase(name: "classWithFactory", method: withAutorelease(classWithFactory)),
             TestCase(name: "objectsHashProperly", method: withAutorelease(objectsHashProperly)),
-            TestCase(name: "openClassesAreInheritable", method: withAutorelease(openClassesAreInheritable)),
+            TestCase(name: "openClasses", method: withAutorelease(openClasses)),
             TestCase(name: "openClassesAdhereToLSP", method: withAutorelease(openClassesAdhereToLSP)),
             TestCase(name: "companionObject", method: withAutorelease(companionObject)),
         ]
