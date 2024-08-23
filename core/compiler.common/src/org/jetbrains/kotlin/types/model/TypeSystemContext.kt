@@ -376,8 +376,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun FlexibleTypeMarker.lowerBound(): RigidTypeMarker
     fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker?
+    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = originalIfDefinitelyNotNullable().asCapturedType()
 
-    fun KotlinTypeMarker.isCapturedType() = asRigidType()?.originalIfDefinitelyNotNullable()?.asCapturedType() != null
+    fun KotlinTypeMarker.isCapturedType() = asRigidType()?.asCapturedTypeUnwrappingDnn() != null
 
     fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
@@ -463,7 +464,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
     fun KotlinTypeMarker.isCapturedDynamic(): Boolean =
-        asRigidType()?.originalIfDefinitelyNotNullable()?.asCapturedType()?.typeConstructor()?.projection()?.takeUnless {
+        asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
             it.isStarProjection()
         }?.getType()?.isDynamic() == true
 

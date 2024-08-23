@@ -456,9 +456,9 @@ abstract class AbstractTypeApproximator(
         // The check it == type here is intended to find a recursion inside a captured type.
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
 
-        fun TypeArgumentMarker.unwrapForComparison(): KotlinTypeMarker? {
+        fun TypeArgumentMarker.unwrapForComparison(): CapturedTypeMarker? {
             if (this.isStarProjection()) return null
-            return getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
+            return getType().lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
         }
 
         return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
@@ -602,7 +602,7 @@ abstract class AbstractTypeApproximator(
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
-            val capturedType = argumentType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().asCapturedType()
+            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
 
             val capturedStarProjectionOrNull =
                 capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
@@ -777,7 +777,7 @@ abstract class AbstractTypeApproximator(
 
     private fun KotlinTypeMarker.isFlexibleOrCapturedWithFlexibleSuperTypes(): Boolean {
         return hasFlexibleNullability() ||
-                (asRigidType()?.originalIfDefinitelyNotNullable()?.asCapturedType()?.typeConstructor()?.supertypes()?.all {
+                (asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.supertypes()?.all {
                     it.hasFlexibleNullability()
                 } == true)
     }

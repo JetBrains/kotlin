@@ -532,10 +532,7 @@ object AbstractTypeChecker {
     }
 
     private fun TypeSystemContext.isStubTypeSubtypeOfAnother(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
-        val originalA = a.originalIfDefinitelyNotNullable()
-        val originalB = b.originalIfDefinitelyNotNullable()
-
-        if (originalA.typeConstructor() !== originalB.typeConstructor()) return false
+        if (a.typeConstructor() !== b.typeConstructor()) return false
         if (!a.isDefinitelyNotNullType() && b.isDefinitelyNotNullType()) return false
         if (a.isMarkedNullable() && !b.isMarkedNullable()) return false
 
@@ -566,8 +563,7 @@ object AbstractTypeChecker {
             return state.isStubTypeEqualsToAnything
 
         // superType might be a definitely notNull type (see KT-42824)
-        val superOriginalType = superType.originalIfDefinitelyNotNullable()
-        val superTypeCaptured = superOriginalType.asCapturedType()
+        val superTypeCaptured = superType.asCapturedTypeUnwrappingDnn()
         val lowerType = superTypeCaptured?.lowerType()
         if (superTypeCaptured != null && lowerType != null) {
             // If superType is nullable, e.g., to check if Foo? a subtype of Captured<in Foo>?, we check the LHS, Foo?,
@@ -617,8 +613,8 @@ object AbstractTypeChecker {
     ): TypeParameterMarker? {
         for (i in 0 until baseType.argumentsCount()) {
             val typeArgument = baseType.getArgument(i).takeIf { !it.isStarProjection() }?.getType() ?: continue
-            val areBothTypesCaptured = typeArgument.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType() &&
-                    targetType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType()
+            val areBothTypesCaptured = typeArgument.lowerBoundIfFlexible().isCapturedType() &&
+                    targetType.lowerBoundIfFlexible().isCapturedType()
 
             if (typeArgument == targetType || (areBothTypesCaptured && typeArgument.typeConstructor() == targetType.typeConstructor())) {
                 return baseType.typeConstructor().getParameter(i)

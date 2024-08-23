@@ -108,7 +108,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedStubTypeForVariableInSubtyping(type: RigidTypeMarker) =
-        type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
+        type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
             ?.getType()?.asRigidType()?.isStubTypeForVariableInSubtyping() == true
 
     private fun TypeSystemCommonSuperTypesContext.refineNullabilityForUndefinedNullability(
@@ -248,7 +248,7 @@ object NewCommonSuperTypeCalculator {
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedTypeVariable(type: RigidTypeMarker): Boolean {
         val projectedType =
-            type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor()?.projection()?.takeUnless {
+            type.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
                 it.isStarProjection()
             }?.getType() ?: return false
         return projectedType.asRigidType()?.isStubTypeForVariableInSubtyping() == true
@@ -380,7 +380,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
-        val capturedType = typeArgument.getType().asRigidType()?.originalIfDefinitelyNotNullable()?.asCapturedType() ?: return typeArgument
+        val capturedType = typeArgument.getType().asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
         if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
 
         return capturedType.typeConstructor().projection()
@@ -427,7 +427,7 @@ object NewCommonSuperTypeCalculator {
 
             var starProjectionFound = false
             for (supertype in supertypesIfCapturedStarProjection(argumentType).orEmpty()) {
-                if (supertype.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().typeConstructor() !in originalTypeConstructorSet)
+                if (supertype.lowerBoundIfFlexible().typeConstructor() !in originalTypeConstructorSet)
                     return false
                 else starProjectionFound = true
             }
@@ -442,7 +442,7 @@ object NewCommonSuperTypeCalculator {
         for (type in types) {
             if (isCapturedStarProjection(type)) {
                 for (supertype in supertypesIfCapturedStarProjection(type).orEmpty()) {
-                    yield(supertype.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().typeConstructor())
+                    yield(supertype.lowerBoundIfFlexible().typeConstructor())
                 }
             } else {
                 yield(type.typeConstructor())
