@@ -21695,6 +21695,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("publishedApiSubstitutionOverride.kt")
+      public void testPublishedApiSubstitutionOverride() {
+        runTest("compiler/testData/diagnostics/tests/inline/publishedApiSubstitutionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("recursion.kt")
       public void testRecursion() {
         runTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
