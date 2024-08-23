@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
+// ISSUES: KT-70133
 
 // FILE: A.java
 import kotlin.jvm.functions.Function0;

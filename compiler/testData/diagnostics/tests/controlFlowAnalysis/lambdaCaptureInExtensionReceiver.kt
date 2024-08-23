@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER, -NOTHING_TO_INLINE
+// ISSUES: KT-70133
 
 fun (()->Int).foo(y: String) {
     this()

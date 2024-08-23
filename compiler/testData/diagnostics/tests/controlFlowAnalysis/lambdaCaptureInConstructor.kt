@@ -1,7 +1,8 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// ISSUE: KT-70724
+// ISSUES: KT-70133, KT-70724
+
 import kotlin.contracts.*
 
 fun test1() {

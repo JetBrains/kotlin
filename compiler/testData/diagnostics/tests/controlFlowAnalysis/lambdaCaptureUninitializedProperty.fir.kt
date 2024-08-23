@@ -1,6 +1,6 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER, -NOTHING_TO_INLINE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// ISSUE: KT-70133
+// ISSUES: KT-70133, KT-70749
 
 import kotlin.contracts.*
 

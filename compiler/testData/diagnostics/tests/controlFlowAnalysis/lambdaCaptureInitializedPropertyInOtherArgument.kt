@@ -1,4 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+// ISSUES: KT-70133
 
 inline fun invokeInline(x: () -> Unit, y: Any) {
     x()
