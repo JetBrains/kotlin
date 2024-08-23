@@ -27778,6 +27778,24 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("directJavaActualization_sharedActual_badDirectActualization.kt")
+        public void testDirectJavaActualization_sharedActual_badDirectActualization() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_sharedActual_badDirectActualization.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_sharedActual_badTypealias.kt")
+        public void testDirectJavaActualization_sharedActual_badTypealias() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_sharedActual_badTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("directJavaActualization_sharedActual_good.kt")
+        public void testDirectJavaActualization_sharedActual_good() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_sharedActual_good.kt");
+        }
+
+        @Test
         @TestMetadata("directJavaActualization_simple.kt")
         public void testDirectJavaActualization_simple() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_simple.kt");
