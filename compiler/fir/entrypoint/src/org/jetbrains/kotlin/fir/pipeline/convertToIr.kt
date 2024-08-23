@@ -301,8 +301,6 @@ private class Fir2IrPipeline(
         val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
         buildFakeOverrides(fakeOverrideBuilder)
         delegatedMembersGenerationStrategy.generateDelegatedBodies()
-        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-        componentsStorage.symbolsMappingForLazyClasses.unregisterRemapper()
         val fakeOverrideStrategy = fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy
         return fakeOverrideStrategy to delegatedMembersGenerationStrategy
     }
@@ -322,6 +320,9 @@ private class Fir2IrPipeline(
             mainIrFragment.transform(SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(expectActualMap), null)
         }
 
+        // TODO: remove this and create a correct remapper from the beginnning: KT-70907
+        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
+        componentsStorage.symbolsMappingForLazyClasses.unregisterRemapper()
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
         componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(fakeOverrideResolver)
     }
