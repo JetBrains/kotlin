@@ -96,6 +96,13 @@ interface Example3 {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun contains(n: Int)
 }
 
+interface DispatchReceiverType {
+    interface ExtensionReceiverType
+
+    operator fun ExtensionReceiverType.inc(): ExtensionReceiverType
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun ExtensionReceiverType.dec(): DispatchReceiverType
+}
+
 
 
 

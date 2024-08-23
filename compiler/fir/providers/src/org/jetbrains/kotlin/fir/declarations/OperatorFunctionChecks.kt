@@ -130,7 +130,7 @@ object OperatorFunctionChecks {
             setOf(OperatorNameConventions.INC, OperatorNameConventions.DEC),
             Checks.memberOrExtension,
             Checks.full("receiver must be a supertype of the return type") { session, function ->
-                val receiver = function.dispatchReceiverType ?: function.receiverParameter?.typeRef?.coneType ?: return@full false
+                val receiver = function.receiverParameter?.typeRef?.coneType ?: function.dispatchReceiverType ?: return@full false
                 function.returnTypeRef.coneType.isSubtypeOf(session.typeContext, receiver)
             }
         )
