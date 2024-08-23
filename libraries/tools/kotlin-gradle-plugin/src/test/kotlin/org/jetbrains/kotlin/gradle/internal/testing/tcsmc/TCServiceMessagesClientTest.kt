@@ -1,13 +1,9 @@
 package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
-import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.api.tasks.testing.TestFailure
 import org.jetbrains.kotlin.gradle.internal.testing.RecordingTestResultProcessor
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.slf4j.LoggerFactory
 import kotlin.test.assertEquals
@@ -38,21 +34,6 @@ open class TCServiceMessagesClientTest {
                 treatFailedTestOutputAsStacktrace = treatFailedTestOutputAsStacktrace
             ),
             LoggerFactory.getLogger("test"),
-            object : MppTestReportHelper {
-                override fun reportFailure(results: TestResultProcessor, id: Any, failure: KotlinTestFailure, isAssertionFailure: Boolean) {
-                    results.failure(
-                        id,
-                        if (isAssertionFailure) {
-                            TestFailure.fromTestAssertionFailure(failure, failure.expected, failure.actual)
-                        } else {
-                            TestFailure.fromTestFrameworkFailure(failure)
-                        }
-                    )
-                }
-
-                override fun createDelegatingTestReportProcessor(origin: TestResultProcessor, targetName: String): TestResultProcessor =
-                    origin
-            }
         )
     }
 

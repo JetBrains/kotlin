@@ -16,14 +16,11 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactories {
+abstract class KotlinTest : AbstractTestTask() {
     @Input
     @Optional
     var targetName: String? = null
@@ -67,15 +64,10 @@ abstract class KotlinTest : AbstractTestTask(), UsesVariantImplementationFactori
         PropertiesProvider(project).ignoreTcsmOverflow
     }
 
-    private val testReporter = project
-        .variantImplementationFactoryProvider<MppTestReportHelper.MppTestReportHelperVariantFactory>()
-        .map { it.getInstance() }
-
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
         runListeners,
         ignoreTcsmOverflow,
         ignoreRunFailures,
-        testReporter.get(),
     )
 }

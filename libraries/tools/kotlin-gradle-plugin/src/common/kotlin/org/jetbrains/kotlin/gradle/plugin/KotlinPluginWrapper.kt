@@ -145,11 +145,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
 
         factories.putIfAbsent(
-            MppTestReportHelper.MppTestReportHelperVariantFactory::class,
-            DefaultMppTestReportHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
             ProjectIsolationStartParameterAccessor.Factory::class,
             DefaultProjectIsolationStartParameterAccessor.Factory()
         )

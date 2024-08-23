@@ -12,7 +12,6 @@ import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.slf4j.Logger
 
 internal class NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
@@ -26,9 +25,8 @@ internal class NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
     override fun createClient(
         testResultProcessor: TestResultProcessor,
         log: Logger,
-        testReporter: MppTestReportHelper
     ): TCServiceMessagesClient {
-        return NativeAppleSimulatorTCServiceMessagesClient(testResultProcessor, clientSettings, log, testReporter, standaloneMode)
+        return NativeAppleSimulatorTCServiceMessagesClient(testResultProcessor, clientSettings, log, standaloneMode)
     }
 }
 
@@ -36,9 +34,8 @@ internal class NativeAppleSimulatorTCServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
     log: Logger,
-    testReporter: MppTestReportHelper,
     private val standaloneMode: Provider<Boolean>
-) : TCServiceMessagesClient(results, settings, log, testReporter) {
+) : TCServiceMessagesClient(results, settings, log) {
     override fun testFailedMessage(execHandle: ExecHandle, exitValue: Int) = when {
         !standaloneMode.get() && exitValue == 149 -> """
                 You have standalone simulator tests run mode disabled and tests have failed to run.

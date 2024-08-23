@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.slf4j.Logger
 
 internal open class JSServiceMessagesTestExecutionSpec(
@@ -25,12 +24,11 @@ internal open class JSServiceMessagesTestExecutionSpec(
     checkExitCode,
     clientSettings
 ) {
-    override fun createClient(testResultProcessor: TestResultProcessor, log: Logger, testReporter: MppTestReportHelper): TCServiceMessagesClient {
+    override fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient {
         return JSServiceMessagesClient(
             results = testResultProcessor,
             settings = clientSettings,
             log = log,
-            testReporter = testReporter,
         )
     }
 }
@@ -39,8 +37,7 @@ internal open class JSServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
     log: Logger,
-    testReporter: MppTestReportHelper,
-) : TCServiceMessagesClient(results, settings, log, testReporter) {
+) : TCServiceMessagesClient(results, settings, log) {
     override fun printNonTestOutput(text: String, type: LogType?) {
         if (log.isDebugEnabled) {
             log.debug(text)

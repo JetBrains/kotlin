@@ -12,7 +12,6 @@ import org.gradle.process.ExecResult
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
@@ -27,9 +26,8 @@ open class TCServiceMessagesTestExecutionSpec(
     internal open fun createClient(
         testResultProcessor: TestResultProcessor,
         log: Logger,
-        testReporter: MppTestReportHelper,
     ): TCServiceMessagesClient =
-        TCServiceMessagesClient(testResultProcessor, clientSettings, log, testReporter)
+        TCServiceMessagesClient(testResultProcessor, clientSettings, log)
 
     internal open fun wrapExecute(body: () -> Unit) = body()
     internal open fun showSuppressedOutput() = Unit
@@ -42,7 +40,6 @@ class TCServiceMessagesTestExecutor(
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean,
-    val testReporter: MppTestReportHelper,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
@@ -50,7 +47,7 @@ class TCServiceMessagesTestExecutor(
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val client = spec.createClient(testResultProcessor, log, testReporter)
+            val client = spec.createClient(testResultProcessor, log)
 
             if (spec.dryRunArgs != null) {
                 val exec = execHandleFactory.newExec()
@@ -58,7 +55,7 @@ class TCServiceMessagesTestExecutor(
                 // get rid of redundant output during dry-run
                 exec.standardOutput = object : OutputStream() {
                     override fun write(b: Int) {
-                         // do nothing
+                        // do nothing
                     }
                 }
                 exec.args = spec.dryRunArgs

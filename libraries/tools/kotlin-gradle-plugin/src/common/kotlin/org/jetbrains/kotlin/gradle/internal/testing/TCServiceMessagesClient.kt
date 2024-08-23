@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.gradle.api.internal.tasks.testing.*
+import org.gradle.api.tasks.testing.TestFailure
 import org.gradle.api.tasks.testing.TestOutputEvent
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
@@ -15,7 +16,6 @@ import org.gradle.api.tasks.testing.TestResult.ResultType.*
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.slf4j.Logger
 import java.text.ParseException
@@ -34,7 +34,6 @@ internal open class TCServiceMessagesClient(
     private val results: TestResultProcessor,
     val settings: TCServiceMessagesClientSettings,
     val log: Logger,
-    val testReporter: MppTestReportHelper,
 ) : ServiceMessageParserCallback {
     var afterMessage = false
 
@@ -176,7 +175,14 @@ internal open class TCServiceMessagesClient(
             message.expected,
             message.actual,
         )
-        testReporter.reportFailure(results, descriptor.id, rawFailure, isAssertionFailure)
+        results.failure(
+            descriptor.id,
+            if (isAssertionFailure) {
+                TestFailure.fromTestAssertionFailure(rawFailure, rawFailure.expected, rawFailure.actual)
+            } else {
+                TestFailure.fromTestFrameworkFailure(rawFailure)
+            }
+        )
     }
 
     private fun extractExceptionClassName(message: String): String =
