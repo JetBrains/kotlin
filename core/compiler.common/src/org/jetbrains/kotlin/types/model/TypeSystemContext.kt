@@ -558,6 +558,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isRigidType(): Boolean = asRigidType() != null
 
+    fun RigidTypeMarker.isPrimitiveType(): Boolean = (this as? SimpleTypeMarker)?.isPrimitiveType() == true
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>

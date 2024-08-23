@@ -22,9 +22,7 @@ open class JvmTypeSpecificityComparator(open val context: TypeSystemInferenceExt
         //    foo(int) and foo(Integer)
         // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
         // so, for such cases, we discriminate Integer in favour of int
-        if (!simpleGeneral.originalIfDefinitelyNotNullable().isPrimitiveType() ||
-            !flexibility.lowerBound().originalIfDefinitelyNotNullable().isPrimitiveType()
-        ) {
+        if (!simpleGeneral.isPrimitiveType() || !flexibility.lowerBound().isPrimitiveType()) {
             return false
         }
 
