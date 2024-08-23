@@ -31,6 +31,12 @@ public class SerializationIrJsBoxTestGenerated extends AbstractSerializationIrJs
   }
 
   @Test
+  @TestMetadata("annotationsOnFileExplicitArray.kt")
+  public void testAnnotationsOnFileExplicitArray() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFileExplicitArray.kt");
+  }
+
+  @Test
   @TestMetadata("caching.kt")
   public void testCaching() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
