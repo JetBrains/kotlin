@@ -12,9 +12,23 @@ repositories {
 }
 
 kotlin {
-    tvos("tvosLib")
-    tvos("tvosLib") {
+    tvosArm64("tvosLibArm64")
+    tvosX64("tvosLibX64")
+
+    tvosArm64("tvosLibArm64") {
         println("Configuring ${this.name}")
+    }
+
+    tvosX64("tvosLibX64") {
+        println("Configuring ${this.name}")
+    }
+
+    sourceSets {
+        val tvosLibMain by creating
+        val tvosLibX64Main by getting
+        val tvosLibArm64Main by getting
+        tvosLibX64Main.dependsOn(tvosLibMain)
+        tvosLibArm64Main.dependsOn(tvosLibMain)
     }
 }
 

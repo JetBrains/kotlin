@@ -3,14 +3,19 @@ plugins {
 }
 
 kotlin {
-    tvos()
+    tvosArm64()
+    tvosX64()
 
     // Check that we can reenter the configuration method.
-    tvos {
+    tvosArm64 {
         binaries.framework(listOf(DEBUG))
     }
 
-    sourceSets["tvosMain"].dependencies {
+    tvosX64 {
+        binaries.framework(listOf(DEBUG))
+    }
+
+    sourceSets.tvosMain.dependencies {
         implementation("common.tvos:lib:1.0")
     }
 }
