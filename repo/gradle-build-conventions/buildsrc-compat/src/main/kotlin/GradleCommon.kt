@@ -57,8 +57,7 @@ enum class GradlePluginVariant(
     val gradleApiVersion: String,
     val gradleApiJavadocUrl: String,
 ) {
-    GRADLE_MIN("main", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
-    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),
+    GRADLE_MIN("main", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),
     GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
     GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/"),
     GRADLE_82("gradle82", "8.2", "8.2", "https://docs.gradle.org/8.2.1/javadoc/"),
@@ -806,7 +805,7 @@ fun Project.configureDokkaPublication(
 // Workaround for https://github.com/Kotlin/dokka/issues/2097
 // Gradle 7.6 javadoc does not have published 'package-list' file
 private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
-    if (pluginVariant == GradlePluginVariant.GRADLE_76 ||
+    if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
         pluginVariant == GradlePluginVariant.GRADLE_80 ||
         pluginVariant == GradlePluginVariant.GRADLE_81 ||
         pluginVariant == GradlePluginVariant.GRADLE_82
