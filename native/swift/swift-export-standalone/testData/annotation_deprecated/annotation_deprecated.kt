@@ -4,11 +4,17 @@
 
 package org.kotlin.foo
 
+@Deprecated("This function is deprecated")
+fun deprecatedFunction() {}
+
 @Deprecated("This function is deprecated and hidden", level = DeprecationLevel.HIDDEN)
 fun hiddenDeprecatedFunction() {}
 
 @Deprecated("This function is deprecated and will cause an error if used", level = DeprecationLevel.ERROR)
 fun errorDeprecatedFunction() {}
+
+@Deprecated("This class is deprecated")
+class DeprecatedClass
 
 @Deprecated("This class is deprecated and hidden", level = DeprecationLevel.HIDDEN)
 class HiddenDeprecatedClass
@@ -23,6 +29,10 @@ class ExampleClass {
     @Deprecated("This method is deprecated and will cause an error if used", level = DeprecationLevel.ERROR)
     fun errorDeprecatedMethod() {}
 }
+
+@Deprecated("This property is deprecated")
+val deprecatedProperty: String
+    get() = "This is deprecated"
 
 @Deprecated("This property is deprecated and hidden", level = DeprecationLevel.HIDDEN)
 val hiddenDeprecatedProperty: String

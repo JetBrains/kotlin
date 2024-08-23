@@ -2,9 +2,16 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
+public typealias DeprecatedClass = ExportedKotlinPackages.org.kotlin.foo.DeprecatedClass
 public typealias ErrorDeprecatedClass = ExportedKotlinPackages.org.kotlin.foo.ErrorDeprecatedClass
 public typealias ExampleClass = ExportedKotlinPackages.org.kotlin.foo.ExampleClass
 public typealias HiddenDeprecatedClass = ExportedKotlinPackages.org.kotlin.foo.HiddenDeprecatedClass
+@available(*, deprecated, obsoleted: 1.0, message: "Deprecated in Kotlin")
+public var deprecatedProperty: Swift.String {
+    get {
+        ExportedKotlinPackages.org.kotlin.foo.deprecatedProperty
+    }
+}
 @available(*, deprecated, obsoleted: 1.0, message: "Removed in Kotlin")
 public var errorDeprecatedProperty: Swift.String {
     get {
@@ -17,6 +24,10 @@ public var hiddenDeprecatedProperty: Swift.String {
         ExportedKotlinPackages.org.kotlin.foo.hiddenDeprecatedProperty
     }
 }
+@available(*, deprecated, obsoleted: 1.0, message: "Deprecated in Kotlin")
+public func deprecatedFunction() -> Swift.Void {
+    ExportedKotlinPackages.org.kotlin.foo.deprecatedFunction()
+}
 @available(*, deprecated, obsoleted: 1.0, message: "Removed in Kotlin")
 public func errorDeprecatedFunction() -> Swift.Void {
     ExportedKotlinPackages.org.kotlin.foo.errorDeprecatedFunction()
@@ -26,6 +37,17 @@ public func hiddenDeprecatedFunction() -> Swift.Void {
     ExportedKotlinPackages.org.kotlin.foo.hiddenDeprecatedFunction()
 }
 public extension ExportedKotlinPackages.org.kotlin.foo {
+    @available(*, deprecated, obsoleted: 1.0, message: "Deprecated in Kotlin")
+    public final class DeprecatedClass : KotlinRuntime.KotlinBase {
+        public override init() {
+            fatalError("unavailable")
+        }
+        public override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
     @available(*, deprecated, obsoleted: 1.0, message: "Removed in Kotlin")
     public final class ErrorDeprecatedClass : KotlinRuntime.KotlinBase {
         public override init() {
@@ -68,6 +90,12 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    @available(*, deprecated, obsoleted: 1.0, message: "Deprecated in Kotlin")
+    public static var deprecatedProperty: Swift.String {
+        get {
+            fatalError("unavailable")
+        }
+    }
     @available(*, deprecated, obsoleted: 1.0, message: "Removed in Kotlin")
     public static var errorDeprecatedProperty: Swift.String {
         get {
@@ -79,6 +107,10 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
         get {
             fatalError("unavailable")
         }
+    }
+    @available(*, deprecated, obsoleted: 1.0, message: "Deprecated in Kotlin")
+    public static func deprecatedFunction() -> Swift.Void {
+        fatalError("unavailable")
     }
     @available(*, deprecated, obsoleted: 1.0, message: "Removed in Kotlin")
     public static func errorDeprecatedFunction() -> Swift.Void {

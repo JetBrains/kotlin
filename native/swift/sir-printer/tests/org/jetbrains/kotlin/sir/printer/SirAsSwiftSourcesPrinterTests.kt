@@ -996,7 +996,7 @@ class SirAsSwiftSourcesPrinterTests {
         val clazz = buildClass {
             name = "OPEN_INTERNAL"
             origin = SirOrigin.Unknown
-            attributes += SirAttribute.Available(message = "Deprecated class", deprecated = true, obsoleted = false)
+            attributes += SirAttribute.Available(message = "Deprecated class", deprecated = true)
             declarations += buildFunction {
                 origin = SirOrigin.Unknown
                 kind = SirCallableKind.FUNCTION
@@ -1004,7 +1004,7 @@ class SirAsSwiftSourcesPrinterTests {
                 name = "method"
                 returnType = SirNominalType(SirSwiftModule.bool)
                 documentation = "// Check that nested attributes handled properly"
-                attributes += SirAttribute.Available(message = "Available method", deprecated = false, obsoleted = false)
+                attributes += SirAttribute.Available(message = "Available method", deprecated = false)
             }
         }
 
@@ -1018,7 +1018,7 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     returnType = SirNominalType(SirSwiftModule.bool)
-                    attributes += SirAttribute.Available(message = "Oh no", deprecated = true, obsoleted = true)
+                    attributes += SirAttribute.Available(message = "Oh no", deprecated = true, obsoleted = "1.0")
                 }
             }
             addChild {
@@ -1031,7 +1031,7 @@ class SirAsSwiftSourcesPrinterTests {
                     documentation = """
                             /// Example docstring
                         """.trimIndent()
-                    attributes += SirAttribute.Available(message = "Obsolete variable", deprecated = false, obsoleted = true)
+                    attributes += SirAttribute.Available(message = "Obsolete variable", deprecated = false, obsoleted = "1.0")
                 }
             }
             addChild {

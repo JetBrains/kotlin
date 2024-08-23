@@ -7,13 +7,13 @@ public class OPEN_INTERNAL {
     }
 }
 /// Example docstring
-@available(*, obsoleted, message: "Obsolete variable")
+@available(*, obsoleted: 1.0, message: "Obsolete variable")
 public var myVariable: Swift.Bool {
     get {
         stub()
     }
 }
-@available(*, deprecated, obsoleted, message: "Oh no")
+@available(*, deprecated, obsoleted: 1.0, message: "Oh no")
 public func foo() -> Swift.Bool {
     stub()
 }
