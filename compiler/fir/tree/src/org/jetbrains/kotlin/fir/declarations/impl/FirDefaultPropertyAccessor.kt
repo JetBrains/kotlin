@@ -42,12 +42,13 @@ abstract class FirDefaultPropertyAccessor(
     isOverride: Boolean,
     symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase,
+    attributes: FirDeclarationAttributes,
 ) : FirPropertyAccessorImpl(
     source,
     resolvePhase,
     moduleData,
     origin,
-    FirDeclarationAttributes(),
+    attributes,
     status = when (effectiveVisibility) {
         null -> FirDeclarationStatusImpl(visibility, modality)
         else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
@@ -114,6 +115,7 @@ class FirDefaultPropertyGetter(
     isOverride: Boolean = false,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 ) : FirDefaultPropertyAccessor(
     source,
     moduleData,
@@ -129,6 +131,7 @@ class FirDefaultPropertyGetter(
     isOverride = isOverride,
     symbol = symbol,
     resolvePhase = resolvePhase,
+    attributes = attributes,
 )
 
 /**
@@ -150,6 +153,7 @@ class FirDefaultPropertySetter(
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 ) : FirDefaultPropertyAccessor(
     source,
     moduleData,
@@ -176,4 +180,5 @@ class FirDefaultPropertySetter(
     isOverride = isOverride,
     symbol = propertyAccessorSymbol,
     resolvePhase = resolvePhase,
+    attributes = attributes,
 )
