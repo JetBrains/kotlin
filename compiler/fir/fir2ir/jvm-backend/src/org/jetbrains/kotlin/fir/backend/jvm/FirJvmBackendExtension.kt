@@ -71,6 +71,8 @@ class FirJvmBackendExtension(
                         stringTable.getQualifiedClassNameIndex(className, isLocal)
 
                     override fun getStringIndex(string: String): Int = stringTable.getStringIndex(string)
+
+                    override fun getPackageFqNameIndexByString(fqName: String): Int = stringTable.getPackageFqNameIndexByString(fqName)
                 }
             ) {
                 override fun serializeClass(

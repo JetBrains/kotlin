@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
+import org.jetbrains.org.objectweb.asm.*
+import java.io.File
+import java.io.FileInputStream
+import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.Metadata
 import kotlin.metadata.jvm.UnstableMetadataApi
-import org.jetbrains.org.objectweb.asm.*
-import java.io.File
-import java.io.FileInputStream
 
 fun ClassReader.readKotlinClassHeader(): Metadata? {
     var header: Metadata? = null
@@ -91,3 +92,6 @@ internal fun readMetadata(metadata: Metadata): KotlinClassMetadata {
 @OptIn(UnstableMetadataApi::class)
 internal fun readModuleFile(file: File): KotlinModuleMetadata? =
     runCatching { KotlinModuleMetadata.read(file.readBytes()) }.getOrNull()
+
+internal fun readBuiltInsFile(file: File): KotlinCommonMetadata? =
+    KotlinCommonMetadata.read(file.readBytes())

@@ -72,6 +72,9 @@ open class SerializableStringTable : StringTable {
         return qualifiedNames.intern(FqNameProto(builder))
     }
 
+    override fun getPackageFqNameIndexByString(fqName: String): Int =
+        getPackageFqNameIndex(FqName(fqName))
+
     fun getPackageFqNameIndex(fqName: FqName): Int {
         var result = -1
         for (segment in fqName.pathSegments()) {

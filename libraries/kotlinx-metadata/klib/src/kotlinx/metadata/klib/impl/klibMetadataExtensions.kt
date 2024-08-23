@@ -8,14 +8,13 @@ package kotlinx.metadata.klib.impl
 import kotlinx.metadata.klib.*
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
-import kotlin.metadata.internal.common.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.StringTableImpl
 
 internal class KlibMetadataExtensions : MetadataExtensions {
@@ -189,8 +188,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     override fun writePackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package.Builder, c: WriteContext) {
         kmPackage.fqName?.let { fqName ->
-            val fqNameIdx = (c.strings as StringTableImpl).getPackageFqNameIndex(FqName(fqName))
-            proto.setExtension(KlibMetadataProtoBuf.packageFqName, fqNameIdx)
+            proto.setExtension(KlibMetadataProtoBuf.packageFqName, c.strings.getPackageFqNameIndexByString(fqName))
         }
     }
 

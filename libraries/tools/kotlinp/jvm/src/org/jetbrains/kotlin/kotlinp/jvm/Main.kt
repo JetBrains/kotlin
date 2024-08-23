@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.kotlinp.jvm
 
-import kotlin.metadata.jvm.UnstableMetadataApi
+import org.jetbrains.kotlin.kotlinp.BuiltInsKotlinp
 import org.jetbrains.kotlin.kotlinp.Settings
 import java.io.File
 import java.io.IOException
+import kotlin.metadata.jvm.UnstableMetadataApi
 import kotlin.system.exitProcess
 
 object Main {
@@ -36,7 +37,7 @@ object Main {
             }
         }
 
-        val kotlinp = JvmKotlinp(Settings(isVerbose = verbose, sortDeclarations = sort))
+        val settings = Settings(isVerbose = verbose, sortDeclarations = sort)
 
         for (path in paths) {
             val file = File(path)
@@ -44,9 +45,10 @@ object Main {
 
             val text = try {
                 when (file.extension) {
-                    "class" -> kotlinp.printClassFile(readMetadata(readClassFile(file)))
-                    "kotlin_module" -> @OptIn(UnstableMetadataApi::class) kotlinp.printModuleFile(readModuleFile(file))
-                    else -> throw KotlinpException("only .class and .kotlin_module files are supported")
+                    "class" -> JvmKotlinp(settings).printClassFile(readMetadata(readClassFile(file)))
+                    "kotlin_module" -> @OptIn(UnstableMetadataApi::class) JvmKotlinp(settings).printModuleFile(readModuleFile(file))
+                    "kotlin_builtins" -> BuiltInsKotlinp(settings).printBuiltInsFile(readBuiltInsFile(file))
+                    else -> throw KotlinpException("only .class, .kotlin_module and .kotlin_builtins files are supported")
                 }
             } catch (e: IOException) {
                 throw KotlinpException("I/O operation failed: ${e.message}")

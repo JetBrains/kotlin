@@ -8,7 +8,7 @@ import kotlinx.metadata.klib.KlibEnumEntry
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlin.metadata.*
 import kotlinx.metadata.klib.*
-import kotlin.metadata.internal.common.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.utils.addIfNotNull
 
