@@ -22,6 +22,7 @@ internal class NativeIrInliner(
         NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions),
         insertAdditionalImplicitCasts = true,
         produceOuterThisFields = false,
+        eraseReturnType = true,
 ) {
     override fun lower(irFile: IrFile) {
         // For consistency, it's important to memoize already lowered inline functions exactly in the same state

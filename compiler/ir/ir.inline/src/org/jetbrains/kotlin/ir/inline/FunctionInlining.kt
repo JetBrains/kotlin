@@ -85,6 +85,7 @@ open class FunctionInlining(
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
+    private val eraseReturnType: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -132,7 +133,8 @@ open class FunctionInlining(
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
-            produceOuterThisFields
+            produceOuterThisFields,
+            eraseReturnType,
         )
         return inliner.inline().markAsRegenerated()
     }
@@ -162,7 +164,8 @@ open class FunctionInlining(
         val context: CommonBackendContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val insertAdditionalImplicitCasts: Boolean,
-        private val produceOuterThisFields: Boolean
+        private val produceOuterThisFields: Boolean,
+        private val eraseReturnType: Boolean,
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
@@ -206,7 +209,7 @@ open class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
-            val returnType = inlineFunctionBodyPreprocessor.remapType(callee.returnType)
+            val returnType = if (eraseReturnType) inlineFunctionBodyPreprocessor.remapType(callee.returnType) else callSite.type
 
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
