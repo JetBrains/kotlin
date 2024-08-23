@@ -43653,6 +43653,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("privateSealedNested.kt")
+      public void testPrivateSealedNested() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateSealedNested.kt");
+      }
+
+      @Test
       @TestMetadata("privateToThis.kt")
       public void testPrivateToThis() {
         runTest("compiler/testData/diagnostics/tests/visibility/privateToThis.kt");
