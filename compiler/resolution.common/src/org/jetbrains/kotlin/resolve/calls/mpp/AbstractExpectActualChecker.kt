@@ -118,7 +118,7 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.ClassModifiers
         }
 
-        if (expectClassSymbol.isFun && !actualClass.isFun && actualClass.isNotSamInterface()) {
+        if (expectClassSymbol.isFun && (!actualClass.isFun || !actualClass.isSamInterface())) {
             return ExpectActualCheckingCompatibility.FunInterfaceModifier
         }
 

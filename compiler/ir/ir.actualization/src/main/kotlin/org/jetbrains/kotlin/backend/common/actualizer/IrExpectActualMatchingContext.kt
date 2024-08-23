@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -456,15 +457,8 @@ internal abstract class IrExpectActualMatchingContext(
         }
     }
 
-    override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean { // todo suka
-        /*
-         * This is incorrect for java classes (because all java interfaces are considered as fun interfaces),
-         *   but it's fine to not to check if some java interfaces is really SAM or not, because if one
-         *   tries to actualize `expect fun interface` with typealias to non-SAM java interface, frontend
-         *   will report an error and IR matching won't be invoked
-         */
-        return !asIr().isFun
-    }
+    override fun RegularClassSymbolMarker.isSamInterface(): Boolean =
+        this.asIr().functions.singleOrNull { it.modality == Modality.ABSTRACT } != null
 
     override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean {
         return asIr().isFakeOverride
