@@ -109,6 +109,9 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
 
     if (backingPsi?.superTypeListEntries?.isNotEmpty() != false ||
         // We cannot optimize super types by psi if at least one compiler plugin may generate additional types
+        // NOTE: ideally, we should check the declaration-site session, but in practice it doesn't matter
+        // as `FirExtensionService` is a project-wide service, so `supertypeGenerators` effectively
+        // the same for all modules in the project
         analysisSession.firSession.extensionService.supertypeGenerators.isNotEmpty()
     ) {
         return firSymbol.superTypesList(builder)

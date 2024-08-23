@@ -180,12 +180,9 @@ internal class KaFirNamedClassSymbol private constructor(
      * TODO This optimization should become obsolete after KT-56551 is fixed.
      */
     private val FirRegularClassSymbol.optionallyResolvedStatus: FirDeclarationStatus
-        get() = if (statusTransformersPresent) {
+        get() = if (moduleData.session.extensionService.statusTransformerExtensions.isNotEmpty()) {
             resolvedStatus
         } else {
             rawStatus
         }
-
-    private val statusTransformersPresent: Boolean
-        get() = analysisSession.firSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }
