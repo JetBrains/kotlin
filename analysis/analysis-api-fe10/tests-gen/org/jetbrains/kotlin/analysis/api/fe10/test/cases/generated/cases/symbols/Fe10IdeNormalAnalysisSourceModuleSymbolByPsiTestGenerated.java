@@ -43,7 +43,7 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
 
   @Test
   public void testAllFilesPresentInSymbolByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
   }
 
   @Test
@@ -334,7 +334,7 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   public class ContextReceivers {
     @Test
     public void testAllFilesPresentInContextReceivers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
 
     @Test
@@ -368,7 +368,7 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   public class ValueParameters {
     @Test
     public void testAllFilesPresentInValueParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
     }
 
     @Test

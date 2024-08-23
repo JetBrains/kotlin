@@ -42,7 +42,7 @@ public class FirStandaloneNormalAnalysisSourceModuleMultiModuleSymbolByPsiTestGe
 
   @Test
   public void testAllFilesPresentInMultiModuleSymbolByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/multiModuleSymbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
   }
 
   @Test

@@ -1,5 +1,4 @@
 // WITH_FIR_TEST_COMPILER_PLUGIN
-// IGNORE_FE10
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

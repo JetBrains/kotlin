@@ -11,12 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderForSetterParameterTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingModuleByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
@@ -39,14 +34,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallByFileTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceByFileTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceWithResolveExtensionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
@@ -55,10 +43,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientTypeEqualityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractTypeEqualityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
@@ -72,29 +56,16 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassIdSubtypingTypeRelationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSymbolSubtypingTypeRelationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassIdSubtypingTypeRelationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSymbolSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractModuleStateModificationAnalysisSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAbbreviatedTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypePointerConsistencyTest
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -212,42 +183,40 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
         group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.frontend == FrontendKind.Fe10) {
+                    model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                } else {
+                    model(data, path)
+                }
+            }
+
             test<AbstractSymbolByPsiTest> {
-                model(it, "symbolByPsi")
+                symbolsModel(it, "symbolByPsi")
             }
 
             test<AbstractSymbolByJavaPsiTest>(filter = frontendIs(FrontendKind.Fir)) {
-                model(it, "symbolByJavaPsi")
+                symbolsModel(it, "symbolByJavaPsi")
             }
 
             test<AbstractSingleSymbolByPsiTest> {
-                model(it, "singleSymbolByPsi")
+                symbolsModel(it, "singleSymbolByPsi")
             }
 
             test<AbstractSymbolRestoreFromDifferentModuleTest> {
-                model(it, "symbolRestoreFromDifferentModule")
+                symbolsModel(it, "symbolRestoreFromDifferentModule")
             }
 
             test<AbstractMultiModuleSymbolByPsiTest> {
-                model(it, "multiModuleSymbolByPsi")
+                symbolsModel(it, "multiModuleSymbolByPsi")
             }
 
             test<AbstractSymbolByFqNameTest> {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model(it, "symbolByFqName")
-                    AnalysisApiMode.Standalone ->
-                        model(it, "symbolByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
+                symbolsModel(it, "symbolByFqName")
             }
 
             test<AbstractSymbolByReferenceTest> {
-                when (it.analysisApiMode) {
-                    AnalysisApiMode.Ide ->
-                        model(it, "symbolByReference")
-                    AnalysisApiMode.Standalone ->
-                        model(it, "symbolByReference", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-                }
+                symbolsModel(it, "symbolByReference")
             }
         }
 
