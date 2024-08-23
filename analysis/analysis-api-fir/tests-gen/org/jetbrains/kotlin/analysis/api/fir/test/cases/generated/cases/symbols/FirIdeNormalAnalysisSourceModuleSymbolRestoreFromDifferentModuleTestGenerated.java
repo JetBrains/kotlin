@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolRestoreFromDifferentModuleTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -55,5 +56,27 @@ public class FirIdeNormalAnalysisSourceModuleSymbolRestoreFromDifferentModuleTes
   @TestMetadata("withDependency.kt")
   public void testWithDependency() {
     runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withDependency.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("statusCompilerPluginFromDependency.kt")
+    public void testStatusCompilerPluginFromDependency() {
+      runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withTestCompilerPluginEnabled/statusCompilerPluginFromDependency.kt");
+    }
+
+    @Test
+    @TestMetadata("supertypeCompilerPluginFromDependency.kt")
+    public void testSupertypeCompilerPluginFromDependency() {
+      runTest("analysis/analysis-api/testData/symbols/symbolRestoreFromDifferentModule/withTestCompilerPluginEnabled/supertypeCompilerPluginFromDependency.kt");
+    }
   }
 }

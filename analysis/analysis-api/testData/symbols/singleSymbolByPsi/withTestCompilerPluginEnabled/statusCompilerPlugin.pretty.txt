@@ -1,0 +1,2 @@
+@org.jetbrains.kotlin.fir.plugin.AllOpen
+open class Foo
