@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -285,6 +286,18 @@ internal class KaFirSymbolRelationProvider(
             KtFakeSourceElementKind.EnumInitializer -> source.psi as KtEnumEntry
             KtFakeSourceElementKind.EnumGeneratedDeclaration -> source.psi as KtDeclaration
             KtFakeSourceElementKind.ScriptParameter -> source.psi as KtScript
+            KtFakeSourceElementKind.DataClassGeneratedMembers -> when (val source = source.psi) {
+                is KtClassOrObject -> {
+                    // for generated `equals`, `hashCode`, `toString` methods the source is the containing `KtClass`
+                    source
+                }
+                is KtParameter -> {
+                    // for `componentN` functions, the source points to the parameter by which the `componentN` function was generated
+                    val constructor = source.ownerFunction as KtPrimaryConstructor
+                    constructor.containingClassOrObject!!
+                }
+                else -> null
+            }
             else -> null
         }
     }

@@ -128,6 +128,52 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CodeFragment {
+      @Test
+      public void testAllFilesPresentInCodeFragment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("dataClassComponent.kt")
+      public void testDataClassComponent() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataClassComponent.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopy.kt")
+      public void testDataClassCopy() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataClassCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopyParameter.kt")
+      public void testDataClassCopyParameter() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataClassCopyParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassEquals.kt")
+      public void testDataClassEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataClassEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectEquals.kt")
+      public void testDataObjectEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataObjectEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectToString.kt")
+      public void testDataObjectToString() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment/dataObjectToString.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library")
     @TestDataPath("$PROJECT_ROOT")
     public class Library {

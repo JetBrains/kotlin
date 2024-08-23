@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceFileProvider
@@ -73,13 +76,25 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
         val foreignValues = testFile.directives[AnalysisApiTestCodeFragmentDirectives.CODE_FRAGMENT_FOREIGN_VALUE]
         TestForeignValueProviderService.submitForeignValues(codeFragment, foreignValues)
 
+
         val module = KaDanglingFileModuleImpl(
             codeFragment,
             contextModule.ktModule,
-            KaDanglingFileResolutionMode.PREFER_SELF
+            getResolutionMode(testFile)
         )
 
+        codeFragment.forcedSpecialModule = module
+
         return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))
+    }
+
+    private fun getResolutionMode(testFile: TestFile): KaDanglingFileResolutionMode {
+        val directives = testFile.directives[AnalysisApiTestCodeFragmentDirectives.CODE_FRAGMENT_RESOLUTION_MODE]
+        return when (directives.size) {
+            0 -> KaDanglingFileResolutionMode.PREFER_SELF
+            1 -> directives.single()
+            else -> error("Expected 0 or 1 `${AnalysisApiTestCodeFragmentDirectives.CODE_FRAGMENT_RESOLUTION_MODE}` directives, got: ${directives.size}")
+        }
     }
 
     private fun findContextElement(file: KtFile, testServices: TestServices): KtElement? {
@@ -98,6 +113,12 @@ object AnalysisApiTestCodeFragmentDirectives : SimpleDirectivesContainer() {
         description = "Import local to the code fragment content",
         applicability = DirectiveApplicability.File
     )
+
+    val CODE_FRAGMENT_RESOLUTION_MODE by enumDirective<KaDanglingFileResolutionMode>(
+        description = "Import local to the code fragment content, default is `KaDanglingFileResolutionMode.PREFER_SELF`",
+        applicability = DirectiveApplicability.File
+    )
+
 
     val CODE_FRAGMENT_FOREIGN_VALUE by valueDirective<TestForeignValue>(
         description = "Value injected to a code fragment",

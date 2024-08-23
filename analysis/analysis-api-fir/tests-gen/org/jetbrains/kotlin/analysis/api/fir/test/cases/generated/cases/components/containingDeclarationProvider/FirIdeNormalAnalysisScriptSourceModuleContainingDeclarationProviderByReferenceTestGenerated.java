@@ -56,6 +56,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleContainingDeclarationProvider
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CodeFragment {
+      @Test
+      public void testAllFilesPresentInCodeFragment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/codeFragment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library")
     @TestDataPath("$PROJECT_ROOT")
     public class Library {
