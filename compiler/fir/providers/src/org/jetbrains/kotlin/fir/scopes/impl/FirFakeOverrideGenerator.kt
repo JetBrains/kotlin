@@ -502,6 +502,7 @@ object FirFakeOverrideGenerator {
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
             isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -517,6 +518,7 @@ object FirFakeOverrideGenerator {
             resolvePhase = origin.resolvePhaseForCopy,
             parameterSource = valueParameters.first().source,
             isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -530,6 +532,7 @@ object FirFakeOverrideGenerator {
             this.body = null
             resolvePhase = origin.resolvePhaseForCopy
             this.status = status.copy(visibility = newVisibility)
+            this.attributes = this@buildCopy.attributes.copy()
         }.also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()

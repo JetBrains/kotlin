@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @PublishedApi
 internal interface History<T> {
     var isIgnoringPlatformChanges: Boolean
