@@ -739,7 +739,7 @@ object LightTreePositioningStrategies {
                 tree.findDescendantByTypes(node, KtTokens.ALL_ASSIGNMENTS) != null
             ) {
                 tree.findExpressionDeep(node)?.let {
-                    return markElement(it, startOffset, endOffset, tree, node)
+                    return mark(it, it.startOffset, it.endOffset, tree)
                 }
             }
             if (node.tokenType in KtTokens.QUALIFIED_ACCESS) {
