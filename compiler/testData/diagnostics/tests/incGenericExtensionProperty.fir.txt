@@ -1,0 +1,32 @@
+FILE: incGenericExtensionProperty.fir.kt
+    public abstract interface Context : R|kotlin/Any| {
+        public abstract var <V> R|Variable<V>|.value: R|V|
+            public get(): R|V|
+            public set(value: R|V|): R|kotlin/Unit|
+
+    }
+    public final class Variable<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Variable<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class A : R|Context| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val intVar: R|Variable<kotlin/Int>|
+            public get(): R|Variable<kotlin/Int>|
+
+        public final fun foo(): R|kotlin/Unit| {
+             {
+                lval <receiver>: R|Variable<kotlin/Int>| = this@R|/A|.R|/A.intVar|
+                lval <unary>: R|kotlin/Int| = (this@R|/A|, R|<local>/<receiver>|).R|/Context.value|<R|kotlin/Int|>
+                (this@R|/A|, R|<local>/<receiver>|).R|/Context.value|<R|kotlin/Int|> = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+
+    }

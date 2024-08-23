@@ -694,6 +694,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("incGenericExtensionProperty.kt")
+    public void testIncGenericExtensionProperty() {
+      runTest("compiler/testData/diagnostics/tests/incGenericExtensionProperty.kt");
+    }
+
+    @Test
     @TestMetadata("IncorrectCharacterLiterals.kt")
     public void testIncorrectCharacterLiterals() {
       runTest("compiler/testData/diagnostics/tests/IncorrectCharacterLiterals.kt");
