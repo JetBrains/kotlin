@@ -25,7 +25,7 @@ interface I {
     fun bar()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F1 {
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!ACTUAL_WITHOUT_EXPECT!>F1<!> {
     actual fun foo()
     fun bar()
 }
@@ -34,10 +34,10 @@ actual fun interface F2 {
     fun bar()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F3 : I {
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!ACTUAL_WITHOUT_EXPECT!>F3<!> : I {
     actual fun foo()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>F4<!> {}
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!ACTUAL_WITHOUT_EXPECT!>F4<!> {}
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F5 {}
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!ACTUAL_WITHOUT_EXPECT!>F5<!> {}
