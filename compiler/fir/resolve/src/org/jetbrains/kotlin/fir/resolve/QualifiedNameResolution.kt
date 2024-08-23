@@ -123,7 +123,6 @@ fun FirResolvedQualifier.continueQualifier(
                     symbol = nestedClassSymbol as FirClassLikeSymbol<*>
                     isFullyQualified = true
 
-                    this.typeArguments.clear()
                     this.typeArguments.addAll(qualifiedAccess.typeArguments)
                     this.typeArguments.addAll(this@continueQualifier.typeArguments)
                     this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
