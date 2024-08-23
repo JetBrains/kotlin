@@ -231,7 +231,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext, preserveAttributes = preserveAttributes)
     }
 
-    override fun RigidTypeMarker.makeRigidTypeDefinitelyNotNullOrNotNull(): RigidTypeMarker {
+    override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker {
         require(this is ConeRigidType)
         return makeConeTypeDefinitelyNotNullOrNotNull(this@ConeInferenceContext) as RigidTypeMarker
     }

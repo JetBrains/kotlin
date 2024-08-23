@@ -191,7 +191,7 @@ object NewCommonSuperTypeCalculator {
 
         return uniquify(typesToUniquify, stateStubTypesNotEqual).singleOrNull()?.let {
             when {
-                areAllDefNotNull -> it.makeRigidTypeDefinitelyNotNullOrNotNull()
+                areAllDefNotNull -> it.makeDefinitelyNotNullOrNotNull()
                 areThereAnyNullable -> it.withNullability(true)
                 else -> it
             }

@@ -557,8 +557,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")
     }
 
-    override fun RigidTypeMarker.makeRigidTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
-        error("makeSimpleTypeDefinitelyNotNullOrNotNull is not yet supported in IR")
+    override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
+        error("makeDefinitelyNotNullOrNotNull is not yet supported in IR")
     }
 
     override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {

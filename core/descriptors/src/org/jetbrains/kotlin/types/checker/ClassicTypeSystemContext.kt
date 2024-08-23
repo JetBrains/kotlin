@@ -472,7 +472,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
 
-    override fun RigidTypeMarker.makeRigidTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
+    override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
         require(this is SimpleType, this::errorMessage)
         return makeSimpleTypeDefinitelyNotNullOrNotNullInternal(this)
     }

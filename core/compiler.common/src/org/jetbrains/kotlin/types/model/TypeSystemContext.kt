@@ -362,33 +362,53 @@ class ArgumentList(initialSize: Int) : ArrayList<TypeArgumentMarker>(initialSize
  * Defines common kotlin type operations with types for abstract types
  */
 interface TypeSystemContext : TypeSystemOptimizationContext {
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.asRigidType(): RigidTypeMarker = this
     fun KotlinTypeMarker.asRigidType(): RigidTypeMarker?
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun FlexibleTypeMarker.asFlexibleType(): FlexibleTypeMarker = this
     fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker?
 
     fun KotlinTypeMarker.isError(): Boolean
     fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DynamicTypeMarker.asDynamicType(): DynamicTypeMarker = this
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
     fun KotlinTypeMarker.isRawType(): Boolean
 
     fun FlexibleTypeMarker.upperBound(): RigidTypeMarker
-
     fun FlexibleTypeMarker.lowerBound(): RigidTypeMarker
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun CapturedTypeMarker.asCapturedType(): CapturedTypeMarker = this
     fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker?
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun CapturedTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker = this
     fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = originalIfDefinitelyNotNullable().asCapturedType()
 
     fun KotlinTypeMarker.isCapturedType() = asRigidType()?.asCapturedTypeUnwrappingDnn() != null
 
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DefinitelyNotNullTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker = this
     fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
 
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun SimpleTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker = this
     fun RigidTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker =
         asDefinitelyNotNullType()?.original() ?: this as SimpleTypeMarker
 
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DefinitelyNotNullTypeMarker.makeDefinitelyNotNullOrNotNull(): DefinitelyNotNullTypeMarker = this
     fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker = makeDefinitelyNotNullOrNotNull(preserveAttributes = false)
     fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker
-    fun RigidTypeMarker.makeRigidTypeDefinitelyNotNullOrNotNull(): RigidTypeMarker
+    fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker
+
     fun SimpleTypeMarker.isMarkedNullable(): Boolean
     fun KotlinTypeMarker.isMarkedNullable(): Boolean =
         this is SimpleTypeMarker && isMarkedNullable()
@@ -454,7 +474,12 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeConstructorMarker.isDenotable(): Boolean
 
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.lowerBoundIfFlexible(): RigidTypeMarker = this
     fun KotlinTypeMarker.lowerBoundIfFlexible(): RigidTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asRigidType()!!
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.upperBoundIfFlexible(): RigidTypeMarker = this
     fun KotlinTypeMarker.upperBoundIfFlexible(): RigidTypeMarker = this.asFlexibleType()?.upperBound() ?: this.asRigidType()!!
 
     fun KotlinTypeMarker.isFlexibleWithDifferentTypeConstructors(): Boolean =
