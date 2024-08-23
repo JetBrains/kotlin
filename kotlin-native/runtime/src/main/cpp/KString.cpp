@@ -98,7 +98,6 @@ bool isInSurrogatePair(String&& string, It&& it) {
 template <typename Allocator /*= KRef(size_t sizeInChars) */>
 KRef allocateString(int encoding, uint32_t sizeInBytes, Allocator&& allocate) {
     auto flags = (encoding << StringHeader::ENCODING_OFFSET) |
-        (StringHeader::HASHCODE_CACHEABLE * (sizeInBytes > 16)) |
         (StringHeader::IGNORE_LAST_BYTE * (sizeInBytes % 2));
     // All strings are stored as KChar arrays regardless of the actual byte encoding
     auto result = allocate((sizeInBytes + StringHeader::extraLength(flags)) / sizeof(KChar));
@@ -564,12 +563,10 @@ extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
         }
     });
 
-    if (flags & StringHeader::HASHCODE_CACHEABLE) {
-        auto nonConst = const_cast<StringHeader*>(header);
-        kotlin::std_support::atomic_ref{nonConst->hashCode_}.store(result, std::memory_order_relaxed);
-        // TODO: use fetch_or once atomic_ref has it; for now this is fine since this is the only mutable flag.
-        kotlin::std_support::atomic_ref{nonConst->flags_}.store(flags | StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
-    }
+    auto nonConst = const_cast<StringHeader*>(header);
+    kotlin::std_support::atomic_ref{nonConst->hashCode_}.store(result, std::memory_order_relaxed);
+    // TODO: use fetch_or once atomic_ref has it; for now this is fine since this is the only mutable flag.
+    kotlin::std_support::atomic_ref{nonConst->flags_}.store(flags | StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
     return result;
 }
 

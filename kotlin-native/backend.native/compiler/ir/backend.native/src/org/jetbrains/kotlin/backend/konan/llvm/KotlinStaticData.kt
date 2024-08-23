@@ -46,28 +46,27 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        val useLatin1 = value.all { it.code in 0..255 }
-        val useHashcodeCache = value.length > (if (useLatin1) 16 else 8) // arbitrary bound...
-        // See KString.h for the meanings and native equivalents of these constants.
-        val encoding = if (useLatin1) (1 shl 12) or ((value.length % 2) shl 2) else 0
-        val stringHeaderLength = if (useHashcodeCache) 4 else 1
-        val stringHeader = if (useHashcodeCache)
-            arrayOf(llvm.constInt16((encoding or 3).toShort()), llvm.constInt16(0), llvm.constInt32(value.hashCode()))
-        else
-            arrayOf(llvm.constInt16(encoding.toShort()))
-        // Length should be in chars independent of encoding.
-        val arrayLength = stringHeaderLength + (if (useLatin1) (value.length + 1) / 2 else value.length)
-        val arrayHeader = arrayHeader(context.ir.symbols.string.owner.typeInfoPtr, arrayLength)
-        val arrayValue = if (useLatin1) {
-            val encoded = value.map { llvm.constInt8(it.code.toByte()) }
-            val padding = List(value.length % 2) { llvm.constInt8(0) }
-            ConstArray(llvm.int8Type, encoded + padding)
+        val (encodingFlag, encoded) = if (value.all { it.code in 0..255 }) {
+            // Technically it's not *really* Latin-1 because real Latin-1 has unassigned codepoints,
+            // so `toByteArray(Charsets.ISO_8859_1)` does not produce the same result - it can replace
+            // some of the characters with placeholders.
+            1 to ByteArray(value.length) { value[it].code.toByte() }
         } else {
-            ConstArray(llvm.int16Type, value.map(llvm::constChar16))
+            // And here it's technically not always UTF-16 either because we could have unpaired surrogates,
+            // so `toByteArray(Charsets.UTF_16{LE,BE})` is also wrong...
+            val high = if (runtime.isBigEndian) 0 else 1
+            0 to ByteArray(value.length * 2) { (value[it / 2].code shr if (it % 2 == high) 8 else 0).toByte() }
         }
-        // The header contains a pointer, use a packed struct to avoid padding the entire string
-        // to a multiple of pointer size.
-        return createConstant(llvm.struct(arrayHeader, *stringHeader, arrayValue, packed = true))
+        val data = encoded + ByteArray(encoded.size % 2) { 0 }
+        val header = Struct(
+                llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
+                permanentTag(context.ir.symbols.string.owner.typeInfoPtr),
+                llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // in chars independent of encoding
+                llvm.constInt32(value.hashCode()),
+                llvm.constInt16((2 or (encodingFlag shl 12) or (encoded.size % 2)).toShort()),
+                ConstArray(llvm.int8Type, data.map(llvm::constInt8))
+        )
+        return createConstant(header)
     }
 
     fun kotlinStringLiteral(value: String) = stringLiterals.getOrPut(value) { createKotlinStringLiteral(value) }

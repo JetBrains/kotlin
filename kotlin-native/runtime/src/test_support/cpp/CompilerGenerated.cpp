@@ -103,10 +103,10 @@ extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakRefer
 extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 
 static StringHeader theEmptyStringImpl =
-    {{theStringTypeInfoHolder.typeInfo(), /* element count */ 1}, /* flags */ 0, /* hashcode */ 0};
+    {theStringTypeInfoHolder.typeInfo(), /* element count */ StringHeader::extraLength(0) / sizeof(KChar), /* hashcode */ 0, /* flags */ 0};
 
 OBJ_GETTER0(TheEmptyString) {
-    RETURN_OBJ(theEmptyStringImpl.array_.obj());
+    RETURN_OBJ(reinterpret_cast<KRef>(theEmptyStringImpl));
 }
 
 RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, void*) {
