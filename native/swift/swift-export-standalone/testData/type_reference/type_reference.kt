@@ -96,6 +96,8 @@ fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
 // FILE: ingored.kt
 package ignored
 
+import Class_without_package
+
 data class DATA_CLASS(val a: Int)
 value class VALUE_CLASS(val a: Int)
 abstract class ABSTRACT_CLASS
@@ -105,8 +107,17 @@ enum class ENUM {
     A,
 }
 
-fun receive_NULLABLE(x: Any?): Unit = TODO()
-fun produce_NULLABlE(): Any? = TODO()
+fun nullable_input_ref(i: Class_without_package?): Unit = TODO()
+fun nullable_output_ref(): Class_without_package? = null
+
+fun nullable_input_prim(i: Int?): Unit = TODO()
+fun nullable_output_prim(): Int? = null
+
+var nullableRef: Class_without_package? = null
+var nullablePrim: Int? = null
+
+fun Int?.extensionOnNullabelPrimitive(): Unit = TODO()
+fun Class_without_package?.extensionOnNullabelRef(): Unit = TODO()
 
 fun recieve_DATA_CLASS(x: DATA_CLASS): Unit = TODO()
 fun produce_DATA_CLASS(): DATA_CLASS = TODO()

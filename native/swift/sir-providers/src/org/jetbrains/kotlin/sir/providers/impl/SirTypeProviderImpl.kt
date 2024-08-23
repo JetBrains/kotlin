@@ -37,6 +37,7 @@ public class SirTypeProviderImpl(
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
+                ktType.isMarkedNullable -> null
                 ktType.isCharType -> SirNominalType(SirSwiftModule.utf16CodeUnit)
                 ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
 
@@ -61,10 +62,12 @@ public class SirTypeProviderImpl(
             }
         }
 
-        fun buildRegularType(ktType: KaType): SirType = with (ktAnalysisSession) {
+        fun buildRegularType(ktType: KaType): SirType = with(ktAnalysisSession) {
             when (ktType) {
                 is KaUsualClassType -> with(sirSession) {
-                    if (ktType.isAnyType && !ktType.isMarkedNullable) {
+                    if (ktType.isMarkedNullable) {
+                        SirUnsupportedType()
+                    } else if (ktType.isAnyType) {
                         SirNominalType(KotlinRuntimeModule.kotlinBase)
                     } else {
                         val classSymbol = ktType.symbol
@@ -77,7 +80,7 @@ public class SirTypeProviderImpl(
                 }
                 is KaFunctionType,
                 is KaTypeParameterType,
-                -> SirUnsupportedType()
+                    -> SirUnsupportedType()
                 is KaErrorType -> SirErrorType(ktType.errorMessage)
                 else -> SirErrorType("Unexpected type ${ktType}")
             }

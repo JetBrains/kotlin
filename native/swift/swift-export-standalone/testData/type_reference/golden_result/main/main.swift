@@ -433,6 +433,38 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
+    public static var nullablePrim: Swift.Never {
+        get {
+            fatalError()
+        }
+        set {
+            fatalError()
+        }
+    }
+    public static var nullableRef: Swift.Never {
+        get {
+            fatalError()
+        }
+        set {
+            fatalError()
+        }
+    }
+    public static func nullable_input_prim(
+        i: Swift.Never
+    ) -> Swift.Void {
+        fatalError()
+    }
+    public static func nullable_input_ref(
+        i: Swift.Never
+    ) -> Swift.Void {
+        fatalError()
+    }
+    public static func nullable_output_prim() -> Swift.Never {
+        fatalError()
+    }
+    public static func nullable_output_ref() -> Swift.Never {
+        fatalError()
+    }
     public static func produce_ABSTRACT_CLASS() -> Swift.Never {
         fatalError()
     }
@@ -445,15 +477,7 @@ public extension ExportedKotlinPackages.ignored {
     public static func produce_INTERFACE() -> Swift.Never {
         fatalError()
     }
-    public static func produce_NULLABlE() -> Swift.Never {
-        fatalError()
-    }
     public static func produce_VALUE_CLASS() -> Swift.Never {
-        fatalError()
-    }
-    public static func receive_NULLABLE(
-        x: Swift.Never
-    ) -> Swift.Void {
         fatalError()
     }
     public static func recieve_ABSTRACT_CLASS(
