@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -115,5 +116,107 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
   @TestMetadata("topLevelFunctionFromInside.kt")
   public void testTopLevelFunctionFromInside() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/topLevelFunctionFromInside.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DataClassGenerated {
+    @Test
+    public void testAllFilesPresentInDataClassGenerated() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Library {
+      @Test
+      public void testAllFilesPresentInLibrary() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("dataClassComponent.kt")
+      public void testDataClassComponent() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataClassComponent.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopy.kt")
+      public void testDataClassCopy() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataClassCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopyParameter.kt")
+      public void testDataClassCopyParameter() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataClassCopyParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassEquals.kt")
+      public void testDataClassEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataClassEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectEquals.kt")
+      public void testDataObjectEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataObjectEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectToString.kt")
+      public void testDataObjectToString() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/library/dataObjectToString.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Source {
+      @Test
+      public void testAllFilesPresentInSource() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("dataClassComponent.kt")
+      public void testDataClassComponent() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataClassComponent.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopy.kt")
+      public void testDataClassCopy() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataClassCopy.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassCopyParameter.kt")
+      public void testDataClassCopyParameter() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataClassCopyParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassEquals.kt")
+      public void testDataClassEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataClassEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectEquals.kt")
+      public void testDataObjectEquals() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataObjectEquals.kt");
+      }
+
+      @Test
+      @TestMetadata("dataObjectToString.kt")
+      public void testDataObjectToString() {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/dataClassGenerated/source/dataObjectToString.kt");
+      }
+    }
   }
 }
