@@ -59,6 +59,10 @@ extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
     injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
   }
+  if (kotlin::compiler::swiftExport()) {
+      // Swift Export generates types that don't need to be additionally initialized.
+      return;
+  }
   Kotlin_ObjCExport_initializeClass(self);
 }
 

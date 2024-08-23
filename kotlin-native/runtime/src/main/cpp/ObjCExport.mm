@@ -290,6 +290,7 @@ static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
 static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
 
 static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
   for (int index = 0; index < count; ++index) {
     const ObjCTypeAdapter* adapter = adapters[index];
     const TypeInfo* typeInfo = adapter->kotlinTypeInfo;
@@ -774,6 +775,12 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
+  if (compiler::swiftExport() && compiler::runtimeAssertsEnabled()) {
+      auto kotlinBase = objc_getClass("KotlinBase");
+      RuntimeAssert(kotlinBase != nullptr, "Couldn't find KotlinBase when Swift Export is enabled");
+      RuntimeAssert(![clazz isSubclassOfClass:kotlinBase], "Trying to createTypeInfo for KotlinBase-descendant with Swift Export");
+  }
+
   std::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
 
@@ -961,6 +968,7 @@ static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) 
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
 
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
@@ -1028,6 +1036,8 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   if (result != nullptr) {
     return result;
   }
+
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
 
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
   if (typeAdapter != nullptr) {
