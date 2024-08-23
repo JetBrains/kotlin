@@ -7512,26 +7512,4 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
       }
     }
   }
-
-  @Nested
-  @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE")
-  @TestDataPath("$PROJECT_ROOT")
-  public class ResolveFreezesIDE {
-    @Test
-    public void testAllFilesPresentInResolveFreezesIDE() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveFreezesIDE"), Pattern.compile("^(.+)\\.(nkt)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("kt69995.nkt")
-    public void testKt69995() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.nkt");
-    }
-
-    @Test
-    @TestMetadata("manyCapturedTypes.nkt")
-    public void testManyCapturedTypes() {
-      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
-    }
-  }
 }
