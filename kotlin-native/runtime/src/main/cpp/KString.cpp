@@ -61,7 +61,7 @@ static constexpr const uint32_t MAX_STRING_SIZE =
  *   }
  * See `KString.*.h` for implementations.
  */
-template <typename F>
+template <typename F /* = R(EncodingAwareString) */>
 auto encodingAware(KConstRef string, F&& impl) {
     auto header = StringHeader::of(string);
     switch (header->encoding()) {
@@ -71,6 +71,13 @@ auto encodingAware(KConstRef string, F&& impl) {
         return impl(Latin1String{reinterpret_cast<const uint8_t*>(header->data()), header->size()});
     default: ThrowIllegalArgumentException();
     }
+}
+
+template <typename F /* = R(EncodingAwareString, EncodingAwareString) */>
+auto encodingAware(KConstRef string1, KConstRef string2, F&& impl) {
+    return encodingAware(string1, [&](auto string1) {
+        return encodingAware(string2, [&](auto string2) { return impl(string1, string2); });
+    });
 }
 
 bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
@@ -258,31 +265,29 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
     if (thiz->array()->count_ == 0) RETURN_OBJ(const_cast<KRef>(other));
     if (other->array()->count_ == 0) RETURN_OBJ(const_cast<KRef>(thiz));
-    return encodingAware(thiz, [=](auto thiz) {
-        return encodingAware(other, [=](auto other) {
-            RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
-            RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
-            auto resultLength = thiz.sizeInChars() + other.sizeInChars(); // can't overflow since MAX_STRING_SIZE is (max value)/2
-            if (resultLength > MAX_STRING_SIZE) {
-                ThrowOutOfMemoryError();
-            }
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        RuntimeAssert(thiz.sizeInChars() <= MAX_STRING_SIZE, "this cannot be this large");
+        RuntimeAssert(other.sizeInChars() <= MAX_STRING_SIZE, "other cannot be this large");
+        auto resultLength = thiz.sizeInChars() + other.sizeInChars(); // can't overflow since MAX_STRING_SIZE is (max value)/2
+        if (resultLength > MAX_STRING_SIZE) {
+            ThrowOutOfMemoryError();
+        }
 
-            if (isSameEncoding(thiz, other) &&
-                // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
-                // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
-                (isUTF16(thiz) || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
-            ) {
-                RETURN_RESULT_OF(createWithEncodingOf, thiz, thiz.sizeInUnits() + other.sizeInUnits(), [=](auto* out) {
-                    auto halfway = std::copy(thiz.begin().ptr(), thiz.end().ptr(), out);
-                    std::copy(other.begin().ptr(), other.end().ptr(), halfway);
-                });
-            } else {
-                RETURN_RESULT_OF(createString<UTF16String>, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
-                    auto halfway = std::copy(thiz.begin(), thiz.end(), out);
-                    std::copy(other.begin(), other.end(), halfway);
-                });
-            }
-        });
+        if (isSameEncoding(thiz, other) &&
+            // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
+            // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
+            (isUTF16(thiz) || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
+        ) {
+            RETURN_RESULT_OF(createWithEncodingOf, thiz, thiz.sizeInUnits() + other.sizeInUnits(), [=](auto* out) {
+                auto halfway = std::copy(thiz.begin().ptr(), thiz.end().ptr(), out);
+                std::copy(other.begin().ptr(), other.end().ptr(), halfway);
+            });
+        } else {
+            RETURN_RESULT_OF(createString<UTF16String>, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
+                auto halfway = std::copy(thiz.begin(), thiz.end(), out);
+                std::copy(other.begin(), other.end(), halfway);
+            });
+        }
     });
 }
 
@@ -349,18 +354,16 @@ static KInt Kotlin_String_compareAt(It1 it1, It1 end1, It2 it2, It2 end2) {
 }
 
 extern "C" KInt Kotlin_String_compareTo(KConstRef thiz, KConstRef other) {
-    return encodingAware(thiz, [=](auto thiz) {
-        return encodingAware(other, [=](auto other) {
-            auto begin1 = thiz.begin(), end1 = thiz.end();
-            auto begin2 = other.begin(), end2 = other.end();
-            if constexpr (isSameEncoding(thiz, other)) {
-                auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
-                return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
-            } else {
-                auto [it1, it2] = std::mismatch(begin1, end1, begin2, end2);
-                return Kotlin_String_compareAt(it1, end1, it2, end2);
-            }
-        });
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto begin1 = thiz.begin(), end1 = thiz.end();
+        auto begin2 = other.begin(), end2 = other.end();
+        if constexpr (isSameEncoding(thiz, other)) {
+            auto [ptr1, ptr2] = std::mismatch(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
+            return Kotlin_String_compareAt(thiz.at(ptr1), end1, other.at(ptr2), end2);
+        } else {
+            auto [it1, it2] = std::mismatch(begin1, end1, begin2, end2);
+            return Kotlin_String_compareAt(it1, end1, it2, end2);
+        }
     });
 }
 
@@ -407,42 +410,38 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
 extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
     // TODO: if hash code is computed and unequal, then strings are also unequal
-    return thiz == other || encodingAware(thiz, [=](auto thiz) {
-        return encodingAware(other, [=](auto other) {
-            if constexpr (isSameEncoding(thiz, other)) {
-                return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
-            } else {
-                return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
-            }
-        });
+    return thiz == other || encodingAware(thiz, other, [=](auto thiz, auto other) {
+        if constexpr (isSameEncoding(thiz, other)) {
+            return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
+        } else {
+            return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
+        }
     });
 }
 
 // Bounds checks is are performed on Kotlin side
 extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOffset, KConstRef other, KInt otherOffset, KInt length) {
-    return length == 0 || encodingAware(thiz, [=](auto thiz) {
-        return encodingAware(other, [=](auto other) {
-            auto begin1 = thiz.begin() + thizOffset;
-            auto begin2 = other.begin() + otherOffset;
-            // Questionable moment: in variable-length encodings, is it more efficient to advance the iterator first
-            // and then compare the known fixed range, or to decode characters one by one and count while comparing?
-            auto end1 = begin1 + length;
-            auto end2 = begin2 + length;
-            if constexpr (!isSameEncoding(thiz, other)) {
-                return std::equal(begin1, end1, begin2, end2);
-            }
-            // Assuming only one "canonical" encoding, can byte-compare encoded values.
-            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
-            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
-                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
-                : isInSurrogatePair(other, begin2);
-            if (startsWithUnequalLowSurrogate) return false;
-            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
-                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
-                : isInSurrogatePair(other, end2);
-            if (endsWithUnequalHighSurrogate) return false;
-            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
-        });
+    return length == 0 || encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto begin1 = thiz.begin() + thizOffset;
+        auto begin2 = other.begin() + otherOffset;
+        // Questionable moment: in variable-length encodings, is it more efficient to advance the iterator first
+        // and then compare the known fixed range, or to decode characters one by one and count while comparing?
+        auto end1 = begin1 + length;
+        auto end2 = begin2 + length;
+        if constexpr (!isSameEncoding(thiz, other)) {
+            return std::equal(begin1, end1, begin2, end2);
+        }
+        // Assuming only one "canonical" encoding, can byte-compare encoded values.
+        // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
+        bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
+            ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
+            : isInSurrogatePair(other, begin2);
+        if (startsWithUnequalLowSurrogate) return false;
+        bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
+            ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
+            : isInSurrogatePair(other, end2);
+        if (endsWithUnequalHighSurrogate) return false;
+        return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
     });
 }
 
@@ -484,43 +483,41 @@ extern "C" KInt Kotlin_String_lastIndexOfChar(KConstRef thiz, KChar ch, KInt fro
 // TODO: or code up Knuth-Moris-Pratt, or use std::boyer_moore_searcher (might need backporting)
 extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KInt fromIndex) {
     auto unsignedIndex = fromIndex < 0 ? 0 : static_cast<size_t>(fromIndex);
-    return encodingAware(thiz, [=](auto thiz) {
-        return encodingAware(other, [=](auto other) {
-            auto thizLength = thiz.sizeInChars();
-            auto otherLength = other.sizeInChars();
-            if (unsignedIndex >= thizLength) {
-                return otherLength == 0 ? static_cast<KInt>(thizLength) : -1;
-            } else if (otherLength > thizLength) {
-                return -1;
-            } else if (otherLength == 0) {
-                return static_cast<KInt>(unsignedIndex);
-            }
+    return encodingAware(thiz, other, [=](auto thiz, auto other) {
+        auto thizLength = thiz.sizeInChars();
+        auto otherLength = other.sizeInChars();
+        if (unsignedIndex >= thizLength) {
+            return otherLength == 0 ? static_cast<KInt>(thizLength) : -1;
+        } else if (otherLength > thizLength) {
+            return -1;
+        } else if (otherLength == 0) {
+            return static_cast<KInt>(unsignedIndex);
+        }
 
-            auto start = thiz.begin() + unsignedIndex, end = thiz.end();
-            auto patternStart = other.begin(), patternEnd = other.end();
-            if constexpr (isSameEncoding(thiz, other)) {
-                auto shift = unsignedIndex;
-                while (start != end) {
-                    if (isInSurrogatePair(thiz, start)) {
-                        // `start` points into a surrogate pair, skip its second half since presumably
-                        // this encoding doesn't allow `other` to start with it anyway.
-                        ++start;
-                        ++shift;
-                    }
-                    auto ptr = std::search(start.ptr(), end.ptr(), patternStart.ptr(), patternEnd.ptr());
-                    if (ptr == end.ptr()) break;
-                    auto it = thiz.at(ptr);
-                    if (ptr == it.ptr()) return static_cast<KInt>(it - start + shift);
-                    // Found a bytewise match, but it starts in the middle of a unit, so it's not a character-wise match.
-                    shift += it - start + 1;
-                    start = ++it;
+        auto start = thiz.begin() + unsignedIndex, end = thiz.end();
+        auto patternStart = other.begin(), patternEnd = other.end();
+        if constexpr (isSameEncoding(thiz, other)) {
+            auto shift = unsignedIndex;
+            while (start != end) {
+                if (isInSurrogatePair(thiz, start)) {
+                    // `start` points into a surrogate pair, skip its second half since presumably
+                    // this encoding doesn't allow `other` to start with it anyway.
+                    ++start;
+                    ++shift;
                 }
-                return -1;
-            } else {
-                auto it = std::search(start, end, patternStart, patternEnd);
-                return it == end ? -1 : static_cast<KInt>(it - start + unsignedIndex);
+                auto ptr = std::search(start.ptr(), end.ptr(), patternStart.ptr(), patternEnd.ptr());
+                if (ptr == end.ptr()) break;
+                auto it = thiz.at(ptr);
+                if (ptr == it.ptr()) return static_cast<KInt>(it - start + shift);
+                // Found a bytewise match, but it starts in the middle of a unit, so it's not a character-wise match.
+                shift += it - start + 1;
+                start = ++it;
             }
-        });
+            return -1;
+        } else {
+            auto it = std::search(start, end, patternStart, patternEnd);
+            return it == end ? -1 : static_cast<KInt>(it - start + unsignedIndex);
+        }
     });
 }
 
