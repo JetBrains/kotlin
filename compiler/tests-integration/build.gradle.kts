@@ -17,7 +17,15 @@ dependencies {
 
     testApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
+
     testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.platform.launcher)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
@@ -51,11 +59,15 @@ sourceSets {
 
 projectTest(
     parallel = true,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0),
+    jUnitMode = JUnitMode.JUnit5
 ) {
     dependsOn(":dist")
 
     workingDir = rootDir
+
+    useJUnitPlatform()
+
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     val antLauncherJarPathProvider = project.provider {
         antLauncherJar.asPath
