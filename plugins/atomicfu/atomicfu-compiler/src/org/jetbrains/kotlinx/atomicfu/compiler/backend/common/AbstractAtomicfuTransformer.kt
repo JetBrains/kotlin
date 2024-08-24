@@ -30,21 +30,6 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
-private const val ATOMICFU = "atomicfu"
-private const val ARRAY = "array"
-private const val AFU_PKG = "kotlinx.atomicfu"
-private const val TRACE_BASE_TYPE = "TraceBase"
-private const val ATOMIC_VALUE_FACTORY = "atomic"
-private const val INVOKE = "invoke"
-private const val APPEND = "append"
-private const val GET = "get"
-private const val VOLATILE = "\$volatile"
-private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper\$$ATOMICFU"
-private const val LOOP = "loop"
-private const val ACTION = "action\$$ATOMICFU"
-private const val INDEX = "index\$$ATOMICFU"
-private const val UPDATE = "update"
-
 abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
 
     companion object {
@@ -80,6 +65,21 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     "       top.compareAndSet(cur, newValue) \n" +
                     "       ```\n" +
                     "\n"
+
+        internal const val VOLATILE = "\$volatile"
+        internal const val ATOMICFU = "atomicfu"
+        internal const val ARRAY = "array"
+        internal const val AFU_PKG = "kotlinx.atomicfu"
+        internal const val TRACE_BASE_TYPE = "TraceBase"
+        internal const val ATOMIC_VALUE_FACTORY = "atomic"
+        internal const val INVOKE = "invoke"
+        internal const val APPEND = "append"
+        internal const val GET = "get"
+        internal const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper\$$ATOMICFU"
+        internal const val LOOP = "loop"
+        internal const val ACTION = "action\$$ATOMICFU"
+        internal const val INDEX = "index\$$ATOMICFU"
+        internal const val UPDATE = "update"
     }
 
     abstract val atomicSymbols: AbstractAtomicSymbols
@@ -242,7 +242,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                      *                           set(value: Int) { a = value }
                      */
                     with(atomicSymbols.createBuilder(atomicProperty.symbol)) {
-                        buildVolatileBackingField(atomicProperty, this@transformDelegatedAtomic).also {
+                        buildAndInitVolatileBackingField(atomicProperty, this@transformDelegatedAtomic).also {
                             declarations.add(it)
                         }
                     }
@@ -290,22 +290,30 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                         if (accessor.isGetter) {
                             // val res: Boolean = b ----> val res: Boolean = b$volatile.toBoolean()
                             val getField = irGetField(dispatchReceiver, delegateVolatileField)
-                            if (accessor.returnType.isBoolean()) toBoolean(getField) else getField
+                            if (accessor.returnType.isBoolean() && delegateVolatileField.type.isInt()) toBoolean(getField) else getField
                         } else {
                             // b = false --> _b$volatile = 0
                             val arg = accessor.valueParameters.first().capture()
-                            irSetField(dispatchReceiver, delegateVolatileField, if (accessor.valueParameters.first().type.isBoolean()) toInt(arg) else arg)
+                            irSetField(dispatchReceiver, delegateVolatileField, if (accessor.valueParameters.first().type.isBoolean() && delegateVolatileField.type.isInt()) toInt(arg) else arg)
                         }
                     )
                 }
             }
         }
 
+        abstract fun AbstractAtomicfuIrBuilder.buildVolatileField(
+            name: String,
+            valueType: IrType,
+            annotations: List<IrConstructorCall>,
+            initExpr: IrExpression?,
+            parentContainer: IrDeclarationContainer
+        ): IrField
+
         /**
          * Builds a private volatile field initialized with the initial value of the given atomic property:
          * private val a = atomic(0)  --> private @Volatile a$volatile: Int = 0
          */
-        protected fun AbstractAtomicfuIrBuilder.buildVolatileBackingField(
+        protected fun AbstractAtomicfuIrBuilder.buildAndInitVolatileBackingField(
             atomicProperty: IrProperty,
             parentContainer: IrDeclarationContainer,
         ): IrField {
@@ -319,24 +327,12 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                 val atomicFactoryCall = initExprWithIndex.value.value
                 val initExprIndex = initExprWithIndex.index
                 val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
-                return irVolatileField(
-                    atomicProperty.name.asString() + VOLATILE,
-                    valueType,
-                    null,
-                    atomicField.annotations,
-                    parentContainer
-                ).also {
+                return buildVolatileField(atomicProperty.name.asString(), valueType, atomicField.annotations, null, parentContainer).also {
                     initBlock.updateFieldInitialization(atomicField.symbol, it.symbol, initValue, initExprIndex)
                 }
             } else {
                 val initValue = initializer.getAtomicFactoryValueArgument()
-                return irVolatileField(
-                    atomicProperty.name.asString() + VOLATILE,
-                    valueType,
-                    initValue,
-                    atomicField.annotations,
-                    parentContainer
-                )
+                return buildVolatileField(atomicProperty.name.asString(), valueType, atomicField.annotations, initValue, parentContainer)
             }
         }
 

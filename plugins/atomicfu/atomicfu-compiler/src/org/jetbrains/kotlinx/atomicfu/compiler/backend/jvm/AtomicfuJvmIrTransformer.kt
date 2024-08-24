@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.ATOMICFU
 import kotlin.collections.set
 
-private const val ATOMICFU = "atomicfu"
 private const val DISPATCH_RECEIVER = "dispatchReceiver\$$ATOMICFU"
 private const val ATOMIC_HANDLER = "handler\$$ATOMICFU"
-private const val INDEX = "index\$$ATOMICFU"
 
 class AtomicfuJvmIrTransformer(
     pluginContext: IrPluginContext,
@@ -73,6 +73,23 @@ class AtomicfuJvmIrTransformer(
             return wrapperClass.addVolatilePropertyWithAtomicUpdater(atomicProperty, index)
         }
 
+        override fun AbstractAtomicfuIrBuilder.buildVolatileField(
+            name: String,
+            valueType: IrType,
+            annotations: List<IrConstructorCall>,
+            initExpr: IrExpression?,
+            parentContainer: IrDeclarationContainer
+        ): IrField {
+            // On JVM a volatile Int field is generated to replace an AtomicBoolean property
+            val castBooleanToInt = valueType.isBoolean()
+            val volatileFieldType = if (castBooleanToInt) irBuiltIns.intType else valueType
+            return irVolatileField(name + VOLATILE, volatileFieldType, annotations, parentContainer).apply {
+                if (initExpr != null) {
+                    this.initializer = context.irFactory.createExpressionBody(if (castBooleanToInt) toInt(initExpr) else initExpr)
+                }
+            }
+        }
+
         private fun IrClass.addVolatilePropertyWithAtomicUpdater(from: IrProperty, index: Int): IrProperty {
             /**
              * Generates a volatile property and an atomic updater for this property,
@@ -98,7 +115,7 @@ class AtomicfuJvmIrTransformer(
                  *                                       }
                  * }                                   }
                  */
-                val volatileField = buildVolatileBackingField(from, parentClass)
+                val volatileField = buildAndInitVolatileBackingField(from, parentClass)
                 val volatileProperty = if (volatileField.parent == from.parent) {
                     // The index is relevant only if the property belongs to the same class as the original atomic property (not the generated wrapper).
                     parentClass.replacePropertyAtIndex(volatileField, DescriptorVisibilities.PRIVATE, isVar = true, isStatic = false, index)

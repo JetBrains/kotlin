@@ -31,6 +31,32 @@ class NativeAtomicfuIrBuilder(
     endOffset: Int
 ): AbstractAtomicfuIrBuilder(atomicSymbols.irBuiltIns, symbol, startOffset, endOffset) {
 
+    override fun irDelegatedAtomicfuCall(
+        symbol: IrSimpleFunctionSymbol,
+        dispatchReceiver: IrExpression?,
+        extensionReceiver: IrExpression?,
+        valueArguments: List<IrExpression?>,
+        receiverValueType: IrType,
+    ): IrCall {
+        val isAtomicArrayHandler = dispatchReceiver != null && atomicSymbols.isAtomicArrayHandlerType(dispatchReceiver.type)
+        val irCall = irCall(symbol).apply {
+            this.dispatchReceiver = dispatchReceiver
+            this.extensionReceiver = extensionReceiver
+            if (symbol.owner.typeParameters.isNotEmpty()) {
+                require(symbol.owner.typeParameters.size == 1) { "Only K/N atomic intrinsics are parameterized with a type of the updated volatile field. A function with more type parameters is being invoked: ${symbol.owner.render()}" }
+                putTypeArgument(0, receiverValueType)
+            }
+            valueArguments.forEachIndexed { i, arg ->
+                if (isAtomicArrayHandler && receiverValueType.isBoolean() && i != 0) {
+                    putValueArgument(i, arg?.let { toInt(it) })
+                } else {
+                    putValueArgument(i, arg)
+                }
+            }
+        }
+        return if (isAtomicArrayHandler && receiverValueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
+    }
+
     internal fun irCallAtomicNativeIntrinsic(
         functionName: String,
         propertyRef: IrExpression,
@@ -281,7 +307,6 @@ class NativeAtomicfuIrBuilder(
             val array = valueParameters[0]
             val index = valueParameters[1]
             val action = valueParameters[2]
-            val actionArgType = (action.type as IrSimpleType).arguments.first().typeOrNull
             +irWhile().apply {
                 condition = irTrue()
                 body = irBlock {
@@ -292,8 +317,7 @@ class NativeAtomicfuIrBuilder(
                     val upd = createTmpVariable(
                         irCall(atomicSymbols.invoke1Symbol).apply {
                             dispatchReceiver = irGet(action)
-                            val getCur = if (actionArgType != null) irAs(irGet(cur), actionArgType) else irGet(cur)
-                            putValueArgument(0, getCur)
+                            putValueArgument(0, irGet(cur))
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(

@@ -24,6 +24,26 @@ class JvmAtomicfuIrBuilder internal constructor(
     endOffset: Int
 ) : AbstractAtomicfuIrBuilder(atomicSymbols.irBuiltIns, symbol, startOffset, endOffset) {
 
+    override fun irDelegatedAtomicfuCall(
+        symbol: IrSimpleFunctionSymbol,
+        dispatchReceiver: IrExpression?,
+        extensionReceiver: IrExpression?,
+        valueArguments: List<IrExpression?>,
+        receiverValueType: IrType,
+    ): IrCall {
+        val irCall = irCall(symbol).apply {
+            this.dispatchReceiver = dispatchReceiver
+            this.extensionReceiver = extensionReceiver
+            valueArguments.forEachIndexed { i, arg ->
+                putValueArgument(i, arg?.let {
+                    val expectedParameterType = symbol.owner.valueParameters[i].type
+                    if (receiverValueType.isBoolean() && !arg.type.isInt() && expectedParameterType.isInt()) toInt(it) else it // todo check this: maybe remove arg.type.isInt()
+                })
+            }
+        }
+        return if (receiverValueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
+    }
+
     // a$FU.get(obj)
     private fun afuGetValue(valueType: IrType, fieldUpdater: IrExpression, obj: IrExpression): IrExpression =
         callAtomicFieldUpdater(

@@ -54,7 +54,13 @@ abstract class AbstractAtomicfuIrBuilder(
      * - transformed loop/update/getAndUpdate/updateAndGetFunctions
      *
      * This is the only place where Bool <-> Int conversion happens for AtomicBoolean properties.
-     * AtomicBoolean property is represented with a volatile Int field + atomic handlers.
+     * On JVM:
+     * - AtomicBoolean property is replaced with a volatile Int field + AtomicIntegerFieldUpdater
+     * - AtomicBooleanArray is replaced with AtomicIntegerArray
+     * On K/N:
+     * - AtomicBoolean property is replaced with a volatile Boolean field + atomic intrinsics parameterized with Boolean -> no conversions
+     * - AtomicBooleanArray is replaced with AtomicIntArray
+     *
      * There are 2 conversion cases:
      * 1. The function that returns the current / updated value of the atomic should return a Boolean (get/getAndSet/updateAndGet/getAndUpdate):
      *   val b: AtomicBoolean = atomic(false)         @Volatile b$volatile: Int = 0 // it's handled with the AtomicIntegerFieldUpdater
@@ -74,57 +80,28 @@ abstract class AbstractAtomicfuIrBuilder(
      *                                                 }
      *                                             }
      */
-    fun irDelegatedAtomicfuCall(
+    abstract fun irDelegatedAtomicfuCall(
         symbol: IrSimpleFunctionSymbol,
         dispatchReceiver: IrExpression?,
         extensionReceiver: IrExpression?,
         valueArguments: List<IrExpression?>,
         receiverValueType: IrType,
-    ): IrCall {
-        val volatileFieldType = if (receiverValueType.isBoolean()) irBuiltIns.intType else receiverValueType
-        val ownerTypeParameter = symbol.owner.typeParameters.firstOrNull()?.defaultType
-        val irCall = irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
-            // NOTE: in case of parameterized K/N intrinsic (atomicGetField<T>, compareAndSet<T>..) compare parameter types with a type argument.
-            if (symbol.owner.typeParameters.isNotEmpty()) {
-                require(symbol.owner.typeParameters.size == 1) { "Only K/N atomic intrinsics are parameterized with a type of the updated volatile field. A function with more type parameters is being invoked: ${symbol.owner.render()}" }
-                putTypeArgument(0, volatileFieldType)
-            }
-            valueArguments.forEachIndexed { i, arg ->
-                putValueArgument(i, arg?.let {
-                    val expectedParameterType = symbol.owner.valueParameters[i].type
-                    if (receiverValueType.isBoolean() && !arg.type.isInt() &&
-                        (expectedParameterType.isInt() || expectedParameterType == ownerTypeParameter)
-                    ) toInt(it) else it
-                })
-            }
-        }
-        return if (receiverValueType.isBoolean() &&
-            (symbol.owner.returnType.isInt() || symbol.owner.returnType == ownerTypeParameter)
-        ) toBoolean(irCall) else irCall
-    }
+    ): IrCall
 
     fun irVolatileField(
         name: String,
         valueType: IrType,
-        initValue: IrExpression?,
         annotations: List<IrConstructorCall>,
         parentContainer: IrDeclarationContainer,
     ): IrField {
-        // AtomicBoolean property is replaced with a volatile Int field + atomic handlers for both JVM and K/N.
-        val castBooleanToInt = valueType.isBoolean()
         return context.irFactory.buildField {
             this.name = Name.identifier(name)
-            this.type = if (castBooleanToInt) irBuiltIns.intType else valueType // for a boolean value, create int volatile field
+            this.type = valueType
             isFinal = false
             isStatic = parentContainer is IrFile
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            // Cast the Boolean initValue to Int
-            val castedInitValue = if (castBooleanToInt && initValue != null) toInt(initValue) else initValue
-            initializer = castedInitValue?.let(context.irFactory::createExpressionBody)
             this.annotations = annotations + atomicSymbols.volatileAnnotationConstructorCall
             this.parent = parentContainer
         }

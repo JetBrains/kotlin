@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.ATOMICFU
 
-private const val ATOMICFU = "atomicfu"
 private const val REF_GETTER = "refGetter\$$ATOMICFU"
 private const val ATOMIC_ARRAY = "atomicArray\$$ATOMICFU"
-private const val INDEX = "index\$$ATOMICFU"
-private const val ACTION = "action\$$ATOMICFU"
 
 class AtomicfuNativeIrTransformer(
     pluginContext: IrPluginContext,
@@ -59,12 +58,26 @@ class AtomicfuNativeIrTransformer(
              */
             val parentContainer = this
             with(atomicSymbols.createBuilder(from.symbol)) {
-                val volatileField = buildVolatileBackingField(from, parentContainer)
+                val volatileField = buildAndInitVolatileBackingField(from, parentContainer)
                 return parentContainer.replacePropertyAtIndex(volatileField, from.visibility, isVar = true, isStatic = from.parent is IrFile, index).also {
                     atomicfuPropertyToVolatile[from] = it
                 }
             }
         }
+
+        override fun AbstractAtomicfuIrBuilder.buildVolatileField(
+            name: String,
+            valueType: IrType,
+            annotations: List<IrConstructorCall>,
+            initExpr: IrExpression?,
+            parentContainer: IrDeclarationContainer
+        ): IrField =
+            // On K/N a volatile Boolean field is generated instead of an AtomicBoolean property
+            irVolatileField(name + VOLATILE, valueType, annotations, parentContainer).apply {
+                if (initExpr != null) {
+                    this.initializer = context.irFactory.createExpressionBody(initExpr)
+                }
+            }
     }
 
     private inner class NativeAtomicFunctionCallTransformer : AtomicFunctionCallTransformer() {
