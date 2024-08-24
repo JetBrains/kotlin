@@ -194,14 +194,15 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
     fun target(body: Action<TARGET>) = body.execute(target)
 }
 
-abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
-abstract class KotlinSingleJavaTargetExtensionCompilerSupport(project: Project) : KotlinSingleJavaTargetExtension(project){
-    abstract val compilerOptions: KotlinJvmCompilerOptions
-    abstract fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>)
-    abstract fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit)
+interface KotlinSingleJavaTargetCompilerSupportExtension {
+    val compilerOptions: KotlinJvmCompilerOptions
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>)
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit)
 }
 
-abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtensionCompilerSupport(project) {
+abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
+
+abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project), KotlinSingleJavaTargetCompilerSupportExtension {
     @Suppress("DEPRECATION")
     override val target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
         get() = targetFuture.getOrThrow()
@@ -210,7 +211,7 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
     override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>>()
 
     open fun target(
-        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit
+        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit,
     ) {
         project.launch(Undispatched) { targetFuture.await().body() }
     }
@@ -237,7 +238,7 @@ abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTar
     @Suppress("DEPRECATION")
     override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>>()
     open fun target(
-        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit
+        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit,
     ) {
         project.launch(Undispatched) { targetFuture.await().body() }
     }
@@ -344,7 +345,7 @@ abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJava
     }
 }
 
-abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleJavaTargetExtensionCompilerSupport<KotlinAndroidTarget>(project) {
+abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project), KotlinSingleJavaTargetCompilerSupportExtension {
     override val target: KotlinAndroidTarget get() = targetFuture.getOrThrow()
     override val targetFuture = CompletableFuture<KotlinAndroidTarget>()
 
