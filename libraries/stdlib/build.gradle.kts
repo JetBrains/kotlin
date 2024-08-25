@@ -622,6 +622,8 @@ tasks {
     val metadataJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
         archiveExtension.set("klib")
+        manifestAttributes(manifest, "Main")
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-common"))
     }
     val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
