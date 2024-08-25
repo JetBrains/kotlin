@@ -21,7 +21,7 @@ kotlinx-metadataJvm = "0.9.0"
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
 jetbrains-ideaExt = "1.0.1"
 jackson = "2.15.2"
-jgit = "6.6.0.202305301015-r"
+jgit = "6.10.0.202406032230-r"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.10.1"
