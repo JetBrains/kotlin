@@ -16,10 +16,12 @@
 import java.io.File
 
 val repoPatch = {
-    "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-repo.patch")
-        .readText()
-        .run { replace("<kotlin_version>", currentKotlinVersion) }
-        .byteInputStream()
+    listOf(
+        "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-repo.patch")
+            .readText()
+            .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+    )
 }
 
 runBenchmarks(

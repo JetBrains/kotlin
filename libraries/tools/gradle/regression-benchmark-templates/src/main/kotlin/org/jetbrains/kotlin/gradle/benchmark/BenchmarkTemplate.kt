@@ -49,7 +49,7 @@ abstract class BenchmarkTemplate(
     private val gitOperationsPrinter = TextProgressMonitor()
 
     fun <T : InputStream> runBenchmarks(
-        repoPatch: (() -> Pair<String, T>)?,
+        repoPatch: (() -> List<Pair<String, T>>)?,
         suite: ScenarioSuite,
     ) {
         printStartingMessage()
@@ -58,8 +58,9 @@ abstract class BenchmarkTemplate(
 
         repoReset()
         repoPatch?.let {
-            val (patchName, patch) = it()
-            repoApplyPatch(patchName, patch)
+            it().forEach { (patchName, patch) ->
+                repoApplyPatch(patchName, patch)
+            }
         }
         val result = runBenchmark(suite)
         aggregateBenchmarkResults(result)

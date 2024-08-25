@@ -11,10 +11,12 @@
 import java.io.File
 
 val repoPatch = {
-    "duckduckgo-kotlin-repo.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-repo.patch")
-        .readText()
-        .run { replace("<kotlin_version>", currentKotlinVersion) }
-        .byteInputStream()
+    listOf(
+        "duckduckgo-kotlin-repo.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-repo.patch")
+            .readText()
+            .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+    )
 }
 
 runBenchmarks(
