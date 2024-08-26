@@ -4,8 +4,8 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "db1dce8f09935a2bef27cd790f5581aafdcbb0a6",
-    stableKotlinVersion = "2.0.0",
+    gitCommitSha = "5bec6f290634f1e9eb8f7956099de5384c604423",
+    stableKotlinVersion = "2.0.20",
 )
 
 import java.io.File
@@ -74,7 +74,6 @@ runBenchmarks(
             title = "No-op configuration time"
 
             runTasks("help")
-        }
 
         scenario {
             title = "UP-TO-DATE configuration time"
