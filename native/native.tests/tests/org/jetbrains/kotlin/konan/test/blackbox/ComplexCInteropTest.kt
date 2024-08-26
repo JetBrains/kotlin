@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -471,6 +472,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     fun arcContract() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         Assumptions.assumeTrue(targets.testTarget.architecture == Architecture.ARM64)
+        Assumptions.assumeTrue(targets.testTarget != KonanTarget.WATCHOS_ARM64) // Not real ARM64.
         val root = interopObjCDir.resolve("arc_contract")
         val bcFile = buildDir.resolve("arc_contract.bc")
         runProcess(
