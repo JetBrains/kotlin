@@ -354,6 +354,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("inlineReified.kt")
+  public void testInlineReified() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/inlineReified.kt");
+  }
+
+  @Test
   @TestMetadata("innerClassesWithTypeParameters.kt")
   public void testInnerClassesWithTypeParameters() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
