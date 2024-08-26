@@ -85,6 +85,16 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xlegacy-metadata-jar-k2",
+        description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation"
+    )
+    var legacyMetadataJar: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun copyOf(): Freezable = copyK2MetadataCompilerArguments(this, K2MetadataCompilerArguments())
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =

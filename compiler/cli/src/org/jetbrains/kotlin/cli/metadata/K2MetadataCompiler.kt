@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
@@ -126,10 +128,15 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
         try {
             val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
-            val metadataSerializer = when {
-                useFir -> FirKlibMetadataSerializer(configuration, environment)
-                arguments.metadataKlib -> K1MetadataKlibSerializer(configuration, environment)
-                else -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
+            val metadataSerializer = when (useFir) {
+                false -> when (arguments.metadataKlib) {
+                    true -> K1MetadataKlibSerializer(configuration, environment)
+                    false -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
+                }
+                true -> when (arguments.legacyMetadataJar) {
+                    true -> FirLegacyMetadataSerializer(configuration, environment)
+                    false -> FirKlibMetadataSerializer(configuration, environment)
+                }
             }
             metadataSerializer.analyzeAndSerialize()
         } catch (e: CompilationException) {
