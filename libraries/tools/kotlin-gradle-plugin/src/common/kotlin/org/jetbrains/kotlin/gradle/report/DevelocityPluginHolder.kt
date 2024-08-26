@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.report
 
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
+import org.gradle.api.Action
 
-class BuildScanExtensionHolder(private val buildScan: BuildScanExtension) : java.io.Serializable, BuildScanApi {
+
+class DevelocityPluginHolder(private val buildScan: BuildScanConfiguration) : java.io.Serializable, BuildScanApi {
 
     companion object {
-        internal operator fun invoke(extension: Any): BuildScanExtensionHolder? {
-            val buildScanExtension = try {
-                extension as BuildScanExtension
+        internal operator fun invoke(extension: Any): DevelocityPluginHolder? {
+            val buildScan = try {
+                extension as BuildScanConfiguration
             } catch (e: ClassNotFoundException) {
                 // Build scan plugin is applied, but BuildScanExtension class is not available due to Gradle classpath isolation
                 // Could be reproduced by applying Gradle enterprise plugin via init script: KT-59589
@@ -25,7 +25,7 @@ class BuildScanExtensionHolder(private val buildScan: BuildScanExtension) : java
                 null
             }
 
-            return buildScanExtension?.let { BuildScanExtensionHolder(it) }
+            return buildScan?.let { DevelocityPluginHolder(it) }
         }
     }
 
