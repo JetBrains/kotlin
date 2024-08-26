@@ -278,13 +278,18 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static String getModuleName(ModuleDescriptor module) {
-        Name name = module.getStableName();
-        if (name == null) {
+        Name stableName = module.getStableName();
+        if (stableName == null) {
             // Defensive fallback to possibly unstable name, to not fail with exception
-            return StringsKt.removeSurrounding(module.getName().asString(), "<", ">");
+            return prepareModuleName(module.getName());
         } else {
-            return StringsKt.removeSurrounding(name.asString(), "<", ">");
+            return prepareModuleName(stableName);
         }
+    }
+
+    @NotNull
+    public static String prepareModuleName(@NotNull Name name) {
+        return StringsKt.removeSurrounding(name.asString(), "<", ">");
     }
 
     @NotNull
