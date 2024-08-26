@@ -80,12 +80,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Flatten0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FlattenDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReadExcel
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
@@ -200,6 +202,8 @@ internal inline fun <reified T> String.load(): T {
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
         "MapToFrame" -> MapToFrame()
+        "Move0" -> Move0()
+        "ToTop" -> ToTop()
         else -> error("$this")
     } as T
 }
