@@ -153,6 +153,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?,
+        direct: Boolean,
     ) {}
 
     fun onIncompatibleMembersFromClassScope(

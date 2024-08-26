@@ -500,6 +500,7 @@ internal abstract class IrExpectActualMatchingContext(
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?,
+        direct: Boolean,
     ) {
         require(expectSymbol is IrSymbol)
         require(actualSymbol is IrSymbol)
@@ -510,13 +511,13 @@ internal abstract class IrExpectActualMatchingContext(
                     is IrTypeAliasSymbol -> actualSymbol.owner.expandedType.getClass()!!.symbol
                     else -> actualSymbol.unexpectedSymbolKind<IrClassifierSymbol>()
                 }
-                onMatchedDeclarations(expectSymbol, actualClassSymbol)
+                onMatchedDeclarations(expectSymbol, actualClassSymbol, direct)
             }
-            else -> onMatchedDeclarations(expectSymbol, actualSymbol)
+            else -> onMatchedDeclarations(expectSymbol, actualSymbol, direct)
         }
     }
 
-    abstract fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
+    protected abstract fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol, direct: Boolean)
 
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)

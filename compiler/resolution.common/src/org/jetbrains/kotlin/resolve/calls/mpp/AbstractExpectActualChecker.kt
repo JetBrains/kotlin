@@ -180,6 +180,8 @@ object AbstractExpectActualChecker {
         val incompatibleMembers =
             arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>()
 
+        val direct = expectClassSymbol.classId == actualClassSymbol.classId
+
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { nameOf(it) }
 
         val expectMembers = expectClassSymbol.collectAllMembers(isActualDeclaration = false)
@@ -195,6 +197,7 @@ object AbstractExpectActualChecker {
                 expectClassSymbol,
                 actualClassSymbol,
                 mismatchedMembers,
+                direct,
             )
 
             matched.forEach {
