@@ -136,7 +136,7 @@ open class FunctionInlining(
             produceOuterThisFields,
             // Only use lifted local classes if there's no cross-module inlining,
             // otherwise lifted local classes would become public ABI, which we don't want.
-            useLiftedLocalClasses = extractLocalClasses && currentFile.module == actualCallee.fileOrNull?.module,
+            useLiftedLocalClasses = extractLocalClasses && (containerScope?.irElement as? IrDeclaration)?.fileOrNull?.module == actualCallee.fileOrNull?.module,
         )
         return inliner.inline().markAsRegenerated()
     }

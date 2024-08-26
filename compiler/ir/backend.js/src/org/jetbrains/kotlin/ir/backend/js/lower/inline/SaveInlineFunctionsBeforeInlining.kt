@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.lower.inline.localClassSymbolRemapper
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 // TODO: KT-67220: consider removing it
 internal class SaveInlineFunctionsBeforeInlining(
@@ -24,7 +27,12 @@ internal class SaveInlineFunctionsBeforeInlining(
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.isInline && (!cacheOnlyPrivateFunctions || declaration.isConsideredAsPrivateForInlining())) {
-            inlineFunctionsBeforeInlining.getOrPut(declaration) { declaration.deepCopyWithSymbols(declaration.parent) }
+            inlineFunctionsBeforeInlining.getOrPut(declaration) {
+                val symbolRemapper = DeepCopySymbolRemapper()
+                declaration.acceptVoid(symbolRemapper)
+                declaration.localClassSymbolRemapper?.replaceKeys(symbolRemapper)
+                declaration.transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null) as IrFunction
+            }
         }
 
         return null

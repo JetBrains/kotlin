@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.locationForExtraction
 import org.jetbrains.kotlin.backend.common.lower.moveTo
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -186,7 +187,7 @@ fun IrFunction.extractableLocalClasses(): Set<IrClass> {
 /**
  * Remaps symbols in local classes inside `this` to their corresponding lifted classes.
  */
-var IrFunction.localClassSymbolRemapper: DeepCopySymbolRemapper? by irAttribute(followAttributeOwner = false)
+var IrFunction.localClassSymbolRemapper: DeepCopySymbolRemapper? by irAttribute(followAttributeOwner = true)
 
 /**
  * Used to mark local classes for which we lifted their copies.
@@ -224,7 +225,12 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
             // inlining we could use that same remapper to replace usages of local classes with usages of lifted classes.
             klass.acceptVoid(symbolRemapper)
             val classCopy = klass.transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null) as IrClass
+
+            // Extracted local classes will only be shared across call sites in the same module,
+            classCopy.visibility = DescriptorVisibilities.INTERNAL
+
             classCopy.moveTo(locationForExtraction)
+            classCopy.patchDeclarationParents()
             klass.useExtractedCopy = true
         }
     }

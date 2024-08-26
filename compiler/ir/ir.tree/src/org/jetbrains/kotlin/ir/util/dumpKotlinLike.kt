@@ -209,14 +209,22 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         get() = if (!isBound) {
             "/* ERROR: unbound symbol $signature */"
         } else {
-            (owner as? IrDeclaration)?.parentClassOrNull?.name?.toString() ?: "/* ERROR: unexpected parent for $safeName */"
+            try {
+                (owner as? IrDeclaration)?.parentClassOrNull?.name?.toString()
+            } catch (e: UninitializedPropertyAccessException) {
+                null
+            } ?: "/* ERROR: unexpected parent for $safeName */"
         }
 
     private val IrSymbol.safeParentClassOrNull
         get() = if (!isBound) {
             null
         } else {
-            (owner as? IrDeclaration)?.parentClassOrNull
+            try {
+                (owner as? IrDeclaration)?.parentClassOrNull
+            } catch (e: UninitializedPropertyAccessException) {
+                null
+            }
         }
 
 

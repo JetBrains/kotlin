@@ -468,6 +468,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("localClassExtraction.kt")
+      public void testLocalClassExtraction() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/localClassExtraction.kt");
+      }
+
+      @Test
       @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
       public void testObjectInLambdaCapturesAnotherObject() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");

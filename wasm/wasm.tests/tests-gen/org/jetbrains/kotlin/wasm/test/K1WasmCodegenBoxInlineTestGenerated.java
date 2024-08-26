@@ -423,6 +423,12 @@ public class K1WasmCodegenBoxInlineTestGenerated extends AbstractK1WasmCodegenBo
     }
 
     @Test
+    @TestMetadata("localClassExtraction.kt")
+    public void testLocalClassExtraction() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/localClassExtraction.kt");
+    }
+
+    @Test
     @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
     public void testObjectInLambdaCapturesAnotherObject() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");

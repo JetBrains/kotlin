@@ -20,21 +20,21 @@ open class DeepCopySymbolRemapper(
     private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
 ) : IrElementVisitorVoid, SymbolRemapper {
 
-    protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
-    protected val scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
-    protected val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
-    protected val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
-    protected val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
-    protected val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
-    protected val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
-    protected val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-    protected val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
-    protected val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
-    protected val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
-    protected val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
-    protected val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
-    protected val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
-    protected val typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
+    protected var classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
+    protected var scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
+    protected var constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
+    protected var enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
+    protected var externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
+    protected var fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
+    protected var files = hashMapOf<IrFileSymbol, IrFileSymbol>()
+    protected var functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    protected var properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
+    protected var returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
+    protected var typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    protected var valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    protected var variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
+    protected var localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
+    protected var typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
 
     fun addMappingsFrom(other: DeepCopySymbolRemapper) {
         classes += other.classes
@@ -52,6 +52,22 @@ open class DeepCopySymbolRemapper(
         variables += other.variables
         localDelegatedProperties += other.localDelegatedProperties
         typeAliases += other.typeAliases
+    }
+
+    fun replaceKeys(remapper: DeepCopySymbolRemapper) {
+        classes = classes.mapKeysTo(hashMapOf()) { remapper.getReferencedClass(it.key) }
+        scripts = scripts.mapKeysTo(hashMapOf()) { remapper.getReferencedScript(it.key) }
+        constructors = constructors.mapKeysTo(hashMapOf()) { remapper.getReferencedConstructor(it.key) }
+        enumEntries = enumEntries.mapKeysTo(hashMapOf()) { remapper.getReferencedEnumEntry(it.key) }
+        fields = fields.mapKeysTo(hashMapOf()) { remapper.getReferencedField(it.key) }
+        functions = functions.mapKeysTo(hashMapOf()) { remapper.getReferencedSimpleFunction(it.key) }
+        properties = properties.mapKeysTo(hashMapOf()) { remapper.getReferencedProperty(it.key) }
+        returnableBlocks = returnableBlocks.mapKeysTo(hashMapOf()) { remapper.getReferencedReturnableBlock(it.key) }
+        typeParameters = typeParameters.mapKeysTo(hashMapOf()) { remapper.getReferencedTypeParameter(it.key) }
+        valueParameters = valueParameters.mapKeysTo(hashMapOf()) { remapper.getReferencedValueParameter(it.key) }
+        variables = variables.mapKeysTo(hashMapOf()) { remapper.getReferencedVariable(it.key) }
+        localDelegatedProperties = localDelegatedProperties.mapKeysTo(hashMapOf()) { remapper.getReferencedLocalDelegatedProperty(it.key) }
+        typeAliases = typeAliases.mapKeysTo(hashMapOf()) { remapper.getReferencedTypeAlias(it.key) }
     }
 
     override fun visitElement(element: IrElement) {
@@ -206,7 +222,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
-    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol = valueParameters.getReferenced(symbol)
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = valueParameters.getReferenced(symbol)
     override fun getReferencedLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
         localDelegatedProperties.getReferenced(symbol)
 
@@ -215,10 +231,10 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
     override fun getReferencedProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getReferenced(symbol)
 
-    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnTargetSymbol =
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
         returnableBlocks.getReferenced(symbol)
 
-    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol = typeParameters.getReferenced(symbol)
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol = typeParameters.getReferenced(symbol)
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)
 }
