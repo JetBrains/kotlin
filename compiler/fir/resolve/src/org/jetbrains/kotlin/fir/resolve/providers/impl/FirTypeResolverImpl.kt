@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeResolutionResult
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -54,136 +53,56 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun FirBasedSymbol<*>?.isVisible(
-        useSiteFile: FirFile?,
-        containingDeclarations: List<FirDeclaration>,
-        supertypeSupplier: SupertypeSupplier
-    ): Boolean {
-        val declaration = this?.fir
-        return if (useSiteFile != null && declaration is FirMemberDeclaration) {
-            session.visibilityChecker.isVisible(
-                declaration,
-                session,
-                useSiteFile,
-                containingDeclarations,
-                dispatchReceiver = null,
-                isCallToPropertySetter = false,
-                supertypeSupplier = supertypeSupplier
-            )
-        } else {
-            true
-        }
-    }
-
-    fun resolveUserTypeToSymbol(
+    private fun resolveUserTypeToSymbol(
         typeRef: FirUserTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier,
         resolveDeprecations: Boolean
     ): TypeResolutionResult {
-        val qualifierResolver = session.qualifierResolver
-        var applicability: CandidateApplicability? = null
-
-        val candidates = mutableSetOf<TypeCandidate>()
-        val qualifier = typeRef.qualifier
-        val scopes = scopeClassDeclaration.scopes
-        val containingDeclarations = scopeClassDeclaration.containingDeclarations
-
-        fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor?) {
-            var symbolApplicability = CandidateApplicability.RESOLVED
-            var diagnostic: ConeDiagnostic? = null
-
-            if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
-                symbolApplicability = minOf(CandidateApplicability.K2_VISIBILITY_ERROR, symbolApplicability)
-                diagnostic = ConeVisibilityError(symbol)
-            }
-
-            if (resolveDeprecations) {
-                if (symbol.isDeprecationLevelHidden(session)) {
-                    symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
-                    diagnostic = null
-                }
-            }
-
-            if (applicability == null || symbolApplicability > applicability!!) {
-                applicability = symbolApplicability
-                candidates.clear()
-            }
-            if (symbolApplicability == applicability) {
-                candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability))
-            }
-        }
-
         session.lookupTracker?.recordUserTypeRefLookup(
-            typeRef, scopes.asSequence().flatMap { it.scopeOwnerLookupNames }.asIterable(), useSiteFile?.source
+            typeRef, scopeClassDeclaration.scopes.asSequence().flatMap { it.scopeOwnerLookupNames }.asIterable(), useSiteFile?.source
         )
 
-        for (scope in scopes) {
-            if (applicability == CandidateApplicability.RESOLVED) break
+        val qualifier = typeRef.qualifier
+        val qualifierResolver = session.qualifierResolver
+        val collector = FirTypeCandidateCollector(
+            session,
+            useSiteFile,
+            scopeClassDeclaration.containingDeclarations,
+            supertypeSupplier,
+            resolveDeprecations
+        )
+
+        for (scope in scopeClassDeclaration.scopes) {
+            if (collector.applicability == CandidateApplicability.RESOLVED) break
             val name = qualifier.first().name
             val processor = { symbol: FirClassifierSymbol<*>, substitutorFromScope: ConeSubstitutor ->
                 val resolvedSymbol = resolveSymbol(symbol, qualifier, qualifierResolver)
 
                 if (resolvedSymbol != null) {
-                    processCandidate(resolvedSymbol, substitutorFromScope)
+                    collector.processCandidate(resolvedSymbol, substitutorFromScope)
                 }
             }
 
             if (scope is FirDefaultStarImportingScope) {
                 scope.processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
                     processor(symbol, substitutor)
-                    applicability == CandidateApplicability.RESOLVED
+                    collector.applicability == CandidateApplicability.RESOLVED
                 }
             } else {
                 scope.processClassifiersByNameWithSubstitution(name, processor)
             }
         }
 
-        if (applicability != CandidateApplicability.RESOLVED) {
+        if (collector.applicability != CandidateApplicability.RESOLVED) {
             val symbol = qualifierResolver.resolveFullyQualifiedSymbol(qualifier)
             if (symbol != null) {
-                processCandidate(symbol, null)
+                collector.processCandidate(symbol, null)
             }
         }
 
-        filterOutAmbiguousTypealiases(candidates)
-
-        val candidateCount = candidates.size
-        return when {
-            candidateCount == 1 -> {
-                val candidate = candidates.single()
-                TypeResolutionResult.Resolved(candidate)
-            }
-            candidateCount > 1 -> {
-                TypeResolutionResult.Ambiguity(candidates.toList())
-            }
-            else -> TypeResolutionResult.Unresolved
-        }
-    }
-
-    private fun filterOutAmbiguousTypealiases(candidates: MutableSet<TypeCandidate>) {
-        if (candidates.size <= 1) return
-
-        val aliasesToRemove = mutableSetOf<ClassId>()
-        val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
-        for (candidate in candidates) {
-            val symbol = candidate.symbol
-            if (symbol is FirClassLikeSymbol<*>) {
-                classTypealiasesThatDontCauseAmbiguity[symbol.classId]?.let { aliasesToRemove.add(it) }
-            }
-        }
-        if (aliasesToRemove.isNotEmpty()) {
-            candidates.removeAll {
-                (it.symbol as? FirClassLikeSymbol)?.classId?.let { classId -> aliasesToRemove.contains(classId) } == true
-            }
-        }
-    }
-
-    sealed class TypeResolutionResult {
-        class Ambiguity(val typeCandidates: List<TypeCandidate>) : TypeResolutionResult()
-        object Unresolved : TypeResolutionResult()
-        class Resolved(val typeCandidate: TypeCandidate) : TypeResolutionResult()
+        return collector.getResult()
     }
 
     private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
@@ -483,24 +402,5 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, useSiteFile?.source)
         }
     }
-
-    class TypeCandidate(
-        override val symbol: FirBasedSymbol<*>,
-        val substitutor: ConeSubstitutor?,
-        val diagnostic: ConeDiagnostic?,
-        override val applicability: CandidateApplicability
-    ) : AbstractCandidate() {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is TypeCandidate) return false
-
-            if (symbol != other.symbol) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return symbol.hashCode()
-        }
-    }
 }
+
