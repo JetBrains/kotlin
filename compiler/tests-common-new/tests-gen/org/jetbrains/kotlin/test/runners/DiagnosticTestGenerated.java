@@ -17091,21 +17091,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("nullableVsDnnConstructor.kt")
-      public void testNullableVsDnnConstructor() {
-        runTest("compiler/testData/diagnostics/tests/inference/nullableVsDnnConstructor.kt");
+      @TestMetadata("nullableVsDnnVariations.kt")
+      public void testNullableVsDnnVariations() {
+        runTest("compiler/testData/diagnostics/tests/inference/nullableVsDnnVariations.kt");
       }
 
       @Test
-      @TestMetadata("nullableVsDnnFunction.kt")
-      public void testNullableVsDnnFunction() {
-        runTest("compiler/testData/diagnostics/tests/inference/nullableVsDnnFunction.kt");
-      }
-
-      @Test
-      @TestMetadata("nullableWithDnnConstructorNoTypeArgument.kt")
-      public void testNullableWithDnnConstructorNoTypeArgument() {
-        runTest("compiler/testData/diagnostics/tests/inference/nullableWithDnnConstructorNoTypeArgument.kt");
+      @TestMetadata("nullableVsDnnVariationsDisabled.kt")
+      public void testNullableVsDnnVariationsDisabled() {
+        runTest("compiler/testData/diagnostics/tests/inference/nullableVsDnnVariationsDisabled.kt");
       }
 
       @Test
