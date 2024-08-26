@@ -29,9 +29,24 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/cli-tests/testData/cli"), Pattern.compile("^(.+)\\.args$"), null, false);
   }
 
+  @TestMetadata("kt68673_no_input.args")
+  public void testKt68673_no_input() {
+    runTest("native/native.tests/cli-tests/testData/cli/kt68673_no_input.args");
+  }
+
   @TestMetadata("kt68673_smoke0.args")
   public void testKt68673_smoke0() {
     runTest("native/native.tests/cli-tests/testData/cli/kt68673_smoke0.args");
+  }
+
+  @TestMetadata("kt68673_with_tr.args")
+  public void testKt68673_with_tr() {
+    runTest("native/native.tests/cli-tests/testData/cli/kt68673_with_tr.args");
+  }
+
+  @TestMetadata("kt68673_wrong_output_kind.args")
+  public void testKt68673_wrong_output_kind() {
+    runTest("native/native.tests/cli-tests/testData/cli/kt68673_wrong_output_kind.args");
   }
 
   @TestMetadata("llvmIrDumpDirectoryDoesntExist.args")

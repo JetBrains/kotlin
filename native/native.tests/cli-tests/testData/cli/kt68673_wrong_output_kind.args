@@ -1,0 +1,4 @@
+-p
+framework
+-l
+$TESTDATA_DIR$/unpackedExampleKlib
