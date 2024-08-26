@@ -6,20 +6,19 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 data class WasmSignature(
     val name: Name,
+    val moduleNameForInternals: Name?,
     val extensionReceiverType: IrType?,
     val valueParametersType: List<IrType>,
     val returnType: IrType,
@@ -41,10 +40,11 @@ data class WasmSignature(
 fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
     WasmSignature(
         name,
+        moduleNameForInternals = if (visibility == INTERNAL) findOriginallyContainingModule()?.name else null,
         extensionReceiverParameter?.type?.toWasmSignatureType(irBuiltIns),
         valueParameters.map { it.type.toWasmSignatureType(irBuiltIns) },
         returnType.toWasmSignatureType(irBuiltIns),
-        isOverridableOrOverrides
+        isOverridableOrOverrides,
     )
 
 private fun IrType.toWasmSignatureType(irBuiltIns: IrBuiltIns): IrType =
@@ -77,6 +77,18 @@ private fun IrTypeArgument.toWasmSignatureTypeArgument(irBuiltIns: IrBuiltIns): 
         }
     }
 }
+
+private fun IrSimpleFunction.findOriginallyContainingModule(): IrModuleFragment? {
+    if (origin == IrDeclarationOrigin.BRIDGE) {
+        val bridgeFrom = overriddenSymbols.firstOrNull()
+            ?: irError("Couldn't find the overridden function for the bridge") {
+                withIrEntry("thisSimpleFunction", this@findOriginallyContainingModule)
+            }
+        return bridgeFrom.owner.findOriginallyContainingModule()
+    }
+    return (getPackageFragment() as? IrFile)?.module
+}
+
 
 class VirtualMethodMetadata(
     val function: IrSimpleFunction,
