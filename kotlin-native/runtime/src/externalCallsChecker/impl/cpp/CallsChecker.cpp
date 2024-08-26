@@ -67,6 +67,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "__cxa_throw",
         "__cxa_rethrow",
         "__memset_chk",
+        "_ZNSt3__15mutex6unlockEv", // std::mutex::unlock()
 
         "abort",
         "acos",

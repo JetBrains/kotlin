@@ -45,6 +45,9 @@ template<typename Mutex>
 class ThreadStateAware : private Pinned {
 public:
     void lock() noexcept(noexcept(std::declval<Mutex>().lock())) {
+        // `try_lock` is expected not to block, we only try it once, and on failure do a full state switch.
+        CallsCheckerIgnoreGuard ignoreCallChecks;
+
         // Fast path without thread state switching.
         if (try_lock()) {
             return;
