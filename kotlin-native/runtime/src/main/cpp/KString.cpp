@@ -287,8 +287,21 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     });
 }
 
+static bool Kotlin_CharArray_isLatin1(KConstRef thiz, KInt start, KInt size) {
+    // TODO: vectorize?
+    return std::all_of(
+        CharArrayAddressOfElementAt(thiz->array(), start),
+        CharArrayAddressOfElementAt(thiz->array(), start + size),
+        [](KChar c) { return c < 256; }
+    );
+}
+
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theCharArrayTypeInfo, "Must use a char array");
+    if (Kotlin_CharArray_isLatin1(thiz, start, size)) {
+        RETURN_RESULT_OF(createString<Latin1String>, size,
+            [=](uint8_t* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
+    }
     RETURN_RESULT_OF(createString<UTF16String>, size,
         [=](KChar* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
 }
