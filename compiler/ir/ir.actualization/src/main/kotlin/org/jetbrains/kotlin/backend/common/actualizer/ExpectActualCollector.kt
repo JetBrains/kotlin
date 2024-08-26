@@ -311,18 +311,20 @@ private class ExpectActualLinkCollector {
 
         override fun visitFunction(declaration: IrFunction, data: MatchingContext) {
             if (declaration.isExpect) {
-                matchExpectCallable(declaration, declaration.callableId, data)
+                // The function is top level because the visitor doesn't visit function/class children recursively
+                matchExpectTopLevelCallable(declaration, declaration.callableId, data)
             }
         }
 
         override fun visitProperty(declaration: IrProperty, data: MatchingContext) {
             if (declaration.isExpect) {
-                matchExpectCallable(declaration, declaration.callableId, data)
+                // The property is top level because the visitor doesn't visit function/class children recursively
+                matchExpectTopLevelCallable(declaration, declaration.callableId, data)
             }
         }
 
-        private fun matchExpectCallable(declaration: IrDeclarationWithName, callableId: CallableId, context: MatchingContext) {
-            matchAndCheckExpectDeclaration(
+        private fun matchExpectTopLevelCallable(declaration: IrDeclarationWithName, callableId: CallableId, context: MatchingContext) {
+            matchAndCheckExpectTopLevelDeclaration(
                 declaration.symbol,
                 context.classActualizationInfo.actualTopLevels[callableId].orEmpty(),
                 context,
@@ -334,10 +336,10 @@ private class ExpectActualLinkCollector {
             val classId = declaration.classIdOrFail
             val expectClassSymbol = declaration.symbol
             val actualClassLikeSymbol = data.classActualizationInfo.getActualWithoutExpansion(classId)
-            matchAndCheckExpectDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
+            matchAndCheckExpectTopLevelDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
         }
 
-        private fun matchAndCheckExpectDeclaration(
+        private fun matchAndCheckExpectTopLevelDeclaration(
             expectSymbol: IrSymbol,
             actualSymbols: List<IrSymbol>,
             context: MatchingContext,
