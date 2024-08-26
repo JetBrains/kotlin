@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "4m")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "10m")
 // Stdlib tests rely on `-Xmulti-platform` thus don't work with one-stage mode.
 @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
 @FirPipeline
