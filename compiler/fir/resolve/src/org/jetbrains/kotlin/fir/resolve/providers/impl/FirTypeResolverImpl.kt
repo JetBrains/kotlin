@@ -158,10 +158,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             candidateCount > 1 -> {
                 TypeResolutionResult.Ambiguity(candidates.toList())
             }
-            candidateCount == 0 -> {
-                TypeResolutionResult.Unresolved
-            }
-            else -> error("Unexpected")
+            else -> TypeResolutionResult.Unresolved
         }
     }
 
