@@ -267,4 +267,32 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
         KotlinTestUtils.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
     }
+
+    @Test
+    fun noSourcesOrIncludeKlib() {
+        val rootDir = testSuiteDir.resolve("kt68673")
+        val libFile = buildDir.resolve("program.klib")
+        val kexe = buildDir.resolve("program.kexe")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("main.kt").absolutePath,
+            "-produce", "library",
+            "-o", libFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+        ) {
+            timeout = konancTimeout
+        }
+
+        runProcess(
+            konanc.absolutePath,
+            "-l", libFile.absolutePath,
+            "-o", kexe.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-g"
+        ) {
+            timeout = konancTimeout
+        }
+        val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
+        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("main.out"), output)
+    }
 }
