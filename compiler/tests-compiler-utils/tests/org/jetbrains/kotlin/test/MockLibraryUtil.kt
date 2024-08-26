@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
@@ -218,7 +218,7 @@ object MockLibraryUtil {
         @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
 
     private val compiler2MetadataClass: Class<*>
-        @Synchronized get() = loadCompilerClass(K2MetadataCompiler::class)
+        @Synchronized get() = loadCompilerClass(KotlinMetadataCompiler::class)
 
     @Synchronized
     private fun loadCompilerClass(compilerClass: KClass<out CLICompiler<*>>): Class<*> {

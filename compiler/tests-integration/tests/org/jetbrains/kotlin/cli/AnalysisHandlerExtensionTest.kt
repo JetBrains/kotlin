@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -84,7 +84,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     fun testShouldNotGenerateCodeMetadata() {
-        runTest(K2MetadataCompiler(), classNotFound, CustomComponentRegistrar::class)
+        runTest(KotlinMetadataCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisJVM() {
@@ -92,7 +92,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     fun testRepeatedAnalysisMetadata() {
-        runTest(K2MetadataCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
+        runTest(KotlinMetadataCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testAnalysisError() {

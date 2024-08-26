@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
@@ -337,7 +337,7 @@ abstract class CompileServiceImplBase(
         val compiler = when (targetPlatform) {
             CompileService.TargetPlatform.JVM -> K2JVMCompiler()
             CompileService.TargetPlatform.JS -> K2JSCompiler()
-            CompileService.TargetPlatform.METADATA -> K2MetadataCompiler()
+            CompileService.TargetPlatform.METADATA -> KotlinMetadataCompiler()
         } as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()

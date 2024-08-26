@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
@@ -511,7 +511,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testInternalFromFriendModuleCommon() {
         val library = compileCommonLibrary("library")
         compileKotlin(
-            "source.kt", tmpdir, listOf(library), K2MetadataCompiler(), listOf(
+            "source.kt", tmpdir, listOf(library), KotlinMetadataCompiler(), listOf(
                 K2MetadataCompilerArguments::friendPaths.cliArgument(library.path)
             )
         )
@@ -652,7 +652,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             "anonymousObjectTypeMetadata.kt",
             tmpdir,
             listOf(library),
-            K2MetadataCompiler(),
+            KotlinMetadataCompiler(),
             additionalOptions = extraCommandLineArguments
         )
     }

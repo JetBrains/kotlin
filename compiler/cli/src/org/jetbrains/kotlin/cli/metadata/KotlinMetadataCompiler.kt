@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
@@ -47,7 +45,7 @@ import java.io.File
  *
  * Please see `/docs/fir/k2_kmp.md` for more info on the K2/FIR implementation.
  */
-class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
+class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2MetadataCompilerPerformanceManager()
 
@@ -61,7 +59,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2MetadataCompilerArguments) {}
 
-    override fun doExecute(
+    public override fun doExecute(
         arguments: K2MetadataCompilerArguments,
         configuration: CompilerConfiguration,
         rootDisposable: Disposable,
@@ -150,14 +148,53 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     // TODO: update this once a launcher script for K2MetadataCompiler is available
     override fun executableScriptFileName(): String = "kotlinc"
 
-    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = BuiltInsBinaryVersion(*versionArray)
+    public override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = BuiltInsBinaryVersion(*versionArray)
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            doMain(K2MetadataCompiler(), args)
+            doMain(KotlinMetadataCompiler(), args)
         }
     }
 
     protected class K2MetadataCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Metadata compiler")
+}
+
+@Deprecated("Use KotlinMetadataCompiler instead", level = DeprecationLevel.HIDDEN)
+class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
+    private val delegate = KotlinMetadataCompiler()
+
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager
+        get() = delegate.defaultPerformanceManager
+
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
+        return delegate.createMetadataVersion(versionArray)
+    }
+
+    override fun setupPlatformSpecificArgumentsAndServices(
+        configuration: CompilerConfiguration,
+        arguments: K2MetadataCompilerArguments,
+        services: Services,
+    ) {
+        delegate.defaultPerformanceManager
+    }
+
+    override fun doExecute(
+        arguments: K2MetadataCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable,
+        paths: KotlinPaths?,
+    ): ExitCode {
+        return delegate.doExecute(arguments, configuration, rootDisposable, paths)
+    }
+
+    override fun MutableList<String>.addPlatformOptions(arguments: K2MetadataCompilerArguments) {}
+
+    override fun createArguments(): K2MetadataCompilerArguments {
+        return delegate.createArguments()
+    }
+
+    override fun executableScriptFileName(): String {
+        return delegate.executableScriptFileName()
+    }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.IOException
@@ -135,7 +135,7 @@ abstract class KotlinCompileDaemonBase {
                 val compilerSelector = object : CompilerSelector {
                     private val jvm by lazy { K2JVMCompiler() }
                     private val js by lazy { K2JSCompiler() }
-                    private val metadata by lazy { K2MetadataCompiler() }
+                    private val metadata by lazy { KotlinMetadataCompiler() }
                     override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
                         CompileService.TargetPlatform.JVM -> jvm
                         CompileService.TargetPlatform.JS -> js

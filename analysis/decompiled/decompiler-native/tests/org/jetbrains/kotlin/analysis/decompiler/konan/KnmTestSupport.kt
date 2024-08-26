@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KlibTestUtil
@@ -75,7 +75,7 @@ object K2KnmTestSupport : KnmTestSupport {
         additionalArguments: List<String>,
     ): OutputType {
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2MetadataCompiler(), buildList {
+            KotlinMetadataCompiler(), buildList {
                 addAll(inputKtFiles.map { it.absolutePathString() })
                 add(K2MetadataCompilerArguments::destination.cliArgument); add(compilationOutputPath.absolutePathString())
                 add(K2MetadataCompilerArguments::moduleName.cliArgument); add("library")

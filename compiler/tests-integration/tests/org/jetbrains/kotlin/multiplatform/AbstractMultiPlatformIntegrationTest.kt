@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -44,7 +44,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val result = buildString {
             appendLine("-- Common --")
-            appendLine(K2MetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
+            appendLine(KotlinMetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
 
             if (jvmSrc != null) {
                 appendLine()
@@ -74,7 +74,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             if (common2Src != null) {
                 appendLine()
                 appendLine("-- Common (2) --")
-                appendLine(K2MetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
+                appendLine(KotlinMetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
             }
 
             if (jvm2Src != null) {

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
-import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -243,7 +242,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
         val sourceFiles = sourcesPath.toFile().walkBottomUp()
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2MetadataCompiler(), buildList {
+            KotlinMetadataCompiler(), buildList {
                 addAll(sourceFiles.mapTo(this) { it.absolutePath })
                 add(K2MetadataCompilerArguments::destination.cliArgument); add(libraryOutputPath.absolutePathString())
                 add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)

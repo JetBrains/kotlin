@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -117,7 +117,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     ): File {
         val destination = File(tmpdir, libraryName)
         val output = compileKotlin(
-            libraryName, destination, compiler = K2MetadataCompiler(), additionalOptions = additionalOptions, expectedFileName = null
+            libraryName, destination, compiler = KotlinMetadataCompiler(), additionalOptions = additionalOptions, expectedFileName = null
         )
         checkKotlinOutput(normalizeOutput(output))
         return destination
@@ -165,7 +165,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add(output.path)
             args.add(K2JSCompilerArguments::moduleName.cliArgument)
             args.add("out")
-        } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
+        } else if (compiler is K2JVMCompiler || compiler is KotlinMetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add(K2JVMCompilerArguments::classpath.cliArgument)
                 args.add(classpath.joinToString(File.pathSeparator))
