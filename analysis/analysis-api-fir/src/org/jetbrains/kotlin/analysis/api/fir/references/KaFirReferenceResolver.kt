@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
@@ -16,10 +17,13 @@ import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteActio
 import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object KaFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
+    private val LOG = Logger.getInstance(KaFirReferenceResolver::class.java)
+
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
     @OptIn(KaAllowAnalysisOnEdt::class, KaAllowAnalysisFromWriteAction::class)
@@ -30,10 +34,16 @@ internal object KaFirReferenceResolver : ResolveCache.PolyVariantResolver<KtRefe
             allowAnalysisFromWriteAction {
                 val resolveToPsiElements = try {
                     analyze(ref.expression) { ref.getResolvedToPsi(this) }
-                } catch (e: Exception) {
-                    rethrowExceptionWithDetails("Unable to resolve reference ${ref.element::class}", e) {
+                } catch (exception: Exception) {
+                    rethrowIntellijPlatformExceptionIfNeeded(exception)
+
+                    val wrappedException = buildErrorWithAttachment("Unable to resolve reference ${ref.element::class}", exception) {
                         withPsiEntry("reference", ref.element)
                     }
+
+                    LOG.error(wrappedException)
+
+                    emptyList()
                 }
 
                 resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
