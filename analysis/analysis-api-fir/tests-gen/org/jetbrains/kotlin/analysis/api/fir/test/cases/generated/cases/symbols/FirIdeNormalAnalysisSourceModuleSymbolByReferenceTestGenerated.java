@@ -502,5 +502,17 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     public void testGeneratedCompanionWorksAsValue() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedCompanionWorksAsValue.kt");
     }
+
+    @Test
+    @TestMetadata("generatedNestedClassInLocalClass.kt")
+    public void testGeneratedNestedClassInLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedNestedClassInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedNestedClassInNestedInLocalClass.kt")
+    public void testGeneratedNestedClassInNestedInLocalClass() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedNestedClassInNestedInLocalClass.kt");
+    }
   }
 }

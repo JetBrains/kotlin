@@ -59,6 +59,10 @@ fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableS
     processClassifiersByName(name, this::add)
 }.singleOrNull()
 
+fun FirScope.getClassifiers(name: Name): List<FirClassifierSymbol<*>> = mutableListOf<FirClassifierSymbol<*>>().apply {
+    processClassifiersByName(name, this::add)
+}
+
 fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
     processFunctionsByName(name, this::add)
 }
