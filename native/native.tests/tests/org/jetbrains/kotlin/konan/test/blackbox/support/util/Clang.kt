@@ -45,10 +45,17 @@ internal enum class ClangMode {
     C, CXX
 }
 
+private fun AbstractNativeSimpleTest.defaultClangDistribution(): ClangDistribution =
+    if (testRunSettings.configurables.target.family.isAppleFamily) {
+        ClangDistribution.Toolchain
+    } else {
+        ClangDistribution.Llvm
+    }
+
 // FIXME: absoluteTargetToolchain might not work correctly with KONAN_USE_INTERNAL_SERVER because
 // :kotlin-native:dependencies:update is not a dependency of :native:native.tests:test where this test runs
 internal fun AbstractNativeSimpleTest.compileWithClang(
-    clangDistribution: ClangDistribution = ClangDistribution.Llvm,
+    clangDistribution: ClangDistribution = defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
@@ -74,7 +81,7 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         addAll(
             when (clangMode) {
                 ClangMode.C -> clangArgsProvider.clangArgs
-                ClangMode.CXX -> clangArgsProvider.clangXXArgs
+                ClangMode.CXX -> clangArgsProvider.clangXXArgs + "-std=c++17"
             }
         )
         addAll(sourceFiles.map { it.absolutePath })
@@ -150,7 +157,7 @@ internal fun createModuleMap(moduleName: String, directory: File, umbrellaHeader
 }
 
 internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
-    clangDistribution: ClangDistribution = ClangDistribution.Llvm,
+    clangDistribution: ClangDistribution = defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,

@@ -451,7 +451,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
 
     private fun compileDylib(name: String, mSources: List<File>, extraClangOpts: List<String> = listOf("-fobjc-arc")): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
         val clangResult = compileWithClang(
-            clangDistribution = ClangDistribution.Llvm,
             sourceFiles = mSources,
             includeDirectories = emptyList(),
             outputFile = buildDir.resolve("lib$name.dylib"),

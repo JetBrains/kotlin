@@ -111,7 +111,6 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
         val clangResult = compileWithClang(
-            clangDistribution = ClangDistribution.Llvm,
             clangMode = clangMode,
             sourceFiles = cSources,
             includeDirectories = includeDirectories,
