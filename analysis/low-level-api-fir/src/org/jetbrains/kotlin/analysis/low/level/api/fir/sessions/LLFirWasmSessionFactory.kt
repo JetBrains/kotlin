@@ -19,11 +19,16 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
+import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
+            registerWasmComponents()
+
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -41,6 +46,8 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
 
     override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
+            registerWasmComponents()
+
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -56,11 +63,14 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
 
     override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
+            registerWasmComponents()
         }
     }
 
     override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
+            registerWasmComponents()
+
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -74,6 +84,12 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
                 )
             )
         }
+    }
+
+    private fun LLFirSession.registerWasmComponents() {
+        val platform = ktModule.targetPlatform.singleOrNull()
+        val target = (platform as? WasmPlatformWithTarget)?.target ?: WasmTarget.JS
+        registerWasmComponents(target)
     }
 
     override fun createProjectLibraryProvidersForScope(
