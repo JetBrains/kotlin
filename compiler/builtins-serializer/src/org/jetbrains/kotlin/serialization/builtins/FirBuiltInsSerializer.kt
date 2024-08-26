@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.metadata.FirMetadataSerializer
+import org.jetbrains.kotlin.cli.metadata.AbstractFirMetadataSerializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
-import org.jetbrains.kotlin.fir.serialization.FirAnnotationSerializer
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtensionBase
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -44,7 +42,7 @@ import java.io.File
 internal class FirBuiltInsSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment,
-) : FirMetadataSerializer(configuration, environment) {
+) : AbstractFirMetadataSerializer(configuration, environment) {
     private var totalSize: Int = 0
     private var totalFiles: Int = 0
 

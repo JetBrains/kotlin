@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.collectSources
+import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForLt
+import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
+import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.toLogger
+import org.jetbrains.kotlin.cli.common.prepareCommonSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
@@ -23,32 +28,23 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
-import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
+import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
+import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
+import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
 
-/**
- * Produces metadata klib using K2 compiler
- */
-internal open class FirMetadataSerializer(
+internal abstract class AbstractFirMetadataSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment
 ) : AbstractMetadataSerializer<List<ModuleCompilerAnalyzedOutput>>(configuration, environment) {
@@ -61,11 +57,11 @@ internal open class FirMetadataSerializer(
         val rootModuleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
         val isLightTree = configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
 
-        val binaryModuleData = BinaryModuleData.initialize(
+        val binaryModuleData = BinaryModuleData.Companion.initialize(
             rootModuleName,
             CommonPlatforms.defaultCommonPlatform,
         )
-        val libraryList = DependencyListForCliModule.build(binaryModuleData) {
+        val libraryList = DependencyListForCliModule.Companion.build(binaryModuleData) {
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
             dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.toPath() })
             dependencies(configuration.jvmModularRoots.map { it.toPath() })
@@ -84,13 +80,20 @@ internal open class FirMetadataSerializer(
 
         // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
 //        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
-        val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), logger)) }
+        val resolvedLibraries = klibFiles.map {
+            KotlinResolvedLibraryImpl(
+                resolveSingleFileKlib(
+                    org.jetbrains.kotlin.konan.file.File(it),
+                    logger
+                )
+            )
+        }
 
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
-            val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+            val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
             val incrementalCompilationScope = createIncrementalCompilationScope(
                 configuration,
@@ -120,11 +123,11 @@ internal open class FirMetadataSerializer(
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
             ) { environment.createPackagePartProvider(it) }
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+            val extensionRegistrars = FirExtensionRegistrar.Companion.getInstances(projectEnvironment.project)
             val psiFiles = environment.getSourceFiles()
             val sourceScope =
                 projectEnvironment.getSearchScopeByPsiFiles(psiFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
-            val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+            val providerAndScopeForIncrementalCompilation = org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation(
                 projectEnvironment,
                 configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
                 configuration,
@@ -160,51 +163,5 @@ internal open class FirMetadataSerializer(
         }
     }
 
-    override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File): OutputInfo? {
-        val fragments = mutableMapOf<String, MutableList<ByteArray>>()
-
-        for (output in analysisResult) {
-            val (session, scopeSession, fir) = output
-
-            val languageVersionSettings = environment.configuration.languageVersionSettings
-            for (firFile in fir) {
-                val packageFragment = serializeSingleFirFile(
-                    firFile,
-                    session,
-                    scopeSession,
-                    actualizedExpectDeclarations = null,
-                    FirKLibSerializerExtension(
-                        session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
-                        allowErrorTypes = false, exportKDoc = false,
-                        additionalMetadataProvider = null
-                    ),
-                    languageVersionSettings,
-                )
-                fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
-            }
-        }
-
-        val header = KlibMetadataProtoBuf.Header.newBuilder()
-        header.moduleName = analysisResult.last().session.moduleData.name.asString()
-
-        if (configuration.languageVersionSettings.isPreRelease()) {
-            header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
-        }
-
-        val fragmentNames = mutableListOf<String>()
-        val fragmentParts = mutableListOf<List<ByteArray>>()
-
-        for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
-            fragmentNames += fqName
-            fragmentParts += fragment
-            header.addPackageFragmentName(fqName)
-        }
-
-        val module = header.build().toByteArray()
-
-        val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
-
-        buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
-        return null
-    }
+    abstract override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File): OutputInfo?
 }

@@ -127,7 +127,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         try {
             val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
             val metadataSerializer = when {
-                useFir -> FirMetadataSerializer(configuration, environment)
+                useFir -> FirKlibMetadataSerializer(configuration, environment)
                 arguments.metadataKlib -> K1MetadataKlibSerializer(configuration, environment)
                 else -> K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
