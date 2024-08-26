@@ -164,7 +164,9 @@ class ConstraintInjector(
             typeCheckerState,
             constraintSet,
         )
-        processConstraintsIgnoringForksData(typeCheckerState, c, skipProperEqualityConstraints = true)
+        if (languageVersionSettings.supportsFeature(LanguageFeature.InferenceEnhancementsIn21)) {
+            processConstraintsIgnoringForksData(typeCheckerState, c, skipProperEqualityConstraints = true)
+        }
     }
 
     private fun processConstraints(
@@ -307,7 +309,8 @@ class ConstraintInjector(
         private var stackForConstraintsSetsFromCurrentForkPoint: Stack<MutableList<ForkPointBranchDescription>>? = null
         private var stackForConstraintSetFromCurrentForkPointBranch: Stack<MutableList<Pair<TypeVariableMarker, Constraint>>>? = null
 
-        override val isInferenceCompatibilityEnabled = languageVersionSettings.supportsFeature(LanguageFeature.InferenceCompatibility)
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = this@ConstraintInjector.languageVersionSettings
 
         private val allowForking: Boolean
             get() = constraintIncorporator.utilContext.isForcedAllowForkingInferenceSystem

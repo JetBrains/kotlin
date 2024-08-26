@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature.InferenceCompatibility
+import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 
@@ -20,7 +23,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     kotlinTypePreparator,
     kotlinTypeRefiner
 ) {
-    abstract val isInferenceCompatibilityEnabled: Boolean
+    abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
@@ -242,9 +245,10 @@ abstract class TypeCheckerStateForConstraintSystem(
                         val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
                                 typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
                                 !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
+                        val inferenceCompatibilityEnabled = languageVersionSettings.supportsFeature(InferenceCompatibility)
 
                         fun KotlinTypeMarker.withCapturedNonNullProjection(): KotlinTypeMarker =
-                            if (isInferenceCompatibilityEnabled && this is CapturedTypeMarker) {
+                            if (inferenceCompatibilityEnabled && this is CapturedTypeMarker) {
                                 withNotNullProjection()
                             } else {
                                 this
@@ -253,12 +257,12 @@ abstract class TypeCheckerStateForConstraintSystem(
                         val resultType = if (needToMakeDefNotNull) {
                             subType.makeDefinitelyNotNullOrNotNull()
                         } else {
-                            val notNullType = if (!isInferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
+                            val notNullType = if (!inferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
                                 subType.withNotNullProjection()
                             } else {
                                 subType.withNullability(false)
                             }
-                            if (isK2) {
+                            if (languageVersionSettings.supportsFeature(InferenceEnhancementsIn21)) {
                                 val variantTypes = listOf(notNullType, subType.makeDefinitelyNotNullOrNotNull()).distinct()
                                 when (variantTypes.size) {
                                     1 -> variantTypes.single()

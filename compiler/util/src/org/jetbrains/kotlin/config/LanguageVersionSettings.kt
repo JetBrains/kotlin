@@ -337,9 +337,13 @@ enum class LanguageFeature(
     AllowSuperCallToJavaInterface(KOTLIN_2_1, kind = OTHER), // KT-69729
     ProhibitJavaClassInheritingPrivateKotlinClass(KOTLIN_2_1, kind = OTHER), // KT-66328
     ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces(KOTLIN_2_1, kind = BUG_FIX), // KT-57014
+
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
     // See the single usage at org.jetbrains.kotlin.fir.types.ConeTypeApproximator.fastPathSkipApproximation
     AvoidApproximationOfRecursiveCapturedTypesWithNoReason(KOTLIN_2_1, kind = OTHER), // KT-69995
+
+    // Common feature for all non-PCLA inference enhancements in 2.1
+    InferenceEnhancementsIn21(KOTLIN_2_1, kind = OTHER), // KT-61227
 
     // 2.2
 
