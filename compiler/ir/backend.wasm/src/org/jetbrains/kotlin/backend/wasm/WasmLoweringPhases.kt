@@ -142,7 +142,6 @@ private val functionInliningPhase = makeIrModulePhase(
         expectDeclarationsRemovingPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersPhase,
         localClassesInInlineLambdasPhase,
-        localClassesInInlineFunctionsPhase,
     )
 )
 
@@ -644,8 +643,8 @@ val loweringList = listOf(
 
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
+//    localClassesInInlineFunctionsPhase,
+//    localClassesExtractionFromInlineFunctionsPhase,
 
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,

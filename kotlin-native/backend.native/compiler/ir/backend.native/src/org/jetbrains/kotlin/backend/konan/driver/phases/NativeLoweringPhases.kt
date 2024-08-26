@@ -193,10 +193,10 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringP
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
         { context, irFile ->
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
-            if (!context.config.produce.isCache) {
-                LocalClassesInInlineFunctionsLowering(context).lower(irFile)
-                LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
-            }
+//            if (!context.config.produce.isCache) {
+//                LocalClassesInInlineFunctionsLowering(context).lower(irFile)
+//                LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
+//            }
         },
         name = "ExtractLocalClassesFromInlineBodies",
         description = "Extraction of local classes from inline bodies",

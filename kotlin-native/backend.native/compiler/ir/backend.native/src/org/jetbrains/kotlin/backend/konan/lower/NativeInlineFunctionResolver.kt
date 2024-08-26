@@ -102,11 +102,11 @@ internal class NativeInlineFunctionResolver(
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
-        if (!(context.config.produce.isCache || functionIsCached)) {
-            // Do not extract local classes off of inline functions from cached libraries.
-            LocalClassesInInlineFunctionsLowering(context).lower(body, function)
-            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
-        }
+//        if (!(context.config.produce.isCache || functionIsCached)) {
+//            // Do not extract local classes off of inline functions from cached libraries.
+//            LocalClassesInInlineFunctionsLowering(context).lower(body, function)
+//            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
+//        }
 
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         ArrayConstructorLowering(context).lower(body, function)

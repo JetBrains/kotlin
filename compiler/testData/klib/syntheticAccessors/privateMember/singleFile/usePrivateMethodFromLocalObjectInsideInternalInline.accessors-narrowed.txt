@@ -3,9 +3,10 @@
 /* FILE package=<root> fileName=usePrivateMethodFromLocalObjectInsideInternalInline.kt */
 
 public class A
+    /* TARGET declaration */ private fun privateMethod(): String
     internal inline fun internalInlineMethod(): String
-        /* ACCESSOR use-site */ access$<init>(this$0 = <this>)
-    local class <no name provided>
-        /* TARGET declaration */ private constructor(this$0: A) /* primary */
-        /* ACCESSOR declaration */ internal /* static */ fun access$<init>(this$0: A): <no name provided>
-            /* TARGET use-site */ <no name provided>(this$0 = this$0)
+        local class <no name provided>
+            public fun run(): String
+                /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: A): String
+        /* TARGET use-site */ $this.privateMethod()

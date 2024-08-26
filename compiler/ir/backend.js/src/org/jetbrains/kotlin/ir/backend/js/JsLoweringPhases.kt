@@ -289,7 +289,7 @@ private val cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase = makeIr
     description = "Cache copies of inline functions before InlineOnlyPrivateFunctions phase",
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
+        localClassesInInlineLambdasPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
@@ -303,7 +303,7 @@ private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePh
     description = "Cache copies of inline functions before InlineAllFunctions phase",
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
+        localClassesInInlineLambdasPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
@@ -887,8 +887,8 @@ fun getJsLowerings(
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
+//    localClassesInInlineFunctionsPhase,
+//    localClassesExtractionFromInlineFunctionsPhase,
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
