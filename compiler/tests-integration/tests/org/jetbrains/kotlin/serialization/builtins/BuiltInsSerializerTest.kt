@@ -42,6 +42,9 @@ abstract class BuiltInsSerializerTest(val useK2: Boolean) {
     @Suppress("JUnitTestCaseWithNoTests")
     class K1BuiltInsSerializerTest : BuiltInsSerializerTest(useK2 = false)
 
+    /**
+     * Note that `KotlinKlibSerializerTest` uses the same testdata
+     */
     @Suppress("JUnitTestCaseWithNoTests")
     class K2BuiltInsSerializerTest : BuiltInsSerializerTest(useK2 = true)
 

@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import java.io.File
 
+/**
+ * Note that `BuiltInsSerializerTest.K2BuiltInsSerializerTest` uses the same testdata
+ */
 class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     private val BASE_DIR = "compiler/testData/serialization"
 
