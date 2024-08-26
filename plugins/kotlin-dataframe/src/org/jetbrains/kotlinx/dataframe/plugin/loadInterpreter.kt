@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.All0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
@@ -196,6 +197,7 @@ internal inline fun <reified T> String.load(): T {
         "Flatten0" -> Flatten0()
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
+        "AddDslStringInvoke" -> AddDslStringInvoke()
         else -> error("$this")
     } as T
 }

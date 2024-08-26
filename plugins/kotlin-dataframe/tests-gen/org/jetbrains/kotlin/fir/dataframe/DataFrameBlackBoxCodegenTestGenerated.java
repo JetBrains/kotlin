@@ -18,6 +18,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlackBoxCodegenTest {
   @Test
+  @TestMetadata("addDsl.kt")
+  public void testAddDsl() {
+    runTest("testData/box/addDsl.kt");
+  }
+
+  @Test
   @TestMetadata("addId.kt")
   public void testAddId() {
     runTest("testData/box/addId.kt");

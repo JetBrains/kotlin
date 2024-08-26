@@ -7,6 +7,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dsl
@@ -55,5 +56,17 @@ class AddWithDsl : AbstractSchemaModificationInterpreter() {
         val addDsl = AddDslApproximation(receiver.columns().toMutableList())
         body(addDsl, emptyMap())
         return PluginDataFrameSchema(addDsl.columns)
+    }
+}
+
+class AddDslStringInvoke : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: AddDslApproximation by arg(lens = Interpreter.Value)
+    val Arguments.receiver: String by string()
+    val Arguments.body by dsl()
+
+    override fun Arguments.interpret() {
+        val addDsl = AddDslApproximation(mutableListOf())
+        body(addDsl, emptyMap())
+        dsl.columns.add(SimpleColumnGroup(receiver, addDsl.columns))
     }
 }
