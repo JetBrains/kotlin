@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
 class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types") {
 
     @Test
-    @OnlyDescriptors("#3649")
     fun `type with typealias to functional type with parameter`() {
         inlineModelTest(
             """
@@ -45,7 +44,6 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
     }
 
     @Test
-    @OnlyDescriptors("#3649")
     fun `type with typealias to functional type`() {
         inlineModelTest(
             """
