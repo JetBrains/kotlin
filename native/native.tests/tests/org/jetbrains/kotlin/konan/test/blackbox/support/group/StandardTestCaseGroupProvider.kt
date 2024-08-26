@@ -252,13 +252,18 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                     WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
                 }
                 TestKind.STANDALONE_LLDB -> {
+                    val locationFormat = "{ at \${line.file.basename}:\${line.number}{:\${line.column}}}"
+                    val nameFormat = "{ \${module.file.basename}{\\`\${function.name-with-args}{\${frame.no-debug}}}}"
+                    val stopReasonFormat = "{, stop reason = \${thread.stop-reason}}"
+                    val returnValFormat = "{\\nReturn value: \${thread.return-value}}{\\nCompleted expression: \${thread.completed-expression}}"
+                    val activityFormat = "{, activity = '\${thread.info.activity.name}'}{, \${thread.info.trace_messages} messages}"
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
                         arguments = listOf("-b",
                                            "-o", "settings set stop-disassembly-display never",
-                                           "-o", "settings set frame-format \"frame #\${frame.index}: <frame pc>{ \${module.file.basename}{\\`\${function.name-with-args}{\${frame.no-debug}}}}{ at \${line.file.basename}:\${line.number}{:\${line.column}}}{\${function.is-optimized} [opt]}{\${frame.is-artificial} [artificial]}\\n\"",
-                                           "-o", "settings set thread-format \"thread #<thread id>{ \${module.file.basename}{\\`\${function.name-with-args}{\${frame.no-debug}}}}{ at \${line.file.basename}:\${line.number}{:\${line.column}}}{, stop reason = \${thread.stop-reason}}{\\nReturn value: \${thread.return-value}}{\\nCompleted expression: \${thread.completed-expression}}\\n\"",
-                                           "-o", "settings set thread-stop-format \"thread #<thread id>{, activity = '\${thread.info.activity.name}'}{, \${thread.info.trace_messages} messages}{, stop reason = \${thread.stop-reason}}{\\nReturn value: \${thread.return-value}}{\\nCompleted expression: \${thread.completed-expression}}\\n\"",
+                                           "-o", "settings set frame-format \"frame #\${frame.index}: <frame pc>$nameFormat$locationFormat\\n\"",
+                                           "-o", "settings set thread-format \"thread #<thread id>$nameFormat$locationFormat$stopReasonFormat$returnValFormat\\n\"",
+                                           "-o", "settings set thread-stop-format \"thread #<thread id>$activityFormat$stopReasonFormat$returnValFormat\\n\"",
                                            "-o", "command script import ${settings.get<LLDB>().prettyPrinters.absolutePath}",
                                            *(inputDataFile?.readLines()?.filterNot { it.isBlank() }?.flatMap { listOf("-o", it) }
                                                ?: listOf()).toTypedArray()
