@@ -83,6 +83,12 @@ public class DokkaBase : DokkaPlugin() {
         preMergeDocumentableTransformer providing ::SuppressTagDocumentableFilter
     }
 
+    public val jvmMappedMethodsFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+        preMergeDocumentableTransformer providing ::JvmMappedMethodsDocumentableFilterTransformer order {
+            before(kotlinArrayDocumentableReplacer)
+        }
+    }
+
     public val documentableVisibilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
     }
