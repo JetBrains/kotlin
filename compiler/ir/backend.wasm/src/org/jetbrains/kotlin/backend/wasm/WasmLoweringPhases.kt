@@ -643,8 +643,8 @@ val loweringList = listOf(
 
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
-//    localClassesInInlineFunctionsPhase,
-//    localClassesExtractionFromInlineFunctionsPhase,
+    localClassesInInlineFunctionsPhase,
+    localClassesExtractionFromInlineFunctionsPhase,
 
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
