@@ -352,7 +352,7 @@ private val functionReferencePhase = createFileLoweringPhase(
         lowering = ::FunctionReferenceLowering,
         name = "FunctionReference",
         description = "Function references lowering",
-        prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+        prerequisite = setOf(localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
 )
 
 private val enumWhenPhase = createFileLoweringPhase(
@@ -662,8 +662,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
         testProcessorPhase.takeIf { context.config.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
-        delegationPhase,
         functionReferencePhase,
+        delegationPhase,
         singleAbstractMethodPhase,
         enumWhenPhase,
         finallyBlocksPhase,

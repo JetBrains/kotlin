@@ -224,31 +224,41 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
 
             val name = irString(expression.symbol.owner.name.asString())
 
-            val initializer = if (dispatchReceiver == null && extensionReceiver == null) {
-                fun IrFunctionReference.convert() : IrConstantValue {
-                    val builder = FunctionReferenceLowering.FunctionReferenceBuilder(
-                            irFile,
-                            irFile,
-                            this,
-                            generationState,
-                            irBuilder,
-                    )
-                    val (newClass, newExpression) = builder.build()
-                    generatedClasses.add(newClass)
-                    return newExpression as IrConstantValue
+            fun IrFunctionReference.convert(produceConstantObject: Boolean): IrExpression {
+                val builder = FunctionReferenceLowering.FunctionReferenceBuilder(
+                        irFile,
+                        irFile,
+                        this,
+                        generationState,
+                        irBuilder,
+                )
+                val (newClass, newExpression) = builder.build()
+                generatedClasses.add(newClass)
+                return if (!produceConstantObject)
+                    newExpression
+                else {
+                    val constructor = newClass.primaryConstructor
+                            ?: error("A function reference impl class must have a primary constructor: ${newClass.render()}")
+                    require(constructor.valueParameters.isEmpty()) {
+                        "Expected a function reference impl class with no captured parameters: ${constructor.render()}"
+                    }
+                    irConstantObject(constructor.symbol, emptyList())
                 }
+            }
+
+            val initializer = if (dispatchReceiver == null && extensionReceiver == null) {
                 return irConstantObject(clazz, buildMap {
                     put("name", irConstantPrimitive(name))
-                    put("getter", getterCallableReference.convert())
+                    put("getter", getterCallableReference.convert(true) as IrConstantValue)
                     if (setterCallableReference != null) {
-                        put("setter", setterCallableReference.convert())
+                        put("setter", setterCallableReference.convert(true) as IrConstantValue)
                     }
                 })
             } else irCallWithSubstitutedType(clazz.constructors.single(), receiverTypes + listOf(returnType)).apply {
                 putValueArgument(0, name)
-                putValueArgument(1, getterCallableReference)
+                putValueArgument(1, getterCallableReference.convert(false))
                 if (setterCallableReference != null)
-                    putValueArgument(2, setterCallableReference)
+                    putValueArgument(2, setterCallableReference.convert(false))
             }
             +initializer
         }
