@@ -32,9 +32,9 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
         return symbolProvider.getClassLikeSymbolByClassId(fqName)
     }
 
-    override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
+    override fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
         if (parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-            return resolveSymbol(parts.drop(1))
+            return resolveFullyQualifiedSymbol(parts.drop(1))
         }
 
         val firProvider = session.symbolProvider
