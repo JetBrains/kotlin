@@ -160,8 +160,21 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     private val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
-        get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty() ||
-                libraryToAddToCache != null || !exportedLibraries.isNullOrEmpty() || !compileFromBitcode.isNullOrEmpty()
+        get() {
+            if (listTargets || listPhases || checkDependencies) {
+                return true
+            }
+            // A little hack: produce == null is assumed to be treated as produce == "program" later in the pipeline.
+            val producingExecutable = produce == null || produce == "program"
+            // KT-68673: It is legal to store entry point in one of the libraries.
+            if (producingExecutable && libraries?.isNotEmpty() == true) {
+                return true
+            }
+            return !includes.isNullOrEmpty()
+                    || !exportedLibraries.isNullOrEmpty()
+                    || libraryToAddToCache != null
+                    || !compileFromBitcode.isNullOrEmpty()
+        }
 
     // It is executed before doExecute().
     override fun setupPlatformSpecificArgumentsAndServices(

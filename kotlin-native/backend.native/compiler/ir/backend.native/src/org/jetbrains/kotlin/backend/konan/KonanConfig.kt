@@ -630,12 +630,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(KonanConfigKeys.SAVE_DEPENDENCIES_PATH)
     }
 
-    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
-            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
-            && libraryToCache == null && compileFromBitcode.isNullOrEmpty())
-
-
     /**
      * Directory to store LLVM IR from -Xsave-llvm-ir-after.
      */

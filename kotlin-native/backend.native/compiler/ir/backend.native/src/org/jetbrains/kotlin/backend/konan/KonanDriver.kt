@@ -106,7 +106,23 @@ class KonanDriver(
         if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
             konanConfig.targetManager.list()
         }
-        if (konanConfig.infoArgsOnly) return
+
+        val hasIncludedLibraries = configuration[KonanConfigKeys.INCLUDED_LIBRARIES]?.isNotEmpty() == true
+        val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
+                && configuration[KonanConfigKeys.LIBRARY_FILES]?.isNotEmpty() == true && !hasIncludedLibraries
+        val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
+                || hasIncludedLibraries
+                || configuration[KonanConfigKeys.EXPORTED_LIBRARIES]?.isNotEmpty() == true
+                || konanConfig.libraryToCache != null
+                || konanConfig.compileFromBitcode?.isNotEmpty() == true
+                || isProducingExecutableFromLibraries
+
+        if (!hasCompilerInput) return
+
+        if (isProducingExecutableFromLibraries && configuration.get(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE) {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                    "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
+        }
 
         // Avoid showing warning twice in 2-phase compilation.
         if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in softDeprecatedTargets) {
