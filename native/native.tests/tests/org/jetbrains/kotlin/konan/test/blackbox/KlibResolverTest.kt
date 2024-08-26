@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.utils.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
@@ -82,10 +84,88 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             when (module.name) {
                 "a" -> aKlib = successKlib.resultingArtifact
                 "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                "c" -> assertTrue((successKlib.loggedData as LoggedData.CompilationToolCall).toolOutput.contains(
-                        "warning: KLIB resolver: Could not find \"a\""
-                    ))
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertTrue(compilationToolCall.exitCode == ExitCode.OK)
+                    assertTrue(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                }
             }
+        }
+    }
+
+    @Test
+    @DisplayName("-nowarn cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithNowarn() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true, extraCmdLineParams = listOf("-nowarn")) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertTrue(compilationToolCall.exitCode == ExitCode.OK)
+                    assertFalse(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("-Werror cmdline param causes error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerror() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = false,
+                useLibraryNamesInCliArguments = true,
+                extraCmdLineParams = listOf("-Werror"),
+            ) { module, successKlib ->
+                when (module.name) {
+                    "a" -> aKlib = successKlib.resultingArtifact
+                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                    "c" -> fail ("Normally should not get here")
+                }
+            }
+        } catch (cte: CompilationToolException) {
+            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
+            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
+        }
+    }
+
+    @Test
+    @DisplayName("-Werror and -nowarn cmdline params cause error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerrorNowarn() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = false,
+                useLibraryNamesInCliArguments = true,
+                extraCmdLineParams = listOf("-Werror", "-nowarn"),
+            ) { module, successKlib ->
+                when (module.name) {
+                    "a" -> aKlib = successKlib.resultingArtifact
+                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                    "c" -> fail ("Normally should not get here")
+                }
+            }
+        } catch (cte: CompilationToolException) {
+            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
+            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
         }
     }
 
@@ -294,6 +374,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     private fun List<Module>.compileModules(
         produceUnpackedKlibs: Boolean,
         useLibraryNamesInCliArguments: Boolean,
+        extraCmdLineParams: List<String> = emptyList(),
         transform: ((module: Module, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
     ) {
         val klibFilesDir = buildDir.resolve(
@@ -323,6 +404,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                                 add("-l")
                                 add(dependency.computeArtifactPath())
                             }
+                            addAll(extraCmdLineParams)
                         }
                     )
                 )
