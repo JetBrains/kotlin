@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
@@ -27,7 +25,7 @@ import javax.inject.Inject
 internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     providerFactory: ProviderFactory,
     objectFactory: ObjectFactory,
-) : DefaultTask() {
+) : AbstractXcodeTask(providerFactory, objectFactory) {
     init {
         onlyIf { HostManager.hostIsMac }
     }
@@ -43,12 +41,6 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
     @get:Input
     abstract val configuration: Property<String>
-
-    @get:Optional
-    @get:Input
-    val targetDeviceIdentifier: Property<String> = objectFactory.property<String>().convention(
-        providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
-    )
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
