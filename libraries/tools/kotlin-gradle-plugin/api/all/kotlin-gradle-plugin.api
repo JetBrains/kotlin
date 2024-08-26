@@ -3867,16 +3867,18 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilati
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrLink : org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService {
-	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/workers/WorkerExecutor;)V
+	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/workers/WorkerExecutor;)V
 	protected fun cleanOutputsAndLocalState (Ljava/lang/String;)V
 	protected fun contributeAdditionalCompilerArguments (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$ContributeCompilerArgumentsContext;)V
 	public final fun getIncrementalJsIr ()Z
+	public final fun getIncrementalWasm ()Z
 	public final fun getMode ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;
 	public final fun getOutputGranularity ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrOutputGranularity;
 	public abstract fun getRootCacheDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public fun getSources ()Lorg/gradle/api/file/FileCollection;
 	protected fun processArgsBeforeCompile (Lorg/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments;)V
 	public final fun setIncrementalJsIr (Z)V
+	public final fun setIncrementalWasm (Z)V
 	public final fun setMode (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
 	protected fun skipCondition ()Z
 }

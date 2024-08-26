@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     project: Project,
+    target: KotlinPlatformType,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : Kotlin2JsCompile(
@@ -63,6 +65,9 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:Input
     var incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
+
+    @get:Input
+    var incrementalWasm: Boolean = propertiesProvider.incrementalWasm
 
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
@@ -122,12 +127,17 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
+    private val isWasmPlatform: Boolean =
+        target == KotlinPlatformType.wasm
+
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
-        buildFusService.orNull?.reportFusMetrics {
-            CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
+        if (!isWasmPlatform) {
+            buildFusService.orNull?.reportFusMetrics {
+                CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
+            }
         }
     }
 
     private fun usingCacheDirectory() =
-        incrementalJsIr && modeProperty.get() == DEVELOPMENT
+        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
 }
