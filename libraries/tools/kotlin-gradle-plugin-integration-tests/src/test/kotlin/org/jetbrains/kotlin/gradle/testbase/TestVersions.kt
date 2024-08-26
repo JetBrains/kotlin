@@ -94,4 +94,8 @@ interface TestVersions {
         const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
         const val KOTLINX_ATOMICFU = "0.23.2"
     }
+
+    object DevelocityPlugin {
+        const val VERSION = "3.18"
+    }
 }

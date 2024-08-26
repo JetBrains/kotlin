@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
@@ -213,7 +214,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
 
         private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
-            val buildScanHolder = initBuildScanExtensionHolder(project, buildMetricServiceProvider)
+            val buildScanHolder = initBuildScanHolder(project, buildMetricServiceProvider)
             if (buildScanHolder != null) {
                 subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanHolder)
             }
@@ -226,10 +227,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        private fun initBuildScanExtensionHolder(
+        private fun initBuildScanHolder(
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
-        ): BuildScanExtensionHolder? {
+        ): BuildScanApi? {
             buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings ?: return null
 
             val rootProject = if (project.isProjectIsolationEnabled) {
@@ -238,31 +239,32 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 project.rootProject
             }
 
-            val buildScanExtension = rootProject.extensions.findByName("buildScan")
-            val buildScanExtensionHolder = buildScanExtension?.let { BuildScanExtensionHolder(it) }
+            val buildScan =
+                rootProject.extensions.findByName("develocity")?.let { DevelocityPluginBuildScanWrapper(it) }
+                ?: rootProject.extensions.findByName("buildScan")?.let { BuildScanExtensionHolder(it) }
 
             when {
-                buildScanExtensionHolder == null && project.isProjectIsolationEnabled ->
+                buildScan == null && project.isProjectIsolationEnabled ->
                     log.warn(
                         "Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled." +
                                 " Follow https://youtrack.jetbrains.com/issue/KT-68847 for the updates." +
                                 " Build report for build scan won't be created."
                     )
-                buildScanExtensionHolder == null -> log.debug("Build scan is not enabled. Build report for build scan won't be created.")
+                buildScan == null -> log.debug("Build scan is not enabled. Build report for build scan won't be created.")
                 else -> log.debug("Build report for build scan is configured.")
             }
 
-            return buildScanExtensionHolder
+            return buildScan
         }
 
         private fun subscribeForTaskEventsForBuildScan(
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
-            buildScanHolder: BuildScanExtensionHolder,
+            buildScanHolder: BuildScanApi,
         ) {
             when {
                 GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                    buildScanHolder.buildScan.buildFinished {
+                    buildScanHolder.buildFinished {
                         buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder) }.get()
                     }
                 }
@@ -315,12 +317,13 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    internal fun addBuildScanReport(buildScan: BuildScanExtensionHolder?) {
+    internal fun addBuildScanReport(buildScan: BuildScanApi?) {
         if (buildScan == null) return
         buildReportService.initBuildScanTags(buildScan, parameters.label.orNull)
         buildReportService.addBuildScanReport(buildOperationRecords, parameters.toBuildReportParameters(), buildScan)
-        parameters.buildConfigurationTags.orNull?.forEach { buildScan.buildScan.tag(it.readableString) }
+        parameters.buildConfigurationTags.orNull?.forEach { buildScan.tag(it.readableString) }
         buildReportService.addCollectedTags(buildScan)
+        log.debug("Build metrics are stored into build scan for '${buildReportService.buildUuid}' build")
     }
 }
 

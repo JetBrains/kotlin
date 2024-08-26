@@ -10,9 +10,9 @@ import org.gradle.api.flow.*
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
+import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
 import javax.inject.Inject
 
 internal abstract class StatisticsBuildFlowManager @Inject constructor(
@@ -32,11 +32,11 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
         }
     }
 
-    fun subscribeForBuildScan(buildScanHolder: BuildScanExtensionHolder) {
+    fun subscribeForBuildScan(buildScan: BuildScanApi) {
         flowScope.always(
             BuildScanFlowAction::class.java
         ) { spec ->
-            spec.parameters.buildScanExtensionHolder.set(buildScanHolder)
+            spec.parameters.buildScan.set(buildScan)
         }
     }
 }
@@ -47,11 +47,11 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
         val buildMetricService: Property<BuildMetricsService>
 
         @get:Input
-        val buildScanExtensionHolder: Property<BuildScanExtensionHolder>
+        val buildScan: Property<BuildScanApi>
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildMetricService.orNull?.addBuildScanReport(parameters.buildScanExtensionHolder.orNull)
+        parameters.buildMetricService.orNull?.addBuildScanReport(parameters.buildScan.orNull)
     }
 }
 

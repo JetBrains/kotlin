@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.metrics.ValueType
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
 import org.jetbrains.kotlin.gradle.plugin.statistics.GradleFileReportService
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
@@ -33,7 +34,7 @@ class BuildReportsService {
     private val loggerAdapter = GradleLoggerAdapter(log)
 
     private val startTime = System.nanoTime()
-    private val buildUuid = UUID.randomUUID().toString()
+    internal val buildUuid = UUID.randomUUID().toString()
 
     private val httpReportService = HttpReportService()
 
@@ -192,7 +193,7 @@ class BuildReportsService {
         event: TaskFinishEvent,
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -208,14 +209,14 @@ class BuildReportsService {
         log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
         compileStatData?.also {
-            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScanExtension)
+            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScan)
         }
     }
 
     internal fun addBuildScanReport(
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -230,11 +231,11 @@ class BuildReportsService {
         log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
         compileStatData.forEach {
-            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScanExtension)
+            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScan)
         }
     }
 
-    private fun addBuildScanReport(data: GradleCompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
+    private fun addBuildScanReport(data: GradleCompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanApi) {
         val elapsedTime = measureTimeMillis {
             tags.addAll(data.getTags())
             if (customValues < customValuesLimit) {
@@ -257,11 +258,11 @@ class BuildReportsService {
     }
 
     private fun addBuildScanValue(
-        buildScan: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
         data: GradleCompileStatisticsData,
         customValue: String,
     ) {
-        buildScan.buildScan.value(data.getTaskName(), customValue)
+        buildScan.value(data.getTaskName(), customValue)
         customValues++
     }
 
@@ -346,14 +347,14 @@ class BuildReportsService {
         return splattedString
     }
 
-    internal fun initBuildScanTags(buildScan: BuildScanExtensionHolder, label: String?) {
-        buildScan.buildScan.tag(buildUuid)
+    internal fun initBuildScanTags(buildScan: BuildScanApi, label: String?) {
+        buildScan.tag(buildUuid)
         label?.also {
-            buildScan.buildScan.tag(it)
+            buildScan.tag(it)
         }
     }
 
-    internal fun addCollectedTags(buildScan: BuildScanExtensionHolder) {
+    internal fun addCollectedTags(buildScan: BuildScanApi) {
         replaceWithCombinedTag(
             StatTag.KOTLIN_1,
             StatTag.KOTLIN_2,
@@ -366,7 +367,7 @@ class BuildReportsService {
             StatTag.INCREMENTAL_AND_NON_INCREMENTAL
         )
 
-        tags.forEach { buildScan.buildScan.tag(it.readableString) }
+        tags.forEach { buildScan.tag(it.readableString) }
     }
 
     private fun replaceWithCombinedTag(firstTag: StatTag, secondTag: StatTag, combinedTag: StatTag) {
