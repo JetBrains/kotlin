@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -19,10 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.labelName
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -179,10 +177,17 @@ private class CodeFragmentCapturedValueVisitor(
     }
 
     private fun processCall(element: FirElement, symbol: FirCallableSymbol<*>) {
+        // Desugared inc/dec FIR looks as follows:
+        // lval <unary>: R|kotlin/Int| = R|<local>/x|
+        // R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+        // We visit the x in the first line before we visit the assignment and need to check the source to determine that the variable
+        // is mutated.
+        // The x in the second line isn't visited because it's a FirDesugaredAssignmentValueReferenceExpression.
+        val isMutated = assignmentLhs.lastOrNull() == symbol || element.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
         when (symbol) {
             is FirValueParameterSymbol -> {
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                val capturedValue = CodeFragmentCapturedValue.Local(symbol.name, symbol.isMutated, isCrossingInlineBounds)
+                val capturedValue = CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirPropertySymbol -> {
@@ -190,8 +195,8 @@ private class CodeFragmentCapturedValueVisitor(
                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                     val capturedValue = when {
                         symbol.isForeignValue -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds)
-                        symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, symbol.isMutated, isCrossingInlineBounds)
-                        else -> CodeFragmentCapturedValue.Local(symbol.name, symbol.isMutated, isCrossingInlineBounds)
+                        symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, isMutated, isCrossingInlineBounds)
+                        else -> CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds)
                     }
                     register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
                 } else {
@@ -202,7 +207,7 @@ private class CodeFragmentCapturedValueVisitor(
             is FirBackingFieldSymbol -> {
                 val propertyName = symbol.propertySymbol.name
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                val capturedValue = CodeFragmentCapturedValue.BackingField(propertyName, symbol.isMutated, isCrossingInlineBounds)
+                val capturedValue = CodeFragmentCapturedValue.BackingField(propertyName, isMutated, isCrossingInlineBounds)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirNamedFunctionSymbol -> {
@@ -288,7 +293,4 @@ private class CodeFragmentCapturedValueVisitor(
         val codeFragmentContext = codeFragment.context ?: return null
         return PsiTreeUtil.findCommonParent(codeFragmentContext, declarationSite)
     }
-
-    private val FirBasedSymbol<*>.isMutated: Boolean
-        get() = assignmentLhs.lastOrNull() == this
 }

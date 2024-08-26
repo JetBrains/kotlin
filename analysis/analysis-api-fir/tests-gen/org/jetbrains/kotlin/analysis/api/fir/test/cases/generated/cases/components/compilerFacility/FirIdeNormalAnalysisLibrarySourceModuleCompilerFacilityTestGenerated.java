@@ -353,6 +353,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       }
 
       @Test
+      @TestMetadata("localMutatedWithAugmentedAssignment.kt")
+      public void testLocalMutatedWithAugmentedAssignment() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithAugmentedAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("localMutatedWithSugar.kt")
+      public void testLocalMutatedWithSugar() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithSugar.kt");
+      }
+
+      @Test
       @TestMetadata("localVariable.kt")
       public void testLocalVariable() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localVariable.kt");
