@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.diagnostics
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
@@ -18,11 +19,20 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 
 /** See KT-68322 for details. */
 abstract class StandardLibrarySpecialCompatibilityChecker {
-    protected class Version(private val comparableVersion: MavenComparableVersion, private val fullVersion: String) : Comparable<Version> {
+    protected class Version(
+        private val comparableVersion: MavenComparableVersion,
+        private val languageVersion: LanguageVersion,
+        private val rawVersion: String
+    ) : Comparable<Version> {
         override fun compareTo(other: Version) = comparableVersion.compareTo(other.comparableVersion)
         override fun equals(other: Any?) = (other as? Version)?.comparableVersion == comparableVersion
         override fun hashCode() = comparableVersion.hashCode()
-        override fun toString() = fullVersion
+
+        fun hasSameLanguageVersion(other: Version) = languageVersion == other.languageVersion
+
+        override fun toString() = rawVersion
+        fun toComparableVersionString() = comparableVersion.toString()
+        fun toLanguageVersionString() = languageVersion.toString()
 
         companion object {
             fun parseVersion(rawVersion: String?): Version? {
@@ -36,7 +46,10 @@ abstract class StandardLibrarySpecialCompatibilityChecker {
                     return null
                 }
 
-                return Version(comparableVersion, fullVersion = rawVersion)
+                val languageVersion = LanguageVersion.fromFullVersionString(rawVersion)
+                    ?: return null
+
+                return Version(comparableVersion, languageVersion, rawVersion)
             }
         }
     }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-class WasmStandardLibrarySpecialCompatibilityChecker : StandardLibrarySpecialCompatibilityChecker() {
+object WasmStandardLibrarySpecialCompatibilityChecker : StandardLibrarySpecialCompatibilityChecker() {
     override fun isStdlib(library: KotlinLibrary) = library.isWasmStdlib
 
     override fun getMessageToReport(compilerVersion: Version, stdlibVersion: Version): String? {

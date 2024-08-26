@@ -778,7 +778,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         isWasm: Boolean,
         messageCollector: MessageCollector,
     ) {
-        val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker() else JsStandardLibrarySpecialCompatibilityChecker()
+        val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
         checker.check(libraries, messageCollector)
     }
 

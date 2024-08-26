@@ -46,18 +46,19 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
                 stdlibVersion = currentVersion,
                 compilerVersion = nextVersion,
                 isWasm = false,
-                expectedWarningStatus = WarningStatus.JS_WARNING
+                expectedWarningStatus = WarningStatus.JS_OLD_STDLIB_WARNING
             )
         }
     }
 
     fun testJsOlderCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
+            val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
             compileDummyLibrary(
                 stdlibVersion = nextVersion,
                 compilerVersion = currentVersion,
                 isWasm = false,
-                expectedWarningStatus = WarningStatus.NO_WARNINGS
+                expectedWarningStatus = if (sameLanguageVersion) WarningStatus.NO_WARNINGS else WarningStatus.JS_TOO_NEW_STDLIB_WARNING
             )
         }
     }
@@ -161,8 +162,9 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
 
         val success = when (expectedWarningStatus) {
-            WarningStatus.NO_WARNINGS -> !messageCollector.hasJsWarning() && !messageCollector.hasWasmWarning()
-            WarningStatus.JS_WARNING -> messageCollector.hasJsWarning(stdlibVersion!! to compilerVersion!!)
+            WarningStatus.NO_WARNINGS -> !messageCollector.hasJsOldStdlibWarning() && !messageCollector.hasJsTooNewStdlibWarning() && !messageCollector.hasWasmWarning()
+            WarningStatus.JS_OLD_STDLIB_WARNING -> messageCollector.hasJsOldStdlibWarning(stdlibVersion!! to compilerVersion!!)
+            WarningStatus.JS_TOO_NEW_STDLIB_WARNING -> messageCollector.hasJsTooNewStdlibWarning(stdlibVersion!! to compilerVersion!!)
             WarningStatus.WASM_WARNING -> messageCollector.hasWasmWarning(stdlibVersion!! to compilerVersion!!)
         }
 
@@ -175,11 +177,20 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         )
     }
 
-    private fun TestMessageCollector.hasJsWarning(
+    private fun TestMessageCollector.hasJsOldStdlibWarning(
         specificVersions: Pair<TestVersion, TestVersion>? = null,
     ): Boolean {
         val stdlibMessagePart = "Kotlin/JS standard library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
+
+    private fun TestMessageCollector.hasJsTooNewStdlibWarning(
+        specificVersions: Pair<TestVersion, TestVersion>? = null,
+    ): Boolean {
+        val stdlibMessagePart = "The Kotlin/JS standard library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
@@ -192,6 +203,9 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
+
+    private fun haveSameLanguageVersion(a: TestVersion, b: TestVersion): Boolean =
+        a.basicVersion.major == b.basicVersion.major && a.basicVersion.minor == b.basicVersion.minor
 
     private fun createFakeUnzippedStdlibWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
         val rawVersion = version?.toString()
@@ -250,7 +264,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     private fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
 
-    private enum class WarningStatus { NO_WARNINGS, JS_WARNING, WASM_WARNING }
+    private enum class WarningStatus { NO_WARNINGS, JS_OLD_STDLIB_WARNING, JS_TOO_NEW_STDLIB_WARNING, WASM_WARNING }
 
     private class TestVersion(val basicVersion: KotlinVersion, val postfix: String) : Comparable<TestVersion> {
         constructor(major: Int, minor: Int, patch: Int, postfix: String = "") : this(KotlinVersion(major, minor, patch), postfix)
@@ -264,9 +278,9 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     companion object {
         private val SORTED_TEST_VERSION_GROUPS: List<Collection<TestVersion>> =
             listOf(
-                TestVersion(1, 9, 24),
-                TestVersion(1, 9, 25),
-                TestVersion(1, 10, 1),
+                TestVersion(1, 8, 24),
+                TestVersion(1, 8, 25),
+                TestVersion(1, 9, 1),
                 TestVersion(2, 0, 0),
                 TestVersion(2, 0, 0, "-dev-1234"),
                 TestVersion(2, 0, 0, "-dev-4321"),
