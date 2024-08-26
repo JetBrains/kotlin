@@ -338,7 +338,7 @@ private val finallyBlocksPhase = createFileLoweringPhase(
 )
 
 private val testProcessorPhase = createFileLoweringPhase(
-        { context, irFile -> TestProcessor(context).process(irFile) },
+        lowering = ::TestProcessor,
         name = "TestProcessor",
         description = "Unit test processor"
 )
@@ -354,7 +354,7 @@ private val functionReferencePhase = createFileLoweringPhase(
         lowering = ::FunctionReferenceLowering,
         name = "FunctionReference",
         description = "Function references lowering",
-        prerequisite = setOf(localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+        prerequisite = setOf(localFunctionsPhase)
 )
 
 private val staticFunctionReferenceOptimizationPhase = createFileLoweringPhase(
@@ -670,8 +670,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         innerClassPhase,
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
-        testProcessorPhase.takeIf { context.config.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         functionReferencePhase,
+        testProcessorPhase.takeIf { context.config.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         delegationPhase,
         staticFunctionReferenceOptimizationPhase,
         singleAbstractMethodPhase,
