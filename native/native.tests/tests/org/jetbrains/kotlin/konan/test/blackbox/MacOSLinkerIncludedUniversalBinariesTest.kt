@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
@@ -57,7 +58,10 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
     )
 
     private val thinArchiveMagic = listOf(0x21, 0x3c, 0x61, 0x72)
-    private val thinMachOMagic = listOf(0xfe, 0xed, 0xfa, 0xcf).reversed()
+    private val thinMachOMagic: List<Int>
+        get() = listOf(
+            0xfe, 0xed, 0xfa, if (targets.testTarget.has32BitPointers()) 0xce else 0xcf
+        ).reversed()
 
     enum class ImageType(val clangOptions: List<String>) {
         DYLIB(
