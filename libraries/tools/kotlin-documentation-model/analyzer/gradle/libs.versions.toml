@@ -14,7 +14,7 @@ ktor = "2.3.11"
 
 ## Analysis
 kotlin-compiler = "2.0.20-RC"
-kotlin-compiler-k2 = "2.1.0-dev-2515"
+kotlin-compiler-k2 = "2.1.0-dev-5441"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -92,9 +92,9 @@ kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref
 
 ###### K2 analysis ######
 kotlin-compiler-k2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler-k2" }
-kotlin-high-level-api-api = { module = "org.jetbrains.kotlin:high-level-api-for-ide", version.ref = "kotlin-compiler-k2" }
-kotlin-high-level-api-impl = { module = "org.jetbrains.kotlin:high-level-api-impl-base-for-ide", version.ref = "kotlin-compiler-k2" }
-kotlin-high-level-api-fir = { module = "org.jetbrains.kotlin:high-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-api-api = { module = "org.jetbrains.kotlin:analysis-api-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-api-impl = { module = "org.jetbrains.kotlin:analysis-api-impl-base-for-ide", version.ref = "kotlin-compiler-k2" }
+kotlin-analysis-api-fir = { module = "org.jetbrains.kotlin:analysis-api-k2-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-low-level-api-fir = { module = "org.jetbrains.kotlin:low-level-api-fir-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-standalone = { module = "org.jetbrains.kotlin:analysis-api-standalone-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-platform = { module = "org.jetbrains.kotlin:analysis-api-platform-interface-for-ide", version.ref = "kotlin-compiler-k2" }
