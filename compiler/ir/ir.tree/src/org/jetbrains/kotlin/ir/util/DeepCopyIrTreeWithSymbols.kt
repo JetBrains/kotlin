@@ -797,7 +797,8 @@ open class DeepCopyIrTreeWithSymbols(
         IrCatchImpl(
             aCatch.startOffset, aCatch.endOffset,
             aCatch.catchParameter.transform(),
-            aCatch.result.transform()
+            aCatch.result.transform(),
+            mapStatementOrigin(aCatch.origin),
         )
 
     override fun visitReturn(expression: IrReturn): IrReturn =

@@ -133,6 +133,30 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("jsExceptionWithRunCatching.kt")
+  public void testJsExceptionWithRunCatching() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithRunCatching.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionWithRunCatchingNewProposal.kt")
+  public void testJsExceptionWithRunCatchingNewProposal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithRunCatchingNewProposal.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionWithRunCatchingNewProposalWithJsTag.kt")
+  public void testJsExceptionWithRunCatchingNewProposalWithJsTag() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithRunCatchingNewProposalWithJsTag.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionWithRunCatchingWithJsTag.kt")
+  public void testJsExceptionWithRunCatchingWithJsTag() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithRunCatchingWithJsTag.kt");
+  }
+
+  @Test
   @TestMetadata("jsExceptionWithThrownValueAttached.kt")
   public void testJsExceptionWithThrownValueAttached() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithThrownValueAttached.kt");

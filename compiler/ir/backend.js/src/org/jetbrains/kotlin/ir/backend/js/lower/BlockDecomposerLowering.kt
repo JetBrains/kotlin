@@ -758,7 +758,7 @@ class BlockDecomposerTransformer(
             val newTryResult = wrap(aTry.tryResult, irVar)
             val newCatches = aTry.catches.memoryOptimizedMap {
                 val newCatchBody = wrap(it.result, irVar)
-                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody)
+                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody, it.origin)
             }
 
             val newTry = aTry.run { IrTryImpl(startOffset, endOffset, unitType, newTryResult, newCatches, finallyExpression) }
