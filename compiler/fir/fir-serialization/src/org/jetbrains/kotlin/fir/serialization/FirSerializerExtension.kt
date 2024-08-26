@@ -28,7 +28,7 @@ abstract class FirSerializerExtension {
     abstract val metadataVersion: BinaryVersion
 
     val annotationSerializer: FirAnnotationSerializer by lazy {
-        createAnnotationSerializer()
+        FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider)
     }
 
     abstract val constValueProvider: ConstValueProvider?
@@ -47,10 +47,6 @@ abstract class FirSerializerExtension {
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
-
-    protected open fun createAnnotationSerializer(): FirAnnotationSerializer {
-        return FirAnnotationSerializer(session, scopeSession, stringTable, constValueProvider)
-    }
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }
