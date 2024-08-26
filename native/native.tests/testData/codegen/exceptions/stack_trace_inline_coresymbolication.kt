@@ -1,7 +1,7 @@
 // NATIVE_STANDALONE
 // FREE_COMPILER_ARGS: -Xbinary=sourceInfoType=coresymbolication
 // FREE_COMPILER_ARGS: -Xg-generate-debug-trampoline=enable
-// DISABLE_NATIVE: isAppleTarget=false
+// DISABLE_NATIVE: targetSupportsCoreSymbolication=false
 // DISABLE_NATIVE: optimizationMode=NO
 // DISABLE_NATIVE: optimizationMode=OPT
 // FILE: stack_trace_inline.kt

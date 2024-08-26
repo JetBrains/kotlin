@@ -1,5 +1,5 @@
 // FREE_COMPILER_ARGS: -Xbinary=sourceInfoType=coresymbolication
-// DISABLE_NATIVE: isAppleTarget=false
+// DISABLE_NATIVE: targetSupportsCoreSymbolication=false
 // DISABLE_NATIVE: optimizationMode=NO
 // DISABLE_NATIVE: optimizationMode=OPT
 
