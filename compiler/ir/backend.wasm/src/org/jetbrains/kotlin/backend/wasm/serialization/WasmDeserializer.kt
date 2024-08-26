@@ -533,33 +533,31 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     private fun deserializeString(): String {
-        return withFlags {
-            if (it.consume()) {
-                val length = b.readUInt32().toInt()
-                val bytes = b.readBytes(length)
-                String(bytes)
-            } else {
-                val lengthBytes = b.readUInt32().toInt()
-                val bytes = b.readBytes(lengthBytes)
-                val length = lengthBytes / Char.SIZE_BYTES
-                val charArray = CharArray(length)
-                for (i in 0..<length) {
-                    val hi = bytes[i * Char.SIZE_BYTES].toInt() and 0xFF
-                    val lo = bytes[i * Char.SIZE_BYTES + 1].toInt() and 0xFF
-                    val code = hi or (lo shl Byte.SIZE_BITS)
-                    charArray[i] = code.toChar()
+        return deserializeReference {
+            withFlags {
+                if (it.consume()) {
+                    val length = b.readUInt32().toInt()
+                    val bytes = b.readBytes(length)
+                    String(bytes)
+                } else {
+                    val lengthBytes = b.readUInt32().toInt()
+                    val bytes = b.readBytes(lengthBytes)
+                    val length = lengthBytes / Char.SIZE_BYTES
+                    val charArray = CharArray(length)
+                    for (i in 0..<length) {
+                        val hi = bytes[i * Char.SIZE_BYTES].toInt() and 0xFF
+                        val lo = bytes[i * Char.SIZE_BYTES + 1].toInt() and 0xFF
+                        val code = hi or (lo shl Byte.SIZE_BITS)
+                        charArray[i] = code.toChar()
+                    }
+                    String(charArray)
                 }
-                String(charArray)
             }
         }
     }
 
     private fun skipString() {
-        withFlags {
-            it.consume()
-            val length = b.readUInt32().toInt()
-            b.skip(length)
-        }
+        skipInt()
     }
 
     private fun deserializeInt() = b.readUInt32().toInt()
