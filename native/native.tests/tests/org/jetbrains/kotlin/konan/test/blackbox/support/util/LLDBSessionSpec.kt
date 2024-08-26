@@ -144,6 +144,7 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
             val nonKotlinFrames = Regex("""(.*frame #\d+: <frame pc>.*\.kexe`kfun:#main.*\n)(?:.*frame #\d+: <frame pc>.*\n)+""")
             val breakpointOffset = Regex( """(Breakpoint .* \+ )\d+( at)""")
             val targetStoppedLine = Regex( """Target \d+: .* stopped\.\n""")
+            val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
 
             return lldbOutput
                 .replace(executablePathRegexp, "<path to executable>")
@@ -153,6 +154,7 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
                 .replace(nonKotlinFrames, "$1")
                 .replace(breakpointOffset, "$1<breakpoint offset>$2")
                 .replace(targetStoppedLine, "")
+                .replace(setFormatLine, "")
         }
     }
 }
