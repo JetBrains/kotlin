@@ -438,6 +438,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(desugaredAssignmentValueReferenceExpression) {
             additionalImports(expression)
+            default("coneTypeOrNull") {
+                value = "expressionRef.value.coneTypeOrNull"
+                withGetter = true
+            }
         }
 
         impl(wrappedDelegateExpression) {

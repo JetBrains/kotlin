@@ -263,15 +263,6 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformBooleanOperatorExpression,
     )
 
-    override fun transformDesugaredAssignmentValueReferenceExpression(
-        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
-        data: ResolutionMode,
-    ): FirStatement = expressionTransformation(
-        desugaredAssignmentValueReferenceExpression,
-        data,
-        FirExpressionsResolveTransformer::transformDesugaredAssignmentValueReferenceExpression,
-    )
-
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode,

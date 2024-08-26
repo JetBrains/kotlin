@@ -25,19 +25,24 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 @FirBuilderDsl
 class FirDesugaredAssignmentValueReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expressionRef: FirExpressionRef<FirExpression>
 
     override fun build(): FirDesugaredAssignmentValueReferenceExpression {
         return FirDesugaredAssignmentValueReferenceExpressionImpl(
             source,
-            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             expressionRef,
         )
     }
 
+
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirDesugaredAssignmentValueReferenceExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
 }
 
 @OptIn(ExperimentalContracts::class)

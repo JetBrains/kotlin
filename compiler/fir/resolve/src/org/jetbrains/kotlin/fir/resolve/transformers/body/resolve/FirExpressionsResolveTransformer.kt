@@ -1113,15 +1113,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .also { it.resultType = booleanType.coneType }
     }
 
-    override fun transformDesugaredAssignmentValueReferenceExpression(
-        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
-        data: ResolutionMode,
-    ): FirStatement {
-        val referencedExpression = desugaredAssignmentValueReferenceExpression.expressionRef.value
-        desugaredAssignmentValueReferenceExpression.resultType = referencedExpression.resolvedType
-        return desugaredAssignmentValueReferenceExpression
-    }
-
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode,
