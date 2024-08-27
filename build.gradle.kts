@@ -478,11 +478,11 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
 val coreLibProjects by extra {
     listOfNotNull(
         ":kotlin-stdlib",
-        ":kotlin-stdlib-common",
         ":kotlin-stdlib-jdk7",
         ":kotlin-stdlib-jdk8",
         ":kotlin-test",
-        ":kotlin-reflect"
+        ":kotlin-reflect",
+        ":kotlin-metadata-jvm",
     )
 }
 val mppProjects by extra {
@@ -725,26 +725,30 @@ tasks {
         delete = setOf(artifactsDir)
     }
 
-    listOf("clean", "assemble", "install", "publish").forEach { taskName ->
-        register("coreLibs${taskName.capitalize()}") {
-            for (projectName in coreLibProjects) {
-                if (projectName.startsWith(":kotlin-test:") && (taskName == "install" || taskName == "publish")) continue
-                dependsOn("$projectName:$taskName")
-            }
+    fun aggregateLibsTask(name: String, projectTask: String, projects: List<String>) =
+        register(name) {
+            projects.forEach { dependsOn("$it:$projectTask") }
         }
-    }
 
-    register("coreLibsTest") {
-        (coreLibProjects + listOfNotNull(
+    val coreLibsPublishable = coreLibProjects + listOf(":kotlin-stdlib-common")
+    val coreLibsBuildable = coreLibProjects + listOf(":kotlin-stdlib-jvm-minimal-for-test", ":kotlin-stdlib-js-ir-minimal-for-test")
+
+    aggregateLibsTask("coreLibsClean", "clean",
+        (coreLibProjects + coreLibsBuildable + coreLibsPublishable).distinct() +
+            ":kotlin-stdlib:samples"
+    )
+
+    aggregateLibsTask("coreLibsAssemble", "assemble", coreLibsBuildable)
+    aggregateLibsTask("coreLibsInstall", "install", coreLibsPublishable)
+    aggregateLibsTask("coreLibsPublish", "publish", coreLibsPublishable)
+    aggregateLibsTask("coreLibsTest", "check",
+        coreLibsBuildable + listOfNotNull(
             ":kotlin-stdlib:samples",
             ":kotlin-test:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-            ":kotlin-metadata-jvm",
             ":tools:binary-compatibility-validator",
             ":tools:jdk-api-validator",
-        )).forEach {
-            dependsOn("$it:check")
-        }
-    }
+        )
+    )
 
     register("gradlePluginTest") {
         gradlePluginProjects.forEach {
