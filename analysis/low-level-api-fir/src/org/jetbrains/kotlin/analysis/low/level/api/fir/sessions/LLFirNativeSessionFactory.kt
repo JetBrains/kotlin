@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory.registerNativeComponents
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -48,6 +50,9 @@ internal class LLFirNativeSessionFactory(project: Project) : LLFirAbstractSessio
     override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
             registerNativeComponents()
+            // Resolvable library session for decompiled libraries can miss annotation arguments
+            // necessary for correct work of the native overload checker
+            register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
