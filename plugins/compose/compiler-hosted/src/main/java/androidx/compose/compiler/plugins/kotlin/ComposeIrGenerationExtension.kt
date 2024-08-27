@@ -131,16 +131,18 @@ class ComposeIrGenerationExtension(
             messageCollector
         ).lower(moduleFragment)
 
-        LiveLiteralTransformer(
-            liveLiteralsEnabled || liveLiteralsV2Enabled,
-            liveLiteralsV2Enabled,
-            DurableKeyVisitor(),
-            pluginContext,
-            symbolRemapper,
-            metrics,
-            stabilityInferencer,
-            featureFlags,
-        ).lower(moduleFragment)
+        if (liveLiteralsEnabled || liveLiteralsV2Enabled) {
+            LiveLiteralTransformer(
+                liveLiteralsEnabled = true,
+                usePerFileEnabledFlag = liveLiteralsV2Enabled,
+                keyVisitor = DurableKeyVisitor(),
+                context = pluginContext,
+                symbolRemapper = symbolRemapper,
+                metrics = metrics,
+                stabilityInferencer = stabilityInferencer,
+                featureFlags = featureFlags,
+            ).lower(moduleFragment)
+        }
 
         ComposableFunInterfaceLowering(pluginContext).lower(moduleFragment)
 
