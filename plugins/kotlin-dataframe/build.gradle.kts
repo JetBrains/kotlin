@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     id("java")
     kotlin("jvm")
@@ -67,10 +70,14 @@ tasks.test {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += listOf("-Xfriend-paths=${project(":core").projectDir}")
-        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
-        freeCompilerArgs += "-Xcontext-receivers"
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-Xfriend-paths=${project(":core").projectDir}",
+            "-Xcontext-receivers",
+        )
+        optIn.addAll(
+            "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+        )
     }
 }
 
@@ -80,16 +87,16 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.compileKotlin {
-    kotlinOptions {
-        languageVersion = "2.0"
-        jvmTarget = "1.8"
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_2_0
+        jvmTarget = JvmTarget.JVM_1_8
     }
 }
 
 tasks.compileTestKotlin {
-    kotlinOptions {
-        languageVersion = "2.0"
-        jvmTarget = "1.8"
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_2_0
+        jvmTarget = JvmTarget.JVM_1_8
     }
 }
 
