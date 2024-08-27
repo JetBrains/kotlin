@@ -22891,6 +22891,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("IltAsExtensionReceiver.kt")
+      public void testIltAsExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/integerLiterals/IltAsExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("intToLongConversion.kt")
       public void testIntToLongConversion() {
         runTest("compiler/testData/diagnostics/tests/integerLiterals/intToLongConversion.kt");
