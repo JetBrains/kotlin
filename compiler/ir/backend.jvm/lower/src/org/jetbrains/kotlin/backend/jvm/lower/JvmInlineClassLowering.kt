@@ -338,7 +338,10 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             // since the underlying representations are the same.
             expression.symbol.owner.isInlineClassFieldGetter -> {
                 val arg = expression.dispatchReceiver!!.transform(this, null)
-                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+                val from = expression.symbol.owner.dispatchReceiverParameter!!.type
+                val to = context.inlineClassReplacements.getUnboxFunction(from.erasedUpperBound).returnType
+                // We need direct unboxed parameter type here
+                coerceInlineClasses(arg, from, to)
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
             expression.isEqEqCallOnInlineClass || expression.isEqualsMethodCallOnInlineClass -> {
