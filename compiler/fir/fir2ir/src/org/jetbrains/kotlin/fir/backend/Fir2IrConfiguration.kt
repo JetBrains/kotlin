@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -32,11 +33,13 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     val diagnosticReporter: BaseDiagnosticsCollector,
+    val messageCollector: MessageCollector,
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val skipBodies: Boolean,
+    val validateIrAfterPlugins: Boolean,
 ) {
     companion object {
         fun forJvmCompilation(
@@ -46,6 +49,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                messageCollector = compilerConfiguration.messageCollector,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),
@@ -54,6 +58,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
+                validateIrAfterPlugins = false,
             )
 
         fun forKlibCompilation(
@@ -63,6 +68,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                messageCollector = compilerConfiguration.messageCollector,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),
@@ -71,6 +77,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
+                validateIrAfterPlugins = true,
             )
 
         fun forAnalysisApi(
@@ -81,6 +88,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                messageCollector = compilerConfiguration.messageCollector,
                 evaluatedConstTracker = compilerConfiguration.putIfAbsent(
                     CommonConfigurationKeys.EVALUATED_CONST_TRACKER,
                     EvaluatedConstTracker.create(),
@@ -89,6 +97,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
+                validateIrAfterPlugins = false,
             )
     }
 }

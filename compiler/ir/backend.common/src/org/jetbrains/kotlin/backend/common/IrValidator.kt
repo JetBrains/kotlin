@@ -174,6 +174,11 @@ private fun performBasicIrValidation(
 sealed interface IrValidationContext {
 
     /**
+     * A string that each validation error will begin with.
+     */
+    var customMessagePrefix: String?
+
+    /**
      * Logs the validation error into the underlying [MessageCollector].
      */
     fun reportIrValidationError(
@@ -216,6 +221,8 @@ private class IrValidationContextImpl(
     private val mode: IrVerificationMode
 ) : IrValidationContext {
 
+    override var customMessagePrefix: String? = null
+
     private var hasValidationErrors: Boolean = false
 
     override fun reportIrValidationError(
@@ -235,8 +242,14 @@ private class IrValidationContextImpl(
         messageCollector.report(
             severity,
             buildString {
-                append("[IR VALIDATION] ")
-                append(phaseMessage)
+                val customMessagePrefix = customMessagePrefix
+                if (customMessagePrefix == null) {
+                    append("[IR VALIDATION] ")
+                    append(phaseMessage)
+                } else {
+                    append(customMessagePrefix)
+                    append(" ")
+                }
                 appendLine(message)
                 append(element.render())
                 for ((i, parent) in parentChain.asReversed().withIndex()) {

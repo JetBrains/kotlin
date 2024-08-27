@@ -216,7 +216,11 @@ internal class KaFirCompilerFacility(
         patchCodeFragmentIr(targetFir2IrResult)
 
         ProgressManager.checkCanceled()
-        targetFir2IrResult.pluginContext.applyIrGenerationExtensions(targetFir2IrResult.irModuleFragment, irGeneratorExtensions)
+        targetFir2IrResult.pluginContext.applyIrGenerationExtensions(
+            targetFir2IrResult.components.configuration,
+            targetFir2IrResult.irModuleFragment,
+            irGeneratorExtensions,
+        )
 
         val bindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
         val codegenFactory = createJvmIrCodegenFactory(targetConfiguration, file is KtCodeFragment, targetFir2IrResult.irModuleFragment)

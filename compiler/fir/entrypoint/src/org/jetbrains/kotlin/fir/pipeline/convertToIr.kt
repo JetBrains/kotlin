@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -234,7 +237,7 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
+        pluginContext.applyIrGenerationExtensions(fir2IrConfiguration, mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
@@ -427,12 +430,42 @@ private class Fir2IrPipeline(
     }
 }
 
+private fun IrPluginContext.runMandatoryIrValidation(
+    extension: IrGenerationExtension?,
+    module: IrModuleFragment,
+    fir2IrConfiguration: Fir2IrConfiguration,
+) {
+    if (!fir2IrConfiguration.validateIrAfterPlugins) return
+    // TODO(KT-71138): Replace with IrVerificationMode.ERROR in Kotlin 2.2
+    validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.WARNING) {
+        customMessagePrefix = if (extension == null) {
+            "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
+        } else {
+            "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+        }
+        performBasicIrValidation(
+            module,
+            irBuiltIns,
+            phaseName = "",
+            IrValidatorConfig(
+                // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+                // so we disable them not to cause too much breakage.
+                checkTreeConsistency = false,
+                // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
+                checkCrossFileFieldUsage = true,
+            )
+        )
+    }
+}
+
 fun IrPluginContext.applyIrGenerationExtensions(
+    fir2IrConfiguration: Fir2IrConfiguration,
     irModuleFragment: IrModuleFragment,
     irGenerationExtensions: Collection<IrGenerationExtension>,
 ) {
-    if (irGenerationExtensions.isEmpty()) return
+    runMandatoryIrValidation(null, irModuleFragment, fir2IrConfiguration)
     for (extension in irGenerationExtensions) {
         extension.generate(irModuleFragment, this)
+        runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
     }
 }
