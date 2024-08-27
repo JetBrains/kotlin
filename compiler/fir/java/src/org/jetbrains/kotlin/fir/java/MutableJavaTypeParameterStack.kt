@@ -27,12 +27,8 @@ class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
         return typeParameterMap.iterator()
     }
 
-    fun snapshot(): JavaTypeParameterStack {
-        val snapshot = typeParameterMap.toMap()
-        return object : JavaTypeParameterStack() {
-            override fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol? = snapshot[javaTypeParameter]
-            override fun iterator(): Iterator<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> = snapshot.iterator()
-        }
+    fun copy(): MutableJavaTypeParameterStack = MutableJavaTypeParameterStack().also {
+        it.typeParameterMap += typeParameterMap
     }
 }
 
@@ -40,6 +36,11 @@ abstract class JavaTypeParameterStack : Iterable<Map.Entry<JavaTypeParameter, Fi
     abstract operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol?
 
     companion object {
-        val EMPTY: JavaTypeParameterStack = MutableJavaTypeParameterStack()
+        val EMPTY: JavaTypeParameterStack = object : JavaTypeParameterStack() {
+            override fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol? = null
+            override fun iterator(): Iterator<Map.Entry<JavaTypeParameter, FirTypeParameterSymbol>> {
+                return emptyMap<JavaTypeParameter, FirTypeParameterSymbol>().iterator()
+            }
+        }
     }
 }

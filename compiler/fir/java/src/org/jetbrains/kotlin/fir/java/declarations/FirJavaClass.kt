@@ -190,7 +190,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             superTypeRefs,
             typeParameters,
             javaPackage,
-            javaTypeParameterStack,
+            javaTypeParameterStack.copy(),
             existingNestedClassifierNames,
             isDeprecatedInJavaDoc,
         )

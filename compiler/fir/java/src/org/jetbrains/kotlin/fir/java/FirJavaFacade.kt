@@ -400,13 +400,15 @@ abstract class FirJavaFacade(
             }
 
             if (classIsAnnotation) {
-                val javaTypeParameterStackSnapshot = javaTypeParameterStack.snapshot()
                 // Cannot load these until the symbol is bound because they may be self-referential.
                 valueParametersForAnnotationConstructor.forEach { javaMethod, firValueParameter ->
                     javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
                         firValueParameter.lazyDefaultValue = lazy {
                             javaDefaultValue.toFirExpression(
-                                session, javaTypeParameterStackSnapshot, firValueParameter.returnTypeRef, fakeSource
+                                session,
+                                (classSymbol.fir as FirJavaClass).javaTypeParameterStack,
+                                firValueParameter.returnTypeRef,
+                                fakeSource
                             )
                         }
                     }
