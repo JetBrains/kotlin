@@ -11,9 +11,13 @@ import com.github.benmanes.caffeine.cache.Scheduler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirNoOpCacheCleaner
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirStopWorldCacheCleaner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -24,13 +28,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationTopics
 import org.jetbrains.kotlin.psi.KtElement
 import java.time.Duration
 import kotlin.reflect.KClass
 
 /**
  * [KaFirSessionProvider] keeps [KaFirSession]s in a cache, which are actively invalidated with their associated underlying
- * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]s.
+ * [LLFirSession][LLFirSession]s.
  */
 internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(project) {
     /**
@@ -51,8 +58,16 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
             .scheduler(Scheduler.systemScheduler())
             .build()
 
+    private val cacheCleaner: KaFirCacheCleaner by lazy {
+        if (Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", false)) {
+            KaFirStopWorldCacheCleaner(project)
+        } else {
+            KaFirNoOpCacheCleaner
+        }
+    }
+
     init {
-        LowMemoryWatcher.register(::clearCaches, project)
+        LowMemoryWatcher.register(::handleLowMemoryEvent, project)
     }
 
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
@@ -61,14 +76,23 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
-        if (useSiteModule is KaDanglingFileModule && !useSiteModule.isStable) {
-            return createAnalysisSession(useSiteModule)
+        // The cache cleaner must be called before we get a session.
+        // Otherwise, the acquired session might become invalid after the session cleanup.
+        cacheCleaner.enterAnalysis()
+
+        try {
+            if (useSiteModule is KaDanglingFileModule && !useSiteModule.isStable) {
+                return createAnalysisSession(useSiteModule)
+            }
+
+            val identifier = tokenFactory.identifier
+            identifier.flushPendingChanges(project)
+
+            return cache.get(useSiteModule, ::createAnalysisSession) ?: error("`createAnalysisSession` must not return `null`.")
+        } catch (e: Throwable) {
+            cacheCleaner.exitAnalysis()
+            throw e
         }
-
-        val identifier = tokenFactory.identifier
-        identifier.flushPendingChanges(project)
-
-        return cache.get(useSiteModule, ::createAnalysisSession) ?: error("`createAnalysisSession` must not return `null`.")
     }
 
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
@@ -77,12 +101,62 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         return KaFirSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
     }
 
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
+        try {
+            super.beforeEnteringAnalysis(session, useSiteElement)
+        } catch (e: Throwable) {
+            cacheCleaner.exitAnalysis()
+            throw e
+        }
+    }
+
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule) {
+        try {
+            super.beforeEnteringAnalysis(session, useSiteModule)
+        } catch (e: Throwable) {
+            cacheCleaner.exitAnalysis()
+            throw e
+        }
+    }
+
+    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
+        try {
+            super.afterLeavingAnalysis(session, useSiteElement)
+        } finally {
+            cacheCleaner.exitAnalysis()
+        }
+    }
+
+    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
+        try {
+            super.afterLeavingAnalysis(session, useSiteModule)
+        } finally {
+            cacheCleaner.exitAnalysis()
+        }
+    }
+
+    /**
+     * Schedules cache removal on a low-memory event.
+     *
+     * First of all, here we clean up the [KaSession] caches right away. This alone is not very effective as underlying [LLFirSession]s
+     * are still cached by the [LLFirSessionCache]. However, we still can free some memory from unclaimed [KaSession] components right away.
+     *
+     * Then, we ask the cache cleaner to schedule a global cache cleanup. It has to wait until there is no ongoing analysis as
+     * [LLFirSessionCleaner][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCleaner] called from [LLFirSessionCache]
+     * marks sessions invalid (and analyses in progress will be very surprised).
+     */
+    private fun handleLowMemoryEvent() {
+        clearCaches()
+        cacheCleaner.scheduleCleanup()
+    }
+
     override fun clearCaches() {
         cache.invalidateAll()
     }
 
     /**
-     * Note: Races cannot happen because the listener is guaranteed to be invoked in a write action.
+     * Note: Races cannot happen because the cleanup is never performed concurrently.
+     * See the KDoc for [LLFirSessionInvalidationTopics] for more information.
      */
     internal class SessionInvalidationListener(val project: Project) : LLFirSessionInvalidationListener {
         private val analysisSessionProvider: KaFirSessionProvider

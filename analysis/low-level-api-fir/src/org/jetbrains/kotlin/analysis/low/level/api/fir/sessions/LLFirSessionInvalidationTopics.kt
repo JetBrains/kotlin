@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * [Topic]s for events published by [LLFirSessionInvalidationService] *after* session invalidation. These topics should be subscribed to via
  * the Analysis API message bus: [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus].
  *
- * Session invalidation events are guaranteed to be published after the associated sessions have been invalidated. Because sessions are
- * invalidated in a write action, all session invalidation events are published during that same write action.
+ * Session invalidation events are guaranteed to be published after the associated sessions have been invalidated.
+ * Sessions can be invalidated either in a write action, or in the case if the caller can guarantee no other threads can perform
+ * invalidation or code analysis until the cleanup is complete. Session invalidation events are published on the same thread – it means
+ * only the reporter thread has access to sessions.
  *
  * When a session is garbage-collected due to being softly reachable, no session invalidation event will be published for it. See the
  * documentation of [LLFirSession] for background information.

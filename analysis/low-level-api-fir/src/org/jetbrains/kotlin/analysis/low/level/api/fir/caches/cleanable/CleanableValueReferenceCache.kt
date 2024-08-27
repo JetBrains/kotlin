@@ -173,15 +173,16 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any> {
     }
 
     /**
-     * Removes all values from the cache and performs cleanup on them. **Must be called in a *write* action.**
+     * Removes all values from the cache and performs cleanup on them.
+     *
+     * **Must be called in a *write* action, or in the case if the caller can guarantee no other threads can perform invalidation or
+     * code analysis until the cleanup is complete.**
      *
      * The write action requirement is due to the complexity associated with atomically clearing a concurrent cache while also performing
      * cleanup on exactly the cleared values. Because this cache implementation is used by components which operate in read and write
      * actions, requiring a write action is more economical than synchronizing on some cache-wide lock.
      */
     fun clear() {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
         // The backing map will not be modified by other threads during `clean` because it is executed in a write action.
         backingMap.values.forEach { it.performCleanup() }
         backingMap.clear()

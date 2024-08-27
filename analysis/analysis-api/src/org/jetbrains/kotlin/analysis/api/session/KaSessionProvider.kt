@@ -99,7 +99,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     @KaImplementationDetail
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule)
 
-    @TestOnly
+    @KaImplementationDetail
     public abstract fun clearCaches()
 
     override fun dispose() {}

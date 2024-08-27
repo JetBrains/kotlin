@@ -23,6 +23,13 @@
         serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl"
     />
+
+    <registryKey
+        defaultValue="true"
+        description="Perform cache clean-up when running out of RAM"
+        key="kotlin.analysis.lowMemoryCacheCleanup"
+        restartRequired="true"
+    />
   </extensions>
 
   <projectListeners>

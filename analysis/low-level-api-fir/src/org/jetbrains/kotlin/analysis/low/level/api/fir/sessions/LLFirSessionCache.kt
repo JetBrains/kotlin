@@ -150,11 +150,10 @@ class LLFirSessionCache(private val project: Project) : Disposable {
      * Removes all sessions after global invalidation. If [includeLibraryModules] is `false`, sessions of library modules will not be
      * removed.
      *
-     * [removeAllSessions] must be called in a write action.
+     * [removeAllSessions] must be called in a write action, or in the case if the caller can guarantee no other threads can perform
+     * invalidation or code analysis until the cleanup is complete.
      */
     fun removeAllSessions(includeLibraryModules: Boolean) {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
         if (includeLibraryModules) {
             removeAllSessionsFrom(sourceCache)
             removeAllSessionsFrom(binaryCache)
