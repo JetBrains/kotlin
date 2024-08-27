@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
@@ -348,44 +350,46 @@ private fun buildFirAnnotation(
      * See KT-59342
      * TODO: KT-60520
      */
-    val argumentMapping = object : FirAnnotationArgumentMapping() {
-        override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-        override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
-        override val source: KtSourceElement? get() = null
+    val argumentMapping = when {
+        lookupTag == null || classId == JvmStandardClassIds.Annotations.Java.Documented -> FirEmptyAnnotationArgumentMapping
+        classId == JvmStandardClassIds.Annotations.Java.Deprecated -> {
+            FirAnnotationArgumentMappingImpl(
+                source = null,
+                mapping = mapOf(
+                    StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(session)
+                )
+            )
+        }
+        else -> object : FirAnnotationArgumentMapping() {
+            override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+            override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
+            override val source: KtSourceElement? get() = null
 
-        override val mapping: Map<Name, FirExpression> by lazy {
-            when {
-                classId == JvmStandardClassIds.Annotations.Java.Target -> {
-                    when (val argument = javaAnnotation.arguments.firstOrNull()) {
-                        is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments()
-                        is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments()
-                        else -> null
-                    }?.let {
-                        mapOf(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets to it)
+            override val mapping: Map<Name, FirExpression> by lazy {
+                when (classId) {
+                    JvmStandardClassIds.Annotations.Java.Target -> {
+                        when (val argument = javaAnnotation.arguments.firstOrNull()) {
+                            is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments()
+                            is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments()
+                            else -> null
+                        }?.let {
+                            mapOf(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets to it)
+                        }
                     }
-                }
 
-                classId == JvmStandardClassIds.Annotations.Java.Retention -> {
-                    javaAnnotation.arguments.firstOrNull()?.mapJavaRetentionArgument()?.let {
-                        mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
+                    JvmStandardClassIds.Annotations.Java.Retention -> {
+                        javaAnnotation.arguments.firstOrNull()?.mapJavaRetentionArgument()?.let {
+                            mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
+                        }
                     }
-                }
 
-                classId == JvmStandardClassIds.Annotations.Java.Deprecated -> {
-                    mapOf(
-                        StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(
-                            session,
-                        )
-                    )
-                }
-
-                lookupTag == null -> null
-                else -> javaAnnotation.arguments.ifNotEmpty {
-                    val mapping = LinkedHashMap<Name, FirExpression>(size)
-                    fillAnnotationArgumentMapping(session, lookupTag, this, mapping, source)
-                    mapping
-                }
-            }.orEmpty()
+                    else -> javaAnnotation.arguments.ifNotEmpty {
+                        val mapping = LinkedHashMap<Name, FirExpression>(size)
+                        fillAnnotationArgumentMapping(session, lookupTag, this, mapping, source)
+                        mapping
+                    }
+                }.orEmpty()
+            }
         }
     }
 
