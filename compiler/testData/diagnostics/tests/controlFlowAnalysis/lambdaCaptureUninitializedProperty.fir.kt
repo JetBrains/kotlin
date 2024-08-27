@@ -65,7 +65,7 @@ fun immutableInitAfterCaptureInlineWithNoinline() {
 fun immutableInitAfterCaptureInlineWithCrossinline() {
     val x: String
     invokeInlineWithCrossinline(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }

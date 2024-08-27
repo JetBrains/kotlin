@@ -334,7 +334,7 @@ class ControlFlowGraphBuilder {
 
         // Lambdas called inline do not capture any variables, so the capture edge needs to be marked as dead.
         val captureNode = anonymousFunctionCaptureNodes.remove(anonymousFunction.symbol)
-        if (captureNode != null && anonymousFunction.inlineStatus == InlineStatus.Inline) {
+        if (captureNode != null && (anonymousFunction.inlineStatus == InlineStatus.Inline || anonymousFunction.inlineStatus == InlineStatus.CrossInline)) {
             CFGNode.killEdge(captureNode, graph.enterNode, propagateDeadness = false)
         }
 
