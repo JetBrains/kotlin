@@ -16,13 +16,16 @@ class FillNulls0 : AbstractInterpreter<FillNullsApproximation>() {
     }
 }
 
-class FillNullsApproximation(val schema: PluginDataFrameSchema, val columns: ColumnsResolver)
+class FillNullsApproximation(val schema: PluginDataFrameSchema, val columns: ColumnsResolver) : UpdateApproximation
 
 class UpdateWith0 : AbstractSchemaModificationInterpreter() {
-    val Arguments.receiver: FillNullsApproximation by arg()
+    val Arguments.receiver: UpdateApproximation by arg()
     val Arguments.expression: TypeApproximation by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return convertImpl(receiver.schema, receiver.columns.resolve(receiver.schema).map { it.path.path }, expression)
+        return when (val receiver = receiver) {
+            is FillNullsApproximation -> convertImpl(receiver.schema, receiver.columns.resolve(receiver.schema).map { it.path.path }, expression)
+            is UpdateApproximationImpl -> convertImpl(receiver.schema, receiver.columns.resolve(receiver.schema).map { it.path.path }, expression)
+        }
     }
 }

@@ -88,6 +88,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Update0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 
 internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*>? {
@@ -204,6 +205,7 @@ internal inline fun <reified T> String.load(): T {
         "MapToFrame" -> MapToFrame()
         "Move0" -> Move0()
         "ToTop" -> ToTop()
+        "Update0" -> Update0()
         else -> error("$this")
     } as T
 }
