@@ -353,7 +353,7 @@ class WasmCompiledModuleFragment(
         createFieldInitializerFunction()
 
         masterInitFunction.instructions.clear()
-        with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
+        with(WasmExpressionBuilder(masterInitFunction.instructions)) {
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.mainFunctionWrappers.forEach { signature ->
@@ -373,7 +373,7 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { allDefinedFunctions.putAll(it.functions.defined) }
 
         tryGetAssociatedObject.instructions.clear()
-        with(WasmIrExpressionBuilder(tryGetAssociatedObject.instructions)) {
+        with(WasmExpressionBuilder(tryGetAssociatedObject.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
                     val klassId = typeIds[klass]!!
@@ -404,7 +404,7 @@ class WasmCompiledModuleFragment(
 
     private fun createStartUnitTestsFunction() {
         startUnitTestsFunction.instructions.clear()
-        with(WasmIrExpressionBuilder(startUnitTestsFunction.instructions)) {
+        with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 val signature = fragment.testFun
                 if (signature != null) {
@@ -417,7 +417,7 @@ class WasmCompiledModuleFragment(
 
     private fun createFieldInitializerFunction() {
         fieldInitializerFunction.instructions.clear()
-        with(WasmIrExpressionBuilder(fieldInitializerFunction.instructions)) {
+        with(WasmExpressionBuilder(fieldInitializerFunction.instructions)) {
             var stringPoolInitializer: Pair<FieldInitializer, WasmSymbol<WasmGlobal>>? = null
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.fieldInitializers.forEach { initializer ->
@@ -446,7 +446,7 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, typeInfo) ->
                 val instructions = mutableListOf<WasmInstr>()
-                WasmIrExpressionBuilder(instructions).buildConstI32(
+                WasmExpressionBuilder(instructions).buildConstI32(
                     typeIds.getValue(referenceKey),
                     SourceLocation.NoLocation("Compile time data per class")
                 )

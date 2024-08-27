@@ -435,7 +435,7 @@ class DeclarationGenerator(
         val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
         val initBody = mutableListOf<WasmInstr>()
-        val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
+        val wasmExpressionGenerator = WasmExpressionBuilder(initBody)
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {

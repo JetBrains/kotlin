@@ -18,10 +18,16 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
  *     - at least, an API user has to think about what to pass a location
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
-abstract class WasmExpressionBuilder {
-    abstract fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate)
+class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
+    fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
+        expression += WasmInstrWithLocation(op, immediates.toList(), location)
+    }
 
-    abstract var numberOfNestedBlocks: Int
+    var numberOfNestedBlocks: Int = 0
+        set(value) {
+            assert(value >= 0) { "end without matching block" }
+            field = value
+        }
 
     fun buildConstI32(value: Int, location: SourceLocation) {
         buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
@@ -281,4 +287,10 @@ abstract class WasmExpressionBuilder {
     fun commentGroupEnd() {
         buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
     }
+}
+
+inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {
+    val res = mutableListOf<WasmInstr>()
+    WasmExpressionBuilder(res).body()
+    return res
 }

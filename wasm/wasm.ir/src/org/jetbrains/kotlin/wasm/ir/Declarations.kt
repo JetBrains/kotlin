@@ -66,7 +66,7 @@ sealed class WasmDataMode {
         val offset: MutableList<WasmInstr>
     ) : WasmDataMode() {
         constructor(memoryIdx: Int, offset: Int) : this(memoryIdx, mutableListOf<WasmInstr>().also<MutableList<WasmInstr>> {
-            WasmIrExpressionBuilder(it).buildConstI32(offset, SourceLocation.NoLocation("Offset value for WasmDataMode.Active "))
+            WasmExpressionBuilder(it).buildConstI32(offset, SourceLocation.NoLocation("Offset value for WasmDataMode.Active "))
         })
     }
 
