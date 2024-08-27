@@ -12,17 +12,28 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class JsKlibResolverTest : TestCaseWithTmpdir() {
+open class JsKlibResolverTest {
+    lateinit var tmpdir: File
 
+    @BeforeEach
+    fun setup() {
+        tmpdir = KtTestUtil.tmpDirForTest(this.javaClass.getSimpleName(), hashCode().toString())
+    }
+
+    @Test
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
         val testDataDir = File("compiler/testData/klib/resolve/mismatched-abi-version")
 
@@ -55,6 +66,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(JUnit4Assertions, result.output, missingLibrary = "/v2/lib1", tmpdir)
     }
 
+    @Test
     fun testResolvingTransitiveDependenciesRecordedInManifest() {
         val moduleA = Module("a")
         val moduleB = Module("b", "a")
@@ -93,6 +105,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         }
     }
 
+    @Test
     fun testWarningAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
             arrayOf(DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING.asCliArgument())
@@ -108,6 +121,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         })
     }
 
+    @Test
     fun testErrorAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
             arrayOf(DuplicatedUniqueNameStrategy.DENY.asCliArgument())
@@ -120,6 +134,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         })
     }
 
+    @Test
     fun testErrorAboutDuplicatedUniqueNamesWithoutCLIParam() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(emptyArray())
         result.assertFailure()
@@ -130,6 +145,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         })
     }
 
+    @Test
     fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
             arrayOf(DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING.asCliArgument())
@@ -171,7 +187,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
     private fun createKlibDir(name: String, version: Int): File =
         tmpdir.resolve("v$version").resolve(name).apply(File::mkdirs)
 
-    private fun compileKlib(
+    open fun compileKlib(
         sourceFile: File,
         dependencies: Array<File> = emptyArray(),
         outputFile: File,
@@ -199,7 +215,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         return CompilationResult(exitCode, compilerXmlOutput.toString())
     }
 
-    private fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
+    open fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
         val libraries = listOfNotNull(
             StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
             dependency
@@ -222,7 +238,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         return CompilationResult(exitCode, compilerXmlOutput.toString())
     }
 
-    private data class CompilationResult(val exitCode: ExitCode, val output: String) {
+    data class CompilationResult(val exitCode: ExitCode, val output: String) {
         fun assertSuccess() = JUnit4Assertions.assertTrue(exitCode == ExitCode.OK) {
             buildString {
                 appendLine("Expected exit code: ${ExitCode.OK}, Actual: $exitCode")
