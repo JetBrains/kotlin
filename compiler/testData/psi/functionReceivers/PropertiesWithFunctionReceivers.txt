@@ -95,8 +95,9 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -104,11 +105,11 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('it')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -151,8 +152,9 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
@@ -167,11 +169,11 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('it')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -235,8 +237,9 @@ KtFile: PropertiesWithFunctionReceivers.kt
         PsiElement(public)('public')
       PsiWhiteSpace(' ')
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -247,8 +250,8 @@ KtFile: PropertiesWithFunctionReceivers.kt
         PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
@@ -258,7 +261,7 @@ KtFile: PropertiesWithFunctionReceivers.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -311,8 +314,8 @@ KtFile: PropertiesWithFunctionReceivers.kt
         PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
@@ -322,7 +325,7 @@ KtFile: PropertiesWithFunctionReceivers.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -386,8 +389,9 @@ KtFile: PropertiesWithFunctionReceivers.kt
         PsiElement(public)('public')
       PsiWhiteSpace(' ')
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -434,15 +438,14 @@ KtFile: PropertiesWithFunctionReceivers.kt
       PsiElement(set)('set')
       PsiErrorElement:Accessor body expected
         PsiElement(RPAR)(')')
-      PsiErrorElement:Expecting '('
-        <empty list>
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
+        PsiErrorElement:Expecting '('
+          <empty list>
         VALUE_PARAMETER
-          PsiErrorElement:Expecting parameter name
-            <empty list>
-      PsiErrorElement:Expecting ')'
-        <empty list>
+          <empty list>
+        PsiErrorElement:Expecting ')'
+          <empty list>
       BLOCK
         PsiElement(LBRACE)('{')
         PsiElement(RBRACE)('}')
@@ -498,10 +501,11 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting ')'
-        PsiElement(IDENTIFIER)('foo')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiErrorElement:Expecting ')'
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -509,12 +513,12 @@ KtFile: PropertiesWithFunctionReceivers.kt
     PsiWhiteSpace('\n   ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiErrorElement:Expecting parameter name
             <empty list>
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')

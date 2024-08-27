@@ -215,8 +215,9 @@ KtFile: Properties_ERR.kt
     PsiWhiteSpace('\n    ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiErrorElement:Expecting function body
         <empty list>
     PsiWhiteSpace(' ')

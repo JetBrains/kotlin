@@ -1600,9 +1600,14 @@ class LightTreeRawFirDeclarationBuilder(
                     accessorAnnotations += convertAnnotationList(it)
                 }
                 TYPE_REFERENCE -> returnType = convertType(it)
-                VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(
-                    it, accessorSymbol, propertyTypeRefToUse, propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
-                )
+                VALUE_PARAMETER_LIST -> {
+                    // getter can have an empty value parameter list
+                    if (!isGetter) {
+                        firValueParameters = convertSetterParameter(
+                            it, accessorSymbol, propertyTypeRefToUse, propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER)
+                        )
+                    }
+                }
                 CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
                 else -> if (it.isExpression()) expression = it

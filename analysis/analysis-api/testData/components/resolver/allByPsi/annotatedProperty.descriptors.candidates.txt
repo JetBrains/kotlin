@@ -2065,6 +2065,9 @@ KtNameReferenceExpression(745,749): 'prop'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
+KtParameterList(759,761): '()'
+  NO_CANDIDATES
+
 KtConstantExpression(764,768): 'null'
   NO_CANDIDATES
 
@@ -2201,7 +2204,7 @@ KtNameReferenceExpression(788,792): 'prop'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtParameterList(803,840): '@Anno("setter parameter $prop") value'
+KtParameterList(802,841): '(@Anno("setter parameter $prop") value)'
   NO_CANDIDATES
 
 KtParameter(803,840): '@Anno("setter parameter $prop") value'

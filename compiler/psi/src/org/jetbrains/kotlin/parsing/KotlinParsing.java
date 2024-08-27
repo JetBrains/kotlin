@@ -1689,9 +1689,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
         myBuilder.disableNewlines();
 
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
+            PsiBuilder.Marker parameterList = mark();
             expect(LPAR, "Expecting '('", RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET);
             if (propertyComponentKind == PropertyComponentKind.SET) {
-                PsiBuilder.Marker parameterList = mark();
                 PsiBuilder.Marker setterParameter = mark();
                 parseModifierList(COMMA_COLON_RPAR_SET);
                 expect(IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET);
@@ -1704,7 +1704,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
-                parameterList.done(VALUE_PARAMETER_LIST);
             }
             if (!at(RPAR)) {
                 errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
@@ -1712,6 +1711,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(RPAR)) {
                 advance();
             }
+            parameterList.done(VALUE_PARAMETER_LIST);
         }
         myBuilder.restoreNewlinesState();
 

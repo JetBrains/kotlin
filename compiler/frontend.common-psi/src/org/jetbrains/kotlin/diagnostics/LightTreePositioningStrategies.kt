@@ -331,7 +331,7 @@ object LightTreePositioningStrategies {
                 KtNodeTypes.PROPERTY_ACCESSOR -> {
                     val endOfSignatureElement =
                         tree.typeReference(node)
-                            ?: tree.rightParenthesis(node)
+                            ?: tree.valueParameterList(node)
                             ?: tree.accessorNamePlaceholder(node)
 
                     return markRange(node, endOfSignatureElement, startOffset, endOffset, tree, node)
@@ -380,7 +380,7 @@ object LightTreePositioningStrategies {
                 KtNodeTypes.PROPERTY_ACCESSOR -> {
                     val endOfSignatureElement =
                         tree.typeReference(node)
-                            ?: tree.rightParenthesis(node)
+                            ?: tree.valueParameterList(node)
                             ?: tree.accessorNamePlaceholder(node)
 
                     return markRange(tree.accessorNamePlaceholder(node), endOfSignatureElement, startOffset, endOffset, tree, node)

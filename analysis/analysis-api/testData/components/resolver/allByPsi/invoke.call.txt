@@ -114,6 +114,9 @@ KtProperty(135,165): 'val property get() = MyClass()'
 KtPropertyAccessor(148,165): 'get() = MyClass()'
   null
 
+KtParameterList(151,153): '()'
+  null
+
 KtCallExpression(156,165): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:

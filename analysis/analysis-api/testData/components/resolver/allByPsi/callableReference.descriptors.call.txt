@@ -328,6 +328,9 @@ KtNameReferenceExpression(422,428): 'String'
 KtPropertyAccessor(429,442): 'get() = "rts"'
   null
 
+KtParameterList(432,434): '()'
+  null
+
 KtStringTemplateExpression(437,442): '"rts"'
   null
 
