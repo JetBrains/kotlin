@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.validateIr
@@ -67,6 +68,11 @@ class ComposeIrGenerationExtension(
             stableTypeMatchers,
         )
 
+        val irValidatorConfig = IrValidatorConfig(
+            checkProperties = true,
+            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+        )
+
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
         validateIr(messageCollector, irVerificationMode) {
@@ -74,8 +80,7 @@ class ComposeIrGenerationExtension(
                 moduleFragment,
                 pluginContext.irBuiltIns,
                 phaseName = "Before Compose Compiler Plugin",
-                checkProperties = true,
-                checkTypes = false,  // TODO: Re-enable checking types (KT-68663)
+                irValidatorConfig,
             )
         }
 
@@ -238,8 +243,7 @@ class ComposeIrGenerationExtension(
                 moduleFragment,
                 pluginContext.irBuiltIns,
                 phaseName = "After Compose Compiler Plugin",
-                checkProperties = true,
-                checkTypes = false, // This should be enabled, the fact this doesn't work is a Compose bug.
+                irValidatorConfig,
             )
         }
     }

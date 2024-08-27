@@ -129,11 +129,13 @@ class IrValidatorTest {
                     tree,
                     TestIrBuiltins,
                     phaseName = "IrValidatorTest",
-                    checkTypes = true,
-                    checkValueScopes = true,
-                    checkTypeParameterScopes = true,
-                    checkCrossFileFieldUsage = true,
-                    checkVisibilities = true,
+                    IrValidatorConfig(
+                        checkTypes = true,
+                        checkValueScopes = true,
+                        checkTypeParameterScopes = true,
+                        checkCrossFileFieldUsage = true,
+                        checkVisibilities = true,
+                    )
                 )
                 assertEquals(expectedMessages, messageCollector.messages)
             }

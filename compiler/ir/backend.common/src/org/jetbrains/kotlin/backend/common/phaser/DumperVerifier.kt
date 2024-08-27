@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -111,7 +112,7 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
                 element,
                 context.heldBackendContext.irBuiltIns,
                 phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
-                checkTypes = checkTypes,
+                config = IrValidatorConfig(checkTypes = checkTypes),
             )
         }
     }

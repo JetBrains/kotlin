@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.IrValidationContext
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -28,18 +28,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
-        performBasicIrValidation(
-            irModule,
-            context.irBuiltIns,
-            phaseName,
+    override val validatorConfig: IrValidatorConfig
+        get() = super.validatorConfig.copy(
             checkProperties = true,
-            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
-            checkValueScopes = true,
-            checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
-            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+            checkCrossFileFieldUsage = false,
         )
-    }
 }
 
 @PhaseDescription(
@@ -49,8 +42,14 @@ internal class JvmIrValidationBeforeLoweringPhase(
 internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
+    override val validatorConfig: IrValidatorConfig
+        get() = super.validatorConfig.copy(
+            checkProperties = true,
+            checkCrossFileFieldUsage = false,
+        )
+
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
-        performBasicIrValidation(irModule, context.irBuiltIns, phaseName, checkProperties = true)
+        performBasicIrValidation(irModule, context.irBuiltIns, phaseName, validatorConfig)
 
         for (file in irModule.files) {
             for (declaration in file.declarations) {

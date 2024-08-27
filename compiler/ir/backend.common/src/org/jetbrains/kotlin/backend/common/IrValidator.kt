@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
-internal class IrValidatorConfig(
+data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
@@ -200,27 +200,9 @@ sealed interface IrValidationContext {
         fragment: IrElement,
         irBuiltIns: IrBuiltIns,
         phaseName: String,
-        checkProperties: Boolean = false,
-        checkTypes: Boolean = false,
-        checkVisibilities: Boolean = false,
-        checkCrossFileFieldUsage: Boolean = false,
-        checkValueScopes: Boolean = false,
-        checkTypeParameterScopes: Boolean = false,
-        checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
+        config: IrValidatorConfig,
     ) {
-        performBasicIrValidation(
-            fragment,
-            irBuiltIns,
-            IrValidatorConfig(
-                checkTypes,
-                checkProperties,
-                checkValueScopes,
-                checkTypeParameterScopes,
-                checkCrossFileFieldUsage,
-                checkVisibilities,
-                checkInlineFunctionUseSites,
-            ),
-        ) { file, element, message, parentChain ->
+        performBasicIrValidation(fragment, irBuiltIns, config) { file, element, message, parentChain ->
             reportIrValidationError(file, element, message, phaseName, parentChain)
         }
     }
