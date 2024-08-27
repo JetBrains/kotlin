@@ -61,7 +61,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         resolveDeprecations: Boolean
     ): TypeResolutionResult {
         session.lookupTracker?.recordUserTypeRefLookup(
-            typeRef, scopeClassDeclaration.scopes.asSequence().flatMap { it.scopeOwnerLookupNames }.asIterable(), useSiteFile?.source
+            typeRef, scopeClassDeclaration.scopes.flatMap { it.scopeOwnerLookupNames }, useSiteFile?.source
         )
 
         val qualifier = typeRef.qualifier
