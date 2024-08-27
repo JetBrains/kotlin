@@ -19,6 +19,23 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
+        val callReturnType = functionCall.resolvedType
+        if (callReturnType.classId == Names.GROUP_BY_CLASS_ID) {
+            val rootMarker = callReturnType.typeArguments[0]
+            val rootMarker1  = callReturnType.typeArguments[1]
+            if (rootMarker !is ConeClassLikeType || rootMarker1 !is ConeClassLikeType) {
+                return emptyList()
+            }
+            val symbol = rootMarker.toRegularClassSymbol(session)
+            val symbol1 = rootMarker1.toRegularClassSymbol(session)
+
+            return listOfNotNull(symbol, symbol1).flatMap {
+                it.declaredMemberScope(session, FirResolvePhase.DECLARATIONS).collectAllProperties()
+                    .filterIsInstance<FirPropertySymbol>()
+                    .filter { it.getAnnotationByClassId(Names.SCOPE_PROPERTY_ANNOTATION, session) != null }
+                    .map { it.resolvedReturnType }
+            }
+        }
         val symbol = generatedTokenOrNull(functionCall) ?: return emptyList()
         return symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS).collectAllProperties()
             .filterIsInstance<FirPropertySymbol>()
