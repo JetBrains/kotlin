@@ -13133,6 +13133,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("nestedInheritance.kt")
+      public void testNestedInheritance() {
+        runTest("compiler/testData/diagnostics/tests/exposed/nestedInheritance.kt");
+      }
+
+      @Test
       @TestMetadata("object.kt")
       public void testObject() {
         runTest("compiler/testData/diagnostics/tests/exposed/object.kt");
