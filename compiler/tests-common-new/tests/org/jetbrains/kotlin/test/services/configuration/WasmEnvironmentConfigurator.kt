@@ -50,12 +50,11 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
 
     companion object : KlibBasedEnvironmentConfiguratorUtils {
         fun getRuntimePathsForModule(target: WasmTarget): List<String> {
-            val suffix = when (target) {
-                WasmTarget.JS -> "-js"
-                WasmTarget.WASI -> "-wasi"
-            }
-            return listOf(System.getProperty("kotlin.wasm$suffix.stdlib.path")!!, System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!)
+            return listOf(stdlibPath(target), kotlinTestPath(target))
         }
+
+        fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!
+        fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
