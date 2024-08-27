@@ -169,7 +169,10 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
     val config = generationState.config
     val produce = config.produce
 
-    if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
+    val staticFramework = produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework
+    val swiftExport = config.swiftExport && produce == CompilerOutputKind.STATIC
+
+    if (staticFramework || swiftExport) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
     linkAllDependencies(generationState, generatedBitcodeFiles.map { it.absoluteFile.normalize().path })

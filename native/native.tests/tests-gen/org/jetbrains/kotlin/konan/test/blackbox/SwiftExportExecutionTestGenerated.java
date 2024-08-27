@@ -30,6 +30,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExport
   }
 
   @Test
+  @TestMetadata("autoimport")
+  public void testAutoimport() {
+    runTest("native/native.tests/testData/SwiftExport/autoimport/");
+  }
+
+  @Test
   @TestMetadata("char")
   public void testChar() {
     runTest("native/native.tests/testData/SwiftExport/char/");
