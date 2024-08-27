@@ -418,6 +418,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     runTest("testData/box/ungroup.kt");
   }
 
+  @Test
+  @TestMetadata("update.kt")
+  public void testUpdate() {
+    runTest("testData/box/update.kt");
+  }
+
   @Nested
   @TestMetadata("testData/box/colKinds")
   @TestDataPath("$PROJECT_ROOT")
