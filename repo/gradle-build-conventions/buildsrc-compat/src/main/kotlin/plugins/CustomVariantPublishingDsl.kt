@@ -74,6 +74,9 @@ class MultiModuleMavenPublishingConfiguration() {
 
             var suppressPomMetadataWarnings: Boolean = false
             fun suppressPomMetadataWarnings() { suppressPomMetadataWarnings = true }
+
+            var publishSecondaryVariants: Boolean = false
+            fun publishSecondaryVariants() { publishSecondaryVariants = true }
         }
 
         val mavenPublicationConfigurations = mutableListOf<MavenPublication.() -> Unit>()
@@ -166,6 +169,13 @@ fun Project.addVariant(component: AdhocComponentWithVariants, variant: MultiModu
     }
 
     component.addVariantsFromConfiguration(configuration) {
+        if (!variant.publishSecondaryVariants) {
+            if (this.configurationVariant.name != configuration.name) {
+                skip()
+                return@addVariantsFromConfiguration
+            }
+        }
+
         variant.variantDetailsConfigurations.forEach { configure -> configure() }
     }
 }
