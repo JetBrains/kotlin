@@ -633,6 +633,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Test
+    @TestMetadata("signatureEnhancementCycleTypeBound.kt")
+    public void testSignatureEnhancementCycleTypeBound() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/signatureEnhancementCycleTypeBound.kt");
+    }
+
+    @Test
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/simpleClass.kt");
