@@ -1237,36 +1237,82 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Exposed visibility group // #
         map.put(
             EXPOSED_TYPEALIAS_EXPANDED_TYPE,
-            "Typealias ''{0}'' exposes ''{2}'' in expanded type ''{1}''.",
+            "''{0}'' typealias exposes ''{3}'' in expanded type{2} ''{1}''.",
             TO_STRING,
             DECLARATION_NAME,
-            TO_STRING
+            TO_STRING,
+            TO_STRING,
         )
         map.put(
             EXPOSED_FUNCTION_RETURN_TYPE,
-            "Function ''{0}'' exposes its ''{2}'' return type ''{1}''.",
+            "''{0}'' function exposes its ''{3}'' return type{2} ''{1}''.",
             TO_STRING,
             DECLARATION_NAME,
-            TO_STRING
+            TO_STRING,
+            TO_STRING,
         )
-        map.put(EXPOSED_RECEIVER_TYPE, "Member ''{0}'' exposes its ''{2}'' receiver type ''{1}''.", TO_STRING, DECLARATION_NAME, TO_STRING)
-        map.put(EXPOSED_PROPERTY_TYPE, "Property ''{0}'' exposes its ''{2}'' type ''{1}''.", TO_STRING, DECLARATION_NAME, TO_STRING)
-        map.put(EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, "Property ''{0}'' exposes its ''{2}'' type ''{1}''.", TO_STRING, TO_STRING, TO_STRING)
-        map.put(EXPOSED_PARAMETER_TYPE, "Function ''{0}'' exposes its ''{2}'' parameter type ''{1}''.", TO_STRING, DECLARATION_NAME, TO_STRING)
-        map.put(EXPOSED_SUPER_INTERFACE, "Sub-interface ''{0}'' exposes its ''{2}'' supertype ''{1}''.", TO_STRING, DECLARATION_NAME, TO_STRING)
-        map.put(EXPOSED_SUPER_CLASS, "Subclass ''{0}'' exposes its ''{2}'' supertype ''{1}''.", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(
+            EXPOSED_RECEIVER_TYPE,
+            "''{0}'' member exposes its ''{3}'' receiver type{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_PROPERTY_TYPE,
+            "''{0}'' property exposes its ''{3}'' type{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+            "''{0}'' property exposes its ''{3}'' type{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_PARAMETER_TYPE,
+            "''{0}'' function exposes its ''{3}'' parameter type{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_SUPER_INTERFACE,
+            "''{0}'' sub-interface exposes its ''{3}'' supertype{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_SUPER_CLASS,
+            "''{0}'' subclass exposes its ''{3}'' supertype{2} ''{1}''.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
         map.put(
             EXPOSED_TYPE_PARAMETER_BOUND,
-            "Generic ''{0}'' exposes its ''{2}'' parameter bound type ''{1}''.",
+            "''{0}'' generic exposes its ''{3}'' parameter bound type{2} ''{1}''.",
             TO_STRING,
             DECLARATION_NAME,
-            TO_STRING
+            TO_STRING,
+            TO_STRING,
         )
         map.put(
             EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING,
-            "Generic ''{0}'' exposes its ''{2}'' parameter bound type ''{1}''. This will be prohibited in the future.",
+            "''{0}'' generic exposes its ''{3}'' parameter bound type{2} ''{1}''. This will be prohibited in the future.",
             TO_STRING,
             DECLARATION_NAME,
+            TO_STRING,
             TO_STRING,
         )
 

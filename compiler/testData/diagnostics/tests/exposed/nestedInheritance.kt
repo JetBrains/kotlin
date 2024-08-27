@@ -1,4 +1,5 @@
 // ISSUE: KT-69794
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 import Outer.Base
 

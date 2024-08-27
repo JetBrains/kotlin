@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -1386,7 +1387,8 @@ internal class SubclassOptArgumentIsNotMarkerImpl(
 
 internal class ExposedTypealiasExpandedTypeImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1394,7 +1396,8 @@ internal class ExposedTypealiasExpandedTypeImpl(
 
 internal class ExposedFunctionReturnTypeImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1402,7 +1405,8 @@ internal class ExposedFunctionReturnTypeImpl(
 
 internal class ExposedReceiverTypeImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1410,7 +1414,8 @@ internal class ExposedReceiverTypeImpl(
 
 internal class ExposedPropertyTypeImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1418,7 +1423,8 @@ internal class ExposedPropertyTypeImpl(
 
 internal class ExposedPropertyTypeInConstructorErrorImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1426,7 +1432,8 @@ internal class ExposedPropertyTypeInConstructorErrorImpl(
 
 internal class ExposedPropertyTypeInConstructorWarningImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1434,7 +1441,8 @@ internal class ExposedPropertyTypeInConstructorWarningImpl(
 
 internal class ExposedParameterTypeImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1442,7 +1450,8 @@ internal class ExposedParameterTypeImpl(
 
 internal class ExposedSuperInterfaceImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1450,7 +1459,8 @@ internal class ExposedSuperInterfaceImpl(
 
 internal class ExposedSuperClassImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1458,7 +1468,8 @@ internal class ExposedSuperClassImpl(
 
 internal class ExposedTypeParameterBoundImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1466,7 +1477,8 @@ internal class ExposedTypeParameterBoundImpl(
 
 internal class ExposedTypeParameterBoundDeprecationWarningImpl(
     override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaSymbol,
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    override val relationToType: RelationToType,
     override val restrictingVisibility: EffectiveVisibility,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

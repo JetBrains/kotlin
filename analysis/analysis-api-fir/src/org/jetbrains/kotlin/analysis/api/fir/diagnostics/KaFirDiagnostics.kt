@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -1154,77 +1155,88 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface ExposedTypealiasExpandedType : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedTypealiasExpandedType::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedFunctionReturnType : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedFunctionReturnType::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedReceiverType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExposedReceiverType::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedPropertyType : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedPropertyType::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedPropertyTypeInConstructorError : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedPropertyTypeInConstructorError::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedPropertyTypeInConstructorWarning : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExposedPropertyTypeInConstructorWarning::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedParameterType : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ExposedParameterType::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedSuperInterface : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExposedSuperInterface::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedSuperClass : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExposedSuperClass::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedTypeParameterBound : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExposedTypeParameterBound::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
     interface ExposedTypeParameterBoundDeprecationWarning : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExposedTypeParameterBoundDeprecationWarning::class
         val elementVisibility: EffectiveVisibility
-        val restrictingDeclaration: KaSymbol
+        val restrictingDeclaration: KaClassLikeSymbol
+        val relationToType: RelationToType
         val restrictingVisibility: EffectiveVisibility
     }
 
