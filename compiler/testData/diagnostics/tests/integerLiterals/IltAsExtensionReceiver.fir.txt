@@ -1,9 +1,9 @@
-FILE: IltAsExtensionReceiver.fir.kt
+FILE: IltAsExtensionReceiver.kt
     public final fun test_Long(): R|kotlin/Unit| {
         local final fun R|kotlin/Long|.foo(): R|kotlin/Unit| {
         }
 
-        Long(2).R|<local>/foo|()
+        Int(2).R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|()
         Int(2)?.{ $subj$.R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|() }
     }
     public final fun test_LongResolution(): R|kotlin/Unit| {
@@ -17,7 +17,7 @@ FILE: IltAsExtensionReceiver.fir.kt
                     ^foo String(2)
                 }
 
-                lval x: R|kotlin/Int| = Long(2).R|<local>/foo<CS errors: <local>/foo>#|()
+                lval x: R|kotlin/Int| = Int(2).R|<local>/foo|()
                 lval y: R|kotlin/Int?| = Int(2)?.{ $subj$.R|<local>/foo|() }
             }
         }

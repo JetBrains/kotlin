@@ -135,6 +135,12 @@ private fun prepareReceivers(
         expectedType = expectedType,
         session = context.session
     ).let { prepareCapturedType(it, context) }
+        .let {
+            when (it) {
+                is ConeIntegerConstantOperatorType -> it.possibleTypes.first()
+                else -> it
+            }
+        }
 
     return ReceiverDescription(argumentExtensionReceiver, argumentType)
 }

@@ -152,7 +152,11 @@ class FirCallCompletionResultsWriterTransformer(
         var extensionReceiver = subCandidate.chosenExtensionReceiverExpression()
         if (!declaration.isWrappedIntegerOperator()) {
             val expectedDispatchReceiverType = (declaration as? FirCallableDeclaration)?.dispatchReceiverType
-            val expectedExtensionReceiverType = (declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType
+            // If the candidate is not successful and extension receiver is Integer literal, it should be approximated
+            //   to default type (Int), not expected type of extension receiver
+            val expectedExtensionReceiverType = runIf(subCandidate.isSuccessful) {
+                (declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType
+            }
             dispatchReceiver = dispatchReceiver?.transformSingle(integerOperatorApproximator, expectedDispatchReceiverType)
             extensionReceiver = extensionReceiver?.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
