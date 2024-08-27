@@ -195,6 +195,7 @@
 /compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ "Kotlin IDE Analysis Core"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
