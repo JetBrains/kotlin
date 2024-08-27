@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
@@ -38,7 +40,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
-    annotationBuilder: () -> List<FirAnnotation>,
+    private val annotationList: FirJavaAnnotationList,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     lazyInitializer: Lazy<FirExpression?>,
     lazyHasConstantInitializer: Lazy<Boolean>,
@@ -66,7 +68,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val backingField: FirBackingField? = null
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
-    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
 
     override val initializer: FirExpression?
         get() = lazyInitializer.value
@@ -183,7 +185,7 @@ class FirJavaField @FirImplementationDetail constructor(
 @FirBuilderDsl
 internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var isFromSource: Boolean by Delegates.notNull()
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var lazyInitializer: Lazy<FirExpression?>? = null
     lateinit var lazyHasConstantInitializer: Lazy<Boolean>
 
@@ -201,7 +203,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             returnTypeRef,
             status,
             isVar,
-            annotationBuilder,
+            annotationList,
             typeParameters,
             lazyInitializer ?: lazyOf(initializer),
             lazyHasConstantInitializer,

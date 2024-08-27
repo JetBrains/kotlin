@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
@@ -37,7 +39,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    annotationBuilder: () -> List<FirAnnotation>,
+    private val annotationList: FirJavaAnnotationList,
     override var status: FirDeclarationStatus,
     resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
@@ -66,7 +68,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
-    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
 
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
@@ -182,7 +184,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaConstructor {
@@ -195,10 +197,10 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             returnTypeRef,
             valueParameters,
             typeParameters,
-            annotationBuilder,
+            annotationList,
             status,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
-            dispatchReceiverType
+            dispatchReceiverType,
         )
     }
 

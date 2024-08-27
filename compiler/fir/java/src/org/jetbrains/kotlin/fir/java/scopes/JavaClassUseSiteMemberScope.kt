@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
-import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
+import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
@@ -80,7 +77,7 @@ class JavaClassUseSiteMemberScope(
     private val klass: FirJavaClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
-    declaredMemberScope: FirContainingNamesAwareScope
+    declaredMemberScope: FirContainingNamesAwareScope,
 ) : AbstractFirUseSiteMemberScope(
     klass.symbol.toLookupTag(),
     session,
@@ -204,7 +201,7 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirPropertySymbol.createOverridePropertyIfExists(
         scope: FirScope,
-        takeModalityFromGetter: Boolean
+        takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol? {
         val getterSymbol = this.findGetterOverride(scope) ?: return null
         val setterSymbol =
@@ -465,7 +462,7 @@ class JavaClassUseSiteMemberScope(
     private fun processSpecialFunctions(
         name: Name,
         functionsFromSupertypes: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
-        destination: MutableCollection<FirNamedFunctionSymbol>
+        destination: MutableCollection<FirNamedFunctionSymbol>,
     ) {
         val functionsFromSupertypesToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
         // The special override checker is needed for the case when we're trying to consider e.g. explicitly defined `Long toLong()`
@@ -554,7 +551,7 @@ class JavaClassUseSiteMemberScope(
         name: Name,
         destination: MutableCollection<FirNamedFunctionSymbol>,
         resultOfIntersection: ResultOfIntersection<FirNamedFunctionSymbol>,
-        explicitlyDeclaredFunction: FirNamedFunctionSymbol?
+        explicitlyDeclaredFunction: FirNamedFunctionSymbol?,
     ): Boolean {
         // E.g. contains(String) or contains(T)
         val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { (member, scope) ->
@@ -595,7 +592,7 @@ class JavaClassUseSiteMemberScope(
                 if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
                     allParametersAreAny = false
                 }
-                buildJavaValueParameterCopy(overrideParameter) {
+                buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
                     this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
                 }
             }
@@ -640,7 +637,7 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
-        builtinWithErasedParameters: FirNamedFunctionSymbol
+        builtinWithErasedParameters: FirNamedFunctionSymbol,
     ): Boolean {
         val ownDescriptor = fir.computeJvmDescriptor(includeReturnType = false)
         val otherDescriptor = builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
@@ -676,7 +673,7 @@ class JavaClassUseSiteMemberScope(
         naturalName: Name,
         resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
         destination: MutableCollection<FirNamedFunctionSymbol>,
-        functionsFromSupertypesToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>
+        functionsFromSupertypesToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>,
     ): Boolean {
         // The JVM name of the function, e.g., byteValue or charAt
         val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {

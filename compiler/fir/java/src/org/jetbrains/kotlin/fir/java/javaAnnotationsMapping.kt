@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -34,14 +35,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
-    session: FirSession, source: KtSourceElement?
+    session: FirSession, source: KtSourceElement?,
 ): List<FirAnnotation> = map { it.toFirAnnotationCall(session, source) }
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
@@ -107,7 +107,7 @@ private fun List<FirAnnotation>.mergeTargetAnnotations(
 }
 
 inline fun buildVarargArgumentsExpressionWithTargets(
-    init: FirVarargArgumentsExpressionBuilder.() -> Unit = {}
+    init: FirVarargArgumentsExpressionBuilder.() -> Unit = {},
 ): FirVarargArgumentsExpression {
     return FirVarargArgumentsExpressionBuilder().apply {
         init()
@@ -161,7 +161,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     name = this@toFirValueParameter.name ?: Name.identifier("p$index")
     returnTypeRef = type.toFirJavaTypeRef(session, source)
     isVararg = this@toFirValueParameter.isVararg
-    annotationBuilder = { convertAnnotationsToFir(session, source) }
+    annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData, source)
 }
 
 internal fun JavaAnnotationArgument.toFirExpression(

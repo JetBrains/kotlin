@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,9 +33,12 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -82,7 +85,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
     override fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
-        context: NestedClassGenerationContext
+        context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (!owner.isSuitableJavaClass()) return null
         return builderClassCache.getValue(owner)?.symbol
@@ -160,7 +163,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         builder: Builder,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
-        destination: MutableList<FirDeclaration>
+        destination: MutableList<FirDeclaration>,
     ) {
         val fieldName = field.name
         val setterName = fieldName.toMethodName(builder)
@@ -178,7 +181,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         singular: Singular,
         field: FirJavaField,
         builderClassSymbol: FirRegularClassSymbol,
-        destination: MutableList<FirDeclaration>
+        destination: MutableList<FirDeclaration>,
     ) {
         val fieldJavaTypeRef = field.returnTypeRef as? FirJavaTypeRef ?: return
         val javaClassifierType = fieldJavaTypeRef.type as? JavaClassifierType ?: return
@@ -301,7 +304,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     visibility: Visibility,
     modality: Modality,
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
-    isStatic: Boolean = false
+    isStatic: Boolean = false,
 ): FirJavaMethod {
     return buildJavaMethod {
         moduleData = this@createJavaMethod.moduleData
@@ -313,14 +316,12 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.isStatic = isStatic
         }
         isFromSource = true
-        annotationBuilder = { emptyList() }
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData
                 this.returnTypeRef = valueParameter.typeRef
                 containingFunctionSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
-                annotationBuilder = { emptyList() }
                 isVararg = false
                 isFromSource = true
             }
@@ -357,7 +358,6 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         }
         dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null
         typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }
-        annotationBuilder = { emptyList() }
     }
 }
 

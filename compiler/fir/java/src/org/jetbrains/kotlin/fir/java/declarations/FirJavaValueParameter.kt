@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -38,7 +40,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirValueParameterSymbol,
-    annotationBuilder: () -> List<FirAnnotation>,
+    val annotationList: FirJavaAnnotationList,
     var lazyDefaultValue: Lazy<FirExpression>?,
     override val containingFunctionSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
@@ -68,7 +70,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val isVar: Boolean
         get() = false
 
-    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
 
     override val receiverParameter: FirReceiverParameter?
         get() = null
@@ -215,7 +217,7 @@ class FirJavaValueParameterBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var defaultValue: Lazy<FirExpression>? = null
     lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
@@ -232,7 +234,7 @@ class FirJavaValueParameterBuilder {
             returnTypeRef,
             name,
             symbol = FirValueParameterSymbol(name),
-            annotationBuilder,
+            annotationList,
             defaultValue,
             containingFunctionSymbol,
             isVararg,
@@ -245,7 +247,7 @@ inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
+inline fun buildJavaValueParameterCopy(original: FirJavaValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -256,9 +258,8 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name
-    val annotations = original.annotations
-    copyBuilder.annotationBuilder = { annotations }
-    copyBuilder.defaultValue = if (original is FirJavaValueParameter) original.lazyDefaultValue else original.defaultValue?.let(::lazyOf)
+    copyBuilder.annotationList = original.annotationList
+    copyBuilder.defaultValue = original.lazyDefaultValue
     copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()

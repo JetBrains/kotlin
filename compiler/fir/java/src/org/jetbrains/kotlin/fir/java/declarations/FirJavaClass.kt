@@ -1,27 +1,24 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java.declarations
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
@@ -42,7 +38,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
-    private val unEnhancedAnnotations: MutableOrEmptyList<JavaAnnotation>,
+    private val annotationList: FirJavaAnnotationList,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
@@ -53,7 +49,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
-    private val isDeprecatedInJavaDoc: Boolean,
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
@@ -78,11 +73,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
-    override val annotations: List<FirAnnotation> by lazy {
-        unEnhancedAnnotations.convertAnnotationsToFir(
-            moduleData.session, source?.fakeElement(KtFakeSourceElementKind.Enhancement), isDeprecatedInJavaDoc
-        )
-    }
+    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val deprecationsProvider: DeprecationsProvider by lazy {
@@ -163,11 +154,10 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
-    var isDeprecatedInJavaDoc: Boolean = false
 
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    var javaAnnotations: MutableList<JavaAnnotation> = mutableListOf()
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
 
@@ -181,7 +171,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             origin = javaOrigin(isFromSource),
-            javaAnnotations.toMutableOrEmpty(),
+            annotationList,
             status,
             classKind,
             declarations,
@@ -192,7 +182,6 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             javaPackage,
             javaTypeParameterStack.copy(),
             existingNestedClassifierNames,
-            isDeprecatedInJavaDoc,
         )
     }
 

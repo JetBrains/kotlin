@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -60,7 +60,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 isInner = classSymbol.isInner
                 isPrimary = false
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
         } else {
             FirJavaMethodBuilder().apply {
@@ -101,7 +100,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                 isStatic = true
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
         }
 
@@ -131,7 +129,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     }
                     containingFunctionSymbol = constructorSymbol
                     name = field.name
-                    annotationBuilder = { emptyList() }
                     isVararg = false
                     isFromSource = true
                 }
@@ -181,7 +178,7 @@ private class JavaClassifierTypeStub(
 }
 
 private class JavaTypeParameterTypeStub(
-    override val classifier: JavaTypeParameter
+    override val classifier: JavaTypeParameter,
 ) : JavaClassifierType {
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()

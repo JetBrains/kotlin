@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.Companion.ANALYZED_DEPENDENCIES
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -42,8 +41,9 @@ class FirJavaTypeParameter(
     override val symbol: FirTypeParameterSymbol,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
     private var initialBounds: List<FirTypeRef>?,
-    override var annotations: MutableOrEmptyList<FirAnnotation>,
+    private val annotationList: FirJavaAnnotationList,
 ) : FirTypeParameter() {
+    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
 
     private enum class BoundsEnhancementState {
         NOT_STARTED,
@@ -180,13 +180,13 @@ class FirJavaTypeParameter(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        annotations = newAnnotations.toMutableOrEmpty()
+        shouldNotBeCalled()
     }
 }
 
 @FirBuilderDsl
-class FirJavaTypeParameterBuilder : FirAnnotationContainerBuilder {
-    override var source: KtSourceElement? = null
+class FirJavaTypeParameterBuilder {
+    var source: KtSourceElement? = null
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -194,9 +194,10 @@ class FirJavaTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirTypeParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
     val bounds: MutableList<FirTypeRef> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
 
-    override fun build(): FirTypeParameter {
+    fun build(): FirTypeParameter {
         return FirJavaTypeParameter(
             source,
             moduleData,
@@ -206,7 +207,7 @@ class FirJavaTypeParameterBuilder : FirAnnotationContainerBuilder {
             symbol,
             containingDeclarationSymbol,
             bounds.takeIf { it.isNotEmpty() } ?: emptyList(),
-            annotations.toMutableOrEmpty(),
+            annotationList,
         )
     }
 

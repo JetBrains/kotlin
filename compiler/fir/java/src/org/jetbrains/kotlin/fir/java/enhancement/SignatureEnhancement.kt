@@ -175,7 +175,7 @@ class FirSignatureEnhancement(
                     returnTypeRef = newReturnTypeRef
                     isFromSource = original.origin.fromSource
                     isVar = firElement.isVar
-                    annotationBuilder = { firElement.annotations }
+                    annotationList = FirJavaAnnotationList { firElement.annotations }
                     status = firElement.status
                     if (firElement is FirJavaField) {
                         lazyInitializer = firElement.lazyInitializer
