@@ -62,6 +62,7 @@ public:
     }
 
     void unlock() noexcept(noexcept(std::declval<Mutex>().unlock())) {
+        CallsCheckerIgnoreGuard ignoreCallChecks;
         mutex_.unlock();
     }
 
