@@ -558,8 +558,9 @@ KtFile: SameLineStatementRecovery.kt
     PsiWhiteSpace(' ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')

@@ -160,12 +160,16 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Nullable
     public PsiElement getRightParenthesis() {
-        return findChildByType(KtTokens.RPAR);
+        KtParameterList parameterList = getParameterList();
+        if (parameterList == null) return null;
+        return parameterList.getRightParenthesis();
     }
 
     @Nullable
     public PsiElement getLeftParenthesis() {
-        return findChildByType(KtTokens.LPAR);
+        KtParameterList parameterList = getParameterList();
+        if (parameterList == null) return null;
+        return parameterList.getLeftParenthesis();
     }
 
     @Nullable

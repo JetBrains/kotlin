@@ -16,8 +16,8 @@ KtFile: firstInSetter.kt
     PsiWhiteSpace('\n    ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiErrorElement:Expecting parameter name
             <empty list>
@@ -27,7 +27,7 @@ KtFile: firstInSetter.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
