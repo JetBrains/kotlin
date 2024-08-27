@@ -8,17 +8,12 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.Companion.ANALYZED_DEPENDENCIES
-import org.jetbrains.kotlin.fir.declarations.FirResolvedToPhaseState
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -90,35 +85,48 @@ class FirJavaTypeParameter(
     }
 
     /**
-     * This function is assumed to be called under facade- or method type parameter bounds lock.
-     * It never tries to resolve some other type parameter bounds, e.g. for a different class.
-     * Mutates [enhancedBounds].
+     * This function shouldn't be called under lock. It mutates nothing.
      *
-     * @return true if the bounds were changed, false if the first round had been already performed earlier
+     * @return a list of bounds, enhanced to the first round, or null if bounds were already enhanced in the past
      */
     internal fun performFirstRoundOfBoundsResolution(
         javaTypeParameterStack: JavaTypeParameterStack,
         source: KtSourceElement?,
-    ): Boolean {
+    ): MutableList<FirResolvedTypeRef>? {
         if (boundsEnhancementState != BoundsEnhancementState.NOT_STARTED) {
-            return false
+            return null
         }
-        boundsEnhancementState = BoundsEnhancementState.FIRST_ROUND
-        enhancedBounds = initialBounds!!.mapTo(mutableListOf()) {
+
+        return initialBounds!!.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) as FirResolvedTypeRef
         }
+    }
+
+    /**
+     * This function is assumed to be called under facade- or method type parameter bounds lock.
+     * It never tries to resolve some other type parameter bounds, e.g., for a different class.
+     * Mutates [enhancedBounds].
+     *
+     * @return true if the bounds were changed, false if the first round had been already performed earlier
+     */
+    internal fun storeBoundsAfterFirstRound(bounds: List<FirResolvedTypeRef>): Boolean {
+        if (boundsEnhancementState != BoundsEnhancementState.NOT_STARTED) {
+            return false
+        }
+
+        boundsEnhancementState = BoundsEnhancementState.FIRST_ROUND
+        enhancedBounds = bounds
         return true
     }
 
     /**
      * This function shouldn't be called under lock. It mutates nothing.
      *
-     * @return a mutable list of bound, enhanced to the 2nd round, or null if bounds were already enhanced in the past
+     * @return a mutable list of bound, enhanced to the second round, or null if bounds were already enhanced in the past
      */
     internal fun performSecondRoundOfBoundsResolution(
-        session: FirSession,
         javaTypeParameterStack: JavaTypeParameterStack,
         source: KtSourceElement?,
     ): MutableList<FirResolvedTypeRef>? {
@@ -129,9 +137,10 @@ class FirJavaTypeParameter(
             }
             return null
         }
+
         return initialBounds!!.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
-                session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
+                moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
             ) as FirResolvedTypeRef
         }
     }
@@ -139,15 +148,18 @@ class FirJavaTypeParameter(
     /**
      * This function is assumed to be called under facade- or method type parameter bounds lock.
      * Performs a final mutation of [enhancedBounds].
-     * Silently does nothing if bounds was already enhanced in the past.
+     *
+     * @return **false** if bounds were already enhanced in the past.
      */
-    internal fun storeBoundsAfterAllRounds(bounds: List<FirResolvedTypeRef>) {
+    internal fun storeBoundsAfterSecondRound(bounds: List<FirResolvedTypeRef>): Boolean {
         if (boundsEnhancementState != BoundsEnhancementState.FIRST_ROUND) {
-            return
+            return false
         }
+
         boundsEnhancementState = BoundsEnhancementState.COMPLETED
         enhancedBounds = bounds
         initialBounds = null
+        return true
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
