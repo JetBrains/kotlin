@@ -877,16 +877,6 @@ publishing {
             }
         }
 
-        // we cannot publish legacy common artifact with metadata in kotlin-stdlib-common
-        // because it will cause problems in explicitly configured stdlib dependencies in project
-//        val common = module("commonModule") {
-//            mavenPublication {
-//                artifactId = "$artifactBaseName-common"
-//                configureKotlinPomAttributes(project, "Kotlin Common Standard Library (for compatibility with legacy multiplatform)")
-//                artifact(tasks["sourcesJar"]) // publish sources.jar just for maven, without including it in Gradle metadata
-//            }
-//            variant("commonMainMetadataElements")
-//        }
         val js = module("jsModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-js"
