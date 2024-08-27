@@ -82,6 +82,7 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
                 <version>${kotlin.version}</version>
+                <type>pom</type>
             </dependency>
             <!-- Reflection Library -->
             <dependency>

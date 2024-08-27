@@ -22,7 +22,6 @@ import java.util.jar.Manifest
 
 val LIBRARIES = listOf(
         "kotlin-stdlib",
-        "kotlin-stdlib-common",
         "kotlin-stdlib-jdk7",
         "kotlin-stdlib-jdk8",
         "kotlin-reflect",
