@@ -43,6 +43,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-common</artifactId>
             <scope>runtime</scope>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
