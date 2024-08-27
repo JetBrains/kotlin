@@ -8,42 +8,46 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordNameLookup
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.getSingleVisibleClassifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+
+data class QualifierResolutionResult(
+    val qualifier: FirResolvedQualifier,
+    val applicability: CandidateApplicability,
+)
 
 fun BodyResolveComponents.resolveRootPartOfQualifier(
     namedReference: FirSimpleNamedReference,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
-): FirResolvedQualifier? {
+): QualifierResolutionResult? {
     val name = namedReference.name
     if (name.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-        return buildResolvedQualifier {
-            this.source = qualifiedAccess.source
-            packageFqName = FqName.ROOT
-            this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
-            annotations += qualifiedAccess.annotations
-        }.apply {
-            setTypeOfQualifier(this@resolveRootPartOfQualifier)
-        }
+        return buildResolvedQualifierResult(
+            qualifiedAccess = qualifiedAccess,
+            packageFqName = FqName.ROOT,
+            nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+        )
     }
 
     val scopes = createCurrentScopeList()
@@ -53,41 +57,26 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
         qualifiedAccess.source,
         file.source
     )
-    for (scope in scopes) {
-        scope.getSingleVisibleClassifier(session, this, name)?.let {
-            val klass = (it as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)
-                ?: return@let
 
-            val isVisible = session.visibilityChecker.isClassLikeVisible(
-                klass.fir,
-                session,
-                file,
-                containingDeclarations,
-            )
-            if (!isVisible) {
-                return@let
-            }
-            val classId = it.classId
-            return buildResolvedQualifier {
-                this.source = qualifiedAccess.source
-                packageFqName = classId.packageFqName
-                relativeClassFqName = classId.relativeClassName
-                symbol = it
-                this.typeArguments.addAll(qualifiedAccess.typeArguments)
-                this.nonFatalDiagnostics.addAll(
-                    extractNonFatalDiagnostics(
-                        qualifiedAccess.source,
-                        explicitReceiver = null,
-                        it,
-                        extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-                        session
-                    )
-                )
-                annotations += qualifiedAccess.annotations
-            }.apply {
-                setTypeOfQualifier(this@resolveRootPartOfQualifier)
-            }
+    var firstUnsuccessful: FirTypeCandidateCollector.TypeCandidate? = null
+    for (scope in scopes) {
+        val candidate = scope.getUnambiguousCandidate(name, this) ?: continue
+        val symbol = candidate.symbol as? FirClassLikeSymbol ?: continue
+
+        // Only return successful candidates here
+        if (candidate.applicability != CandidateApplicability.RESOLVED) {
+            if (firstUnsuccessful == null) firstUnsuccessful = candidate
+            continue
         }
+
+        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, candidate)
+    }
+
+    // If we have only found one unsuccessful candidate, return it.
+    if (firstUnsuccessful != null) {
+        // We checked the type of the symbol in the loop
+        val symbol = firstUnsuccessful.symbol as FirClassLikeSymbol
+        return buildResolvedQualifierResultForTopLevelClass(symbol, qualifiedAccess, nonFatalDiagnosticsFromExpression, firstUnsuccessful)
     }
 
     return FqName.ROOT.continueQualifierInPackage(
@@ -104,93 +93,138 @@ fun FirResolvedQualifier.continueQualifier(
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
     session: FirSession,
     components: BodyResolveComponents,
-): FirResolvedQualifier? {
+): QualifierResolutionResult? {
     val name = namedReference.name
-    symbol?.let { outerClassSymbol ->
-        val firClass = outerClassSymbol.fir
-        if (firClass !is FirClass) return null
-        return firClass.scopeProvider.getNestedClassifierScope(firClass, components.session, components.scopeSession)
-            ?.also {
-                session.lookupTracker?.recordNameLookup(name, it.scopeOwnerLookupNames, qualifiedAccess.source, components.file.source)
-            }
-            ?.getSingleVisibleClassifier(session, components, name)
-            ?.takeIf { it is FirClassLikeSymbol<*> }
-            ?.let { nestedClassSymbol ->
-                buildResolvedQualifier {
-                    this.source = qualifiedAccess.source
-                    packageFqName = this@continueQualifier.packageFqName
-                    relativeClassFqName = this@continueQualifier.relativeClassFqName?.child(name)
-                    symbol = nestedClassSymbol as FirClassLikeSymbol<*>
-                    isFullyQualified = true
 
-                    this.typeArguments.addAll(qualifiedAccess.typeArguments)
-                    this.typeArguments.addAll(this@continueQualifier.typeArguments)
-                    this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
-                    this.nonFatalDiagnostics.addAll(
-                        extractNonFatalDiagnostics(
-                            qualifiedAccess.source,
-                            explicitReceiver = null,
-                            nestedClassSymbol,
-                            extraNotFatalDiagnostics = this@continueQualifier.nonFatalDiagnostics,
-                            session
-                        )
-                    )
-                }.apply {
-                    setTypeOfQualifier(components)
-                }
-            }
-    }
-
-    return packageFqName.continueQualifierInPackage(
+    // No symbol means it's a package. Continue resolution in that package.
+    val outerClassSymbol = symbol ?: return packageFqName.continueQualifierInPackage(
         name,
         qualifiedAccess,
         nonFatalDiagnosticsFromExpression,
         components
     )
+
+    val firClass = outerClassSymbol.fir
+    if (firClass !is FirClass) return null
+
+    val nestedClassifierScope =
+        firClass.scopeProvider.getNestedClassifierScope(firClass, components.session, components.scopeSession) ?: return null
+
+    session.lookupTracker?.recordNameLookup(
+        name,
+        nestedClassifierScope.scopeOwnerLookupNames,
+        qualifiedAccess.source,
+        components.file.source
+    )
+
+    val candidate = nestedClassifierScope.getUnambiguousCandidate(name, components) ?: return null
+    val nestedClassSymbol = candidate.symbol as? FirClassLikeSymbol ?: return null
+
+    val nonFatalDiagnostics = extractNonFatalDiagnostics(
+        qualifiedAccess.source,
+        explicitReceiver = null,
+        nestedClassSymbol,
+        extraNotFatalDiagnostics = this@continueQualifier.nonFatalDiagnostics,
+        session
+    )
+
+    return components.buildResolvedQualifierResult(
+        qualifiedAccess = qualifiedAccess,
+        packageFqName = this@continueQualifier.packageFqName,
+        relativeClassFqName = this@continueQualifier.relativeClassFqName?.child(name),
+        symbol = nestedClassSymbol,
+        nonFatalDiagnostics = nonFatalDiagnostics + nonFatalDiagnosticsFromExpression.orEmpty(),
+        extraTypeArguments = this@continueQualifier.typeArguments,
+        candidate = candidate
+    )
+}
+
+private fun FirScope.getUnambiguousCandidate(name: Name, components: BodyResolveComponents): FirTypeCandidateCollector.TypeCandidate? {
+    val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
+    processClassifiersByName(name, collector::processCandidate)
+    return collector.getResult().resolvedCandidateOrNull()
 }
 
 private fun FqName.continueQualifierInPackage(
     name: Name,
     qualifiedAccess: FirQualifiedAccessExpression,
     nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
-    components: BodyResolveComponents
-): FirResolvedQualifier? {
+    components: BodyResolveComponents,
+): QualifierResolutionResult? {
     val childFqName = this.child(name)
     if (components.symbolProvider.getPackage(childFqName) != null) {
-        return buildResolvedQualifier {
-            this.source = qualifiedAccess.source
-            packageFqName = childFqName
-            this.typeArguments.addAll(qualifiedAccess.typeArguments)
-            this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
-            annotations += qualifiedAccess.annotations
-        }.apply {
-            setTypeOfQualifier(components)
-        }
+        return components.buildResolvedQualifierResult(
+            qualifiedAccess = qualifiedAccess,
+            packageFqName = childFqName,
+            nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+        )
     }
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = components.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
 
-    return buildResolvedQualifier {
-        this.source = qualifiedAccess.source
-        packageFqName = this@continueQualifierInPackage
-        relativeClassFqName = classId.relativeClassName
-        this.symbol = symbol
-        this.typeArguments.addAll(qualifiedAccess.typeArguments)
-        this.nonFatalDiagnostics.addAll(
-            extractNonFatalDiagnostics(
-                qualifiedAccess.source,
-                explicitReceiver = null,
-                symbol,
-                extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-                components.session
-            )
-        )
-        isFullyQualified = true
-        annotations += qualifiedAccess.annotations
-    }.apply {
-        setTypeOfQualifier(components)
-    }
+    val nonFatalDiagnostics = extractNonFatalDiagnostics(
+        qualifiedAccess.source,
+        explicitReceiver = null,
+        symbol,
+        extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+        components.session
+    )
+    return components.buildResolvedQualifierResult(
+        qualifiedAccess = qualifiedAccess,
+        packageFqName = this@continueQualifierInPackage,
+        relativeClassFqName = classId.relativeClassName,
+        symbol = symbol,
+        nonFatalDiagnostics = nonFatalDiagnostics,
+    )
+}
+
+private fun BodyResolveComponents.buildResolvedQualifierResultForTopLevelClass(
+    symbol: FirClassLikeSymbol<*>,
+    qualifiedAccess: FirQualifiedAccessExpression,
+    nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
+    candidate: FirTypeCandidateCollector.TypeCandidate,
+): QualifierResolutionResult {
+    val classId = symbol.classId
+    val nonFatalDiagnostics = extractNonFatalDiagnostics(
+        qualifiedAccess.source,
+        explicitReceiver = null,
+        symbol,
+        extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+        session
+    )
+    return buildResolvedQualifierResult(
+        qualifiedAccess = qualifiedAccess,
+        packageFqName = classId.packageFqName,
+        relativeClassFqName = classId.relativeClassName,
+        symbol = symbol,
+        nonFatalDiagnostics = nonFatalDiagnostics,
+        candidate = candidate,
+    )
+}
+
+private fun BodyResolveComponents.buildResolvedQualifierResult(
+    qualifiedAccess: FirQualifiedAccessExpression,
+    packageFqName: FqName,
+    relativeClassFqName: FqName? = null,
+    symbol: FirClassLikeSymbol<*>? = null,
+    nonFatalDiagnostics: List<ConeDiagnostic>? = null,
+    extraTypeArguments: List<FirTypeProjection>? = null,
+    candidate: FirTypeCandidateCollector.TypeCandidate? = null,
+): QualifierResolutionResult {
+    return QualifierResolutionResult(
+        buildResolvedQualifierForClass(
+            symbol = symbol,
+            sourceElement = qualifiedAccess.source,
+            packageFqName = packageFqName,
+            relativeClassName = relativeClassFqName,
+            typeArgumentsForQualifier = qualifiedAccess.typeArguments.applyIf(!extraTypeArguments.isNullOrEmpty()) { plus(extraTypeArguments.orEmpty()) },
+            diagnostic = candidate?.diagnostic,
+            nonFatalDiagnostics = nonFatalDiagnostics.orEmpty(),
+            annotations = qualifiedAccess.annotations
+        ),
+        candidate?.applicability ?: CandidateApplicability.RESOLVED,
+    )
 }
 
 internal fun extractNestedClassAccessDiagnostic(

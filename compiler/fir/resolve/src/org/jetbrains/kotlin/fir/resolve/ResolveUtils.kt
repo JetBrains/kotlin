@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -312,7 +313,7 @@ fun createKPropertyType(
 }
 
 fun BodyResolveComponents.buildResolvedQualifierForClass(
-    regularClass: FirClassLikeSymbol<*>,
+    symbol: FirClassLikeSymbol<*>,
     sourceElement: KtSourceElement?,
     // Note: we need type arguments here, see e.g. testIncompleteConstructorCall in diagnostic group
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
@@ -320,8 +321,28 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
     annotations: List<FirAnnotation> = emptyList(),
 ): FirResolvedQualifier {
-    val classId = regularClass.classId
+    return buildResolvedQualifierForClass(
+        symbol,
+        sourceElement,
+        symbol.classId.packageFqName,
+        symbol.classId.relativeClassName,
+        typeArgumentsForQualifier,
+        diagnostic,
+        nonFatalDiagnostics,
+        annotations
+    )
+}
 
+fun BodyResolveComponents.buildResolvedQualifierForClass(
+    symbol: FirClassLikeSymbol<*>?,
+    sourceElement: KtSourceElement?,
+    packageFqName: FqName,
+    relativeClassName: FqName?,
+    typeArgumentsForQualifier: List<FirTypeProjection>,
+    diagnostic: ConeDiagnostic?,
+    nonFatalDiagnostics: List<ConeDiagnostic>?,
+    annotations: List<FirAnnotation>,
+): FirResolvedQualifier {
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
     } else {
@@ -329,16 +350,16 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     }
 
     return builder.apply {
-        source = sourceElement
-        packageFqName = classId.packageFqName
-        relativeClassFqName = classId.relativeClassName
-        typeArguments.addAll(typeArgumentsForQualifier)
-        symbol = regularClass
-        this.nonFatalDiagnostics.addAll(nonFatalDiagnostics)
+        this.source = sourceElement
+        this.packageFqName = packageFqName
+        this.relativeClassFqName = relativeClassName
+        this.typeArguments.addAll(typeArgumentsForQualifier)
+        this.symbol = symbol
+        nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
     }.build().apply {
-        if (classId.isLocal) {
-            resultType = typeForQualifierByDeclaration(regularClass.fir, session, element = this@apply, file)
+        if (symbol?.classId?.isLocal == true) {
+            resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.coneType
         } else {

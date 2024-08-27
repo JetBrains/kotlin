@@ -7,11 +7,11 @@ fun main() {
     foo.PrivateBar.<!INVISIBLE_REFERENCE!>Baz<!>
 
     PrivateBar.<!INVISIBLE_REFERENCE!>Baz<!>
-    <!INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>PrivateBar<!>.<!INVISIBLE_REFERENCE!>Public<!>()
-    PrivateBar.<!INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>Public<!>.<!INVISIBLE_REFERENCE!>Public<!>()
+    <!INVISIBLE_REFERENCE!>PrivateBar<!>.<!INVISIBLE_REFERENCE!>Public<!>()
+    PrivateBar.<!INVISIBLE_REFERENCE!>Public<!>.<!INVISIBLE_REFERENCE!>Public<!>()
 
-    Some.<!INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>Private<!>.<!INVISIBLE_REFERENCE!>Public<!>()
-    PrivateInOtherFile.<!INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>Public<!>.<!INVISIBLE_REFERENCE!>Public<!>()
+    Some.<!INVISIBLE_REFERENCE!>Private<!>.<!INVISIBLE_REFERENCE!>Public<!>()
+    PrivateInOtherFile.<!INVISIBLE_REFERENCE!>Public<!>.<!INVISIBLE_REFERENCE!>Public<!>()
 }
 
 class Some {
