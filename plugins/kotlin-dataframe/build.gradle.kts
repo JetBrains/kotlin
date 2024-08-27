@@ -95,7 +95,7 @@ tasks.compileTestKotlin {
 
 tasks.create<JavaExec>("generateTests") {
     classpath = sourceSets.test.get().runtimeClasspath
-    mainClass.set("org.jetbrains.kotlin.fir.dataframe.GenerateTestsKt")
+    mainClass = "org.jetbrains.kotlin.fir.dataframe.GenerateTestsKt"
 }
 
 fun Test.setLibraryProperty(propName: String, jarName: String) {
@@ -109,11 +109,11 @@ fun Test.setLibraryProperty(propName: String, jarName: String) {
 }
 
 kotlinPublications {
-    fairDokkaJars.set(false)
+    fairDokkaJars = false
     publication {
-        publicationName.set("api")
-        artifactId.set("compiler-plugin-all")
-        description.set("Data processing in Kotlin")
-        packageName.set(artifactId)
+        publicationName = "api"
+        artifactId = "compiler-plugin-all"
+        description = "Data processing in Kotlin"
+        packageName = artifactId
     }
 }
