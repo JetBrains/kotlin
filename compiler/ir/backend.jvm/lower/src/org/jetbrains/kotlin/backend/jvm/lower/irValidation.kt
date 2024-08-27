@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override val validatorConfig: IrValidatorConfig
-        get() = super.validatorConfig.copy(
+    override val defaultValidationConfig: IrValidatorConfig
+        get() = super.defaultValidationConfig.copy(
             checkProperties = true,
             checkCrossFileFieldUsage = false,
         )
@@ -42,15 +42,13 @@ internal class JvmIrValidationBeforeLoweringPhase(
 internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
-    override val validatorConfig: IrValidatorConfig
-        get() = super.validatorConfig.copy(
+    override val defaultValidationConfig: IrValidatorConfig
+        get() = super.defaultValidationConfig.copy(
             checkProperties = true,
             checkCrossFileFieldUsage = false,
         )
 
-    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
-        performBasicIrValidation(irModule, context.irBuiltIns, phaseName, validatorConfig)
-
+    override fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {
         for (file in irModule.files) {
             for (declaration in file.declarations) {
                 if (declaration !is IrClass) {

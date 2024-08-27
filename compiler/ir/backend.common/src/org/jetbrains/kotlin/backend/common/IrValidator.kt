@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
 data class IrValidatorConfig(
-    val checkTypes: Boolean = true,
+    val checkTypes: Boolean = false,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
