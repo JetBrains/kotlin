@@ -11,6 +11,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.internal.file.archive.ZipCopyAction
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.util.PatternSet
@@ -71,11 +72,17 @@ abstract class AsmDeprecationExtension {
                         classReader.accept(classVisitor, ClassReader.EXPAND_FRAMES)
                         val newBytes = classWriter.toByteArray()
                         val newEntry = ZipEntry(path)
+                        if (!isPreserveFileTimestamps) {
+                            newEntry.time = ZipCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
+                        }
                         intermediateZipFile.putNextEntry(newEntry)
                         intermediateZipFile.write(newBytes)
                         intermediateZipFile.closeEntry()
                     } else {
                         val newEntry = ZipEntry(if (isDirectory) "$path/" else path)
+                        if (!isPreserveFileTimestamps) {
+                            newEntry.time = ZipCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
+                        }
                         intermediateZipFile.putNextEntry(newEntry)
                         if (!isDirectory) {
                             file.inputStream().use {
