@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.backend.js.getJsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
+import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
@@ -281,7 +281,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
-            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
+            writeText(wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
         }
 
         private fun prepareExternalJsFiles(): MutableList<String> {

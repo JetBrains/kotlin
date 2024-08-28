@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.utils
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.JavaScript
@@ -279,5 +280,24 @@ fun getTestChecker(testServices: TestServices): AbstractJsTestChecker {
         if (runTestInNashorn) NashornIrJsTestChecker else V8IrJsTestChecker
     } else {
         if (runTestInNashorn) NashornJsTestChecker else V8JsTestChecker
+    }
+}
+
+internal const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
+
+internal fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleKind, moduleId: String): String {
+    val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
+
+    return when (moduleKind) {
+        ModuleKind.COMMON_JS -> "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
+                "$content\n" +
+                "$KOTLIN_TEST_INTERNAL.endModule(\"$escapedModuleId\");"
+
+        ModuleKind.AMD, ModuleKind.UMD ->
+            "if (typeof $KOTLIN_TEST_INTERNAL !== \"undefined\") { " +
+                    "$KOTLIN_TEST_INTERNAL.setModuleId(\"$escapedModuleId\"); }\n" +
+                    "$content\n"
+
+        ModuleKind.PLAIN, ModuleKind.ES -> content
     }
 }

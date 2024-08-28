@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
+import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
@@ -239,7 +240,7 @@ class JsIrLoweringFacade(
     }
 
     private fun File.fixJsFile(rootDir: File, newJsTarget: File, moduleId: String, moduleKind: ModuleKind) {
-        val newJsCode = ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
+        val newJsCode = wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
         val jsCodeWithCorrectImportPath = jsIrPathReplacer.replacePathTokensWithRealPath(newJsCode, newJsTarget, rootDir)
 
         val oldJsMap = File("$absolutePath.map")
