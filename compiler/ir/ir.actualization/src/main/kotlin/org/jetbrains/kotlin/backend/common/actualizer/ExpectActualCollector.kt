@@ -328,6 +328,7 @@ private class ExpectActualLinkCollector {
                 declaration.symbol,
                 context.classActualizationInfo.actualTopLevels[callableId].orEmpty(),
                 context,
+                direct = true // Top level callables can't be actualized with typealias
             )
         }
 
@@ -336,18 +337,26 @@ private class ExpectActualLinkCollector {
             val classId = declaration.classIdOrFail
             val expectClassSymbol = declaration.symbol
             val actualClassLikeSymbol = data.classActualizationInfo.getActualWithoutExpansion(classId)
-            matchAndCheckExpectTopLevelDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
+            matchAndCheckExpectTopLevelDeclaration(
+                expectClassSymbol,
+                listOfNotNull(actualClassLikeSymbol),
+                data,
+                direct = true // Typealias is not expanded
+            )
         }
 
+        @Suppress("SameParameterValue") // It's easier to verify code correctness when direct is passed outside
         private fun matchAndCheckExpectTopLevelDeclaration(
             expectSymbol: IrSymbol,
             actualSymbols: List<IrSymbol>,
             context: MatchingContext,
+            direct: Boolean
         ) {
             val matched = AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
                 expectSymbol,
                 actualSymbols,
                 context,
+                direct
             )
             if (matched != null) {
                 AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstMatchedActual(
@@ -382,9 +391,9 @@ private class ExpectActualLinkCollector {
                 typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, expectActualMap
             )
 
-        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol, direct: Boolean) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)
-            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter)
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter, direct)
         }
 
         override fun onIncompatibleMembersFromClassScope(

@@ -48,6 +48,7 @@ object AbstractExpectActualMatcher {
         expectDeclaration: DeclarationSymbolMarker,
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
+        direct: Boolean,
     ): DeclarationSymbolMarker? = with(context) {
         matchSingleExpectAgainstPotentialActuals(
             expectDeclaration,
@@ -56,6 +57,7 @@ object AbstractExpectActualMatcher {
             expectClassSymbol = null,
             actualClassSymbol = null,
             mismatchedMembers = null,
+            direct,
         ).singleOrNull()
     }
 
@@ -86,6 +88,7 @@ object AbstractExpectActualMatcher {
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
         mismatchedMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>?,
+        direct: Boolean,
     ): List<DeclarationSymbolMarker> {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -109,7 +112,7 @@ object AbstractExpectActualMatcher {
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 ExpectActualMatchingCompatibility.MatchedSuccessfully -> {
-                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
+                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol, direct)
                     matched.add(actualMember)
                 }
                 is ExpectActualMatchingCompatibility.Mismatch -> mismatched.getOrPut(compatibility) { SmartList() }.add(actualMember)
