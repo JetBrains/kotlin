@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -29,6 +32,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -72,11 +77,26 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
 
     val backingPsi = backingPsi
     val otherBackingPsi = (other as KaFirPsiSymbol<*, *>).backingPsi
-    if ((backingPsi != null || otherBackingPsi != null) && backingPsi != otherBackingPsi) return false
-    if (backingPsi == null) return symbolEquals(other)
+    when {
+        // Both elements are null, so we cannot compare them
+        backingPsi == null && otherBackingPsi == null -> return symbolEquals(other)
 
-    // A Java symbol represents either source or library element at once. It cannot represent both at once.
-    if (backingPsi !is KtElement) return true
+        // Special handling for Java declarations as we cannot guarantee their identity
+        backingPsi is PsiMember || otherBackingPsi is PsiMember -> {
+            return backingPsi != null &&
+                    otherBackingPsi != null &&
+                    PsiEquivalenceUtil.areElementsEquivalent(backingPsi, otherBackingPsi)
+        }
+
+        backingPsi !== otherBackingPsi -> return false
+    }
+
+    if (backingPsi !is KtElement) {
+        errorWithAttachment("Unexpected backingPsi class: ${backingPsi?.let { it::class.simpleName }}") {
+            withPsiEntry("backingPsi", backingPsi)
+            withSymbolAttachment("this", analysisSession, this@psiOrSymbolEquals)
+        }
+    }
 
     // Source PSI elements represents only source symbols
     if (!backingPsi.cameFromKotlinLibrary) return true
