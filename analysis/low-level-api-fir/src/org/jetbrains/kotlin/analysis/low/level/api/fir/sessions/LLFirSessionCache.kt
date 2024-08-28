@@ -10,8 +10,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.CleanableSoftValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.CleanableValueReferenceCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
@@ -45,7 +45,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
     private val danglingFileSessionCache: SessionStorage = createCache()
     private val unstableDanglingFileSessionCache: SessionStorage = createCache()
 
-    private fun createCache(): SessionStorage = CleanableSoftValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
+    private fun createCache(): SessionStorage = CleanableWeakValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
