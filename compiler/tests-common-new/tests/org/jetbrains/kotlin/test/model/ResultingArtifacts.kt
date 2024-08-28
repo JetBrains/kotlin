@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
-import org.jetbrains.kotlin.js.facade.TranslationResult
 import java.io.File
 
 class SourceFileInfo(
@@ -36,8 +35,6 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Js
 
         open fun unwrap(): Js = this
-
-        class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
 
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
 
