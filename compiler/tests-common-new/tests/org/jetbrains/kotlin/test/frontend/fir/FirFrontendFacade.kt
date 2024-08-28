@@ -217,8 +217,7 @@ open class FirFrontendFacade(
                         resolvedKLibs = resolvedKLibs,
                         packageAndMetadataPartProvider = packagePartProvider as PackageAndMetadataPartProvider,
                         languageVersionSettings = languageVersionSettings,
-                        registerExtraComponents = ::registerExtraComponents
-                    )
+                    ).also(::registerExtraComponents)
                 } else {
                     FirJvmSessionFactory.createLibrarySession(
                         moduleName,
@@ -230,8 +229,7 @@ open class FirFrontendFacade(
                         packagePartProvider,
                         languageVersionSettings,
                         predefinedJavaComponents,
-                        registerExtraComponents = ::registerExtraComponents,
-                    )
+                    ).also(::registerExtraComponents)
                 }
             }
             module.targetPlatform.isJs() -> {
@@ -244,8 +242,7 @@ open class FirFrontendFacade(
                     testServices,
                     configuration,
                     extensionRegistrars,
-                    registerExtraComponents = ::registerExtraComponents,
-                )
+                ).also(::registerExtraComponents)
             }
             module.targetPlatform.isNative() -> {
                 projectEnvironment = null
@@ -258,8 +255,7 @@ open class FirFrontendFacade(
                     configuration,
                     extensionRegistrars,
                     languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
-                )
+                ).also(::registerExtraComponents)
             }
             module.targetPlatform.isWasm() -> {
                 projectEnvironment = null
@@ -272,8 +268,7 @@ open class FirFrontendFacade(
                     configuration,
                     extensionRegistrars,
                     languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
-                )
+                ).also(::registerExtraComponents)
             }
             else -> error("Unsupported")
         }
@@ -369,9 +364,8 @@ open class FirFrontendFacade(
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
                     languageVersionSettings = languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator,
-                )
+                ).also(::registerExtraComponents)
             }
             targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createModuleBasedSession(
@@ -389,9 +383,8 @@ open class FirFrontendFacade(
                     importTracker = null,
                     predefinedJavaComponents,
                     needRegisterJavaElementFinder = true,
-                    registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator,
-                )
+                ).also(::registerExtraComponents)
             }
             targetPlatform.isJs() -> {
                 TestFirJsSessionFactory.createModuleBasedSession(
@@ -399,10 +392,9 @@ open class FirFrontendFacade(
                     sessionProvider,
                     extensionRegistrars,
                     testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
-                    null,
-                    registerExtraComponents = ::registerExtraComponents,
+                    lookupTracker = null,
                     sessionConfigurator,
-                )
+                ).also(::registerExtraComponents)
             }
             targetPlatform.isNative() -> {
                 FirNativeSessionFactory.createModuleBasedSession(
@@ -410,9 +402,8 @@ open class FirFrontendFacade(
                     sessionProvider,
                     extensionRegistrars,
                     languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
                     init = sessionConfigurator
-                )
+                ).also(::registerExtraComponents)
             }
             targetPlatform.isWasm() -> {
                 TestFirWasmSessionFactory.createModuleBasedSession(
@@ -421,10 +412,9 @@ open class FirFrontendFacade(
                     extensionRegistrars,
                     languageVersionSettings,
                     testServices.compilerConfigurationProvider.getCompilerConfiguration(module).wasmTarget,
-                    null,
-                    registerExtraComponents = ::registerExtraComponents,
+                    lookupTracker = null,
                     sessionConfigurator,
-                )
+                ).also(::registerExtraComponents)
             }
             else -> error("Unsupported")
         }

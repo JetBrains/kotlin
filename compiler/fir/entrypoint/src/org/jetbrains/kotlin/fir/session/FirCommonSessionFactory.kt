@@ -40,7 +40,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         resolvedKLibs: List<KotlinResolvedLibrary>,
         packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         return createLibrarySession(
             mainModuleName,
@@ -50,7 +49,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             extensionRegistrars,
             registerExtraComponents = {
                 it.registerDefaultComponents()
-                registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
@@ -91,7 +89,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
         importTracker: ImportTracker? = null,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createModuleBasedSession(
@@ -105,7 +102,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
-                registerExtraComponents(it)
             },
             registerExtraCheckers = {},
             createKotlinScopeProvider = {

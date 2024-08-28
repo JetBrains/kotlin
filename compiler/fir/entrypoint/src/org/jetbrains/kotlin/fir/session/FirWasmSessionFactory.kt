@@ -34,7 +34,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         wasmTarget: WasmTarget,
         lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
         return createModuleBasedSession(
@@ -48,7 +47,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
-                registerExtraComponents(it)
                 @OptIn(SessionConfiguration::class)
                 it.register(
                     FirDefaultImportProviderHolder::class,
@@ -82,7 +80,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession = createLibrarySession(
         mainModuleName,
         sessionProvider,
@@ -91,7 +88,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         extensionRegistrars,
         registerExtraComponents = {
             it.registerDefaultComponents()
-            registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->

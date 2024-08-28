@@ -35,7 +35,6 @@ object TestFirWasmSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         val resolvedLibraries = resolveLibraries(
@@ -50,14 +49,12 @@ object TestFirWasmSessionFactory {
             moduleDataProvider,
             extensionRegistrars,
             languageVersionSettings,
-            registerExtraComponents,
         )
     }
 
     fun createModuleBasedSession(
         mainModuleData: FirModuleData, sessionProvider: FirProjectSessionProvider, extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings, wasmTarget: WasmTarget, lookupTracker: LookupTracker?,
-        registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
         FirWasmSessionFactory.createModuleBasedSession(
@@ -68,7 +65,6 @@ object TestFirWasmSessionFactory {
             wasmTarget,
             lookupTracker,
             icData = null,
-            registerExtraComponents,
             sessionConfigurator
         )
 }

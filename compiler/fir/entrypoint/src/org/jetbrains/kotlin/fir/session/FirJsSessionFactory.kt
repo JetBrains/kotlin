@@ -42,7 +42,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         compilerConfiguration: CompilerConfiguration,
         lookupTracker: LookupTracker?,
         icData: KlibIcData? = null,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
         return createModuleBasedSession(
@@ -57,7 +56,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerJsComponents(compilerConfiguration)
-                registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
@@ -86,7 +84,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         compilerConfiguration: CompilerConfiguration,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession = createLibrarySession(
         mainModuleName,
         sessionProvider,
@@ -96,7 +93,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         registerExtraComponents = {
             it.registerDefaultComponents()
             it.registerJsComponents(compilerConfiguration)
-            registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider() },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->

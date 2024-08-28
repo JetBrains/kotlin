@@ -44,7 +44,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,
-        registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
         return createLibrarySession(
@@ -56,7 +55,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
-                registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
@@ -101,7 +99,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         importTracker: ImportTracker?,
         predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
-        registerExtraComponents: ((FirSession) -> Unit),
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         return createModuleBasedSession(
@@ -117,7 +114,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
                 it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 it.register(FirJvmTargetProvider::class, FirJvmTargetProvider(jvmTarget))
-                registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
             createKotlinScopeProvider = {

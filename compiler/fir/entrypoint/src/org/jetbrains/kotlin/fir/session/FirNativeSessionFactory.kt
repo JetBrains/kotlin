@@ -34,7 +34,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
     ): FirSession {
         return createLibrarySession(
             mainModuleName,
@@ -45,7 +44,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = { session ->
                 session.registerDefaultComponents()
                 session.registerNativeComponents()
-                registerExtraComponents(session)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
@@ -71,7 +69,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
         init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit) = {},
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
@@ -85,7 +82,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerNativeComponents()
-                registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
