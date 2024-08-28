@@ -1134,6 +1134,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN) { firDiagnostic ->
+        KotlinActualAnnotationHasNoEffectInKotlinImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OVERRIDE_DEPRECATION) { firDiagnostic ->
         OverrideDeprecationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
