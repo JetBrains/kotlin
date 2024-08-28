@@ -47,10 +47,14 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         return KaDanglingFileResolutionMode.PREFER_SELF
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun computeContextModule(file: KtFile): KaModule {
+        val originalFile = file.originalFile.takeIf { it !== file }
+        originalFile?.virtualFile?.analysisExtensionFileContextModule?.let { return it }
+
         val contextElement = file.context
             ?: file.analysisContext
-            ?: file.originalFile.takeIf { it !== file }
+            ?: originalFile
 
         if (contextElement != null) {
             return getModule(contextElement, useSiteModule = null)
