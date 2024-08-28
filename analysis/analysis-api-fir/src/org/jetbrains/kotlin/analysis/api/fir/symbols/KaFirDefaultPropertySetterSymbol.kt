@@ -148,5 +148,9 @@ internal class KaFirDefaultPropertySetterSymbol(
             other is KaFirDefaultPropertySetterSymbol &&
             other.owningKaProperty == owningKaProperty
 
+    /**
+     * +4 is used to reduce the chance of clash with the original symbol
+     * and other dependent parts (like receiver, backing field, etc.)
+     */
     override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + 4
 }
