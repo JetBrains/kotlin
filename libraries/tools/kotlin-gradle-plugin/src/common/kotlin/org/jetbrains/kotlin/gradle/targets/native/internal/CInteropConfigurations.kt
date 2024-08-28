@@ -10,18 +10,20 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
+import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
@@ -50,7 +52,7 @@ internal fun createCInteropApiElementsKlibArtifact(
         artifact.builtBy(packTask)
     }
     if (compilation.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        configuration.outgoing.variants.getByName(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME)
+        configuration.outgoing.variants.getByName(NON_PACKED_KLIB_VARIANT_NAME)
             .artifact(interopTask.flatMap { it.klibDirectory }) {
                 it.builtBy(interopTask)
             }
@@ -73,7 +75,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(compilation.target)
             if (compilation.target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setAttributeTo(compilation.target.project, attributes, true)
+                KlibPackaging.setAttributeTo(compilation.target.project, attributes, false)
             }
             compilation.copyAttributesTo(project.providers, dest = attributes)
             attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
@@ -110,8 +112,8 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
 
     return configurations.createConsumable(configurationName).apply {
         if (target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-            outgoing.variants.create(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME) { variant ->
-                KlibPackaging.setAttributeTo(project, variant.attributes, true)
+            outgoing.variants.create(NON_PACKED_KLIB_VARIANT_NAME) { variant ->
+                KlibPackaging.setAttributeTo(project, variant.attributes, false)
             }
         }
         /* Deferring attributes to wait for target.attributes to be configured by user */
@@ -123,7 +125,7 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
             if (target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setAttributeTo(project, attributes, false)
+                KlibPackaging.setAttributeTo(project, attributes, true)
             }
 
             /* Expose api dependencies */

@@ -14,12 +14,13 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.internal.extensions.core.extra
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
@@ -126,11 +127,11 @@ class KT56143CinteropConfigurationAttributes {
 
             assertEquals(
                 when {
-                    nonPackedKlibsEnabled && usesNonPackedKlib -> KlibPackaging.NON_PACKED
-                    nonPackedKlibsEnabled && !usesNonPackedKlib -> KlibPackaging.PACKED
+                    nonPackedKlibsEnabled && usesNonPackedKlib -> project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED)
+                    nonPackedKlibsEnabled && !usesNonPackedKlib -> project.objects.named(KlibPackaging::class.java, KlibPackaging.PACKED)
                     else -> null
                 },
-                configuration.attributes.getAttribute(KlibPackaging.attribute),
+                configuration.attributes.getAttribute(KlibPackaging.ATTRIBUTE),
                 "Unexpected Klib packaging on $configuration"
             )
         }
@@ -138,7 +139,7 @@ class KT56143CinteropConfigurationAttributes {
         project.multiplatformExtension.targets.forEach { target ->
             val cinteropApiElements = project.locateOrCreateCInteropApiElementsConfiguration(target)
             checkConfigurationAttributes(cinteropApiElements, false, nonPackedKlibsEnabled)
-            val nonPackedVariant = cinteropApiElements.outgoing.variants.findByName(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME)
+            val nonPackedVariant = cinteropApiElements.outgoing.variants.findByName(NON_PACKED_KLIB_VARIANT_NAME)
             if (!nonPackedKlibsEnabled) {
                 assertEquals(
                     null, nonPackedVariant,

@@ -12,11 +12,12 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
@@ -204,10 +205,10 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     ) {
         for (configuration in apiConfigurations) {
             assertNull(
-                configuration.attributes.getAttribute(KlibPackaging.attribute),
-                "The primary variant of ${configuration.name} should not have attribute ${KlibPackaging.ATTRIBUTE_NAME} set to."
+                configuration.attributes.getAttribute(KlibPackaging.ATTRIBUTE),
+                "The primary variant of ${configuration.name} should not have attribute ${KlibPackaging.ATTRIBUTE.name} set to."
             )
-            val nonPackedKlibVariant = configuration.outgoing.variants.findByName(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME)
+            val nonPackedKlibVariant = configuration.outgoing.variants.findByName(NON_PACKED_KLIB_VARIANT_NAME)
             assertNull(
                 nonPackedKlibVariant,
                 "Expected non-packed KLIB variant to be absent in configuration ${configuration.name}"
@@ -230,17 +231,17 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     ) {
         for (configuration in apiConfigurations) {
             assertEquals(
-                KlibPackaging.PACKED,
-                configuration.attributes.getAttribute(KlibPackaging.attribute),
+                project.objects.named(KlibPackaging::class.java, KlibPackaging.PACKED),
+                configuration.attributes.getAttribute(KlibPackaging.ATTRIBUTE),
                 "The primary variant of ${configuration.name} should be packed."
             )
-            val nonPackedKlibVariant = configuration.outgoing.variants.findByName(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME)
+            val nonPackedKlibVariant = configuration.outgoing.variants.findByName(NON_PACKED_KLIB_VARIANT_NAME)
             assertNotNull(nonPackedKlibVariant) {
                 "Expected non-packed KLIB variant to be present in configuration ${configuration.name}"
             }
             assertEquals(
-                KlibPackaging.NON_PACKED,
-                nonPackedKlibVariant.attributes.getAttribute(KlibPackaging.attribute),
+                project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED),
+                nonPackedKlibVariant.attributes.getAttribute(KlibPackaging.ATTRIBUTE),
                 "The non-packed variant of ${configuration.name} should have proper attribute."
             )
             // cinterop also adds artifacts to main apiElements
@@ -272,8 +273,8 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         for ((variant, usages) in usagesByVariant) {
             for (usage in usages) {
                 assertNull(
-                    usage.attributes.getAttribute(KlibPackaging.attribute),
-                    "Expected no attribute ${KlibPackaging.ATTRIBUTE_NAME} to be published for usage context ${usage.name} of variant ${variant.name}."
+                    usage.attributes.getAttribute(KlibPackaging.ATTRIBUTE),
+                    "Expected no attribute ${KlibPackaging.ATTRIBUTE.name} to be published for usage context ${usage.name} of variant ${variant.name}."
                 )
             }
         }

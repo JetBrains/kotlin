@@ -1357,6 +1357,16 @@ public class org/jetbrains/kotlin/gradle/plugin/SubpluginOption {
 	public final fun getValue ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging : org/gradle/api/Named {
+	public static final field ATTRIBUTE Lorg/gradle/api/attributes/Attribute;
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion;
+	public static final field NON_PACKED Ljava/lang/String;
+	public static final field PACKED Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode : java/lang/Enum {
 	public static final field BITCODE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;

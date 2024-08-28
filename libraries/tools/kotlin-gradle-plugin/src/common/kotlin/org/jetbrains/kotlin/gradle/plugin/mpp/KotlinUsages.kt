@@ -10,6 +10,8 @@ import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.attributes.chooseCandidateByName
+import org.jetbrains.kotlin.gradle.internal.attributes.getCandidateNames
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -174,9 +176,9 @@ object KotlinUsages {
     }
 
     private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
-        override fun execute(details: MultipleCandidatesDetails<Usage?>) = details.run {
+        override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_CINTEROP) {
-                val candidateNames = candidateValues.map { it?.name }
+                val candidateNames = getCandidateNames()
                 when {
                     KOTLIN_CINTEROP in candidateNames -> chooseCandidateByName(KOTLIN_CINTEROP)
                     KOTLIN_API in candidateNames -> chooseCandidateByName(KOTLIN_API)
@@ -211,8 +213,8 @@ object KotlinUsages {
     }
 
     private class KotlinUsagesDisambiguation : AttributeDisambiguationRule<Usage> {
-        override fun execute(details: MultipleCandidatesDetails<Usage?>) = with(details) {
-            val candidateNames = candidateValues.map { it?.name }.toSet()
+        override fun execute(details: MultipleCandidatesDetails<Usage>) = with(details) {
+            val candidateNames = getCandidateNames().toSet()
 
             // if both API and runtime artifacts are chosen according to the compatibility rules, then
             // the consumer requested nothing specific, so provide them with the runtime variant, which is more complete:
@@ -239,10 +241,6 @@ object KotlinUsages {
                 chooseCandidateByName(KOTLIN_RUNTIME)
             }
         }
-    }
-
-    private fun MultipleCandidatesDetails<Usage?>.chooseCandidateByName(name: String?): Unit {
-        closestMatch(candidateValues.single { it?.name == name }!!)
     }
 
     internal fun setupAttributesMatchingStrategy(

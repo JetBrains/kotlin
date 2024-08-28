@@ -9,10 +9,11 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -107,6 +108,6 @@ private fun Configuration.configureAttributesFor(project: Project, target: Konan
     attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     if (kotlinPropertiesProvider.useNonPackedKlibs) {
-        KlibPackaging.setAttributeTo(project, attributes, true)
+        KlibPackaging.setAttributeTo(project, attributes, false)
     }
 }

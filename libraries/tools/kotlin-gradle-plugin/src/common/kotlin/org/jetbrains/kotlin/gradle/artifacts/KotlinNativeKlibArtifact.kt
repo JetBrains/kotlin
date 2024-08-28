@@ -15,7 +15,6 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -108,7 +108,7 @@ internal fun createKlibArtifact(
         attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
 
         if (compilation.target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-            outgoing.variants.getByName(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME)
+            outgoing.variants.getByName(NON_PACKED_KLIB_VARIANT_NAME)
                 .artifact(klibProducingTask.flatMap { it.klibDirectory }) {
                     it.builtBy(klibProducingTask)
                 }

@@ -21,7 +21,7 @@ val kotlinStdlibJs by configurations.creating {
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         // the workaround below for KT-65266 expects a packed artifact
         val klibPackagingAttribute = Attribute.of("org.jetbrains.kotlin.klib.packaging", String::class.java)
-        attribute(klibPackagingAttribute, "PACKED")
+        attribute(klibPackagingAttribute, "packed")
     }
 }
 

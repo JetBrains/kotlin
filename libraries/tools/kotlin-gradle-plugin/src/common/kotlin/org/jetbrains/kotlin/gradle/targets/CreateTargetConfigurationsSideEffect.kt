@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.gradle.targets
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -60,9 +61,9 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             )
         }
         if (target.producesPlatformKlib && target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-            KlibPackaging.setAttributeTo(project, attributes, false)
-            outgoing.variants.create(KlibPackaging.NON_PACKED_KLIB_VARIANT_NAME) { variant ->
-                KlibPackaging.setAttributeTo(project, variant.attributes, true)
+            KlibPackaging.setAttributeTo(project, attributes, true)
+            outgoing.variants.create(NON_PACKED_KLIB_VARIANT_NAME) { variant ->
+                KlibPackaging.setAttributeTo(project, variant.attributes, false)
             }
         }
     }
