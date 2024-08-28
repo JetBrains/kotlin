@@ -37,7 +37,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
         beforeEnteringAnalysis(analysisSession, useSiteElement)
         return try {
-            analysisSession.action()
+            val lock = Any()
+            synchronized(lock) {
+                analysisSession.action()
+            }
         } finally {
             afterLeavingAnalysis(analysisSession, useSiteElement)
         }
@@ -51,7 +54,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
         beforeEnteringAnalysis(analysisSession, useSiteModule)
         return try {
-            analysisSession.action()
+            val lock = Any()
+            synchronized(lock) {
+                analysisSession.action()
+            }
         } finally {
             afterLeavingAnalysis(analysisSession, useSiteModule)
         }
