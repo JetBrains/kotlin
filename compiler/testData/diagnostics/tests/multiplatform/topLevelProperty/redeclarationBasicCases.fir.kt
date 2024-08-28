@@ -12,7 +12,7 @@ val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{METADATA}, REDECLARATION!>x2<!> = 2
 
 // MODULE: jvm()()(common)
 // FILE: main.kt
-<!AMBIGUOUS_EXPECTS!>actual val x1 = 1<!>
+<!AMBIGUOUS_EXPECTS!>actual<!> val x1 = 1
 
 actual val x2 = 2
 
