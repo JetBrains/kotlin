@@ -10,12 +10,13 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 
-@CacheableTask
+@DisableCachingByDefault(because = "This task only merges binaries")
 internal abstract class MergeStaticLibrariesTask : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
