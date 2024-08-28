@@ -934,7 +934,7 @@ object FirErrors {
     val DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class)
     val DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val DEPRECATED_DECLARATION_OF_ENUM_ENTRY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_DECLARATION_OF_ENUM_ENTRY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtEnumEntry::class)
+    val DEPRECATED_DECLARATION_OF_ENUM_ENTRY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_DECLARATION_OF_ENUM_ENTRY", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtEnumEntry::class)
 
     // Compatibility issues
     val INCOMPATIBLE_CLASS: KtDiagnosticFactory2<String, IncompatibleVersionErrorData<*>> = KtDiagnosticFactory2("INCOMPATIBLE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

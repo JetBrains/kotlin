@@ -1,4 +1,4 @@
-FILE: enumEntriesAmbiguity.kt
+FILE: enumEntriesAmbiguity.fir.kt
     public final enum class Ambiguous : R|kotlin/Enum<Ambiguous>| {
         private constructor(): R|Ambiguous| {
             super<R|kotlin/Enum<Ambiguous>|>()
