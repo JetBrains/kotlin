@@ -110,7 +110,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         with(SourceNavigator.forElement(regularClass)) {
             for (superTypeRef in regularClass.superTypeRefs) {
                 if (superTypeRef.isInConstructorCallee()) {
-                    reporter.reportOn(regularClass.source, FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, context)
+                    reporter.reportOn(superTypeRef.source ?: regularClass.source, FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, context)
                 }
             }
         }
