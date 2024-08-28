@@ -76,6 +76,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("KotlinActualAnnotationHasNoEffectInKotlin.kt")
+    public void testKotlinActualAnnotationHasNoEffectInKotlin() {
+      runTest("compiler/testData/diagnostics/tests/KotlinActualAnnotationHasNoEffectInKotlin.kt");
+    }
+
+    @Test
     @TestMetadata("kt56612.kt")
     public void testKt56612() {
       runTest("compiler/testData/diagnostics/tests/kt56612.kt");
