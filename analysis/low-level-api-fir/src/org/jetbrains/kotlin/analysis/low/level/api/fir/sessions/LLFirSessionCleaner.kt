@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.SoftValueCleaner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.ValueReferenceCleaner
 
 /**
- * [LLFirSessionCleaner] is a [SoftValueCleaner] which handles cleanup of the session after it has been explicitly invalidated or garbage
- * collected.
+ * [LLFirSessionCleaner] is a [ValueReferenceCleaner] which handles cleanup of the session after it has been explicitly invalidated or
+ * garbage-collected.
  *
- * It must not keep a strong reference to its associated [LLFirSession], because otherwise the soft reference-based garbage collection of
+ * It must not keep a strong reference to its associated [LLFirSession], because otherwise the weak reference-based garbage collection of
  * unused sessions will not work.
  *
  * @param disposable The associated [LLFirSession]'s [disposable]. Keeping a separate reference ensures that the disposable can be disposed
  *  even after the session has been reclaimed by the GC.
  */
-internal class LLFirSessionCleaner(private val disposable: Disposable?) : SoftValueCleaner<LLFirSession> {
+internal class LLFirSessionCleaner(private val disposable: Disposable?) : ValueReferenceCleaner<LLFirSession> {
     override fun cleanUp(value: LLFirSession?) {
         // If both the session and the disposable are present, we can check their consistency. Otherwise, this is not possible, because
         // we cannot store the session in the session cleaner (otherwise the session will never be garbage-collected).

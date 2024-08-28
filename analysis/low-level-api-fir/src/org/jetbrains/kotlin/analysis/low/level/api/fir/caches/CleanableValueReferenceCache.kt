@@ -9,22 +9,23 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.SoftReference
+import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * [SoftValueCleaner] performs a cleaning operation after its associated value has been removed from the cache or garbage-collected. The
- * cleaner will be strongly referenced from the soft references held by the cache.
+ * [ValueReferenceCleaner] performs a cleaning operation after its associated value has been removed from a [CleanableValueReferenceCache]
+ * or was garbage-collected. The cleaner will be strongly referenced from the value reference held by the cache.
  *
- * You **must not** store a reference to the associated value [V] in its [SoftValueCleaner]. Otherwise, the cached values will never become
- * softly reachable.
+ * You **must not** store a reference to the associated value [V] in its [ValueReferenceCleaner]. Otherwise, the cached values will never
+ * become non-strongly reachable.
  *
- * The cleaner may be invoked multiple times by the cache, in any thread. Implementations of [SoftValueCleaner] must ensure that the
+ * The cleaner may be invoked multiple times by the cache, in any thread. Implementations of [ValueReferenceCleaner] must ensure that the
  * operation is repeatable and thread-safe.
  */
 @LLFirInternals
-fun interface SoftValueCleaner<V> {
+fun interface ValueReferenceCleaner<V> {
     /**
-     * Cleans up after [value] has been removed from the cache or garbage-collected.
+     * Cleans up after [value] has been removed from the [CleanableValueReferenceCache] or was garbage-collected.
      *
      * [value] is non-null if it was removed from the cache and is still referable, or `null` if it has already been garbage-collected.
      */
@@ -32,34 +33,31 @@ fun interface SoftValueCleaner<V> {
 }
 
 /**
- * A cache with hard references to its keys [K] and soft references to its values [V], which will be cleaned up after manual removal and
- * garbage collection. **The cache should only be used in read/write actions, as specified by the individual functions.**
+ * A cache with strong references to its keys [K] and non-strong references to its values [V], which will be cleaned up after manual removal
+ * and garbage collection. **The cache should only be used in read/write actions, as specified by the individual functions.**
  *
- * Each value of the cache has a [SoftValueCleaner] associated with it. The cache ensures that this cleaner is invoked when the value is
- * removed from or replaced in the cache, or when the value has been garbage-collected. Already collected values from the cache's reference
- * queue are guaranteed to be processed on mutating operations (such as `put`, `remove`, and so on). The [SoftValueCleaner] will be strongly
- * referenced from the cache until collected values have been processed.
+ * Each value of the cache has a [ValueReferenceCleaner] associated with it. The cache ensures that this cleaner is invoked when the value
+ * is removed from or replaced in the cache, or when the value has been garbage-collected. Already collected values from the cache's
+ * reference queue are guaranteed to be processed on mutating operations (such as `put`, `remove`, and so on). The [ValueReferenceCleaner]
+ * will be strongly referenced from the cache until collected values have been processed.
  *
  * `null` keys or values are not allowed.
- *
- * @param getCleaner Returns the [SoftValueCleaner] that should be invoked after [V] has been collected or removed from the cache. The
- *  function will be invoked once when the value is added to the cache.
  */
 @LLFirInternals
-class CleanableSoftValueCache<K : Any, V : Any>(
-    private val getCleaner: (V) -> SoftValueCleaner<V>,
-) {
-    private val backingMap = ConcurrentHashMap<K, SoftReferenceWithCleanup<K, V>>()
+abstract class CleanableValueReferenceCache<K : Any, V : Any> {
+    private val backingMap = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>()
 
-    private val referenceQueue = ReferenceQueue<V>()
+    protected val referenceQueue = ReferenceQueue<V>()
+
+    protected abstract fun createReference(key: K, value: V): ReferenceWithCleanup<K, V>
 
     private fun processQueue() {
         while (true) {
             val ref = referenceQueue.poll() ?: break
-            check(ref is SoftReferenceWithCleanup<*, *>)
+            check(ref is ReferenceWithCleanup<*, *>)
 
             @Suppress("UNCHECKED_CAST")
-            ref as SoftReferenceWithCleanup<K, V>
+            ref as ReferenceWithCleanup<K, V>
 
             val wasRemoved = backingMap.remove(ref.key, ref)
 
@@ -104,12 +102,12 @@ class CleanableSoftValueCache<K : Any, V : Any>(
      */
     fun compute(key: K, computeValue: (K, V?) -> V?): V? {
         // We need to keep a potentially newly computed value on the stack so that it isn't accidentally garbage-collected before the end of
-        // this function. Without this variable, after `backingMap.compute` and before the end of this function, the soft reference kept in
-        // the cache might be the only reference to the new value. With unlucky GC timing, it might be collected.
+        // this function. Without this variable, after `backingMap.compute` and before the end of this function, the reference kept in the
+        // cache might be the only reference to the new value. With unlucky GC timing, it might be collected.
         var newValue: V? = null
 
         // If we replace an existing reference, we need to clean it up per the contract of the cache.
-        var removedRef: SoftReferenceWithCleanup<K, V>? = null
+        var removedRef: ReferenceWithCleanup<K, V>? = null
 
         val newRef = backingMap.compute(key) { _, currentRef ->
             // If `currentRef` exists but its value is `null`, to the outside it will look like no value existed in the cache. It will be
@@ -123,17 +121,17 @@ class CleanableSoftValueCache<K : Any, V : Any>(
                     null
                 }
 
-                // Avoid creating another soft reference for the same value, for example if `f` doesn't need to change the cached value,
-                // though it isn't necessary for correct functioning of the cache. If there are multiple soft references for the same value,
-                // they will all remain valid until the value itself is garbage-collected. Cleanup in `processQueue` will be performed once
-                // for each such soft reference, which will result in multiple cleanup calls. This is legal given the contract of
-                // `SoftValueCleaner`, but wasteful and thus best to avoid. Also, we shouldn't clean up such a reference, as per the
-                // contract of the `compute` function.
+                // Avoid creating another reference for the same value, for example if `f` doesn't need to change the cached value, though
+                // it isn't necessary for correct functioning of the cache. If there are multiple references for the same value, they will
+                // all remain valid until the value itself is garbage-collected. Cleanup in `processQueue` will be performed once for each
+                // such reference, which will result in multiple cleanup calls. This is legal given the contract of `ValueReferenceCleaner`,
+                // but wasteful and thus best to avoid. Also, we shouldn't clean up such a reference, as per the contract of the `compute`
+                // function.
                 newValue === currentValue -> currentRef
 
                 else -> {
                     removedRef = currentRef
-                    createSoftReference(key, newValue!!)
+                    createReference(key, newValue!!)
                 }
             }
         }
@@ -157,13 +155,13 @@ class CleanableSoftValueCache<K : Any, V : Any>(
      * @return The old value that has been replaced, if any.
      */
     fun put(key: K, value: V): V? {
-        // We implement `put` in terms of `backingMap.compute` to avoid creation of a new soft reference when the old and the new value are
+        // We implement `put` in terms of `backingMap.compute` to avoid creation of a new reference when the old and the new value are
         // referentially equal. A combination of `backingMap.get` and `backingMap.put` would not be atomic, because the existing value
         // fetched with `backingMap.get` might be outdated by the time we invoke `backingMap.put` based on the `old === new` comparison.
-        // This function's implementation is different from `CleanableSoftValueCache.compute` because `put` needs to return the old value,
+        // This function's implementation is different from `CleanableValueReferenceCache.compute` because `put` needs to return the old value,
         // not the new value.
         var oldValue: V? = null
-        var removedRef: SoftReferenceWithCleanup<K, V>? = null
+        var removedRef: ReferenceWithCleanup<K, V>? = null
 
         // See `compute` for additional comments on the implementation, as it is similar to this implementation.
         backingMap.compute(key) { _, currentRef ->
@@ -175,7 +173,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
             }
 
             removedRef = currentRef
-            createSoftReference(key, value)
+            createReference(key, value)
         }
 
         removedRef?.performCleanup()
@@ -250,32 +248,80 @@ class CleanableSoftValueCache<K : Any, V : Any>(
 
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
-    private fun createSoftReference(key: K, value: V) = SoftReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
-
-    private fun SoftReferenceWithCleanup<K, V>.performCleanup() {
+    private fun ReferenceWithCleanup<K, V>.performCleanup() {
         cleaner.cleanUp(get())
     }
 }
 
-private class SoftReferenceWithCleanup<K, V>(
-    val key: K,
-    value: V,
-    val cleaner: SoftValueCleaner<V>,
-    referenceQueue: ReferenceQueue<V>,
-) : SoftReference<V>(value, referenceQueue) {
-    override fun equals(other: Any?): Boolean {
-        // When the referent is collected, equality should be identity-based (for `processQueue` to remove this very same soft value).
-        // Hence, we skip the value equality check if the referent has been collected and `get()` returns `null`. If the reference is still
-        // valid, this is just a canonical equals on referents for `replace(K,V,V)`.
-        //
-        // The `cleaner` is not part of equality, because `value` equality implies `cleaner` equivalence.
-        if (this === other) return true
-        if (other == null || other !is SoftReferenceWithCleanup<*, *>) return false
-        if (key != other.key) return false
-
-        val value = get() ?: return false
-        return value == other.get()
+/**
+ * A [CleanableValueReferenceCache] with a [WeakReference] to values [V].
+ *
+ * @param getCleaner Returns the [ValueReferenceCleaner] that should be invoked after [V] has been collected or removed from the cache. The
+ *  function will be invoked once when the value is added to the cache.
+ */
+@LLFirInternals
+class CleanableWeakValueReferenceCache<K : Any, V : Any>(
+    private val getCleaner: (V) -> ValueReferenceCleaner<V>,
+) : CleanableValueReferenceCache<K, V>() {
+    override fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
+        return WeakReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
     }
+}
 
-    override fun hashCode(): Int = key.hashCode()
+/**
+ * A [CleanableValueReferenceCache] with a [SoftReference] to values [V].
+ *
+ * @param getCleaner Returns the [ValueReferenceCleaner] that should be invoked after [V] has been collected or removed from the cache. The
+ *  function will be invoked once when the value is added to the cache.
+ */
+@LLFirInternals
+class CleanableSoftValueReferenceCache<K : Any, V : Any>(
+    private val getCleaner: (V) -> ValueReferenceCleaner<V>,
+) : CleanableValueReferenceCache<K, V>() {
+    override fun createReference(key: K, value: V): ReferenceWithCleanup<K, V> {
+        return SoftReferenceWithCleanup(key, value, getCleaner(value), referenceQueue)
+    }
+}
+
+@LLFirInternals
+interface ReferenceWithCleanup<K, V> {
+    val key: K
+    val cleaner: ValueReferenceCleaner<V>
+    fun get(): V?
+}
+
+private fun <K, V> ReferenceWithCleanup<K, V>.equalsImpl(other: Any?): Boolean {
+    // When the referent is collected, equality should be identity-based (for `processQueue` to remove this very same reference).
+    // Hence, we skip the value equality check if the referent has been collected and `get()` returns `null`. If the reference is still
+    // valid, this is just a canonical equals on referents for `replace(K,V,V)`.
+    //
+    // The `cleaner` is not part of equality, because `value` equality implies `cleaner` equivalence.
+    if (this === other) return true
+    if (other == null || other !is ReferenceWithCleanup<*, *>) return false
+    if (key != other.key) return false
+
+    val value = get() ?: return false
+    return value == other.get()
+}
+
+private fun <K, V> ReferenceWithCleanup<K, V>.hashKeyImpl(): Int = key.hashCode()
+
+private class WeakReferenceWithCleanup<K, V>(
+    override val key: K,
+    value: V,
+    override val cleaner: ValueReferenceCleaner<V>,
+    referenceQueue: ReferenceQueue<V>,
+) : WeakReference<V>(value, referenceQueue), ReferenceWithCleanup<K, V> {
+    override fun equals(other: Any?): Boolean = equalsImpl(other)
+    override fun hashCode(): Int = hashKeyImpl()
+}
+
+private class SoftReferenceWithCleanup<K, V>(
+    override val key: K,
+    value: V,
+    override val cleaner: ValueReferenceCleaner<V>,
+    referenceQueue: ReferenceQueue<V>,
+) : SoftReference<V>(value, referenceQueue), ReferenceWithCleanup<K, V> {
+    override fun equals(other: Any?): Boolean = equalsImpl(other)
+    override fun hashCode(): Int = hashKeyImpl()
 }
