@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -132,9 +131,6 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()
-        task.konanPropertiesService
-            .value(KonanPropertiesBuildService.registerIfAbsent(project))
-            .disallowChanges()
         task.classLoadersCachingService
             .value(ClassLoadersCachingBuildService.registerIfAbsent(project))
             .disallowChanges()

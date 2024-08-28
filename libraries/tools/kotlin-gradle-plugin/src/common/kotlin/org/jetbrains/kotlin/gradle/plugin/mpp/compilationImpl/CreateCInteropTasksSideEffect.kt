@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
@@ -52,10 +51,6 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.kotlinNativeProvider.set(project.provider {
                 KotlinNativeProvider(project, it.konanTarget, it.kotlinNativeBundleBuildService)
             })
-
-            val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
-            it.konanPropertiesService.value(konanPropertiesBuildService).disallowChanges()
-            it.usesService(konanPropertiesBuildService)
 
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)

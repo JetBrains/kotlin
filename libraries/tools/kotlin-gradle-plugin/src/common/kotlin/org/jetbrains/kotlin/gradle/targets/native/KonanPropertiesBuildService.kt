@@ -88,6 +88,7 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
                 SingleActionPerProject.run(project, UsesKonanPropertiesBuildService::class.java.name) {
                     project.tasks.withType<UsesKonanPropertiesBuildService>().configureEach { task ->
                         task.usesService(serviceProvider)
+                        task.konanPropertiesService.value(serviceProvider).disallowChanges()
                     }
                 }
             }

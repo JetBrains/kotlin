@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
-import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -107,9 +106,6 @@ class KotlinNativeLibraryImpl(
                 task.kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
-                task.konanPropertiesService
-                    .value(KonanPropertiesBuildService.registerIfAbsent(project))
-                    .disallowChanges()
                 task.classLoadersCachingService
                     .value(ClassLoadersCachingBuildService.registerIfAbsent(project))
                     .disallowChanges()

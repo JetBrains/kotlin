@@ -100,7 +100,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
     // which leads to not able run project.afterEvaluate because of wrong context
     // this afterEvaluate comes from NativeCompilerOptions
     @Suppress("DEPRECATION") val compilationCompilerOptions = binary.compilation.compilerOptions
-    val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
 
     val linkTask = registerTask<KotlinNativeLink>(
         binary.linkTaskName, listOf(binary)
@@ -113,8 +112,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.dependsOn(compilation.compileTaskProvider)
 
         task.enabled = binary.konanTarget.enabledOnCurrentHostForBinariesCompilation()
-        task.konanPropertiesService.set(konanPropertiesBuildService)
-        task.usesService(konanPropertiesBuildService)
         task.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
         task.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
