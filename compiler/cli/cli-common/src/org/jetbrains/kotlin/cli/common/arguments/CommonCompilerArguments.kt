@@ -173,6 +173,16 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
+    @Argument(
+        value = "-Xoutput-builtins-metadata",
+        description = "Output JVM builtins metadata"
+    )
+    var outputBuiltinsMetadata = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
     var reportOutputFiles = false
         set(value) {
@@ -855,6 +865,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
+            put(AnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)

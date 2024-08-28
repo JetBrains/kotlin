@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.java.scopes.ClassicBuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmSignature
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.REMOVE_AT_NAME_AND_SIGNATURE
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.SIGNATURE_TO_JVM_REPRESENTATION_NAME
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirCallableSymbol<*>.doesOverrideBuiltinWithDifferentJvmName(containingScope: FirTypeScope, session: FirSession): Boolean {
     return getOverriddenBuiltinWithDifferentJvmName(containingScope, session) != null
@@ -135,7 +139,10 @@ object ClassicBuiltinSpecialProperties {
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolean {
-    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true
+    if (dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true) return true
+    val containingFile = session.firProvider.getContainingFile(this) ?: return false
+    return containingFile.hasAnnotation(StandardClassIds.Annotations.ProducesBuiltinMetadata, session)
+            || containingFile.hasAnnotation(StandardClassIds.Annotations.Builtin, session)
 }
 
 private fun FirNamedFunctionSymbol.firstOverriddenFunction(

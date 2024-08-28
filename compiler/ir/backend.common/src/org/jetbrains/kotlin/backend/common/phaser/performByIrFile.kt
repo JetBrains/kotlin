@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ir.producesMetadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -45,6 +46,9 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
+            if (irFile.producesMetadata) {
+                continue
+            }
             try {
                 val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
                 for (phase in lower) {

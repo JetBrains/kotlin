@@ -17,13 +17,10 @@ import java.util.regex.Pattern
 
 object BuiltinsTestUtils {
     fun compileBuiltinsModule(environment: KotlinCoreEnvironment): ModuleDescriptor {
-        val files = KotlinTestUtils.loadToKtFiles(
-            environment, ContainerUtil.concat<File>(
-                allFilesUnder("libraries/stdlib/jvm/builtins"),
-                allFilesUnder("core/builtins/build/src/common"),
-                allFilesUnder("core/builtins/build/src/reflect"),
-            )
-        )
+        val files = KotlinTestUtils.loadToKtFiles(environment, allFilesUnder("libraries/stdlib/"))
+            .filter {
+                it.annotationEntries.any { annotation -> annotation.shortName?.asString() in listOf("ProducesBuiltinMetadata", "Builtin") }
+            }
         return createResolveSessionForFiles(environment.project, files, false).moduleDescriptor
     }
 

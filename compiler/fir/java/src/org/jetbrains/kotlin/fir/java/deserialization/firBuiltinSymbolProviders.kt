@@ -90,7 +90,7 @@ class FirJvmBuiltinsSymbolProvider(
  * Uses classes defined in classpath to load builtins
  */
 @ThreadSafeMutableState
-private class FirJvmClasspathBuiltinSymbolProvider(
+class FirJvmClasspathBuiltinSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,

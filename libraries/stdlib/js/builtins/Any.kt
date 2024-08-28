@@ -4,6 +4,13 @@
  */
 
 @file:kotlin.internal.BuiltinWithoutBytecode
+@file:Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "WRONG_MODIFIER_TARGET",
+    "UNUSED_PARAMETER")
 
 package kotlin
 
@@ -23,7 +30,6 @@ public actual open class Any {
      *
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
-    @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual open operator fun equals(other: Any?): Boolean
 
     /**
@@ -32,12 +38,10 @@ public actual open class Any {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual open fun hashCode(): Int
 
     /**
      * Returns a string representation of the object.
      */
-    @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual open fun toString(): String
 }

@@ -116,3 +116,17 @@ internal annotation class ContractsDsl
  */
 @OptionalExpectation
 internal expect annotation class ActualizeByJvmBuiltinProvider()
+
+/**
+ * Specified that all file declarations are builtins which do not emit any bytecode (e.g., kotlin.Any, kotlin.Int)
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class BuiltinWithoutBytecode
+
+/**
+ * Specified that all file declarations are builtins which do emit bytecode (e.g., kotlin.Unit)
+ */
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class BuiltinWithBytecode

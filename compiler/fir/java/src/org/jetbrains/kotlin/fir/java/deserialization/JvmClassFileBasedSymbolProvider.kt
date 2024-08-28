@@ -71,8 +71,6 @@ class JvmClassFileBasedSymbolProvider(
         }
 
     private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
-        if (partName in KotlinBuiltins) return null
-
         val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
         val (kotlinClass, byteContent) =

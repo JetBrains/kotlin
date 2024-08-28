@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
+@file:kotlin.internal.BuiltinWithBytecode
 package kotlin.reflect
 
 /**

@@ -82,6 +82,9 @@ object AnalysisFlags {
     @JvmStatic
     val stdlibCompilation by AnalysisFlag.Delegates.Boolean
 
+    @JvmStatic
+    val outputBuiltinsMetadata by AnalysisFlag.Delegates.Boolean
+
     /**
      * Setting this flag to `false` disable automatic expansion of aliased types during type resolution,
      *   which was added in scope of KT-65038 (see commit 156a51b7 and its neighbors).
