@@ -353,7 +353,55 @@ class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.")
-        expectActual = ExpectActualModifier.Unspecified
+        expectActual = ExpectActualModifier.Actual
+    }
+
+    override fun MethodBuilder.modifyGeneratedCompareTo() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedPlus() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedMinusChar() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedMinusInt() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedDec() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedInc() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedRangeTo() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedRangeUntil() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedToString() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedHashCode() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedEquals() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedConversions(otherKind: PrimitiveType) {
+        suppressNonAbstractFunctionWithoutBody()
     }
 }
 

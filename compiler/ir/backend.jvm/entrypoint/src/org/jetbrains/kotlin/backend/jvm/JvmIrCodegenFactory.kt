@@ -19,16 +19,14 @@ import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
+import org.jetbrains.kotlin.backend.jvm.ir.isBuiltin
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmSerializeIrMode
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -39,8 +37,10 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -376,7 +376,19 @@ open class JvmIrCodegenFactory(
         state.afterIndependentPart()
 
         generateModuleMetadata(input)
+        if (state.configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && state.config.useFir) {
+            serializeBuiltinsMetadata(module, context)
+        }
     }
+
+    private fun serializeBuiltinsMetadata(module: IrModuleFragment, context: JvmBackendContext) {
+        val serializer = context.backendExtension.createBuiltinsSerializer()
+        val serializedPackages = serializer.serialize(module.files.filter { it.isBuiltin }.map { it.metadata as MetadataSource.File })
+        for ((packageName, serialized) in serializedPackages) {
+            context.state.factory.addSerializedBuiltinsPackageMetadata(packageName.pathSegments().joinToString(separator = "/"), serialized)
+        }
+    }
+
 
     private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
         val backendContext = (result as JvmIrCodegenInput).context

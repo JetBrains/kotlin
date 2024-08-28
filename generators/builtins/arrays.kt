@@ -224,7 +224,28 @@ class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
 class GenerateJvmArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
         override fun ClassBuilder.modifyGeneratedClass() {
-            expectActual = ExpectActualModifier.Unspecified
+            expectActual = ExpectActualModifier.Actual
+        }
+
+        override fun MethodBuilder.modifyGetOperator() {
+            suppressNonAbstractFunctionWithoutBody()
+        }
+
+        override fun MethodBuilder.modifySetOperator() {
+            suppressNonAbstractFunctionWithoutBody()
+        }
+
+        override fun MethodBuilder.modifyIterator() {
+            suppressNonAbstractFunctionWithoutBody()
+        }
+
+        override fun PropertyBuilder.modifySizeProperty() {
+            suppressUninitializedNonAbstractProperty()
+        }
+
+        override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
+            annotations.clear()
+            suppressDiagnostics("WRONG_MODIFIER_TARGET", "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
         }
     }
 }

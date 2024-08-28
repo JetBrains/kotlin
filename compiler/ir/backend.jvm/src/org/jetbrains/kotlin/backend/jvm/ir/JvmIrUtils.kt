@@ -79,6 +79,28 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     }
 }
 
+private val builtinFiles = listOf(
+    "Annotation",
+    "Any",
+    "Array",
+    "Arrays",
+    "Boolean",
+    "Char",
+    "CharSequence",
+    "Comparable",
+    "Enum",
+    "Library",
+    "Nothing",
+    "Number",
+    "Primitives",
+    "String",
+    "Throwable"
+).map { "kotlin.$it.kt" } +
+        listOf("Collections", "Iterator").map { "kotlin.collections.$it.kt" } +
+        listOf("kotlin.coroutines.Coroutines.kt")
+
+val IrFile.isBuiltin: Boolean get() = this.nameWithPackage in builtinFiles
+
 fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     return (this as? IrSimpleFunction)?.isCompiledToJvmDefault(jvmDefaultMode) == true
 }

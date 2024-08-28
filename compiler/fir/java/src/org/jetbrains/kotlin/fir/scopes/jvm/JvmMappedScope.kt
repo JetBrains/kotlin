@@ -289,6 +289,7 @@ class JvmMappedScope(
             newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
             newSource = oldFunction.source,
+            dontForceOverride = true
         ).apply {
             setHiddenAttributeIfNecessary(jdkMemberStatus)
         }

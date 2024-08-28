@@ -127,6 +127,7 @@ object StandardClassIds {
     val Iterable = "Iterable".collectionsId()
     val Collection = "Collection".collectionsId()
     val List = "List".collectionsId()
+    val ArrayList = "ArrayList".collectionsId()
     val ListIterator = "ListIterator".collectionsId()
     val Set = "Set".collectionsId()
     val Map = "Map".collectionsId()
@@ -260,7 +261,7 @@ object StandardClassIds {
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 
-    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
+    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum + ArrayList + MutableList + MutableSet + Throwable + MutableMap
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))

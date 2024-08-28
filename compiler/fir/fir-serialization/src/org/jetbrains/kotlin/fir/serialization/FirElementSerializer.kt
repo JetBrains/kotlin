@@ -129,6 +129,68 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+    annotation class SensitiveApi
+
+    /**
+     * This method doesn't use `extension.constValueProvider`, so if there is a provider, then
+     *   constants might be computed incorrectly
+     */
+    @SensitiveApi
+    fun packagePartProto(
+        packageFqName: FqName,
+        declarations: List<FirDeclaration>,
+        actualizedExpectDeclarations: Set<FirDeclaration>?
+    ): ProtoBuf.Package.Builder {
+        require(extension.constValueProvider == null) {
+            "constValueProvider cannot work without file. Please use the `packagePartProto` overload which accepts FirFile"
+        }
+        val builder = ProtoBuf.Package.newBuilder()
+        for (declaration in declarations) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
+        }
+        return finalizePackagePartProto(packageFqName, builder, actualizedExpectDeclarations)
+    }
+
+    private fun finalizePackagePartProto(
+        packageFqName: FqName,
+        builder: ProtoBuf.Package.Builder,
+        actualizedExpectDeclarations: Set<FirDeclaration>?,
+    ): ProtoBuf.Package.Builder {
+        extension.serializePackage(packageFqName, builder)
+        // Next block will process declarations from plugins.
+        // Such declarations don't belong to any file, so there is no need to call `extension.processFile`.
+        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName, scopeSession)) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {
+                error("Unsupported top-level declaration type: ${it.render()}")
+            }
+        }
+
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
+
+        return builder
+    }
+
+    private fun ProtoBuf.Package.Builder.addDeclarationProto(
+        declaration: FirDeclaration,
+        actualizedExpectDeclarations: Set<FirDeclaration>?,
+        onUnsupportedDeclaration: (FirDeclaration) -> Unit,
+    ) {
+        if (declaration is FirMemberDeclaration) {
+            if (!declaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations)) return
+            if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) return
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { this.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { this.addFunction(it) }
+                is FirTypeAlias -> typeAliasProto(declaration)?.let { this.addTypeAlias(it) }
+                else -> onUnsupportedDeclaration(declaration)
+            }
+        } else {
+            onUnsupportedDeclaration(declaration)
+        }
+    }
+
     fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
