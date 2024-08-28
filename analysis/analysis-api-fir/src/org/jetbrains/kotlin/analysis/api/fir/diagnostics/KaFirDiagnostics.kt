@@ -824,6 +824,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedSinceKotlinOutsideKotlinSubpackage::class
     }
 
+    interface KotlinActualAnnotationHasNoEffectInKotlin : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = KotlinActualAnnotationHasNoEffectInKotlin::class
+    }
+
     interface OverrideDeprecation : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = OverrideDeprecation::class
         val overridenSymbol: KaSymbol
