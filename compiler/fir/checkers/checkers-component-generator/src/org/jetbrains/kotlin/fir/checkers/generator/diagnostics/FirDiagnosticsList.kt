@@ -856,7 +856,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
         val FINITE_BOUNDS_VIOLATION by error<PsiElement>()
-        val FINITE_BOUNDS_VIOLATION_IN_JAVA by warning<PsiElement> {
+        val FINITE_BOUNDS_VIOLATION_IN_JAVA by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<List<Symbol>>("containingTypes")
         }
         val EXPANSIVE_INHERITANCE by error<PsiElement>()
