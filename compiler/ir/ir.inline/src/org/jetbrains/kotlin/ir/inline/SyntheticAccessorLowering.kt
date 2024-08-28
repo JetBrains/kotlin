@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 /**
  * Generates synthetic accessor functions for private declarations that are referenced from non-private inline functions,
@@ -153,15 +154,11 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         val generatedAccessors = irFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
-            val newData = if (declaration.isInline) {
-                if (!declaration.isConsideredAsPrivateForInlining()) {
-                    // By the time this lowering is executed, there must be no private inline functions, however, there are exceptions, for example,
-                    // suspendCoroutineUninterceptedOrReturn, which are somewhat magical.
-                    // If we encounter one, just ignore it.
-                    TransformerData(declaration)
-                } else null
-            } else {
-                data
+            val newData = data ?: runIf(declaration.isInline && !declaration.isConsideredAsPrivateForInlining()) {
+                // By the time this lowering is executed, there must be no private inline functions; however,
+                // there are exceptions, for example, `suspendCoroutineUninterceptedOrReturn` which are somewhat magical.
+                // If we encounter one, ignore it.
+                TransformerData(declaration)
             }
 
             // Wrap it to the stage controller to avoid JS BE failing with not found lowered declaration signature
@@ -219,7 +216,7 @@ private class GeneratedAccessors {
  */
 private class GeneratedAccessor(
     val accessor: IrFunction,
-    val targetSymbol: IrSymbol
+    val targetSymbol: IrSymbol,
 ) {
     val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
 

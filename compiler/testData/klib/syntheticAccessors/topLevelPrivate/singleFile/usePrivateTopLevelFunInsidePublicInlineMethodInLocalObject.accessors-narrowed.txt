@@ -9,5 +9,5 @@ internal inline fun internalInlineMethod(crossinline f: Function0<String>): Stri
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
     /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()
 /* TARGET declaration */ private fun privateMethod(): String
-/* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt(): String
+/* ACCESSOR declaration */ internal fun access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt(): String
     /* TARGET use-site */ privateMethod()
