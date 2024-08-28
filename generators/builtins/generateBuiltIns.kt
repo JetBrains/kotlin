@@ -35,7 +35,7 @@ interface BuiltInsGenerator {
     fun generate()
 }
 
-abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator {
+abstract class BuiltInsSourceGenerator(val out: PrintWriter, private val annotateAsBuiltin: Boolean = false) : BuiltInsGenerator {
     protected abstract fun generateBody(): Unit
 
     protected open fun getPackage(): String = "kotlin"
@@ -53,6 +53,9 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator
         getMultifileClassName()?.let { name ->
             out.println("@file:kotlin.jvm.JvmName(\"$name\")")
             out.println("@file:kotlin.jvm.JvmMultifileClass")
+        }
+        if (annotateAsBuiltin) {
+            out.println("@file:kotlin.internal.Builtin")
         }
         out.print("package ${getPackage()}")
         out.println()

@@ -38,3 +38,15 @@ internal fun operatorSign(methodName: String): String {
 internal fun String.toPrimitiveType(): PrimitiveType {
     return PrimitiveType.valueOf(this.uppercase())
 }
+
+internal fun PropertyBuilder.suppressUninitializedNonAbstractProperty() {
+    suppressDiagnostics("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
+}
+
+internal fun MethodBuilder.suppressNonAbstractFunctionWithoutBody() {
+    suppressDiagnostics("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+}
+
+internal fun AnnotatedAndDocumented.suppressDiagnostics(vararg diagnostics: String) {
+    annotations += "Suppress(${diagnostics.joinToString { "\"$it\"" }})"
+}

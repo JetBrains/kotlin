@@ -545,7 +545,7 @@ KaNamedFunctionSymbol:
   isInfix: false
   isInline: false
   isOperator: false
-  isOverride: true
+  isOverride: false
   isStatic: false
   isSuspend: false
   isTailRec: false

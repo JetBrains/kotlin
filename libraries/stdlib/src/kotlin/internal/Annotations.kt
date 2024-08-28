@@ -116,3 +116,11 @@ internal annotation class ContractsDsl
  */
 @OptionalExpectation
 internal expect annotation class ActualizeByJvmBuiltinProvider()
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class ProducesBuiltinMetadata
+
+@Target(AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class Builtin

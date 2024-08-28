@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.ModuleMetadataSerializer
+import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -103,4 +104,6 @@ class FirJvmBackendExtension(
             return serializer.classProto(fir).build()
         }
     }
+
+    override fun createBuiltinsSerializer(): BuiltinsSerializer = FirBuiltInsSerializer(components.session, components.scopeSession)
 }

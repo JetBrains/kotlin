@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
-class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAsBuiltin = true) {
 
     override fun getPackage() = "kotlin.ranges"
     private fun generateDiscreteBody(kind: ProgressionKind) {

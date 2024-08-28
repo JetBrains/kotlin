@@ -31,17 +31,17 @@ object StandardClassIds {
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
         BASE_RANGES_PACKAGE,
-        BASE_ANNOTATION_PACKAGE,
+        BASE_ANNOTATION_PACKAGE
     )
 
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
+        BASE_COROUTINES_PACKAGE,
         BASE_RANGES_PACKAGE,
         BASE_ANNOTATION_PACKAGE,
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
-        BASE_COROUTINES_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()
@@ -130,6 +130,7 @@ object StandardClassIds {
     val Iterable = "Iterable".collectionsId()
     val Collection = "Collection".collectionsId()
     val List = "List".collectionsId()
+    val ArrayList = "ArrayList".collectionsId()
     val ListIterator = "ListIterator".collectionsId()
     val Set = "Set".collectionsId()
     val Map = "Map".collectionsId()
@@ -216,6 +217,9 @@ object StandardClassIds {
 
         val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
 
+        val ProducesBuiltinMetadata = "ProducesBuiltinMetadata".internalId()
+        val Builtin = "Builtin".internalId()
+
         object ParameterNames {
             val value = Name.identifier("value")
 
@@ -264,7 +268,7 @@ object StandardClassIds {
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 
-    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
+    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum + ArrayList + MutableList + MutableSet + Throwable + MutableMap
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))

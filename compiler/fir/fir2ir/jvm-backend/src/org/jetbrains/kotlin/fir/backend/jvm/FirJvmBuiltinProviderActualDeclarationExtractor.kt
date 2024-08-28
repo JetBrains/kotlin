@@ -66,8 +66,13 @@ class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
     }
 
     private fun IrClass.hasActualizeByJvmBuiltinProviderFqNameAnnotation(): Boolean {
+        return false
+        /*
         if (annotations.any { it.isAnnotation(ActualizeByJvmBuiltinProviderFqName) }) return true
         return parentClassOrNull?.hasActualizeByJvmBuiltinProviderFqNameAnnotation() == true
+
+         */
+
     }
 
     override fun extract(expectTopLevelCallables: List<IrDeclarationWithName>, expectCallableId: CallableId): List<IrSymbol> {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.producesMetadata
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -30,6 +31,7 @@ private abstract class FileCodegen(
     private val context: JvmBackendContext, private val generateMultifileFacade: Boolean,
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        if (irFile.producesMetadata) return
         val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
         if (isMultifileFacade == generateMultifileFacade) {
             for (loweredClass in irFile.declarations) {

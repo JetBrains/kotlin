@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceG
 import org.jetbrains.kotlin.generators.builtins.hashLong
 import java.io.PrintWriter
 
-class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out, annotateAsBuiltin = true) {
     override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
         for (kind in ProgressionKind.values()) {

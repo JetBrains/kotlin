@@ -62,6 +62,7 @@ class JvmMappedScope(
     private val firJavaClass: FirRegularClass,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val javaMappedClassUseSiteScope: FirTypeScope,
+    private val filterOutJvmPlatformDeclarations: Boolean,
 ) : FirTypeScope() {
     private val mappedSymbolCache = session.mappedSymbolStorage.cacheByOwner.getValue(firKotlinClass.symbol)
 
@@ -119,7 +120,12 @@ class JvmMappedScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
-            if (FirJvmPlatformDeclarationFilter.isFunctionAvailable(symbol.fir, javaMappedClassUseSiteScope, session)) {
+            if (!filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
+                    symbol.fir,
+                    javaMappedClassUseSiteScope,
+                    session
+                )
+            ) {
                 declared += symbol
                 processor(symbol)
             }
@@ -289,6 +295,7 @@ class JvmMappedScope(
             newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
             newSource = oldFunction.source,
+            dontForceOverride = true
         ).apply {
             setHiddenAttributeIfNecessary(jdkMemberStatus)
         }
@@ -445,6 +452,7 @@ class JvmMappedScope(
             firJavaClass,
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             javaMappedClassUseSiteScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: javaMappedClassUseSiteScope,
+            filterOutJvmPlatformDeclarations
         )
     }
 }
