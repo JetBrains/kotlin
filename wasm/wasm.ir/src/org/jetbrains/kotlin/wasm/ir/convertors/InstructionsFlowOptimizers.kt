@@ -42,19 +42,21 @@ internal fun removeUnreachableInstructions(input: Sequence<WasmInstr>): Sequence
 
     return sequence {
         for (instruction in input) {
-            when (instruction.operator) {
-                WasmOp.BLOCK, WasmOp.LOOP, WasmOp.IF, WasmOp.TRY, WasmOp.TRY_TABLE -> numberOfNestedBlocks++
-                WasmOp.END -> numberOfNestedBlocks--
-                else -> {}
+            val op = instruction.operator
+
+            if (op.isBlockStart()) {
+                numberOfNestedBlocks++
+            } else if (op.isBlockEnd()) {
+                numberOfNestedBlocks--
             }
 
-            val currentEatUntil = getCurrentEatLevel(instruction.operator)
+            val currentEatUntil = getCurrentEatLevel(op)
             if (currentEatUntil != null) {
                 if (currentEatUntil <= numberOfNestedBlocks) {
                     continue
                 }
             } else {
-                if (instruction.operator.isOutCfgNode()) {
+                if (op.isOutCfgNode()) {
                     eatEverythingUntilLevel = numberOfNestedBlocks
                 }
             }

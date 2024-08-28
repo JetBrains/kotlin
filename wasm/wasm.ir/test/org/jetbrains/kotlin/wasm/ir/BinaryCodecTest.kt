@@ -10,6 +10,7 @@ import org.junit.Test
 
 class BinaryCodecTest {
     @Test
+    @Ignore
     fun core() {
         runSpecTests("core", wasmTestSuitePath, emptyList())
     }

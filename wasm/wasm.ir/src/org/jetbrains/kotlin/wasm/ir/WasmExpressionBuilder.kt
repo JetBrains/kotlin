@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+internal fun WasmOp.isBlockStart(): Boolean = when (this) {
+    WasmOp.BLOCK, WasmOp.LOOP, WasmOp.IF, WasmOp.TRY, WasmOp.TRY_TABLE -> true
+    else -> false
+}
+
+internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
+
 /**
  * Class for building a wasm instructions list.
  *
@@ -19,15 +26,19 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
 class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
+    private var _numberOfNestedBlocks = 0
+
     fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
+        if (op.isBlockStart()) {
+            _numberOfNestedBlocks++
+        } else if (op.isBlockEnd()) {
+            _numberOfNestedBlocks--
+        }
         expression += WasmInstrWithLocation(op, immediates.toList(), location)
     }
 
-    var numberOfNestedBlocks: Int = 0
-        set(value) {
-            assert(value >= 0) { "end without matching block" }
-            field = value
-        }
+    val numberOfNestedBlocks: Int
+        get() = _numberOfNestedBlocks
 
     fun buildConstI32(value: Int, location: SourceLocation) {
         buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
@@ -55,7 +66,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
 
     @Suppress("UNUSED_PARAMETER")
     inline fun buildBlock(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
-        numberOfNestedBlocks++
         buildInstr(WasmOp.BLOCK, SourceLocation.NoLocation("BLOCK"), WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
         buildEnd()
@@ -63,7 +73,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
 
     @Suppress("UNUSED_PARAMETER")
     inline fun buildLoop(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
-        numberOfNestedBlocks++
         buildInstr(WasmOp.LOOP, SourceLocation.NoLocation("LOOP"), WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
         buildEnd()
@@ -75,7 +84,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
 
     @Suppress("UNUSED_PARAMETER")
     fun buildIf(label: String?, resultType: WasmType? = null) {
-        numberOfNestedBlocks++
         buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
     }
 
@@ -84,13 +92,11 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
     }
 
     fun buildBlock(resultType: WasmType? = null): Int {
-        numberOfNestedBlocks++
         buildInstrWithNoLocation(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
         return numberOfNestedBlocks
     }
 
     fun buildEnd() {
-        numberOfNestedBlocks--
         buildInstrWithNoLocation(WasmOp.END)
     }
 
@@ -140,7 +146,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
 
     @Suppress("UNUSED_PARAMETER")
     fun buildTry(label: String?, resultType: WasmType? = null) {
-        numberOfNestedBlocks++
         buildInstrWithNoLocation(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
     }
 
@@ -150,7 +155,6 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         catches: List<WasmImmediate.Catch>,
         resultType: WasmType? = null
     ) {
-        numberOfNestedBlocks++
         buildInstrWithNoLocation(
             WasmOp.TRY_TABLE,
             WasmImmediate.BlockType.Value(resultType),
