@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
@@ -137,10 +138,11 @@ class KT56143CinteropConfigurationAttributes {
         }
 
         project.multiplatformExtension.targets.forEach { target ->
+            val nonPackedKlibsAffectThisConfiguration = nonPackedKlibsEnabled && target is KotlinNativeTarget
             val cinteropApiElements = project.locateOrCreateCInteropApiElementsConfiguration(target)
-            checkConfigurationAttributes(cinteropApiElements, false, nonPackedKlibsEnabled)
+            checkConfigurationAttributes(cinteropApiElements, false, nonPackedKlibsAffectThisConfiguration)
             val nonPackedVariant = cinteropApiElements.outgoing.variants.findByName(NON_PACKED_KLIB_VARIANT_NAME)
-            if (!nonPackedKlibsEnabled) {
+            if (!nonPackedKlibsAffectThisConfiguration) {
                 assertEquals(
                     null, nonPackedVariant,
                     "Expected no non-packed variant on $cinteropApiElements"
@@ -155,7 +157,7 @@ class KT56143CinteropConfigurationAttributes {
             target.compilations.forEach { compilation ->
                 if (compilation is KotlinNativeCompilation) {
                     val resolvableConfiguration = project.locateOrCreateCInteropDependencyConfiguration(compilation)
-                    checkConfigurationAttributes(resolvableConfiguration, nonPackedKlibsEnabled, nonPackedKlibsEnabled)
+                    checkConfigurationAttributes(resolvableConfiguration, nonPackedKlibsAffectThisConfiguration, nonPackedKlibsAffectThisConfiguration)
                 }
             }
         }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
 
 internal fun Project.klibModuleName(
@@ -19,10 +17,3 @@ internal fun Project.klibModuleName(
 
 internal fun Project.klibModuleName(baseName: String = project.name): String =
     if (group.toString().isNotEmpty()) "$group:$baseName" else baseName
-
-/**
- * Metadata klibs should produced and consumed in the non-packed form by default.
- * JVM compiler does not produce klibs, but classes directly.
- */
-internal val KotlinTarget.producesPlatformKlib: Boolean
-    get() = platformType != KotlinPlatformType.jvm && platformType != KotlinPlatformType.androidJvm && platformType != KotlinPlatformType.common

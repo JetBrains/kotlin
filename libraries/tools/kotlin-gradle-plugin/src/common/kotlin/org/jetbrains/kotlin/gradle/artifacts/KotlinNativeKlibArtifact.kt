@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -106,13 +105,6 @@ internal fun createKlibArtifact(
         compilation.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
         artifacts.add(klibArtifact)
         attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
-
-        if (compilation.target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-            outgoing.variants.getByName(NON_PACKED_KLIB_VARIANT_NAME)
-                .artifact(klibProducingTask.flatMap { it.klibDirectory }) {
-                    it.builtBy(klibProducingTask)
-                }
-        }
     }
 }
 
