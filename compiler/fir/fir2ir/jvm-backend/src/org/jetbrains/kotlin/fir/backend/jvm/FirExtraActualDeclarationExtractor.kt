@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * Extracts actual top-level declarations from the builtin symbol provider
  * But only for expect declarations marked with `ActualizeByJvmBuiltinProvider` annotation
  */
-class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
+class FirExtraActualDeclarationExtractor private constructor(
     private val provider: FirSymbolProvider,
     private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage,
@@ -49,7 +49,7 @@ class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
                 val dependencyProviders = (session.symbolProvider as FirCachingCompositeSymbolProvider).providers
                 val firJvmActualizingBuiltinSymbolProvider =
                     dependencyProviders.filterIsInstance<FirJvmActualizingBuiltinSymbolProvider>().single()
-                FirJvmBuiltinProviderActualDeclarationExtractor(
+                FirExtraActualDeclarationExtractor(
                     firJvmActualizingBuiltinSymbolProvider.builtinsSymbolProvider,
                     platformComponents.classifierStorage,
                     platformComponents.declarationStorage
