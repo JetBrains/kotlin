@@ -860,7 +860,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<Symbol>>("containingTypes")
         }
         val EXPANSIVE_INHERITANCE by error<PsiElement>()
-        val EXPANSIVE_INHERITANCE_IN_JAVA by warning<PsiElement> {
+        val EXPANSIVE_INHERITANCE_IN_JAVA by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<List<Symbol>>("containingTypes")
         }
 

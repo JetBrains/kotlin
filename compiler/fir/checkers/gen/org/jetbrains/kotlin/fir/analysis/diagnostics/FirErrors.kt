@@ -512,7 +512,7 @@ object FirErrors {
     val FINITE_BOUNDS_VIOLATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("FINITE_BOUNDS_VIOLATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val FINITE_BOUNDS_VIOLATION_IN_JAVA: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("FINITE_BOUNDS_VIOLATION_IN_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val EXPANSIVE_INHERITANCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPANSIVE_INHERITANCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
-    val EXPANSIVE_INHERITANCE_IN_JAVA: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("EXPANSIVE_INHERITANCE_IN_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val EXPANSIVE_INHERITANCE_IN_JAVA: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("EXPANSIVE_INHERITANCE_IN_JAVA", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val DEPRECATED_TYPE_PARAMETER_SYNTAX: KtDiagnosticFactory0 = KtDiagnosticFactory0("DEPRECATED_TYPE_PARAMETER_SYNTAX", ERROR, SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST, KtDeclaration::class)
     val MISPLACED_TYPE_PARAMETER_CONSTRAINTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISPLACED_TYPE_PARAMETER_CONSTRAINTS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeParameter::class)
     val DYNAMIC_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DYNAMIC_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
