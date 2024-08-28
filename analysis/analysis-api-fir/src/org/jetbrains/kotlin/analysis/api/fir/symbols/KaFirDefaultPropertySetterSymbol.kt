@@ -63,9 +63,6 @@ internal class KaFirDefaultPropertySetterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { backingPsiSetterWithoutBody }
 
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
     override val isExpect: Boolean
         get() = withValidityAssertion {
             backingPsiSetterWithoutBody?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||

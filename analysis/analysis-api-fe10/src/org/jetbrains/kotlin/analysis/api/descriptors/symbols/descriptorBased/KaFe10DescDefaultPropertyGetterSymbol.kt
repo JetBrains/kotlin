@@ -41,9 +41,6 @@ internal class KaFe10DescDefaultPropertyGetterSymbol(
     override val hasBody: Boolean
         get() = withValidityAssertion { false }
 
-    override val isActual: Boolean
-        get() = withValidityAssertion { propertyDescriptor.isActual }
-
     override val isExpect: Boolean
         get() = withValidityAssertion { propertyDescriptor.isExpect }
 

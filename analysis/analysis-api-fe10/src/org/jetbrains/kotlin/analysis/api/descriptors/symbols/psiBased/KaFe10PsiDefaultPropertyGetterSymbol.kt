@@ -88,10 +88,6 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { descriptor?.isActual == true }
-
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect == true }
 

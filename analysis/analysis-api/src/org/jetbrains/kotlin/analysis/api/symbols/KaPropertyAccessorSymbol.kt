@@ -17,7 +17,13 @@ public sealed class KaPropertyAccessorSymbol :
     override val isExtension: Boolean get() = withValidityAssertion { false }
 
     override val isExpect: Boolean get() = withValidityAssertion { false }
-    override val isActual: Boolean get() = withValidityAssertion { false }
+
+    /**
+     * Property accessors cannot have `actual` modifier in valid code
+     * as this modifier is not propagated from containing declarations as it done
+     * for `expect` modifier.
+     */
+    final override val isActual: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
