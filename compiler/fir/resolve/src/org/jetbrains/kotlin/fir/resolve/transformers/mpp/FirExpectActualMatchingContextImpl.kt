@@ -95,11 +95,8 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val RegularClassSymbolMarker.isValue: Boolean
         get() = asSymbol().resolvedStatus.isInline
 
-    /*
-     * In this context java interfaces should be considered as not fun interface, so they will be later checked by [isNotSamInterface] function
-     */
     override val RegularClassSymbolMarker.isFun: Boolean
-        get() = asSymbol().takeUnless { it.origin is FirDeclarationOrigin.Java }?.resolvedStatus?.isFun ?: false
+        get() = asSymbol().resolvedStatus.isFun
 
     override val ClassLikeSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>
         get() = asSymbol().typeParameterSymbols
@@ -406,10 +403,9 @@ class FirExpectActualMatchingContextImpl private constructor(
         return actualSession.typeContext.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = false)
     }
 
-    override fun RegularClassSymbolMarker.isNotSamInterface(): Boolean {
+    override fun RegularClassSymbolMarker.isSamInterface(): Boolean {
         val type = asSymbol().defaultType()
-        val isSam = FirSamResolver(actualSession, actualScopeSession).isSamType(type)
-        return !isSam
+        return FirSamResolver(actualSession, actualScopeSession).isSamType(type)
     }
 
     override fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean {
