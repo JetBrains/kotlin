@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-abstract class FirAbstractSessionFactory<CONTEXT> {
+abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
     // ==================================== Library session ====================================
 
     protected fun createLibrarySession(
         mainModuleName: Name,
+        context: LIBRARY_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        registerExtraComponents: ((FirSession) -> Unit),
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
@@ -49,7 +49,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerExtraComponents(this)
+            registerLibrarySessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
@@ -78,12 +78,13 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     }
 
     protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
+    protected abstract fun FirSession.registerLibrarySessionComponents(c: LIBRARY_CONTEXT)
 
     // ==================================== Platform session ====================================
 
     protected fun createModuleBasedSession(
         moduleData: FirModuleData,
-        context: CONTEXT,
+        context: SOURCE_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
@@ -91,7 +92,6 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         enumWhenTracker: EnumWhenTracker?,
         importTracker: ImportTracker?,
         init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit),
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
@@ -105,7 +105,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
-            registerExtraComponents(this)
+            registerSourceSessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
@@ -152,7 +152,8 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
     ): FirKotlinScopeProvider
 
-    protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: CONTEXT)
+    protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: SOURCE_CONTEXT)
+    protected abstract fun FirSession.registerSourceSessionComponents(c: SOURCE_CONTEXT)
 
     // ==================================== Common parts ====================================
 

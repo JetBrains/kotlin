@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
+object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -46,13 +46,11 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
     ): FirSession {
         return createLibrarySession(
             mainModuleName,
+            context = null,
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
-            registerExtraComponents = {
-                it.registerDefaultComponents()
-            },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 listOfNotNull(
                     MetadataSymbolProvider(
@@ -85,6 +83,10 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         return FirKotlinScopeProvider()
     }
 
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerDefaultComponents()
+    }
+
     // ==================================== Platform session ====================================
 
     fun createModuleBasedSession(
@@ -109,9 +111,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
             enumWhenTracker,
             importTracker,
             init,
-            registerExtraComponents = {
-                it.registerDefaultComponents()
-            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
@@ -156,6 +155,10 @@ object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
     }
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {}
+
+    override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
+        registerDefaultComponents()
+    }
 
     // ==================================== Common parts ====================================
 

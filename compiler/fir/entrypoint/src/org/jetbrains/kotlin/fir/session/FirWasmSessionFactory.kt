@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
-object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.Context>() {
+object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 
@@ -38,13 +38,11 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirSession = createLibrarySession(
         mainModuleName,
+        context = null,
         sessionProvider,
         moduleDataProvider,
         languageVersionSettings,
         extensionRegistrars,
-        registerExtraComponents = {
-            it.registerDefaultComponents()
-        },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
@@ -56,6 +54,10 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
 
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
+    }
+
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerDefaultComponents()
     }
 
     // ==================================== Platform session ====================================
@@ -81,14 +83,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
             enumWhenTracker = null,
             importTracker = null,
             init,
-            registerExtraComponents = {
-                it.registerDefaultComponents()
-                @OptIn(SessionConfiguration::class)
-                it.register(
-                    FirDefaultImportProviderHolder::class,
-                    FirDefaultImportProviderHolder(if (wasmTarget == WasmTarget.JS) WasmPlatformAnalyzerServices else WasmWasiPlatformAnalyzerServices)
-                )
-            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -116,6 +110,15 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.C
 
     override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
         registerWasmCheckers(c.wasmTarget)
+    }
+
+    @OptIn(SessionConfiguration::class)
+    override fun FirSession.registerSourceSessionComponents(c: Context) {
+        registerDefaultComponents()
+        register(
+            FirDefaultImportProviderHolder::class,
+            FirDefaultImportProviderHolder(if (c.wasmTarget == WasmTarget.JS) WasmPlatformAnalyzerServices else WasmWasiPlatformAnalyzerServices)
+        )
     }
 
     // ==================================== Common parts ====================================

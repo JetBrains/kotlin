@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
+object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Context, FirJsSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 
@@ -46,27 +46,31 @@ object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         compilerConfiguration: CompilerConfiguration,
-    ): FirSession = createLibrarySession(
-        mainModuleName,
-        sessionProvider,
-        moduleDataProvider,
-        compilerConfiguration.languageVersionSettings,
-        extensionRegistrars,
-        registerExtraComponents = {
-            it.registerDefaultComponents()
-            it.registerJsComponents(compilerConfiguration)
-        },
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider
-            )
-        }
-    )
+    ): FirSession {
+        val context = Context(compilerConfiguration)
+        return createLibrarySession(
+            mainModuleName,
+            context,
+            sessionProvider,
+            moduleDataProvider,
+            compilerConfiguration.languageVersionSettings,
+            extensionRegistrars,
+            createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
+                listOfNotNull(
+                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                    FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
+                    syntheticFunctionInterfaceProvider
+                )
+            }
+        )
+    }
 
     override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
+    }
+
+    override fun FirSession.registerLibrarySessionComponents(c: Context) {
+        registerComponents(c.configuration)
     }
 
     // ==================================== Platform session ====================================
@@ -80,9 +84,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         icData: KlibIcData? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
+        val context = Context(compilerConfiguration)
         return createModuleBasedSession(
             moduleData,
-            context = null,
+            context,
             sessionProvider,
             extensionRegistrars,
             compilerConfiguration.languageVersionSettings,
@@ -90,10 +95,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
             enumWhenTracker = null,
             importTracker = null,
             init,
-            registerExtraComponents = {
-                it.registerDefaultComponents()
-                it.registerJsComponents(compilerConfiguration)
-            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -119,16 +120,19 @@ object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         return FirKotlinScopeProvider()
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
         registerJsCheckers()
+    }
+
+    override fun FirSession.registerSourceSessionComponents(c: Context) {
+        registerComponents(c.configuration)
     }
 
     // ==================================== Common parts ====================================
 
-    // ==================================== Utilities ====================================
-
-    private fun FirSession.registerJsComponents(compilerConfiguration: CompilerConfiguration) {
+    private fun FirSession.registerComponents(compilerConfiguration: CompilerConfiguration) {
         val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        registerDefaultComponents()
         registerJsComponents(moduleKind)
     }
 
@@ -147,4 +151,8 @@ object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         }
         register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(JsPlatformAnalyzerServices))
     }
+
+    // ==================================== Utilities ====================================
+
+    class Context(val configuration: CompilerConfiguration)
 }

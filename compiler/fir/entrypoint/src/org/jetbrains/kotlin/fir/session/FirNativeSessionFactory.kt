@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
-object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
+object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -40,14 +40,11 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
     ): FirSession {
         return createLibrarySession(
             mainModuleName,
+            context = null,
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
-            registerExtraComponents = { session ->
-                session.registerDefaultComponents()
-                session.registerNativeComponents()
-            },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     FORWARD_DECLARATIONS_MODULE_NAME,
@@ -69,6 +66,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         return FirKotlinScopeProvider()
     }
 
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        registerComponents()
+    }
+
     // ==================================== Platform session ====================================
 
     fun createModuleBasedSession(
@@ -88,10 +89,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
             enumWhenTracker = null,
             importTracker = null,
             init,
-            registerExtraComponents = {
-                it.registerDefaultComponents()
-                it.registerNativeComponents()
-            },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -113,7 +110,16 @@ object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
         registerNativeCheckers()
     }
 
+    override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
+        registerComponents()
+    }
+
     // ==================================== Common parts ====================================
+
+    private fun FirSession.registerComponents() {
+        registerDefaultComponents()
+        registerNativeComponents()
+    }
 
     // ==================================== Utilities ====================================
 
