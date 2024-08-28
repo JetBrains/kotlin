@@ -489,7 +489,8 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
-        containingActualClassSymbol: RegularClassSymbolMarker?
+        containingActualClassSymbol: RegularClassSymbolMarker?,
+        direct: Boolean,
     ) {
         if (containingActualClassSymbol == null || containingExpectClassSymbol == null) return
 

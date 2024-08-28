@@ -23,15 +23,16 @@ internal fun recordActualForExpectDeclaration(
     actualSymbol: IrSymbol,
     expectActualMap: IrExpectActualMap,
     diagnosticsReporter: IrDiagnosticReporter,
+    direct: Boolean
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = expectActualMap.expectToActual.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.putRegular(expectSymbol, actualSymbol, direct)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
     if (expectDeclaration is IrTypeParametersContainer) {
-        recordTypeParametersMapping(expectActualMap, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
+        recordTypeParametersMapping(expectActualMap, expectDeclaration, actualDeclaration as IrTypeParametersContainer, direct)
     }
     if (expectDeclaration is IrProperty) {
         require(actualDeclaration is IrProperty)
@@ -39,8 +40,8 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.getter?.let { expectGetter ->
             val actualGetter = actualDeclaration.getter
             if (actualGetter != null) {
-                expectActualMap.expectToActual[expectGetter.symbol] = actualGetter.symbol
-                recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter)
+                expectActualMap.putRegular(expectGetter.symbol, actualGetter.symbol, direct)
+                recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter, direct)
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no getter.
                 // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
@@ -53,7 +54,7 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.setter?.let { expectSetter ->
             val actualSetter = actualDeclaration.setter
             if (actualSetter != null) {
-                expectActualMap.expectToActual[expectSetter.symbol] = actualSetter.symbol
+                expectActualMap.putRegular(expectSetter.symbol, actualSetter.symbol, direct)
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no setter.
                 // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
@@ -68,12 +69,13 @@ internal fun recordActualForExpectDeclaration(
 private fun recordTypeParametersMapping(
     expectActualMap: IrExpectActualMap,
     expectTypeParametersContainer: IrTypeParametersContainer,
-    actualTypeParametersContainer: IrTypeParametersContainer
+    actualTypeParametersContainer: IrTypeParametersContainer,
+    direct: Boolean
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            expectActualMap.expectToActual[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.putRegular(expectTypeParameter.symbol, actualTypeParameter.symbol, direct)
         }
 }
 
