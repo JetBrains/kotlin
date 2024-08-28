@@ -95,14 +95,14 @@ internal class KaFirValueParameterSymbol private constructor(
         get() = withValidityAssertion {
             if (backingPsi != null) {
                 return if (backingPsi.hasValOrVar()) {
-                    KaFirKotlinPropertySymbol(backingPsi, analysisSession)
+                    KaFirKotlinPropertySymbol.create(backingPsi, analysisSession)
                 } else {
                     null
                 }
             }
 
             val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return null
-            return KaFirKotlinPropertySymbol(propertySymbol, analysisSession)
+            return KaFirKotlinPropertySymbol.create(propertySymbol, analysisSession)
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {

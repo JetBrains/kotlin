@@ -66,7 +66,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
         get() = withValidityAssertion { firSymbol.returnType(builder) }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { KaFirReceiverParameterSymbol(null, analysisSession, this) }
+        get() = withValidityAssertion { KaFirReceiverParameterSymbol.create(null, analysisSession, this) }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

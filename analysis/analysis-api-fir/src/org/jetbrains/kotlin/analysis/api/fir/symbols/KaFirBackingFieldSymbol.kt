@@ -70,7 +70,7 @@ internal class KaFirBackingFieldSymbol private constructor(
     override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + 2
 
     companion object {
-        operator fun invoke(owningKaProperty: KaFirKotlinPropertySymbol<*>): KaFirBackingFieldSymbol? {
+        fun create(owningKaProperty: KaFirKotlinPropertySymbol<*>): KaFirBackingFieldSymbol? {
             if (owningKaProperty.backingPsi == null && owningKaProperty.firSymbol.backingFieldSymbol == null) {
                 return null
             }

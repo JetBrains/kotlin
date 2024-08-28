@@ -161,7 +161,7 @@ internal class KaFirPropertySetterSymbol(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
-        operator fun invoke(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertySetterSymbol {
+        fun create(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertySetterSymbol {
             val property = declaration.property
             val owningKaProperty = with(session) {
                 @Suppress("UNCHECKED_CAST")

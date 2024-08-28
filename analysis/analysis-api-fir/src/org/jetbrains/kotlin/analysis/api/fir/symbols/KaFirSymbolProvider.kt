@@ -89,7 +89,7 @@ internal class KaFirSymbolProvider(
             if (isLocal) {
                 KaFirLocalVariableSymbol(this, analysisSession)
             } else {
-                KaFirKotlinPropertySymbol(this, analysisSession)
+                KaFirKotlinPropertySymbol.create(this, analysisSession)
             }
         }
 
@@ -128,9 +128,9 @@ internal class KaFirSymbolProvider(
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
         get() = withValidityAssertion {
             if (isGetter) {
-                KaFirPropertyGetterSymbol(this, analysisSession)
+                KaFirPropertyGetterSymbol.create(this, analysisSession)
             } else {
-                KaFirPropertySetterSymbol(this, analysisSession)
+                KaFirPropertySetterSymbol.create(this, analysisSession)
             }
         }
 
@@ -144,7 +144,7 @@ internal class KaFirSymbolProvider(
             when (val parent = parent) {
                 is KtDestructuringDeclaration -> {
                     if (parent.parent?.parent is KtScript) {
-                        KaFirKotlinPropertySymbol(this, analysisSession)
+                        KaFirKotlinPropertySymbol.create(this, analysisSession)
                     } else {
                         KaFirLocalVariableSymbol(this, analysisSession)
                     }

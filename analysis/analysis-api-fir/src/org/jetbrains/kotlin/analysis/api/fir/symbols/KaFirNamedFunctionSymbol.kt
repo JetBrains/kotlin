@@ -82,7 +82,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol(backingPsi, analysisSession, this)
+            KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
         }
 
     override val contextReceivers: List<KaContextReceiver>

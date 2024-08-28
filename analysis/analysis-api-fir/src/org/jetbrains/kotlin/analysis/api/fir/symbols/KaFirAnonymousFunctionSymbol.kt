@@ -59,7 +59,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol(
+            KaFirReceiverParameterSymbol.create(
                 // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
                 backingPsi?.takeIf { it is KtNamedFunction },
                 analysisSession,

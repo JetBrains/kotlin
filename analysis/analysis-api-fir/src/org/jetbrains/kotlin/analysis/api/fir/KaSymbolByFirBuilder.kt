@@ -287,7 +287,7 @@ internal class KaSymbolByFirBuilder(
 
             firSymbol.unwrapImportedFromObjectOrStatic(::buildPropertySymbol)?.let { return it }
 
-            return KaFirKotlinPropertySymbol(firSymbol, analysisSession)
+            return KaFirKotlinPropertySymbol.create(firSymbol, analysisSession)
         }
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KaVariableSignature<KaVariableSymbol> {

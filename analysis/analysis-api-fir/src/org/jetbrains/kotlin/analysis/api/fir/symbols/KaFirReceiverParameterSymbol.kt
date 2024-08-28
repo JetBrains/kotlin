@@ -99,7 +99,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
     override fun hashCode(): Int = 31 * owningKaSymbol.hashCode() + 1
 
     companion object {
-        operator fun invoke(
+        fun create(
             owningBackingPsi: KtCallableDeclaration?,
             analysisSession: KaFirSession,
             owningKaSymbol: KaCallableSymbol,

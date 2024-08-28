@@ -85,7 +85,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { modalityByPsi ?: firSymbol.kaSymbolModality }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion { KaFirBackingFieldSymbol(this) }
+        get() = withValidityAssertion { KaFirBackingFieldSymbol.create(this) }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion {
@@ -155,30 +155,30 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
-        operator fun invoke(
+        fun create(
             declaration: KtProperty,
             session: KaFirSession,
         ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtPropertyBasedSymbol(declaration, session)
 
-        operator fun invoke(
+        fun create(
             declaration: KtParameter,
             session: KaFirSession,
         ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtParameterBasedSymbol(declaration, session)
 
-        operator fun invoke(
+        fun create(
             declaration: KtDestructuringDeclarationEntry,
             session: KaFirSession,
         ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol(declaration, session)
 
-        operator fun invoke(symbol: FirPropertySymbol, session: KaFirSession): KaKotlinPropertySymbol {
+        fun create(symbol: FirPropertySymbol, session: KaFirSession): KaKotlinPropertySymbol {
             assert(!symbol.isLocal)
             check(symbol !is FirSyntheticPropertySymbol)
             check(symbol.fir !is FirSyntheticProperty)
 
             return when (val psi = symbol.fir.getAllowedPsi()) {
-                is KtProperty -> this(psi, session)
-                is KtParameter -> this(psi, session)
-                is KtDestructuringDeclarationEntry -> this(psi, session)
+                is KtProperty -> create(psi, session)
+                is KtParameter -> create(psi, session)
+                is KtDestructuringDeclarationEntry -> create(psi, session)
                 else -> KaFirKotlinPropertyKtPropertyBasedSymbol(symbol, session)
             }
         }
@@ -223,7 +223,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol(backingPsi, analysisSession, this)
+            KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
         }
 
     override val isVal: Boolean
