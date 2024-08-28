@@ -574,7 +574,7 @@ class FirSignatureEnhancement(
     ): Boolean {
         for (typeParameter in typeParameters) {
             if (typeParameter is FirJavaTypeParameter) {
-                if (!typeParameter.performFirstRoundOfBoundsResolution(session, javaTypeParameterStack, source)) {
+                if (!typeParameter.performFirstRoundOfBoundsResolution(javaTypeParameterStack, source)) {
                     return false
                 }
             }

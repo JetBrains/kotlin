@@ -97,7 +97,6 @@ class FirJavaTypeParameter(
      * @return true if the bounds were changed, false if the first round had been already performed earlier
      */
     internal fun performFirstRoundOfBoundsResolution(
-        session: FirSession,
         javaTypeParameterStack: JavaTypeParameterStack,
         source: KtSourceElement?,
     ): Boolean {
@@ -107,7 +106,7 @@ class FirJavaTypeParameter(
         boundsEnhancementState = BoundsEnhancementState.FIRST_ROUND
         enhancedBounds = initialBounds!!.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
-                session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
+                moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) as FirResolvedTypeRef
         }
         return true
