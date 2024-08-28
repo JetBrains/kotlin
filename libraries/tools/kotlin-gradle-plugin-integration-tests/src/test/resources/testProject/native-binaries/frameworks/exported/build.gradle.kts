@@ -8,12 +8,6 @@ repositories {
 }
 
 kotlin {
-    sourceSets["commonMain"].apply {
-        dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
-        }
-    }
-
     iosArm64("ios")
     iosX64("iosSim")
 }

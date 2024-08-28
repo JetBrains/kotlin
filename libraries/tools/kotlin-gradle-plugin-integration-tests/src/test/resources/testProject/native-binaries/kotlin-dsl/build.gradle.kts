@@ -15,14 +15,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configur
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
             api(project(":exported"))
         }
     }
 
     sourceSets["commonTest"].apply {
         dependencies {
-            api("org.jetbrains.kotlin:kotlin-test-annotations-common")
+            api("org.jetbrains.kotlin:kotlin-test")
         }
     }
 

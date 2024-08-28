@@ -24,14 +24,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api "org.jetbrains.kotlin:kotlin-stdlib-common"
                 api(project(":exported"))
             }
         }
         
         commonTest {
             dependencies {
-                api "org.jetbrains.kotlin:kotlin-test-annotations-common"
+                api "org.jetbrains.kotlin:kotlin-test"
             }
         }
     }

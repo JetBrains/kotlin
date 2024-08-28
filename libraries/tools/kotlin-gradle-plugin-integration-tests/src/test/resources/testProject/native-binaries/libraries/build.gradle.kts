@@ -10,7 +10,6 @@ repositories {
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
             api(project(":exported"))
         }
     }
