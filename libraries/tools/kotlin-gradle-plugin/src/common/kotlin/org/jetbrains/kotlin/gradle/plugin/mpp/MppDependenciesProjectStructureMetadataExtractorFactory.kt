@@ -61,7 +61,7 @@ private constructor(
                     For MPP projects starting from 2.1.0, we have consumable/resolvable configurations to get PSM
                     Such an approach prevents project-isolation violations.
                     */
-                    getProjectMppDependencyProjectStructureMetadataExtractorForCompositProject(resolvedMetadataConfiguration, moduleId)
+                    getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(resolvedMetadataConfiguration, moduleId)
                 } else {
                     diagnosticsCollector.report(
                         KotlinToolingDiagnostics.ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion(
@@ -76,7 +76,7 @@ private constructor(
             }
         } else {
             if (isCompositeProjectContainsExtractedPsm(metadataArtifact)) {
-                getProjectMppDependencyProjectStructureMetadataExtractorForCompositProject(resolvedMetadataConfiguration, moduleId)
+                getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(resolvedMetadataConfiguration, moduleId)
             } else {
                 JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
             }
@@ -102,7 +102,7 @@ private constructor(
         )
     }
 
-    private fun getProjectMppDependencyProjectStructureMetadataExtractorForCompositProject(
+    private fun getProjectMppDependencyProjectStructureMetadataExtractorForCompositeProject(
         resolvedMetadataConfiguration: LazyResolvedConfiguration?,
         moduleId: ComponentIdentifier,
     ): ProjectMppDependencyProjectStructureMetadataExtractor {
