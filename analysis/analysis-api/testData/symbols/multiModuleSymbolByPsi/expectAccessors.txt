@@ -34,7 +34,7 @@ KaKotlinPropertySymbol:
     hasStableParameterNames: true
     isActual: false
     isDefault: false
-    isExpect: false
+    isExpect: true
     isExtension: false
     isInline: false
     isOverride: false
@@ -80,7 +80,7 @@ KaKotlinPropertySymbol:
     hasStableParameterNames: true
     isActual: false
     isDefault: false
-    isExpect: false
+    isExpect: true
     isExtension: false
     isInline: false
     isOverride: false

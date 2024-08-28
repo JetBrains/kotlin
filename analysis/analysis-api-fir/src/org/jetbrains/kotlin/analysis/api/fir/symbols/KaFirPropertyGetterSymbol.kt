@@ -20,16 +20,14 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBody
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -64,7 +62,10 @@ internal class KaFirPropertyGetterSymbol(
         get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { owningKaProperty.isExpect }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
+                    owningKaProperty.backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect
+        }
 
     override val isDefault: Boolean
         get() = withValidityAssertion {

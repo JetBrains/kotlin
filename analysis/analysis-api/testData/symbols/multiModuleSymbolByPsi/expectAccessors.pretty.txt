@@ -1,5 +1,5 @@
 // FILE: main.kt
 
 var variable: kotlin.Int
-  get()
-  set(value: kotlin.Int)
+  expect get()
+  expect set(value: kotlin.Int)
