@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
@@ -123,6 +124,15 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.cre
     return firSymbol.createContextReceivers(builder)
 }
 
+/**
+ * We cannot optimize super types by psi if at least one compiler plugin may generate additional types
+ */
+private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
+    val declarationSiteModule = getModule(declaration)
+    val declarationSiteSession = firResolveSession.getSessionFor(declarationSiteModule)
+    return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
+}
+
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {
     /**
      * There is no so much profit to analyze PSI from libraries, but it requires additional logic
@@ -131,13 +141,7 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
      */
     val backingPsi = ifSource { backingPsi }
 
-    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false ||
-        // We cannot optimize super types by psi if at least one compiler plugin may generate additional types
-        // NOTE: ideally, we should check the declaration-site session, but in practice it doesn't matter
-        // as `FirExtensionService` is a project-wide service, so `supertypeGenerators` effectively
-        // the same for all modules in the project
-        analysisSession.firSession.extensionService.supertypeGenerators.isNotEmpty()
-    ) {
+    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false || analysisSession.hasCompilerPluginForSupertypes(backingPsi)) {
         return firSymbol.superTypesList(builder)
     }
 
