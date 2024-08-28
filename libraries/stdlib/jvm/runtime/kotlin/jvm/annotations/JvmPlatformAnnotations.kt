@@ -120,6 +120,12 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 @ExperimentalMultiplatform
 @MustBeDocumented
 @SinceKotlin("1.9")
+@Deprecated(
+    "Please migrate to kotlin.jvm.KotlinActual in kotlin-annotations-jvm. " +
+            "ImplicitlyActualizedByJvmDeclaration will be dropped in future versions of Kotlin. " +
+            "See https://youtrack.jetbrains.com/issue/KT-67202",
+    level = DeprecationLevel.ERROR
+)
 public actual annotation class ImplicitlyActualizedByJvmDeclaration
 
 /**
