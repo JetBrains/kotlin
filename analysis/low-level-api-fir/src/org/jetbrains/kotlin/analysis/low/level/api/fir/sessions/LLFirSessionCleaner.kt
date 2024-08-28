@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.ValueReferenceCleaner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.ValueReferenceCleaner
 
 /**
  * [LLFirSessionCleaner] is a [ValueReferenceCleaner] which handles cleanup of the session after it has been explicitly invalidated or

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlinx.lincheck.RandomProvider
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.annotations.Param
@@ -18,8 +19,8 @@ import java.io.Serializable
 
 /**
  * Verifies the linearizability of [CleanableWeakValueReferenceCache]. As the weak value cache only differs from
- * [CleanableSoftValueReferenceCache] in the choice of reference and Lincheck tests can be expensive, we avoid a duplicate test for the soft
- * value cache.
+ * [CleanableSoftValueReferenceCache][org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache] in
+ * the choice of reference and Lincheck tests can be expensive, we avoid a duplicate test for the soft value cache.
  *
  * While this test cannot rely on garbage collector and reference queue semantics to test cleanup after garbage collection, it still
  * verifies that values are cleaned up after they have been removed with [remove] and [put]. We can't check the same for the compute
@@ -30,12 +31,12 @@ import java.io.Serializable
  *
  * Various functions of the cache are not checked by Lincheck:
  *
- * - [CleanableValueReferenceCache.clear] is not checked because it must be executed in a write action, which guarantees
+ * - [CleanableWeakValueReferenceCache.clear] is not checked because it must be executed in a write action, which guarantees
  *   single-threadedness.
- * - [CleanableValueReferenceCache.size] and [CleanableValueReferenceCache.isEmpty] are not checked because the underlying
+ * - [CleanableWeakValueReferenceCache.size] and [CleanableWeakValueReferenceCache.isEmpty] are not checked because the underlying
  *   `ConcurrentHashMap`'s implementation of these properties isn't guaranteed to immediately take effect after map operations (see the
  *   `ConcurrentHashMap` section in the book "Java Concurrency in Practice").
- * - [CleanableValueReferenceCache.keys] is not checked for linearizability because it is only weakly consistent via the underlying
+ * - [CleanableWeakValueReferenceCache.keys] is not checked for linearizability because it is only weakly consistent via the underlying
  *   concurrent hash map implementation.
  */
 @Param(name = "value", gen = ValueWithCleanupGenerator::class)

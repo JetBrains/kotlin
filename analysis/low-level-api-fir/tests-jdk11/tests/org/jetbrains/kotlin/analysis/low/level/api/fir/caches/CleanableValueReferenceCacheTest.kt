@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.test.framework.utils.withDummyApplication
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
