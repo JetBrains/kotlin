@@ -7,7 +7,7 @@ import kotlin.contracts.*
 fun test1() {
     val x: String
     Array(
-        init = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        init = { x.length },
         size = if (true) { x = ""; 1 } else { x = ""; 1 }
     )
 }

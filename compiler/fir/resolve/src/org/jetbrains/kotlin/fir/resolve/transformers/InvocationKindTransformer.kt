@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -28,8 +29,9 @@ tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunct
 fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
     val argumentMapping = calleeReference.candidate.argumentMapping
-    val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return
-    val isInline = function.isInline
+    val symbol = calleeReference.candidate.symbol
+    val function = (symbol.fir as? FirSimpleFunction) ?: (symbol.fir as? FirConstructor) ?: return
+    val isInline = function.isInline || symbol.isArrayConstructorWithLambda
 
     // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
     val effects = function.unwrapFakeOverrides().contractDescription?.effects

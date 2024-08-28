@@ -541,13 +541,6 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
-        get() {
-            val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
-            if (constructor.valueParameters.size != 2) return false
-            return constructor.returnTypeRef.coneType.isArrayOrPrimitiveArray
-        }
-
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: ExpectedArgumentType?,
