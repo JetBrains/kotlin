@@ -97,9 +97,6 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
-                        // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
-                        // restate the list of opt-ins
-                        optIn.addAll(commonOptIns)
                     }
                 }
             }
@@ -599,14 +596,14 @@ kotlin {
 
 dependencies {
     val jvmMainApi by configurations.getting
-    val commonMainMetadataElementsWithClassifier by configurations.creating
+    val commonMainMetadataElements by configurations.creating
     val metadataApiElements by configurations.getting
     val nativeApiElements = configurations.maybeCreate("nativeApiElements")
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively
         jvmMainApi(project(":kotlin-stdlib-common"))
-        commonMainMetadataElementsWithClassifier(project(":kotlin-stdlib-common"))
+        commonMainMetadataElements(project(":kotlin-stdlib-common"))
         metadataApiElements(project(":kotlin-stdlib-common"))
         nativeApiElements(project(":kotlin-stdlib-common"))
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
@@ -616,9 +613,15 @@ dependencies {
 }
 
 tasks {
-    val metadataJar by existing(Jar::class) {
+    val allMetadataJar by existing(Jar::class) {
+        archiveClassifier = "all"
+    }
+    val metadataJar by registering(Jar::class) {
         archiveAppendix.set("metadata")
         archiveExtension.set("klib")
+    }
+    kotlin.metadata().compilations.named { it == "commonMain" }.configureEach {
+        metadataJar.configure { from(output.allOutputs) }
     }
     val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
@@ -841,13 +844,12 @@ publishing {
             variant("jvmSourcesElements")
 
             variant("metadataApiElements")
-            variant("commonMainMetadataElementsWithClassifier") {
-                name = "commonMainMetadataElements"
-                configuration {
-                    isCanBeConsumed = false
-                }
+            variant("commonMainMetadataElements") {
                 attributes {
-                    copyAttributes(from = project.configurations["commonMainMetadataElements"].attributes, to = this)
+                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
                 }
                 artifact(tasks["metadataJar"]) {
                     classifier = "common"
