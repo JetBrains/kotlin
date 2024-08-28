@@ -112,7 +112,7 @@ class IrActualizer(
 
     private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: IrExpectActualMap): Boolean {
         return when (irDeclaration) {
-            is IrClass -> irDeclaration.isExpect && (!irDeclaration.containsOptionalExpectation() || expectActualMap.regularSymbols.containsKey(irDeclaration.symbol))
+            is IrClass -> irDeclaration.isExpect && (!irDeclaration.containsOptionalExpectation() || expectActualMap.expectToActual.containsKey(irDeclaration.symbol))
             is IrProperty -> irDeclaration.isExpect
             is IrFunction -> irDeclaration.isExpect
             else -> false
