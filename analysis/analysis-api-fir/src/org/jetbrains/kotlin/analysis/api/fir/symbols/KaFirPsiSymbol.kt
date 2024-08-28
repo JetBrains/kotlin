@@ -79,7 +79,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
     val otherBackingPsi = (other as KaFirPsiSymbol<*, *>).backingPsi
     when {
         // Both elements are null, so we cannot compare them
-        backingPsi == null && otherBackingPsi == null -> return symbolEquals(other)
+        backingPsi == null && otherBackingPsi == null -> return firSymbol == other.firSymbol
 
         // Special handling for Java declarations as we cannot guarantee their identity
         backingPsi is PsiMember || otherBackingPsi is PsiMember -> {
@@ -102,7 +102,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
     if (!backingPsi.cameFromKotlinLibrary) return true
 
     // As library elements may represent both library and source symbols at once, we have to check the FIR symbol equals
-    return symbolEquals(other)
+    return firSymbol == other.firSymbol
 }
 
 /**

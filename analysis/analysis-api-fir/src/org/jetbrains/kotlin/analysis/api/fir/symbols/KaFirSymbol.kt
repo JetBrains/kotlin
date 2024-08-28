@@ -41,9 +41,10 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaLifetime
     override val origin: KaSymbolOrigin get() = withValidityAssertion { symbolOrigin() }
 }
 
-internal fun KaFirSymbol<*>.symbolEquals(other: Any?): Boolean {
-    if (other !is KaFirSymbol<*>) return false
-    return this.firSymbol == other.firSymbol
+internal fun KaFirSymbol<*>.symbolEquals(other: Any?): Boolean = when {
+    this === other -> true
+    other == null || this::class != other::class -> false
+    else -> this.firSymbol == (other as KaFirSymbol<*>).firSymbol
 }
 
 internal fun KaFirSymbol<*>.symbolOrigin(): KaSymbolOrigin = firSymbol.fir.ktSymbolOrigin()
@@ -56,7 +57,8 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
             KtFakeSourceElementKind.ImplicitConstructor,
             KtFakeSourceElementKind.DataClassGeneratedMembers, /* Valid for copy() / componentX(), should we change it? */
             KtFakeSourceElementKind.EnumGeneratedDeclaration,
-            KtFakeSourceElementKind.ItLambdaParameter -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+            KtFakeSourceElementKind.ItLambdaParameter,
+                -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
 
             else -> KaSymbolOrigin.SOURCE
         }
