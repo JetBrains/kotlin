@@ -159,6 +159,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
         initProject()
         createKotlinJavaScriptLibraryArchive()
+        addKotlinStdlibDependency()
         addDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         addKotlinJavaScriptStdlibDependency()
         buildAllModules().assertSuccessful()
