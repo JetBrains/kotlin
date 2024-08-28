@@ -221,8 +221,6 @@ object StandardClassIds {
         val ProducesBuiltinMetadata = "ProducesBuiltinMetadata".internalId()
         val Builtin = "Builtin".internalId()
 
-        val PlatformDependent = "PlatformDependent".internalId()
-
         object ParameterNames {
             val value = Name.identifier("value")
 
