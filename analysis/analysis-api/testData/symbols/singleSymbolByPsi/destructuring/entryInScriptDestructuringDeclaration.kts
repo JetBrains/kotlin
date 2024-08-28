@@ -3,4 +3,4 @@
 
 data class X(val a: Int, val b: Int)
 
-val (<expr>a</expr>, b) = X(1, 2)
+val (<expr>c</expr>, d) = X(1, 2)

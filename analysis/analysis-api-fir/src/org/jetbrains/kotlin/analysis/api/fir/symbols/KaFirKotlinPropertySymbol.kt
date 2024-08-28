@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -60,9 +62,6 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val isExtension: Boolean
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
-
-    override val initializer: KaInitializerValue?
-        get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
 
     val isInline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
@@ -298,6 +297,15 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 firSymbol.getCallableId()
         }
 
+    override val initializer: KaInitializerValue?
+        get() = withValidityAssertion {
+            if (backingPsi?.hasInitializer() == false) {
+                return null
+            }
+
+            firSymbol.getKtConstantInitializer(builder)
+        }
+
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
@@ -391,6 +399,26 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
                 firSymbol.getCallableId()
         }
 
+    /**
+     * We treat the corresponding parameter as the initializer.
+     *
+     * Effectively, the code below
+     * ```kotlin
+     * class Foo(val param: Int)
+     * ```
+     * is syntax sugar for
+     * ```kotlin
+     * class Foo(param: Int) {
+     *   val param: Int = param
+     * }
+     * ```
+     */
+    override val initializer: KaInitializerValue?
+        get() = withValidityAssertion {
+            backingPsi?.takeIf { it.containingClassOrObject?.isAnnotation() != true }
+                ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
+        }
+
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { true }
 
@@ -460,6 +488,26 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
                 backingPsi.callableIdForName(name)
             else
                 firSymbol.getCallableId()
+        }
+
+    /**
+     * Effectively, the code below
+     * ```kotlin
+     * val pair = 1 to 2
+     * val (first, second) = pair
+     * ```
+     * is syntax sugar for
+     * ```kotlin
+     * val pair = 1 to 2
+     * val first = pair.component1()
+     * val second = pair.component2()
+     * ```
+     * so the initializer should be `pair.component1()`, but this expression doesn't exist in the code.
+     * It is unclear which behavior we should have, so for now it aligned with [getKtConstantInitializer].
+     */
+    override val initializer: KaInitializerValue?
+        get() = withValidityAssertion {
+            backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
     override val isFromPrimaryConstructor: Boolean

@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
-  callableId: /a
+  callableId: /c
   compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -34,7 +34,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: KtNonConstantInitializerValue(a)
+  initializer: KtNonConstantInitializerValue(c)
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -47,7 +47,7 @@ KaKotlinPropertySymbol:
   isVal: true
   location: TOP_LEVEL
   modality: FINAL
-  name: a
+  name: c
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -62,6 +62,6 @@ KaKotlinPropertySymbol:
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getA
+  javaGetterName: getC
   javaSetterName: null
   setterDeprecationStatus: null
