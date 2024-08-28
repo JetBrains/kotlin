@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 abstract class FirAbstractSessionFactory {
+
+    // ==================================== Library session ====================================
+
     protected fun createLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
@@ -74,6 +77,8 @@ abstract class FirAbstractSessionFactory {
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
+
+    // ==================================== Platform session ====================================
 
     protected fun createModuleBasedSession(
         moduleData: FirModuleData,
@@ -142,6 +147,10 @@ abstract class FirAbstractSessionFactory {
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
         }
     }
+
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
 
     private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific

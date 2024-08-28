@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object FirJvmSessionFactory : FirAbstractSessionFactory() {
+
+    // ==================================== Library session ====================================
+
     fun createLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
@@ -83,6 +86,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             }
         )
     }
+
+    // ==================================== Platform session ====================================
 
     @OptIn(SessionConfiguration::class)
     fun createModuleBasedSession(
@@ -148,6 +153,10 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         }
     }
 
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
+
     private fun initializeForStdlibIfNeeded(
         projectEnvironment: AbstractProjectEnvironment,
         session: FirSession,
@@ -181,4 +190,3 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
     )
 }
-

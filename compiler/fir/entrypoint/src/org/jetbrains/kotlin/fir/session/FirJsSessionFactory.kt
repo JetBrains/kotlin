@@ -35,6 +35,38 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object FirJsSessionFactory : FirAbstractSessionFactory() {
+
+    // ==================================== Library session ====================================
+
+    fun createLibrarySession(
+        mainModuleName: Name,
+        resolvedLibraries: List<KotlinLibrary>,
+        sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        compilerConfiguration: CompilerConfiguration,
+    ): FirSession = createLibrarySession(
+        mainModuleName,
+        sessionProvider,
+        moduleDataProvider,
+        compilerConfiguration.languageVersionSettings,
+        extensionRegistrars,
+        registerExtraComponents = {
+            it.registerDefaultComponents()
+            it.registerJsComponents(compilerConfiguration)
+        },
+        createKotlinScopeProvider = { FirKotlinScopeProvider() },
+        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
+            listOfNotNull(
+                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
+                syntheticFunctionInterfaceProvider
+            )
+        }
+    )
+
+    // ==================================== Platform session ====================================
+
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -77,32 +109,9 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         )
     }
 
-    fun createLibrarySession(
-        mainModuleName: Name,
-        resolvedLibraries: List<KotlinLibrary>,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        compilerConfiguration: CompilerConfiguration,
-    ): FirSession = createLibrarySession(
-        mainModuleName,
-        sessionProvider,
-        moduleDataProvider,
-        compilerConfiguration.languageVersionSettings,
-        extensionRegistrars,
-        registerExtraComponents = {
-            it.registerDefaultComponents()
-            it.registerJsComponents(compilerConfiguration)
-        },
-        createKotlinScopeProvider = { FirKotlinScopeProvider() },
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider
-            )
-        }
-    )
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
 
     private fun FirSession.registerJsComponents(compilerConfiguration: CompilerConfiguration) {
         val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)

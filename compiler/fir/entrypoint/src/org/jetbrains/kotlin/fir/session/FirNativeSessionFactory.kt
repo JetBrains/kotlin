@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
 object FirNativeSessionFactory : FirAbstractSessionFactory() {
+
+    // ==================================== Library session ====================================
+
     fun createLibrarySession(
         mainModuleName: Name,
         resolvedLibraries: List<KotlinResolvedLibrary>,
@@ -63,6 +66,8 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             })
     }
 
+    // ==================================== Platform session ====================================
+
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -94,6 +99,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             }
         )
     }
+
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
 
     @OptIn(SessionConfiguration::class)
     fun FirSession.registerNativeComponents() {

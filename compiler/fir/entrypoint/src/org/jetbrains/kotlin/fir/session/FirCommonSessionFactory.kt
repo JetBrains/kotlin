@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object FirCommonSessionFactory : FirAbstractSessionFactory() {
+
+    // ==================================== Library session ====================================
+
     fun createLibrarySession(
         mainModuleName: Name,
         sessionProvider: FirProjectSessionProvider,
@@ -78,6 +81,8 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             }
         )
     }
+
+    // ==================================== Platform session ====================================
 
     fun createModuleBasedSession(
         moduleData: FirModuleData,
@@ -142,4 +147,9 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             }
         )
     }
+
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
+
 }

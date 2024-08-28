@@ -26,6 +26,37 @@ import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
 object FirWasmSessionFactory : FirAbstractSessionFactory() {
+
+    // ==================================== Library session ====================================
+
+    fun createLibrarySession(
+        mainModuleName: Name,
+        resolvedLibraries: List<KotlinLibrary>,
+        sessionProvider: FirProjectSessionProvider,
+        moduleDataProvider: ModuleDataProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+    ): FirSession = createLibrarySession(
+        mainModuleName,
+        sessionProvider,
+        moduleDataProvider,
+        languageVersionSettings,
+        extensionRegistrars,
+        registerExtraComponents = {
+            it.registerDefaultComponents()
+        },
+        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
+        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
+            listOfNotNull(
+                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
+                syntheticFunctionInterfaceProvider,
+            )
+        }
+    )
+
+    // ==================================== Platform session ====================================
+
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -73,29 +104,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         )
     }
 
-    fun createLibrarySession(
-        mainModuleName: Name,
-        resolvedLibraries: List<KotlinLibrary>,
-        sessionProvider: FirProjectSessionProvider,
-        moduleDataProvider: ModuleDataProvider,
-        extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-    ): FirSession = createLibrarySession(
-        mainModuleName,
-        sessionProvider,
-        moduleDataProvider,
-        languageVersionSettings,
-        extensionRegistrars,
-        registerExtraComponents = {
-            it.registerDefaultComponents()
-        },
-        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
-        createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
-            listOfNotNull(
-                KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
-                syntheticFunctionInterfaceProvider,
-            )
-        }
-    )
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
 }
