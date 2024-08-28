@@ -16221,6 +16221,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/exceptions/extend0.kt");
     }
 
+    @TestMetadata("kt69534.kt")
+    public void testKt69534() {
+      runTest("compiler/testData/codegen/box/exceptions/kt69534.kt");
+    }
+
     @TestMetadata("rethrow.kt")
     public void testRethrow() {
       runTest("compiler/testData/codegen/box/exceptions/rethrow.kt");
