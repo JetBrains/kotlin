@@ -450,7 +450,7 @@ internal class RTTIGenerator(
                     debugOperationsSize, debugOperations)
         }
 
-        val result = staticData.placeGlobal("", value)
+        val result = staticData.placeGlobal("kextendedtypeinfo:$className", value)
         result.setConstant(true)
         return result.pointer
     }
@@ -503,26 +503,26 @@ internal class RTTIGenerator(
 
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
-        val interfacesPtr = staticData.placeGlobalConstArray("",
+        val interfacesPtr = staticData.placeGlobalConstArray("kinterfacesptr:${irClass.fqNameForIrSerialization}",
                 pointerType(runtime.typeInfoType), interfaces.map { it.typeInfoPtr })
 
         assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
 
         val objOffsets = getObjOffsets(bodyType)
-        val objOffsetsPtr = staticData.placeGlobalConstArray("", llvm.int32Type, objOffsets)
+        val objOffsetsPtr = staticData.placeGlobalConstArray("kobjoffsetsptrs:${irClass.fqNameForIrSerialization}", llvm.int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
         val writableTypeInfoType = runtime.writableTypeInfoType
         val writableTypeInfo = if (writableTypeInfoType == null) {
             null
         } else {
-            staticData.createGlobal(writableTypeInfoType, "")
+            staticData.createGlobal(writableTypeInfoType, "ktypewsynth:${irClass.fqNameForIrSerialization}")
                     .also { it.setZeroInitializer() }
                     .pointer
         }
         val vtable = vtable(superClass)
         val typeInfoWithVtableType = llvm.structType(runtime.typeInfoType, vtable.llvmType)
-        val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
+        val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "ktypeinfowvtable:${irClass.fqNameForIrSerialization}", isExported = false)
         val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
         val typeHierarchyInfo = if (!context.ghaEnabled())
             ClassGlobalHierarchyInfo.DUMMY
@@ -537,7 +537,7 @@ internal class RTTIGenerator(
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
                 val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
-                val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
+                val interfaceVTable = staticData.placeGlobalArray("kitableentries:${irClass.fqNameForIrSerialization}", llvm.int8PtrType, vtableEntries)
                 val interfaceVTableType = LLVMArrayType(llvm.int8PtrType, vtableEntries.size)!!
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
@@ -546,7 +546,7 @@ internal class RTTIGenerator(
                 )
             }
         }
-        val interfaceTablePtr = staticData.placeGlobalConstArray("", runtime.interfaceTableRecordType, interfaceTable)
+        val interfaceTablePtr = staticData.placeGlobalConstArray("kitablerecs:${irClass.fqNameForIrSerialization}", runtime.interfaceTableRecordType, interfaceTable)
 
         val typeInfoWithVtable = llvm.struct(TypeInfo(
                 selfPtr = result,

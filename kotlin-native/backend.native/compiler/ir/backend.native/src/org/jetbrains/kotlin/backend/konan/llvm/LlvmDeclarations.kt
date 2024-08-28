@@ -343,7 +343,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 it.setLinkage(LLVMLinkage.LLVMCommonLinkage) // Allows to be replaced by other bitcode module.
             }
         } else {
-            staticData.createGlobal(writableTypeInfoType, "")
+            staticData.createGlobal(writableTypeInfoType, "ktypew:${declaration.fqNameForIrSerialization}#internal")
         }.also {
             it.setZeroInitializer()
         }

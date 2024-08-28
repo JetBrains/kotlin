@@ -10,6 +10,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.util.*
 
 private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, type: LLVMTypeRef, bits: Int): ConstPointer {
     val rawPtr = LLVMConstBitCast(this.llvm, llvm.int8PtrType)
@@ -59,7 +60,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
         val compositeType = llvm.structType(runtime.arrayHeaderType, arrayBody.llvmType)
 
-        val global = this.createGlobal(compositeType, "")
+        val global = this.createGlobal(compositeType, "kconstarray:${arrayClass.fqNameForIrSerialization}")
 
         val objHeaderPtr = global.pointer.getElementPtr(llvm, compositeType, 0)
         val arrayHeader = arrayHeader(typeInfo, elements.size)
@@ -72,7 +73,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     fun createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
-        val global = this.placeGlobal("", createConstKotlinObjectBody(type, *fields))
+        val global = this.placeGlobal("kconstobj:${type.fqNameForIrSerialization}", createConstKotlinObjectBody(type, *fields))
         global.setUnnamedAddr(true)
         global.setConstant(true)
 
