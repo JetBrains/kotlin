@@ -11,7 +11,7 @@ expect abstract class B
 expect class C : B
 
 expect abstract class D() {
-    <!AMBIGUOUS_ACTUALS{JVM}!>fun foo()<!>
+    fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 }
 
 class E : D()

@@ -1,9 +1,9 @@
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(param: Int = 1)<!>
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun missingOnActual()<!>
-}<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>(param: Int = 1)
+    fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>missingOnActual<!>()
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

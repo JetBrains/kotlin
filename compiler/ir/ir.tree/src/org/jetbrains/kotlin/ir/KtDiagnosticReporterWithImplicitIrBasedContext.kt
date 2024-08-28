@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -32,9 +33,11 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
 
     private val suppressCache = IrBasedSuppressCache()
 
-    private fun IrElement.toSourceElement(containingIrFile: IrFile) =
-        (PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
-            ?: sourceElement())
+    private fun IrElement.toSourceElement(containingIrFile: IrFile): AbstractKtSourceElement? {
+        return PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
+            ?: (this as? IrMetadataSourceOwner)?.metadata?.source
+            ?: sourceElement()
+    }
 
     override fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl =
         at(irElement, containingIrDeclaration.file)

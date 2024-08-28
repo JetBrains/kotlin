@@ -5,11 +5,11 @@
 
 import kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>@OptIn(ExperimentalMultiplatform::class)
+@OptIn(ExperimentalMultiplatform::class)
 @ImplicitlyActualizedByJvmDeclaration
-expect class <!CLASSIFIER_REDECLARATION!>Foo<!>() {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class <!CLASSIFIER_REDECLARATION!>Foo<!>() {
     fun foo()
-}<!>
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

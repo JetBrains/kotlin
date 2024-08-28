@@ -1,6 +1,6 @@
 // MODULE: m1-common
 // FILE: common.kt
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Foo {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo {
     <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }
@@ -20,4 +20,4 @@
     <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1
     }
-}<!>
+}

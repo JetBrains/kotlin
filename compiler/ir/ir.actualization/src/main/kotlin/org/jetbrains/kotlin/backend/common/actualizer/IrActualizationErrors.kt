@@ -21,12 +21,18 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibil
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 internal object IrActualizationErrors {
-    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
-    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>()
-    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>()
-    val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>()
-    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
-    val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>()
+    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleDescriptor>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
+        SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
+    )
+    val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>(
+        SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
+    )
+    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>(
+        SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
+    )
+    val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultIrActualizationErrorMessages)

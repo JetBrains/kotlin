@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.psi
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirMetadataSource : MetadataSource {
     abstract val fir: FirDeclaration
+    override val source: KtSourceElement?
+        get() = fir.source
 
     override val name: Name?
         get() = when (val fir = fir) {

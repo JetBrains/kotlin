@@ -7,7 +7,7 @@
 // MODULE: common
 // FILE: Common.kt
 expect abstract class B() {
-    <!AMBIGUOUS_ACTUALS{JVM}!>fun get(index: Int): Char<!>
+    fun <!AMBIGUOUS_ACTUALS{JVM}!>get<!>(index: Int): Char
 }
 
 // MODULE: jvm()()(common)

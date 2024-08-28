@@ -6,9 +6,9 @@
 // FILE: common.kt
 package foo
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>public expect abstract class AbstractMutableList() {
-    <!EXPECT_ACTUAL_MISMATCH{JVM}!>protected var modCount: Int<!>
-}<!>
+public <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class AbstractMutableList() {
+    protected var <!EXPECT_ACTUAL_MISMATCH{JVM}!>modCount<!>: Int
+}
 
 // MODULE: jvm()()(common)
 // FILE: bar/JavaAbstractMutableList.java

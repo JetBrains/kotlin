@@ -498,7 +498,7 @@ object PositioningStrategies {
         }
     }
 
-    private open class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
+    private open class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<PsiElement>() {
         constructor(vararg tokens: IElementType) : this(TokenSet.create(*tokens))
 
         protected fun markModifier(element: KtModifierListOwner?): List<TextRange>? =
@@ -506,9 +506,11 @@ object PositioningStrategies {
                 element?.modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange
             }.takeIf { it.isNotEmpty() }
 
-        override fun mark(element: KtModifierListOwner): List<TextRange> {
-            val result = markModifier(element)
-            if (result != null) return result
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtModifierListOwner) {
+                val result = markModifier(element)
+                if (result != null) return result
+            }
 
             // Try to resolve situation when there's no visibility modifiers written before element
             if (element is PsiNameIdentifierOwner) {
@@ -521,17 +523,14 @@ object PositioningStrategies {
             val elementToMark = when (element) {
                 is KtObjectDeclaration -> element.getObjectKeyword()!!
                 is KtPropertyAccessor -> element.namePlaceholder
-                is KtAnonymousInitializer, is KtPrimaryConstructor -> element
-                else -> throw IllegalArgumentException(
-                    "Can't find text range for element '${element::class.java.canonicalName}' with the text '${element.text}'"
-                )
+                else -> element
             }
             return markElement(elementToMark)
         }
     }
 
     private class InlineFunPositioningStrategy : ModifierSetBasedPositioningStrategy(KtTokens.INLINE_KEYWORD) {
-        override fun mark(element: KtModifierListOwner): List<TextRange> {
+        override fun mark(element: PsiElement): List<TextRange> {
             if (element is KtProperty) {
                 return markModifier(element.getter) ?: markModifier(element.setter) ?: super.mark(element)
             }

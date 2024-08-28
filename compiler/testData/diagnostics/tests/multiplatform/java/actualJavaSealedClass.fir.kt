@@ -2,7 +2,7 @@
 
 // MODULE: common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect abstract class Memory<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class Memory
 
 // MODULE: jvm()()(common)
 // FILE: kotlin.kt

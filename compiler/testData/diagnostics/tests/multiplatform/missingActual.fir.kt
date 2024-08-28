@@ -3,11 +3,11 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>open expect class A() {
+open <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class A() {
     open fun foo(): String
-}<!>
+}
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class B() : A<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class B() : A
 
 fun test() = B().foo()
 
