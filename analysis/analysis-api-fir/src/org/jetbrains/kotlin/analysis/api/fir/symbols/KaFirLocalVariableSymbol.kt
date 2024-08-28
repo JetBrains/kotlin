@@ -26,12 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.*
 
 internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
     final override val backingPsi: KtDeclaration?,
@@ -85,10 +80,27 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(declaration, session) {
         val parent = declaration.parent
 
-        // to be sure that the entry is correct
+        /**
+         *  [KtDestructuringDeclaration] in incorrect positions (like class-level)
+         *  still produce [KtDestructuringDeclarationEntry],
+         *  but their parent is [com.intellij.psi.PsiErrorElement],
+         *  so for them [KaFirErrorVariableSymbol] should be created instead.
+         *
+         *  Otherwise, [KtDestructuringDeclarationEntry.getParentNode] will throw an exception later.
+         */
         assert(parent is KtDestructuringDeclaration)
 
-        // to be sure that the entry is not treated as non-local
+        /**
+         * Top-level destructuring declarations inside [KtScript] produce non-local
+         * properties for each corresponding [KtDestructuringDeclarationEntry],
+         * so [KaFirKotlinPropertySymbol.create] should be used in this case.
+         *
+         * This assertion checks that this is not the case here.
+         *
+         * In the case of the script, the first parent for [KtDestructuringDeclarationEntry]
+         * will be [KtDestructuringDeclaration] (previous assertion),
+         * the second one is [KtBlockExpression] and the third one is [KtScript].
+         */
         assert(parent.parent?.parent !is KtScript)
     }
 
