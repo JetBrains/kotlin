@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 // ----------------------------------- declaration origins -----------------------------------
 
 fun FirClass.irOrigin(c: Fir2IrComponents): IrDeclarationOrigin = when {
-    c.firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     isJava -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    c.firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     else -> when (val origin = origin) {
         is FirDeclarationOrigin.Plugin -> GeneratedByPlugin(origin.key)
         else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
