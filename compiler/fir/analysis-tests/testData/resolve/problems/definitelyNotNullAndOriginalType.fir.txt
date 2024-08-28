@@ -1,4 +1,4 @@
 FILE: main.kt
     public final fun <V> R|SLRUMap<V>|.getOrPut(value: R|V|): R|kotlin/Unit| {
-        this@R|/getOrPut|.R|SubstitutionOverride</SLRUMap.takeV: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /SLRUMap.takeV>#|(R|<local>/value|)
+        this@R|/getOrPut|.R|SubstitutionOverride</SLRUMap.takeV: R|kotlin/Unit|><Inapplicable(UNSAFE_CALL): /SLRUMap.takeV>#|(R|<local>/value|)
     }

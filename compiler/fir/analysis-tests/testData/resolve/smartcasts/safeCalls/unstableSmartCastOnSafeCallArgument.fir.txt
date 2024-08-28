@@ -31,7 +31,7 @@ FILE: unstableSmartCastOnSafeCallArgument.kt
         when () {
             !=(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| }, Null(null)) ->  {
                 R|/takesNullable|(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| })
-                R|/takesNonNull<Inapplicable(INAPPLICABLE): /takesNonNull>#|(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| })
+                R|/takesNonNull<Inapplicable(UNSAFE_CALL): /takesNonNull>#|(R|<local>/foo|.R|/Foo.bar|?.{ $subj$.R|/Bar.buz| })
             }
         }
 

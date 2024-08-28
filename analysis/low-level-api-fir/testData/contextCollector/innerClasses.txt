@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] innerClasses.kt
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] f: R|F|, [ResolvedTo(BODY_RESOLVE)] b: R|B|): R|kotlin/Unit| {
-                R|test/consume<Inapplicable(INAPPLICABLE): test/consume>#|(R|<local>/f|)
+                R|test/consume<Inapplicable(UNSAFE_CALL): test/consume>#|(R|<local>/f|)
             }
 
         }

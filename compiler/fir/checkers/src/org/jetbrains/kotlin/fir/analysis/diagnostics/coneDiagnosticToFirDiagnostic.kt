@@ -122,10 +122,14 @@ private fun ConeDiagnostic.toKtDiagnostic(
         } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val (unsafeCall, candidate) = candidates.firstNotNullOf {
+            val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
                 (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnsafeCall>()?.to(it)
             }
-            mapUnsafeCallError(candidate, unsafeCall, source, callOrAssignmentSource)
+            if (diagnosticAndCandidate != null) {
+                mapUnsafeCallError(diagnosticAndCandidate.second, diagnosticAndCandidate.first, source, callOrAssignmentSource)
+            } else {
+                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
+            }
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {

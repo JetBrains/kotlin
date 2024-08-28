@@ -14,7 +14,7 @@ fun bar(arg: Long?): Long {
         return i<!UNSAFE_CALL!>--<!> <!UNSAFE_OPERATOR_CALL!>+<!> i
     }
     if (i++ == 7L) {
-        return i++ <!NONE_APPLICABLE!>+<!> i
+        return i++ <!UNSAFE_OPERATOR_CALL!>+<!> <!ARGUMENT_TYPE_MISMATCH!>i<!>
     }
     return 0L
 }

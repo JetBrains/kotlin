@@ -21,7 +21,7 @@ fun test() {
     ClassWithExternalAnnotatedMembers(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>i<!>)
 
     val s: String? = null
-    <!NONE_APPLICABLE!>ClassWithExternalAnnotatedMembers<!>(s)
+    ClassWithExternalAnnotatedMembers(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 
     val b: Boolean? = null
     ClassWithExternalAnnotatedMembers(b)
