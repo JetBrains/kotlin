@@ -6,7 +6,7 @@ There are various Kotlin APIs to JavaScript environments in the [standard librar
 
 ## Compiling the Kotlin Standard Library for JavaScript
 
-The Kotlin Standard Library for JS is built with gradle, see the corresponding module's [ReadMe](../libraries/stdlib/js-v1/ReadMe.md). 
+The Kotlin Standard Library for JS is built with gradle, see the corresponding module's [ReadMe](../libraries/stdlib/js/ReadMe.md). 
 
 
 ## Reusing JVM based test cases in JavaScript
