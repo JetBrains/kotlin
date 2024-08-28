@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.caches.StubsForCollectionClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.overridesWithoutStubs
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
@@ -103,11 +107,25 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                     //  - 'remove' member functions:
                     //          kotlin.collections.MutableCollection<E>#remove(E): Boolean
                     //          kotlin.collections.MutableMap<K, V>#remove(K): V?
+                    //          kotlin.collections.MutableMap<K, V>#remove(key: K, value: V): Boolean
                     //      We've checked that corresponding 'remove(T)' member function is not present in the class.
                     //      We should add a member function that overrides, respectively:
                     //          java.util.Collection<E>#remove(Object): boolean
                     //          java.util.Map<K, V>#remove(K): V
                     //      This corresponds to replacing value parameter types with 'Any?'.
+
+                    //      Here we manually filter out remove(key: K, value: V) method.
+                    //      We have to reproduce old behavior to avoid introducing breaking changes until it's approved by LC.
+                    //      As soon as changes that fix KT-72496 are approved, this must be dropped.
+                    if (context.config.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+                        && irClass.classId == StandardClassIds.AbstractMap
+                        && irClass.typeParameters.size == 2
+                        && stub.valueParameters.size == 2
+                        && stub.valueParameters[0].type.classifierOrNull == irClass.typeParameters[0].symbol
+                        && stub.valueParameters[1].type.classifierOrNull == irClass.typeParameters[1].symbol
+                    ) {
+                        continue
+                    }
                     irClass.declarations.add(stub.apply {
                         valueParameters = valueParameters.map {
                             it.copyWithCustomTypeSubstitution(this) { context.irBuiltIns.anyNType }

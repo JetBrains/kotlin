@@ -7,20 +7,18 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * @param firJavaClass JDK version of some built-in class (e.g. java.util.List)
  * @param declaredMemberScope basic/common declared scope (without any additional members) of a Kotlin version
  * @param javaMappedClassUseSiteScope use-site scope of JDK class
+ * @param filterOutJvmPlatformDeclarations filter out members annotated by @kotlin.internal.PlatformDependent
  */
 class JvmMappedScope(
     private val session: FirSession,
@@ -62,6 +61,7 @@ class JvmMappedScope(
     private val firJavaClass: FirRegularClass,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val javaMappedClassUseSiteScope: FirTypeScope,
+    private val filterOutJvmPlatformDeclarations: Boolean,
 ) : FirTypeScope() {
     private val mappedSymbolCache = session.mappedSymbolStorage.cacheByOwner.getValue(firKotlinClass.symbol)
 
@@ -119,7 +119,12 @@ class JvmMappedScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
-            if (FirJvmPlatformDeclarationFilter.isFunctionAvailable(symbol.fir, javaMappedClassUseSiteScope, session)) {
+            if (!filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
+                    symbol.fir,
+                    javaMappedClassUseSiteScope,
+                    session
+                )
+            ) {
                 declared += symbol
                 processor(symbol)
             }
@@ -289,6 +294,7 @@ class JvmMappedScope(
             newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType),
             newSource = oldFunction.source,
+            markAsOverride = !session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)
         ).apply {
             setHiddenAttributeIfNecessary(jdkMemberStatus)
         }
@@ -445,6 +451,7 @@ class JvmMappedScope(
             firJavaClass,
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             javaMappedClassUseSiteScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: javaMappedClassUseSiteScope,
+            filterOutJvmPlatformDeclarations
         )
     }
 }

@@ -41,11 +41,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -138,11 +134,17 @@ fun FirResult.convertToIrAndActualizeForJvm(
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
-        {
-            listOfNotNull(
-                FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
-                FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
-            )
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
+            && configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)
+        ) {
+            { emptyList() }
+        } else {
+            {
+                listOfNotNull(
+                    FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
+                    FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
+                )
+            }
         }
     ).also { performanceManager?.notifyIRTranslationFinished() }
 }

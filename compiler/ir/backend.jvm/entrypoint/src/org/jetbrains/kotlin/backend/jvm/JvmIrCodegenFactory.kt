@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
+import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
@@ -20,14 +22,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmSerializeIrMode
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
@@ -138,6 +140,7 @@ open class JvmIrCodegenFactory(
         override val state: GenerationState,
         val context: JvmBackendContext,
         val module: IrModuleFragment,
+        val allBuiltins: List<IrFile>,
         val notifyCodegenStart: () -> Unit,
     ) : CodegenFactory.CodegenInput
 
@@ -359,13 +362,16 @@ open class JvmIrCodegenFactory(
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
+        val allBuiltins = irModuleFragment.files.filter { it.isJvmBuiltin }
+        irModuleFragment.files.removeIf { it.isBytecodeGenerationSuppressed }
+
         jvmLoweringPhases.invokeToplevel(phaseConfig, context, irModuleFragment)
 
-        return JvmIrCodegenInput(state, context, irModuleFragment, notifyCodegenStart)
+        return JvmIrCodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
+        val (state, context, module, allBuiltins, notifyCodegenStart) = input as JvmIrCodegenInput
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
@@ -380,6 +386,22 @@ open class JvmIrCodegenFactory(
         state.afterIndependentPart()
 
         generateModuleMetadata(input)
+        if (state.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
+            require(state.config.useFir) { "Stdlib is expected to be compiled by K2" }
+            serializeBuiltinsMetadata(allBuiltins, context)
+        }
+    }
+
+    private fun serializeBuiltinsMetadata(allBuiltins: List<IrFile>, context: JvmBackendContext) {
+        val serializer = context.backendExtension.createBuiltinsSerializer()
+        val serializedPackages = serializer.serialize(allBuiltins.map { it.metadata as MetadataSource.File })
+        require(serializedPackages.map { it.first }.toSet() == BUILT_INS_PACKAGE_FQ_NAMES) { "Unexpected set of builtin packages" }
+        for ((packageName, serialized) in serializedPackages) {
+            context.state.factory.addSerializedBuiltinsPackageMetadata(
+                BuiltInSerializerProtocol.getBuiltInsFilePath(packageName),
+                serialized
+            )
+        }
     }
 
     private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {

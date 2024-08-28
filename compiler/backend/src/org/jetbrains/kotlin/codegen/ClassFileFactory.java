@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
@@ -96,6 +98,20 @@ public class ClassFileFactory implements OutputFileCollection {
 
     public void releaseGeneratedOutput() {
         generators.clear();
+    }
+
+    public void addSerializedBuiltinsPackageMetadata(String path, byte[] serialized) {
+        generators.put(path, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
+            @Override
+            public byte[] asBytes(ClassBuilderFactory factory) {
+                return serialized;
+            }
+
+            @Override
+            public String asText(ClassBuilderFactory factory) {
+                throw new UnsupportedOperationException("No string representation for protobuf-serialized metadata");
+            }
+        });
     }
 
     public void setModuleMapping(JvmModuleProtoBuf.Module moduleProto) {

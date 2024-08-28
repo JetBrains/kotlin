@@ -25,6 +25,7 @@ fun wrapScopeWithJvmMapped(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     memberRequiredPhase: FirResolvePhase?,
+    filterOutJvmPlatformDeclarations: Boolean = true
 ): FirContainingNamesAwareScope {
     if (klass !is FirRegularClass) return declaredMemberScope
     val classId = klass.classId
@@ -50,5 +51,6 @@ fun wrapScopeWithJvmMapped(
         javaClass,
         declaredMemberScope,
         javaClassUseSiteScope,
+        filterOutJvmPlatformDeclarations
     )
 }

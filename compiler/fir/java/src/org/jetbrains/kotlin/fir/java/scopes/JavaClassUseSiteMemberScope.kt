@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
@@ -1049,7 +1051,18 @@ class JavaClassUseSiteMemberScope(
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
             isInterface || origin.isBuiltIns -> false
-            else -> true
+            else -> {
+                if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
+                    true
+                } else {
+                    val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)
+                    if (containingFile == null) {
+                        true
+                    } else {
+                        !containingFile.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
+                    }
+                }
+            }
         }
 
     private fun ConeClassLikeType.toFir(session: FirSession): FirRegularClass? {

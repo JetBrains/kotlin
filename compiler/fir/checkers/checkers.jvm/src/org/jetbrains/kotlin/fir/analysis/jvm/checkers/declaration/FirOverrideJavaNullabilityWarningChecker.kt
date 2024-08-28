@@ -142,6 +142,7 @@ private fun FirSimpleFunction.substituteOrNull(
             newReturnType = newReturnType,
             newContextParameterTypes = newContextReceiverTypes,
             newReceiverType = newExtensionReceiverType,
+            markAsOverride = true
         )
     }
 }
