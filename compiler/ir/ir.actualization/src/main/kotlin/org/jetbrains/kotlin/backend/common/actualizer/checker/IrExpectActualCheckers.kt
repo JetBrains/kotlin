@@ -26,7 +26,7 @@ internal class IrExpectActualCheckers(
     )
 
     override val matchingContext = object : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
-        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol, direct: Boolean) {
             shouldNotBeCalled()
         }
     }
