@@ -15,10 +15,10 @@ expect annotation class MyOptIn
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 @RequiresOptIn
-<!EXPECT_ACTUAL_OPT_IN_ANNOTATION!>actual<!> annotation class ActualOnly
+actual annotation class <!ACTUAL_WITHOUT_EXPECT!>ActualOnly<!>
 
 @RequiresOptIn
-<!EXPECT_ACTUAL_OPT_IN_ANNOTATION!>actual<!> annotation class Both
+actual annotation class <!ACTUAL_WITHOUT_EXPECT!>Both<!>
 
 @RequiresOptIn
 actual annotation class MyOptIn
