@@ -35,12 +35,26 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @Transient
     var errors: ArgumentParseErrors? = null
 
+    private var _help: Boolean = false
+
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")
     var help = false
         set(value) {
             checkFrozen()
             field = value
+            _help = value
         }
+        get() = _help || field
+
+    @Deprecated("Use help", level = DeprecationLevel.HIDDEN) // Replacement for private visibility
+    @Argument(value = "--help", description = "Synonym for -help.")
+    var helpLong = false
+        set(value) {
+            checkFrozen()
+            field = value
+            _help = value
+        }
+        get() = _help || field
 
     @Argument(value = "-X", description = "Print a synopsis of advanced options.")
     var extraHelp = false
@@ -49,12 +63,26 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    @Argument(value = "-version", description = "Display the compiler version.")
+    private var _version = false
+
+    @Argument(value = "-version", shortName = "-v", description = "Print the compiler version.")
     var version = false
         set(value) {
             checkFrozen()
             field = value
+            _version = value
         }
+        get() = _version || field
+
+    @Deprecated("Use version", level = DeprecationLevel.HIDDEN) // Replacement for private visibility
+    @Argument(value = "--version", description = "Synonym for -version.")
+    var versionSynonym = false
+        set(value) {
+            checkFrozen()
+            field = value
+            _version = value
+        }
+        get() = _version || field
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -97,10 +125,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             checkFrozen()
             field = value
         }
-
-    // This is a hack to workaround an issue that incremental compilation does not recompile CLI arguments classes after the change in
-    // the previous commit. This method can be removed after some time.
-    override fun equals(other: Any?): Boolean = super.equals(other)
 }
 
 

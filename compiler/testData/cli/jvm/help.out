@@ -17,6 +17,7 @@ where possible options include:
   -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
   -X                         Print a synopsis of advanced options.
   -help (-h)                 Print a synopsis of standard options.
+  --help                     Synonym for -help.
   -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
   -language-version <version> Provide source compatibility with the specified version of Kotlin.
   -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
@@ -30,7 +31,8 @@ where possible options include:
   -script                    Evaluate the given Kotlin script (*.kts) file.
   -nowarn                    Don't generate any warnings.
   -verbose                   Enable verbose logging output.
-  -version                   Display the compiler version.
+  -version (-v)              Print the compiler version.
+  --version                  Synonym for -version.
   -J<option>                 Pass an option directly to JVM.
   @<argfile>                 Read compiler arguments and file paths from the given file.
 
