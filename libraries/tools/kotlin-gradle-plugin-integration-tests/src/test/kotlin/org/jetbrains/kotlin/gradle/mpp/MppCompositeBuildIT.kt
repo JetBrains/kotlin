@@ -27,6 +27,9 @@ import kotlin.test.assertIs
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
 class MppCompositeBuildIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.disableConfigurationCache_KT70416()
+
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
@@ -519,7 +522,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleProperties.appendText("\nold_kotlin_version=1.9.24")
         }
 
-        project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
+        project(
+            "mpp-composite-build/sample0/consumerBuild",
+            gradleVersion, buildOptions = defaultBuildOptions.enableKmpIsolatedProjectSupport()
+        ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
 
             build(":consumerA:transformCommonMainDependenciesMetadata") {

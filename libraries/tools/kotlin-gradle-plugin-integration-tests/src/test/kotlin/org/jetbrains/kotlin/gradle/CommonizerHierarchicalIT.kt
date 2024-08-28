@@ -19,6 +19,7 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions
             .disableConfigurationCache_KT70416()
+            .enableKmpIsolatedProjectSupport()
 
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest

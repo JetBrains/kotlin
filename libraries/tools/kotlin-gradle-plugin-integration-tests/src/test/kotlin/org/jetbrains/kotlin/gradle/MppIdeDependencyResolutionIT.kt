@@ -35,6 +35,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions
             .disableConfigurationCache_KT70416()
+            .enableKmpIsolatedProjectSupport()
 
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {

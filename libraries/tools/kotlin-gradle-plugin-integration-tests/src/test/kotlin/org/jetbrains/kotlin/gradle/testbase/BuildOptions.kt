@@ -256,7 +256,7 @@ data class BuildOptions(
         }
 
         if (kmpIsolatedProjectsSupport != null) {
-            arguments.add("-Pkotlin.kmp.project.isolation.enabled=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
+            arguments.add("-Pkotlin.kmp.isolated-projects.support=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
         }
 
         arguments.addAll(freeArgs)
@@ -353,3 +353,4 @@ fun BuildOptions.withBundledKotlinNative() = copy(
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
+fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)
