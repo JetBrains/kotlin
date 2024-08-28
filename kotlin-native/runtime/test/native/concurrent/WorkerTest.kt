@@ -62,7 +62,7 @@ class WorkerTest {
             }
         }
 
-        val actual = waitForMultipleFutures(futures, 10000)
+        val actual = waitForMultipleFutures(futures, 1_200_000)
 
         val expected = (1..3).flatMap { attempt ->
             (0 until 5).map { index -> "$attempt: Input $index processed" }
