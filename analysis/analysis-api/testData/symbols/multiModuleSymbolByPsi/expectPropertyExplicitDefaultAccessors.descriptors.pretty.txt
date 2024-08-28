@@ -1,0 +1,6 @@
+// FILE: main.kt
+
+expect var variable: kotlin.Int
+  get()
+  set(`<set-?>`: kotlin.Int)
+
