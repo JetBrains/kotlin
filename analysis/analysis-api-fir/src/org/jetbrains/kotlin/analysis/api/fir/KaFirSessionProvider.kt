@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.Scheduler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationListener
 import org.jetbrains.kotlin.psi.KtElement
-import java.util.concurrent.ConcurrentMap
+import java.time.Duration
 import kotlin.reflect.KClass
 
 /**
@@ -34,8 +36,20 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     /**
      * [KaFirSession]s must be weakly referenced to allow simultaneous garbage collection of an unused [KaFirSession] together with its
      * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession].
+     *
+     * The cache automatically evicts unused [KaFirSession]s when they haven't been accessed for 10 seconds. The configured scheduler
+     * ensures that cleanup happens even when the cache is not accessed. This allows deterministic cleanup of the cache's entries. While the
+     * [KaFirSession] can be garbage-collected without this, it also frees up the strong [KaModule] key, which can hold references to PSI.
+     *
+     * This behavior may lead to duplicate [KaFirSession]s for the same [KaModule] existing in the world (if a thread is using a single
+     * [KaFirSession] for >10 seconds). However, there is no uniqueness requirement for [KaSession]s, so the behavior is legal.
      */
-    private val cache: ConcurrentMap<KaModule, KaSession> = ContainerUtil.createConcurrentWeakValueMap()
+    private val cache: Cache<KaModule, KaSession> =
+        Caffeine.newBuilder()
+            .weakValues()
+            .expireAfterAccess(Duration.ofSeconds(10))
+            .scheduler(Scheduler.systemScheduler())
+            .build()
 
     init {
         LowMemoryWatcher.register(::clearCaches, project)
@@ -54,7 +68,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         val identifier = tokenFactory.identifier
         identifier.flushPendingChanges(project)
 
-        return cache.computeIfAbsent(useSiteModule, ::createAnalysisSession)
+        return cache.get(useSiteModule, ::createAnalysisSession) ?: error("`createAnalysisSession` must not return `null`.")
     }
 
     private fun createAnalysisSession(useSiteKtModule: KaModule): KaFirSession {
@@ -64,7 +78,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun clearCaches() {
-        cache.clear()
+        cache.invalidateAll()
     }
 
     /**
@@ -76,7 +90,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
                 ?: error("Expected the analysis session provider to be a `${KaFirSessionProvider::class.simpleName}`.")
 
         override fun afterInvalidation(modules: Set<KaModule>) {
-            modules.forEach { analysisSessionProvider.cache.remove(it) }
+            modules.forEach { analysisSessionProvider.cache.invalidate(it) }
         }
 
         override fun afterGlobalInvalidation() {

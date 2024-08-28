@@ -37,9 +37,7 @@ dependencies {
     implementation(project(":kotlin-scripting-common"))
     implementation(project(":kotlin-assignment-compiler-plugin.k2"))
     implementation(project(":kotlin-assignment-compiler-plugin.cli"))
-
-    // We cannot use the latest version `3.1.5` because it doesn't support Java 8.
-    implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
+    implementation(libs.caffeine)
 
     api(intellijCore())
 

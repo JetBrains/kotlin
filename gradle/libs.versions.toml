@@ -36,6 +36,7 @@ gradle-node = "7.0.1"
 commons-text = "1.10.0"
 lincheck = "2.28.1"
 xerces = "2.12.2"
+caffeine = "2.9.3" # We cannot use the latest version of Caffeine (`3.x`) because it doesn't support Java 8.
 compose-stable = "1.7.0-alpha08" # Compose stable version used for Compose compiler plugin tests
 ant = "1.10.14"
 kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
@@ -91,6 +92,7 @@ junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", v
 junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junit-platform" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 
 android-gradle-plugin-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle-plugin" }
 android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
