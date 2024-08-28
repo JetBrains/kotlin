@@ -217,9 +217,7 @@ dependencies {
 
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        fatJarContents(kotlinBuiltins())
-    }
+
     fatJarContents(commonDependency("javax.inject"))
     fatJarContents(commonDependency("org.jline", "jline"))
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
@@ -272,6 +270,13 @@ val packCompiler by task<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
+
+    val compileKotlinStdlib = project(":kotlin-stdlib").tasks["compileKotlinJvm"]
+    dependsOn(compileKotlinStdlib)
+    from(compileKotlinStdlib.outputs.files) {
+        includeEmptyDirs = false
+        include("**/*.kotlin_builtins")
+    }
 
     dependsOn(fatJarContents)
     from {
