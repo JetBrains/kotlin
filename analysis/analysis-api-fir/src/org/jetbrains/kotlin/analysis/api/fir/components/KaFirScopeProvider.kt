@@ -276,7 +276,9 @@ internal class KaFirScopeProvider(
                 useCaching = true,
             )
 
-            val ktScopesWithKinds = createScopesWithKind(firImportingScopes.withIndex())
+            val firImportingScopesIndexed = firImportingScopes.asReversed().withIndex()
+
+            val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
             return KaBaseScopeContext(ktScopesWithKinds, implicitReceivers = emptyList(), token)
         }
 

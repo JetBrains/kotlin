@@ -1,8 +1,18 @@
 implicit receivers:
 scopes:
-  DefaultStarImportingScope, index = 0
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
-  ExplicitStarImportingScope, index = 1
+  PackageMemberScope, index = 1
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
     packages: 0
     classifiers: 1
       class A
@@ -10,14 +20,5 @@ scopes:
       fun b()
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 2
+  DefaultStarImportingScope, index = 5
 
-  DefaultSimpleImportingScope, index = 3
-
-  PackageMemberScope, index = 4
-
-  ExplicitSimpleImportingScope, index = 5
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
