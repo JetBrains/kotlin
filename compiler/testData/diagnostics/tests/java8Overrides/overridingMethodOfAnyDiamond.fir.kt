@@ -7,5 +7,5 @@ interface IRight {
 }
 
 interface IDiamond : ILeft, IRight {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "IDiamond"<!>
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "IDiamond"
 }

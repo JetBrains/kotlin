@@ -1172,7 +1172,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Symbol>("declaration")
         }
-        val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<PsiElement>()
+        val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
         val EXTENSION_SHADOWED_BY_MEMBER by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirCallableSymbol<*>>("member")
         }

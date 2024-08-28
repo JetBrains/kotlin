@@ -4,7 +4,7 @@
 // MODULE: lib
 
 interface Lib {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>fun <!VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true<!>
+    fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true
     fun box(): Boolean
 }
 
@@ -23,7 +23,7 @@ interface Lib3 {
 // MODULE: main(lib)
 interface I1 {
     fun <T> equals(other: A1): Boolean = true
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>fun <!VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true<!>
+    fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true
     fun box(): Boolean = true
 }
 
@@ -55,7 +55,7 @@ fun main2() {
 
 interface I3 {
     fun <T> equals(other: A3): Boolean = true
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>fun <!VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true<!>
+    fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, VIRTUAL_MEMBER_HIDDEN!>hashCode<!>(): Boolean = true
     fun box(): Boolean = true
 }
 

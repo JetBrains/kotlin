@@ -594,7 +594,7 @@ object FirErrors {
     val CLASSIFIER_REDECLARATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CLASSIFIER_REDECLARATION", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val PACKAGE_CONFLICTS_WITH_CLASSIFIER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("PACKAGE_CONFLICTS_WITH_CLASSIFIER", ERROR, SourceElementPositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION, KtPackageDirective::class)
     val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
-    val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val EXTENSION_SHADOWED_BY_MEMBER: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("EXTENSION_SHADOWED_BY_MEMBER", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
 

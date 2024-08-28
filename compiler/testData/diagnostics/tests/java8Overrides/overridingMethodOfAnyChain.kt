@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IA
 
 interface IB : IA {
