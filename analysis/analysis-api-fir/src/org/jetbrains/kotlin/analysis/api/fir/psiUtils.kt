@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -197,11 +198,31 @@ internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): 
     it.useSiteTarget?.getAnnotationUseSiteTarget() == useSiteTarget
 }
 
+/**
+ * **true** if for [this] property should be created [KaFirPropertySetterSymbol]
+ * instead of [KaFirDefaultPropertySetterSymbol][org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDefaultPropertySetterSymbol].
+ *
+ * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
+ */
 internal val KtProperty.hasRegularSetter: Boolean
     get() = isVar && hasDelegate() || setter?.isRegularAccessor == true
 
+/**
+ * **true** if for [this] property should be created [KaFirPropertyGetterSymbol][org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertyGetterSymbol]
+ * instead of [KaFirDefaultPropertyGetterSymbol][org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDefaultPropertyGetterSymbol].
+ *
+ * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
+ */
 internal val KtProperty.hasRegularGetter: Boolean
     get() = hasDelegate() || getter?.isRegularAccessor == true
 
+/**
+ * Only [KtPropertyAccessor.hasBody] check should be enough, but we need [KtFile.isCompiled] check
+ * to work around the case with [loadProperty][org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirMemberDeserializer.loadProperty]
+ * as all deserialized properties should have regular accessors, but they don't have bodies.
+ *
+ * @see hasRegularGetter
+ * @see hasRegularSetter
+ */
 private val KtPropertyAccessor.isRegularAccessor: Boolean
     get() = hasBody() || containingKtFile.isCompiled
