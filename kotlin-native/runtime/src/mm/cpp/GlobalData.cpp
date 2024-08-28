@@ -41,7 +41,6 @@ void constructGlobalDataInstance() noexcept {
     auto initialState = InitState::kUninitialized;
     globalDataInitState.compare_exchange_strong(initialState, InitState::kInitializing, std::memory_order_acq_rel);
     RuntimeAssert(initialState != InitState::kInitializing, "Expected state %s, but was %s", initStateToString(InitState::kUninitialized), initStateToString(initialState));
-    if (initialState == InitState::kInitialized) return;
     globalDataInitializingThread.store(std::this_thread::get_id(), std::memory_order_relaxed);
 
     globalDataInstance.construct();
@@ -83,10 +82,6 @@ void mm::GlobalData::init() noexcept {
 // static
 void mm::GlobalData::waitInitialized() noexcept {
         if (globalDataInitState.load(std::memory_order_acquire) == InitState::kInitialized) {
-            return;
-        }
-        auto initializingThread = globalDataInitializingThread.load(std::memory_order_relaxed);
-        if (initializingThread == std::this_thread::get_id()) {
             return;
         }
         std::unique_lock guard{globalDataInitMutex};

@@ -22,7 +22,6 @@ gcScheduler::GCScheduler::ThreadData::~ThreadData() = default;
 
 gcScheduler::GCScheduler::Impl::Impl(gcScheduler::GCSchedulerConfig& config) noexcept :
     impl_(config, []() noexcept {
-        mm::GlobalData::waitInitialized();
         return mm::GlobalData::Instance().gc().Schedule();
     }) {}
 
