@@ -107,7 +107,7 @@ object FirJvmErrors {
     val JVM_RECORD_NOT_VAL_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_VAL_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JVM_RECORD_NOT_LAST_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_LAST_VARARG_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val INNER_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("INNER_JVM_RECORD", ERROR, SourceElementPositioningStrategies.INNER_MODIFIER, PsiElement::class)
-    val FIELD_IN_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("FIELD_IN_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val FIELD_IN_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("FIELD_IN_JVM_RECORD", ERROR, SourceElementPositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS, PsiElement::class)
     val DELEGATION_BY_IN_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_BY_IN_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JVM_RECORD_EXTENDS_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JVM_RECORD_EXTENDS_CLASS", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, PsiElement::class)
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
