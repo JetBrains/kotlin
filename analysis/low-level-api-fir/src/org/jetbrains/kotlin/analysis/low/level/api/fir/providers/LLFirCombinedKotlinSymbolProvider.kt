@@ -136,6 +136,8 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
         return hasPackage
     }
 
+    override fun estimateSymbolCacheSize(): Long = classifierCache.estimatedSize
+
     companion object {
         fun merge(session: LLFirSession, project: Project, providers: List<LLFirKotlinSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {

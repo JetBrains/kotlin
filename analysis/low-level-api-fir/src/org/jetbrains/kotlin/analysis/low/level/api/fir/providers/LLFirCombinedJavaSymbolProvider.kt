@@ -90,6 +90,8 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
 
     override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
+    override fun estimateSymbolCacheSize(): Long = classCache.estimatedSize
+
     companion object {
         fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {

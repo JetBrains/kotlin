@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.utils.mapToIndex
  *
  * Classpath order must be preserved with [selectFirstElementInClasspathOrder] in case a single result is required.
  */
-abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
+internal abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
     session: FirSession,
     project: Project,
-    protected val providers: List<PROVIDER>,
-) : FirSymbolProvider(session) {
+    override val providers: List<PROVIDER>,
+) : LLCombinedSymbolProvider<PROVIDER>(session) {
     protected val providersByKtModule: Map<KaModule, PROVIDER> =
         providers
             .groupingBy { it.session.llFirModuleData.ktModule }

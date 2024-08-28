@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(FirSymbolProviderInternals::class)
 internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
     session: FirSession,
-    private val providers: List<FirSyntheticFunctionInterfaceProviderBase>,
-) : FirSymbolProvider(session) {
+    override val providers: List<FirSyntheticFunctionInterfaceProviderBase>,
+) : LLCombinedSymbolProvider<FirSyntheticFunctionInterfaceProviderBase>(session) {
     private val combinedPackageNames: Set<FqName> = providers.flatMapTo(mutableSetOf()) { it.getFunctionKindPackageNames() }
 
+    // `FirCompositeSymbolNamesProvider` defines `mayHaveSyntheticFunctionTypes` and `mayHaveSyntheticFunctionType` correctly, which is
+    // needed for consistency should this symbol provider be part of another composite symbol provider.
     override val symbolNamesProvider: FirSymbolNamesProvider =
-        // `FirCompositeSymbolNamesProvider` defines `mayHaveSyntheticFunctionTypes` and `mayHaveSyntheticFunctionType` correctly, which is
-        // needed for consistency should this symbol provider be part of another composite symbol provider.
         object : FirCompositeSymbolNamesProvider(providers.map { it.symbolNamesProvider }) {
             override fun getPackageNames(): Set<String> = emptySet()
 
@@ -64,6 +64,8 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
     }
 
     override fun hasPackage(fqName: FqName): Boolean = fqName in combinedPackageNames
+
+    override fun estimateSymbolCacheSize(): Long = 0
 
     companion object {
         fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =
