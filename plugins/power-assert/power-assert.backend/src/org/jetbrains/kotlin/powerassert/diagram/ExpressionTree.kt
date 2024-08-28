@@ -110,14 +110,15 @@ fun buildTree(expression: IrExpression): Node? {
             }
 
             override fun visitExpression(expression: IrExpression, data: Node) {
-                if (expression is IrFunctionExpression) return // Do not transform lambda expressions, especially their body
-
+                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                 val call = currentCall
                 if (call != null && expression.isImplicitReceiverOf(call)) {
-                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
-                    chainNode.addChild(ConstantNode(expression)) // Do not diagram implicit receivers
+                    // Do not diagram implicit receivers.
+                    chainNode.addChild(ConstantNode(expression))
+                } else if (expression is IrFunctionExpression) {
+                    // Do not transform lambda expressions, especially their body.
+                    chainNode.addChild(ConstantNode(expression))
                 } else {
-                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
                 }
@@ -129,7 +130,7 @@ fun buildTree(expression: IrExpression): Node? {
                     IrStatementOrigin.SAFE_CALL -> {
                         // Safe call operators only have their temporary variable processed
                         val statements = expression.statements
-                        require(statements.size == 2) {
+                        check(statements.size == 2) {
                             "Expected the safe call expression to consist of exactly two statements.\n${expression.dump()}"
                         }
                         val variable = statements[0] as? IrVariable
@@ -142,7 +143,7 @@ fun buildTree(expression: IrExpression): Node? {
                     IrStatementOrigin.ELVIS -> {
                         // Elvis operators are handled with a special node
                         val statements = expression.statements
-                        require(statements.size == 2) {
+                        check(statements.size == 2) {
                             "Expected the elvis expression to consist of exactly two statements.\n${expression.dump()}"
                         }
                         val variable = statements[0] as? IrVariable
@@ -156,9 +157,10 @@ fun buildTree(expression: IrExpression): Node? {
                         chainNode.addChild(elvisNode)
 
                         // Elvis operators need special handing for fallback value,
-                        // as all other when-expression values should be treated as constants
+                        // as all other when-expression values are synthetic and either
+                        // constants or repeats of expressions already processed.
                         val branches = conditional.branches
-                        require(branches.size == 2) {
+                        check(branches.size == 2) {
                             "Expected the when of the elvis expression to consist of exactly two branches.\n${expression.dump()}"
                         }
                         val nullBranch = branches[0]
@@ -166,10 +168,15 @@ fun buildTree(expression: IrExpression): Node? {
 
                         // Make sure each branch results in 2 child nodes: condition and result.
                         val whenNode = WhenNode(conditional).also { elvisNode.addChild(it) }
-                        whenNode.addChild(ConstantNode(nullBranch.condition))
+                        whenNode.addChild(ConstantNode(nullBranch.condition)) // Constant node for the synthetic nullable condition.
                         nullBranch.result.accept(this, whenNode)
-                        whenNode.addChild(ConstantNode(notNullBranch.condition))
-                        whenNode.addChild(ConstantNode(notNullBranch.result))
+                        whenNode.addChild(ConstantNode(notNullBranch.condition)) // Constant node for the synthetic non-null condition.
+                        whenNode.addChild(ConstantNode(notNullBranch.result)) // Constant node for the synthetic non-null result.
+
+                        // Make sure elvis resulted in 4 child nodes.
+                        check(whenNode.children.size == 4) {
+                            "Expected the when of the elvis expression to consist of exactly two branches.\n${expression.dump()}"
+                        }
                     }
                     else -> {
                         // Everything else is considered unsafe and terminates the expression tree
@@ -222,27 +229,26 @@ fun buildTree(expression: IrExpression): Node? {
             }
 
             override fun visitConst(expression: IrConst, data: Node) {
-                // Do not include constants
+                data.addChild(ConstantNode(expression))
             }
 
             override fun visitWhen(expression: IrWhen, data: Node) {
                 val whenNode = WhenNode(expression).also { data.addChild(it) }
 
                 for (branch in expression.branches) {
-                    // Make sure each branch results in 2 child nodes: condition and result.
-                    when (val child = branch.condition) {
-                        is IrConst -> whenNode.addChild(ConstantNode(child))
-                        else -> child.accept(this, whenNode)
-                    }
-                    when (val child = branch.result) {
-                        is IrConst -> whenNode.addChild(ConstantNode(child))
-                        else -> child.accept(this, whenNode)
-                    }
+                    // Each branch should result in 2 child nodes: a condition and a result.
+                    branch.condition.accept(this, whenNode)
+                    branch.result.accept(this, whenNode)
+                }
+
+                // Make sure each branch resulted in 2 child nodes: condition and result.
+                check(whenNode.children.size == 2 * expression.branches.size) {
+                    "Expected the when of the elvis expression to consist of exactly two branches.\n${expression.dump()}"
                 }
             }
         },
         tree,
     )
 
-    return tree.children.singleOrNull()
+    return tree.children.singleOrNull()?.takeIf { it !is ConstantNode }
 }
