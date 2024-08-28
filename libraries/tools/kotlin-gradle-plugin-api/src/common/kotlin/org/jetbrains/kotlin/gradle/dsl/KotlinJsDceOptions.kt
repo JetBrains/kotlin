@@ -34,7 +34,4 @@ interface KotlinJsDceOptions : @Suppress("DEPRECATION") KotlinCommonToolOptions 
  */
 @InternalKotlinGradlePluginApi
 const val KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE: String =
-    "The DCE tool is obsolete and does not work with the IR compiler. " +
-            "The IR compiler supports dead code elimination of ouf the box. " +
-            "It is enabled by default when compiling for production and disabled when compiling for development. " +
-            "DCE roots can be specified by annotating root declarations with the '@JsExport' annotation"
+    "The DCE tool is obsolete and does not work with the IR compiler. Learn more here https://kotl.in/js-ir-dce"
