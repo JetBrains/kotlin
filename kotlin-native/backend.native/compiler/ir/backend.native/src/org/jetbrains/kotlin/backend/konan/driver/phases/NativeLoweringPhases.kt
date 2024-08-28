@@ -391,13 +391,20 @@ private val builtinOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase, enumWhenPhase)
 )
 
+private val cacheOnlyPrivateFunctionsPhase: SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createFileLoweringPhase(
+    lowering = { _: Context -> CacheInlineFunctionsBeforeInlining(cacheOnlyPrivateFunctions = true) },
+    name = "CacheOnlyPrivateFunctions",
+    description = "Cache only private functions (before the first phase of inlining)",
+    prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+)
+
 private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             NativeIrInliner(context, inlineOnlyPrivateFunctions = true)
         },
         name = "InlineOnlyPrivateFunctions",
         description = "The first phase of inlining (inline only private functions)",
-        prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+        prerequisite = setOf(cacheOnlyPrivateFunctionsPhase)
 )
 
 internal val syntheticAccessorGenerationPhase = createFileLoweringPhase(
@@ -407,13 +414,20 @@ internal val syntheticAccessorGenerationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
+private val cacheAllFunctionsPhase: SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createFileLoweringPhase(
+    lowering = { _: Context -> CacheInlineFunctionsBeforeInlining(cacheOnlyPrivateFunctions = false) },
+    name = "CacheAllPrivateFunctions",
+    description = "Cache all functions (before the second phase of inlining)",
+    prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+)
+
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
         },
         name = "InlineAllFunctions",
         description = "The second phase of inlining (inline all functions)",
-        prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+        prerequisite = setOf(cacheAllFunctionsPhase)
 )
 
 private val interopPhase = createFileLoweringPhase(
@@ -617,8 +631,10 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+        cacheOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
         inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
         syntheticAccessorGenerationPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+        cacheAllFunctionsPhase,
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
