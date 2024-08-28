@@ -1,13 +1,13 @@
 // DIAGNOSTICS: -ACTUAL_WITHOUT_EXPECT
 // MODULE: m1-common
 // FILE: common.kt
-expect class A {
-    fun foo(p1: String = "common", p2: String = "common", p3: String)
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class A {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(p1: String = "common", p2: String = "common", p3: String)<!>
+}<!>
 
-expect class B {
-    fun foo(s: String)
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class B {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(s: String)<!>
+}<!>
 
 interface I {
     fun methodWithDefaultArg(s: String = "common")

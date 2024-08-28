@@ -12,6 +12,7 @@ package kotlin.text
  * Note that the [pattern] syntax and the option set has differences on each platform.
  * See the docs of `Regex` for the specific platform for details.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect class Regex {
     /** Creates a regular expression from the specified [pattern] string and the default options.  */
     public constructor(pattern: String)
@@ -124,6 +125,7 @@ public expect class Regex {
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      * @sample samples.text.Regexps.find
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
 
     /**
@@ -133,6 +135,7 @@ public expect class Regex {
      *
      * @sample samples.text.Regexps.findAll
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
 
     /**
@@ -141,6 +144,7 @@ public expect class Regex {
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     public fun split(input: CharSequence, limit: Int = 0): List<String>
 
     /**
@@ -150,6 +154,7 @@ public expect class Regex {
      * Zero by default means no limit is set.
      * @sample samples.text.Regexps.splitToSequence
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     @SinceKotlin("1.6")
     @WasExperimental(ExperimentalStdlibApi::class)
     public fun splitToSequence(input: CharSequence, limit: Int = 0): Sequence<String>
@@ -245,6 +250,7 @@ public expect fun String(chars: CharArray, offset: Int, length: Int): String
 /**
  * Concatenates characters in this [CharArray] into a String.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun CharArray.concatToString(): String
 
@@ -257,6 +263,7 @@ public expect fun CharArray.concatToString(): String
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String
 
@@ -275,6 +282,7 @@ public expect fun String.toCharArray(): CharArray
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray
 
@@ -290,6 +298,7 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("2.0")
 public expect fun String.toCharArray(
     destination: CharArray,
@@ -317,6 +326,7 @@ public expect fun ByteArray.decodeToString(): String
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun ByteArray.decodeToString(
     startIndex: Int = 0,
@@ -343,6 +353,7 @@ public expect fun String.encodeToByteArray(): ByteArray
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun String.encodeToByteArray(
     startIndex: Int = 0,
@@ -371,6 +382,7 @@ public expect fun CharSequence.repeat(n: Int): String
  * 
  * @sample samples.text.Strings.replace
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
@@ -379,17 +391,20 @@ public expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
  *
  * @sample samples.text.Strings.replace
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
 /**
@@ -400,6 +415,7 @@ public expect fun String.replaceFirst(oldValue: String, newValue: String, ignore
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
 /**
@@ -407,12 +423,16 @@ public expect fun String?.equals(other: String?, ignoreCase: Boolean = false): B
  *
  * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.2")
 public expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
 
 // From stringsCode.kt
@@ -427,6 +447,7 @@ internal expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 public expect fun CharSequence.regionMatches(
     thisOffset: Int,
     other: CharSequence,
@@ -442,6 +463,7 @@ public expect fun CharSequence.regionMatches(
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.9")
 public expect fun String.regionMatches(
     thisOffset: Int,

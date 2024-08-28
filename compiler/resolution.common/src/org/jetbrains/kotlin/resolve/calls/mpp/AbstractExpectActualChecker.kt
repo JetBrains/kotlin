@@ -360,8 +360,7 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.DefaultArgumentsInExpectActualizedByFakeOverride
         }
 
-        if (shouldCheckDefaultParams &&
-            // "parameters" checks are required only for functions, because only functions can have parameters
+        if (// "parameters" checks are required only for functions, because only functions can have parameters
             actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker &&
             // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
             // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors

@@ -5,9 +5,9 @@
 // TARGET_PLATFORM: Common
 // FILE: common.kt
 
-expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean<!>
 
-expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean<!>
 
 // MODULE: jvm()()(common)
 // TARGET_PLATFORM: JVM

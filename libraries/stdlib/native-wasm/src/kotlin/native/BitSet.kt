@@ -17,18 +17,22 @@ internal const val BIT_SET_ELEMENT_SIZE: Int = 64
  * @param size the size of one element in the array used to store bits.
  */
 @ObsoleteNativeApi
-internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
+internal expect class BitSet @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") /* ActualFunctionWithDefaultParameters */ constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
     /** True if this BitSet contains no bits set to true. */
     val isEmpty: Boolean
     var size: Int
         private set
     /** Set the bit specified to the specified value. */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     fun set(index: Int, value: Boolean = true)
 
     /** Sets the bits with indices between [from] (inclusive) and [to] (exclusive) to the specified value. */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     fun set(from : Int, to: Int, value: Boolean = true)
 
     /** Sets the bits from the range specified to the specified value. */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     fun set(range: IntRange, value: Boolean = true)
 
     /**
@@ -36,6 +40,7 @@ internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
      * Returns -1 if there is no such bits after [startIndex].
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     fun nextSetBit(startIndex: Int = 0): Int
 
     /**
@@ -44,6 +49,7 @@ internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
      * sequence of `false` bits after (size - 1)-th.
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
+    @Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
     fun nextClearBit(startIndex: Int = 0): Int
 
     /** Returns a value of a bit with the [index] specified. */

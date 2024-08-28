@@ -4,9 +4,9 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(a: Int)<!>
-}<!>
+expect class Foo {
+    fun foo(a: Int)
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

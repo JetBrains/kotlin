@@ -41,12 +41,6 @@ internal abstract class IrExpectActualMatchingContext(
     val typeContext: IrTypeSystemContext,
     val expectToActualClassMap: ClassActualizationInfo.ActualClassMapping
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
-    // This incompatibility is often suppressed in the source code (e.g. in kotlin-stdlib).
-    // The backend must be able to do expect-actual matching to emit bytecode
-    // That's why we disable the checker here. Probably, this checker can be enabled once KT-60426 is fixed
-    override val shouldCheckDefaultParams: Boolean
-        get() = false
-
     private inline fun <R> CallableSymbolMarker.processIr(
         onFunction: (IrFunction) -> R,
         onProperty: (IrProperty) -> R,

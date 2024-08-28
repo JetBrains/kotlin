@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
-expect class DefaultArgsInConstructor(p1: String = "common", p2: String = "common", p3: String)
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class DefaultArgsInConstructor<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>(p1: String = "common", p2: String = "common", p3: String)<!><!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

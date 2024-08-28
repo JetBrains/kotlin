@@ -1,12 +1,12 @@
 // MODULE: m1-common
 // FILE: common.kt
-expect class E {
-    fun f(x: Int): Int
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class E {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun f(x: Int): Int<!>
+}<!>
 
-expect class E2 {
-    fun f(x: Int): Int
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class E2 {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun f(x: Int): Int<!>
+}<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

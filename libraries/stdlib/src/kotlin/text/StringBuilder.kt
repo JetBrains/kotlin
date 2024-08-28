@@ -427,6 +427,7 @@ public expect fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): Str
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
+@Suppress("EXPECT_ACTUAL_INCOMPATIBILITY") // ActualFunctionWithDefaultParameters
 @SinceKotlin("1.4")
 public expect fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length)
 
