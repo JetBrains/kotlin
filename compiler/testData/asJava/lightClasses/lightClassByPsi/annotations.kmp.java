@@ -7,7 +7,7 @@ public abstract @interface Ann /* Ann*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract @org.jetbrains.annotations.NotNull() Anno @org.jetbrains.annotations.NotNull() [] x() default {Anno(p = "a"), Anno(p = "b")};//  x()
+  public abstract @org.jetbrains.annotations.NotNull() Anno @org.jetbrains.annotations.NotNull() [] x() default {@Anno(p = "a"), @Anno(p = "b")};//  x()
 
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String p() default "";//  p()
 }
