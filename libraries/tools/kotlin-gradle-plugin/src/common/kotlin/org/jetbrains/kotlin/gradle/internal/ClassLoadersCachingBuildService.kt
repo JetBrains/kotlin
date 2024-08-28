@@ -49,6 +49,7 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
                 SingleActionPerProject.run(project, UsesClassLoadersCachingBuildService::class.java.name) {
                     project.tasks.withType<UsesClassLoadersCachingBuildService>().configureEach { task ->
                         task.usesService(serviceProvider)
+                        task.classLoadersCachingService.value(serviceProvider).disallowChanges()
                     }
                 }
             }

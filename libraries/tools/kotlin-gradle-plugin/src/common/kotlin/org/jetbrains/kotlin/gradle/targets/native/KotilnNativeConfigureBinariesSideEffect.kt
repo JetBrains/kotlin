@@ -133,9 +133,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()
-        task.classLoadersCachingService
-            .value(ClassLoadersCachingBuildService.registerIfAbsent(project))
-            .disallowChanges()
     }
 
     NativeLinkTaskMetrics.collectMetrics(this)
