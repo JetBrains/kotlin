@@ -145,6 +145,20 @@ internal fun IrDiagnosticReporter.reportActualAnnotationsNotMatchExpect(
     )
 }
 
+internal fun IrDiagnosticReporter.reportJavaDirectActualWithoutExpect(actual: IrDeclaration, reportOn: IrSymbol) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT,
+        actual.symbol
+    )
+}
+
+internal fun IrDiagnosticReporter.reportKotlinActualAnnotationMissing(actual: IrDeclaration, reportOn: IrSymbol) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.KOTLIN_ACTUAL_ANNOTATION_MISSING,
+        actual.symbol
+    )
+}
+
 internal fun IrDiagnosticReporter.reportActualAnnotationConflictingDefaultArgumentValue(
     reportOn: IrElement,
     file: IrFile,
