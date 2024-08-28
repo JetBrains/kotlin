@@ -105,9 +105,13 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
     return symbolEquals(other)
 }
 
-internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(): KaAnnotationList {
-    val annotatedElement = backingPsi as? KtAnnotated
-    if (annotatedElement?.annotationEntries?.isEmpty() == true) {
+/**
+ * Note: This function is supposed only for simple cases there annotations can be declared only
+ * directly on the underlying [KtAnnotated], so cases like property accessors or
+ * generated constructor property are not supported.
+ */
+internal fun KaFirKtBasedSymbol<KtAnnotated, *>.psiOrSymbolAnnotationList(): KaAnnotationList {
+    if (backingPsi?.annotationEntries?.isEmpty() == true) {
         return KaBaseEmptyAnnotationList(token)
     }
 
