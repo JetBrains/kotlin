@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -170,7 +172,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
-            if (data == null || !expression.symbol.owner.isAbiPrivate)
+            if (data == null || !expression.symbol.owner.isRequiredToGenerateAccessor())
                 return super.visitFunctionAccess(expression, data)
 
             // Generate and memoize the accessor. The visibility can be narrowed later.
@@ -187,11 +189,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
     }
 
     companion object {
-        // TODO: Take into account visibilities of containers
-        // TODO(KT-69565): It's not enough to just look at the visibility, since the declaration may be private inside a local class
-        //   and accessed only within that class. For such cases we shouldn't generate an accessor.
-        private val IrDeclarationWithVisibility.isAbiPrivate: Boolean
-            get() = DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL
+        private fun IrDeclarationWithVisibility.isRequiredToGenerateAccessor(): Boolean = isPrivate(visibility) && !isLocal
     }
 }
 
