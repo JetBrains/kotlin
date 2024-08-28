@@ -704,7 +704,7 @@ object FirErrors {
     val EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtConstructorDelegationCall::class)
     val EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val EXPECTED_ENUM_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_ENUM_CONSTRUCTOR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtConstructor::class)
-    val EXPECTED_ENUM_ENTRY_WITH_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_ENUM_ENTRY_WITH_BODY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtEnumEntry::class)
+    val EXPECTED_ENUM_ENTRY_WITH_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_ENUM_ENTRY_WITH_BODY", ERROR, SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER, KtEnumEntry::class)
     val EXPECTED_PROPERTY_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_PROPERTY_INITIALIZER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val EXPECTED_DELEGATED_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_DELEGATED_PROPERTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val EXPECTED_LATEINIT_PROPERTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECTED_LATEINIT_PROPERTY", ERROR, SourceElementPositioningStrategies.LATEINIT_MODIFIER, KtModifierListOwner::class)

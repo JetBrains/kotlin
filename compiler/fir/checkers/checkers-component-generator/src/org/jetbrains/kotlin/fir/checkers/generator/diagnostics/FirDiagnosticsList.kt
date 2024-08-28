@@ -1353,7 +1353,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL by error<KtConstructorDelegationCall>()
         val EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER by error<KtParameter>()
         val EXPECTED_ENUM_CONSTRUCTOR by error<KtConstructor<*>>()
-        val EXPECTED_ENUM_ENTRY_WITH_BODY by error<KtEnumEntry>()
+        val EXPECTED_ENUM_ENTRY_WITH_BODY by error<KtEnumEntry>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
         val EXPECTED_PROPERTY_INITIALIZER by error<KtExpression>()
 
         // TODO: need to cover `by` as well as delegate expression
