@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
-object FirWasmSessionFactory : FirAbstractSessionFactory() {
+object FirWasmSessionFactory : FirAbstractSessionFactory<FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
 
@@ -70,14 +70,16 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         icData: KlibIcData? = null,
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
+        val context = Context(wasmTarget)
         return createModuleBasedSession(
             moduleData,
+            context,
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
             lookupTracker,
-            null,
-            null,
+            enumWhenTracker = null,
+            importTracker = null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
@@ -87,7 +89,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
                     FirDefaultImportProviderHolder(if (wasmTarget == WasmTarget.JS) WasmPlatformAnalyzerServices else WasmWasiPlatformAnalyzerServices)
                 )
             },
-            registerExtraCheckers = { it.registerWasmCheckers(wasmTarget) },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -113,7 +114,13 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
     }
 
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
+        registerWasmCheckers(c.wasmTarget)
+    }
+
     // ==================================== Common parts ====================================
 
     // ==================================== Utilities ====================================
+
+    class Context(val wasmTarget: WasmTarget)
 }

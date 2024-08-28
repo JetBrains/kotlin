@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-abstract class FirAbstractSessionFactory {
+abstract class FirAbstractSessionFactory<CONTEXT> {
 
     // ==================================== Library session ====================================
 
@@ -83,6 +83,7 @@ abstract class FirAbstractSessionFactory {
 
     protected fun createModuleBasedSession(
         moduleData: FirModuleData,
+        context: CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
@@ -91,7 +92,6 @@ abstract class FirAbstractSessionFactory {
         importTracker: ImportTracker?,
         init: FirSessionConfigurator.() -> Unit,
         registerExtraComponents: ((FirSession) -> Unit),
-        registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
@@ -115,7 +115,7 @@ abstract class FirAbstractSessionFactory {
 
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
-                registerExtraCheckers?.invoke(this)
+                registerPlatformCheckers(context)
 
                 for (extensionRegistrar in extensionRegistrars) {
                     registerExtensions(extensionRegistrar.configure())
@@ -151,6 +151,8 @@ abstract class FirAbstractSessionFactory {
     protected abstract fun createKotlinScopeProviderForSourceSession(
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
     ): FirKotlinScopeProvider
+
+    protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: CONTEXT)
 
     // ==================================== Common parts ====================================
 

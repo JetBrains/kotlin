@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-object FirJsSessionFactory : FirAbstractSessionFactory() {
+object FirJsSessionFactory : FirAbstractSessionFactory<Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -82,6 +82,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
+            context = null,
             sessionProvider,
             extensionRegistrars,
             compilerConfiguration.languageVersionSettings,
@@ -93,7 +94,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
                 it.registerJsComponents(compilerConfiguration)
             },
-            registerExtraCheckers = { it.registerJsCheckers() },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -117,6 +117,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings,
     ): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
+    }
+
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+        registerJsCheckers()
     }
 
     // ==================================== Common parts ====================================

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-object FirCommonSessionFactory : FirAbstractSessionFactory() {
+object FirCommonSessionFactory : FirAbstractSessionFactory<Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -101,6 +101,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
+            context = null,
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
@@ -111,7 +112,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
             },
-            registerExtraCheckers = {},
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
@@ -154,6 +154,8 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             FirKotlinScopeProvider()
         }
     }
+
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {}
 
     // ==================================== Common parts ====================================
 

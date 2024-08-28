@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-object FirJvmSessionFactory : FirAbstractSessionFactory() {
+object FirJvmSessionFactory : FirAbstractSessionFactory<Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -111,6 +111,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
+            context = null,
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
@@ -123,7 +124,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
                 it.register(FirJvmTargetProvider::class, FirJvmTargetProvider(jvmTarget))
             },
-            registerExtraCheckers = { it.registerJvmCheckers() },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
@@ -158,6 +158,10 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         } else {
             FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         }
+    }
+
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+        registerJvmCheckers()
     }
 
     // ==================================== Common parts ====================================

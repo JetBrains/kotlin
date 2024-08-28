@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
-object FirNativeSessionFactory : FirAbstractSessionFactory() {
+object FirNativeSessionFactory : FirAbstractSessionFactory<Nothing?>() {
 
     // ==================================== Library session ====================================
 
@@ -80,6 +80,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
+            context = null,
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
@@ -91,7 +92,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
                 it.registerNativeComponents()
             },
-            registerExtraCheckers = { it.registerNativeCheckers() },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -107,6 +107,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings,
     ): FirKotlinScopeProvider {
         return FirKotlinScopeProvider()
+    }
+
+    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+        registerNativeCheckers()
     }
 
     // ==================================== Common parts ====================================
