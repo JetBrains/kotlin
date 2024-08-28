@@ -986,6 +986,11 @@ internal class DeprecatedSinceKotlinOutsideKotlinSubpackageImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DeprecatedSinceKotlinOutsideKotlinSubpackage
 
+internal class KotlinActualAnnotationHasNoEffectInKotlinImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.KotlinActualAnnotationHasNoEffectInKotlin
+
 internal class OverrideDeprecationImpl(
     override val overridenSymbol: KaSymbol,
     override val deprecationInfo: FirDeprecationInfo,
