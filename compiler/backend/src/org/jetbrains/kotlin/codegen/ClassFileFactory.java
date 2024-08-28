@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.JvmAnalysisFlags;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
-import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.serialization.StringTableImpl;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
@@ -124,6 +121,20 @@ public class ClassFileFactory implements OutputFileCollection {
 
     public void releaseGeneratedOutput() {
         generators.clear();
+    }
+
+    public void addSerializedBuiltinsPackageMetadata(String path, byte[] serialized) {
+        generators.put(path, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
+            @Override
+            public byte[] asBytes(ClassBuilderFactory factory) {
+                return serialized;
+            }
+
+            @Override
+            public String asText(ClassBuilderFactory factory) {
+                throw new UnsupportedOperationException("No string representation for protobuf-serialized metadata");
+            }
+        });
     }
 
     public void setModuleMapping(JvmModuleProtoBuf.Module moduleProto) {

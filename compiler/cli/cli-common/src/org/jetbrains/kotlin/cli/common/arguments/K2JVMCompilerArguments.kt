@@ -818,6 +818,26 @@ This option is deprecated and will be deleted in future versions."""
             field = value
         }
 
+    @Argument(
+        value = "-Xcompile-builtins-as-part-of-stdlib",
+        description = "Enable behaviour needed to compile builtins as part of JVM stdlib"
+    )
+    var expectBuiltinsAsPartOfStdlib = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xoutput-builtins-metadata",
+        description = "Output builtins metadata as .kotlin_builtins files"
+    )
+    var outputBuiltinsMetadata = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -836,6 +856,14 @@ This option is deprecated and will be deleted in future versions."""
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
         result[JvmAnalysisFlags.useIR] = !useOldBackend
+        result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
+        if (expectBuiltinsAsPartOfStdlib && !stdlibCompilation) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "-Xcompile-builtins-as-part-of-stdlib must not be used without -Xstdlib-compilation"
+            )
+        }
+        result[JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib] = expectBuiltinsAsPartOfStdlib
         return result
     }
 

@@ -108,6 +108,7 @@ class FirDelegatedMemberScope(
                     newDispatchReceiverType = dispatchReceiverType,
                     newModality = Modality.OPEN,
                     newSource = containingClass.source?.fakeElement(KtFakeSourceElementKind.MembersImplementedByDelegation),
+                    markAsOverride = true
                 ).apply {
                     delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
                 }.symbol

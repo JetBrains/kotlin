@@ -34,6 +34,8 @@ where advanced options include:
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xenhance-type-parameter-types-to-def-not-null
                              Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').
+  -Xcompile-builtins-as-part-of-stdlib
+                             Enable behaviour needed to compile builtins as part of JVM stdlib
   -Xfriend-paths=<path>      Paths to output directories for friend modules (modules whose internals should be visible).
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and a facade.
   -Xmodule-path=<path>       Paths to Java 9+ modules.
@@ -103,6 +105,7 @@ where advanced options include:
                              * warn (report a warning)
   -Xuse-old-innerclasses-logic Use the old logic for the generation of 'InnerClasses' attributes.
                              This option is deprecated and will be deleted in future versions.
+  -Xoutput-builtins-metadata Output builtins metadata as .kotlin_builtins files
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
                              `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.

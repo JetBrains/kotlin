@@ -256,6 +256,7 @@ class FirSamResolver(
             newReturnType = type.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType())),
             newParameterTypes = newParameterTypes,
             newTypeParameters = typeAliasSymbol.fir.typeParameters,
+            markAsOverride = true
         ).also {
             it.originalConstructorIfTypeAlias = samConstructorForClass
             it.typeAliasForConstructor = typeAliasSymbol

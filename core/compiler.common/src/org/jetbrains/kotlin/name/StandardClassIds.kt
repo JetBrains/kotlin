@@ -134,6 +134,7 @@ object StandardClassIds {
     val ListIterator = "ListIterator".collectionsId()
     val Set = "Set".collectionsId()
     val Map = "Map".collectionsId()
+    val AbstractMap = "AbstractMap".collectionsId()
     val MutableIterator = "MutableIterator".collectionsId()
     val CharIterator = "CharIterator".collectionsId()
 
@@ -216,6 +217,9 @@ object StandardClassIds {
         val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
 
         val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
+
+        val BuiltinWithoutBytecode = "BuiltinWithoutBytecode".internalId()
+        val BuiltinWithBytecode = "BuiltinWithBytecode".internalId()
 
         object ParameterNames {
             val value = Name.identifier("value")
