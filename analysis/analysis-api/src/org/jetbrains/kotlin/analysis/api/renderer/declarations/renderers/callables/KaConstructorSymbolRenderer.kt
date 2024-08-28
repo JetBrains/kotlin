@@ -23,6 +23,7 @@ public interface KaConstructorSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaConstructorSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -37,6 +38,7 @@ public interface KaConstructorSymbolRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_RAW_SIGNATURE : KaConstructorSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

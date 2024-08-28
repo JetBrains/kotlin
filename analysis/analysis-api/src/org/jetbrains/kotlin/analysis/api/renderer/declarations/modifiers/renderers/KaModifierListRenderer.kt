@@ -21,6 +21,7 @@ public interface KaModifierListRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_LIST : KaModifierListRenderer {
         override fun renderModifiers(
             analysisSession: KaSession,

@@ -24,6 +24,7 @@ public interface KaAnnotationArgumentsRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NONE : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
             analysisSession: KaSession,
@@ -34,6 +35,7 @@ public interface KaAnnotationArgumentsRenderer {
         ) {}
     }
 
+    @KaExperimentalApi
     public object IF_ANY : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
             analysisSession: KaSession,

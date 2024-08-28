@@ -23,6 +23,7 @@ public interface KaAnnotationQualifierRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_QUALIFIED_NAMES : KaAnnotationQualifierRenderer {
         override fun renderQualifier(
             analysisSession: KaSession,
@@ -42,6 +43,7 @@ public interface KaAnnotationQualifierRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_SHORT_NAMES : KaAnnotationQualifierRenderer {
         override fun renderQualifier(
             analysisSession: KaSession,

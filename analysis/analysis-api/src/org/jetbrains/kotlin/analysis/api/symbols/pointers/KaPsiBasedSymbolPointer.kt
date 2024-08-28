@@ -54,6 +54,7 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
 
     public constructor(psi: KtElement, expectedClass: KClass<S>) : this(createCompatibleSmartPointer(psi), expectedClass)
 
+    @KaImplementationDetail
     public companion object {
         @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
         public inline fun <reified S : KaSymbol> createForSymbolFromSource(symbol: @kotlin.internal.NoInfer S): KaPsiBasedSymbolPointer<S>? {

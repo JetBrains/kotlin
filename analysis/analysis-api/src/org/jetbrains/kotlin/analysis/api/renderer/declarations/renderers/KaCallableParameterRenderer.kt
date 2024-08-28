@@ -21,6 +21,7 @@ public interface KaCallableParameterRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object PARAMETERS_IN_PARENS : KaCallableParameterRenderer {
         override fun renderValueParameters(
             analysisSession: KaSession,

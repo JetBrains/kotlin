@@ -21,6 +21,7 @@ public interface KaLocalVariableSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaLocalVariableSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

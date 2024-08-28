@@ -20,6 +20,7 @@ public interface KaSuperTypeListRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_LIST : KaSuperTypeListRenderer {
         override fun renderSuperTypes(
             analysisSession: KaSession,

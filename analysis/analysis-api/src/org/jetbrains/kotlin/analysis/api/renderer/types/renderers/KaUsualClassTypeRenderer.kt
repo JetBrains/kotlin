@@ -21,6 +21,7 @@ public interface KaUsualClassTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS : KaUsualClassTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

@@ -25,6 +25,7 @@ public interface KaClassTypeQualifierRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_SHORT_NAMES : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
             analysisSession: KaSession,
@@ -37,6 +38,7 @@ public interface KaClassTypeQualifierRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
             analysisSession: KaSession,
@@ -53,6 +55,7 @@ public interface KaClassTypeQualifierRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_QUALIFIED_NAMES : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
             analysisSession: KaSession,

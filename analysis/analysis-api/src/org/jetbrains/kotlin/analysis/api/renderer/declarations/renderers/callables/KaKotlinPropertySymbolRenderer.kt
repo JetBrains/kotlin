@@ -21,6 +21,7 @@ public interface KaKotlinPropertySymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaKotlinPropertySymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

@@ -22,6 +22,7 @@ public interface KaContextReceiverListRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaContextReceiverListRenderer {
         override fun renderContextReceivers(
             analysisSession: KaSession,

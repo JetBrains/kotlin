@@ -359,24 +359,34 @@ public sealed interface KaScopeKind {
 
 @KaIdeApi
 public object KaScopeKinds {
+    @KaIdeApi
     public class LocalScope(override val indexInTower: Int) : KaScopeKind.LocalScope
 
+    @KaIdeApi
     public class TypeScope(override val indexInTower: Int) : KaScopeKind.TypeScope
 
+    @KaIdeApi
     public class TypeParameterScope(override val indexInTower: Int) : KaScopeKind.TypeParameterScope
 
+    @KaIdeApi
     public class PackageMemberScope(override val indexInTower: Int) : KaScopeKind.PackageMemberScope
 
+    @KaIdeApi
     public class ExplicitSimpleImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitSimpleImportingScope
 
+    @KaIdeApi
     public class ExplicitStarImportingScope(override val indexInTower: Int) : KaScopeKind.ExplicitStarImportingScope
 
+    @KaIdeApi
     public class DefaultSimpleImportingScope(override val indexInTower: Int) : KaScopeKind.DefaultSimpleImportingScope
 
+    @KaIdeApi
     public class DefaultStarImportingScope(override val indexInTower: Int) : KaScopeKind.DefaultStarImportingScope
 
+    @KaIdeApi
     public class StaticMemberScope(override val indexInTower: Int) : KaScopeKind.StaticMemberScope
 
+    @KaIdeApi
     public class ScriptMemberScope(override val indexInTower: Int) : KaScopeKind.ScriptMemberScope
 }
 

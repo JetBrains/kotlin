@@ -29,6 +29,7 @@ public interface KaCompoundAssignOperation : KaCompoundOperation {
     public val kind: Kind
     public val operand: KtExpression
 
+    @KaExperimentalApi
     public enum class Kind {
         PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN
     }
@@ -42,10 +43,12 @@ public interface KaCompoundUnaryOperation : KaCompoundOperation {
     public val kind: Kind
     public val precedence: Precedence
 
+    @KaExperimentalApi
     public enum class Kind {
         INC, DEC
     }
 
+    @KaExperimentalApi
     public enum class Precedence {
         PREFIX, POSTFIX
     }

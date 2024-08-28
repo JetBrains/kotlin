@@ -20,6 +20,7 @@ public interface KaScriptSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaScriptSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

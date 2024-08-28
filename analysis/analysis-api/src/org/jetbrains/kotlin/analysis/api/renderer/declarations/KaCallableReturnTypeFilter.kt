@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 public interface KaCallableReturnTypeFilter {
     public fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean
 
+    @KaExperimentalApi
     public object ALWAYS : KaCallableReturnTypeFilter {
         override fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean {
             return true
@@ -22,6 +23,7 @@ public interface KaCallableReturnTypeFilter {
 
     }
 
+    @KaExperimentalApi
     public object NO_UNIT_FOR_FUNCTIONS : KaCallableReturnTypeFilter {
         override fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean {
             with(analysisSession) {

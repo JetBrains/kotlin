@@ -23,6 +23,7 @@ public interface KaClassifierBodyRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NO_BODY : KaClassifierBodyRenderer {
         override fun renderBody(
             analysisSession: KaSession,
@@ -32,6 +33,7 @@ public interface KaClassifierBodyRenderer {
         ) {}
     }
 
+    @KaExperimentalApi
     public object EMPTY_BRACES : KaClassifierBodyRenderer {
         override fun renderBody(
             analysisSession: KaSession,
@@ -43,12 +45,14 @@ public interface KaClassifierBodyRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object BODY_WITH_MEMBERS : KaClassifierBodyWithMembersRenderer() {
         override fun renderEmptyBodyForEmptyMemberScope(symbol: KaDeclarationContainerSymbol): Boolean {
             return false
         }
     }
 
+    @KaExperimentalApi
     public object BODY_WITH_MEMBERS_OR_EMPTY_BRACES : KaClassifierBodyWithMembersRenderer() {
         override fun renderEmptyBodyForEmptyMemberScope(symbol: KaDeclarationContainerSymbol): Boolean {
             return true

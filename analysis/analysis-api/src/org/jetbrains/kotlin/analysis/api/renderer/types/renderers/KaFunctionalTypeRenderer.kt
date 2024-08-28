@@ -23,6 +23,7 @@ public interface KaFunctionalTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_FUNCTIONAL_TYPE : KaFunctionalTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -68,6 +69,7 @@ public interface KaFunctionalTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_CLASS_TYPE : KaFunctionalTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -87,6 +89,7 @@ public interface KaFunctionalTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_CLASS_TYPE_FOR_REFLECTION_TYPES : KaFunctionalTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

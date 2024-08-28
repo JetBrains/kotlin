@@ -20,6 +20,7 @@ public interface KaIntersectionTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_INTERSECTION : KaIntersectionTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

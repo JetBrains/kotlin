@@ -21,6 +21,7 @@ public interface KaDynamicTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_DYNAMIC_WORD : KaDynamicTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

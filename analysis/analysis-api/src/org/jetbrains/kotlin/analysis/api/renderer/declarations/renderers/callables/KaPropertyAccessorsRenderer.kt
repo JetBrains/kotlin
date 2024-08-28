@@ -23,6 +23,7 @@ public interface KaPropertyAccessorsRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object ALL : KaPropertyAccessorsRenderer {
         override fun renderAccessors(
             analysisSession: KaSession,
@@ -49,6 +50,7 @@ public interface KaPropertyAccessorsRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object NO_DEFAULT : KaPropertyAccessorsRenderer {
         override fun renderAccessors(
             analysisSession: KaSession,
@@ -76,7 +78,7 @@ public interface KaPropertyAccessorsRenderer {
         }
     }
 
-
+    @KaExperimentalApi
     public object NONE : KaPropertyAccessorsRenderer {
         override fun renderAccessors(
             analysisSession: KaSession,

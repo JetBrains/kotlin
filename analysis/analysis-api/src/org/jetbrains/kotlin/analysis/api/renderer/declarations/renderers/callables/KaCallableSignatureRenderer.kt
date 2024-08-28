@@ -24,6 +24,7 @@ public interface KaCallableSignatureRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object FOR_SOURCE : KaCallableSignatureRenderer {
         override fun renderCallableSignature(
             analysisSession: KaSession,

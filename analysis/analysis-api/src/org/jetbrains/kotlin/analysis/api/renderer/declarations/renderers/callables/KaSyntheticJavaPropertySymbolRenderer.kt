@@ -21,6 +21,7 @@ public interface KaSyntheticJavaPropertySymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaSyntheticJavaPropertySymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

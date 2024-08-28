@@ -21,6 +21,7 @@ public interface KaEnumEntrySymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaEnumEntrySymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

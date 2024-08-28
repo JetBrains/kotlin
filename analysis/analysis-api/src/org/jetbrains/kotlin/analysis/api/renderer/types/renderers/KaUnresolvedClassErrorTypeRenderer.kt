@@ -21,6 +21,7 @@ public interface KaUnresolvedClassErrorTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object UNRESOLVED_QUALIFIER : KaUnresolvedClassErrorTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -35,6 +36,7 @@ public interface KaUnresolvedClassErrorTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_ERROR_WORD : KaUnresolvedClassErrorTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -46,6 +48,7 @@ public interface KaUnresolvedClassErrorTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_ERROR_MESSAGE : KaUnresolvedClassErrorTypeRenderer {
         @OptIn(KaNonPublicApi::class)
         override fun renderType(

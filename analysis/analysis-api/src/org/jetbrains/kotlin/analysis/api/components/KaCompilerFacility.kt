@@ -94,6 +94,7 @@ public typealias KtCompilerTarget = KaCompilerTarget
 
 @KaExperimentalApi
 public interface KaCompilerFacility {
+    @KaExperimentalApi
     public companion object {
         /** Simple class name for the code fragment facade class. */
         public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =

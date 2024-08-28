@@ -29,6 +29,7 @@ public abstract class KaResolveExtensionProvider {
      */
     public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
+    @KaExperimentalApi
     public companion object {
         public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
             ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")

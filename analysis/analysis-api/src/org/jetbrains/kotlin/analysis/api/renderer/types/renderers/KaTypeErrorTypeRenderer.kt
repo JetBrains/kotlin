@@ -21,6 +21,7 @@ public interface KaErrorTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_CODE_IF_POSSIBLE : KaErrorTypeRenderer {
         @OptIn(KaNonPublicApi::class)
         override fun renderType(
@@ -37,6 +38,7 @@ public interface KaErrorTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_ERROR_WORD : KaErrorTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -48,6 +50,7 @@ public interface KaErrorTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_ERROR_MESSAGE : KaErrorTypeRenderer {
         @OptIn(KaNonPublicApi::class)
         override fun renderType(

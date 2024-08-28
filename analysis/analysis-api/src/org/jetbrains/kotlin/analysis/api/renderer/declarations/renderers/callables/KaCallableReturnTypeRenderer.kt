@@ -22,6 +22,7 @@ public interface KaCallableReturnTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_OUT_APPROXIMATION : KaCallableReturnTypeRenderer {
         override fun renderReturnType(
             analysisSession: KaSession,

@@ -22,6 +22,7 @@ public interface KaTypeProjectionRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_VARIANCE : KaTypeProjectionRenderer {
         override fun renderTypeProjection(
             analysisSession: KaSession,
@@ -43,6 +44,7 @@ public interface KaTypeProjectionRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITHOUT_VARIANCE : KaTypeProjectionRenderer {
         override fun renderTypeProjection(
             analysisSession: KaSession,

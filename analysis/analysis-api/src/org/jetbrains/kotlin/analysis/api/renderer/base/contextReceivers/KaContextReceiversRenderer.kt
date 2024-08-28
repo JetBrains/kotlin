@@ -37,6 +37,7 @@ public class KaContextReceiversRenderer(
         }
     }
 
+    @KaExperimentalApi
     public class Builder {
         public lateinit var contextReceiverListRenderer: KaContextReceiverListRenderer
         public lateinit var contextReceiverLabelRenderer: KaContextReceiverLabelRenderer
@@ -47,6 +48,7 @@ public class KaContextReceiversRenderer(
         )
     }
 
+    @KaExperimentalApi
     public companion object {
         public inline operator fun invoke(action: Builder.() -> Unit): KaContextReceiversRenderer =
             Builder().apply(action).build()

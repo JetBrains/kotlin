@@ -22,6 +22,7 @@ public interface KaPropertySetterSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaPropertySetterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

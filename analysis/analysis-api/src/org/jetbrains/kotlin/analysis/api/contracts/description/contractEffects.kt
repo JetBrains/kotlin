@@ -60,11 +60,13 @@ public sealed interface KaContractReturnsContractEffectDeclaration : KaContractE
     /**
      * Represents [kotlin.contracts.ContractBuilder.returnsNotNull].
      */
+    @KaExperimentalApi
     public interface KaContractReturnsNotNullEffectDeclaration : KaContractReturnsContractEffectDeclaration
 
     /**
      * Represents [kotlin.contracts.ContractBuilder.returns] with a `value` argument.
      */
+    @KaExperimentalApi
     public interface KaContractReturnsSpecificValueEffectDeclaration : KaContractReturnsContractEffectDeclaration {
         public val value: KaContractConstantValue
     }
@@ -72,6 +74,7 @@ public sealed interface KaContractReturnsContractEffectDeclaration : KaContractE
     /**
      * Represents [kotlin.contracts.ContractBuilder.returns] without arguments.
      */
+    @KaExperimentalApi
     public interface KaContractReturnsSuccessfullyEffectDeclaration : KaContractReturnsContractEffectDeclaration
 }
 

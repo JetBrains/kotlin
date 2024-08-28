@@ -20,6 +20,7 @@ public interface KaSamConstructorSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NOT_RENDER : KaSamConstructorSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -31,6 +32,7 @@ public interface KaSamConstructorSymbolRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_FUNCTION : KaSamConstructorSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

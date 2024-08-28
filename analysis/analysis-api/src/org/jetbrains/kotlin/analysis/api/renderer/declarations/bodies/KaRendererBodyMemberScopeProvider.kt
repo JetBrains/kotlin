@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 public interface KaRendererBodyMemberScopeProvider {
     public fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol>
 
+    @KaExperimentalApi
     public object ALL : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             with(analysisSession) {
@@ -22,6 +23,7 @@ public interface KaRendererBodyMemberScopeProvider {
         }
     }
 
+    @KaExperimentalApi
     public object ALL_DECLARED : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             with(analysisSession) {
@@ -42,6 +44,7 @@ public interface KaRendererBodyMemberScopeProvider {
         }
     }
 
+    @KaExperimentalApi
     public object NONE : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
             return emptyList()

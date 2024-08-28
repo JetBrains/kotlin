@@ -39,6 +39,7 @@ public class KaAnnotationRenderer internal constructor(
         }
     }
 
+    @KaExperimentalApi
     public class Builder {
         public lateinit var annotationListRenderer: KaAnnotationListRenderer
         public lateinit var annotationFilter: KaRendererAnnotationsFilter
@@ -57,6 +58,7 @@ public class KaAnnotationRenderer internal constructor(
 
     }
 
+    @KaExperimentalApi
     public companion object {
         public inline operator fun invoke(action: Builder.() -> Unit): KaAnnotationRenderer =
             Builder().apply(action).build()

@@ -21,6 +21,7 @@ public interface KaNamedFunctionSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaNamedFunctionSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -35,6 +36,7 @@ public interface KaNamedFunctionSymbolRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_RAW_SIGNATURE : KaNamedFunctionSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

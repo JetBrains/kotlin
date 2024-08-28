@@ -23,6 +23,7 @@ public interface KaFlexibleTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_RANGE : KaFlexibleTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -40,6 +41,7 @@ public interface KaFlexibleTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_SHORT : KaFlexibleTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

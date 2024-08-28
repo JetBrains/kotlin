@@ -21,6 +21,7 @@ public interface KaContextReceiverLabelRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_LABEL : KaContextReceiverLabelRenderer {
         override fun renderLabel(
             analysisSession: KaSession,

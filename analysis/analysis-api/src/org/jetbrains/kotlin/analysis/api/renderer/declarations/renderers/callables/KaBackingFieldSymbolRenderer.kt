@@ -21,6 +21,7 @@ public interface KaBackingFieldSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_FIELD_KEYWORD : KaBackingFieldSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

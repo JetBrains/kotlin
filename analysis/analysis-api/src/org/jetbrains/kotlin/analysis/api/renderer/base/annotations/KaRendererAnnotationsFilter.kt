@@ -28,31 +28,35 @@ public interface KaRendererAnnotationsFilter {
             filter(analysisSession, annotation, owner) || other.filter(analysisSession, annotation, owner)
         }
 
+    @KaExperimentalApi
     public object ALL : KaRendererAnnotationsFilter {
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return true
         }
     }
 
+    @KaExperimentalApi
     public object NO_NULLABILITY : KaRendererAnnotationsFilter {
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() !in NULLABILITY_ANNOTATIONS
         }
     }
 
+    @KaExperimentalApi
     public object NO_PARAMETER_NAME : KaRendererAnnotationsFilter {
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() != StandardNames.FqNames.parameterName
         }
     }
 
-
+    @KaExperimentalApi
     public object NONE : KaRendererAnnotationsFilter {
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return false
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(
             predicate: KaSession.(annotation: KaAnnotation, owner: KaAnnotated) -> Boolean

@@ -26,6 +26,7 @@ public interface KaRendererModalityModifierProvider {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? = when (symbol) {
             is KaPropertyAccessorSymbol,
@@ -53,6 +54,7 @@ public interface KaRendererModalityModifierProvider {
         }
     }
 
+    @KaExperimentalApi
     public object WITHOUT_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
         override fun getModalityModifier(analysisSession: KaSession, symbol: KaDeclarationSymbol): KtModifierKeywordToken? {
             with(analysisSession) {

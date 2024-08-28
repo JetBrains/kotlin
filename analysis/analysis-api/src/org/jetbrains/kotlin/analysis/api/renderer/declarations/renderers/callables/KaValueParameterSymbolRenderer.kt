@@ -20,6 +20,7 @@ public interface KaValueParameterSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaValueParameterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -39,6 +40,7 @@ public interface KaValueParameterSymbolRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object TYPE_ONLY : KaValueParameterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

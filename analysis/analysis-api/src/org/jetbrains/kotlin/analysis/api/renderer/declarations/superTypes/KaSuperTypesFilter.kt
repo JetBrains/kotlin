@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 public fun interface KaSuperTypesFilter {
     public fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean
 
+    @KaExperimentalApi
     public object NO_DEFAULT_TYPES : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
             with(analysisSession) {
@@ -36,6 +37,7 @@ public fun interface KaSuperTypesFilter {
         }
     }
 
+    @KaExperimentalApi
     public object NO_ANY_FOR_INTERFACES : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
             with(analysisSession) {
@@ -47,18 +49,21 @@ public fun interface KaSuperTypesFilter {
         }
     }
 
+    @KaExperimentalApi
     public object ALL : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
             return true
         }
     }
 
+    @KaExperimentalApi
     public object NONE : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
             return false
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(predicate: KaSession.(type: KaType, symbol: KaClassSymbol) -> Boolean): KaSuperTypesFilter {
             return KaSuperTypesFilter { analysisSession, superType, symbol -> predicate(analysisSession, superType, symbol) }

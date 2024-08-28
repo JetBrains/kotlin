@@ -23,6 +23,7 @@ public interface KaSuperTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_OUT_APPROXIMATION : KaSuperTypeRenderer {
         override fun renderSuperType(
             analysisSession: KaSession,

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 public interface KaPropertyAccessorBodyRenderer {
     public fun renderBody(analysisSession: KaSession, symbol: KaPropertyAccessorSymbol, printer: PrettyPrinter)
 
+    @KaExperimentalApi
     public object NO_BODY : KaPropertyAccessorBodyRenderer {
         override fun renderBody(analysisSession: KaSession, symbol: KaPropertyAccessorSymbol, printer: PrettyPrinter) {}
     }

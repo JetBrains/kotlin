@@ -25,6 +25,7 @@ public interface KaRendererVisibilityModifierProvider {
         }
     }
 
+    @KaExperimentalApi
     public object NO_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,
@@ -52,6 +53,7 @@ public interface KaRendererVisibilityModifierProvider {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_IMPLICIT_VISIBILITY : KaRendererVisibilityModifierProvider {
         override fun getVisibilityModifier(
             analysisSession: KaSession,

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
  */
 @KaExperimentalApi
 public interface KaContractBinaryLogicExpression : KaContractBooleanExpression {
+    @KaExperimentalApi
     public enum class KaLogicOperation {
         AND,
         OR,

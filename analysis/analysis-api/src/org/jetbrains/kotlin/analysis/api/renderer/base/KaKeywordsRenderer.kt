@@ -35,6 +35,7 @@ public class KaKeywordsRenderer private constructor(
         }
     }
 
+    @KaExperimentalApi
     public class Builder {
         public lateinit var keywordRenderer: KaKeywordRenderer
         public lateinit var keywordFilter: KaRendererKeywordFilter
@@ -45,6 +46,7 @@ public class KaKeywordsRenderer private constructor(
         )
     }
 
+    @KaExperimentalApi
     public companion object {
         public val AS_WORD: KaKeywordsRenderer = KaKeywordsRenderer(KaKeywordRenderer.AS_WORD, KaRendererKeywordFilter.ALL)
         public val NONE: KaKeywordsRenderer = KaKeywordsRenderer(KaKeywordRenderer.NONE, KaRendererKeywordFilter.ALL)

@@ -22,6 +22,7 @@ public interface KaAnonymousObjectSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaAnonymousObjectSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

@@ -25,9 +25,13 @@ public interface KaNamedClassSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE: AsSourceRenderer(true)
+
+    @KaExperimentalApi
     public object AS_SOURCE_WITHOUT_PRIMARY_CONSTRUCTOR: AsSourceRenderer(false)
 
+    @KaExperimentalApi
     public open class AsSourceRenderer(private val withPrimaryConstructor: Boolean) : KaNamedClassSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

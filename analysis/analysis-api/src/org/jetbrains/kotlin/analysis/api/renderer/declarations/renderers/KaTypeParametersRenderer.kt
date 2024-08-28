@@ -30,6 +30,7 @@ public interface KaTypeParametersRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NO_TYPE_PARAMETERS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
             analysisSession: KaSession,
@@ -46,6 +47,7 @@ public interface KaTypeParametersRenderer {
         ) {}
     }
 
+    @KaExperimentalApi
     public object WIHTOUT_BOUNDS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
             analysisSession: KaSession,
@@ -74,6 +76,7 @@ public interface KaTypeParametersRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_BOUNDS_IN_WHERE_CLAUSE : KaTypeParametersRenderer {
         override fun renderTypeParameters(
             analysisSession: KaSession,

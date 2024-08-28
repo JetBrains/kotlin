@@ -25,6 +25,7 @@ public interface KaAnalysisPermissionRegistry {
 
     public var isAnalysisAllowedInWriteAction: Boolean
 
+    @KaImplementationDetail
     public companion object {
         private val permissionRegistry = KaAnalysisPermissionRegistryImpl()
 

@@ -21,6 +21,7 @@ public interface KaSingleTypeParameterSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NO : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -30,7 +31,7 @@ public interface KaSingleTypeParameterSymbolRenderer {
         ) {}
     }
 
-
+    @KaExperimentalApi
     public object WITHOUT_BOUNDS : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,
@@ -48,6 +49,7 @@ public interface KaSingleTypeParameterSymbolRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_COMMA_SEPARATED_BOUNDS : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

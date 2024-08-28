@@ -35,6 +35,7 @@ public interface KaDeclarationNameRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object QUOTED : KaDeclarationNameRenderer {
         override fun renderName(
             analysisSession: KaSession,
@@ -49,6 +50,7 @@ public interface KaDeclarationNameRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object UNQUOTED : KaDeclarationNameRenderer {
         override fun renderName(
             analysisSession: KaSession,

@@ -22,6 +22,7 @@ public interface KaClassInitializerRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object INIT_BLOCK_WITH_BRACES : KaClassInitializerRenderer {
         override fun renderClassInitializer(
             analysisSession: KaSession,

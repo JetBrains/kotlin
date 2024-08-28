@@ -33,6 +33,7 @@ public data class ShortenOptions(
     public val removeThis: Boolean = false,
     public val removeThisLabels: Boolean = false,
 ) {
+    @KaIdeApi
     public companion object {
         public val DEFAULT: ShortenOptions = ShortenOptions()
 
@@ -79,6 +80,7 @@ public enum class ShortenStrategy {
      */
     SHORTEN_AND_STAR_IMPORT;
 
+    @KaIdeApi
     public companion object {
         @KaIdeApi
         public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = {

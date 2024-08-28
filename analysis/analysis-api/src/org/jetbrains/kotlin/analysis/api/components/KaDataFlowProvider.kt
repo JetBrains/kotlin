@@ -159,6 +159,7 @@ public class KaDataFlowExitPointSnapshot(
      * Represents a default expression (generally, a last given statement if it has a meaningful result type).
      * Expressions that always return [Nothing], such as `return`, `break`, `continue` or `throw`, cannot be default expressions.
      */
+    @KaNonPublicApi
     public class DefaultExpressionInfo(
         /** The default expression. */
         public val expression: KtExpression,
@@ -170,6 +171,7 @@ public class KaDataFlowExitPointSnapshot(
     /**
      * Represents a local variable reassignment.
      */
+    @KaNonPublicApi
     public class VariableReassignment(
         /** The reassignment expression. */
         public val expression: KtExpression,

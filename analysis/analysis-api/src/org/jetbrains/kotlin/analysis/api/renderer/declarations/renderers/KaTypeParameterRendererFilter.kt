@@ -19,6 +19,7 @@ public interface KaTypeParameterRendererFilter {
         owner: KaDeclarationSymbol,
     ): Boolean
 
+    @KaExperimentalApi
     public object NO_FOR_CONSTURCTORS : KaTypeParameterRendererFilter {
         override fun filter(
             analysisSession: KaSession,
@@ -29,6 +30,7 @@ public interface KaTypeParameterRendererFilter {
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(
             predicate: KaSession.(typeParameter: KaTypeParameterSymbol, owner: KaDeclarationSymbol) -> Boolean

@@ -23,6 +23,7 @@ public interface KaAnnotationListRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object FOR_SOURCE : KaAnnotationListRenderer {
         override fun renderAnnotations(
             analysisSession: KaSession,

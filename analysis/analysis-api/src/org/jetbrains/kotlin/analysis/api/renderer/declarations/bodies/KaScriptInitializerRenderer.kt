@@ -20,6 +20,7 @@ public interface KaScriptInitializerRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NO_INITIALIZER : KaScriptInitializerRenderer {
         override fun renderInitializer(
             analysisSession: KaSession,

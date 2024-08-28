@@ -20,6 +20,7 @@ public interface KaCapturedTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_PROJECTION : KaCapturedTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,
@@ -31,6 +32,7 @@ public interface KaCapturedTypeRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_CAPTURED_TYPE_WITH_PROJECTION : KaCapturedTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

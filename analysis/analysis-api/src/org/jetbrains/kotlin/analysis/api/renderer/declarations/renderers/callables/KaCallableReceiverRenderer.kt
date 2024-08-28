@@ -21,6 +21,7 @@ public interface KaCallableReceiverRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_TYPE_WITH_IN_APPROXIMATION : KaCallableReceiverRenderer {
         override fun renderReceiver(
             analysisSession: KaSession,

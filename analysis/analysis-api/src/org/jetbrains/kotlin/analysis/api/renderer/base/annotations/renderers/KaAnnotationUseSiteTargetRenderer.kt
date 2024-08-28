@@ -24,6 +24,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITHOUT_USE_SITE : KaAnnotationUseSiteTargetRenderer {
         override fun renderUseSiteTarget(
             analysisSession: KaSession,
@@ -34,6 +35,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
         ) {}
     }
 
+    @KaExperimentalApi
     public object WITH_USES_SITE : KaAnnotationUseSiteTargetRenderer {
         override fun renderUseSiteTarget(
             analysisSession: KaSession,
@@ -48,6 +50,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object WITH_NON_DEFAULT_USE_SITE : KaAnnotationUseSiteTargetRenderer {
         override fun renderUseSiteTarget(
             analysisSession: KaSession,

@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 public interface KaParameterDefaultValueRenderer {
     public fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter)
 
+    @KaExperimentalApi
     public object NO_DEFAULT_VALUE : KaParameterDefaultValueRenderer {
         override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
         }
     }
 
+    @KaExperimentalApi
     public object THREE_DOTS : KaParameterDefaultValueRenderer {
         override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
             if (symbol.hasDefaultValue) {

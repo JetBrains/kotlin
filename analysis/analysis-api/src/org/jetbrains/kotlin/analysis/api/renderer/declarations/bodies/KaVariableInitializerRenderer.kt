@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 public interface KaVariableInitializerRenderer {
     public fun renderInitializer(analysisSession: KaSession, symbol: KaVariableSymbol, printer: PrettyPrinter)
 
+    @KaExperimentalApi
     public object NO_INITIALIZER : KaVariableInitializerRenderer {
         override fun renderInitializer(analysisSession: KaSession, symbol: KaVariableSymbol, printer: PrettyPrinter) {
         }
     }
 
+    @KaExperimentalApi
     public object ONLY_CONST_VALUE_INITIALIZERS : KaVariableInitializerRenderer {
         @OptIn(KaExperimentalApi::class)
         override fun renderInitializer(analysisSession: KaSession, symbol: KaVariableSymbol, printer: PrettyPrinter) {

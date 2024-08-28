@@ -38,11 +38,13 @@ public class KaDeclarationModifiersRenderer private constructor(
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public inline operator fun invoke(action: Builder.() -> Unit): KaDeclarationModifiersRenderer =
             Builder().apply(action).build()
     }
 
+    @KaExperimentalApi
     public class Builder {
         public lateinit var modifierListRenderer: KaModifierListRenderer
         public lateinit var modifiersSorter: KaModifiersSorter

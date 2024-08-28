@@ -19,6 +19,7 @@ public interface KaModifiersSorter {
         owner: KaDeclarationSymbol,
     ): List<KtModifierKeywordToken>
 
+    @KaExperimentalApi
     public object CANONICAL : KaModifiersSorter {
         override fun sort(
             analysisSession: KaSession,

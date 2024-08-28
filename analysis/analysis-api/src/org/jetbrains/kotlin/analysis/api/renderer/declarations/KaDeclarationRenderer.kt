@@ -181,11 +181,13 @@ public class KaDeclarationRenderer private constructor(
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(action: Builder.() -> Unit): KaDeclarationRenderer =
             Builder().apply(action).build()
     }
 
+    @KaExperimentalApi
     public open class Builder {
         public lateinit var returnTypeFilter: KaCallableReturnTypeFilter
         public lateinit var nameRenderer: KaDeclarationNameRenderer

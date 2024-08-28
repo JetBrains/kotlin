@@ -22,6 +22,7 @@ public interface KaDestructuringDeclarationRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object WITH_ENTRIES : KaDestructuringDeclarationRenderer {
         override fun renderSymbol(
             analysisSession: KaSession,

@@ -19,6 +19,7 @@ public interface KaRendererBodyMemberScopeSorter {
         container: KaDeclarationContainerSymbol,
     ): List<KaDeclarationSymbol>
 
+    @KaExperimentalApi
     public object ENUM_ENTRIES_AT_BEGINING : KaRendererBodyMemberScopeSorter {
         override fun sortMembers(
             analysisSession: KaSession,

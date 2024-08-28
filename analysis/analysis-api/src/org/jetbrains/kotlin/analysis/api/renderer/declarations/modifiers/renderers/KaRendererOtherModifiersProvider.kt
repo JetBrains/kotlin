@@ -40,6 +40,7 @@ public interface KaRendererOtherModifiersProvider {
         }
     }
 
+    @KaExperimentalApi
     public object ALL : KaRendererOtherModifiersProvider {
         override fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken> {
             return buildList {

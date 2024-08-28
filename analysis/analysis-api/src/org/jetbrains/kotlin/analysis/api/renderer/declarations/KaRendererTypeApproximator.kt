@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.Variance
 public interface KaRendererTypeApproximator {
     public fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType
 
+    @KaExperimentalApi
     public object TO_DENOTABLE : KaRendererTypeApproximator {
         @OptIn(KaExperimentalApi::class)
         override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
@@ -29,6 +30,7 @@ public interface KaRendererTypeApproximator {
         }
     }
 
+    @KaExperimentalApi
     public object NO_APPROXIMATION : KaRendererTypeApproximator {
         override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
             return type

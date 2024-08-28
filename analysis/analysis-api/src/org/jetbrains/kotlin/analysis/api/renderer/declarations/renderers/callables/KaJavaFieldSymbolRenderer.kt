@@ -21,6 +21,7 @@ public interface KaJavaFieldSymbolRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaJavaFieldSymbolRenderer {
         override fun renderSymbol(
             session: KaSession,

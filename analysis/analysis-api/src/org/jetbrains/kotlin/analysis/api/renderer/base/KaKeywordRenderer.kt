@@ -34,6 +34,7 @@ public interface KaKeywordRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object AS_WORD : KaKeywordRenderer {
         override fun renderKeyword(
             analysisSession: KaSession,
@@ -48,6 +49,7 @@ public interface KaKeywordRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object NONE : KaKeywordRenderer {
         override fun renderKeyword(
             analysisSession: KaSession,

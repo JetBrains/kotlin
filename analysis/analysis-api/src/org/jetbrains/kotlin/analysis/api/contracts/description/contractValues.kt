@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
  */
 @KaExperimentalApi
 public interface KaContractConstantValue : KaLifetimeOwner {
+    @KaExperimentalApi
     public enum class KaContractConstantType {
         NULL,
         TRUE,

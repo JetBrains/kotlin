@@ -31,18 +31,21 @@ public interface KaRendererKeywordFilter {
         }
     }
 
+    @KaExperimentalApi
     public object ALL : KaRendererKeywordFilter {
         override fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean {
             return true
         }
     }
 
+    @KaExperimentalApi
     public object NONE : KaRendererKeywordFilter {
         override fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean {
             return false
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(
             predicate: KaSession.(modifier: KtKeywordToken, annotated: KaAnnotated) -> Boolean

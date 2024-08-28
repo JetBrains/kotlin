@@ -22,6 +22,7 @@ public interface KaSuperTypesCallArgumentsRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object NO_ARGS : KaSuperTypesCallArgumentsRenderer {
         override fun renderSuperTypeArguments(
             analysisSession: KaSession,
@@ -33,6 +34,7 @@ public interface KaSuperTypesCallArgumentsRenderer {
         }
     }
 
+    @KaExperimentalApi
     public object EMPTY_PARENS : KaSuperTypesCallArgumentsRenderer {
         override fun renderSuperTypeArguments(
             analysisSession: KaSession,

@@ -21,6 +21,7 @@ public interface KaTypeParameterTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_SOURCE : KaTypeParameterTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

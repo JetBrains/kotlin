@@ -496,6 +496,7 @@ public class DebugSymbolRenderer(
         else lines.first() + " ..."
     }
 
+    @KaNonPublicApi
     public companion object {
         private val ignoredPropertyNames = setOf(
             "psi",

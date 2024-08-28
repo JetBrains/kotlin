@@ -20,6 +20,7 @@ public interface KaDefinitelyNotNullTypeRenderer {
         printer: PrettyPrinter,
     )
 
+    @KaExperimentalApi
     public object AS_TYPE_INTERSECTION : KaDefinitelyNotNullTypeRenderer {
         override fun renderType(
             analysisSession: KaSession,

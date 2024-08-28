@@ -136,11 +136,13 @@ public class KaTypeRenderer private constructor(
         }
     }
 
+    @KaExperimentalApi
     public companion object {
         public operator fun invoke(action: Builder.() -> Unit): KaTypeRenderer =
             Builder().apply(action).build()
     }
 
+    @KaExperimentalApi
     public class Builder {
         public lateinit var expandedTypeRenderingMode: KaExpandedTypeRenderingMode
         public lateinit var capturedTypeRenderer: KaCapturedTypeRenderer
