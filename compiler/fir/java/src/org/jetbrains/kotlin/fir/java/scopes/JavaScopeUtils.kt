@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.REMOVE_AT_NAME_AND_SIGNATURE
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.SIGNATURE_TO_JVM_REPRESENTATION_NAME
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirCallableSymbol<*>.doesOverrideBuiltinWithDifferentJvmName(containingScope: FirTypeScope, session: FirSession): Boolean {
     return getOverriddenBuiltinWithDifferentJvmName(containingScope, session) != null
@@ -135,7 +136,8 @@ object ClassicBuiltinSpecialProperties {
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolean {
-    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true
+    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.classId in StandardClassIds.allBuiltinTypes
+            || dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true
 }
 
 private fun FirNamedFunctionSymbol.firstOverriddenFunction(

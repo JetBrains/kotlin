@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.JvmOptionalAnnotationSerializerExtension
@@ -44,6 +45,7 @@ interface JvmBackendExtension {
             }
         }
 
+        override fun createBuiltinsSerializer() = error("JVM backend builtins serialization is not supported in K1")
 
         fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
             JvmAnnotationNames.METADATA_JVM_IR_FLAG or
@@ -51,6 +53,8 @@ interface JvmBackendExtension {
     }
 
     fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer
+
+    fun createBuiltinsSerializer(): BuiltinsSerializer
 }
 
 interface ModuleMetadataSerializer {

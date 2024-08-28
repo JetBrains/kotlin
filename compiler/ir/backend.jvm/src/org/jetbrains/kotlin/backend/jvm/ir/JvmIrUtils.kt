@@ -78,6 +78,7 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     }
 }
 
+
 fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     return (this as? IrSimpleFunction)?.isCompiledToJvmDefault(jvmDefaultMode) == true
 }

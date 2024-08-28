@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.internal.Builtin
+
 package kotlin
 
 import kotlin.annotation.AnnotationRetention.BINARY

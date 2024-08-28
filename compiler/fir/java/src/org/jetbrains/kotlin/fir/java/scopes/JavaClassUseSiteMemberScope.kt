@@ -982,7 +982,8 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin.isBuiltIns -> false
+            // TODO do we still need `origin.isBuiltIns` check?
+            isInterface || origin.isBuiltIns || StandardClassIds.allBuiltinTypes.contains(classId) -> false
             else -> true
         }
 

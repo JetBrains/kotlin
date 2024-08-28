@@ -1,3 +1,5 @@
+@file:kotlin.internal.Builtin
+
 package kotlin
 
 import kotlin.annotation.AnnotationTarget.*

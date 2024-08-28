@@ -1,3 +1,3 @@
 KtNameReferenceExpression(174,180): 'stream'
   KtSimpleNameReference:
-    (in kotlin.collections.Collection) {psi: ClsMethodImpl}override fun stream(): java.util.stream.Stream<E>
+    (in kotlin.collections.Collection) {psi: ClsMethodImpl} fun stream(): java.util.stream.Stream<E>

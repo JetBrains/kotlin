@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.max
 import kotlin.math.min
@@ -111,7 +112,10 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
                 return dispatchReceiverParameter == null
                         && extensionReceiverParameter?.type?.isNullableAny() == true
-                        && fqNameWhenAvailable?.parent() == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+                        && fqNameWhenAvailable?.parent() in listOf(
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("LibraryKt"))
+                )
             }
 
         /** @return true if the given expression is a call to [toString] */

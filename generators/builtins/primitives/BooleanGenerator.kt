@@ -17,8 +17,15 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
         writer.print(generateFile().build())
     }
 
+    protected open val fileAnnotations: List<String> = emptyList()
+
     private fun generateFile(): FileBuilder {
-        return file(this::class) { generateClass() }.apply { this.modifyGeneratedFile() }
+        return file(this::class) {
+            for (fileAnnotation in fileAnnotations) {
+                annotate(fileAnnotation)
+            }
+            generateClass()
+        }.apply { this.modifyGeneratedFile() }
     }
 
     private fun FileBuilder.generateClass() {
@@ -181,11 +188,42 @@ class CommonBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `boolean`.")
-        expectActual = ExpectActualModifier.Unspecified
+        expectActual = ExpectActualModifier.Actual
     }
+
+    override val fileAnnotations = listOf("kotlin.internal.ProducesBuiltinMetadata")
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         noBody()
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedNot() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedAnd() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedOr() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedXor() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedCompareTo() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedToString() {
+        suppressNonAbstractFunctionWithoutBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedEquals() {
+        suppressNonAbstractFunctionWithoutBody()
     }
 }
 

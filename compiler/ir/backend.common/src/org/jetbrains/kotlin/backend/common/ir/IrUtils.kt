@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -124,3 +126,7 @@ fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst)?.value == true
 
 fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
     compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)
+
+val IrFile.producesMetadata: Boolean get() = hasAnnotation(StandardClassIds.Annotations.ProducesBuiltinMetadata)
+
+val IrFile.isBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotations.Builtin)
