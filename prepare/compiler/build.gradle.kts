@@ -202,8 +202,6 @@ dependencies {
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         sources(kotlinStdlib(classifier = "sources"))
         sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
-        distCommonContents(kotlinStdlib(classifier = "common"))
-        distCommonContents(kotlinStdlib(classifier = "common-sources"))
     } else {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
