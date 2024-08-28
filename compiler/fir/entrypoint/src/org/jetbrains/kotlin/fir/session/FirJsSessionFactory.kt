@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
+@OptIn(SessionConfiguration::class)
 object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Context, FirJsSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
@@ -136,7 +137,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory<FirJsSessionFactory.Conte
         registerJsComponents(moduleKind)
     }
 
-    @OptIn(SessionConfiguration::class)
     fun FirSession.registerJsComponents(moduleKind: ModuleKind?) {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(

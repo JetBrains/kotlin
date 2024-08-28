@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
+@OptIn(SessionConfiguration::class)
 object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessionFactory.Context>() {
 
     // ==================================== Library session ====================================
@@ -112,7 +113,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory<Nothing?, FirWasmSessio
         registerWasmCheckers(c.wasmTarget)
     }
 
-    @OptIn(SessionConfiguration::class)
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerDefaultComponents()
         register(

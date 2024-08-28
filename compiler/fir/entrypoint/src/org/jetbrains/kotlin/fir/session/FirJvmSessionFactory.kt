@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
+@OptIn(SessionConfiguration::class)
 object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.LibraryContext, FirJvmSessionFactory.SourceContext>() {
 
     // ==================================== Library session ====================================
@@ -95,7 +96,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
 
     // ==================================== Platform session ====================================
 
-    @OptIn(SessionConfiguration::class)
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
@@ -163,7 +163,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         registerJvmCheckers()
     }
 
-    @OptIn(SessionConfiguration::class)
     override fun FirSession.registerSourceSessionComponents(c: SourceContext) {
         registerDefaultComponents()
         registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
