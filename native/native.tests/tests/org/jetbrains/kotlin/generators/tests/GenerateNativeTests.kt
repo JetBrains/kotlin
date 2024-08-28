@@ -409,6 +409,12 @@ fun main() {
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "AtomicfuNativeFirTestGenerated",
+                annotations = listOf(*atomicfuNative(), *frontendFir(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
         }
 
         generateTestGroupSuiteWithJUnit5 {
