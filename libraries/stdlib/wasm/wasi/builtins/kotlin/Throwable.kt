@@ -36,8 +36,10 @@ public actual constructor(public actual open val message: String?, public actual
     }
 }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
     get() = this.suppressedExceptionsList
     set(value) { this.suppressedExceptionsList = value }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 internal actual val Throwable.stack: String get() = this.stack
