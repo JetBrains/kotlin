@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 object PositioningStrategies {
-    open class DeclarationHeader<T : KtDeclaration> : PositioningStrategy<T>() {
+    open class DeclarationHeader<T : PsiElement> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
             if (element is KtNamedDeclaration &&
                 element !is KtObjectDeclaration &&
@@ -257,8 +257,8 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
-        override fun mark(element: KtDeclaration): List<TextRange> {
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS: PositioningStrategy<PsiElement> = object : DeclarationHeader<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
             when (element) {
                 is KtNamedFunction -> {
                     val startElement = element.funKeyword ?: element
@@ -282,7 +282,11 @@ object PositioningStrategies {
                     return markRange(element.namePlaceholder, endOfSignatureElement)
                 }
             }
-            return DECLARATION_SIGNATURE.mark(element)
+            return if (element is KtDeclaration) {
+                DECLARATION_SIGNATURE.mark(element)
+            } else {
+                DEFAULT.mark(element)
+            }
         }
     }
 

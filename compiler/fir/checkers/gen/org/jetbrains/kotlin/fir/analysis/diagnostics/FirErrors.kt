@@ -288,7 +288,7 @@ object FirErrors {
     val ANNOTATION_ARGUMENT_MUST_BE_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_ARGUMENT_MUST_BE_CONST", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
-    val ANNOTATION_CLASS_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_CLASS_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val ANNOTATION_CLASS_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_CLASS_MEMBER", ERROR, SourceElementPositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS, PsiElement::class)
     val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val INVALID_TYPE_OF_ANNOTATION_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_TYPE_OF_ANNOTATION_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER", ForbidProjectionsInAnnotationProperties, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class)

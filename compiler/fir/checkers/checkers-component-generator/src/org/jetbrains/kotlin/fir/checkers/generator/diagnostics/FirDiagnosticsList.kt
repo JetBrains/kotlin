@@ -355,7 +355,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANNOTATION_ARGUMENT_MUST_BE_CONST by error<KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by error<KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL by error<KtExpression>()
-        val ANNOTATION_CLASS_MEMBER by error<PsiElement>()
+        val ANNOTATION_CLASS_MEMBER by error<PsiElement>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
         val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by error<KtExpression>()
         val INVALID_TYPE_OF_ANNOTATION_MEMBER by error<KtElement>()
         val PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER by deprecationError<KtTypeReference>(LanguageFeature.ForbidProjectionsInAnnotationProperties)
