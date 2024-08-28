@@ -189,6 +189,7 @@ class WasmCompiledModuleFragment(
     }
 
     fun linkWasmCompiledFragments(): WasmModule {
+        // TODO: Implement optimal ir linkage KT-71040
         bindUnboundSymbols()
         addCompileTimePerClassData()
         handleExports()

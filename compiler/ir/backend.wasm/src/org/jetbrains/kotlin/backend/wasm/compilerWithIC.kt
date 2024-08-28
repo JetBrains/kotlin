@@ -36,7 +36,7 @@ open class WasmCompilerWithIC(
         val irBuiltIns = mainModule.irBuiltins
         val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
 
-        //Hack - pre-load functional interfaces in case if IrLoader cut its count
+        //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
         repeat(25) {
             mainModule.irBuiltins.functionN(it)
             mainModule.irBuiltins.suspendFunctionN(it)
@@ -75,6 +75,8 @@ open class WasmCompilerWithIC(
         val phaseConfig = PhaseConfigBuilder(wasmPhases).also { lowerings ->
             lowerings.enabled.addAll(wasmPhases.toPhaseMap().values)
         }.build()
+
+        //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
         lowerPreservingTags(
             allModules,
