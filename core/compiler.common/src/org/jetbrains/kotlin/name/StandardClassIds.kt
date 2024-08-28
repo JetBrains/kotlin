@@ -13,6 +13,7 @@ object StandardClassIds {
     val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
+    val BASE_ANNOTATIONS_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotations")).child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
     val BASE_JVM_FUNCTIONS_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("functions"))
     val BASE_ANNOTATION_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotation"))
@@ -202,6 +203,7 @@ object StandardClassIds {
 
         val OptionalExpectation = "OptionalExpectation".baseId()
         val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
+        val KotlinActual = "KotlinActual".annotationsJvmId()
 
         val jvmStatic = "JvmStatic".jvmId()
 
@@ -271,6 +273,7 @@ private fun String.collectionsId() = ClassId(StandardClassIds.BASE_COLLECTIONS_P
 private fun String.rangesId() = ClassId(StandardClassIds.BASE_RANGES_PACKAGE, Name.identifier(this))
 private fun String.annotationId() = ClassId(StandardClassIds.BASE_ANNOTATION_PACKAGE, Name.identifier(this))
 private fun String.jvmId() = ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier(this))
+private fun String.annotationsJvmId() = ClassId(StandardClassIds.BASE_ANNOTATIONS_JVM_PACKAGE, Name.identifier(this))
 private fun String.jvmInternalId() = ClassId(StandardClassIds.BASE_JVM_INTERNAL_PACKAGE, Name.identifier(this))
 private fun String.jvmFunctionsId() = ClassId(StandardClassIds.BASE_JVM_FUNCTIONS_PACKAGE, Name.identifier(this))
 private fun String.internalId() = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier(this))
