@@ -419,7 +419,8 @@ internal constructor(
         get() = compilerOptions.freeCompilerArgs as Provider<Collection<String>>
 
     @get:Internal
-    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+    internal val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel> = objectFactory
+        .propertyWithConvention(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
