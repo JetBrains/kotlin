@@ -8,12 +8,6 @@ repositories {
 }
 
 kotlin {
-    sourceSets["commonMain"].apply {
-        dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
-        }
-    }
-
     <SingleNativeTarget>("host") {
         binaries {
             executable() // Executable with default name.
