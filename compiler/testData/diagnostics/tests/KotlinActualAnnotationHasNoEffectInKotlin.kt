@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_KOTLIN_JVM_ANNOTATIONS
 
 import kotlin.annotations.jvm.KotlinActual
