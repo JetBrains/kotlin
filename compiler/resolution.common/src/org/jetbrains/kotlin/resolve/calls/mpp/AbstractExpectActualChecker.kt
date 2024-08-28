@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher.matchSingleExpectAgainstPotentialActuals
+import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -148,6 +151,10 @@ object AbstractExpectActualChecker {
 
         if (!areCompatibleSupertypes(expectClassSymbol, actualClass, substitutor)) {
             return ExpectActualCheckingCompatibility.Supertypes
+        }
+
+        if (isIllegalRequiresOptInAnnotation(on = actualClass, expectClassSymbol, languageVersionSettings)) {
+            return ExpectActualCheckingCompatibility.IllegalRequiresOpt
         }
 
         getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor, languageVersionSettings)?.let { return it }
@@ -582,4 +589,15 @@ object AbstractExpectActualChecker {
     private fun ExpectActualMatchingContext<*>.isFinal(regularClassSymbolMarker: RegularClassSymbolMarker): Boolean {
         return regularClassSymbolMarker.modality == Modality.FINAL
     }
+}
+
+fun ExpectActualMatchingContext<*>.isIllegalRequiresOptInAnnotation(
+    on: RegularClassSymbolMarker, // actual or expect
+    expect: RegularClassSymbolMarker,
+    languageVersionSettings: LanguageVersionSettings,
+): Boolean {
+    return languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+            on.classKind.isAnnotationClass &&
+            expect.annotations.none { it.classId == StandardClassIds.Annotations.OptionalExpectation } &&
+            on.annotations.any { it.classId == OptInNames.REQUIRES_OPT_IN_CLASS_ID }
 }
