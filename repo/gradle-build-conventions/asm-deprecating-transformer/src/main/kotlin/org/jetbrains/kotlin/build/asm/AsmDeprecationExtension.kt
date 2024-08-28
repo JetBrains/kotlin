@@ -21,6 +21,8 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -99,7 +101,7 @@ abstract class AsmDeprecationExtension {
                     }
                 }
             }
-            intermediateZipFilePath.renameTo(archiveFile.get().asFile)
+            Files.move(intermediateZipFilePath.toPath(), archiveFile.get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
