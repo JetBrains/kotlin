@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -199,6 +200,10 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
         configureDefaultJvmTarget(configuration)
         val registeredDirectives = module.directives
+
+        if (ConfigurationDirectives.WITH_KOTLIN_JVM_ANNOTATIONS in module.directives) {
+            configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())
+        }
 
         val jdkKind = extractJdkKind(registeredDirectives)
         getJdkHome(jdkKind)?.let { configuration.put(JVMConfigurationKeys.JDK_HOME, it) }
