@@ -596,14 +596,12 @@ kotlin {
 
 dependencies {
     val jvmMainApi by configurations.getting
-    val commonMainMetadataElements by configurations.creating
     val metadataApiElements by configurations.getting
     val nativeApiElements = configurations.maybeCreate("nativeApiElements")
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively
         jvmMainApi(project(":kotlin-stdlib-common"))
-        commonMainMetadataElements(project(":kotlin-stdlib-common"))
         metadataApiElements(project(":kotlin-stdlib-common"))
         nativeApiElements(project(":kotlin-stdlib-common"))
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
@@ -730,9 +728,11 @@ tasks {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
         val distJsKlib = configurations.create("distJsKlib")
+        val commonMainMetadataElements by configurations.creating
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
+        add(commonMainMetadataElements.name, metadataJar)
     }
 
 
@@ -844,18 +844,6 @@ publishing {
             variant("jvmSourcesElements")
 
             variant("metadataApiElements")
-            variant("commonMainMetadataElements") {
-                attributes {
-                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                }
-                artifact(tasks["metadataJar"]) {
-                    classifier = "common"
-                    extension = "klib"
-                }
-            }
             variant("metadataSourcesElementsFromJvm") {
                 name = "metadataSourcesElements"
                 configuration {
