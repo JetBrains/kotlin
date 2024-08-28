@@ -39,7 +39,6 @@ abstract class FirAbstractSessionFactory {
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
         registerExtraComponents: ((FirSession) -> Unit),
-        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
@@ -52,7 +51,7 @@ abstract class FirAbstractSessionFactory {
             registerCommonComponents(languageVersionSettings)
             registerExtraComponents(this)
 
-            val kotlinScopeProvider = createKotlinScopeProvider.invoke()
+            val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
@@ -78,6 +77,8 @@ abstract class FirAbstractSessionFactory {
         }
     }
 
+    protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
+
     // ==================================== Platform session ====================================
 
     protected fun createModuleBasedSession(
@@ -91,7 +92,6 @@ abstract class FirAbstractSessionFactory {
         init: FirSessionConfigurator.() -> Unit,
         registerExtraComponents: ((FirSession) -> Unit),
         registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
-        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
@@ -107,7 +107,7 @@ abstract class FirAbstractSessionFactory {
             registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
             registerExtraComponents(this)
 
-            val kotlinScopeProvider = createKotlinScopeProvider.invoke()
+            val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
@@ -147,6 +147,10 @@ abstract class FirAbstractSessionFactory {
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
         }
     }
+
+    protected abstract fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
+    ): FirKotlinScopeProvider
 
     // ==================================== Common parts ====================================
 

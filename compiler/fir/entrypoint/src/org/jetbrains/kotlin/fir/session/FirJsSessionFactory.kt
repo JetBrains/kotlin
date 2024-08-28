@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -55,7 +56,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             it.registerDefaultComponents()
             it.registerJsComponents(compilerConfiguration)
         },
-        createKotlinScopeProvider = { FirKotlinScopeProvider() },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
@@ -64,6 +64,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             )
         }
     )
+
+    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider()
+    }
 
     // ==================================== Platform session ====================================
 
@@ -82,15 +86,14 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             extensionRegistrars,
             compilerConfiguration.languageVersionSettings,
             lookupTracker,
-            null,
-            null,
+            enumWhenTracker = null,
+            importTracker = null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerJsComponents(compilerConfiguration)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -107,6 +110,13 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData,
+        languageVersionSettings: LanguageVersionSettings,
+    ): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider()
     }
 
     // ==================================== Common parts ====================================

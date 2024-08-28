@@ -48,7 +48,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 session.registerDefaultComponents()
                 session.registerNativeComponents()
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     FORWARD_DECLARATIONS_MODULE_NAME,
@@ -66,6 +65,10 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             })
     }
 
+    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider()
+    }
+
     // ==================================== Platform session ====================================
 
     fun createModuleBasedSession(
@@ -80,16 +83,15 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             extensionRegistrars,
             languageVersionSettings,
-            null,
-            null,
-            null,
+            lookupTracker = null,
+            enumWhenTracker = null,
+            importTracker = null,
             init,
             registerExtraComponents = {
                 it.registerDefaultComponents()
                 it.registerNativeComponents()
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -98,6 +100,13 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData,
+        languageVersionSettings: LanguageVersionSettings,
+    ): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider()
     }
 
     // ==================================== Common parts ====================================

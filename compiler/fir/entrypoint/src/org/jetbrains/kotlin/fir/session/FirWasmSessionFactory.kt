@@ -45,7 +45,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
         registerExtraComponents = {
             it.registerDefaultComponents()
         },
-        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
@@ -54,6 +53,10 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
             )
         }
     )
+
+    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
+    }
 
     // ==================================== Platform session ====================================
 
@@ -85,7 +88,6 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
                 )
             },
             registerExtraCheckers = { it.registerWasmCheckers(wasmTarget) },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -102,6 +104,13 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData,
+        languageVersionSettings: LanguageVersionSettings,
+    ): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope }
     }
 
     // ==================================== Common parts ====================================

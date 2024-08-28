@@ -53,7 +53,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 it.registerDefaultComponents()
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 listOfNotNull(
                     MetadataSymbolProvider(
@@ -80,6 +79,10 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider()
     }
 
     // ==================================== Platform session ====================================
@@ -109,16 +112,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
             },
             registerExtraCheckers = {},
-            createKotlinScopeProvider = {
-                if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                    /**
-                     * For stdlib and builtin compilation, we don't want to hide @PlatformDependent declarations from the metadata
-                     */
-                    FirKotlinScopeProvider { _, declaredScope, _, _, _ -> declaredScope }
-                } else {
-                    FirKotlinScopeProvider()
-                }
-            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
@@ -146,6 +139,20 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData,
+        languageVersionSettings: LanguageVersionSettings,
+    ): FirKotlinScopeProvider {
+        return if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            /**
+             * For stdlib and builtin compilation, we don't want to hide @PlatformDependent declarations from the metadata
+             */
+            FirKotlinScopeProvider { _, declaredScope, _, _, _ -> declaredScope }
+        } else {
+            FirKotlinScopeProvider()
+        }
     }
 
     // ==================================== Common parts ====================================

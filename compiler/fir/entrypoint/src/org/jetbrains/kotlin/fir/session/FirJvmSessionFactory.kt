@@ -59,7 +59,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultComponents()
                 it.registerJavaComponents(projectEnvironment.getJavaModuleResolver(), predefinedJavaComponents)
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
@@ -85,6 +84,10 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 )
             }
         )
+    }
+
+    override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {
+        return FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
     }
 
     // ==================================== Platform session ====================================
@@ -121,13 +124,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.register(FirJvmTargetProvider::class, FirJvmTargetProvider(jvmTarget))
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
-            createKotlinScopeProvider = {
-                if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && moduleData.isCommon) {
-                    FirKotlinScopeProvider()
-                } else {
-                    FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-                }
-            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
@@ -150,6 +146,17 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             if (needRegisterJavaElementFinder) {
                 projectEnvironment.registerAsJavaElementFinder(it)
             }
+        }
+    }
+
+    override fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData,
+        languageVersionSettings: LanguageVersionSettings,
+    ): FirKotlinScopeProvider {
+        return if (languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && moduleData.isCommon) {
+            FirKotlinScopeProvider()
+        } else {
+            FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         }
     }
 
