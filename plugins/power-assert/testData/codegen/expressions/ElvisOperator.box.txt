@@ -42,3 +42,19 @@ assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    null
          null
 ---
+---
+assert((str?.lowercase()?.length ?: 0) == 5)
+        |    |            |            |
+        |    |            |            false
+        |    |            4
+        |    test
+        TEST
+---
+---
+assert((str?.lowercase()?.length ?: 0) == 5)
+        |    |            |            |
+        |    |            |            false
+        |    |            null
+        |    null
+        null
+---
