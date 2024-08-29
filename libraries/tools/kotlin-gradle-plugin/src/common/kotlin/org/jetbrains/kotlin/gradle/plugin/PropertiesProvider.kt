@@ -594,7 +594,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     private fun propertiesWithPrefix(prefix: String): Map<String, String> {
         val result: MutableMap<String, String> = mutableMapOf()
-        project.properties.forEach { (name, value) ->
+        project.extensions.extraProperties.properties.forEach { (name, value) ->
             if (name.startsWith(prefix) && value is String) {
                 result[name] = value
             }
