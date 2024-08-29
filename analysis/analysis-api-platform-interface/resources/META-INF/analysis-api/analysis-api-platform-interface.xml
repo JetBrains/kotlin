@@ -1,0 +1,10 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey
+        defaultValue="false"
+        description="Enables Analysis API statistics collection and reporting to OpenTelemetry."
+        key="kotlin.analysis.statistics"
+        restartRequired="true"
+    />
+  </extensions>
+</idea-plugin>

@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
@@ -55,7 +57,11 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
 ) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
-    private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> { it.maximumSize(500) }
+    private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
+        it
+            .maximumSize(500)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null

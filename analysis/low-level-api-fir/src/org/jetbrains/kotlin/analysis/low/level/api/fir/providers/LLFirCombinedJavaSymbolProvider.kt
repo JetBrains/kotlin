@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.withStatsCounter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
@@ -48,7 +50,11 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
      * resulted in less time spent in [computeClassLikeSymbolByClassId] in local benchmarks. Cache sizes of 5000 and 10000 were tried in
      * performance tests, but didn't affect performance. A cache size of 2500 is a good middle ground with a small memory footprint.
      */
-    private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache { it.maximumSize(2500) }
+    private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache {
+        it
+            .maximumSize(2500)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
+    }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false

@@ -29,6 +29,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirDefaultImportsProvider"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.statistics.KaFirStatisticsService"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"

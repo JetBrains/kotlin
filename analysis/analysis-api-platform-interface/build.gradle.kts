@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(intellijCore())
+    implementation(libs.opentelemetry.api)
 }
 
 sourceSets {
