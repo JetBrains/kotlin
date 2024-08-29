@@ -343,7 +343,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             if (typeArgument !is ConeKotlinType) typeArgument
             else ConeKotlinTypeProjectionOut(typeArgument)
         }
-        return ConeClassLikeTypeImpl(lookupTag, argumentsWithOutProjection, isNullable)
+        return ConeClassLikeTypeImpl(lookupTag, argumentsWithOutProjection, isMarkedNullable)
     }
 
     override fun isSubtypeOf(superType: KotlinTypeMarker, subType: KotlinTypeMarker): Boolean {
@@ -398,7 +398,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             )
         )
         return actualNestedClassId.constructClassLikeType(
-            expectNestedClassType.typeArguments, expectNestedClassType.isNullable, expectNestedClassType.attributes
+            expectNestedClassType.typeArguments, expectNestedClassType.isMarkedNullable, expectNestedClassType.attributes
         )
     }
 

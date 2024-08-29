@@ -222,7 +222,7 @@ internal object ArgumentCheckingProcessor {
 
                     val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
                     if (originalTypeParameter != null) {
-                        return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
+                        return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
                     }
                 } else if (type is ConeIntegerLiteralType) {
                     return type.possibleTypes.firstOrNull() ?: type

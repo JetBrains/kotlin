@@ -130,7 +130,7 @@ private fun ConeRigidType.enhanceInflexibleType(
 
         if (enhancedTag != lookupTag) {
             // Handle case when mutability was enhanced and nullability was enhanced for warning.
-            enhancedTag.constructType(enhanced.typeArgumentsOfLowerBoundIfFlexible, isNullable, newAttributes)
+            enhancedTag.constructType(enhanced.typeArgumentsOfLowerBoundIfFlexible, isMarkedNullable, newAttributes)
         } else {
             this.withAttributes(newAttributes).withArguments(enhanced.typeArgumentsOfLowerBoundIfFlexible)
         }.applyIf(isFromDefinitelyNotNullType) {
@@ -168,7 +168,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     val enhancedIsNullable = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
         NullabilityQualifier.NOT_NULL -> false
-        else -> isNullable
+        else -> isMarkedNullable
     }
 
     var globalArgIndex = index + 1
@@ -200,7 +200,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     }
 
     val shouldAddAttribute = nullabilityFromQualifiers == NullabilityQualifier.NOT_NULL && !hasEnhancedNullability
-    if (lookupTag == enhancedTag && enhancedIsNullable == isNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
+    if (lookupTag == enhancedTag && enhancedIsNullable == isMarkedNullable && !shouldAddAttribute && enhancedArguments.all { it == null }) {
         return null // absolutely no changes
     }
 

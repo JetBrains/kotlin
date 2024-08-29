@@ -17,6 +17,13 @@ import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
+
+@Deprecated(
+    "`isNullable` on non-flexible types is the same as `isMarkedNullable`. Also consider using `canBeNull()`",
+    level = DeprecationLevel.ERROR
+)
+val ConeRigidType.isNullable: Boolean get() = isMarkedNullable
+
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
 val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
@@ -107,7 +114,7 @@ inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinTyp
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
-    is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
+    is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
     is ConeErrorType -> this
     else -> error("Unknown cone type: ${this::class}")
 }

@@ -770,7 +770,7 @@ private fun ConeKotlinType.eraseAsUpperBound(
             lookupTag.typeParameterSymbol.fir.eraseToUpperBound(
                 session, cache, mode
             ).let {
-                if (isNullable) it.withNullability(nullability, session.typeContext) else it
+                if (isMarkedNullable) it.withNullability(nullability, session.typeContext) else it
             }
 
         is ConeDefinitelyNotNullType ->
@@ -839,7 +839,7 @@ fun ConeKotlinType.isKCallableType(): Boolean {
 val ConeKotlinType.isUnitOrFlexibleUnit: Boolean
     get() {
         val type = this.lowerBoundIfFlexible()
-        if (type.isNullable) return false
+        if (type.isMarkedNullable) return false
         val classId = type.classId ?: return false
         return classId == StandardClassIds.Unit
     }

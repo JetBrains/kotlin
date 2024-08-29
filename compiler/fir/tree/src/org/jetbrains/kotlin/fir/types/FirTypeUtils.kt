@@ -118,7 +118,7 @@ private val FirTypeRef.lookupTagBasedOrNull: ConeLookupTagBasedType?
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
     val type = this.lookupTagBasedOrNull ?: return false
-    return type.classLikeLookupTagIfAny?.classId == classId && type.isNullable == isNullable
+    return type.classLikeLookupTagIfAny?.classId == classId && type.isMarkedNullable == isNullable
 }
 
 val FirTypeRef.isMarkedNullable: Boolean?

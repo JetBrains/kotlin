@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
-import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.expressions.*
@@ -321,7 +320,7 @@ internal class OperatorExpressionGenerator(
         ).also {
             it.dispatchReceiver = irExpression
         }
-        return if (operandType.isNullable) {
+        return if (operandType.isMarkedNullable) {
             val (receiverVariable, receiverVariableSymbol) =
                 conversionScope.createTemporaryVariableForSafeCallConstruction(irExpression)
 

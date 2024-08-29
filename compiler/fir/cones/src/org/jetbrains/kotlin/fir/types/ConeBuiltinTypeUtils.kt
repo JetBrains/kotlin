@@ -74,7 +74,7 @@ val ConeKotlinType.isUnsignedType: Boolean get() = isUnsignedTypeOrNullableUnsig
 
 private fun ConeKotlinType.isBuiltinType(classId: ClassId, isNullable: Boolean?): Boolean {
     if (this !is ConeClassLikeType) return false
-    return lookupTag.classId == classId && (isNullable == null || this.isNullable == isNullable)
+    return lookupTag.classId == classId && (isNullable == null || this.isMarkedNullable == isNullable)
 }
 
 private fun ConeKotlinType.isAnyOfBuiltinType(classIds: Set<ClassId>): Boolean {

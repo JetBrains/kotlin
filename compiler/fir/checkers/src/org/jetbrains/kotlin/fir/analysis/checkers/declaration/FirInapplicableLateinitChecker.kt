@@ -121,7 +121,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
 
     private val ConeKotlinType.hasNullableUpperBound
         get() = when (this) {
-            is ConeTypeParameterType -> isNullable || lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
+            is ConeTypeParameterType -> isMarkedNullable || lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
             else -> isNullable
         }
 

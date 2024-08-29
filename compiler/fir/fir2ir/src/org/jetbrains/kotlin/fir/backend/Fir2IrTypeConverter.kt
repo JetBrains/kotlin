@@ -206,7 +206,7 @@ class Fir2IrTypeConverter(
                     val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag && !isRaw) {
                         lower.replaceArguments(upper.getArguments())
                     } else lower
-                    (intermediate.withNullability(upper.isNullable) as ConeKotlinType)
+                    (intermediate.withNullability(upper.isMarkedNullable) as ConeKotlinType)
                         .withAttributes(lower.attributes)
                         .toIrType(
                             typeOrigin,

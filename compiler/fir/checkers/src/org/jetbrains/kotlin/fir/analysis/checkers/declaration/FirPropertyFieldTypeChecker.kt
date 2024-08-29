@@ -69,7 +69,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
     private val FirBackingField.isNullable
         get() = when (val type = returnTypeRef.coneType) {
-            is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
+            is ConeTypeParameterType -> type.isMarkedNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
             else -> type.isNullable
         }
 

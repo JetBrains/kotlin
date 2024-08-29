@@ -162,7 +162,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),
-                isNullable,
+                isMarkedNullable,
                 attributes
             )
             else -> this

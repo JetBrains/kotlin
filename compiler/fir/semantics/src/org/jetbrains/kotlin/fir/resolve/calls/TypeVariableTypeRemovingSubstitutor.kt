@@ -26,7 +26,7 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
         val originalTypeParameter = type.typeConstructor.originalTypeParameter
         if (originalTypeParameter != null) {
             check(originalTypeParameter is ConeTypeParameterLookupTag)
-            return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
+            return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
         }
         return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
     }
