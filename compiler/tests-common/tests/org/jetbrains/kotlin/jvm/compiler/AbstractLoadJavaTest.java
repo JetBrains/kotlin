@@ -181,7 +181,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
 
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
-        DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
+        DescriptorValidator.validate(new DescriptorValidator.ValidationVisitor(), packageFromBinary);
         Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true).checkFunctionContracts(true);
 
         if (InTextDirectivesUtils.isDirectiveDefined(fileContent, "NO_CHECK_SOURCE_VS_BINARY")) {
@@ -290,7 +290,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertFalse(packageView.isEmpty());
 
         validateAndCompareDescriptorWithFile(packageView, COMPARATOR_CONFIGURATION.withValidationStrategy(
-                new DeserializedScopeValidationVisitor()
+                new DescriptorValidator.ValidationVisitor()
         ), expectedFile);
     }
 

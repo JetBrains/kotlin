@@ -57,7 +57,7 @@ public class DescriptorValidator {
         private boolean allowErrorTypes = false;
         private Predicate<DeclarationDescriptor> recursiveFilter = descriptor -> true;
 
-        protected ValidationVisitor() {
+        public ValidationVisitor() {
         }
 
         @NotNull

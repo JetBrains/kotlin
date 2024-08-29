@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY, JVM, JVM_IR
-// ^ properties of stdlib annotations are not sorted when stdlib compiled with K2
 package test
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER)
