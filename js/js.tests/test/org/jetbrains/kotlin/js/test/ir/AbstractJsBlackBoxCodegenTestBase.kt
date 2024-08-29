@@ -47,7 +47,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             useHandlers(
                 ::NodeJsGeneratorHandler,
                 ::JsBoxRunner,
-                ::JsMinifierRunner,
                 ::JsAstHandler
             )
         }
