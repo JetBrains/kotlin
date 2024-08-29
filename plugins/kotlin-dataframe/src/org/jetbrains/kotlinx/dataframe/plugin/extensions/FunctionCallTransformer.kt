@@ -279,8 +279,8 @@ class FunctionCallTransformer(
             val firstSchema = keyMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
             val firstSchema1 = groupMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
 
-            val dataSchemaApis = materialize(keySchema, call, firstSchema)
-            val dataSchemaApis1 = materialize(groupSchema, call, firstSchema1, dataSchemaApis.size)
+            val dataSchemaApis = materialize(keySchema, call, firstSchema, "Key")
+            val dataSchemaApis1 = materialize(groupSchema, call, firstSchema1, "Group", dataSchemaApis.size)
 
             val tokenFir = keyMarker.toClassSymbol(session)!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
@@ -431,6 +431,7 @@ class FunctionCallTransformer(
         dataFrameSchema: PluginDataFrameSchema,
         call: FirFunctionCall,
         firstSchema: FirRegularClass,
+        prefix: String = "",
         i: Int = 0
     ): List<DataSchemaApi> {
         var i = i
@@ -469,7 +470,7 @@ class FunctionCallTransformer(
                     val text = call.source?.text ?: call.calleeReference.name
                     val name =
                         "${column.name.titleCase().replEscapeLineBreaks()}_${hashToTwoCharString(abs(text.hashCode()))}"
-                    return materialize(suggestedName = name)
+                    return materialize(suggestedName = "$prefix$name")
                 }
 
                 when (it) {
