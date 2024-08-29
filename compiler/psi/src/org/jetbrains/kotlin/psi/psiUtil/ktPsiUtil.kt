@@ -430,7 +430,8 @@ fun KtSimpleNameExpression.isCallee(): Boolean {
 val KtStringTemplateExpression.plainContent: String
     get() = getContentRange().substring(text)
 
-fun KtStringTemplateExpression.isSingleQuoted(): Boolean = node.firstChildNode.textLength == 1
+fun KtStringTemplateExpression.isSingleQuoted(): Boolean =
+    node.findChildByType(KtTokens.OPEN_QUOTE)?.textLength == 1
 
 val KtNamedDeclaration.isPrivateNestedClassOrObject: Boolean get() = this is KtClassOrObject && isPrivate() && !isTopLevel()
 
