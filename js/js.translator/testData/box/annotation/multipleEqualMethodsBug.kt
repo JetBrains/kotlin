@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS
-// EXPECTED_REACHABLE_NODES: 1280
 package foo
 
 annotation class Parent {

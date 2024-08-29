@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: myMultiply except=A;imul;new_foo_A_eb0rqk_k$

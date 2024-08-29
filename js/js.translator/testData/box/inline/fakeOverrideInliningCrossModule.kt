@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1300
 // MODULE: libA
 // FILE: libA.kt
 inline fun foo() = (object : II {}).ok()

@@ -1,5 +1,4 @@
 // NO_COMMON_FILES
-// EXPECTED_REACHABLE_NODES: 1284
 // MODULE: lib
 // FILE: lib.kt
 fun foo(x: String) = "foo($x)"

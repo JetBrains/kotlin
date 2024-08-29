@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1276
-
 class A(@JsName("x") val x: Char)
 
 fun typeOf(x: dynamic): String = js("typeof x")

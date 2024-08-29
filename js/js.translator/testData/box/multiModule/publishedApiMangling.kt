@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1280
 class A {
     @PublishedApi
     internal fun published(x: String) = "${x}K"

@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1432
 // LANGUAGE: -ProhibitGenericArrayClassLiteral
 import kotlin.reflect.KClass
 

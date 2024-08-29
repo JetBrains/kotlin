@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 var l = ""
 
 fun log(message: String) {

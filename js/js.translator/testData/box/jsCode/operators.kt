@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1290
-
 fun box(): String {
     assertEquals(-1, js("-1"), "- (unary)")
     assertEquals(1, js("+'1'"), "+ (unary)")

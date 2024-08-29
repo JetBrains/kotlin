@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1315
-
 open class Ex0(msg: String, cs: Throwable): Throwable(msg, cs)
 
 open class Ex1: Ex0("A", Error("fail2")) {

@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
-
 fun <T> bar(x: T, y: (T) -> Boolean): Boolean = y(x) && jsTypeOf(x.asDynamic()) != "number"
 
 fun typeOf(x: dynamic) = js("typeof x")

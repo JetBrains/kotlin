@@ -1,5 +1,4 @@
 // KT-53968
-// EXPECTED_REACHABLE_NODES: 1252
 
 @JsExport
 class LateinitContainer {

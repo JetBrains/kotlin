@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 // MODULE: module1
 // MODULE_KIND: UMD
 // FILE: bar.kt

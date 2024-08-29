@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1277
-
 // This test's purpose is not preventing regressions, but rather making sure the array-to-string conversion is tested at all.
 // The `expected` values in asserts just reflect the current state of things. It doesn't mean things _must_ be this way.
 // So feel free to update them if you're sure that the array-to-string conversion should behave differently.

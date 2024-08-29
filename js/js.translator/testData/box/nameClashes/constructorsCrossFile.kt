@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1276
 // FILE: lib.kt
 
 // Force constructor renaming

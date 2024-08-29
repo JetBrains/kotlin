@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1280
-
 inline fun foo() = (object : II {}).ok()
 
 // CHECK_BREAKS_COUNT: function=box count=0

@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// EXPECTED_REACHABLE_NODES: 1292
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

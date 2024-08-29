@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
-
 inline fun foo(vararg x: String) = x.size
 
 inline fun bar(vararg x: String) = x.size + x.size

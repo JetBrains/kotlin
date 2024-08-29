@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1342
 // WITH_STDLIB
 
 package test

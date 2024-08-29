@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1344
 open class MyClass1 private constructor(val value: String) {
     constructor(i: Int): this(i.toString())
 }

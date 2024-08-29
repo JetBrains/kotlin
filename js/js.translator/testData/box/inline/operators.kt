@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1301
-
 // CHECK_FUNCTION_EXISTS: plus
 // CHECK_NOT_CALLED_IN_SCOPE: function=plus scope=box
 

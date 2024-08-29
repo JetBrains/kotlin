@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 2002
 // MODULE: lib1
 // FILE: lib1.kt
 package lib1

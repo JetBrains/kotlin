@@ -1,6 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
-// EXPECTED_REACHABLE_NODES: 1290
 data class A(val number: Int)
 
 external fun foo(first: A, second: A): Boolean

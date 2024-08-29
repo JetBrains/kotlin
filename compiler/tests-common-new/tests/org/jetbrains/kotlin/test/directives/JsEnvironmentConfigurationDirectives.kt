@@ -44,12 +44,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val EXPECTED_REACHABLE_NODES by valueDirective(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        parser = { it.toIntOrNull() }
-    )
-
     val RECOMPILE by directive(
         description = "",
         applicability = DirectiveApplicability.File

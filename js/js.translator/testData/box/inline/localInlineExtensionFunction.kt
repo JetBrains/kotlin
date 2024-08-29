@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1292
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: capturedInLambda except=Unit_getInstance

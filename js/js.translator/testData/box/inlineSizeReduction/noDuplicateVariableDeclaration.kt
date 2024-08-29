@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1281
 package foo
 
 inline fun if1(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {

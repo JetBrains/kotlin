@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1378
 package foo
 
 fun <T: Long> longToString(x: T) = " $x"

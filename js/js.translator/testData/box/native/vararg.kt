@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: WASM
-// EXPECTED_REACHABLE_NODES: 1314
 package foo
 
 external fun paramCount(vararg a: Int): Int = definedExternally

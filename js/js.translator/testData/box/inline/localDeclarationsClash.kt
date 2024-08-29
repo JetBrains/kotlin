@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1281
 // FILE: 1.kt
 
 package o

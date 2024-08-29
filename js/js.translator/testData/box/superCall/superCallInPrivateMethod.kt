@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1292
-
 var result = ""
 abstract class Parent {
     val o = "O"

@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1401
-
 import kotlin.coroutines.*
 
 var next: () -> Unit = {}

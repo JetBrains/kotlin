@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1292
 // MODULE: lib
 // FILE: lib.kt
 

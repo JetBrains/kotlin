@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1403
 import kotlin.reflect.KClass
 
 fun box(): String {

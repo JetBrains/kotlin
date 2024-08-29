@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1287
 package foo
 
 // CHECK_BREAKS_COUNT: function=add count=0

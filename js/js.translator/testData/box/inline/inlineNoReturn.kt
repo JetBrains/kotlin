@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: factAbsNoInline1 except=imul;Unit_getInstance
