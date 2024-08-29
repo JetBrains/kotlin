@@ -372,6 +372,13 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                     )
                     this.correspondingClass = klass
                 }
+                if (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB ||
+                    origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                ) {
+                    // This [IrEnumEntry] won't be visited by [Fir2IrVisitor],
+                    // hence annotation generation at this point.
+                    annotationGenerator.generate(this, enumEntry)
+                }
                 declarationStorage.leaveScope(this.symbol)
             }
         }
