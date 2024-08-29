@@ -4,10 +4,6 @@
 
 /simple.fir.kt:(185,187): error: 'public' generic exposes its 'private-in-file' parameter bound type 'My'.
 
-/simple.fir.kt:(185,187): warning: 'public' generic exposes its 'private-in-file' parameter bound type 'My'. This will be prohibited in the future.
-
-/simple.fir.kt:(185,187): warning: 'public' generic exposes its 'private-in-file' parameter bound type 'My'. This will be prohibited in the future.
-
 /simple.fir.kt:(189,198): error: 'public' function exposes its 'private-in-file' parameter type 'My'.
 
 /simple.fir.kt:(201,205): error: 'public' subclass exposes its 'private-in-file' supertype 'Base'.

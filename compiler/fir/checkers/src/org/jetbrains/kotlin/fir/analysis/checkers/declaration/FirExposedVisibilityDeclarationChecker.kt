@@ -83,7 +83,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
-        if (visibility == EffectiveVisibility.Local) return
+        if (visibility == EffectiveVisibility.Local || declaration is FirConstructor) return
 
         val reportProperError = context.languageVersionSettings.supportsFeature(
             LanguageFeature.ReportExposedTypeForMoreCasesOfTypeParameterBounds
