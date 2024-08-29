@@ -155,11 +155,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val RUN_MINIFIER_BY_DEFAULT by directive(
-        description = "Enables minifier even if `EXPECTED_REACHABLE_NODES` directive is not set",
-        applicability = DirectiveApplicability.Global
-    )
-
     val SKIP_REGULAR_MODE by directive(
         description = "Disable js runner for common js and dce files",
         applicability = DirectiveApplicability.Global
