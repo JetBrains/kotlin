@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.fus.internal
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -23,27 +24,32 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
 
     companion object {
         private var statisticsIsEnabled: Boolean = true //KT-59629 Wait for user confirmation before start to collect metrics
-        private const val FUS_STATISTICS_PATH = "kotlin.fus.statistics.path"
+        private const val FUS_STATISTICS_PATH = "kotlin.session.logger.root.path"
         private val serviceClass = GradleBuildFusStatisticsBuildService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
+        private val log = Logging.getLogger(GradleBuildFusStatisticsService::class.java)
         fun registerIfAbsent(project: Project): Provider<out GradleBuildFusStatisticsService>? {
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return it.service as Provider<GradleBuildFusStatisticsService>
             }
 
-            return (if (statisticsIsEnabled) {
+            val customPath: String =
+                project.providers.gradleProperty(FUS_STATISTICS_PATH).orNull ?: project.gradle.gradleUserHomeDir.path
+
+
+            return (if (!statisticsIsEnabled || customPath.isBlank()) {
+                log.info(
+                    "Fus metrics wont be collected as statistic was " +
+                            (if (statisticsIsEnabled) "enabled" else "disabled") +
+                            if (customPath.isBlank()) " and custom path is blank" else ""
+                )
+                project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
+            } else {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, InternalGradleBuildFusStatisticsService::class.java) {
-                    val customPath: String = if (project.rootProject.hasProperty(FUS_STATISTICS_PATH)) {
-                        project.rootProject.property(FUS_STATISTICS_PATH) as String
-                    } else {
-                        project.gradle.gradleUserHomeDir.path
-                    }
                     it.parameters.fusStatisticsRootDirPath.set(customPath)
                     it.parameters.buildId.set(UUID.randomUUID().toString())
                 }
-            } else {
-                project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
             }).also { configureTasks(project, it) }
         }
 

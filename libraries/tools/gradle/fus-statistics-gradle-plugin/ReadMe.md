@@ -4,7 +4,7 @@ Contains a plugin for Feature Usage Statistics(FUS). fus-statistics-gradle-plugi
 collect additional metrics for FUS.  
 
 Statistics will be gathered in **kotlin-fus/<build_uid>** file. It is located in ${GRADLE_USER_HOME} directory by default. 
-You can modify default directory by using the **kotlin.fus.statistics.path** property (for test purpose only). 
+You can modify default directory by using the **kotlin.session.logger.root.path** property (for test purpose only). 
 Created file will contain **key=value** rows fowled by **BUILD FINISHED** 
 
 Collection statistics in a file is enabled by default. Further step is to collect data only after approval - KT-59629. 

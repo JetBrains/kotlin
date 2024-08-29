@@ -99,7 +99,7 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             }
 
             val reportRelativePath = "reports"
-            build("test-fus", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
+            build("test-fus", "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}") {
                 val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
                 assertFileContains(
                     fusReport,
@@ -163,8 +163,12 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             }
 
             val reportRelativePath = "reports"
-            build("test-fus", "test-fus-second", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
-                assertOutputContains("Try to override $metricName metric: current value is \"1\", new value is \"2\"")
+            build("test-fus", "test-fus-second", "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}") {
+                //for Gradle 8.9 the task execution order can be changed
+                assertOutputContainsAny(
+                    "Try to override $metricName metric: current value is \"1\", new value is \"2\"",
+                    "Try to override $metricName metric: current value is \"2\", new value is \"1\""
+                )
                 val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
                 assertFileContains(
                     fusReport,
@@ -197,9 +201,8 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                 """.trimIndent()
             }
 
-            //For kotlin.fus.statistics.path= a root folder will be used, no permission is graded to create /kotlin-fus folder
-            build("test-fus", "-Pkotlin.fus.statistics.path=") {
-                assertOutputContains("Failed to create directory '/kotlin-fus' for FUS report. FUS report won't be created")
+            build("test-fus", "-Pkotlin.session.logger.root.path=") {
+                assertOutputContains("Fus metrics wont be collected")
             }
         }
     }
