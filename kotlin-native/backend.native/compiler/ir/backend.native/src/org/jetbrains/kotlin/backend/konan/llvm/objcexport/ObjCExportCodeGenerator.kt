@@ -464,7 +464,11 @@ internal class ObjCExportCodeGenerator(
 
             if (irClass != null) {
                 if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
-                    codegen.bindObjCExportTypeAdapterTo(irClass, typeAdapter)
+                    try {
+                        codegen.bindObjCExportTypeAdapterTo(irClass, typeAdapter)
+                    } catch (_: WritableTypeInfoOverrideError) {
+                        // ObjCExport never tried to catch this error, so ignore.
+                    }
                 } else {
                     // Optimization: avoid generating huge initializers;
                     // handled with "Kotlin_ObjCExport_initTypeAdapters" below.
@@ -617,7 +621,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, value))
     }
 
-    codegen.bindObjCExportConvertToRetainedTo(boxClass, converter.toConstPointer())
+    bindObjCExportConvertToRetained(boxClass, converter.toConstPointer())
 }
 
 private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConverter(
@@ -669,7 +673,7 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(generationState.shouldDefineFunctionClasses)
     mappedFunctionNClasses.forEach { functionClass ->
         val convertToRetained = kotlinFunctionToRetainedBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
-        codegen.bindObjCExportConvertToRetainedTo(functionClass.irClass, convertToRetained.toConstPointer())
+        bindObjCExportConvertToRetained(functionClass.irClass, convertToRetained.toConstPointer())
     }
 }
 
@@ -699,7 +703,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
 }
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.string.owner,
             llvm.Kotlin_ObjCExport_CreateRetainedNSStringFromKString.toConstPointer()
     )
@@ -714,32 +718,32 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
     fun importConverter(name: String): ConstPointer =
             llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.list.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
     )
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.mutableList.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
     )
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.set.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
     )
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.mutableSet.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
     )
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.map.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
     )
 
-    codegen.bindObjCExportConvertToRetainedTo(
+    bindObjCExportConvertToRetained(
             symbols.mutableMap.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
     )
@@ -1898,4 +1902,15 @@ private fun MethodBridge.parametersAssociated(
             }
         }
     }.also { assert(!kotlinParameters.hasNext()) }
+}
+
+private fun ObjCExportCodeGeneratorBase.bindObjCExportConvertToRetained(
+        irClass: IrClass,
+        convertToRetained: ConstPointer,
+) {
+    try {
+        codegen.bindObjCExportConvertToRetained(irClass, convertToRetained)
+    } catch (_: WritableTypeInfoOverrideError) {
+        // ObjCExport never tried to catch this error, so ignore.
+    }
 }

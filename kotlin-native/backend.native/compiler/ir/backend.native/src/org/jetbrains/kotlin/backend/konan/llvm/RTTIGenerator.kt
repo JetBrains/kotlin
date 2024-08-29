@@ -9,6 +9,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -92,7 +94,7 @@ internal class RTTIGenerator(
             relativeName: String?,
             flags: Int,
             classId: Int,
-            writableTypeInfo: ConstPointer?,
+            writableTypeInfo: WritableTypeInfoPointer?,
             associatedObjects: ConstPointer?,
             processObjectInMark: ConstPointer?,
             requiredAlignment: Int,
@@ -251,7 +253,7 @@ internal class RTTIGenerator(
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
                 context.getLayoutBuilder(irClass).classId,
-                llvmDeclarations.writableTypeInfoGlobal?.pointer,
+                llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
                     irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
@@ -513,14 +515,7 @@ internal class RTTIGenerator(
         val objOffsetsPtr = staticData.placeGlobalConstArray("", llvm.int32Type, objOffsets)
         val objOffsetsCount = objOffsets.size
 
-        val writableTypeInfoType = runtime.writableTypeInfoType
-        val writableTypeInfo = if (writableTypeInfoType == null) {
-            null
-        } else {
-            staticData.createGlobal(writableTypeInfoType, "")
-                    .also { it.setZeroInitializer() }
-                    .pointer
-        }
+        val writableTypeInfo = generateWritableTypeInfoForSyntheticInterface(irClass)
         val vtable = vtable(superClass)
         val typeInfoWithVtableType = llvm.structType(runtime.typeInfoType, vtable.llvmType)
         val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)

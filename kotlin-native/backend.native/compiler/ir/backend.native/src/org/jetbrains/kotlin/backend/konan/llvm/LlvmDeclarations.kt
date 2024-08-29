@@ -9,6 +9,8 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -64,7 +66,7 @@ internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, objectFieldIndices:
 internal class ClassLlvmDeclarations(
         val bodyType: ObjectBodyType,
         val typeInfoGlobal: StaticData.Global,
-        val writableTypeInfoGlobal: StaticData.Global?,
+        val writableTypeInfoGlobal: WritableTypeInfoPointer?,
         val typeInfo: ConstPointer,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
         val alignment: Int,
@@ -334,19 +336,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             null
         }
 
-        val writableTypeInfoType = runtime.writableTypeInfoType
-        val writableTypeInfoGlobal = if (writableTypeInfoType == null) {
-            null
-        } else if (declaration.isExported()) {
-            val name = declaration.writableTypeInfoSymbolName
-            staticData.createGlobal(writableTypeInfoType, name, isExported = true).also {
-                it.setLinkage(LLVMLinkage.LLVMCommonLinkage) // Allows to be replaced by other bitcode module.
-            }
-        } else {
-            staticData.createGlobal(writableTypeInfoType, "")
-        }.also {
-            it.setZeroInitializer()
-        }
+        val writableTypeInfoGlobal = generateWritableTypeInfoForClass(declaration)
 
         return ClassLlvmDeclarations(
                 ObjectBodyType(bodyType, objectFieldIndices),
