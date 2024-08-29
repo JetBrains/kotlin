@@ -31,9 +31,10 @@ interface AssertDSL {
     infix fun Any?.equals(other: Any?) = assertEquals(other, this)
     infix fun Collection<Any>?.allEquals(other: Any?) =
         this?.onEach { it equals other } ?: run { fail("Collection is empty") }
+
     infix fun <T> Collection<T>?.exists(e: T) {
         assertTrue(this.orEmpty().isNotEmpty(), "Collection cannot be null or empty")
-        assertTrue(this!!.any{it == e}, "Collection doesn't contain $e")
+        assertTrue(this!!.any { it == e }, "Collection doesn't contain $e")
     }
 
     infix fun <T> Collection<T>?.counts(n: Int) = this.orEmpty().assertCount(n)
@@ -44,13 +45,27 @@ interface AssertDSL {
         assertEquals(n, count(), "${prefix}Expected $n, got ${count()}")
 }
 
-/*
- * TODO replace with kotlin.test.assertContains after migrating to Kotlin 1.5+
- */
-internal fun <T> assertContains(iterable: Iterable<T>, element: T, ) {
+// TODO replace with kotlin.test.assertContains after migrating to Kotlin 1.5+
+internal fun <T> assertContains(iterable: Iterable<T>, element: T) {
     asserter.assertTrue(
         { "Expected the collection to contain the element.\nCollection <$iterable>, element <$element>." },
         iterable.contains(element)
+    )
+}
+
+private fun messagePrefix(message: String?) = if (message == null) "" else "$message. "
+
+// TODO replace with kotlin.test.assertContains after migrating to Kotlin 1.5+
+// https://github.com/JetBrains/kotlin/blob/c072e7c945fed74805d87ecc89c9a650bad23e12/libraries/kotlin.test/common/src/main/kotlin/kotlin/test/Assertions.kt#L334-L345
+internal fun assertContains(
+    charSequence: CharSequence,
+    other: CharSequence,
+    ignoreCase: Boolean = false,
+    message: String? = null,
+) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the char sequence to contain the substring.\nCharSequence <$charSequence>, substring <$other>, ignoreCase <$ignoreCase>." },
+        charSequence.contains(other, ignoreCase)
     )
 }
 
