@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.fir.types.abbreviatedType
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.type
 
 internal fun <T : ConeKotlinType> T.createPointer(builder: KaSymbolByFirBuilder): ConeTypePointer<T> {
@@ -80,7 +80,7 @@ internal interface ConeTypePointer<out T : ConeKotlinType> {
 private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaSymbolByFirBuilder) : ConeTypePointer<ConeClassLikeType> {
     private val lookupTag = coneType.lookupTag
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
-    private val isNullable = coneType.isNullable
+    private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder)
 
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
@@ -107,7 +107,7 @@ private class ConeTypeParameterTypePointer(
     builder: KaSymbolByFirBuilder,
 ) : ConeTypePointer<ConeTypeParameterType> {
     private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.symbol).createPointer()
-    private val isNullable = coneType.isNullable
+    private val isNullable = coneType.isMarkedNullable
 
     override fun restore(session: KaFirSession): ConeTypeParameterType? {
         val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
