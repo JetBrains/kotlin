@@ -1,4 +1,3 @@
-// SKIP_MINIFICATION
 // ES_MODULES
 
 // FILE: api.kt

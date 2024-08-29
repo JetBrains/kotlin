@@ -1,5 +1,4 @@
 // MODULE_KIND: COMMON_JS
-// SKIP_MINIFICATION
 
 // FILE: api.kt
 package api

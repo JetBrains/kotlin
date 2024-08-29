@@ -1,6 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// SKIP_MINIFICATION
-// This test assumes that external JS code calls Kotlin code directly
 
 // Legacy export, wrong types
 // DONT_TARGET_EXACT_BACKEND: JS_IR
