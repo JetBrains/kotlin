@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

@@ -3,6 +3,7 @@ description = "Extension for saving imports of .kt-files in JSON"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

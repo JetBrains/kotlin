@@ -5,6 +5,7 @@ import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
 }

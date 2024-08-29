@@ -3,6 +3,7 @@ description = "Kotlin Ant Tools"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {

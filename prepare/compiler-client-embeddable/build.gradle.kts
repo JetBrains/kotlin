@@ -2,6 +2,7 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val testCompilerClasspath by configurations.creating {
@@ -17,7 +18,7 @@ dependencies {
     embedded(project(":compiler:cli-common")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
-    
+
     testApi(project(":compiler:cli-common"))
     testApi(project(":daemon-common"))
     testApi(project(":kotlin-daemon-client"))

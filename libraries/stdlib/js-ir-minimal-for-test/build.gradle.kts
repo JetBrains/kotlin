@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
 }
 
 kotlin {

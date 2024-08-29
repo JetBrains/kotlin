@@ -9,6 +9,7 @@ import java.util.*
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     kotlin("plugin.serialization")
     id("jps-compatible")
     alias(libs.plugins.gradle.node)

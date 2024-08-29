@@ -3,6 +3,7 @@ description = "Annotation Processor for Kotlin"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

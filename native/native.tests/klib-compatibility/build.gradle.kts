@@ -3,6 +3,7 @@ import java.io.File
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {

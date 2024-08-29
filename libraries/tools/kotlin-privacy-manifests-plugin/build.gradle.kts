@@ -3,6 +3,7 @@ import plugins.configureKotlinPomAttributes
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     `java-gradle-plugin`
     `maven-publish`
 }

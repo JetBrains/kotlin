@@ -5,6 +5,7 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

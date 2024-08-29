@@ -2,6 +2,7 @@ description = "Parcelize compiler plugin"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {

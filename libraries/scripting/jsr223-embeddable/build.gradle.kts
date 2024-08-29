@@ -1,6 +1,7 @@
 description = "Kotlin Scripting JSR-223 support"
 
 plugins {
+    id("java-instrumentation")
     java
 }
 

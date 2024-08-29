@@ -22,6 +22,7 @@ import kotlin.io.path.copyTo
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
     `maven-publish`
     signing
 }

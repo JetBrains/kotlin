@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val allTestsRuntime by configurations.creating
@@ -24,7 +25,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    
+
     embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))
     embeddableTestRuntime(kotlinTest("junit"))
     embeddableTestRuntime(projectTests(":compiler:tests-common")) { isTransitive = false }

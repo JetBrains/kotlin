@@ -8,6 +8,7 @@ buildscript {
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val isNativeBuildToolsProject = rootProject.name == "native-build-tools"

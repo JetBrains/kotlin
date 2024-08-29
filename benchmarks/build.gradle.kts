@@ -3,6 +3,7 @@ import kotlinx.benchmark.gradle.benchmark
 plugins {
     java
     kotlin("jvm")
+    id("java-instrumentation")
     id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"
 }
 

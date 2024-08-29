@@ -9,6 +9,7 @@ plugins {
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish")
+    id("java-instrumentation")
 }
 
 // Enable signing for publications into Gradle Plugin Portal

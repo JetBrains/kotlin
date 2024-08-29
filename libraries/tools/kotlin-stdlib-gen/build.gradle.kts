@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val copyrightDirectory = project.layout.buildDirectory.dir("copyright")

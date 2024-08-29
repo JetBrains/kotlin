@@ -1,4 +1,5 @@
 plugins {
+    id("java-instrumentation")
     application
     kotlin("jvm")
     id("jps-compatible")

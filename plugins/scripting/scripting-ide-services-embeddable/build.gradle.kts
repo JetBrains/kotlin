@@ -1,6 +1,7 @@
 description = "Kotlin Scripting Compiler extension providing code completion and static analysis (for using in embeddable mode)"
 
 plugins {
+    id("java-instrumentation")
     java
 }
 

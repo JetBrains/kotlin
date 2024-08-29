@@ -4,6 +4,7 @@ import plugins.configureKotlinPomAttributes
 description = "Runtime library for the Atomicfu compiler plugin"
 
 plugins {
+    id("java-instrumentation")
     kotlin("js")
     `maven-publish`
 }

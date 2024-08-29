@@ -6,6 +6,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
+    id("java-instrumentation")
     `maven-publish`
     kotlin("js")
 }

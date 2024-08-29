@@ -14,6 +14,7 @@ import plugins.publishing.configureMultiModuleMavenPublishing
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
     `maven-publish`
     signing
 }

@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

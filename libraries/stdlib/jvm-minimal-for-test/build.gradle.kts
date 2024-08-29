@@ -4,6 +4,7 @@ description = "Kotlin Mock Runtime for Tests"
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
     `maven-publish`
 }
 

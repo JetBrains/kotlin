@@ -4,6 +4,7 @@ description = "Kotlin Scripting Compiler extension providing code completion and
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

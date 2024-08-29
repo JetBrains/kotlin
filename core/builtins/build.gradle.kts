@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 
 plugins {
+    id("java-instrumentation")
     base
     `maven-publish`
 }

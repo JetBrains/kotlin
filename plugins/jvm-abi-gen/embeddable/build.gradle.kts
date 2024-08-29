@@ -3,6 +3,7 @@ import org.gradle.jvm.tasks.Jar
 description = "ABI generation for Kotlin/JVM (for using with embeddable compiler)"
 
 plugins {
+    id("java-instrumentation")
     `java`
 }
 

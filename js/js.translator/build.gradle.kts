@@ -1,6 +1,7 @@
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 plugins {
+    id("java-instrumentation")
     idea
     kotlin("jvm")
     id("jps-compatible")

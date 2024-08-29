@@ -2,6 +2,7 @@ description = "Kotlin SamWithReceiver Compiler Plugin (K2)"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

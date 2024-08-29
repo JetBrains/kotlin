@@ -4,6 +4,7 @@ description = "ABI generation for Kotlin/JVM"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

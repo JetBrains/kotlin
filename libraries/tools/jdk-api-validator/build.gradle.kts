@@ -1,4 +1,5 @@
 plugins {
+    id("java-instrumentation")
     id("kotlin")
 }
 

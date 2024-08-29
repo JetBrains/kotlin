@@ -3,6 +3,7 @@ import java.net.URI
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     kotlin("plugin.serialization")
 }

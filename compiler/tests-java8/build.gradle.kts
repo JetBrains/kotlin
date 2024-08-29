@@ -2,6 +2,7 @@ import kotlin.io.path.createTempDirectory
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

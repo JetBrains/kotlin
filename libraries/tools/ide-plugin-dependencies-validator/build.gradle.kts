@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import kotlin.io.path.readLines
 
 plugins {
+    id("java-instrumentation")
     application
     kotlin("jvm")
     id("jps-compatible")

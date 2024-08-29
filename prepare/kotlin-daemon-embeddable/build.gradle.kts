@@ -1,6 +1,7 @@
 description = "Kotlin Daemon (for using with embeddable compiler)"
 
 plugins {
+    id("java-instrumentation")
     `java`
 }
 

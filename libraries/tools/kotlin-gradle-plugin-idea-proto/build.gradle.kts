@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 

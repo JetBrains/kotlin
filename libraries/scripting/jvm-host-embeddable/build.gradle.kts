@@ -1,6 +1,7 @@
 description = "Kotlin Scripting JVM host (for using with embeddable compiler)"
 
 plugins {
+    id("java-instrumentation")
     java
 }
 

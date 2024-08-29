@@ -2,6 +2,7 @@ description = "Kotlin Android Extensions Compiler"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {
@@ -31,4 +32,3 @@ runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJar()
 
 javadocJar()
-

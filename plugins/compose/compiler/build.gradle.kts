@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 kotlin.jvmToolchain(11)

@@ -4,6 +4,7 @@ import plugins.configureKotlinPomAttributes
 description = "Runtime library for the JS Plain Objects compiler plugin"
 
 plugins {
+    id("java-instrumentation")
     kotlin("js")
     `maven-publish`
 }

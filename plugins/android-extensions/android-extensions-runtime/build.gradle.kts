@@ -2,6 +2,7 @@ description = "Kotlin Android Extensions Runtime"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

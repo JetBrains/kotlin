@@ -2,6 +2,7 @@ description = "Kotlin Build Common"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
 }

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     id("share-kotlin-wasm-custom-formatters")
 }

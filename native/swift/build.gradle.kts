@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 tasks.register("sirAllTests") {

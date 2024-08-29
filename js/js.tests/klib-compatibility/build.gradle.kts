@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {
@@ -60,4 +61,3 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests()
     useJUnitPlatform()
 }
-

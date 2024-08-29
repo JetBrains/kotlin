@@ -1,6 +1,7 @@
 import plugins.signLibraryPublication
 
 plugins {
+    id("java-instrumentation")
     id("java-platform")
     id("maven-publish")
 }

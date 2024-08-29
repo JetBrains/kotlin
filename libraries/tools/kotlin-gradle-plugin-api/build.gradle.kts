@@ -1,4 +1,5 @@
 plugins {
+    id("java-instrumentation")
     id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")

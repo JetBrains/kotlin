@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     `jvm-test-suite`
     id("test-symlink-transformation")
 }

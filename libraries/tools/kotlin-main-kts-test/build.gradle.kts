@@ -3,6 +3,7 @@ description = "Kotlin \"main\" script definition tests"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating

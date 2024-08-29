@@ -2,6 +2,7 @@ description = "Simple Annotation Processor for testing kapt"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     `maven-publish` // only used for installing to mavenLocal()
 }
 

@@ -6,6 +6,7 @@ import java.util.*
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     alias(libs.plugins.gradle.node)
 }

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }

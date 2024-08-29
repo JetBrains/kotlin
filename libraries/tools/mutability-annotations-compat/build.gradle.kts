@@ -1,6 +1,7 @@
 description = "Compatibility artifact with Mutable and ReadOnly annotations"
 
 plugins {
+    id("java-instrumentation")
     java
     id("jps-compatible")
 }

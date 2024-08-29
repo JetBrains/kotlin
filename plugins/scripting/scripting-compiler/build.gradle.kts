@@ -4,6 +4,7 @@ description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 
@@ -83,4 +84,3 @@ projectTest(taskName = "testWithK1", parallel = true) {
         systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
     }
 }
-

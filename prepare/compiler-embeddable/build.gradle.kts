@@ -4,6 +4,7 @@ description = "Kotlin Compiler (embeddable)"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val testCompilationClasspath by configurations.creating
@@ -73,4 +74,3 @@ projectTest {
         systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
-

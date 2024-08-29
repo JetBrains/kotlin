@@ -2,6 +2,7 @@ description = "Kotlin Daemon Client"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

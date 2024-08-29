@@ -4,6 +4,7 @@ description = "Kotlin Android Extensions Compiler"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     id("android-sdk-provisioner")
 }

@@ -6,6 +6,7 @@ import plugins.signLibraryPublication
 description = "Annotation Processor for Kotlin (for using with embeddable compiler)"
 
 plugins {
+    id("java-instrumentation")
     `java-library`
 }
 

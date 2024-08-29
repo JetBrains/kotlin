@@ -6,6 +6,7 @@
 description = "Shaded test jars from compiler for Gradle integration tests"
 
 plugins {
+    id("java-instrumentation")
     `java-library`
 }
 

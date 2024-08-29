@@ -1,6 +1,7 @@
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 dependencies {
@@ -17,4 +18,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-

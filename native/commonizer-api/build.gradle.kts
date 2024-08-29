@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("gradle-plugin-compiler-dependency-configuration")
 }
 

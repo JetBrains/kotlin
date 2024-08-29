@@ -3,6 +3,7 @@ import com.github.gradle.node.npm.task.NpxTask
 description = "Simple Kotlin/Wasm devtools formatters"
 
 plugins {
+    id("java-instrumentation")
     id("base")
     id("share-kotlin-wasm-custom-formatters")
     alias(libs.plugins.gradle.node)

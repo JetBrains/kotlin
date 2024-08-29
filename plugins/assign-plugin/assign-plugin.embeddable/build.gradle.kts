@@ -2,6 +2,7 @@ description = "Kotlin Assignment Compiler Plugin (Embeddable)"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

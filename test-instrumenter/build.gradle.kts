@@ -1,6 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 
 plugins {
+    id("java-instrumentation")
     java
     kotlin("jvm")
 }

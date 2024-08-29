@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 description = "Kotlin KLIB Library Commonizer"

@@ -2,6 +2,7 @@ description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

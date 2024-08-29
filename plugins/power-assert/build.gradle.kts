@@ -2,6 +2,7 @@ description = "Kotlin Power-Assert Compiler Plugin"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

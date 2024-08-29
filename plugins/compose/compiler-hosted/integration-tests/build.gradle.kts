@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
 }
 
 repositories {

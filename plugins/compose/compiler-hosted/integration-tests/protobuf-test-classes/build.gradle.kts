@@ -1,4 +1,5 @@
 plugins {
+    id("java-instrumentation")
     id("com.google.protobuf") version "0.9.4"
     id("java")
 }

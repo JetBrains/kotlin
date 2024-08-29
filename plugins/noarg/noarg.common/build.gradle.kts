@@ -2,6 +2,7 @@ description = "Kotlin NoArg Compiler Plugin (Common)"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

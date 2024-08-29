@@ -17,6 +17,7 @@ buildscript {
 }
 
 plugins {
+    id("java-instrumentation")
     `java-library`
 }
 

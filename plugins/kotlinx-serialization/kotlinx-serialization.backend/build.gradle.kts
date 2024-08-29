@@ -2,6 +2,7 @@ description = "Kotlin Serialization Compiler Plugin (Backend)"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

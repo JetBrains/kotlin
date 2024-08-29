@@ -2,6 +2,7 @@ description = "Compiler runner + daemon client unshaded"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
 }

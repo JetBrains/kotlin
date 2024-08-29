@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 plugins {
+    id("java-instrumentation")
     `java-base`
     id("android-sdk-provisioner")
 }

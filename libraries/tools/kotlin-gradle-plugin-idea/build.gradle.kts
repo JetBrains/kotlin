@@ -4,6 +4,7 @@ import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     `java-test-fixtures`
     `maven-publish`
     id("org.jetbrains.kotlinx.binary-compatibility-validator")

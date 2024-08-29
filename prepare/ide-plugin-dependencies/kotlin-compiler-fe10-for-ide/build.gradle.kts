@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
 }
 
 val fe10CompilerModules: Array<String> by rootProject.extra

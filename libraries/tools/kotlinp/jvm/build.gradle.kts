@@ -4,6 +4,7 @@ description = "kotlinp-jvm"
 
 plugins {
     kotlin("jvm")
+    id("java-instrumentation")
     id("jps-compatible")
 }
 

@@ -4,6 +4,7 @@ import java.io.FileOutputStream
 
 plugins {
     kotlin("multiplatform")
+    id("java-instrumentation")
     alias(libs.plugins.gradle.node)
     idea
 }
