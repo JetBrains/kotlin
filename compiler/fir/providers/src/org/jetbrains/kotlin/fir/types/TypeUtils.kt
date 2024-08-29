@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitute
@@ -797,23 +798,23 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
 }
 
 fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
-    if (isMarkedNullable) {
-        return true
-    }
     return when (this) {
         is ConeFlexibleType -> upperBound.canBeNull(session)
         is ConeDefinitelyNotNullType -> false
-        is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.resolvedBounds.all {
-            // Upper bounds can resolve to typealiases that can expand to nullable types.
-            it.coneType.fullyExpandedType(session).canBeNull(session)
+        is ConeTypeParameterType -> isMarkedNullable || this.lookupTag.typeParameterSymbol.resolvedBounds.all {
+            it.coneType.canBeNull(session)
         }
         is ConeStubType -> {
-            val symbol = (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
-            symbol == null || symbol.allBoundsAreNullableOrUnresolved(session)
+            isMarkedNullable ||
+                    (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
+                        it == null || it.allBoundsAreNullableOrUnresolved(session)
+                    }
         }
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
-        is ConeCapturedType -> constructor.supertypes?.all { it.canBeNull(session) } == true
-        else -> fullyExpandedType(session).isNullable
+        is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session) } == true
+        is ConeErrorType -> diagnostic.let { it !is ConeDiagnosticWithNullability || it.isNullable }
+        is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
+        is ConeIntegerLiteralType, is ConeTypeVariableType -> isMarkedNullable
     }
 }
 
