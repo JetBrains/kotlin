@@ -46,4 +46,8 @@ class IrLazyTypeAlias(
             descriptor.expandedType.toIrType()
         }
     }
+
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
 }

@@ -543,6 +543,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationWithName)
         parent(declarationWithVisibility)
         parent(typeParametersContainer)
+        parent(metadataSourceOwner)
 
         +descriptor("TypeAliasDescriptor")
         +declaredSymbol(typeAliasSymbol)

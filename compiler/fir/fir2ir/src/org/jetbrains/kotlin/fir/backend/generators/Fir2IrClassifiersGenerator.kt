@@ -298,6 +298,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             expandedType = typeAlias.expandedTypeRef.toIrType(c),
         ).apply {
             this.parent = parent
+            this.metadata = FirMetadataSource.TypeAlias(typeAlias)
             setTypeParameters(this, typeAlias)
             setParent(parent)
             addDeclarationToParent(this, parent)

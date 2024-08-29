@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
-abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer {
+abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeAliasDescriptor
 
