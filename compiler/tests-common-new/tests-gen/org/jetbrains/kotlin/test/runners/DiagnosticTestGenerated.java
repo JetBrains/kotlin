@@ -26412,6 +26412,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("actualTypealiasToNonexistent.kt")
+      public void testActualTypealiasToNonexistent() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToNonexistent.kt");
+      }
+
+      @Test
       @TestMetadata("actualTypealiasToSpecialAnnotation.kt")
       public void testActualTypealiasToSpecialAnnotation() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation.kt");
