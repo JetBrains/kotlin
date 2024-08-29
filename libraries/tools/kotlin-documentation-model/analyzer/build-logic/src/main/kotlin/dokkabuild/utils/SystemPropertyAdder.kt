@@ -4,8 +4,10 @@
 package dokkabuild.utils
 
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskInputFilePropertyBuilder
@@ -14,6 +16,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.process.CommandLineArgumentProvider
+import java.io.File
 import javax.inject.Inject
 
 
@@ -34,18 +37,32 @@ val Test.systemProperty: SystemPropertyAdder
 abstract class SystemPropertyAdder @Inject internal constructor(
     private val task: Test,
 ) {
+    private val objects: ObjectFactory = task.project.objects
+
     fun inputDirectory(
         key: String,
-        value: Directory,
+        value: DirectoryProperty,
     ): TaskInputFilePropertyBuilder {
         task.jvmArgumentProviders.add(
             SystemPropertyArgumentProvider(key, value) {
-                it.asFile.invariantSeparatorsPath
+                it.get().asFile.invariantSeparatorsPath
             }
         )
         return task.inputs.dir(value)
             .withPropertyName("SystemProperty input directory $key")
     }
+
+    fun inputDirectory(
+        key: String,
+        value: Provider<File>,
+    ): TaskInputFilePropertyBuilder =
+        inputDirectory(key, objects.directoryProperty().fileProvider(value))
+
+    fun inputDirectory(
+        key: String,
+        value: Directory,
+    ): TaskInputFilePropertyBuilder =
+        inputDirectory(key, objects.directoryProperty().apply { set(value) })
 
     fun inputFile(
         key: String,
