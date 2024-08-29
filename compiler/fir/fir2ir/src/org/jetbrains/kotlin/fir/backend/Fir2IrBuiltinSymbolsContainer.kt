@@ -103,6 +103,9 @@ class Fir2IrBuiltinSymbolsContainer(
     val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
     val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
 
+    val throwableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Throwable) }
+    val throwableType: IrType get() = throwableClass.defaultTypeWithoutArguments
+
     val extensionFunctionTypeAnnotationCall: IrConstructorCall? by lazy {
         generateAnnotationCall(StandardClassIds.Annotations.ExtensionFunctionType)
     }

@@ -153,8 +153,8 @@ class IrBuiltInsOverFir(
     override val mutableIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableIterator) }
     override val mutableListIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableListIterator) }
     override val comparableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Comparable) }
-    override val throwableType: IrType by lazy { throwableClass.defaultTypeWithoutArguments }
-    override val throwableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Throwable) }
+    override val throwableType: IrType get() = fir2irBuiltins.throwableType
+    override val throwableClass: IrClassSymbol get() = fir2irBuiltins.throwableClass
 
     override val kCallableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KCallable) }
     override val kPropertyClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty) }

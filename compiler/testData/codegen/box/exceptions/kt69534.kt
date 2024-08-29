@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: WASM
 // DUMP_IR
 
 sealed class Sas
