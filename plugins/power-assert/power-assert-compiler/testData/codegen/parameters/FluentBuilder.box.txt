@@ -1,0 +1,27 @@
+---
+Expected:
+assertThat(actual).isEqualTo(expected)
+                             |
+                             5
+
+Where:
+expected =
+hello.length
+|     |
+Hello 5
+
+Actual:
+assertThat(actual)
+           |
+           3
+
+Where:
+actual = world.length
+         |     |
+         orl   3
+
+And:
+world = "World".substring(1, 4)
+                |
+                orl
+---

@@ -1,160 +1,24 @@
 /*
- * Copyright 2023-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// Copyright (C) 2020-2023 Brian Norman
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package org.jetbrains.kotlin.powerassert.diagram
+package org.jetbrains.kotlin.powerassert.builder.explanation
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irConcat
-import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.powerassert.diagram.IrTemporaryVariable
 import org.jetbrains.kotlin.powerassert.getExplicitReceiver
-import org.jetbrains.kotlin.powerassert.irString
 import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
 import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
-fun IrBuilderWithScope.irDiagramString(
-    sourceFile: SourceFile,
-    prefix: IrExpression? = null,
-    call: IrCall,
-    variables: List<IrTemporaryVariable>,
-): IrExpression {
-    val callInfo = sourceFile.getCompleteSourceRangeInfo(call)
-
-    // Get call source string starting at the very beginning of the first line.
-    // This is so multiline calls all start from the same column offset.
-    val rows = sourceFile.getText(callInfo.startOffset - callInfo.startColumnNumber, callInfo.endOffset)
-        .clearSourcePrefix(callInfo.startColumnNumber)
-        .split("\n")
-
-    val minSourceIndent = rows.minOf { line ->
-        // Find index of first non-whitespace character.
-        val indent = line.indexOfFirst { !it.isWhitespace() }
-        if (indent == -1) Int.MAX_VALUE else indent
-    }
-
-    val valuesByRow = variables
-        .map { it.toValueDisplay(callInfo) }
-        .sortedBy { it.indent }
-        .groupBy { it.row }
-
-    return irConcat().apply {
-        if (prefix != null) addArgument(prefix)
-
-        for ((row, rowSource) in rows.withIndex()) {
-            addArgument(
-                irString {
-                    appendLine()
-                    val sourceLine = rowSource.substring(minOf(minSourceIndent, rowSource.length))
-                    if (sourceLine.isNotBlank() && valuesByRow[row - 1] != null) appendLine() // Add an extra line after displayed values.
-                    append(sourceLine)
-                },
-            )
-
-            val rowValues = valuesByRow[row] ?: continue
-
-            val lineTemplate = buildString {
-                val indentations = rowValues.mapTo(hashSetOf()) { it.indent }
-                val lastIndent = rowValues.last().indent
-                for ((i, c) in rowSource.withIndex()) {
-                    when {
-                        i in indentations -> {
-                            // Add bar at indents for value display.
-                            append('|')
-                            if (i == lastIndent) break // Do not add trailing whitespace.
-                        }
-                        c == '\t' -> append('\t') // Preserve tabs in source code.
-                        else -> append(' ')
-                    }
-                }
-            }
-
-            addArgument(
-                irString {
-                    appendLine()
-                    append(lineTemplate.substring(minSourceIndent))
-                },
-            )
-
-            for (tmp in rowValues.asReversed()) {
-                addArgument(
-                    irString {
-                        appendLine()
-                        append(lineTemplate.substring(minSourceIndent, tmp.indent))
-                    },
-                )
-                addArgument(irGet(tmp.value))
-            }
-        }
-
-        addArgument(
-            irString {
-                appendLine()
-            }
-        )
-    }
-}
-
-private fun String.clearSourcePrefix(offset: Int): String = buildString {
-    for ((i, c) in this@clearSourcePrefix.withIndex()) {
-        when {
-            i >= offset -> {
-                // Append the remaining characters and exit.
-                append(this@clearSourcePrefix.substring(i))
-                break
-            }
-            c == '\t' -> append('\t') // Preserve tabs.
-            else -> append(' ') // Replace all other characters with spaces.
-        }
-    }
-}
-
-private data class ValueDisplay(
-    val value: IrVariable,
-    val indent: Int,
-    val row: Int,
-)
-
-private fun IrTemporaryVariable.toValueDisplay(
-    originalInfo: SourceRangeInfo,
-): ValueDisplay {
-    var indent = sourceRangeInfo.startColumnNumber
-    var row = sourceRangeInfo.startLineNumber - originalInfo.startLineNumber
-
-    val source = text
-    val columnOffset = findDisplayOffset(original, sourceRangeInfo, source)
-
-    val prefix = source.substring(0, columnOffset)
-    val rowShift = prefix.count { it == '\n' }
-    if (rowShift == 0) {
-        indent += columnOffset
-    } else {
-        row += rowShift
-        indent = columnOffset - (prefix.lastIndexOf('\n') + 1)
-    }
-
-    return ValueDisplay(temporary, indent, row)
+fun IrTemporaryVariable.toDisplayOffset(): Int {
+    return sourceRangeInfo.startOffset + findDisplayOffset(original, sourceRangeInfo, text)
 }
 
 /**

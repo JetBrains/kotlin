@@ -1,0 +1,39 @@
+@JvmSynthetic
+fun explain$explained(value: Any, $explanation: CallExplanation): String? {
+  return { // BLOCK
+    val tmp_0: CallExplanation? = $explanation
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.toDefaultMessage()
+    }
+  }
+}
+
+fun box(): String {
+  val reallyLongList: List<String> = listOf<String>(elements = ["a", "b"])
+  return { // BLOCK
+    val tmp_1: String? = { // BLOCK
+      val tmp0_Explain: List<String> = reallyLongList
+      val tmp1_Explain: List<String> = tmp0_Explain.reversed<String>()
+      val tmp2_Explain: List<String> = emptyList<String>()
+      val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+      explain$explained(value = tmp3_Explain, $explanation = CallExplanation(offset = 102, source = "           explain(reallyLongList.reversed() == emptyList<String>())", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 19, endOffset = 67, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 19, endOffset = 33, displayOffset = 19, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 44, displayOffset = 34, value = tmp1_Explain), ValueExpression(startOffset = 48, endOffset = 67, displayOffset = 48, value = tmp2_Explain), EqualityExpression(startOffset = 19, endOffset = 67, displayOffset = 45, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])))])))
+    }
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> "FAIL"
+      else -> tmp_1
+    }
+  }
+}
+
+@ExplainCall
+fun explain(value: Any): String? {
+  return { // BLOCK
+    val tmp_2: CallExplanation? = null
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.toDefaultMessage()
+    }
+  }
+}
+

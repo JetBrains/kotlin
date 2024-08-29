@@ -1,6 +1,5 @@
 ---Message:
 assertEquals(greeting, name, message)
              |         |
-             |         World
-             Hello
+             Hello     World
 . Expected <Hello>, actual <World>.---

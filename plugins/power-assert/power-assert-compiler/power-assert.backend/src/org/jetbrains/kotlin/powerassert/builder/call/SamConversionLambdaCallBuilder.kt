@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,29 +17,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.jetbrains.kotlin.powerassert.delegate
+package org.jetbrains.kotlin.powerassert.builder.call
 
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irSamConversion
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.powerassert.irLambda
 
-class SimpleFunctionDelegate(
+class SamConversionLambdaCallBuilder(
     private val overload: IrSimpleFunctionSymbol,
-    override val messageParameter: IrValueParameter,
-) : FunctionDelegate {
+    private val originalCall: IrCall,
+    private val lambdaType: IrType,
+) : CallBuilder {
     override val function = overload.owner
 
     override fun buildCall(
         builder: IrBuilderWithScope,
-        original: IrCall,
         arguments: List<IrExpression?>,
-        messageArgument: IrExpression,
-    ): IrExpression = builder.irCallCopy(
-        overload = overload,
-        original = original,
-        arguments = arguments,
-        messageArgument = messageArgument,
-    )
+        diagram: IrExpression,
+    ): IrExpression = with(builder) {
+        val lambda = irLambda(context.irBuiltIns.stringType, lambdaType) {
+            +irReturn(diagram)
+        }
+        val expression = irSamConversion(lambda, lambdaType)
+        irCallCopy(
+            overload = overload,
+            original = originalCall,
+            arguments = arguments,
+            messageArgument = expression,
+        )
+    }
 }

@@ -1,14 +1,12 @@
 ---
 requireNotNull(a as? String)
                | |
-               | null
-               1
+               1 null
 ---
 ---
 checkNotNull(a as? String)
              | |
-             | null
-             1
+             1 null
 ---
 ---OK---
 ---OK---

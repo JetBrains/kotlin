@@ -1,5 +1,5 @@
 ---Not equal
 assert(1 == 2) { "Not equal" }
          |
-         false
+         Expected <1>, actual <2>.
 ---

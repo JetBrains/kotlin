@@ -1,6 +1,5 @@
 ---
 assert(i-- == 4)
        |   |
-       |   false
-       3
+       3   Expected <3>, actual <4>.
 ---

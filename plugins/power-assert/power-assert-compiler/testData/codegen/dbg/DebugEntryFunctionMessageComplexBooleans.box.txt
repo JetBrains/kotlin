@@ -3,13 +3,11 @@ Message:
 dbg(
     key = greeting != null && greeting.length == 5,
           |        |
-          |        false
-          null
+          null     false
 
     value = name == null || name.length == 5,
             |    |
-            |    true
-            null
+            null true
 
     msg = "Message:"
 )

@@ -27,14 +27,11 @@ assert(
 ---
 assert("Name"/*in*/in/*in*/listOf("Hello", "World"))
                    |       |
-                   |       [Hello, World]
-                   false
+                   false   [Hello, World]
 ---
 ---
 assert(("Name" in listOf("Hello", "World")) in listOf(true))
                |  |                         |  |
-               |  |                         |  [true]
-               |  |                         false
-               |  [Hello, World]
-               false
+               |  [Hello, World]            |  [true]
+               false                        false
 ---

@@ -1,8 +1,7 @@
 test1: ---
 assert("aaa".compareTo("bbb") > 0)
              |                |
-             |                false
-             -1
+             -1               false
 ---
 test2: ---
 assert("aaa" > "bbb")
@@ -12,8 +11,7 @@ assert("aaa" > "bbb")
 test3: ---
 assert("aaa".compareTo("bbb") >= 0)
              |                |
-             |                false
-             -1
+             -1               false
 ---
 test4: ---
 assert("aaa" >= "bbb")
@@ -23,8 +21,7 @@ assert("aaa" >= "bbb")
 test5: ---
 assert("bbb".compareTo("aaa") < 0)
              |                |
-             |                false
-             1
+             1                false
 ---
 test6: ---
 assert("bbb" < "aaa")
@@ -34,8 +31,7 @@ assert("bbb" < "aaa")
 test7: ---
 assert("bbb".compareTo("aaa") <= 0)
              |                |
-             |                false
-             1
+             1                false
 ---
 test8: ---
 assert("bbb" <= "aaa")

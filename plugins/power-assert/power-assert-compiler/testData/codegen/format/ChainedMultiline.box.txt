@@ -14,8 +14,7 @@ assert(
 
         .length == 4
          |      |
-         |      false
-         5
+         5      Expected <5>, actual <4>.
 
 )
 ---

@@ -1,13 +1,8 @@
 ---
 assert(text == null || (text.length == 5 && text.lowercase() == text))
        |    |           |    |      |       |    |           |  |
-       |    |           |    |      |       |    |           |  Hello
-       |    |           |    |      |       |    |           false
-       |    |           |    |      |       |    hello
-       |    |           |    |      |       Hello
-       |    |           |    |      true
-       |    |           |    5
-       |    |           Hello
-       |    false
+       |    |           |    5      true    |    hello       |  Hello
+       |    |           Hello               Hello            Expected <hello>, actual <Hello>.
+       |    Expected <Hello>, actual <null>.
        Hello
 ---

@@ -1,0 +1,38 @@
+---
+assert(expected == actual)
+       |        |  |
+       5        |  3
+                Expected <5>, actual <3>.
+
+Where:
+actual = world.length
+         |     |
+         orl   3
+
+And:
+expected =
+hello.length
+|     |
+Hello 5
+
+And:
+world = "World".substring(1, 4)
+                |
+                orl
+---
+---
+assert(expected == actual)
+       |        |  |
+       5        |  3
+                Expected <5>, actual <3>.
+
+Where:
+actual = "World".substring(1, 4).length
+                 |               |
+                 orl             3
+
+And:
+expected = "Hello".length
+                   |
+                   5
+---

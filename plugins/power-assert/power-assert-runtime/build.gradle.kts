@@ -11,7 +11,21 @@ plugins {
 kotlin {
     explicitApi()
 
-    jvm()
+    jvm {
+        compilations {
+            all {
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     sourceSets {
         commonMain {

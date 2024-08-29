@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,38 +17,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.jetbrains.kotlin.powerassert.delegate
+package org.jetbrains.kotlin.powerassert.builder.call
 
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irSamConversion
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.parent
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.powerassert.irLambda
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-class SamConversionLambdaFunctionDelegate(
-    private val overload: IrSimpleFunctionSymbol,
-    override val messageParameter: IrValueParameter,
-) : FunctionDelegate {
-    override val function = overload.owner
+interface CallBuilder {
+    val function: IrFunction
 
-    override fun buildCall(
+    fun buildCall(
         builder: IrBuilderWithScope,
+        arguments: List<IrExpression?>,
+        diagram: IrExpression,
+    ): IrExpression
+
+    fun IrBuilderWithScope.irCallCopy(
+        overload: IrSimpleFunctionSymbol,
         original: IrCall,
         arguments: List<IrExpression?>,
         messageArgument: IrExpression,
-    ): IrExpression = with(builder) {
-        val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
-            +irReturn(messageArgument)
+    ): IrExpression {
+        return irCall(overload, type = original.type).apply {
+            for (i in original.typeArguments.indices) {
+                typeArguments[i] = original.typeArguments[i]
+            }
+            this.arguments.assignFrom(arguments) { it?.deepCopyWithSymbols(parent) }
+            this.arguments.add(messageArgument.deepCopyWithSymbols(parent))
         }
-        val expression = irSamConversion(lambda, messageParameter.type)
-        irCallCopy(
-            overload = overload,
-            original = original,
-            arguments = arguments,
-            messageArgument = expression,
-        )
     }
 }

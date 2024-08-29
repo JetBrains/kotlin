@@ -1,7 +1,7 @@
 test1: ---
 assert(dispatch + dispatch == Failure)
        |        | |        |
-       |        | |        false
+       |        | |        Expected <Dispatch(n=2)>, actual <Failure>.
        |        | Dispatch(n=1)
        |        Dispatch(n=2)
        Dispatch(n=1)
@@ -9,7 +9,7 @@ assert(dispatch + dispatch == Failure)
 test2: ---
 assert(extension + extension == Failure)
        |         | |         |
-       |         | |         false
+       |         | |         Expected <Extension(n=2)>, actual <Failure>.
        |         | Extension(n=1)
        |         Extension(n=2)
        Extension(n=1)
@@ -17,7 +17,7 @@ assert(extension + extension == Failure)
 test3: ---
 assert(extension - extension == Failure)
        |         | |         |
-       |         | |         false
+       |         | |         Expected <Extension(n=0)>, actual <Failure>.
        |         | Extension(n=1)
        |         Extension(n=0)
        Extension(n=1)
@@ -25,7 +25,7 @@ assert(extension - extension == Failure)
 test4: ---
 assert(dispatch - dispatch == Failure)
        |        | |        |
-       |        | |        false
+       |        | |        Expected <Dispatch(n=0)>, actual <Failure>.
        |        | Dispatch(n=1)
        |        Dispatch(n=0)
        Dispatch(n=1)
@@ -33,7 +33,7 @@ assert(dispatch - dispatch == Failure)
 test5: ---
 assert(extension - extension == Failure)
        |         | |         |
-       |         | |         false
+       |         | |         Expected <Extension(n=2)>, actual <Failure>.
        |         | Extension(n=1)
        |         Extension(n=2)
        Extension(n=1)
@@ -41,7 +41,7 @@ assert(extension - extension == Failure)
 test6: ---
 assert(extension * extension == Failure)
        |         | |         |
-       |         | |         false
+       |         | |         Expected <Extension(n=1)>, actual <Failure>.
        |         | Extension(n=1)
        |         Extension(n=1)
        Extension(n=1)
@@ -91,7 +91,7 @@ assert(context in extension)
 test13: ---
 assert(dispatch.plus(dispatch) == Failure)
        |        |    |         |
-       |        |    |         false
+       |        |    |         Expected <Dispatch(n=2)>, actual <Failure>.
        |        |    Dispatch(n=1)
        |        Dispatch(n=2)
        Dispatch(n=1)
@@ -99,7 +99,7 @@ assert(dispatch.plus(dispatch) == Failure)
 test14: ---
 assert(extension.plus(extension) == Failure)
        |         |    |          |
-       |         |    |          false
+       |         |    |          Expected <Extension(n=2)>, actual <Failure>.
        |         |    Extension(n=1)
        |         Extension(n=2)
        Extension(n=1)
@@ -107,7 +107,7 @@ assert(extension.plus(extension) == Failure)
 test15: ---
 assert(extension.minus(extension) == Failure)
        |         |     |          |
-       |         |     |          false
+       |         |     |          Expected <Extension(n=0)>, actual <Failure>.
        |         |     Extension(n=1)
        |         Extension(n=0)
        Extension(n=1)
@@ -115,7 +115,7 @@ assert(extension.minus(extension) == Failure)
 test16: ---
 assert(dispatch.minus(dispatch) == Failure)
        |        |     |         |
-       |        |     |         false
+       |        |     |         Expected <Dispatch(n=0)>, actual <Failure>.
        |        |     Dispatch(n=1)
        |        Dispatch(n=0)
        Dispatch(n=1)
@@ -123,7 +123,7 @@ assert(dispatch.minus(dispatch) == Failure)
 test17: ---
 assert(extension.minus(extension) == Failure)
        |         |     |          |
-       |         |     |          false
+       |         |     |          Expected <Extension(n=2)>, actual <Failure>.
        |         |     Extension(n=1)
        |         Extension(n=2)
        Extension(n=1)
@@ -131,7 +131,7 @@ assert(extension.minus(extension) == Failure)
 test18: ---
 assert(extension.times(extension) == Failure)
        |         |     |          |
-       |         |     |          false
+       |         |     |          Expected <Extension(n=1)>, actual <Failure>.
        |         |     Extension(n=1)
        |         Extension(n=1)
        Extension(n=1)
@@ -139,42 +139,36 @@ assert(extension.times(extension) == Failure)
 test19: ---
 assert(dispatch.contains(dispatch))
        |        |        |
-       |        |        Dispatch(n=1)
-       |        false
+       |        false    Dispatch(n=1)
        Dispatch(n=1)
 ---
 test20: ---
 assert(extension.contains(dispatch))
        |         |        |
-       |         |        Dispatch(n=1)
-       |         false
+       |         false    Dispatch(n=1)
        Extension(n=1)
 ---
 test21: ---
 assert(extension.contains(extension))
        |         |        |
-       |         |        Extension(n=1)
-       |         false
+       |         false    Extension(n=1)
        Extension(n=1)
 ---
 test22: ---
 assert(dispatch.contains(context))
        |        |        |
-       |        |        Context(n=1)
-       |        false
+       |        false    Context(n=1)
        Dispatch(n=1)
 ---
 test23: ---
 assert(extension.contains(dispatch))
        |         |        |
-       |         |        Dispatch(n=1)
-       |         false
+       |         false    Dispatch(n=1)
        Extension(n=1)
 ---
 test24: ---
 assert(extension.contains(context))
        |         |        |
-       |         |        Context(n=1)
-       |         false
+       |         false    Context(n=1)
        Extension(n=1)
 ---

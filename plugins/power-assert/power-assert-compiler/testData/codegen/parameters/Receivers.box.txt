@@ -1,36 +1,30 @@
 test1: ---
 Asserter.dispatchAssert("test".length == 5)
                                |      |
-                               |      false
-                               4
+                               4      Expected <4>, actual <5>.
 ---
 test2: ---
 dispatchAssert("test".length == 5)
                       |      |
-                      |      false
-                      4
+                      4      Expected <4>, actual <5>.
 ---
 test3: ---
 Asserter.extensionAssert("test".length == 5)
                                 |      |
-                                |      false
-                                4
+                                4      Expected <4>, actual <5>.
 ---
 test4: ---
 extensionAssert("test".length == 5)
                        |      |
-                       |      false
-                       4
+                       4      Expected <4>, actual <5>.
 ---
 test5: ---
 Asserter.memberExtensionAssert("test".length == 5)
                                       |      |
-                                      |      false
-                                      4
+                                      4      Expected <4>, actual <5>.
 ---
 test6: ---
 memberExtensionAssert("test".length == 5)
                              |      |
-                             |      false
-                             4
+                             4      Expected <4>, actual <5>.
 ---

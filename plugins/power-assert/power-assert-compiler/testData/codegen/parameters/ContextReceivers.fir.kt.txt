@@ -51,9 +51,9 @@ fun context2Assert(<unused var>: Asserter, <unused var>: Asserter, condition: Bo
 fun test1() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_1: Int = "test".<get-length>()
-      val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
-      context1Assert(<unused var> = $this$with, condition = tmp_2, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_2 + "\n                      " + tmp_1 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      context1Assert(<unused var> = $this$with, condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 566, source = "        context1Assert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 23, endOffset = 41, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 23, endOffset = 36, displayOffset = 30, value = tmp0_Explain), EqualityExpression(startOffset = 23, endOffset = 41, displayOffset = 37, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )
@@ -62,9 +62,9 @@ fun test1() {
 fun test2() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_3: Int = "test".<get-length>()
-      val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
-      context2Assert(<unused var> = $this$with, <unused var> = $this$with, condition = tmp_4, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      context2Assert(<unused var> = $this$with, <unused var> = $this$with, condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 653, source = "        context2Assert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 23, endOffset = 41, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 23, endOffset = 36, displayOffset = 30, value = tmp0_Explain), EqualityExpression(startOffset = 23, endOffset = 41, displayOffset = 37, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )

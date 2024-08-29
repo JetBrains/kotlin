@@ -1,12 +1,10 @@
 test1: ---
 context1Assert("test".length == 5)
                       |      |
-                      |      false
-                      4
+                      4      Expected <4>, actual <5>.
 ---
 test2: ---
 context2Assert("test".length == 5)
                       |      |
-                      |      false
-                      4
+                      4      Expected <4>, actual <5>.
 ---

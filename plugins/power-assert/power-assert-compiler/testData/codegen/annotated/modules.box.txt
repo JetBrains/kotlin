@@ -1,0 +1,4 @@
+describe(reallyLongList.reversed() == emptyList<String>())
+         |              |          |  |
+         [a, b]         [b, a]     |  []
+                                   Expected <[b, a]>, actual <[]>.

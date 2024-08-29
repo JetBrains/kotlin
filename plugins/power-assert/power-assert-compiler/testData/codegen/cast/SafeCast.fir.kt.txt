@@ -5,18 +5,18 @@ fun box(): String {
 fun test1(a: Any): String {
   return expectThrowableMessage(block = local fun <anonymous>() {
     { // BLOCK
-      val tmp_0: Any = a
-      val tmp_1: String? = tmp_0 as? String
-      val tmp_2: Int? = { // BLOCK
-        val tmp_3: String? = tmp_1
+      val tmp0_Explain: Any = a
+      val tmp1_Explain: String? = tmp0_Explain as? String
+      val tmp2_Explain: Int? = { // BLOCK
+        val tmp_0: String? = tmp1_Explain
         when {
-          EQEQ(arg0 = tmp_3, arg1 = null) -> null
-          else -> tmp_3.<get-length>()
+          EQEQ(arg0 = tmp_0, arg1 = null) -> null
+          else -> tmp_0.<get-length>()
         }
       }
-      val tmp_4: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
-      assert(value = tmp_4, lazyMessage = local fun <anonymous>(): String {
-        return "\nassert((a as? String)?.length == 5)" + "\n        | |            |      |" + "\n        | |            |      " + tmp_4 + "\n        | |            " + tmp_2 + "\n        | " + tmp_1 + "\n        " + tmp_0 + "\n"
+      val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
+      assert(value = tmp3_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + CallExplanation(offset = 216, source = "    assert((a as? String)?.length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 11, endOffset = 38, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 12, endOffset = 13, displayOffset = 12, value = tmp0_Explain), ValueExpression(startOffset = 12, endOffset = 24, displayOffset = 14, value = tmp1_Explain), ValueExpression(startOffset = 12, endOffset = 33, displayOffset = 27, value = tmp2_Explain), EqualityExpression(startOffset = 11, endOffset = 38, displayOffset = 34, value = tmp3_Explain, lhs = tmp2_Explain, rhs = 5)])))])).toDefaultMessage()
       }
 )
     }
@@ -27,10 +27,10 @@ fun test1(a: Any): String {
 fun test2(a: Any): String {
   return expectThrowableMessage(block = local fun <anonymous>() {
     { // BLOCK
-      val tmp_5: Any = a
-      val tmp_6: String? = tmp_5 as? String
-      requireNotNull<String>(value = tmp_6, lazyMessage = local fun <anonymous>(): String {
-        return "\nrequireNotNull(a as? String)" + "\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
+      val tmp0_Explain: Any = a
+      val tmp1_Explain: String? = tmp0_Explain as? String
+      requireNotNull<String>(value = tmp1_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + CallExplanation(offset = 304, source = "    requireNotNull(a as? String)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 19, endOffset = 31, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 19, endOffset = 20, displayOffset = 19, value = tmp0_Explain), ValueExpression(startOffset = 19, endOffset = 31, displayOffset = 21, value = tmp1_Explain)])))])).toDefaultMessage()
       }
 )
     } /*~> Unit */

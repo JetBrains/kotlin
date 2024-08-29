@@ -1,14 +1,11 @@
 ---
 assert(listOf("Hello", "World")[1] == "Hello")
        |                       |   |
-       |                       |   false
-       |                       World
-       [Hello, World]
+       [Hello, World]          |   Expected <World>, actual <Hello>.
+                               World
 ---
 ---
 assert(listOf("Hello", "World").get(1) == "Hello")
        |                        |      |
-       |                        |      false
-       |                        World
-       [Hello, World]
+       [Hello, World]           World  Expected <World>, actual <Hello>.
 ---

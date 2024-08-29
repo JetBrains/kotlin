@@ -1,60 +1,35 @@
 ---
 assert((str?.lowercase()?.length ?: default) == 5)
         |    |            |                  |
-        |    |            |                  false
-        |    |            4
-        |    test
-        TEST
+        TEST test         4                  Expected <4>, actual <5>.
 ---
 ---
 assert((str?.lowercase()?.length ?: default) == 5)
         |    |            |         |        |
-        |    |            |         |        false
-        |    |            |         0
-        |    |            null
-        |    null
-        null
+        null null         null      0        Expected <0>, actual <5>.
 ---
 ---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |                         |                  |
-         |    |                         |                  false
-         |    |                         4
-         |    test
-         TEST
+         TEST test                      4                  Expected <4>, actual <5>.
 ---
 ---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              |          |                  |
-         |    |              |          |                  false
-         |    |              |          4
-         |    |              test
-         |    null
-         null
+         null null           test       4                  Expected <4>, actual <5>.
 ---
 ---
 assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
          |    |              |          |         |        |
-         |    |              |          |         |        false
-         |    |              |          |         0
-         |    |              |          null
-         |    |              null
-         |    null
-         null
+         null null           null       null      0        Expected <0>, actual <5>.
 ---
 ---
 assert((str?.lowercase()?.length ?: 0) == 5)
         |    |            |            |
-        |    |            |            false
-        |    |            4
-        |    test
-        TEST
+        TEST test         4            Expected <4>, actual <5>.
 ---
 ---
 assert((str?.lowercase()?.length ?: 0) == 5)
         |    |            |            |
-        |    |            |            false
-        |    |            null
-        |    null
-        null
+        null null         null         Expected <0>, actual <5>.
 ---

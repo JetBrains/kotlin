@@ -1,14 +1,7 @@
 ---
 assert((text.length == 5 && text.lowercase() == text) || text.length == 1)
         |    |      |       |    |           |  |        |    |      |
-        |    |      |       |    |           |  |        |    |      false
-        |    |      |       |    |           |  |        |    5
-        |    |      |       |    |           |  |        Hello
-        |    |      |       |    |           |  Hello
-        |    |      |       |    |           false
-        |    |      |       |    hello
-        |    |      |       Hello
-        |    |      true
-        |    5
-        Hello
+        |    5      true    |    hello       |  Hello    |    5      Expected <5>, actual <1>.
+        Hello               Hello            |           Hello
+                                             Expected <hello>, actual <Hello>.
 ---

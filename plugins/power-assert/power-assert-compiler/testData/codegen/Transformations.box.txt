@@ -2,7 +2,7 @@
 assert(hello.reversed() == emptyList<String>())
        |     |          |  |
        |     |          |  []
-       |     |          false
+       |     |          Expected <[World, Hello]>, actual <[]>.
        |     [World, Hello]
        [Hello, World]
 ---

@@ -27,6 +27,5 @@ assert("Hello, world!"/*!is*/!is/*!is*/String)
 ---
 assert(("Hello, world!" !is String) !is Boolean)
                         |           |
-                        |           false
-                        false
+                        false       false
 ---

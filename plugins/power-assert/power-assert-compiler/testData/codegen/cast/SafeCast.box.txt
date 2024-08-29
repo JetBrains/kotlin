@@ -1,22 +1,16 @@
 ---
 assert((a as? String)?.length == 5)
         | |            |      |
-        | |            |      false
-        | |            4
-        | test
+        | test         4      Expected <4>, actual <5>.
         test
 ---
 ---
 assert((a as? String)?.length == 5)
         | |            |      |
-        | |            |      false
-        | |            null
-        | null
-        1
+        1 null         null   Expected <null>, actual <5>.
 ---
 ---
 requireNotNull(a as? String)
                | |
-               | null
-               1
+               1 null
 ---

@@ -1,0 +1,15 @@
+---
+assertEquals("Hello".length, "World".substring(1, 4).length)
+                     |               |               |
+                     5               orl             3
+---
+---
+assertEquals("Hello".length, "World".substring(1, 4).length, message = "Values are not equal!")
+                     |               |               |
+                     5               orl             3
+---
+---
+assertEquals("Hello".length, "World".substring(1, 4).length, message)
+                     |               |               |
+                     5               orl             3
+---

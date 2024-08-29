@@ -68,18 +68,18 @@ fun Asserter.extensionAssert(condition: Boolean, msg: Any? = null) {
 
 fun test1() {
   { // BLOCK
-    val tmp_1: Int = "test".<get-length>()
-    val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
-    Asserter.dispatchAssert(condition = tmp_2, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp_2 + "\n                               " + tmp_1 + "\n")
+    val tmp0_Explain: Int = "test".<get-length>()
+    val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+    Asserter.dispatchAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 770, source = "    Asserter.dispatchAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 28, endOffset = 46, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 28, endOffset = 41, displayOffset = 35, value = tmp0_Explain), EqualityExpression(startOffset = 28, endOffset = 46, displayOffset = 42, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
   }
 }
 
 fun test2() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_3: Int = "test".<get-length>()
-      val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
-      $this$with.dispatchAssert(condition = tmp_4, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      $this$with.dispatchAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 856, source = "        dispatchAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 23, endOffset = 41, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 23, endOffset = 36, displayOffset = 30, value = tmp0_Explain), EqualityExpression(startOffset = 23, endOffset = 41, displayOffset = 37, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )
@@ -87,18 +87,18 @@ fun test2() {
 
 fun test3() {
   { // BLOCK
-    val tmp_5: Int = "test".<get-length>()
-    val tmp_6: Boolean = EQEQ(arg0 = tmp_5, arg1 = 5)
-    Asserter.extensionAssert(condition = tmp_6, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp_6 + "\n                                " + tmp_5 + "\n")
+    val tmp0_Explain: Int = "test".<get-length>()
+    val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+    Asserter.extensionAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 922, source = "    Asserter.extensionAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 29, endOffset = 47, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 29, endOffset = 42, displayOffset = 36, value = tmp0_Explain), EqualityExpression(startOffset = 29, endOffset = 47, displayOffset = 43, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
   }
 }
 
 fun test4() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_7: Int = "test".<get-length>()
-      val tmp_8: Boolean = EQEQ(arg0 = tmp_7, arg1 = 5)
-      $this$with.extensionAssert(condition = tmp_8, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp_8 + "\n                       " + tmp_7 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      $this$with.extensionAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 1009, source = "        extensionAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 24, endOffset = 42, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 24, endOffset = 37, displayOffset = 31, value = tmp0_Explain), EqualityExpression(startOffset = 24, endOffset = 42, displayOffset = 38, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )
@@ -107,9 +107,9 @@ fun test4() {
 fun test5() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_9: Int = "test".<get-length>()
-      val tmp_10: Boolean = EQEQ(arg0 = tmp_9, arg1 = 5)
-      ($this$with, Asserter).memberExtensionAssert(condition = tmp_10, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp_10 + "\n                                      " + tmp_9 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      ($this$with, Asserter).memberExtensionAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 1097, source = "        Asserter.memberExtensionAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 39, endOffset = 57, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 39, endOffset = 52, displayOffset = 46, value = tmp0_Explain), EqualityExpression(startOffset = 39, endOffset = 57, displayOffset = 53, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )
@@ -118,9 +118,9 @@ fun test5() {
 fun test6() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_11: Int = "test".<get-length>()
-      val tmp_12: Boolean = EQEQ(arg0 = tmp_11, arg1 = 5)
-      ($this$with, $this$with).memberExtensionAssert(condition = tmp_12, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp_12 + "\n                             " + tmp_11 + "\n")
+      val tmp0_Explain: Int = "test".<get-length>()
+      val tmp1_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = 5)
+      ($this$with, $this$with).memberExtensionAssert(condition = tmp1_Explain, msg = "\n" + CallExplanation(offset = 1200, source = "        memberExtensionAssert(\"test\".length == 5)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "condition", second = ValueArgument(startOffset = 30, endOffset = 48, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 30, endOffset = 43, displayOffset = 37, value = tmp0_Explain), EqualityExpression(startOffset = 30, endOffset = 48, displayOffset = 44, value = tmp1_Explain, lhs = tmp0_Explain, rhs = 5)])))])).toDefaultMessage())
     }
   }
 )

@@ -1,6 +1,5 @@
 ---
 assert(2 / 1 == 4)
          |   |
-         |   false
-         2
+         2   Expected <2>, actual <4>.
 ---

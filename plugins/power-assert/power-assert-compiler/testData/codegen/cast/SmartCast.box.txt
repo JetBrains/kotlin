@@ -1,9 +1,5 @@
 ---
 assert(greeting is String && greeting.length == 2)
        |        |            |        |      |
-       |        |            |        |      false
-       |        |            |        5
-       |        |            hello
-       |        true
-       hello
+       hello    true         hello    5      Expected <5>, actual <2>.
 ---

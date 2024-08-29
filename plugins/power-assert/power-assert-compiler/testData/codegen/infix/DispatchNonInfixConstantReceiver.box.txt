@@ -1,6 +1,5 @@
 ---
 Wrapper(1).mustEqual(2 + 4)
 |                      |
-|                      6
-Wrapper
+Wrapper                6
 ---

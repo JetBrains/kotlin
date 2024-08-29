@@ -62,6 +62,10 @@ data class SourceFile(
         return irFile.fileEntry.getSourceRangeInfo(range.first, range.last)
     }
 
+    fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
+        return irFile.fileEntry.getSourceRangeInfo(beginOffset, endOffset)
+    }
+
     fun getText(info: SourceRangeInfo): String {
         return getText(info.startOffset, info.endOffset)
     }

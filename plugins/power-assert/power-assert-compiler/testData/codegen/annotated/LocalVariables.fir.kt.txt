@@ -1,0 +1,72 @@
+fun box(): String {
+  return test1().plus(other = test2())
+}
+
+fun test1(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    val tmp0_worldExplanation: VariableExplanation
+    val tmp1_expectedExplanation: VariableExplanation
+    val tmp2_actualExplanation: VariableExplanation
+    @Explain
+    val hello: String = "Hello"
+    @Explain
+    val world: String = { // BLOCK
+      val tmp0_Explain: String = "World".substring(startIndex = 1, endIndex = 4)
+      tmp0_worldExplanation = VariableExplanation(offset = 176, source = "    @Explain val world = \"World\".substring(1, 4)", name = "world", initializer = Initializer(startOffset = 25, endOffset = 48, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 25, endOffset = 48, displayOffset = 33, value = tmp0_Explain)])))
+      tmp0_Explain
+    }
+    @Explain
+    val expected: Int = { // BLOCK
+      val tmp0_Explain: String = hello
+      val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+      tmp1_expectedExplanation = VariableExplanation(offset = 226, source = "    @Explain\n    val expected =\n        hello.length", name = "expected", initializer = Initializer(startOffset = 40, endOffset = 52, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 40, endOffset = 45, displayOffset = 40, value = tmp0_Explain), ValueExpression(startOffset = 40, endOffset = 52, displayOffset = 46, value = tmp1_Explain)])))
+      tmp1_Explain
+    }
+    @Explain
+    val actual: Int = { // BLOCK
+      val tmp0_Explain: Int = world.<get-length>()
+      tmp2_actualExplanation = VariableExplanation(offset = 279, source = "    @Explain val actual = world.length", name = "actual", initializer = Initializer(startOffset = 26, endOffset = 38, expressions = listOf</* null */>(elements = [VariableAccessExpression(startOffset = 26, endOffset = 31, displayOffset = 26, value = world, explanation = tmp0_worldExplanation), ValueExpression(startOffset = 26, endOffset = 38, displayOffset = 32, value = tmp0_Explain)])))
+      tmp0_Explain
+    }
+    { // BLOCK
+      val tmp0_Explain: Boolean = EQEQ(arg0 = expected, arg1 = actual)
+      assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\n" + CallExplanation(offset = 318, source = "    assert(expected == actual)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 11, endOffset = 29, expressions = listOf</* null */>(elements = [VariableAccessExpression(startOffset = 11, endOffset = 19, displayOffset = 11, value = expected, explanation = tmp1_expectedExplanation), VariableAccessExpression(startOffset = 23, endOffset = 29, displayOffset = 23, value = actual, explanation = tmp2_actualExplanation), EqualityExpression(startOffset = 11, endOffset = 29, displayOffset = 20, value = tmp0_Explain, lhs = expected, rhs = actual)])))])).toDefaultMessage()
+      }
+)
+    }
+  }
+)
+}
+
+fun test2(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    test2_run()
+  }
+)
+}
+
+@Explain
+fun test2_run() {
+  val tmp0_expectedExplanation: VariableExplanation
+  val tmp1_actualExplanation: VariableExplanation
+  val expected: Int = { // BLOCK
+    val tmp0_Explain: Int = "Hello".<get-length>()
+    tmp0_expectedExplanation = VariableExplanation(offset = 437, source = "    val expected = \"Hello\".length", name = "expected", initializer = Initializer(startOffset = 19, endOffset = 33, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 19, endOffset = 33, displayOffset = 27, value = tmp0_Explain)])))
+    tmp0_Explain
+  }
+  val actual: Int = { // BLOCK
+    val tmp0_Explain: String = "World".substring(startIndex = 1, endIndex = 4)
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    tmp1_actualExplanation = VariableExplanation(offset = 471, source = "    val actual = \"World\".substring(1, 4).length", name = "actual", initializer = Initializer(startOffset = 17, endOffset = 47, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 17, endOffset = 40, displayOffset = 25, value = tmp0_Explain), ValueExpression(startOffset = 17, endOffset = 47, displayOffset = 41, value = tmp1_Explain)])))
+    tmp1_Explain
+  }
+  { // BLOCK
+    val tmp0_Explain: Boolean = EQEQ(arg0 = expected, arg1 = actual)
+    assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
+      return "\n" + CallExplanation(offset = 519, source = "    assert(expected == actual)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "value", second = ValueArgument(startOffset = 11, endOffset = 29, expressions = listOf</* null */>(elements = [VariableAccessExpression(startOffset = 11, endOffset = 19, displayOffset = 11, value = expected, explanation = tmp0_expectedExplanation), VariableAccessExpression(startOffset = 23, endOffset = 29, displayOffset = 23, value = actual, explanation = tmp1_actualExplanation), EqualityExpression(startOffset = 11, endOffset = 29, displayOffset = 20, value = tmp0_Explain, lhs = expected, rhs = actual)])))])).toDefaultMessage()
+    }
+)
+  }
+}
+

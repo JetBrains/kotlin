@@ -31,24 +31,22 @@ import org.jetbrains.kotlin.powerassert.isImplicitArgument
 import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
 import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
-abstract class Node {
+sealed class Node {
     private val _children = mutableListOf<Node>()
     val children: List<Node> get() = _children
 
     fun addChild(node: Node) {
         _children.add(node)
     }
+}
 
-    fun dump(): String = buildString {
-        dump(this, 0)
-    }
+class RootNode<T>(
+    val parameter: T,
+) : Node() {
+    override fun toString() = "RootNode"
 
-    private fun dump(builder: StringBuilder, indent: Int) {
-        builder.append("  ".repeat(indent)).append(this).appendLine()
-        for (child in children) {
-            child.dump(builder, indent + 1)
-        }
-    }
+    val child: Node?
+        get() = children.singleOrNull()?.takeIf { it !is ConstantNode }
 }
 
 class ConstantNode(
@@ -80,20 +78,18 @@ class ElvisNode(
     override fun toString() = "ElvisNode(${expression.dumpKotlinLike()})"
 }
 
-fun buildTree(
+fun <T> buildTree(
     constTracker: EvaluatedConstTracker?,
     sourceFile: SourceFile,
-    expression: IrExpression,
-): Node? {
-    class RootNode : Node() {
-        override fun toString() = "RootNode"
-    }
+    parameter: T,
+    expression: IrExpression?,
+): RootNode<T> {
+    val tree = RootNode(parameter)
 
     fun IrConst.isEvaluatedConst(): Boolean =
         constTracker?.load(startOffset, endOffset, sourceFile.irFile.nameWithPackage) != null
 
-    val tree = RootNode()
-    expression.accept(
+    expression?.accept(
         object : IrVisitor<Unit, Node>() {
             override fun visitElement(element: IrElement, data: Node) {
                 element.acceptChildren(this, data)
@@ -244,5 +240,5 @@ fun buildTree(
         tree,
     )
 
-    return tree.children.singleOrNull()?.takeIf { it !is ConstantNode }
+    return tree
 }

@@ -7,34 +7,29 @@ assert(x)
 ---
 assert(1 == 2)
          |
-         false
+         Expected <1>, actual <2>.
 ---
 ---
 assert(y == 2)
        | |
-       | false
-       1
+       1 Expected <1>, actual <2>.
 ---
 ---
 assert(("Hello" + ", " + "World").length == 0)
                 |      |          |      |
-                |      |          |      false
-                |      |          12
+                |      |          12     Expected <12>, actual <0>.
                 |      Hello, World
                 Hello,
 ---
 ---
 assert("$GREETING, World".length == 0)
        | |                |      |
-       | |                |      false
-       | |                12
-       | Hello
+       | Hello            12     Expected <12>, actual <0>.
        Hello, World
 ---
 ---
 assert(WELCOME.length == 0)
        |       |      |
-       |       |      false
-       |       12
+       |       12     Expected <12>, actual <0>.
        Hello, World
 ---

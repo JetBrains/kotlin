@@ -1,7 +1,5 @@
 ---
 assert(object { override fun toString() = "ANONYMOUS" }.toString() == "toString()")
        |                                                |          |
-       |                                                |          false
-       |                                                ANONYMOUS
-       ANONYMOUS
+       ANONYMOUS                                        ANONYMOUS  Expected <ANONYMOUS>, actual <toString()>.
 ---

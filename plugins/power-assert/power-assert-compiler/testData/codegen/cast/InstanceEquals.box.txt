@@ -6,8 +6,7 @@ assert(null is String)
 ---
 assert(!(" is " is String))
        |        |
-       |        true
-       false
+       false    true
 ---
 ---
 assert(!(
@@ -31,7 +30,5 @@ assert(null/*is*/is/*is*/String)
 ---
 assert(!((null is String) is Boolean))
        |       |          |
-       |       |          true
-       |       false
-       false
+       false   false      true
 ---

@@ -1,6 +1,5 @@
 ---
 assert(listOf("Hello", "World").contains("Name"))
        |                        |
-       |                        false
-       [Hello, World]
+       [Hello, World]           false
 ---

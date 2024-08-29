@@ -74,6 +74,40 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
   }
 
   @Nested
+  @TestMetadata("plugins/power-assert/power-assert-compiler/testData/codegen/annotated")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotated {
+    @Test
+    public void testAllFilesPresentInAnnotated() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/power-assert-compiler/testData/codegen/annotated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("Explain.kt")
+    public void testExplain() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/Explain.kt");
+    }
+
+    @Test
+    @TestMetadata("IgnoreParameter.kt")
+    public void testIgnoreParameter() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/IgnoreParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("LocalVariables.kt")
+    public void testLocalVariables() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/LocalVariables.kt");
+    }
+
+    @Test
+    @TestMetadata("modules.kt")
+    public void testModules() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/annotated/modules.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/power-assert/power-assert-compiler/testData/codegen/arithmetic")
   @TestDataPath("$PROJECT_ROOT")
   public class Arithmetic {
@@ -740,6 +774,12 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     @TestMetadata("ContextReceivers.kt")
     public void testContextReceivers() {
       runTest("plugins/power-assert/power-assert-compiler/testData/codegen/parameters/ContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("FluentBuilder.kt")
+    public void testFluentBuilder() {
+      runTest("plugins/power-assert/power-assert-compiler/testData/codegen/parameters/FluentBuilder.kt");
     }
 
     @Test

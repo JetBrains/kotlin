@@ -1,0 +1,79 @@
+@JvmSynthetic
+fun assertEquals$explained(expected: Any?, actual: Any?, @ExplainIgnore message: String? = null, $explanation: CallExplanation) {
+  when {
+    EQEQ(arg0 = actual, arg1 = expected).not() -> { // BLOCK
+      val diagram: CallExplanation = { // BLOCK
+        val tmp_0: CallExplanation? = $explanation
+        when {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> error(message = "no power-assert")
+          else -> tmp_0
+        }
+      }
+      throw AssertionError(p0 = "\n".plus(other = diagram.toDefaultMessage()))
+    }
+  }
+}
+
+@ExplainCall
+fun assertEquals(expected: Any?, actual: Any?, @ExplainIgnore message: String? = null) {
+  when {
+    EQEQ(arg0 = actual, arg1 = expected).not() -> { // BLOCK
+      val diagram: CallExplanation = { // BLOCK
+        val tmp_1: CallExplanation? = null
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = null) -> error(message = "no power-assert")
+          else -> tmp_1
+        }
+      }
+      throw AssertionError(p0 = "\n".plus(other = diagram.toDefaultMessage()))
+    }
+  }
+}
+
+fun box(): String {
+  return test1().plus(other = test2()).plus(other = test3())
+}
+
+fun test1(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = "Hello".<get-length>()
+      { // BLOCK
+        val tmp1_Explain: String = "World".substring(startIndex = 1, endIndex = 4)
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        assertEquals$explained(expected = tmp0_Explain, actual = tmp2_Explain, $explanation = CallExplanation(offset = 444, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "expected", second = ValueArgument(startOffset = 17, endOffset = 31, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp0_Explain)]))), Pair</* null */, /* null */>(first = "actual", second = ValueArgument(startOffset = 33, endOffset = 63, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp1_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp2_Explain)])))])))
+      }
+    }
+  }
+)
+}
+
+fun test2(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = "Hello".<get-length>()
+      { // BLOCK
+        val tmp1_Explain: String = "World".substring(startIndex = 1, endIndex = 4)
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        assertEquals$explained(expected = tmp0_Explain, actual = tmp2_Explain, message = "Values are not equal!", $explanation = CallExplanation(offset = 551, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length, message = \"Values are not equal!\")", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "expected", second = ValueArgument(startOffset = 17, endOffset = 31, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp0_Explain)]))), Pair</* null */, /* null */>(first = "actual", second = ValueArgument(startOffset = 33, endOffset = 63, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp1_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp2_Explain)])))])))
+      }
+    }
+  }
+)
+}
+
+fun test3(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    val message: String = "Values are not equal!"
+    { // BLOCK
+      val tmp0_Explain: Int = "Hello".<get-length>()
+      { // BLOCK
+        val tmp1_Explain: String = "World".substring(startIndex = 1, endIndex = 4)
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        assertEquals$explained(expected = tmp0_Explain, actual = tmp2_Explain, message = message, $explanation = CallExplanation(offset = 735, source = "    assertEquals(\"Hello\".length, \"World\".substring(1, 4).length, message)", dispatchReceiver = null, extensionReceiver = null, valueArguments = mapOf</* null */, /* null */>(pairs = [Pair</* null */, /* null */>(first = "expected", second = ValueArgument(startOffset = 17, endOffset = 31, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 17, endOffset = 31, displayOffset = 25, value = tmp0_Explain)]))), Pair</* null */, /* null */>(first = "actual", second = ValueArgument(startOffset = 33, endOffset = 63, expressions = listOf</* null */>(elements = [ValueExpression(startOffset = 33, endOffset = 56, displayOffset = 41, value = tmp1_Explain), ValueExpression(startOffset = 33, endOffset = 63, displayOffset = 57, value = tmp2_Explain)])))])))
+      }
+    }
+  }
+)
+}
+
