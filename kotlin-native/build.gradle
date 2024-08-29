@@ -72,7 +72,6 @@ def targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.v
 def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 configurations {
-    ftpAntTask
     distPack
     commonSources
 
@@ -111,7 +110,6 @@ configurations {
 apply plugin: CompilationDatabasePlugin
 
 dependencies {
-    ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
     distPack project(':kotlin-native:Interop:Skia')
     distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
