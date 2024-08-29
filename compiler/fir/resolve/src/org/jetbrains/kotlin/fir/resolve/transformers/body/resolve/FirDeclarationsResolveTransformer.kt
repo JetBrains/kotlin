@@ -290,7 +290,7 @@ open class FirDeclarationsResolveTransformer(
                             else -> dispatchType
                         } ?: argument
                     }.toTypedArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 ).also {
                     session.lookupTracker?.recordTypeResolveAsLookup(
                         it,

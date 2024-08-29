@@ -54,10 +54,10 @@ fun FirRegularClassBuilder.generateValuesFunction(
                     ConeClassLikeTypeImpl(
                         this@generateValuesFunction.symbol.toLookupTag(),
                         ConeTypeProjection.EMPTY_ARRAY,
-                        isNullable = false
+                        isMarkedNullable = false
                     )
                 ),
-                isNullable = false
+                isMarkedNullable = false
             )
         }
         this.returnTypeRef = returnTypeRef
@@ -93,7 +93,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             coneType = ConeClassLikeTypeImpl(
                 this@generateValueOfFunction.symbol.toLookupTag(),
                 emptyArray(),
-                isNullable = false
+                isMarkedNullable = false
             )
         }
         this.returnTypeRef = returnTypeRef
@@ -114,7 +114,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
                 coneType = ConeClassLikeTypeImpl(
                     StandardClassIds.String.toLookupTag(),
                     emptyArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
             name = DEFAULT_VALUE_PARAMETER
@@ -152,9 +152,9 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             coneType = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 ),
-                isNullable = false
+                isMarkedNullable = false
             )
         }
         name = ENUM_ENTRIES

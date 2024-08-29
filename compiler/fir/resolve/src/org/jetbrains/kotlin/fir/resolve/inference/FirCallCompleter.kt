@@ -285,7 +285,7 @@ class FirCallCompleter(
         val expectedType = ConeClassLikeTypeImpl(
             functionalType.lookupTag,
             Array(size) { index -> if (index != size - 1) functionalType.typeArguments[index] else returnVariable.defaultType },
-            isNullable = functionalType.isNullable,
+            isMarkedNullable = functionalType.isNullable,
             functionalType.attributes
         )
         csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition(atom.anonymousFunction))

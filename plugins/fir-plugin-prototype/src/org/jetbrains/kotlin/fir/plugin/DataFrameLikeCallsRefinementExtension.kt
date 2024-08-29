@@ -93,7 +93,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 coneType = ConeClassLikeTypeImpl(
                     ConeClassLookupTagWithFixedSymbol(schemaId, schemaSymbol),
                     emptyArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
         }
@@ -105,10 +105,10 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     ConeClassLikeTypeImpl(
                         ConeClassLookupTagWithFixedSymbol(refinedTypeId, refinedTypeSymbol),
                         emptyArray(),
-                        isNullable = false
+                        isMarkedNullable = false
                     )
                 ),
-                isNullable = false
+                isMarkedNullable = false
             )
         }
         return CallReturnType(typeRef) { functionSymbol ->
@@ -199,7 +199,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     coneType = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
                         typeArguments = arrayOf(receiverType, returnType),
-                        isNullable = false
+                        isMarkedNullable = false
                     )
                 }
                 invocationKind = EventOccurrencesRange.EXACTLY_ONCE

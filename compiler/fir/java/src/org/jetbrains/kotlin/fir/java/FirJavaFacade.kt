@@ -281,7 +281,7 @@ abstract class FirJavaFacade(
             if (superTypeRefs.isEmpty()) {
                 superTypeRefs.add(
                     buildResolvedTypeRef {
-                        coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false)
+                        coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = false)
                     }
                 )
             }
@@ -713,9 +713,9 @@ abstract class FirJavaFacade(
 
     private fun FirJavaClassBuilder.buildSelfTypeRef(): ConeKotlinType = symbol.constructType(
         typeParameters.map {
-            ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false)
+            ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false)
         }.toTypedArray(),
-        isNullable = false,
+        isMarkedNullable = false,
     )
 
     private fun FqName.topLevelName() =

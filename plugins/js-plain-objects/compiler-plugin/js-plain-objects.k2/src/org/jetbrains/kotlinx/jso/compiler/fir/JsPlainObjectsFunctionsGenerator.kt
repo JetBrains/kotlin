@@ -240,7 +240,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                         containingDeclarationSymbol = functionalSymbol
                     }
                     typeParameterSubstitutionMap[it] = ConeTypeParameterTypeImpl(
-                        typeParameter.symbol.toLookupTag(), isNullable = false
+                        typeParameter.symbol.toLookupTag(), isMarkedNullable = false
                     )
                     typeParameter
                 }

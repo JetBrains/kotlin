@@ -281,7 +281,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClas
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
         returnTypeRef = buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = emptyArray(), isNullable = false)
+            coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = emptyArray(), isMarkedNullable = false)
         }
 
         status = FirResolvedDeclarationStatusImpl(

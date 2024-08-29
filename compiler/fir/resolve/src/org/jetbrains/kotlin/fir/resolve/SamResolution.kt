@@ -155,7 +155,7 @@ class FirSamResolver(
 
         val newTypeParameterTypes =
             newTypeParameters
-                .map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }
+                .map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
 
         val substitutor = substitutorByMap(
             firRegularClass.typeParameters
@@ -194,7 +194,7 @@ class FirSamResolver(
             val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
             val substitutedReturnType =
                 ConeClassLikeTypeImpl(
-                    firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false,
+                    firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isMarkedNullable = false,
                 )
 
             returnTypeRef = buildResolvedTypeRef {

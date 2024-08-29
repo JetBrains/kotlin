@@ -73,7 +73,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
                 val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
                 val serializerConeType = resolveConeTypeFromArgument(getClassArgument, typeResolver)
 
-                listOf(kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isNullable = false))
+                listOf(kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isMarkedNullable = false))
             }
             isSerializableObjectAndNeedsFactory(classLikeDeclaration) || isCompanionAndNeedsFactory(classLikeDeclaration) -> {
                 val serializerFactoryClassId = ClassId(

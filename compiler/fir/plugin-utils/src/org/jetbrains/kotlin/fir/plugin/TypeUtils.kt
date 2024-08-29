@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -22,7 +21,7 @@ public fun ClassId.createConeType(
 
     return when {
         symbol != null -> when {
-            typeArguments.isEmpty() -> symbol.constructStarProjectedType(isNullable = nullable)
+            typeArguments.isEmpty() -> symbol.constructStarProjectedType(isMarkedNullable = nullable)
             else -> symbol.constructType(typeArguments, nullable)
         }
         else -> ConeClassLikeTypeImpl(

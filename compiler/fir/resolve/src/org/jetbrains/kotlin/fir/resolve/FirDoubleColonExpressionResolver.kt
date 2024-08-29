@@ -176,7 +176,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
                     }
                 }
             },
-            isNullable = resolvedExpression.isNullableLHSForCallableReference
+            isMarkedNullable = resolvedExpression.isNullableLHSForCallableReference
         )
 
         return DoubleColonLHS.Type(type)

@@ -95,7 +95,7 @@ class BuilderGenerator(session: FirSession) : FirDeclarationGenerationExtension(
         val builderClassName = builder.builderClassName.replace("*", classId.shortClassName.asString())
         val builderClassId = classId.createNestedClassId(Name.identifier(builderClassName))
 
-        val builderType = builderClassId.constructClassLikeType(emptyArray(), isNullable = false)
+        val builderType = builderClassId.constructClassLikeType(emptyArray(), isMarkedNullable = false)
         val visibility = builder.visibility.toVisibility()
         functions += classSymbol.createJavaMethod(
             Name.identifier(builder.builderMethodName),

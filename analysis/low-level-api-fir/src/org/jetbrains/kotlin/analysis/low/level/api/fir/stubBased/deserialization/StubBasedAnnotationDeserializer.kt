@@ -79,7 +79,7 @@ class StubBasedAnnotationDeserializer(
         return buildAnnotation {
             source = KtRealPsiSourceElement(ktAnnotation)
             annotationTypeRef = buildResolvedTypeRef {
-                coneType = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                coneType = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
             }
             this.argumentMapping = buildAnnotationArgumentMapping {
                 valueArguments?.forEach { (name, constantValue) ->
@@ -101,7 +101,7 @@ class StubBasedAnnotationDeserializer(
             is KClassValue -> buildGetClassCall {
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
-                val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
@@ -174,11 +174,11 @@ class StubBasedAnnotationDeserializer(
                 is FloatValue -> session.builtinTypes.floatType.coneType
                 is AnnotationValue -> session.builtinTypes.annotationType.coneType
                 is StringValue -> session.builtinTypes.stringType.coneType
-                is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
                     val kClassType = session.builtinTypes.anyType.coneType
-                    StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isNullable = false)
+                    StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isMarkedNullable = false)
                 }
                 else -> null
             }

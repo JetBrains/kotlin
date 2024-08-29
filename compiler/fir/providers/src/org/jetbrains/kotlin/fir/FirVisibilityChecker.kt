@@ -307,7 +307,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 dispatchReceiver.resolvedType.findClassRepresentation(
                     dispatchReceiverParameterClassLookupTag.constructClassType(
                         Array(dispatchReceiverParameterClassSymbol.fir.typeParameters.size) { ConeStarProjection },
-                        isNullable = true
+                        isMarkedNullable = true
                     ),
                     session,
                 )

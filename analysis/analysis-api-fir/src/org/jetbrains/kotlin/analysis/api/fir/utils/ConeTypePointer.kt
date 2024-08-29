@@ -96,7 +96,7 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
         return ConeClassLikeTypeImpl(
             lookupTag = lookupTag,
             typeArguments = typeArguments.toTypedArray(),
-            isNullable = isNullable,
+            isMarkedNullable = isNullable,
             attributes = ConeAttributes.create(attributes)
         )
     }

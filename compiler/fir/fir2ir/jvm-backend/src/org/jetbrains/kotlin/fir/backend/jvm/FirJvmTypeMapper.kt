@@ -46,7 +46,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
     companion object {
         val NON_EXISTENT_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
-        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
     }
 
     fun mapType(
@@ -254,7 +254,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.defaultType(): ConeSimpleKotlinType {
         require(this is ConeClassifierLookupTag)
         return when (this) {
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable = false)
+            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable = false)
             is ConeClassLikeLookupTag -> {
                 val symbol = toClassSymbol(session)
                     ?: return ConeErrorType(ConeUnresolvedSymbolError(classId))

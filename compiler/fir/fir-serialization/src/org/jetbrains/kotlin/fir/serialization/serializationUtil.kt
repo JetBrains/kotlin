@@ -47,9 +47,9 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
         functionTypeId.toLookupTag(),
         typeArguments = (typeArguments.dropLast(1) + continuationClassId.toLookupTag().constructClassType(
             arrayOf(lastTypeArgument),
-            isNullable = false
+            isMarkedNullable = false
         ) + session.builtinTypes.nullableAnyType.coneType).toTypedArray(),
-        isNullable = fullyExpandedType.isNullable,
+        isMarkedNullable = fullyExpandedType.isNullable,
         attributes = fullyExpandedType.attributes
     )
 }

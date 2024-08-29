@@ -45,7 +45,7 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
             coneType = ConeClassLikeTypeImpl(
                 JAVA_IO_SERIALIZABLE.toLookupTag(),
                 typeArguments = ConeTypeProjection.EMPTY_ARRAY,
-                isNullable = false
+                isMarkedNullable = false
             )
         }
     }

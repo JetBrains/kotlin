@@ -305,7 +305,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val lookupTag = classifier.toLookupTag()
                     lookupTag.constructType(
                         this.arguments.map { it.toConeTypeProjection() }.toTypedArray(),
-                        isNullable = this.isMarkedNullable()
+                        isMarkedNullable = this.isMarkedNullable()
                     )
                 }
                 is IrDynamicType -> ConeDynamicType.create(session)
@@ -345,7 +345,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         return buildAnnotation {
             annotationTypeRef = annotationClassId
                 .toLookupTag()
-                .constructClassType(typeArguments = emptyArray(), isNullable = false)
+                .constructClassType(typeArguments = emptyArray(), isMarkedNullable = false)
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
                 for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {

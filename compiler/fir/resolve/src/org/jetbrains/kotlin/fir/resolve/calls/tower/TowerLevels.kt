@@ -442,7 +442,7 @@ internal class ScopeTowerLevel(
         val declarationReceiverType = candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
         val startProjectedDeclarationReceiverType = declarationReceiverType.lookupTag.constructClassType(
             declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
-            isNullable = true
+            isMarkedNullable = true
         )
 
         return givenExtensionReceiverOptions.none { extensionReceiver ->

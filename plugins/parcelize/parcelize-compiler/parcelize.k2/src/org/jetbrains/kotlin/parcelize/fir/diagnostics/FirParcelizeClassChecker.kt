@@ -82,7 +82,7 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
             val parcelableType = ConeClassLikeTypeImpl(
                 PARCELABLE_ID.toLookupTag(),
                 ConeTypeProjection.EMPTY_ARRAY,
-                isNullable = false
+                isMarkedNullable = false
             )
             if (superType.isSubtypeOf(parcelableType, context.session)) {
                 reporter.reportOn(superTypeRef.source, KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED, context)

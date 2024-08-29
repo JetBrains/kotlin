@@ -67,9 +67,9 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
         val defaultType = subtypeLookupTag.constructClassType(
             (subtypeFirClass as? FirTypeParameterRefsOwner)?.typeParameters?.map {
-                it.symbol.toLookupTag().constructType(emptyArray(), isNullable = false)
+                it.symbol.toLookupTag().constructType(emptyArray(), isMarkedNullable = false)
             }?.toTypedArray().orEmpty(),
-            isNullable = false
+            isMarkedNullable = false
         )
 
         if (state.anySupertype(

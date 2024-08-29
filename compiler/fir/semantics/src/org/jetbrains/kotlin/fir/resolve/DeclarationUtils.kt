@@ -130,6 +130,6 @@ inline fun outerType(
 
     return containingSymbol.constructType(
         fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
-        isNullable = false
+        isMarkedNullable = false
     )
 }

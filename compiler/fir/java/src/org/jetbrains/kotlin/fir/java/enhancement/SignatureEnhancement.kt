@@ -485,7 +485,7 @@ class FirSignatureEnhancement(
             } else typeParameter
             if (typeParameter is FirTypeParameter) {
                 typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
-                    newTypeParameter.symbol.toLookupTag(), isNullable = false
+                    newTypeParameter.symbol.toLookupTag(), isMarkedNullable = false
                 )
             }
             @Suppress("UNCHECKED_CAST")
@@ -729,9 +729,9 @@ class FirSignatureEnhancement(
         val typeParameterCount = typeParameters.size
         val parametersAsTypeProjections = when {
             typeParameterCount == supertypeParameterCount ->
-                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false) }
+                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
             typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
-                val projection = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isNullable = false)
+                val projection = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
                 (1..supertypeParameterCount).map { projection }
             }
             else -> return null
@@ -739,7 +739,7 @@ class FirSignatureEnhancement(
         return ConeClassLikeTypeImpl(
             purelyImplementedClassId.toLookupTag(),
             parametersAsTypeProjections.toTypedArray(),
-            isNullable = false
+            isMarkedNullable = false
         )
     }
 

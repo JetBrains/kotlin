@@ -187,7 +187,7 @@ fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true)
         StandardClassIds.elementTypeByUnsignedArrayType[classId]
     }
     if (elementType != null) {
-        return elementType.constructClassLikeType(emptyArray(), isNullable = false)
+        return elementType.constructClassLikeType(emptyArray(), isMarkedNullable = false)
     }
 
     return null

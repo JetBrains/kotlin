@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -46,7 +45,7 @@ fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression
         }
 
         val enumClassLookupTag = enumClassId.toLookupTag()
-        val enumClassType = ConeClassLikeTypeImpl(enumClassLookupTag, ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+        val enumClassType = ConeClassLikeTypeImpl(enumClassLookupTag, ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
         coneTypeOrNull = enumClassType
 
         val receiver = buildResolvedQualifier {

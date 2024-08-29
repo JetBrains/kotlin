@@ -54,7 +54,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
                 coneType = ConeClassLikeTypeImpl(
                     StandardNames.FqNames.parameterNameClassId.toLookupTag(),
                     emptyArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
         argumentMapping = buildAnnotationArgumentMapping {

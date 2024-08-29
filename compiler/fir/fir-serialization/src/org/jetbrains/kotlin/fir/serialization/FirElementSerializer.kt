@@ -1089,7 +1089,7 @@ class FirElementSerializer private constructor(
                 this.coneType = ConeClassLikeTypeImpl(
                     lookupTag,
                     emptyArray(),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
             argumentMapping = FirEmptyAnnotationArgumentMapping
@@ -1105,7 +1105,7 @@ class FirElementSerializer private constructor(
             buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
                     this.coneType = classId.constructClassLikeType(
-                        emptyArray(), isNullable = false
+                        emptyArray(), isMarkedNullable = false
                     )
                 }
                 this.argumentMapping = argumentMapping

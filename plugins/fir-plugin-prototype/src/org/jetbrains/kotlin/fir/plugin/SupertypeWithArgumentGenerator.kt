@@ -52,7 +52,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
 
         val resolvedArgument = typeResolver.resolveUserType(typeToResolve).coneType
 
-        return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isNullable = false))
+        return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isMarkedNullable = false))
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?

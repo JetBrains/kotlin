@@ -48,7 +48,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
             ClassKind.ANNOTATION_CLASS -> return emptyList()
         }
         if (resolvedSupertypes.any { it.coneType.classId == myInterfaceClassId }) return emptyList()
-        return listOf(myInterfaceClassId.constructClassLikeType(emptyArray(), isNullable = false))
+        return listOf(myInterfaceClassId.constructClassLikeType(emptyArray(), isMarkedNullable = false))
     }
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {

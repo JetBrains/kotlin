@@ -138,7 +138,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         coneType = ConeClassLikeTypeImpl(
             StandardClassIds.Array.toLookupTag(),
             arrayOf(dynamicTypeRef.coneType),
-            isNullable = false
+            isMarkedNullable = false
         )
     }
 

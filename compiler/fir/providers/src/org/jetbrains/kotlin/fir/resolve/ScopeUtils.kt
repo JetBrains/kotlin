@@ -157,10 +157,10 @@ fun FirClass.defaultType(): ConeClassLikeType =
         typeParameters.map {
             ConeTypeParameterTypeImpl(
                 it.symbol.toLookupTag(),
-                isNullable = false
+                isMarkedNullable = false
             )
         }.toTypedArray(),
-        isNullable = false
+        isMarkedNullable = false
     )
 
 fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
@@ -169,10 +169,10 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
         parameters.map {
             ConeTypeParameterTypeImpl(
                 it.toLookupTag(),
-                isNullable = false
+                isMarkedNullable = false
             )
         }.toTypedArray(),
-        isNullable = false,
+        isMarkedNullable = false,
     )
 
 val TYPE_PARAMETER_SCOPE_KEY: ScopeSessionKey<FirTypeParameterSymbol, FirTypeScope> = scopeSessionKey()

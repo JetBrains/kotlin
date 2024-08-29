@@ -191,7 +191,7 @@ class JvmMappedScope(
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
                 coneType = firKotlinClass.typeParameters.firstOrNull()
-                    ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }
+                    ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
                     ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
             }
             this.name = name
@@ -423,7 +423,7 @@ class JvmMappedScope(
                 fromClass.typeParameters.zip(toClass.typeParameters).associate { (fromTypeParameter, toTypeParameter) ->
                     fromTypeParameter.symbol to ConeTypeParameterTypeImpl(
                         ConeTypeParameterLookupTag(toTypeParameter.symbol),
-                        isNullable = false
+                        isMarkedNullable = false
                     )
                 },
                 session

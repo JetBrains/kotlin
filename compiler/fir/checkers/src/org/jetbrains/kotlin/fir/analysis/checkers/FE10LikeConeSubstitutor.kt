@@ -44,7 +44,7 @@ internal class FE10LikeConeSubstitutor(
         val projection = substitution[type.lookupTag.symbol] ?: return null
 
         if (projection.isStarProjection) {
-            return StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = true).withProjection(projection)
+            return StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = true).withProjection(projection)
         }
 
         val result = projection.type!!.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)

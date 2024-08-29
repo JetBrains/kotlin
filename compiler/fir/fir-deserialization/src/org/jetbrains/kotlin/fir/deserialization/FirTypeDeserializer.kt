@@ -199,7 +199,7 @@ class FirTypeDeserializer(
     private fun rigidType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeRigidType? {
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) {
-            return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable, attributes).let {
+            return ConeTypeParameterTypeImpl(constructor, isMarkedNullable = proto.nullable, attributes).let {
                 if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
                     ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                 else
@@ -228,12 +228,12 @@ class FirTypeDeserializer(
                         attributes = attributes
                     )
                 }
-                ConeClassLikeTypeImpl(newConstructor, arguments, isNullable = proto.nullable, attributes)
+                ConeClassLikeTypeImpl(newConstructor, arguments, isMarkedNullable = proto.nullable, attributes)
             }
             Flags.SUSPEND_TYPE.get(proto.flags) -> {
                 createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
             }
-            else -> ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
+            else -> ConeClassLikeTypeImpl(constructor, arguments, isMarkedNullable = proto.nullable, attributes)
         }
 
         val abbreviatedType = proto.abbreviatedType(typeTable)?.let { rigidType(it, attributes) }

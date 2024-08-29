@@ -114,7 +114,7 @@ inline fun buildVarargArgumentsExpressionWithTargets(
         val elementConeType = ConeClassLikeTypeImpl(
             StandardClassIds.AnnotationTarget.toLookupTag(),
             emptyArray(),
-            isNullable = false,
+            isMarkedNullable = false,
             ConeAttributes.Empty
         )
         coneTypeOrNull = elementConeType.createOutArrayType()
@@ -331,7 +331,7 @@ private fun buildFirAnnotation(
     }?.toLookupTag()
     val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
+            coneType = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isMarkedNullable = false)
             this.source = source
         }
     } else {

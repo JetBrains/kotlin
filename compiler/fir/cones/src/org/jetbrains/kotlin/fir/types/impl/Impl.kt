@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.util.WeakPair
 class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean,
+    isMarkedNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeClassLikeType() {
     override val typeArguments: Array<out ConeTypeProjection> = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
 
-    override val nullability: ConeNullability = ConeNullability.create(isNullable)
+    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
 
     // Cached expanded type and the relevant session
     var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null

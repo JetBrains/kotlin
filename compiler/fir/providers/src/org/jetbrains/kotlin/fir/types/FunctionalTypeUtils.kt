@@ -145,7 +145,7 @@ fun ConeKotlinType.createFunctionTypeWithNewKind(
     val typeArguments = expandedType.typeArgumentsOfLowerBoundIfFlexible
     return functionTypeId.toLookupTag().constructClassType(
         updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
-        isNullable = expandedType.isNullable,
+        isMarkedNullable = expandedType.isNullable,
         attributes = expandedType.attributes.add(additionalAnnotations.computeTypeAttributes(session, shouldExpandTypeAliases = false)),
     )
 }

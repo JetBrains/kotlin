@@ -44,7 +44,7 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
                 coneType = ConeClassLikeTypeImpl(
                     classId.toLookupTag(),
                     ConeTypeProjection.EMPTY_ARRAY,
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
             argumentMapping = FirEmptyAnnotationArgumentMapping

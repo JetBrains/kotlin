@@ -14,22 +14,22 @@ import org.jetbrains.kotlin.name.ClassId
 
 fun ConeClassifierLookupTag.constructType(
     typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean,
+    isMarkedNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable, attributes)
-        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable, attributes)
+        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable, attributes)
+        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isMarkedNullable, attributes)
         else -> error("! ${this::class}")
     }
 }
 
 fun ConeClassLikeLookupTag.constructClassType(
     typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean,
+    isMarkedNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(this, typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(this, typeArguments, isMarkedNullable, attributes)
 }
 
 fun ClassId.toLookupTag(): ConeClassLikeLookupTagImpl {
@@ -38,38 +38,38 @@ fun ClassId.toLookupTag(): ConeClassLikeLookupTagImpl {
 
 fun ClassId.constructClassLikeType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
-    isNullable: Boolean = false,
+    isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
 fun FirClassifierSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection>,
-    isNullable: Boolean,
+    isMarkedNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
-        is FirClassLikeSymbol<*> -> constructType(typeArguments, isNullable, attributes)
+        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
+        is FirClassLikeSymbol<*> -> constructType(typeArguments, isMarkedNullable, attributes)
     }
 }
 
 fun FirClassLikeSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection>,
-    isNullable: Boolean,
+    isMarkedNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+    return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
 fun FirClassSymbol<*>.constructStarProjectedType(
     typeParameterNumber: Int = typeParameterSymbols.size,
-    isNullable: Boolean = false
+    isMarkedNullable: Boolean = false
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(
         toLookupTag(),
         Array(typeParameterNumber) { ConeStarProjection },
-        isNullable
+        isMarkedNullable
     )
 }

@@ -551,7 +551,7 @@ class LightTreeRawFirDeclarationBuilder(
                                     coneType = ConeClassLikeTypeImpl(
                                         implicitEnumType.coneType.lookupTag,
                                         arrayOf(selfType.coneType),
-                                        isNullable = false
+                                        isMarkedNullable = false
                                     )
                                     source =classNode.toFirSourceElement(KtFakeSourceElementKind.EnumSuperTypeRef)
                                 }
@@ -845,7 +845,7 @@ class LightTreeRawFirDeclarationBuilder(
                                     coneType = ConeClassLikeTypeImpl(
                                         this@buildAnonymousObject.symbol.toLookupTag(),
                                         ConeTypeProjection.EMPTY_ARRAY,
-                                        isNullable = false
+                                        isMarkedNullable = false
                                     )
                                 }.also { registerSelfType(it) },
                                 delegatedSuperTypeRef = classWrapper.delegatedSelfTypeRef,

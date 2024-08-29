@@ -226,7 +226,7 @@ private object Checks {
     private val kPropertyType = ConeClassLikeTypeImpl(
         StandardClassIds.KProperty.toLookupTag(),
         arrayOf(ConeStarProjection),
-        isNullable = false
+        isMarkedNullable = false
     )
 
     val isKProperty = full("second parameter must be of type KProperty<*> or its supertype") { session, function ->

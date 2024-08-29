@@ -38,7 +38,7 @@ internal class FirDelegatedConstructorCallImpl(
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? = ConeClassLikeTypeImpl(StandardClassIds.Unit.toLookupTag(), typeArguments = emptyArray(), isNullable = false)
+    override val coneTypeOrNull: ConeKotlinType? = ConeClassLikeTypeImpl(StandardClassIds.Unit.toLookupTag(), typeArguments = emptyArray(), isMarkedNullable = false)
     override val isSuper: Boolean
         get() = !isThis
 

@@ -274,7 +274,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
         coneType = ConeClassLikeTypeImpl(
             StandardClassIds.Cloneable.toLookupTag(),
             typeArguments = ConeTypeProjection.EMPTY_ARRAY,
-            isNullable = false
+            isMarkedNullable = false
         )
     }
     declarations += buildSimpleFunction {
@@ -285,7 +285,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
             val typeArguments = if (classId.shortClassName == ARRAY) {
                 arrayOf(
                     ConeTypeParameterTypeImpl(
-                        ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isNullable = false
+                        ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isMarkedNullable = false
                     )
                 )
             } else {
@@ -294,7 +294,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
             coneType = ConeClassLikeTypeImpl(
                 classId.toLookupTag(),
                 typeArguments = typeArguments,
-                isNullable = false
+                isMarkedNullable = false
             )
         }
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {

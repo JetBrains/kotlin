@@ -81,10 +81,10 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
                         ConeClassLikeTypeImpl(
                             ConeClassLookupTagWithFixedSymbol(tokenSymbol.classId, tokenSymbol),
                             emptyArray(),
-                            isNullable = false
+                            isMarkedNullable = false
                         )
                     ),
-                    isNullable = false
+                    isMarkedNullable = false
                 )
             }
         }
@@ -116,7 +116,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             ConeClassLikeTypeImpl(
                 ConeClassLookupTagWithFixedSymbol(scope, scopeSymbol),
                 emptyArray(),
-                isNullable = false
+                isMarkedNullable = false
             )
         ) {
             visibility = Visibilities.Local

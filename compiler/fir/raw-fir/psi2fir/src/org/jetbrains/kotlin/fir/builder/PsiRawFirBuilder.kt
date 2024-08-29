@@ -1014,7 +1014,7 @@ open class PsiRawFirBuilder(
                         coneType = ConeClassLikeTypeImpl(
                             implicitEnumType.coneType.lookupTag,
                             delegatedSelfTypeRef?.coneType?.let { arrayOf(it) } ?: emptyArray(),
-                            isNullable = false,
+                            isMarkedNullable = false,
                         )
                         source = container.source?.fakeElement(KtFakeSourceElementKind.EnumSuperTypeRef)
                     }
@@ -1470,7 +1470,7 @@ open class PsiRawFirBuilder(
                                             ConeClassLikeTypeImpl(
                                                 this@buildAnonymousObject.symbol.toLookupTag(),
                                                 emptyArray(),
-                                                isNullable = false
+                                                isMarkedNullable = false
                                             )
                                     }
                                     registerSelfType(delegatedEntrySelfType)
