@@ -9,4 +9,9 @@ public class Foo {
             stub()
         }
     }
+    public var my_variable3: Swift.Int32? {
+        get {
+            stub()
+        }
+    }
 }

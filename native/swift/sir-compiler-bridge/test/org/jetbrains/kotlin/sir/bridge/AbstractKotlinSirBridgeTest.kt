@@ -76,7 +76,7 @@ private fun parseType(typeName: String): SirType {
 
         "any" -> buildClass {
             name = "MyClass"
-            origin = SirOrigin.ExternallyDefined(name="MyClass")
+            origin = SirOrigin.ExternallyDefined(name = "MyClass")
         }
 
         else -> error("Unknown type: $typeName")

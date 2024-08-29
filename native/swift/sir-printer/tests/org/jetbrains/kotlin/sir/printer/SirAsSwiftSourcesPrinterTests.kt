@@ -176,6 +176,10 @@ class SirAsSwiftSourcesPrinterTests {
                                 argumentName = "arg8",
                                 type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                             ),
+                            SirParameter(
+                                argumentName = "arg9",
+                                type = SirNominalType(SirSwiftModule.bool).optional()
+                            ),
                         )
                     )
                     returnType = SirNominalType(SirSwiftModule.bool)
@@ -746,6 +750,17 @@ class SirAsSwiftSourcesPrinterTests {
                             }
                         }
                     )
+                    declarations.add(
+                        buildVariable {
+                            name = "my_variable3"
+                            type = SirNominalType(
+                                SirSwiftModule.int32,
+                            ).optional()
+                            getter = buildGetter {
+                                kind = SirCallableKind.INSTANCE_METHOD
+                            }
+                        }
+                    )
                 }
             )
         }
@@ -774,6 +789,16 @@ class SirAsSwiftSourcesPrinterTests {
             name = "Test"
             declarations.add(`typealias`)
             declarations.add(sampleType)
+
+            declarations.add(
+                buildTypealias {
+                    origin = SirOrigin.Unknown
+                    name = "OptionalInt"
+                    type = SirNominalType(
+                        SirSwiftModule.int32,
+                    ).optional()
+                }
+            )
         }.apply {
             `typealias`.parent = this
             sampleType.parent = this
@@ -1041,6 +1066,28 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/attributes"
+        )
+    }
+
+    @Test
+    fun `function returns nullable type`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    kind = SirCallableKind.FUNCTION
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    returnType = SirNominalType(
+                        SirSwiftModule.bool
+                    ).optional()
+                }
+            )
+        }
+        runTest(
+            module,
+            "testData/simple_function_returns_nullable"
         )
     }
 }

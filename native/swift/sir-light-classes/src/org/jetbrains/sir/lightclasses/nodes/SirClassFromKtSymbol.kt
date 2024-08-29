@@ -98,7 +98,12 @@ internal class SirClassFromKtSymbol(
         isFailable = false
         initKind = SirInitializerKind.ORDINARY
         isOverride = true
-        parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
+        parameters.add(
+            SirParameter(
+                argumentName = "__externalRCRef",
+                type = SirNominalType(SirSwiftModule.uint)
+            )
+        )
     }.also { it.parent = this }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KaClassKind.OBJECT)

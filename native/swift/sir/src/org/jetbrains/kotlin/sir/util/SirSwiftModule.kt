@@ -47,6 +47,8 @@ object SirSwiftModule : SirModule() {
     private val utf16Extension = extension(SirNominalType(utf16))
 
     val utf16CodeUnit = utf16Extension.addTypealias("CodeUnit", SirNominalType(utf16))
+
+    val optional = enum("Optional")
 }
 
 private fun SirMutableDeclarationContainer.struct(typeName: String) = addChild {

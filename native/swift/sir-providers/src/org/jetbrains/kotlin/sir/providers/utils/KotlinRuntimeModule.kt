@@ -44,7 +44,12 @@ public object KotlinRuntimeModule : SirModule() {
                 isFailable = false
                 initKind = SirInitializerKind.ORDINARY
                 isOverride = false
-                parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
+                parameters.add(
+                    SirParameter(
+                        argumentName = "__externalRCRef",
+                        type = SirNominalType(SirSwiftModule.uint)
+                    )
+                )
             }
         }.also { klass ->
             klass.parent = KotlinRuntimeModule

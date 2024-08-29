@@ -37,7 +37,7 @@ public class SirTypeProviderImpl(
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
-                ktType.isMarkedNullable -> null
+                ktType.isMarkedNullable -> null // TODO("KT-70920")
                 ktType.isCharType -> SirNominalType(SirSwiftModule.utf16CodeUnit)
                 ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
 
@@ -66,23 +66,23 @@ public class SirTypeProviderImpl(
             when (ktType) {
                 is KaUsualClassType -> with(sirSession) {
                     if (ktType.isMarkedNullable) {
-                        SirUnsupportedType()
+                        SirUnsupportedType
                     } else if (ktType.isAnyType) {
-                        SirNominalType(KotlinRuntimeModule.kotlinBase)
+                        SirNominalType(KotlinRuntimeModule.kotlinBase)// nullability = TODO("KT-70919")
                     } else {
                         val classSymbol = ktType.symbol
                         if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)// nullability = TODO("KT-70919")
                         } else {
-                            SirUnsupportedType()
+                            SirUnsupportedType
                         }
                     }
                 }
                 is KaFunctionType,
                 is KaTypeParameterType,
-                    -> SirUnsupportedType()
+                    -> SirUnsupportedType
                 is KaErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type ${ktType}")
+                else -> SirErrorType("Unexpected type $ktType")
             }
         }
 
