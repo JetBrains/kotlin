@@ -772,11 +772,6 @@ tasks {
         )
     }
 
-    register("jsCompilerTest") {
-        dependsOn(":js:js.tests:jsTest")
-        dependsOn(":js:js.tests:runMocha")
-    }
-
     register("jsFirCompilerTest") {
         dependsOn(":js:js.tests:jsFirTest")
     }
@@ -872,7 +867,6 @@ tasks {
 
     register("compilerTest") {
         dependsOn("jvmCompilerTest")
-        dependsOn("jsCompilerTest")
         dependsOn("miscCompilerTest")
     }
 

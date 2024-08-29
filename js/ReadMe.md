@@ -29,10 +29,11 @@ We love contributions! The JavaScript translation could really use your help! If
 ## Testing the Kotlin/JS compiler
 
 The following Gradle tasks are responsible for testing the Kotlin/JS compiler:
-- `:js:js.tests:jsIrTest` — run JS tests against the IR backend, plus the same tests with dead code elimination (DCE) enabled.
-- `:js:js.tests:jsTest` — run JS tests against the legacy backend, plus the same tests with DCE enabled.
-- `:js:js.tests:quickTest` — run JS tests against the legacy backend. No DCE.
-- `:js:js.tests:test` — run all JS tests, against both the legacy and the IR backends, plus the same tests with DCE enabled.
+- `:js:js.tests:jsIrTest` — run JS tests with the K1 frontend and with ES5 as the target.
+- `:js:js.tests:jsIrES6Test` — run JS tests with the K1 frontend and ES6 as the target.
+- `:js:js.tests:jsFirTest` — run JS tests with the K2 frontend and ES5 as the target.
+- `:js:js.tests:jsFirES6Test` — run JS tests with the K2 frontend and ES6 as the target.
+- `:js:js.tests:test` — run all JS tests
 
 The JavaScript files generated from the test files are located in the following directories, divided by the translation mode:
 - `js/js.tests/build/out` — JS files generated with the `FULL` translation mode (all modules are compiled into one big JS file)
@@ -53,8 +54,8 @@ The actual line numbers can be viewed in the generated JS file whose name ends w
 These test that the generated `.d.ts` (TypeScript definitions) file matches the reference `.d.ts` file.
 - Also, some tests located in `compiler/testData/codegen` are shared between the JS and the JVM backends.
 
-### Manually running the generated JS files (IR backend only)
-There is a helpful tool for running and debugging JS code generated from test files right in Intellij IDEA.
+### Manually running the generated JS files
+There is a helpful tool for running and debugging JS code generated from test files right in IntelliJ IDEA.
 
 Note that this will only work for files generated with the IR backend in the `FULL` translation mode,
 because these files are self-sufficient and don't require any dependencies.
