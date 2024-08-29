@@ -15,4 +15,6 @@ internal abstract class DummyGradleBuildFusStatisticsService : GradleBuildFusSta
 
     override fun reportMetric(name: String, value: String, subprojectName: String?) {}
 
+    override fun close() {}
+
 }
