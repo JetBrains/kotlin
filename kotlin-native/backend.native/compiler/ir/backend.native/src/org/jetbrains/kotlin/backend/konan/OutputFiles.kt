@@ -77,6 +77,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val eagerInitializedPropertiesFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.EAGER_INITIALIZED_PROPERTIES_FILE_NAME)
 
+    val usedDependenciesPath = "$outputName$suffix.d"
+
     private fun String.fullOutputName() = prefixBaseNameIfNeeded(prefix).suffixIfNeeded(suffix)
 
     private fun String.prefixBaseNameIfNeeded(prefix: String) =

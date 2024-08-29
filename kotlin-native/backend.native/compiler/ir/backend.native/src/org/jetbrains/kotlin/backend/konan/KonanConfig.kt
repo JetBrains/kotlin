@@ -295,6 +295,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val purgeUserLibs: Boolean
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
 
+    internal val writeDependenciesFile: Boolean
+        get() = configuration.getBoolean(KonanConfigKeys.WRITE_DEPENDENCIES_FILE)
+
     internal val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )

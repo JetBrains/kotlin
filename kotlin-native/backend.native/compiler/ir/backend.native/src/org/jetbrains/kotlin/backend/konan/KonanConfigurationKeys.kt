@@ -125,6 +125,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify bitcode")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
+        val WRITE_DEPENDENCIES_FILE: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("write file with used dependencies")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
                 = CompilerConfigurationKey.create("debug info format version")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
