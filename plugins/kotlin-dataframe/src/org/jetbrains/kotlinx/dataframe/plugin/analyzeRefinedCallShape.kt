@@ -35,15 +35,6 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
 
     val newSchema: PluginDataFrameSchema = call.interpreterName(session)?.let { name ->
         when (name) {
-            "Aggregate" -> {
-                val groupByCall = call.explicitReceiver as? FirFunctionCall
-                val interpreter = groupByCall?.loadInterpreter(session)
-                if (interpreter != null) {
-                    aggregate(groupByCall, interpreter, reporter, call)
-                } else {
-                    PluginDataFrameSchema(emptyList())
-                }
-            }
             else -> name.load<Interpreter<*>>().let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)
                     .let {

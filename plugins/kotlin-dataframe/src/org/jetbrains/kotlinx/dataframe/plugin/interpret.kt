@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -144,10 +145,22 @@ fun <T> KotlinTypeFacade.interpret(
                     }
 
                     is FirFunctionCall -> {
-                        val interpreter = expression.loadInterpreter()
-                        interpreter?.let {
-                            val result = interpret(expression, interpreter, emptyMap(), reporter)
-                            result
+                        var interpreter = expression.loadInterpreter()
+                        if (interpreter == null) {
+                            val r = expression.arguments[0]
+                            val last = (r as? FirAnonymousFunctionExpression)?.anonymousFunction?.body?.statements?.lastOrNull()
+                            val call = (last as? FirReturnExpression)?.result as? FirFunctionCall
+                            val interpreter = call?.loadInterpreter()
+                            if (interpreter != null) {
+                                interpret(call, interpreter, emptyMap(), reporter)
+                            } else {
+                                null
+                            }
+                        } else {
+                            interpreter?.let {
+                                val result = interpret(expression, interpreter, emptyMap(), reporter)
+                                result
+                            }
                         }
                     }
 

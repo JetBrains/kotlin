@@ -3,15 +3,11 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.interpret
 import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
@@ -55,21 +51,30 @@ class GroupByInto : AbstractInterpreter<Unit>() {
     }
 }
 
+class Aggregate : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: GroupBy by arg()
+    val Arguments.body: FirAnonymousFunctionExpression by arg(lens = Interpreter.Id)
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return aggregate(
+            receiver,
+            InterpretationErrorReporter.DEFAULT,
+            body
+        )
+    }
+}
+
 fun KotlinTypeFacade.aggregate(
-    groupByCall: FirFunctionCall,
-    interpreter: Interpreter<*>,
+    groupBy: GroupBy,
     reporter: InterpretationErrorReporter,
-    call: FirFunctionCall
-): PluginDataFrameSchema? {
-    val groupBy = interpret(groupByCall, interpreter, reporter = reporter)?.value as? GroupBy ?: return null
-    val aggregate = call.argumentList.arguments.singleOrNull() as? FirAnonymousFunctionExpression
-    val body = aggregate?.anonymousFunction?.body ?: return null
-    val lastExpression = (body.statements.lastOrNull() as? FirReturnExpression)?.result
+    firAnonymousFunctionExpression: FirAnonymousFunctionExpression
+): PluginDataFrameSchema {
+    val body = firAnonymousFunctionExpression.anonymousFunction.body
+    val lastExpression = (body?.statements?.lastOrNull() as? FirReturnExpression)?.result
     val type = lastExpression?.resolvedType
     return if (type != session.builtinTypes.unitType) {
         val dsl = GroupByDsl()
         val calls = buildList {
-            body.statements.filterIsInstance<FirFunctionCall>().let { addAll(it) }
+            body?.statements?.filterIsInstance<FirFunctionCall>()?.let { addAll(it) }
             if (lastExpression is FirFunctionCall) add(lastExpression)
         }
         calls.forEach { call ->
@@ -87,7 +92,7 @@ fun KotlinTypeFacade.aggregate(
         }
         PluginDataFrameSchema(cols)
     } else {
-        null
+        PluginDataFrameSchema(emptyList())
     }
 }
 

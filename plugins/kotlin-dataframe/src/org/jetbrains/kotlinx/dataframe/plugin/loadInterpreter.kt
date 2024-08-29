@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.All0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
@@ -206,6 +207,7 @@ internal inline fun <reified T> String.load(): T {
         "Move0" -> Move0()
         "ToTop" -> ToTop()
         "Update0" -> Update0()
+        "Aggregate" -> Aggregate()
         else -> error("$this")
     } as T
 }
