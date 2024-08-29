@@ -17,28 +17,22 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
@@ -65,15 +59,6 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         CommonDescriptor(kind, startOffsetSkippingComments() ?: startOffset, endOffset)
 
     private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<CommonDescriptor, MutableList<IrConstructorCall>>>()
-
-    private fun IrConstructorCall.hasOnlySupportedAnnotationArgumentTypes(): Boolean {
-        for (i in 0 until valueArgumentsCount) {
-            if (getValueArgument(i) !is IrConst) {
-                return false
-            }
-        }
-        return true
-    }
 
     private fun IrDeclaration.getAnnotationTargetKind(): AnnotationTarget? = when (this) {
         is IrClass -> {
@@ -130,8 +115,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         require(declaration.startOffset >= 0 && declaration.endOffset >= 0) {
             "Declaration's startOffset and/or endOffset should be positive in order to mark declaration with annotations (otherwise it is generated declaration and would not appear in metadata)"
         }
-        require(annotations.all { it.typeArgumentsCount == 0 && it.hasOnlySupportedAnnotationArgumentTypes() }) {
-            "Saving annotations with arguments from IR to metadata is only supported for basic constants. See KT-58968"
+        require(annotations.all { it.typeArgumentsCount == 0 }) {
+            "Saving annotations with type arguments from IR to metadata is not supported"
         }
         annotations.forEach {
             require(it.symbol.owner.constructedClass.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
@@ -298,7 +283,13 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         return this.annotations.map { it.toFirAnnotation() }
     }
 
-    private inner class TypeConverter(val originalFunction: IrFunction, val convertedFunction: FirFunction) {
+    private open inner class TypeConverter(val originalFunction: IrFunction?, val convertedFunction: FirFunction?) {
+        init {
+            if (originalFunction != null && convertedFunction == null) {
+                error("Conversion with null `convertedFunction`is unsupported")
+            }
+        }
+
         fun IrType.toConeType(): ConeKotlinType {
             return when (this) {
                 is IrSimpleType -> {
@@ -325,7 +316,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 is IrClass -> owner.classIdOrFail.toLookupTag()
                 is IrTypeParameter -> {
                     val typeParameter = when (val parent = owner.parent) {
-                        originalFunction -> convertedFunction.typeParameters[owner.index]
+                        // guarded by init block, so !! is safe
+                        originalFunction -> convertedFunction!!.typeParameters[owner.index]
                         is IrClass -> {
                             val firClass = parent.classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
                                 ?: error("Fir class for ${parent.render()} not found")
@@ -340,6 +332,125 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 
+    private val emptyTypeConverter = TypeConverter(null, null)
+
+    private fun IrExpression.toFirExpression(): FirExpression {
+        return when (this) {
+            is IrConst -> {
+                when (this.kind) {
+                    IrConstKind.Boolean -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Boolean,
+                        this.value as Boolean,
+                        setType = true
+                    )
+                    IrConstKind.Byte -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Byte,
+                        this.value as Byte,
+                        setType = true
+                    )
+                    IrConstKind.Char -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Char,
+                        this.value as Char,
+                        setType = true
+                    )
+                    IrConstKind.Double -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Double,
+                        this.value as Double,
+                        setType = true
+                    )
+                    IrConstKind.Float -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Float,
+                        this.value as Float,
+                        setType = true
+                    )
+                    IrConstKind.Int -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Int,
+                        this.value as Int,
+                        setType = true
+                    )
+                    IrConstKind.Long -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Long,
+                        this.value as Long,
+                        setType = true
+                    )
+                    IrConstKind.Null -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Null,
+                        value = null,
+                        setType = true
+                    )
+                    IrConstKind.Short -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.Short,
+                        this.value as Short,
+                        setType = true
+                    )
+                    IrConstKind.String -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.String,
+                        this.value as String,
+                        setType = true
+                    )
+                }
+            }
+            is IrGetEnumValue -> {
+                val enumClassType: ConeKotlinType = with(emptyTypeConverter) { this@toFirExpression.type.toConeType() }
+                val enumClassId = (this.symbol.owner.parent as IrClass).classId!!
+                val enumClassLookupTag = enumClassId.toLookupTag()
+                val enumVariantName = this.symbol.owner.name
+                val enumEntrySymbol = session.symbolProvider.getClassLikeSymbolByClassId(enumClassId)?.let { classSymbol ->
+                    (classSymbol as? FirRegularClassSymbol)?.declarationSymbols
+                        ?.filterIsInstance<FirEnumEntrySymbol>()
+                        ?.find { it.name == enumVariantName }
+                } ?: error("Could not resolve FirEnumEntry for $enumVariantName")
+
+                buildPropertyAccessExpression {
+                    val receiver = buildResolvedQualifier {
+                        coneTypeOrNull = enumClassType
+                        packageFqName = enumClassId.packageFqName
+                        relativeClassFqName = enumClassId.relativeClassName
+                        symbol = enumClassLookupTag.toSymbol(session)
+                    }
+                    coneTypeOrNull = enumClassType
+                    calleeReference = buildResolvedNamedReference {
+                        name = enumVariantName
+                        resolvedSymbol = enumEntrySymbol
+                    }
+                    explicitReceiver = receiver
+                    dispatchReceiver = receiver
+                }
+            }
+            is IrConstructorCall -> this.toFirAnnotation()
+            is IrVararg -> {
+                val varargElements = this.elements.map { element ->
+                    when (element) {
+                        is IrExpression -> element.toFirExpression()
+                        else -> error("Unsupported ir type: $element")
+                    }
+                }
+
+                with(emptyTypeConverter) {
+                    val type = this@toFirExpression.type.toConeType()
+                    val elemType = this@toFirExpression.varargElementType.toConeType()
+
+                    buildVarargArgumentsExpression {
+                        arguments.addAll(varargElements)
+                        coneTypeOrNull = type
+                        coneElementTypeOrNull = elemType
+                    }
+                }
+            }
+            else -> error("Unsupported ir type: $this")
+        }
+    }
+
     private fun IrConstructorCall.toFirAnnotation(): FirAnnotation {
         val annotationClassId = this.symbol.owner.constructedClass.classId!!
         return buildAnnotation {
@@ -349,69 +460,9 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
                 for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
-                    val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
-                    val argument = this@toFirAnnotation.getValueArgument(i) as IrConst
-                    this.mapping[name] = when (argument.kind) {
-                        IrConstKind.Boolean -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Boolean,
-                            argument.value as Boolean,
-                            setType = true
-                        )
-                        IrConstKind.Byte -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Byte,
-                            argument.value as Byte,
-                            setType = true
-                        )
-                        IrConstKind.Char -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Char,
-                            argument.value as Char,
-                            setType = true
-                        )
-                        IrConstKind.Double -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Double,
-                            argument.value as Double,
-                            setType = true
-                        )
-                        IrConstKind.Float -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Float,
-                            argument.value as Float,
-                            setType = true
-                        )
-                        IrConstKind.Int -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Int,
-                            argument.value as Int,
-                            setType = true
-                        )
-                        IrConstKind.Long -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Long,
-                            argument.value as Long,
-                            setType = true
-                        )
-                        IrConstKind.Null -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Null,
-                            value = null,
-                            setType = true
-                        )
-                        IrConstKind.Short -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.Short,
-                            argument.value as Short,
-                            setType = true
-                        )
-                        IrConstKind.String -> buildLiteralExpression(
-                            source = null,
-                            ConstantValueKind.String,
-                            argument.value as String,
-                            setType = true
-                        )
+                    val argName = this@toFirAnnotation.symbol.owner.valueParameters[i].name
+                    this@toFirAnnotation.getValueArgument(i)?.let { argument ->
+                        this.mapping[argName] = argument.toFirExpression()
                     }
                 }
             }
