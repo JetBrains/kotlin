@@ -4659,6 +4659,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("javaAnnotationOnJavaEnum.kt")
+    public void testJavaAnnotationOnJavaEnum() {
+      runTest("compiler/testData/ir/irText/stubs/javaAnnotationOnJavaEnum.kt");
+    }
+
+    @Test
     @TestMetadata("javaConstructorWithTypeParameters.kt")
     public void testJavaConstructorWithTypeParameters() {
       runTest("compiler/testData/ir/irText/stubs/javaConstructorWithTypeParameters.kt");
