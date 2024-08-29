@@ -9,10 +9,12 @@ import java.net.URI
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-private val Project.versionCatalog: VersionCatalog
+private val Project.composeSnapshotVersionCatalog: VersionCatalog
+    get() = project.extensions.getByType(VersionCatalogsExtension::class.java).find("composeRuntimeSnapshot").get()
+private val Project.libsVersionCatalog: VersionCatalog
     get() = project.extensions.getByType(VersionCatalogsExtension::class.java).find("libs").get()
-private fun Project.composeStableVersion() = versionCatalog.findVersion("compose.stable").get().requiredVersion
-private fun Project.composeSnapshotVersion() = versionCatalog.findVersion("compose.snapshot.version").get().requiredVersion
+private fun Project.composeStableVersion() = libsVersionCatalog.findVersion("compose.stable").get().requiredVersion
+private fun Project.composeSnapshotVersion() = composeSnapshotVersionCatalog.findVersion("snapshot.version").get().requiredVersion
 
 val Project.androidXMavenLocalPath: String?
     get() = kotlinBuildProperties.getOrNull("compose.aosp.root")?.toString()

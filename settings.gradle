@@ -50,6 +50,12 @@ dependencyResolutionManagement {
             }
         }
     }
+
+    versionCatalogs {
+        create("composeRuntimeSnapshot") {
+            from(files("plugins/compose/compose-runtime-snapshot-versions.toml"))
+        }
+    }
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
