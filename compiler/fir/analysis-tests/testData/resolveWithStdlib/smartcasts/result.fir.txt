@@ -1,0 +1,108 @@
+FILE: result.kt
+    public final fun branch(r: R|kotlin/Result<kotlin/Int>|): R|kotlin/Int| {
+        ^branch when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| ->  {
+                R|<local>/r|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/Int|>|
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun R|kotlin/Result<kotlin/Int>|.branchReceiver(): R|kotlin/Int| {
+        ^branchReceiver when () {
+            this@R|/branchReceiver|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| ->  {
+                this@R|/branchReceiver|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/Int|>|
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun branchThrow(r: R|kotlin/Result<kotlin/String>|): R|kotlin/Throwable| {
+        ^branchThrow when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| ->  {
+                R|java/lang/Exception.Exception|(R|<local>/r|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/String|>|)
+            }
+            else ->  {
+                R|<local>/r|.R|SubstitutionOverride<kotlin/Result.exception: R|kotlin/Throwable|>|
+            }
+        }
+
+    }
+    public final fun branchThrowReverse(r: R|kotlin/Result<kotlin/String>|): R|kotlin/Throwable| {
+        ^branchThrowReverse when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isFailure: R|kotlin/Boolean|>| ->  {
+                R|<local>/r|.R|SubstitutionOverride<kotlin/Result.exception: R|kotlin/Throwable|>|
+            }
+            else ->  {
+                R|java/lang/Exception.Exception|(R|<local>/r|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/String|>|)
+            }
+        }
+
+    }
+    public final fun incorrectNoCheck(r: R|kotlin/Result<kotlin/Int>|): R|kotlin/Int| {
+        ^incorrectNoCheck R|<local>/r|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/Int|>|
+    }
+    public final fun R|kotlin/Result<kotlin/Int>|.incorrectNoCheckReceiver(): R|kotlin/Int| {
+        ^incorrectNoCheckReceiver this@R|/incorrectNoCheckReceiver|.R|SubstitutionOverride<kotlin/Result.result: R|kotlin/Int|>|
+    }
+    public final fun unreachable(r: R|kotlin/Result<kotlin/Int>|): R|kotlin/Int| {
+        ^unreachable when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| && R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isFailure: R|kotlin/Boolean|>| ->  {
+                Int(0)
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun correct(r: R|kotlin/Result<kotlin/Int>|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> r.isFailure
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>|)
+            }
+            )
+        }
+
+        ^correct when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| ->  {
+                Boolean(true)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun incorrect(r: R|kotlin/Result<kotlin/Int>|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> r.isFailure
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>|)
+            }
+            )
+        }
+
+        ^incorrect when () {
+            R|<local>/r|.R|SubstitutionOverride<kotlin/Result.isSuccess: R|kotlin/Boolean|>| ->  {
+                Boolean(false)
+            }
+            else ->  {
+                Boolean(true)
+            }
+        }
+
+    }
