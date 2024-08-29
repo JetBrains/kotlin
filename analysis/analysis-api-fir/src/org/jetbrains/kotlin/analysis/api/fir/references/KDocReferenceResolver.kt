@@ -71,7 +71,8 @@ internal object KDocReferenceResolver {
             //ensure file context is provided for "non-physical" code as well
             val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
                 ?: contextElement
-            val fullSymbolsResolved = resolveKdocFqName(fullFqName, contextDeclarationOrSelf)
+            val fullSymbolsResolved =
+                resolveKdocFqName(fullFqName, contextDeclarationOrSelf).sortedByDescending { it.symbol is KaClassLikeSymbol }
             if (selectedFqName == fullFqName) return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
             if (fullSymbolsResolved.isEmpty()) {
                 val parent = fullFqName.parent()

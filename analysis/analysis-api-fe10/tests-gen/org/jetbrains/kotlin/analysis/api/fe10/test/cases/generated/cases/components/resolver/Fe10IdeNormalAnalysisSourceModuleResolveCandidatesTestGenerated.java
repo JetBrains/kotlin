@@ -3207,6 +3207,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
       }
 
       @Test
+      @TestMetadata("KT-64190.kt")
+      public void testKT_64190() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/imports/KT-64190.kt");
+      }
+
+      @Test
       @TestMetadata("SameNameClassesFromStarImports.kt")
       public void testSameNameClassesFromStarImports() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/imports/SameNameClassesFromStarImports.kt");

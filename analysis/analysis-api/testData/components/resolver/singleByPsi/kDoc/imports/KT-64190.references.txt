@@ -1,0 +1,3 @@
+KDocName(14,18): 'List'
+  KDocReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
