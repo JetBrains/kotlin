@@ -224,7 +224,7 @@ internal expect inline fun <E> buildListInternal(capacity: Int, builderAction: M
  * Returns an [IntRange] of the valid indices for this collection.
  * @sample samples.collections.Collections.Collections.indicesOfCollection
  */
-public val Collection<*>.indices: IntRange
+public inline val Collection<*>.indices: IntRange
     get() = 0..size - 1
 
 /**
@@ -232,7 +232,7 @@ public val Collection<*>.indices: IntRange
  *
  * @sample samples.collections.Collections.Lists.lastIndexOfList
  */
-public val <T> List<T>.lastIndex: Int
+public inline val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
 /**

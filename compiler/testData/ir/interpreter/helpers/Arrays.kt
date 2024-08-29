@@ -100,46 +100,46 @@ public actual fun DoubleArray.asList(): List<Double> = kotlin.UnsupportedOperati
 public actual fun BooleanArray.asList(): List<Boolean> = kotlin.UnsupportedOperationException("This is intrinsic")
 public actual fun CharArray.asList(): List<Char> = kotlin.UnsupportedOperationException("This is intrinsic")
 
-public val <T> Array<out T>.indices: IntRange
+public inline val <T> Array<out T>.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val ByteArray.indices: IntRange
+public inline val ByteArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val ShortArray.indices: IntRange
+public inline val ShortArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val IntArray.indices: IntRange
+public inline val IntArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val LongArray.indices: IntRange
+public inline val LongArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val FloatArray.indices: IntRange
+public inline val FloatArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val DoubleArray.indices: IntRange
+public inline val DoubleArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val BooleanArray.indices: IntRange
+public inline val BooleanArray.indices: IntRange
     get() = IntRange(0, lastIndex)
-public val CharArray.indices: IntRange
+public inline val CharArray.indices: IntRange
     get() = IntRange(0, lastIndex)
 
 public inline fun <T> Array<out T>.isEmpty(): Boolean {
     return size == 0
 }
 
-public val <T> Array<out T>.lastIndex: Int
+public inline val <T> Array<out T>.lastIndex: Int
     get() = size - 1
-public val ByteArray.lastIndex: Int
+public inline val ByteArray.lastIndex: Int
     get() = size - 1
-public val ShortArray.lastIndex: Int
+public inline val ShortArray.lastIndex: Int
     get() = size - 1
-public val IntArray.lastIndex: Int
+public inline val IntArray.lastIndex: Int
     get() = size - 1
-public val LongArray.lastIndex: Int
+public inline val LongArray.lastIndex: Int
     get() = size - 1
-public val FloatArray.lastIndex: Int
+public inline val FloatArray.lastIndex: Int
     get() = size - 1
-public val DoubleArray.lastIndex: Int
+public inline val DoubleArray.lastIndex: Int
     get() = size - 1
-public val BooleanArray.lastIndex: Int
+public inline val BooleanArray.lastIndex: Int
     get() = size - 1
-public val CharArray.lastIndex: Int
+public inline val CharArray.lastIndex: Int
     get() = size - 1
 
 public fun ByteArray.first(): Int {

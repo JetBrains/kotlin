@@ -67,10 +67,10 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
     return list
 }
 
-public val Collection<*>.indices: IntRange
+public inline val Collection<*>.indices: IntRange
     get() = 0..size - 1
 
-public val <T> List<T>.lastIndex: Int
+public inline val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()

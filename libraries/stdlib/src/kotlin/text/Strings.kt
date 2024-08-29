@@ -381,13 +381,13 @@ public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSeque
 /**
  * Returns the range of valid character indices for this char sequence.
  */
-public val CharSequence.indices: IntRange
+public inline val CharSequence.indices: IntRange
     get() = 0..length - 1
 
 /**
  * Returns the index of the last character in the char sequence or -1 if it is empty.
  */
-public val CharSequence.lastIndex: Int
+public inline val CharSequence.lastIndex: Int
     get() = this.length - 1
 
 /**
