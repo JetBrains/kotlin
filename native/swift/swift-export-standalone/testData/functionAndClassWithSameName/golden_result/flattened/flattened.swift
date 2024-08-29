@@ -13,7 +13,7 @@ public extension ExportedKotlinPackages.flattenedPackage {
         public override init() {
             let __kt = flattenedPackage_FlattenedPackageClass_init_allocate()
             super.init(__externalRCRef: __kt)
-            flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -24,6 +24,6 @@ public extension ExportedKotlinPackages.flattenedPackage {
     public static func flattenedPackageClass(
         i: Swift.Int32
     ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
-        return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass(__externalRCRef: flattenedPackage_FlattenedPackageClass__TypesOfArguments__int32_t__(i))
+        return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass(__externalRCRef: flattenedPackage_FlattenedPackageClass__TypesOfArguments__Swift_Int32__(i))
     }
 }

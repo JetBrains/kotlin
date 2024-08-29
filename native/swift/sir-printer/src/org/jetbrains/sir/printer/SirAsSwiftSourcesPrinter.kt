@@ -369,7 +369,7 @@ private val SirParameter.swiftRender
             type.swiftRender
 
 private val SirType.swiftRender: String
-    get() = if (this is SirNominalType && type == SirSwiftModule.optional) {
+    get() = if (this is SirNominalType && typeDeclaration == SirSwiftModule.optional) {
         typeArguments.first().swiftRender + "?"
     } else {
         swiftName

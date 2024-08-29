@@ -31,17 +31,17 @@ int32_t __root___baz_get();
 
 uintptr_t __root___foo_get();
 
-void __root___foo_set__TypesOfArguments__uintptr_t__(uintptr_t newValue);
+void __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t newValue);
 
 uintptr_t __root___lateinit_foo_get();
 
-void __root___lateinit_foo_set__TypesOfArguments__uintptr_t__(uintptr_t newValue);
+void __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t newValue);
 
 int32_t namespace_main_bar_get();
 
-void namespace_main_bar_set__TypesOfArguments__int32_t__(int32_t newValue);
+void namespace_main_bar_set__TypesOfArguments__Swift_Int32__(int32_t newValue);
 
 int32_t namespace_main_foo_get();
 
-int32_t namespace_main_foobar__TypesOfArguments__int32_t__(int32_t param);
+int32_t namespace_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
 

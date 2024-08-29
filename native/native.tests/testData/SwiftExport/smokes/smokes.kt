@@ -60,6 +60,20 @@ import dependency.one.*
 
 fun dependency_usage() = dep_fun()
 
+// FILE: reference_override.kt
+
+class Foo
+class Bar
+
+fun foo(arg: Foo) = "foo"
+fun foo(arg: Bar) = "bar"
+fun foo(arg: Int) = "int"
+
+fun foo(arg1: Foo, arg2: Int) = "foo_int"
+fun foo(arg1: Int, arg2: Foo) = "int_foo"
+
+
+
 // MODULE: deps(deps_2)
 // FILE: deps_file.kt
 package dependency.one

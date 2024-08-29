@@ -24,13 +24,15 @@ abstract class AbstractKotlinSirBridgeTest {
 
         val generator = createBridgeGenerator(object : SirTypeNamer {
             override fun swiftFqName(type: SirType): String {
-                TODO("Not yet implemented")
+                require(type is SirNominalType)
+                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                return type.typeDeclaration.name
             }
 
             override fun kotlinFqName(type: SirType): String {
                 require(type is SirNominalType)
-                require(type.type.origin is SirOrigin.ExternallyDefined)
-                return type.type.name
+                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                return type.typeDeclaration.name
             }
         })
         val kotlinBridgePrinter = createKotlinBridgePrinter()

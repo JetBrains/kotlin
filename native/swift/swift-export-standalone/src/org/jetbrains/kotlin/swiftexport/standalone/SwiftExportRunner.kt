@@ -311,7 +311,7 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
     override fun kotlinFqName(type: SirType): String {
         require(type is SirNominalType)
 
-        return when(val declaration = type.type) {
+        return when(val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
             else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()

@@ -91,8 +91,8 @@ public fun __root___foo_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___foo_set__TypesOfArguments__uintptr_t__")
-public fun __root___foo_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__")
+public fun __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
     foo = __newValue
 }
@@ -103,8 +103,8 @@ public fun __root___lateinit_foo_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___lateinit_foo_set__TypesOfArguments__uintptr_t__")
-public fun __root___lateinit_foo_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__")
+public fun __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
     lateinit_foo = __newValue
 }
@@ -115,8 +115,8 @@ public fun namespace_main_bar_get(): Int {
     return _result
 }
 
-@ExportedBridge("namespace_main_bar_set__TypesOfArguments__int32_t__")
-public fun namespace_main_bar_set(newValue: Int): Unit {
+@ExportedBridge("namespace_main_bar_set__TypesOfArguments__Swift_Int32__")
+public fun namespace_main_bar_set__TypesOfArguments__Swift_Int32__(newValue: Int): Unit {
     val __newValue = newValue
     namespace.main.bar = __newValue
 }
@@ -127,9 +127,10 @@ public fun namespace_main_foo_get(): Int {
     return _result
 }
 
-@ExportedBridge("namespace_main_foobar__TypesOfArguments__int32_t__")
-public fun namespace_main_foobar(param: Int): Int {
+@ExportedBridge("namespace_main_foobar__TypesOfArguments__Swift_Int32__")
+public fun namespace_main_foobar__TypesOfArguments__Swift_Int32__(param: Int): Int {
     val __param = param
     val _result = namespace.main.foobar(__param)
     return _result
 }
+

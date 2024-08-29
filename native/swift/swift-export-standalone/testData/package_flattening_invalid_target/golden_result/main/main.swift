@@ -7,7 +7,7 @@ public extension ExportedKotlinPackages.org.kotlin {
         public override init() {
             let __kt = org_kotlin_Foo_init_allocate()
             super.init(__externalRCRef: __kt)
-            org_kotlin_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            org_kotlin_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt

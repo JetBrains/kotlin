@@ -13,8 +13,8 @@ public fun __root___getString(): kotlin.native.internal.NativePtr {
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___setString__TypesOfArguments__NSStringPtr__")
-public fun __root___setString(value: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___setString__TypesOfArguments__Swift_String__")
+public fun __root___setString__TypesOfArguments__Swift_String__(value: kotlin.native.internal.NativePtr): Unit {
     val __value = interpretObjCPointer<String>(value)
     setString(__value)
 }
@@ -25,8 +25,8 @@ public fun __root___string_get(): kotlin.native.internal.NativePtr {
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___string_set__TypesOfArguments__NSStringPtr__")
-public fun __root___string_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___string_set__TypesOfArguments__Swift_String__")
+public fun __root___string_set__TypesOfArguments__Swift_String__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = interpretObjCPointer<String>(newValue)
     string = __newValue
 }

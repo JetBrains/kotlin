@@ -5,5 +5,5 @@ uintptr_t __root___MyObject_get();
 
 uintptr_t __root___getMainObject();
 
-_Bool __root___isMainObject__TypesOfArguments__uintptr_t__(uintptr_t obj);
+_Bool __root___isMainObject__TypesOfArguments__KotlinRuntime_KotlinBase__(uintptr_t obj);
 

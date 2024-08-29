@@ -26,7 +26,7 @@ public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
             return DATA_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
         }
         set {
-            return DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+            return DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
     private override init() {
@@ -51,7 +51,7 @@ public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {
     public override init() {
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt
@@ -78,7 +78,7 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt
@@ -89,7 +89,7 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
-    return __root___increment__TypesOfArguments__int32_t__(integer)
+    return __root___increment__TypesOfArguments__Swift_Int32__(integer)
 }
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
@@ -98,7 +98,7 @@ public extension ExportedKotlinPackages.typealiases.inner {
         public override init() {
             let __kt = typealiases_inner_Bar_init_allocate()
             super.init(__externalRCRef: __kt)
-            typealiases_inner_Bar_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -114,7 +114,7 @@ public extension ExportedKotlinPackages.typealiases {
         public override init() {
             let __kt = typealiases_Foo_init_allocate()
             super.init(__externalRCRef: __kt)
-            typealiases_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            typealiases_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt

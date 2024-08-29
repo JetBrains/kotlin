@@ -77,7 +77,7 @@ public var foo: KotlinRuntime.KotlinBase {
         return KotlinRuntime.KotlinBase(__externalRCRef: __root___foo_get())
     }
     set {
-        return __root___foo_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
     }
 }
 public var lateinit_foo: KotlinRuntime.KotlinBase {
@@ -85,7 +85,7 @@ public var lateinit_foo: KotlinRuntime.KotlinBase {
         return KotlinRuntime.KotlinBase(__externalRCRef: __root___lateinit_foo_get())
     }
     set {
-        return __root___lateinit_foo_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
     }
 }
 public extension ExportedKotlinPackages.namespace.main {
@@ -94,7 +94,7 @@ public extension ExportedKotlinPackages.namespace.main {
             return namespace_main_bar_get()
         }
         set {
-            return namespace_main_bar_set__TypesOfArguments__int32_t__(newValue)
+            return namespace_main_bar_set__TypesOfArguments__Swift_Int32__(newValue)
         }
     }
     public static var foo: Swift.Int32 {
@@ -105,6 +105,6 @@ public extension ExportedKotlinPackages.namespace.main {
     public static func foobar(
         param: Swift.Int32
     ) -> Swift.Int32 {
-        return namespace_main_foobar__TypesOfArguments__int32_t__(param)
+        return namespace_main_foobar__TypesOfArguments__Swift_Int32__(param)
     }
 }

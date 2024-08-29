@@ -7,8 +7,8 @@ public fun dependency_four_AnotherBar_init_allocate(): kotlin.native.internal.Na
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("dependency_four_AnotherBar_init_initialize__TypesOfArguments__uintptr_t__")
-public fun dependency_four_AnotherBar_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, dependency.four.AnotherBar())
 }

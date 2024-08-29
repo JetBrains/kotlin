@@ -35,7 +35,7 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
         public override init() {
             let __kt = org_kotlin_foo_Clazz_init_allocate()
             super.init(__externalRCRef: __kt)
-            org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -53,12 +53,12 @@ public extension ExportedKotlinPackages.org.kotlin.foo {
             return org_kotlin_foo_variable_get()
         }
         set {
-            return org_kotlin_foo_variable_set__TypesOfArguments__int32_t__(newValue)
+            return org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue)
         }
     }
     public static func function(
         arg: Swift.Int32
     ) -> Swift.Int32 {
-        return org_kotlin_foo_function__TypesOfArguments__int32_t__(arg)
+        return org_kotlin_foo_function__TypesOfArguments__Swift_Int32__(arg)
     }
 }

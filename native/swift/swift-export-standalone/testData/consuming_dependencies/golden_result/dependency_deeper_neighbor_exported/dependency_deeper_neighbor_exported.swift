@@ -7,7 +7,7 @@ public extension ExportedKotlinPackages.dependency.four {
         public override init() {
             let __kt = dependency_four_AnotherBar_init_allocate()
             super.init(__externalRCRef: __kt)
-            dependency_four_AnotherBar_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            dependency_four_AnotherBar_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt

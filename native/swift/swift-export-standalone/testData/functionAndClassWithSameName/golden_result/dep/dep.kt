@@ -7,8 +7,9 @@ public fun test_factory_modules_ClassFromDependency_init_allocate(): kotlin.nati
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__uintptr_t__")
-public fun test_factory_modules_ClassFromDependency_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, test.factory.modules.ClassFromDependency())
 }
+

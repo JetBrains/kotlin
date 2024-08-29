@@ -11,27 +11,27 @@ int32_t DATA_OBJECT_WITH_PACKAGE_value_get(uintptr_t self);
 
 int32_t DATA_OBJECT_WITH_PACKAGE_variable_get(uintptr_t self);
 
-void DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(uintptr_t self, int32_t newValue);
+void DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(uintptr_t self, int32_t newValue);
 
 uintptr_t __root___DATA_OBJECT_WITH_PACKAGE_get();
 
 uintptr_t __root___INHERITANCE_SINGLE_CLASS_init_allocate();
 
-void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 uintptr_t __root___OBJECT_WITH_CLASS_INHERITANCE_get();
 
 uintptr_t __root___OPEN_CLASS_init_allocate();
 
-void __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+void __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
-int32_t __root___increment__TypesOfArguments__int32_t__(int32_t integer);
+int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 
 uintptr_t typealiases_Foo_init_allocate();
 
-void typealiases_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+void typealiases_Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 uintptr_t typealiases_inner_Bar_init_allocate();
 
-void typealiases_inner_Bar_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+void typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 

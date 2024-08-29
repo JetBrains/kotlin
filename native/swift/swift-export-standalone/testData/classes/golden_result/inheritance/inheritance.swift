@@ -7,7 +7,7 @@ public final class INHERITANCE_SINGLE_CLASS : inheritance.OPEN_CLASS {
             return INHERITANCE_SINGLE_CLASS_value_get(self.__externalRCRef())
         }
         set {
-            return INHERITANCE_SINGLE_CLASS_value_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+            return INHERITANCE_SINGLE_CLASS_value_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
     public override init(
@@ -20,7 +20,7 @@ public final class INHERITANCE_SINGLE_CLASS : inheritance.OPEN_CLASS {
     ) {
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, value)
+        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE : inheritance.OPEN_CLASS {
@@ -42,7 +42,7 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt

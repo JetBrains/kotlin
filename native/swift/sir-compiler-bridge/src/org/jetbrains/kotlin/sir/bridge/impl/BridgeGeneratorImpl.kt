@@ -19,14 +19,14 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
         when (request.callable) {
             is SirFunction -> {
                 add(
-                    request.descriptor.createFunctionBridge(typeNamer) { name, args ->
+                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
                         "$name(${args.joinToString()})"
                     }
                 )
             }
             is SirGetter -> {
                 add(
-                    request.descriptor.createFunctionBridge(typeNamer) { name, args ->
+                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
                         require(args.isEmpty()) { "Received a getter $name with ${args.size} parameters instead of no parameters, aborting" }
                         name
                     }
@@ -34,7 +34,7 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
             }
             is SirSetter -> {
                 add(
-                    request.descriptor.createFunctionBridge(typeNamer) { name, args ->
+                    request.descriptor(typeNamer).createFunctionBridge { name, args ->
                         require(args.size == 1) { "Received a setter $name with ${args.size} parameters instead of a single one, aborting" }
                         "$name = ${args.single()}"
                     }
@@ -42,12 +42,12 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
             }
             is SirInit -> {
                 add(
-                    request.allocationDescriptor.createFunctionBridge(typeNamer) { name, args ->
+                    request.allocationDescriptor(typeNamer).createFunctionBridge { name, args ->
                         "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
                     }
                 )
                 add(
-                    request.initializationDescriptor.createFunctionBridge(typeNamer) { name, args ->
+                    request.initializationDescriptor(typeNamer).createFunctionBridge { name, args ->
                         "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
                     }
                 )
@@ -58,25 +58,27 @@ internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerato
     override fun generateSirFunctionBody(request: BridgeRequest) = SirFunctionBody(buildList {
         when (request.callable) {
             is SirFunction, is SirGetter, is SirSetter -> {
-                add("return ${request.descriptor.swiftCall(typeNamer)}")
+                add("return ${request.descriptor(typeNamer).swiftCall(typeNamer)}")
             }
             is SirInit -> {
-                add("let ${obj.name} = ${request.allocationDescriptor.swiftCall(typeNamer)}")
+                add("let ${obj.name} = ${request.allocationDescriptor(typeNamer).swiftCall(typeNamer)}")
                 add("super.init(__externalRCRef: ${obj.name})")
-                add(request.initializationDescriptor.swiftCall(typeNamer))
+                add(request.initializationDescriptor(typeNamer).swiftCall(typeNamer))
             }
         }
     })
 }
 
 private class BridgeFunctionDescriptor(
-    val kotlinBridgeName: String,
+    val baseBridgeName: String,
     val parameters: List<BridgeParameter>,
     val returnType: Bridge,
     val kotlinFqName: List<String>,
     val selfParameter: BridgeParameter?,
+    val typeNamer: SirTypeNamer,
 ) {
-    val cBridgeName = cDeclarationName(kotlinBridgeName, parameters)
+    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
+    val cBridgeName = kotlinBridgeName
 
     val allParameters
         get() = listOfNotNull(selfParameter) + parameters
@@ -89,58 +91,58 @@ private class BridgeFunctionDescriptor(
         }
 }
 
-private val BridgeRequest.descriptor: BridgeFunctionDescriptor
-    get() {
-        require(callable !is SirInit) { "Use allocationDescriptor and initializationDescriptor instead" }
-        return BridgeFunctionDescriptor(
-            bridgeName,
-            callable.bridgeParameters(),
-            bridgeType(callable.returnType),
-            fqName,
-            if (callable.kind == SirCallableKind.INSTANCE_METHOD) {
-                val selfType = when (callable) {
-                    is SirFunction -> SirNominalType(callable.parent as SirClass)
-                    is SirAccessor -> SirNominalType((callable.parent as SirVariable).parent as SirClass)
-                    is SirInit -> error("Init node cannot be an instance method")
-                }
-                BridgeParameter("self", bridgeType(selfType))
-            } else null,
-        )
-    }
+private fun BridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+    require(callable !is SirInit) { "Use allocationDescriptor and initializationDescriptor instead" }
+    return BridgeFunctionDescriptor(
+        baseBridgeName = bridgeName,
+        parameters = callable.bridgeParameters(),
+        returnType = bridgeType(callable.returnType),
+        kotlinFqName = fqName,
+        selfParameter = if (callable.kind == SirCallableKind.INSTANCE_METHOD) {
+            val selfType = when (callable) {
+                is SirFunction -> SirNominalType(callable.parent as SirClass)
+                is SirAccessor -> SirNominalType((callable.parent as SirVariable).parent as SirClass)
+                is SirInit -> error("Init node cannot be an instance method")
+            }
+            BridgeParameter("self", bridgeType(selfType))
+        } else null,
+        typeNamer = typeNamer,
+    )
+}
 
 private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.uint)))
 
-private val BridgeRequest.allocationDescriptor: BridgeFunctionDescriptor
-    get() {
-        require(callable is SirInit) { "Use descriptor instead" }
-        return BridgeFunctionDescriptor(
-            bridgeName + "_allocate",
-            emptyList(),
-            obj.bridge,
-            fqName,
-            null,
-        )
-    }
+private fun BridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+    require(callable is SirInit) { "Use descriptor instead" }
+    return BridgeFunctionDescriptor(
+        bridgeName + "_allocate",
+        emptyList(),
+        obj.bridge,
+        fqName,
+        null,
+        typeNamer = typeNamer,
+    )
+}
 
-private val BridgeRequest.initializationDescriptor: BridgeFunctionDescriptor
-    get() {
-        require(callable is SirInit) { "Use descriptor instead" }
-        return BridgeFunctionDescriptor(
-            bridgeName + "_initialize",
-            listOf(obj) + callable.bridgeParameters(),
-            bridgeType(callable.returnType),
-            fqName,
-            null,
-        )
-    }
+private fun BridgeRequest.initializationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
+    require(callable is SirInit) { "Use descriptor instead" }
+    return BridgeFunctionDescriptor(
+        bridgeName + "_initialize",
+        listOf(obj) + callable.bridgeParameters(),
+        bridgeType(callable.returnType),
+        fqName,
+        null,
+        typeNamer = typeNamer,
+    )
+}
 
 // TODO: we need to mangle C name in more elegant way. KT-64970
 // problems with this approach are:
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
-private fun cDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>): String {
+private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>, typeNamer: SirTypeNamer): String {
     val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-        it.bridge.cType.repr.replace(" ", "").replace("*", "Ptr")
+        typeNamer.swiftFqName(it.bridge.swiftType).replace(".", "_")
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
@@ -176,7 +178,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 private fun BridgeFunctionDescriptor.cDeclaration() =
     "${returnType.cType.repr} ${cBridgeName}(${allParameters.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
 
-private inline fun BridgeFunctionDescriptor.createFunctionBridge(typeNamer: SirTypeNamer, kotlinCall: (name: String, args: List<String>) -> String) =
+private inline fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (name: String, args: List<String>) -> String) =
     FunctionBridge(
         KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop)),
         CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
@@ -186,7 +188,7 @@ private fun SirCallable.bridgeParameters() = allParameters.mapIndexed { index, v
 
 private fun bridgeType(type: SirType): Bridge {
     require(type is SirNominalType)
-    return when (val subtype = type.type) {
+    return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
 
         SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
@@ -239,7 +241,7 @@ private data class BridgeParameter(
     val bridge: Bridge,
 )
 
-private enum class CType(public val repr: String) {
+private enum class CType(val repr: String) {
     Void("void"),
 
     Bool("_Bool"),
@@ -262,7 +264,7 @@ private enum class CType(public val repr: String) {
     NSString("NSString *"),
 }
 
-private enum class KotlinType(val repr: String) {
+private enum class KotlinType(val repr: kotlin.String) {
     Unit("Unit"),
 
     Boolean("Boolean"),

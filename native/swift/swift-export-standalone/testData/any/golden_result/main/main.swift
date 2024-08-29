@@ -22,5 +22,5 @@ public func getMainObject() -> KotlinRuntime.KotlinBase {
 public func isMainObject(
     obj: KotlinRuntime.KotlinBase
 ) -> Swift.Bool {
-    return __root___isMainObject__TypesOfArguments__uintptr_t__(obj.__externalRCRef())
+    return __root___isMainObject__TypesOfArguments__KotlinRuntime_KotlinBase__(obj.__externalRCRef())
 }

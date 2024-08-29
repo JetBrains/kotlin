@@ -36,8 +36,8 @@ public fun DATA_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.Na
     return _result
 }
 
-@ExportedBridge("DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__")
-public fun DATA_OBJECT_WITH_PACKAGE_variable_set(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+@ExportedBridge("DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__")
+public fun DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_OBJECT_WITH_PACKAGE
     val __newValue = newValue
     __self.variable = __newValue
@@ -55,8 +55,8 @@ public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.inte
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_CLASS())
 }
@@ -73,14 +73,14 @@ public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___OPEN_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
 }
 
-@ExportedBridge("__root___increment__TypesOfArguments__int32_t__")
-public fun __root___increment(integer: Int): Int {
+@ExportedBridge("__root___increment__TypesOfArguments__Swift_Int32__")
+public fun __root___increment__TypesOfArguments__Swift_Int32__(integer: Int): Int {
     val __integer = integer
     val _result = increment(__integer)
     return _result
@@ -92,8 +92,8 @@ public fun typealiases_Foo_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("typealiases_Foo_init_initialize__TypesOfArguments__uintptr_t__")
-public fun typealiases_Foo_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("typealiases_Foo_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun typealiases_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, typealiases.Foo())
 }
@@ -104,8 +104,8 @@ public fun typealiases_inner_Bar_init_allocate(): kotlin.native.internal.NativeP
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("typealiases_inner_Bar_init_initialize__TypesOfArguments__uintptr_t__")
-public fun typealiases_inner_Bar_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, typealiases.inner.Bar())
 }

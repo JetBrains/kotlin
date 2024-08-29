@@ -24,8 +24,8 @@ public fun namespace1_local_functions_foo(): Unit {
     namespace1.local_functions.foo()
 }
 
-@ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double_uint16_t__")
-public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg6: UByte, arg7: UShort, arg8: UInt, arg9: ULong, arg10: Float, arg11: Double, arg12: Char): Unit {
+@ExportedBridge("namespace1_main_all_args__TypesOfArguments__Swift_Bool_Swift_Int8_Swift_Int16_Swift_Int32_Swift_Int64_Swift_UInt8_Swift_UInt16_Swift_UInt32_Swift_UInt64_Swift_Float_Swift_Double_Swift_Unicode_UTF16_CodeUnit__")
+public fun namespace1_main_all_args__TypesOfArguments__Swift_Bool_Swift_Int8_Swift_Int16_Swift_Int32_Swift_Int64_Swift_UInt8_Swift_UInt16_Swift_UInt32_Swift_UInt64_Swift_Float_Swift_Double_Swift_Unicode_UTF16_CodeUnit__(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg6: UByte, arg7: UShort, arg8: UInt, arg9: ULong, arg10: Float, arg11: Double, arg12: Char): Unit {
     val __arg1 = arg1
     val __arg2 = arg2
     val __arg3 = arg3
@@ -41,29 +41,29 @@ public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4
     namespace1.main.all_args(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11, __arg12)
 }
 
-@ExportedBridge("namespace1_main_foobar__TypesOfArguments__int32_t__")
-public fun namespace1_main_foobar(param: Int): Int {
+@ExportedBridge("namespace1_main_foobar__TypesOfArguments__Swift_Int32__")
+public fun namespace1_main_foobar__TypesOfArguments__Swift_Int32__(param: Int): Int {
     val __param = param
     val _result = namespace1.main.foobar(__param)
     return _result
 }
 
-@ExportedBridge("namespace2_foo__TypesOfArguments__int32_t__")
-public fun namespace2_foo(arg1: Int): Int {
+@ExportedBridge("namespace2_foo__TypesOfArguments__Swift_Int32__")
+public fun namespace2_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     val __arg1 = arg1
     val _result = namespace2.foo(__arg1)
     return _result
 }
 
-@ExportedBridge("overload_foo__TypesOfArguments__int32_t__")
-public fun overload_foo(arg1: Int): Int {
+@ExportedBridge("overload_foo__TypesOfArguments__Swift_Int32__")
+public fun overload_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     val __arg1 = arg1
     val _result = overload.foo(__arg1)
     return _result
 }
 
-@ExportedBridge("overload_foo__TypesOfArguments__double__")
-public fun overload_foo(arg1: Double): Int {
+@ExportedBridge("overload_foo__TypesOfArguments__Swift_Double__")
+public fun overload_foo__TypesOfArguments__Swift_Double__(arg1: Double): Int {
     val __arg1 = arg1
     val _result = overload.foo(__arg1)
     return _result

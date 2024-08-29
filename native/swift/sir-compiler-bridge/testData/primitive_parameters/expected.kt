@@ -1,8 +1,8 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
-@ExportedBridge("a__TypesOfArguments__int8_t_int16_t_int32_t_int64_t__")
-public fun a(p0: Byte, p1: Short, p2: Int, p3: Long): Int {
+@ExportedBridge("a__TypesOfArguments__Int8_Int16_Int32_Int64__")
+public fun a__TypesOfArguments__Int8_Int16_Int32_Int64__(p0: Byte, p1: Short, p2: Int, p3: Long): Int {
     val __p0 = p0
     val __p1 = p1
     val __p2 = p2
@@ -11,8 +11,8 @@ public fun a(p0: Byte, p1: Short, p2: Int, p3: Long): Int {
     return _result
 }
 
-@ExportedBridge("b__TypesOfArguments__uint8_t_uint16_t_uint32_t_uint64_t__")
-public fun b(p0: UByte, p1: UShort, p2: UInt, p3: ULong): UInt {
+@ExportedBridge("b__TypesOfArguments__UInt8_UInt16_UInt32_UInt64__")
+public fun b__TypesOfArguments__UInt8_UInt16_UInt32_UInt64__(p0: UByte, p1: UShort, p2: UInt, p3: ULong): UInt {
     val __p0 = p0
     val __p1 = p1
     val __p2 = p2
@@ -21,10 +21,9 @@ public fun b(p0: UByte, p1: UShort, p2: UInt, p3: ULong): UInt {
     return _result
 }
 
-@ExportedBridge("c__TypesOfArguments___Bool__")
-public fun c(p0: Boolean): Boolean {
+@ExportedBridge("c__TypesOfArguments__Bool__")
+public fun c__TypesOfArguments__Bool__(p0: Boolean): Boolean {
     val __p0 = p0
     val _result = pkg.c(__p0)
     return _result
 }
-

@@ -7,8 +7,8 @@ public fun Class_without_package_INNER_CLASS_init_allocate(): kotlin.native.inte
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun Class_without_package_INNER_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Class_without_package.INNER_CLASS())
 }
@@ -25,8 +25,8 @@ public fun Demo_INNER_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun Demo_INNER_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Demo.INNER_CLASS())
 }
@@ -65,8 +65,8 @@ public fun Demo_arg4_get(self: kotlin.native.internal.NativePtr): kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__")
-public fun Demo_combine(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Demo_combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun Demo_combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as Class_without_package
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as namespace.deeper.Class_with_package
@@ -76,8 +76,8 @@ public fun Demo_combine(self: kotlin.native.internal.NativePtr, arg1: kotlin.nat
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_combine_inner_classses__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__")
-public fun Demo_combine_inner_classses(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Demo_combine_inner_classses__TypesOfArguments__main_Class_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_CLASS_main_Object_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_CLASS__")
+public fun Demo_combine_inner_classses__TypesOfArguments__main_Class_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_CLASS_main_Object_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_CLASS__(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as Class_without_package.INNER_CLASS
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as namespace.deeper.Class_with_package.INNER_CLASS
@@ -87,8 +87,8 @@ public fun Demo_combine_inner_classses(self: kotlin.native.internal.NativePtr, a
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_combine_inner_objects__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__")
-public fun Demo_combine_inner_objects(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("Demo_combine_inner_objects__TypesOfArguments__main_Class_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_OBJECT_main_Object_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_OBJECT__")
+public fun Demo_combine_inner_objects__TypesOfArguments__main_Class_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_OBJECT_main_Object_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_OBJECT__(self: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as Class_without_package.INNER_OBJECT
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as namespace.deeper.Class_with_package.INNER_OBJECT
@@ -105,8 +105,8 @@ public fun Demo_var1_get(self: kotlin.native.internal.NativePtr): kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_var1_set__TypesOfArguments__uintptr_t__")
-public fun Demo_var1_set(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Demo_var1_set__TypesOfArguments__main_Class_without_package__")
+public fun Demo_var1_set__TypesOfArguments__main_Class_without_package__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Class_without_package
     __self.var1 = __newValue
@@ -119,8 +119,8 @@ public fun Demo_var2_get(self: kotlin.native.internal.NativePtr): kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_var2_set__TypesOfArguments__uintptr_t__")
-public fun Demo_var2_set(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Demo_var2_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__")
+public fun Demo_var2_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as namespace.deeper.Class_with_package
     __self.var2 = __newValue
@@ -133,8 +133,8 @@ public fun Demo_var3_get(self: kotlin.native.internal.NativePtr): kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_var3_set__TypesOfArguments__uintptr_t__")
-public fun Demo_var3_set(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Demo_var3_set__TypesOfArguments__main_Object_without_package__")
+public fun Demo_var3_set__TypesOfArguments__main_Object_without_package__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Object_without_package
     __self.var3 = __newValue
@@ -147,8 +147,8 @@ public fun Demo_var4_get(self: kotlin.native.internal.NativePtr): kotlin.native.
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Demo_var4_set__TypesOfArguments__uintptr_t__")
-public fun Demo_var4_set(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Demo_var4_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun Demo_var4_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Demo
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as namespace.deeper.Object_with_package
     __self.var4 = __newValue
@@ -160,8 +160,8 @@ public fun Object_without_package_INNER_CLASS_init_allocate(): kotlin.native.int
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun Object_without_package_INNER_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Object_without_package.INNER_CLASS())
 }
@@ -178,8 +178,8 @@ public fun __root___Class_without_package_init_allocate(): kotlin.native.interna
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___Class_without_package_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___Class_without_package_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___Class_without_package_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Class_without_package())
 }
@@ -190,8 +190,8 @@ public fun __root___Demo_init_allocate(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___Demo_init_initialize__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t_uintptr_t__")
-public fun __root___Demo_init_initialize(__kt: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___Demo_init_initialize__TypesOfArguments__Swift_UInt_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun __root___Demo_init_initialize__TypesOfArguments__Swift_UInt_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(__kt: kotlin.native.internal.NativePtr, arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as Class_without_package
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as namespace.deeper.Class_with_package
@@ -206,8 +206,8 @@ public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun __root___OPEN_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
 }
@@ -218,8 +218,8 @@ public fun __root___Object_without_package_get(): kotlin.native.internal.NativeP
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__")
-public fun __root___combine(arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1: kotlin.native.internal.NativePtr, arg2: kotlin.native.internal.NativePtr, arg3: kotlin.native.internal.NativePtr, arg4: kotlin.native.internal.NativePtr): Unit {
     val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as Class_without_package
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as namespace.deeper.Class_with_package
     val __arg3 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg3) as Object_without_package
@@ -263,38 +263,38 @@ public fun __root___produce_object_wp(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_DATA_OBJECT(x: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__")
+public fun __root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as namespace.deeper.DATA_OBJECT
     recieve_DATA_OBJECT(__x)
 }
 
-@ExportedBridge("__root___recieve_OPEN_CLASS__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_OPEN_CLASS(x: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_OPEN_CLASS__TypesOfArguments__main_OPEN_CLASS__")
+public fun __root___recieve_OPEN_CLASS__TypesOfArguments__main_OPEN_CLASS__(x: kotlin.native.internal.NativePtr): Unit {
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as OPEN_CLASS
     recieve_OPEN_CLASS(__x)
 }
 
-@ExportedBridge("__root___recieve_class__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_class(arg: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_class__TypesOfArguments__main_Class_without_package__")
+public fun __root___recieve_class__TypesOfArguments__main_Class_without_package__(arg: kotlin.native.internal.NativePtr): Unit {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Class_without_package
     recieve_class(__arg)
 }
 
-@ExportedBridge("__root___recieve_class_wp__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_class_wp(arg: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_class_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__")
+public fun __root___recieve_class_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(arg: kotlin.native.internal.NativePtr): Unit {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as namespace.deeper.Class_with_package
     recieve_class_wp(__arg)
 }
 
-@ExportedBridge("__root___recieve_object__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_object(arg: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_object__TypesOfArguments__main_Object_without_package__")
+public fun __root___recieve_object__TypesOfArguments__main_Object_without_package__(arg: kotlin.native.internal.NativePtr): Unit {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Object_without_package
     recieve_object(__arg)
 }
 
-@ExportedBridge("__root___recieve_object_wp__TypesOfArguments__uintptr_t__")
-public fun __root___recieve_object_wp(arg: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___recieve_object_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun __root___recieve_object_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg: kotlin.native.internal.NativePtr): Unit {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as namespace.deeper.Object_with_package
     recieve_object_wp(__arg)
 }
@@ -329,8 +329,8 @@ public fun __root___var_class_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___var_class_set__TypesOfArguments__uintptr_t__")
-public fun __root___var_class_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___var_class_set__TypesOfArguments__main_Class_without_package__")
+public fun __root___var_class_set__TypesOfArguments__main_Class_without_package__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Class_without_package
     var_class = __newValue
 }
@@ -341,8 +341,8 @@ public fun __root___var_class_wp_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___var_class_wp_set__TypesOfArguments__uintptr_t__")
-public fun __root___var_class_wp_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___var_class_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__")
+public fun __root___var_class_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as namespace.deeper.Class_with_package
     var_class_wp = __newValue
 }
@@ -353,8 +353,8 @@ public fun __root___var_object_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___var_object_set__TypesOfArguments__uintptr_t__")
-public fun __root___var_object_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___var_object_set__TypesOfArguments__main_Object_without_package__")
+public fun __root___var_object_set__TypesOfArguments__main_Object_without_package__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Object_without_package
     var_object = __newValue
 }
@@ -365,8 +365,8 @@ public fun __root___var_object_wp_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___var_object_wp_set__TypesOfArguments__uintptr_t__")
-public fun __root___var_object_wp_set(newValue: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__")
+public fun __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(newValue: kotlin.native.internal.NativePtr): Unit {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as namespace.deeper.Object_with_package
     var_object_wp = __newValue
 }
@@ -377,8 +377,8 @@ public fun namespace_deeper_Class_with_package_INNER_CLASS_init_allocate(): kotl
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun namespace_deeper_Class_with_package_INNER_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Class_with_package.INNER_CLASS())
 }
@@ -395,8 +395,8 @@ public fun namespace_deeper_Class_with_package_init_allocate(): kotlin.native.in
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__uintptr_t__")
-public fun namespace_deeper_Class_with_package_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Class_with_package())
 }
@@ -434,8 +434,8 @@ public fun namespace_deeper_Object_with_package_INNER_CLASS_init_allocate(): kot
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__")
-public fun namespace_deeper_Object_with_package_INNER_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Object_with_package.INNER_CLASS())
 }

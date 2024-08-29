@@ -71,7 +71,7 @@ private fun SirMutableDeclarationContainer.extension(type: SirNominalType) = add
     buildExtension {
         // This doesn't retain information about the extension and its place in the hierarchy,
         // and thus is a bit imprecise, but the result is more readable and consistent with other [SirExtension]s.
-        origin = type.type.origin
+        origin = type.typeDeclaration.origin
 
         visibility = SirVisibility.PUBLIC
         extendedType = type

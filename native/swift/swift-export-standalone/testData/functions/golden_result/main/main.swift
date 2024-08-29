@@ -28,12 +28,12 @@ public extension ExportedKotlinPackages.namespace1.main {
         arg11: Swift.Double,
         arg12: Swift.Unicode.UTF16.CodeUnit
     ) -> Swift.Void {
-        return namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double_uint16_t__(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
+        return namespace1_main_all_args__TypesOfArguments__Swift_Bool_Swift_Int8_Swift_Int16_Swift_Int32_Swift_Int64_Swift_UInt8_Swift_UInt16_Swift_UInt32_Swift_UInt64_Swift_Float_Swift_Double_Swift_Unicode_UTF16_CodeUnit__(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
     }
     public static func foobar(
         param: Swift.Int32
     ) -> Swift.Int32 {
-        return namespace1_main_foobar__TypesOfArguments__int32_t__(param)
+        return namespace1_main_foobar__TypesOfArguments__Swift_Int32__(param)
     }
 }
 public extension ExportedKotlinPackages.namespace1 {
@@ -45,18 +45,18 @@ public extension ExportedKotlinPackages.namespace2 {
     public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {
-        return namespace2_foo__TypesOfArguments__int32_t__(arg1)
+        return namespace2_foo__TypesOfArguments__Swift_Int32__(arg1)
     }
 }
 public extension ExportedKotlinPackages.overload {
     public static func foo(
         arg1: Swift.Double
     ) -> Swift.Int32 {
-        return overload_foo__TypesOfArguments__double__(arg1)
+        return overload_foo__TypesOfArguments__Swift_Double__(arg1)
     }
     public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {
-        return overload_foo__TypesOfArguments__int32_t__(arg1)
+        return overload_foo__TypesOfArguments__Swift_Int32__(arg1)
     }
 }

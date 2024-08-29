@@ -6,7 +6,7 @@ public final class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___CLASS_WITH_SAME_NAME_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt
@@ -41,13 +41,13 @@ public final class Foo : KotlinRuntime.KotlinBase {
                 return Foo_INSIDE_CLASS_my_variable_inner_get(self.__externalRCRef())
             }
             set {
-                return Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                return Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
             }
         }
         public override init() {
             let __kt = Foo_INSIDE_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -68,7 +68,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
             return Foo_my_variable_get(self.__externalRCRef())
         }
         set {
-            return Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+            return Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
         }
     }
     public override init(
@@ -81,14 +81,14 @@ public final class Foo : KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Foo_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, a)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, a)
     }
     public init(
         f: Swift.Float
     ) {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(__kt, f)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UInt_Swift_Float__(__kt, f)
     }
     public func foo() -> Swift.Bool {
         return Foo_foo(self.__externalRCRef())
@@ -100,7 +100,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             public override init() {
                 let __kt = OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate()
                 super.init(__externalRCRef: __kt)
-                OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
@@ -123,7 +123,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         ) {
             let __kt = OBJECT_NO_PACKAGE_Bar_init_allocate()
             super.init(__externalRCRef: __kt)
-            OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, i)
+            OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, i)
         }
         public func bar() -> Swift.Int32 {
             return OBJECT_NO_PACKAGE_Bar_bar(self.__externalRCRef())
@@ -133,7 +133,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = OBJECT_NO_PACKAGE_Foo_init_allocate()
             super.init(__externalRCRef: __kt)
-            OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -171,7 +171,7 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             return OBJECT_NO_PACKAGE_variable_get(self.__externalRCRef())
         }
         set {
-            return OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+            return OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
     private override init() {
@@ -203,7 +203,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
             }
         }
         private override init() {
@@ -237,13 +237,13 @@ public extension ExportedKotlinPackages.namespace.deeper {
                         return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                     }
                     set {
-                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
                     }
                 }
                 public override init() {
                     let __kt = namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate()
                     super.init(__externalRCRef: __kt)
-                    namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                    namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
                 }
                 public override init(
                     __externalRCRef: Swift.UInt
@@ -264,13 +264,13 @@ public extension ExportedKotlinPackages.namespace.deeper {
                     return namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                 }
                 set {
-                    return namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                    return namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
                 }
             }
             public override init() {
                 let __kt = namespace_deeper_Foo_INSIDE_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
@@ -291,13 +291,13 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                return namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
             }
         }
         public override init() {
             let __kt = namespace_deeper_Foo_init_allocate()
             super.init(__externalRCRef: __kt)
-            namespace_deeper_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -312,7 +312,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         public override init() {
             let __kt = namespace_deeper_NAMESPACED_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -352,7 +352,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             ) {
                 let __kt = namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, i)
+                namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, i)
             }
             public func bar() -> Swift.Int32 {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self.__externalRCRef())
@@ -362,7 +362,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             public override init() {
                 let __kt = namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
@@ -400,7 +400,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+                return namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
             }
         }
         private override init() {
@@ -422,7 +422,7 @@ public extension ExportedKotlinPackages.namespace {
             public override init() {
                 let __kt = namespace_Foo_INSIDE_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
@@ -440,13 +440,13 @@ public extension ExportedKotlinPackages.namespace {
                 return namespace_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                return namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
             }
         }
         public override init() {
             let __kt = namespace_Foo_init_allocate()
             super.init(__externalRCRef: __kt)
-            namespace_Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            namespace_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -461,7 +461,7 @@ public extension ExportedKotlinPackages.namespace {
         public override init() {
             let __kt = namespace_NAMESPACED_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -475,7 +475,7 @@ public extension ExportedKotlinPackages.why_we_need_module_names {
         public override init() {
             let __kt = why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate()
             super.init(__externalRCRef: __kt)
-            why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt

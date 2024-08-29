@@ -109,7 +109,7 @@ public class SirTypeProviderImpl(
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType {
         if (this is SirNominalType) {
-            when (val origin = type.origin) {
+            when (val origin = typeDeclaration.origin) {
                 is KotlinSource -> {
                     val ktModule = with(ktAnalysisSession) {
                         origin.symbol.containingModule

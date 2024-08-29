@@ -7,7 +7,7 @@ public extension ExportedKotlinPackages.test.factory.modules {
         public override init() {
             let __kt = test_factory_modules_ClassFromDependency_init_allocate()
             super.init(__externalRCRef: __kt)
-            test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt

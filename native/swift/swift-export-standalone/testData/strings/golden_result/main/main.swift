@@ -5,7 +5,7 @@ public var string: Swift.String {
         return __root___string_get()
     }
     set {
-        return __root___string_set__TypesOfArguments__NSStringPtr__(newValue)
+        return __root___string_set__TypesOfArguments__Swift_String__(newValue)
     }
 }
 public func getConstantString() -> Swift.String {
@@ -17,5 +17,5 @@ public func getString() -> Swift.String {
 public func setString(
     value: Swift.String
 ) -> Swift.Void {
-    return __root___setString__TypesOfArguments__NSStringPtr__(value)
+    return __root___setString__TypesOfArguments__Swift_String__(value)
 }

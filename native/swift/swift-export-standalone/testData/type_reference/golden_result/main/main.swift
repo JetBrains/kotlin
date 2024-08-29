@@ -7,7 +7,7 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Class_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -33,7 +33,7 @@ public final class Class_without_package : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___Class_without_package_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Class_without_package_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt
@@ -46,7 +46,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Demo_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            Demo_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -94,7 +94,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             return main.Class_without_package(__externalRCRef: Demo_var1_get(self.__externalRCRef()))
         }
         set {
-            return Demo_var1_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
+            return Demo_var1_set__TypesOfArguments__main_Class_without_package__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var2: ExportedKotlinPackages.namespace.deeper.Class_with_package {
@@ -102,7 +102,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             return ExportedKotlinPackages.namespace.deeper.Class_with_package(__externalRCRef: Demo_var2_get(self.__externalRCRef()))
         }
         set {
-            return Demo_var2_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
+            return Demo_var2_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var3: main.Object_without_package {
@@ -110,7 +110,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             return main.Object_without_package(__externalRCRef: Demo_var3_get(self.__externalRCRef()))
         }
         set {
-            return Demo_var3_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
+            return Demo_var3_set__TypesOfArguments__main_Object_without_package__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var4: ExportedKotlinPackages.namespace.deeper.Object_with_package {
@@ -118,7 +118,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
             return ExportedKotlinPackages.namespace.deeper.Object_with_package(__externalRCRef: Demo_var4_get(self.__externalRCRef()))
         }
         set {
-            return Demo_var4_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
+            return Demo_var4_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public override init(
@@ -134,7 +134,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
     ) {
         let __kt = __root___Demo_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___Demo_init_initialize__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t_uintptr_t__(__kt, arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
+        __root___Demo_init_initialize__TypesOfArguments__Swift_UInt_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(__kt, arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
     }
     public func combine(
         arg1: main.Class_without_package,
@@ -142,7 +142,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package,
         arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package
     ) -> main.Demo {
-        return main.Demo(__externalRCRef: Demo_combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
+        return main.Demo(__externalRCRef: Demo_combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
     public func combine_inner_classses(
         arg1: main.Class_without_package.INNER_CLASS,
@@ -150,7 +150,7 @@ public final class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package.INNER_CLASS,
         arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_CLASS
     ) -> main.Demo.INNER_CLASS {
-        return main.Demo.INNER_CLASS(__externalRCRef: Demo_combine_inner_classses__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
+        return main.Demo.INNER_CLASS(__externalRCRef: Demo_combine_inner_classses__TypesOfArguments__main_Class_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_CLASS_main_Object_without_package_INNER_CLASS_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_CLASS__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
     public func combine_inner_objects(
         arg1: main.Class_without_package.INNER_OBJECT,
@@ -158,14 +158,14 @@ public final class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package.INNER_OBJECT,
         arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_OBJECT
     ) -> main.Demo.INNER_OBJECT {
-        return main.Demo.INNER_OBJECT(__externalRCRef: Demo_combine_inner_objects__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
+        return main.Demo.INNER_OBJECT(__externalRCRef: Demo_combine_inner_objects__TypesOfArguments__main_Class_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Class_with_package_INNER_OBJECT_main_Object_without_package_INNER_OBJECT_ExportedKotlinPackages_namespace_deeper_Object_with_package_INNER_OBJECT__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
 }
 open class OPEN_CLASS : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
-        __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+        __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
     }
     public override init(
         __externalRCRef: Swift.UInt
@@ -178,7 +178,7 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Object_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRef: __kt)
-            Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -240,7 +240,7 @@ public var var_class: main.Class_without_package {
         return main.Class_without_package(__externalRCRef: __root___var_class_get())
     }
     set {
-        return __root___var_class_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___var_class_set__TypesOfArguments__main_Class_without_package__(newValue.__externalRCRef())
     }
 }
 public var var_class_wp: ExportedKotlinPackages.namespace.deeper.Class_with_package {
@@ -248,7 +248,7 @@ public var var_class_wp: ExportedKotlinPackages.namespace.deeper.Class_with_pack
         return ExportedKotlinPackages.namespace.deeper.Class_with_package(__externalRCRef: __root___var_class_wp_get())
     }
     set {
-        return __root___var_class_wp_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___var_class_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(newValue.__externalRCRef())
     }
 }
 public var var_object: main.Object_without_package {
@@ -256,7 +256,7 @@ public var var_object: main.Object_without_package {
         return main.Object_without_package(__externalRCRef: __root___var_object_get())
     }
     set {
-        return __root___var_object_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___var_object_set__TypesOfArguments__main_Object_without_package__(newValue.__externalRCRef())
     }
 }
 public var var_object_wp: ExportedKotlinPackages.namespace.deeper.Object_with_package {
@@ -264,7 +264,7 @@ public var var_object_wp: ExportedKotlinPackages.namespace.deeper.Object_with_pa
         return ExportedKotlinPackages.namespace.deeper.Object_with_package(__externalRCRef: __root___var_object_wp_get())
     }
     set {
-        return __root___var_object_wp_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+        return __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(newValue.__externalRCRef())
     }
 }
 public func combine(
@@ -273,7 +273,7 @@ public func combine(
     arg3: main.Object_without_package,
     arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package
 ) -> Swift.Void {
-    return __root___combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
+    return __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
 }
 public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: __root___produce_DATA_OBJECT())
@@ -296,32 +296,32 @@ public func produce_object_wp() -> ExportedKotlinPackages.namespace.deeper.Objec
 public func recieve_DATA_OBJECT(
     x: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT
 ) -> Swift.Void {
-    return __root___recieve_DATA_OBJECT__TypesOfArguments__uintptr_t__(x.__externalRCRef())
+    return __root___recieve_DATA_OBJECT__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_DATA_OBJECT__(x.__externalRCRef())
 }
 public func recieve_OPEN_CLASS(
     x: main.OPEN_CLASS
 ) -> Swift.Void {
-    return __root___recieve_OPEN_CLASS__TypesOfArguments__uintptr_t__(x.__externalRCRef())
+    return __root___recieve_OPEN_CLASS__TypesOfArguments__main_OPEN_CLASS__(x.__externalRCRef())
 }
 public func recieve_class(
     arg: main.Class_without_package
 ) -> Swift.Void {
-    return __root___recieve_class__TypesOfArguments__uintptr_t__(arg.__externalRCRef())
+    return __root___recieve_class__TypesOfArguments__main_Class_without_package__(arg.__externalRCRef())
 }
 public func recieve_class_wp(
     arg: ExportedKotlinPackages.namespace.deeper.Class_with_package
 ) -> Swift.Void {
-    return __root___recieve_class_wp__TypesOfArguments__uintptr_t__(arg.__externalRCRef())
+    return __root___recieve_class_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Class_with_package__(arg.__externalRCRef())
 }
 public func recieve_object(
     arg: main.Object_without_package
 ) -> Swift.Void {
-    return __root___recieve_object__TypesOfArguments__uintptr_t__(arg.__externalRCRef())
+    return __root___recieve_object__TypesOfArguments__main_Object_without_package__(arg.__externalRCRef())
 }
 public func recieve_object_wp(
     arg: ExportedKotlinPackages.namespace.deeper.Object_with_package
 ) -> Swift.Void {
-    return __root___recieve_object_wp__TypesOfArguments__uintptr_t__(arg.__externalRCRef())
+    return __root___recieve_object_wp__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg.__externalRCRef())
 }
 public extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package : KotlinRuntime.KotlinBase {
@@ -329,7 +329,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             public override init() {
                 let __kt = namespace_deeper_Class_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
@@ -355,7 +355,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         public override init() {
             let __kt = namespace_deeper_Class_with_package_init_allocate()
             super.init(__externalRCRef: __kt)
-            namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+            namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
         }
         public override init(
             __externalRCRef: Swift.UInt
@@ -394,7 +394,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
             public override init() {
                 let __kt = namespace_deeper_Object_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRef: __kt)
-                namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+                namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
             }
             public override init(
                 __externalRCRef: Swift.UInt
