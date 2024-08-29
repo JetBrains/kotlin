@@ -1,6 +1,5 @@
 // WITH_COROUTINES
 // WITH_STDLIB
-// SKIP_SOURCEMAP_REMAPPING
 // FILE: test.kt
 import kotlin.coroutines.*
 import helpers.*

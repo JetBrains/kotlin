@@ -44,11 +44,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val SKIP_SOURCEMAP_REMAPPING by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val EXPECTED_REACHABLE_NODES by valueDirective(
         description = "",
         applicability = DirectiveApplicability.Global,
