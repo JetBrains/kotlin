@@ -164,6 +164,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("expectFunctionWithDefaultParam.kt")
+    public void testExpectFunctionWithDefaultParam() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/expectFunctionWithDefaultParam.kt");
+    }
+
+    @Test
     @TestMetadata("fragmentFunction.kt")
     public void testFragmentFunction() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/fragmentFunction.kt");

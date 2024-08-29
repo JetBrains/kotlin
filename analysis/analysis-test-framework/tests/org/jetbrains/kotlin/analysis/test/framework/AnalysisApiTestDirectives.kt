@@ -36,7 +36,17 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     )
 
     val CONTEXT_MODULE by stringDirective(
-        description = "Specifies the module name which should be treated as a context module for the current one",
+        description = "Specifies the module name used to find the 'context psi element' for this module",
+        applicability = DirectiveApplicability.Module
+    )
+
+    /*
+    Note: the 'contextElement' can be different from the 'contextModule'.
+    E.g., consider a multiplatform project where the contextElement is in 'commonMain', but the contextModule can be
+    configured as 'jvmMain'
+    */
+    val ANALYSIS_CONTEXT_MODULE by stringDirective(
+        description = "Specifies the module name which should be treated as a context module for the current one (can overwrite 'CONTEXT_MODULE')",
         applicability = DirectiveApplicability.Module
     )
 }
