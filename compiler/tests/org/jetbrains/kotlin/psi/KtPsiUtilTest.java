@@ -96,6 +96,20 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
         Assert.assertFalse(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("Foo", 2, true)));
     }
 
+    public void testPlainContent() {
+        KtPsiFactory factory = new KtPsiFactory(getProject());
+        String singleLineContent = "foo";
+        String multiLineContent = "Bar\nBaz";
+
+        Assert.assertEquals("", KtPsiUtilKt.getPlainContent(factory.createStringTemplate("")));
+        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createStringTemplate(singleLineContent)));
+        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, false)));
+        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 5, false)));
+
+        Assert.assertEquals(multiLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(multiLineContent, 2, false)));
+        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, true)));
+    }
+
     public void testIsLocalClass() throws IOException {
         String text = FileUtil.loadFile(new File(KtTestUtil.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
         KtClass aClass = new KtPsiFactory(getProject()).createClass(text);
