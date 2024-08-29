@@ -3103,6 +3103,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       }
 
       @Test
+      @TestMetadata("KT-69736.kt")
+      public void testKT_69736() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations/KT-69736.kt");
+      }
+
+      @Test
       @TestMetadata("NoSyntheticFieldInClass.kt")
       public void testNoSyntheticFieldInClass() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/javaDeclarations/NoSyntheticFieldInClass.kt");

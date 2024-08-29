@@ -162,6 +162,10 @@ internal object KDocReferenceResolver {
         val getterNames = possibleGetMethodNames(fqName.shortNameOrSpecial())
         return getterNames.flatMap { getterName ->
             resolveKdocFqName(fqName.parent().child(getterName), contextElement, trySyntheticGetters = false)
+        }.filter {
+            val symbolLocation = it.symbol.location
+            val symbolOrigin = it.symbol.origin
+            symbolLocation == KaSymbolLocation.CLASS && (symbolOrigin == KaSymbolOrigin.JAVA_LIBRARY || symbolOrigin == KaSymbolOrigin.JAVA_SOURCE)
         }
     }
 
