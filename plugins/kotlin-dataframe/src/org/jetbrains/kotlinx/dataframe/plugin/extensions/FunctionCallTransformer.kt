@@ -74,12 +74,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedGroupByCallShape
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.createPluginDataFrameSchema
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -222,14 +223,10 @@ class FunctionCallTransformer(
 
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
-            val analyzeRefinedCallShape = analyzeRefinedCallShape(call, InterpretationErrorReporter.DEFAULT)
-
-            val (token, dataFrameSchema) =
-                analyzeRefinedCallShape ?: return null
-
-
+            val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, Names.DF_CLASS_ID, InterpretationErrorReporter.DEFAULT)
+            val (tokens, dataFrameSchema) = callResult ?: return null
+            val token = tokens[0]
             val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
-
             val dataSchemaApis = materialize(dataFrameSchema, call, firstSchema)
 
             val tokenFir = token.toClassSymbol(session)!!.fir
@@ -272,23 +269,28 @@ class FunctionCallTransformer(
 
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
-            val (keyMarker, keySchema, groupMarker, groupSchema) = analyzeRefinedGroupByCallShape(
-                call,
-                InterpretationErrorReporter.DEFAULT
-            ) ?: return null
+            val callResult = analyzeRefinedCallShape<GroupBy>(call, Names.GROUP_BY_CLASS_ID, InterpretationErrorReporter.DEFAULT)
+            val (rootMarkers, groupBy) = callResult ?: return null
+
+            val keyMarker = rootMarkers[0]
+            val groupMarker = rootMarkers[1]
+
+            val keySchema = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop)
+            val groupSchema = PluginDataFrameSchema(groupBy.df.columns())
+
             val firstSchema = keyMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
             val firstSchema1 = groupMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
 
-            val dataSchemaApis = materialize(keySchema, call, firstSchema, "Key")
-            val dataSchemaApis1 = materialize(groupSchema, call, firstSchema1, "Group", dataSchemaApis.size)
+            val keyApis = materialize(keySchema, call, firstSchema, "Key")
+            val groupApis = materialize(groupSchema, call, firstSchema1, "Group", i = keyApis.size)
 
-            val tokenFir = keyMarker.toClassSymbol(session)!!.fir
-            tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
+            val groupToken = keyMarker.toClassSymbol(session)!!.fir
+            groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol })
 
-            val tokenFir1 = groupMarker.toClassSymbol(session)!!.fir
-            tokenFir1.callShapeData = CallShapeData.RefinedType(dataSchemaApis1.map { it.scope.symbol })
+            val keyToken = groupMarker.toClassSymbol(session)!!.fir
+            keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
 
-            return buildLetCall(call, originalSymbol, dataSchemaApis + dataSchemaApis1, listOf(tokenFir, tokenFir1))
+            return buildLetCall(call, originalSymbol, keyApis + groupApis, additionalDeclarations = listOf(groupToken, keyToken))
         }
     }
 
