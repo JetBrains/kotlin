@@ -1,6 +1,8 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JavaEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<@[FlexibleNullability] <root>.JavaEnum?>]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.JavaEnum
   ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:FOO
+    annotations:
+      JavaPropertyAnnotation
   FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JavaEnum?>) returnType:kotlin.Any [fake_override]
     overridden:
       protected final fun clone (): kotlin.Any declared in kotlin.Enum
