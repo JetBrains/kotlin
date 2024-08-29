@@ -11,10 +11,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -46,7 +42,7 @@ object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
-        project: Project
+        project: Project,
     ): KtTestModuleStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
@@ -81,6 +77,9 @@ object TestModuleStructureFactory {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
             val contextModule = contextModuleName?.let(existingModules::getValue)
 
+            val analysisContextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.ANALYSIS_CONTEXT_MODULE)
+            val analysisContextModule = analysisContextModuleName?.let(existingModules::getValue)
+
             val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
                 val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KaLibraryModule
                 libraryModule?.binaryRoots.orEmpty()
@@ -88,7 +87,7 @@ object TestModuleStructureFactory {
 
             val ktTestModule = testServices
                 .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, contextModule, dependencyBinaryRoots, testServices, project)
+                .createModule(testModule, analysisContextModule ?: contextModule, dependencyBinaryRoots, testServices, project)
 
             existingModules[testModule.name] = ktTestModule
             result.add(ktTestModule)
@@ -146,7 +145,7 @@ object TestModuleStructureFactory {
         testModule: TestModule,
         testServices: TestServices,
         ktModule: KtModuleWithModifiableDependencies,
-        libraryCache: (paths: Set<Path>, factory: () -> KaLibraryModule) -> KaLibraryModule
+        libraryCache: (paths: Set<Path>, factory: () -> KaLibraryModule) -> KaLibraryModule,
     ) {
         val project = ktModule.project
 
