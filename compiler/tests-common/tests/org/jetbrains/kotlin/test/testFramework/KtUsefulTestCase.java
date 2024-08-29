@@ -28,6 +28,7 @@ import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.lang.CompoundRuntimeException;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import junit.framework.TestCase;
+import kotlin.Unit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -196,7 +197,10 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected final void disposeRootDisposable() {
-        Disposer.dispose(getTestRootDisposable());
+        UtilKt.runWriteAction(() -> {
+            Disposer.dispose(getTestRootDisposable());
+            return Unit.INSTANCE;
+        });
     }
 
     protected void addTmpFileToKeep(@NotNull File file) {
