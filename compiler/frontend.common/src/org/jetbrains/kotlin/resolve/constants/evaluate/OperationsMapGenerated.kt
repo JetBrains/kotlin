@@ -136,21 +136,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Byte).mod(right as Byte)
                 "floorDiv" -> return (left as Byte).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Double)
-                "div" -> return (left as Byte).div(right as Double)
-                "minus" -> return (left as Byte).minus(right as Double)
-                "plus" -> return (left as Byte).plus(right as Double)
-                "rem" -> return (left as Byte).rem(right as Double)
-                "times" -> return (left as Byte).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Float)
-                "div" -> return (left as Byte).div(right as Float)
-                "minus" -> return (left as Byte).minus(right as Float)
-                "plus" -> return (left as Byte).plus(right as Float)
-                "rem" -> return (left as Byte).rem(right as Float)
-                "times" -> return (left as Byte).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Short)
+                "div" -> return (left as Byte).div(right as Short)
+                "minus" -> return (left as Byte).minus(right as Short)
+                "plus" -> return (left as Byte).plus(right as Short)
+                "rem" -> return (left as Byte).rem(right as Short)
+                "times" -> return (left as Byte).times(right as Short)
+                "mod" -> return (left as Byte).mod(right as Short)
+                "floorDiv" -> return (left as Byte).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Byte).compareTo(right as Int)
@@ -172,15 +166,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Byte).mod(right as Long)
                 "floorDiv" -> return (left as Byte).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Byte).compareTo(right as Short)
-                "div" -> return (left as Byte).div(right as Short)
-                "minus" -> return (left as Byte).minus(right as Short)
-                "plus" -> return (left as Byte).plus(right as Short)
-                "rem" -> return (left as Byte).rem(right as Short)
-                "times" -> return (left as Byte).times(right as Short)
-                "mod" -> return (left as Byte).mod(right as Short)
-                "floorDiv" -> return (left as Byte).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Float)
+                "div" -> return (left as Byte).div(right as Float)
+                "minus" -> return (left as Byte).minus(right as Float)
+                "plus" -> return (left as Byte).plus(right as Float)
+                "rem" -> return (left as Byte).rem(right as Float)
+                "times" -> return (left as Byte).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Byte).compareTo(right as Double)
+                "div" -> return (left as Byte).div(right as Double)
+                "minus" -> return (left as Byte).minus(right as Double)
+                "plus" -> return (left as Byte).plus(right as Double)
+                "rem" -> return (left as Byte).rem(right as Double)
+                "times" -> return (left as Byte).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Byte).equals(right)
@@ -210,23 +210,13 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Double).rem(right as Byte)
                 "times" -> return (left as Double).times(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Double)
-                "div" -> return (left as Double).div(right as Double)
-                "minus" -> return (left as Double).minus(right as Double)
-                "plus" -> return (left as Double).plus(right as Double)
-                "rem" -> return (left as Double).rem(right as Double)
-                "times" -> return (left as Double).times(right as Double)
-                "mod" -> return (left as Double).mod(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Float)
-                "div" -> return (left as Double).div(right as Float)
-                "minus" -> return (left as Double).minus(right as Float)
-                "plus" -> return (left as Double).plus(right as Float)
-                "rem" -> return (left as Double).rem(right as Float)
-                "times" -> return (left as Double).times(right as Float)
-                "mod" -> return (left as Double).mod(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Short)
+                "div" -> return (left as Double).div(right as Short)
+                "minus" -> return (left as Double).minus(right as Short)
+                "plus" -> return (left as Double).plus(right as Short)
+                "rem" -> return (left as Double).rem(right as Short)
+                "times" -> return (left as Double).times(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Double).compareTo(right as Int)
@@ -244,13 +234,23 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Double).rem(right as Long)
                 "times" -> return (left as Double).times(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Double).compareTo(right as Short)
-                "div" -> return (left as Double).div(right as Short)
-                "minus" -> return (left as Double).minus(right as Short)
-                "plus" -> return (left as Double).plus(right as Short)
-                "rem" -> return (left as Double).rem(right as Short)
-                "times" -> return (left as Double).times(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Float)
+                "div" -> return (left as Double).div(right as Float)
+                "minus" -> return (left as Double).minus(right as Float)
+                "plus" -> return (left as Double).plus(right as Float)
+                "rem" -> return (left as Double).rem(right as Float)
+                "times" -> return (left as Double).times(right as Float)
+                "mod" -> return (left as Double).mod(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Double).compareTo(right as Double)
+                "div" -> return (left as Double).div(right as Double)
+                "minus" -> return (left as Double).minus(right as Double)
+                "plus" -> return (left as Double).plus(right as Double)
+                "rem" -> return (left as Double).rem(right as Double)
+                "times" -> return (left as Double).times(right as Double)
+                "mod" -> return (left as Double).mod(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Double).equals(right)
@@ -266,23 +266,13 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Float).rem(right as Byte)
                 "times" -> return (left as Float).times(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Double)
-                "div" -> return (left as Float).div(right as Double)
-                "minus" -> return (left as Float).minus(right as Double)
-                "plus" -> return (left as Float).plus(right as Double)
-                "rem" -> return (left as Float).rem(right as Double)
-                "times" -> return (left as Float).times(right as Double)
-                "mod" -> return (left as Float).mod(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Float)
-                "div" -> return (left as Float).div(right as Float)
-                "minus" -> return (left as Float).minus(right as Float)
-                "plus" -> return (left as Float).plus(right as Float)
-                "rem" -> return (left as Float).rem(right as Float)
-                "times" -> return (left as Float).times(right as Float)
-                "mod" -> return (left as Float).mod(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Short)
+                "div" -> return (left as Float).div(right as Short)
+                "minus" -> return (left as Float).minus(right as Short)
+                "plus" -> return (left as Float).plus(right as Short)
+                "rem" -> return (left as Float).rem(right as Short)
+                "times" -> return (left as Float).times(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Float).compareTo(right as Int)
@@ -300,13 +290,23 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "rem" -> return (left as Float).rem(right as Long)
                 "times" -> return (left as Float).times(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Float).compareTo(right as Short)
-                "div" -> return (left as Float).div(right as Short)
-                "minus" -> return (left as Float).minus(right as Short)
-                "plus" -> return (left as Float).plus(right as Short)
-                "rem" -> return (left as Float).rem(right as Short)
-                "times" -> return (left as Float).times(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Float)
+                "div" -> return (left as Float).div(right as Float)
+                "minus" -> return (left as Float).minus(right as Float)
+                "plus" -> return (left as Float).plus(right as Float)
+                "rem" -> return (left as Float).rem(right as Float)
+                "times" -> return (left as Float).times(right as Float)
+                "mod" -> return (left as Float).mod(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Float).compareTo(right as Double)
+                "div" -> return (left as Float).div(right as Double)
+                "minus" -> return (left as Float).minus(right as Double)
+                "plus" -> return (left as Float).plus(right as Double)
+                "rem" -> return (left as Float).rem(right as Double)
+                "times" -> return (left as Float).times(right as Double)
+                "mod" -> return (left as Float).mod(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Float).equals(right)
@@ -340,21 +340,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Int).mod(right as Byte)
                 "floorDiv" -> return (left as Int).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Double)
-                "div" -> return (left as Int).div(right as Double)
-                "minus" -> return (left as Int).minus(right as Double)
-                "plus" -> return (left as Int).plus(right as Double)
-                "rem" -> return (left as Int).rem(right as Double)
-                "times" -> return (left as Int).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Float)
-                "div" -> return (left as Int).div(right as Float)
-                "minus" -> return (left as Int).minus(right as Float)
-                "plus" -> return (left as Int).plus(right as Float)
-                "rem" -> return (left as Int).rem(right as Float)
-                "times" -> return (left as Int).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Short)
+                "div" -> return (left as Int).div(right as Short)
+                "minus" -> return (left as Int).minus(right as Short)
+                "plus" -> return (left as Int).plus(right as Short)
+                "rem" -> return (left as Int).rem(right as Short)
+                "times" -> return (left as Int).times(right as Short)
+                "mod" -> return (left as Int).mod(right as Short)
+                "floorDiv" -> return (left as Int).floorDiv(right as Short)
             }
             LONG -> when (name) {
                 "compareTo" -> return (left as Int).compareTo(right as Long)
@@ -366,15 +360,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Int).mod(right as Long)
                 "floorDiv" -> return (left as Int).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Int).compareTo(right as Short)
-                "div" -> return (left as Int).div(right as Short)
-                "minus" -> return (left as Int).minus(right as Short)
-                "plus" -> return (left as Int).plus(right as Short)
-                "rem" -> return (left as Int).rem(right as Short)
-                "times" -> return (left as Int).times(right as Short)
-                "mod" -> return (left as Int).mod(right as Short)
-                "floorDiv" -> return (left as Int).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Float)
+                "div" -> return (left as Int).div(right as Float)
+                "minus" -> return (left as Int).minus(right as Float)
+                "plus" -> return (left as Int).plus(right as Float)
+                "rem" -> return (left as Int).rem(right as Float)
+                "times" -> return (left as Int).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Int).compareTo(right as Double)
+                "div" -> return (left as Int).div(right as Double)
+                "minus" -> return (left as Int).minus(right as Double)
+                "plus" -> return (left as Int).plus(right as Double)
+                "rem" -> return (left as Int).rem(right as Double)
+                "times" -> return (left as Int).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Int).equals(right)
@@ -405,21 +405,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Long).mod(right as Byte)
                 "floorDiv" -> return (left as Long).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Double)
-                "div" -> return (left as Long).div(right as Double)
-                "minus" -> return (left as Long).minus(right as Double)
-                "plus" -> return (left as Long).plus(right as Double)
-                "rem" -> return (left as Long).rem(right as Double)
-                "times" -> return (left as Long).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Float)
-                "div" -> return (left as Long).div(right as Float)
-                "minus" -> return (left as Long).minus(right as Float)
-                "plus" -> return (left as Long).plus(right as Float)
-                "rem" -> return (left as Long).rem(right as Float)
-                "times" -> return (left as Long).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Short)
+                "div" -> return (left as Long).div(right as Short)
+                "minus" -> return (left as Long).minus(right as Short)
+                "plus" -> return (left as Long).plus(right as Short)
+                "rem" -> return (left as Long).rem(right as Short)
+                "times" -> return (left as Long).times(right as Short)
+                "mod" -> return (left as Long).mod(right as Short)
+                "floorDiv" -> return (left as Long).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Long).compareTo(right as Int)
@@ -434,15 +428,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Long).mod(right as Int)
                 "floorDiv" -> return (left as Long).floorDiv(right as Int)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Long).compareTo(right as Short)
-                "div" -> return (left as Long).div(right as Short)
-                "minus" -> return (left as Long).minus(right as Short)
-                "plus" -> return (left as Long).plus(right as Short)
-                "rem" -> return (left as Long).rem(right as Short)
-                "times" -> return (left as Long).times(right as Short)
-                "mod" -> return (left as Long).mod(right as Short)
-                "floorDiv" -> return (left as Long).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Float)
+                "div" -> return (left as Long).div(right as Float)
+                "minus" -> return (left as Long).minus(right as Float)
+                "plus" -> return (left as Long).plus(right as Float)
+                "rem" -> return (left as Long).rem(right as Float)
+                "times" -> return (left as Long).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Long).compareTo(right as Double)
+                "div" -> return (left as Long).div(right as Double)
+                "minus" -> return (left as Long).minus(right as Double)
+                "plus" -> return (left as Long).plus(right as Double)
+                "rem" -> return (left as Long).rem(right as Double)
+                "times" -> return (left as Long).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Long).equals(right)
@@ -460,21 +460,15 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Short).mod(right as Byte)
                 "floorDiv" -> return (left as Short).floorDiv(right as Byte)
             }
-            DOUBLE -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Double)
-                "div" -> return (left as Short).div(right as Double)
-                "minus" -> return (left as Short).minus(right as Double)
-                "plus" -> return (left as Short).plus(right as Double)
-                "rem" -> return (left as Short).rem(right as Double)
-                "times" -> return (left as Short).times(right as Double)
-            }
-            FLOAT -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Float)
-                "div" -> return (left as Short).div(right as Float)
-                "minus" -> return (left as Short).minus(right as Float)
-                "plus" -> return (left as Short).plus(right as Float)
-                "rem" -> return (left as Short).rem(right as Float)
-                "times" -> return (left as Short).times(right as Float)
+            SHORT -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Short)
+                "div" -> return (left as Short).div(right as Short)
+                "minus" -> return (left as Short).minus(right as Short)
+                "plus" -> return (left as Short).plus(right as Short)
+                "rem" -> return (left as Short).rem(right as Short)
+                "times" -> return (left as Short).times(right as Short)
+                "mod" -> return (left as Short).mod(right as Short)
+                "floorDiv" -> return (left as Short).floorDiv(right as Short)
             }
             INT -> when (name) {
                 "compareTo" -> return (left as Short).compareTo(right as Int)
@@ -496,15 +490,21 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
                 "mod" -> return (left as Short).mod(right as Long)
                 "floorDiv" -> return (left as Short).floorDiv(right as Long)
             }
-            SHORT -> when (name) {
-                "compareTo" -> return (left as Short).compareTo(right as Short)
-                "div" -> return (left as Short).div(right as Short)
-                "minus" -> return (left as Short).minus(right as Short)
-                "plus" -> return (left as Short).plus(right as Short)
-                "rem" -> return (left as Short).rem(right as Short)
-                "times" -> return (left as Short).times(right as Short)
-                "mod" -> return (left as Short).mod(right as Short)
-                "floorDiv" -> return (left as Short).floorDiv(right as Short)
+            FLOAT -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Float)
+                "div" -> return (left as Short).div(right as Float)
+                "minus" -> return (left as Short).minus(right as Float)
+                "plus" -> return (left as Short).plus(right as Float)
+                "rem" -> return (left as Short).rem(right as Float)
+                "times" -> return (left as Short).times(right as Float)
+            }
+            DOUBLE -> when (name) {
+                "compareTo" -> return (left as Short).compareTo(right as Double)
+                "div" -> return (left as Short).div(right as Double)
+                "minus" -> return (left as Short).minus(right as Double)
+                "plus" -> return (left as Short).plus(right as Double)
+                "rem" -> return (left as Short).rem(right as Double)
+                "times" -> return (left as Short).times(right as Double)
             }
             ANY -> when (name) {
                 "equals" -> return (left as Short).equals(right)
@@ -541,6 +541,13 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            SHORT -> when (name) {
+                "div" -> return left.divide(right)
+                "minus" -> return left.subtract(right)
+                "plus" -> return left.add(right)
+                "rem" -> return left.rem(right)
+                "times" -> return left.multiply(right)
+            }
             INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
@@ -549,13 +556,6 @@ fun checkBinaryOp(
                 "times" -> return left.multiply(right)
             }
             LONG -> when (name) {
-                "div" -> return left.divide(right)
-                "minus" -> return left.subtract(right)
-                "plus" -> return left.add(right)
-                "rem" -> return left.rem(right)
-                "times" -> return left.multiply(right)
-            }
-            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -582,14 +582,14 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            LONG -> when (name) {
+            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            SHORT -> when (name) {
+            LONG -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -616,14 +616,14 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            INT -> when (name) {
+            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
-            SHORT -> when (name) {
+            INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
@@ -640,6 +640,13 @@ fun checkBinaryOp(
                 "rem" -> return left.rem(right)
                 "times" -> return left.multiply(right)
             }
+            SHORT -> when (name) {
+                "div" -> return left.divide(right)
+                "minus" -> return left.subtract(right)
+                "plus" -> return left.add(right)
+                "rem" -> return left.rem(right)
+                "times" -> return left.multiply(right)
+            }
             INT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
@@ -648,13 +655,6 @@ fun checkBinaryOp(
                 "times" -> return left.multiply(right)
             }
             LONG -> when (name) {
-                "div" -> return left.divide(right)
-                "minus" -> return left.subtract(right)
-                "plus" -> return left.add(right)
-                "rem" -> return left.rem(right)
-                "times" -> return left.multiply(right)
-            }
-            SHORT -> when (name) {
                 "div" -> return left.divide(right)
                 "minus" -> return left.subtract(right)
                 "plus" -> return left.add(right)
