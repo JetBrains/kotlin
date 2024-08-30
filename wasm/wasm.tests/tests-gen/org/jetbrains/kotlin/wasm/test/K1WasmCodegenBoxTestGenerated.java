@@ -1722,6 +1722,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     public void testKt53100_casts() {
       runTest("compiler/testData/codegen/box/boxing/kt53100_casts.kt");
     }
+
+    @Test
+    @TestMetadata("missingValueClassUnboxing.kt")
+    public void testMissingValueClassUnboxing() {
+      runTest("compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");
+    }
   }
 
   @Nested
