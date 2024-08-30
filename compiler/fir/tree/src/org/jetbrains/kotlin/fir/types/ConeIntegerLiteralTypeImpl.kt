@@ -39,7 +39,6 @@ class ConeIntegerLiteralConstantTypeImpl(
             value: Long,
             isUnsigned: Boolean,
             isTypePresent: (ConeClassLikeType) -> Boolean,
-            nullability: ConeNullability = ConeNullability.NOT_NULL
         ): ConeSimpleKotlinType {
             val possibleTypes = mutableListOf<ConeClassLikeType>()
 
@@ -72,7 +71,7 @@ class ConeIntegerLiteralConstantTypeImpl(
                 addSignedPossibleTypes()
             }
             return if (possibleTypes.size == 1) {
-                possibleTypes.single().withNullabilityAndAttributes(nullability, ConeAttributes.Empty).also {
+                possibleTypes.single().withNullabilityAndAttributes(ConeNullability.NOT_NULL, ConeAttributes.Empty).also {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                         assert(it.isLong() || it.isULong())
                     }

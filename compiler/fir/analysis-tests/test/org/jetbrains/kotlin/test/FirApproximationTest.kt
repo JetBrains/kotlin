@@ -30,7 +30,7 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
         runWithSession { session ->
             val intersectionType = ConeIntersectionType(
                 listOf(
-                    ConeIntegerLiteralConstantTypeImpl.create(1, false, { true }, ConeNullability.NOT_NULL),
+                    ConeIntegerLiteralConstantTypeImpl.create(1, false, { true }),
                     ConeClassLikeTypeImpl(StandardClassIds.CharSequence.toLookupTag(), arrayOf(), false)
                 ),
                 ConeClassLikeTypeImpl(StandardClassIds.Number.toLookupTag(), emptyArray(), false)
