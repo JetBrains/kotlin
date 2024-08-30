@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
+import org.jetbrains.kotlin.tooling.core.withClosureSequence
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -142,8 +144,6 @@ annotation class JdkVersions(
     }
 }
 
-private typealias MinimalSupportingGradleVersion = GradleVersion
-
 /**
  * Parameterized test against different Gradle and JDK versions.
  * Test should accept [GradleVersion] and [JdkVersions.ProvidedJdk] as a parameters.
@@ -185,17 +185,19 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
 
         return providedJdks
             .flatMap { providedJdk ->
-                val minSupportedGradleVersion = jdkGradleCompatibilityMatrix[providedJdk.version]
+                val allSupportedGradleVersions = jdkGradleCompatibilityMatrix
+                    .filter { providedJdk.version in it.javaVersions }
+
+                check(allSupportedGradleVersions.isNotEmpty()) {
+                    "Could not find suitable Gradle version for $providedJdk. Please update the compatibility matrix."
+                }
+
+                val supportedGradleVersionsRange =
+                    allSupportedGradleVersions.first().gradleVersions.start..allSupportedGradleVersions.last().gradleVersions.endInclusive
                 gradleVersions
                     .run {
-                        if (jdkAnnotation.compatibleWithGradle && minSupportedGradleVersion != null) {
-                            val initialVersionsCount = count()
-                            val filteredVersions = filter { it >= minSupportedGradleVersion }
-                            if (initialVersionsCount > filteredVersions.count()) {
-                                (filteredVersions + minSupportedGradleVersion).toSet()
-                            } else {
-                                filteredVersions
-                            }
+                        if (jdkAnnotation.compatibleWithGradle) {
+                            gradleVersionsWorkingWithJdk(supportedGradleVersionsRange, providedJdk)
                         } else this
                     }
                     .map { it to providedJdk }
@@ -208,9 +210,53 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             .asStream()
     }
 
+    private fun Set<GradleVersion>.gradleVersionsWorkingWithJdk(
+        allSupportedForJdkGradleVersionRange: ClosedRange<GradleVersion>,
+        requestedJdk: JdkVersions.ProvidedJdk,
+    ): Set<GradleVersion> {
+        val initialVersionsCount = count()
+        val filteredVersions = filter { it in allSupportedForJdkGradleVersionRange }
+        return when {
+            // All Gradle versions fit
+            filteredVersions.count() == initialVersionsCount -> this
+            // No Gradle versions fit
+            filteredVersions.count() == 0 -> error(
+                "Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}."
+            )
+            // Some Gradle versions fit
+            filteredVersions.count() <= initialVersionsCount -> {
+                filteredVersions.toSet()
+            }
+            else -> error(
+                "Failed to match JDK version ${requestedJdk.version} to ${this.joinToString()} - result: ${filteredVersions.joinToString()}"
+            )
+        }
+    }
+
     companion object {
-        private val jdkGradleCompatibilityMatrix = mapOf<JavaVersion, MinimalSupportingGradleVersion>(
-            JavaVersion.VERSION_21 to GradleVersion.version(TestVersions.Gradle.G_8_5),
+        private data class GradleJavaVersionsRange(
+            val gradleVersions: ClosedRange<GradleVersion>,
+            val javaVersions: ClosedRange<JavaVersion>,
+        )
+
+        // https://docs.gradle.org/current/userguide/compatibility.html#java_runtime
+        private val jdkGradleCompatibilityMatrix = setOf<GradleJavaVersionsRange>(
+            GradleJavaVersionsRange(
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_7_6)..GradleVersion.version(TestVersions.Gradle.G_8_2),
+                javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_19,
+            ),
+            GradleJavaVersionsRange(
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_3)..GradleVersion.version(TestVersions.Gradle.G_8_4),
+                javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_20,
+            ),
+            GradleJavaVersionsRange(
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_5)..GradleVersion.version(TestVersions.Gradle.G_8_7),
+                javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_21,
+            ),
+            GradleJavaVersionsRange(
+                gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_8)..GradleVersion.version(TestVersions.Gradle.G_8_9),
+                javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_22,
+            ),
         )
     }
 }
