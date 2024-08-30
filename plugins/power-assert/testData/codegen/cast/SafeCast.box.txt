@@ -15,7 +15,7 @@ assert((a as? String)?.length == 5)
         1
 ---
 ---
-requireNotNull(a as? String) { "" }
+requireNotNull(a as? String)
                | |
                | null
                1

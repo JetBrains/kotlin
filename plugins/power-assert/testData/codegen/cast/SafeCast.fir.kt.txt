@@ -30,10 +30,7 @@ fun test2(a: Any): String {
       val tmp_5: Any = a
       val tmp_6: String? = tmp_5 as? String
       requireNotNull<String>(value = tmp_6, lazyMessage = local fun <anonymous>(): String {
-        return local fun <anonymous>(): Any {
-          return ""
-        }
-.invoke() + "\nrequireNotNull(a as? String) { \"\" }" + "\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
+        return "\nrequireNotNull(a as? String)" + "\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
       }
 )
     } /*~> Unit */

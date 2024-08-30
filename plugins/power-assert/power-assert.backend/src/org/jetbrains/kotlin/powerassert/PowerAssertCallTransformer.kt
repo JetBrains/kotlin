@@ -201,20 +201,36 @@ class PowerAssertCallTransformer(
             .distinct()
 
         return possible.mapNotNull { overload ->
+            // Type parameters must be compatible.
+            if (function.typeParameters.size != overload.owner.typeParameters.size) {
+                return@mapNotNull null
+            }
+            for (i in function.typeParameters.indices) {
+                val functionSuperTypes = function.typeParameters[i].superTypes
+                val overloadDefaultType = overload.owner.typeParameters[i].defaultType
+                if (functionSuperTypes.any { !it.isAssignableTo(overloadDefaultType) }) {
+                    return@mapNotNull null
+                }
+            }
+
+            fun IrType.remap(): IrType = remapTypeParameters(overload.owner, function)
+
             // Dispatch receivers must always match exactly
-            if (function.dispatchReceiverParameter?.type != overload.owner.dispatchReceiverParameter?.type) {
+            if (function.dispatchReceiverParameter?.type != overload.owner.dispatchReceiverParameter?.type?.remap()) {
                 return@mapNotNull null
             }
 
             // Extension receiver may only be assignable
-            if (!function.extensionReceiverParameter?.type.isAssignableTo(overload.owner.extensionReceiverParameter?.type)) {
+            if (!function.extensionReceiverParameter?.type.isAssignableTo(overload.owner.extensionReceiverParameter?.type?.remap())) {
                 return@mapNotNull null
             }
 
             val parameters = overload.owner.valueParameters
             if (parameters.size !in values.size..values.size + 1) return@mapNotNull null
-            if (!parameters.zip(values).all { (param, value) -> value.type.isAssignableTo(param.type) }) {
-                return@mapNotNull null
+            for (i in values.indices) {
+                if (!values[i].type.isAssignableTo(parameters[i].type.remap())) {
+                    return@mapNotNull null
+                }
             }
 
             val messageParameter = parameters.last()

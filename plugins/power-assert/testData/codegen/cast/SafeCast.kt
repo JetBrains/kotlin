@@ -13,5 +13,5 @@ fun test1(a: Any) = expectThrowableMessage {
 }
 
 fun test2(a: Any) = expectThrowableMessage {
-    requireNotNull(a as? String) { "" }
+    requireNotNull(a as? String)
 }
