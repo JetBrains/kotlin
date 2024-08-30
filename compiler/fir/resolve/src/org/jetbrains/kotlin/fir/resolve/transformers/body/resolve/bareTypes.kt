@@ -48,7 +48,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
             castClass.defaultType(), originalClassLookupTag,
         ).firstOrNull() as? ConeClassLikeType ?: return null
 
-        if (originalType.nullability.isNullable)
+        if (originalType.isMarkedNullable)
             correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
         else
             correspondingSupertype

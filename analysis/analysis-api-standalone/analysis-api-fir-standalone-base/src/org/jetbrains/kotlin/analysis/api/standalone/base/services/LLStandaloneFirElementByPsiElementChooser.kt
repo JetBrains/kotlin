@@ -264,8 +264,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             else -> errorWithFirSpecificEntries("Type should not be present in Kotlin declaration", coneType = this)
         }.replace('/', '.')
 
-        // UNKNOWN nullability occurs only on flexible types
-        val nullabilitySuffix = nullability.takeUnless { it == ConeNullability.UNKNOWN }?.suffix.orEmpty()
+        val nullabilitySuffix = if (isMarkedNullable) "?" else ""
 
         return rendered + nullabilitySuffix
     }

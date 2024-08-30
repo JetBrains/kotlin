@@ -71,7 +71,7 @@ class ConeIntegerLiteralConstantTypeImpl(
                 addSignedPossibleTypes()
             }
             return if (possibleTypes.size == 1) {
-                possibleTypes.single().withNullabilityAndAttributes(ConeNullability.NOT_NULL, ConeAttributes.Empty).also {
+                possibleTypes.single().withNullabilityAndAttributes(false, ConeAttributes.Empty).also {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                         assert(it.isLong() || it.isULong())
                     }
@@ -157,12 +157,12 @@ private object ConeIntegerLiteralTypeExtensions {
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {
         val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
-            ?.withNullabilityAndAttributes(ConeNullability.NOT_NULL, ConeAttributes.Empty)
+            ?.withNullabilityAndAttributes(false, ConeAttributes.Empty)
         val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
             else -> expectedTypeForApproximation
         }
-        return approximatedType.withNullabilityAndAttributes(nullability, attributes)
+        return approximatedType.withNullabilityAndAttributes(isMarkedNullable, attributes)
     }
 
 
@@ -226,12 +226,12 @@ private object ConeIntegerLiteralTypeExtensions {
         return this
     }
 
-    fun ConeClassLikeType.withNullabilityAndAttributes(nullability: ConeNullability, attributes: ConeAttributes): ConeClassLikeType {
-        if (nullability == this.nullability && attributes == this.attributes) return this
+    fun ConeClassLikeType.withNullabilityAndAttributes(isMarkedNullable: Boolean, attributes: ConeAttributes): ConeClassLikeType {
+        if (isMarkedNullable == this.isMarkedNullable && attributes == this.attributes) return this
 
         return when (this) {
             is ConeErrorType -> this
-            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
+            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
             else -> error("sealed")
         }
     }

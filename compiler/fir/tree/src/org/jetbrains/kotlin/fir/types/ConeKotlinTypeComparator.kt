@@ -62,8 +62,9 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         return 0
     }
 
-    private fun compare(a: ConeNullability, b: ConeNullability): Int {
-        return a.ordinal - b.ordinal
+    private fun compareNullability(a: ConeKotlinType, b: ConeKotlinType): Int {
+        // true compares as lower, therefore, the arguments are swapped.
+        return b.isMarkedNullable.compareTo(a.isMarkedNullable)
     }
 
     override fun compare(a: ConeKotlinType, b: ConeKotlinType): Int {
@@ -87,7 +88,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -119,7 +120,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                         return lowerTypeDiff
                     }
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -150,7 +151,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             is ConeIntegerLiteralConstantType -> {
                 require(b is ConeIntegerLiteralConstantType) {
@@ -160,7 +161,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (valueDiff != 0L) {
                     return valueDiff.toInt()
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -168,7 +169,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 return a.hashCode() - b.hashCode()
             }
             is ConeIntegerConstantOperatorType -> {
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             else ->
                 error("Unsupported type comparison: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}")

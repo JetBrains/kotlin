@@ -54,7 +54,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
 
             val expandedSupertype = superTypeRef.coneType.fullyExpandedType(context.session)
             val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
-            if (!nullableSupertypeReported && originalSupertype.nullability == ConeNullability.NULLABLE) {
+            if (!nullableSupertypeReported && originalSupertype.isMarkedNullable) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
                 nullableSupertypeReported = true
             }

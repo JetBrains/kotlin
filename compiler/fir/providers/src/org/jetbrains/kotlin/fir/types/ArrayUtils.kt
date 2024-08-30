@@ -21,7 +21,7 @@ fun ConeKotlinType.createOutArrayType(nullable: Boolean = false, createPrimitive
 fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiveArrayTypeIfPossible: Boolean = true): ConeClassLikeType {
     if (this is ConeKotlinTypeProjection && createPrimitiveArrayTypeIfPossible) {
         val type = type.lowerBoundIfFlexible()
-        if (type is ConeClassLikeType && type.nullability != ConeNullability.NULLABLE) {
+        if (type is ConeClassLikeType && !type.isMarkedNullable) {
             val classId = type.lookupTag.classId
             val primitiveArrayId =
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]

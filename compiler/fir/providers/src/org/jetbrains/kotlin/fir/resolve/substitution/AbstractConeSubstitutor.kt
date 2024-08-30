@@ -142,7 +142,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                 is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
                     newArguments as Array<ConeTypeProjection>,
-                    nullability.isNullable,
+                    isMarkedNullable,
                     attributes
                 )
                 is ConeErrorType -> ConeErrorType(

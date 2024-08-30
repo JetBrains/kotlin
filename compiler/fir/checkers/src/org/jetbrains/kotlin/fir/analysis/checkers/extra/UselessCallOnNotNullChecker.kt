@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
@@ -28,7 +28,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppChec
         val calleeName = method.callableName.asString()
         if ("$calleePackageName.$calleeName" !in triggerOn) return
 
-        if (calleeOn.getNullability() == ConeNullability.NOT_NULL) {
+        if (!calleeOn.resolvedType.canBeNull(context.session)) {
             reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL, context)
         }
     }
@@ -40,9 +40,6 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppChec
     private fun FirExpression.getPackage(): String {
         return resolvedType.classId?.packageFqName.toString()
     }
-
-    private fun FirExpression.getNullability() = resolvedType.nullability
-
 
     private val triggerOn = setOf(
         "kotlin.collections.orEmpty",

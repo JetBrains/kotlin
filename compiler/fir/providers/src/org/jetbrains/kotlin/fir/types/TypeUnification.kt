@@ -59,7 +59,7 @@ fun FirSession.doUnify(
     }
 
     // Foo? ~ X?  =>  Foo ~ X
-    if (originalType?.nullability == ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
+    if (originalType?.isMarkedNullable == true && typeWithParameters?.isMarkedNullable == true) {
         return doUnify(
             originalTypeProjection.removeQuestionMark(this),
             typeWithParametersProjection.removeQuestionMark(this),
@@ -84,8 +84,8 @@ fun FirSession.doUnify(
     // Foo ~ X? => fail
     if (
         originalTypeProjection !is ConeStarProjection &&
-        originalType?.nullability != ConeNullability.NULLABLE &&
-        typeWithParameters?.nullability == ConeNullability.NULLABLE
+        originalType?.isMarkedNullable != true &&
+        typeWithParameters?.isMarkedNullable == true
     ) {
         return true
     }
@@ -100,7 +100,7 @@ fun FirSession.doUnify(
     }
 
     // Foo? ~ Foo || in Foo ~ Foo || Foo ~ Bar
-    if (originalType?.nullability?.isNullable != typeWithParameters?.nullability?.isNullable) return true
+    if (originalType?.isMarkedNullable != typeWithParameters?.isMarkedNullable) return true
     if (originalTypeProjection.kind != typeWithParametersProjection.kind) return true
     if (originalType?.lookupTagIfAny != typeWithParameters?.lookupTagIfAny) return true
     if (originalType == null || typeWithParameters == null) return true
@@ -125,7 +125,7 @@ fun FirSession.doUnify(
 
 private fun ConeTypeProjection.removeQuestionMark(session: FirSession): ConeTypeProjection {
     val type = type?.fullyExpandedType(session)
-    require(type != null && type.nullability.isNullable) {
+    require(type != null && type.isMarkedNullable) {
         "Expected nullable type, got $type"
     }
 

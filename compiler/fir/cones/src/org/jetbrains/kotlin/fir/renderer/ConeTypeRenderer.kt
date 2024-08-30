@@ -104,8 +104,8 @@ open class ConeTypeRenderer(
                 }
             }
         }
-        if (type !is ConeFlexibleType && type !is ConeErrorType) {
-            builder.append(type.nullability.suffix)
+        if (type !is ConeFlexibleType && type !is ConeErrorType && type.isMarkedNullable) {
+            builder.append("?")
         }
     }
 
@@ -152,7 +152,7 @@ open class ConeTypeRenderer(
     private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
         if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
             lowerBound.lookupTag == upperBound.lookupTag &&
-            lowerBound.nullability == ConeNullability.NOT_NULL && upperBound.nullability == ConeNullability.NULLABLE
+            !lowerBound.isMarkedNullable && upperBound.isMarkedNullable
         ) {
             if (lowerBound !is ConeClassLikeType || lowerBound.typeArguments.isEmpty()) {
                 if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {

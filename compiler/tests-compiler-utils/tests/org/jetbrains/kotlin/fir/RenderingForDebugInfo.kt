@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.types.*
 
 fun ConeKotlinType.renderForDebugInfo(): String {
-    val nullabilitySuffix = if (this !is ConeErrorType && this !is ConeErrorType) nullability.suffix else ""
+    val nullabilitySuffix = when {
+        this is ConeErrorType -> ""
+        hasFlexibleMarkedNullability -> "!"
+        isMarkedNullable -> "?"
+        else -> ""
+    }
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.typeConstructor.name})"
         is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"

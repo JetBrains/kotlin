@@ -206,7 +206,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.expression
 
         fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
-            if (expression.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
+            if (expression.isNullLiteral && !actualExpectedType.isMarkedOrFlexiblyNullable) {
                 return NullForNotNullType(expression, actualExpectedType)
             }
 

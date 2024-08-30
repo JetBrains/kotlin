@@ -106,7 +106,6 @@ class Fir2IrTypeConverter(
     ): IrType {
         return when (this) {
             is ConeErrorType -> {
-                val isMarkedNullable = nullability == ConeNullability.NULLABLE
                 when (val diagnostic = diagnostic) {
                     is ConeUnresolvedError -> createErrorType(diagnostic.qualifier, isMarkedNullable)
                     else -> createErrorType(diagnostic.reason, isMarkedNullable)
@@ -188,7 +187,7 @@ class Fir2IrTypeConverter(
                 lowerBound.withNullability(upperBound.nullability, session.typeContext).toIrType(
                     typeOrigin,
                     annotations,
-                    hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
+                    hasFlexibleNullability = lowerBound.isMarkedNullable != upperBound.isMarkedNullable,
                     hasFlexibleMutability = isMutabilityFlexible(),
                     hasFlexibleArrayElementVariance = false,
                     addRawTypeAnnotation = true
@@ -211,7 +210,7 @@ class Fir2IrTypeConverter(
                         .toIrType(
                             typeOrigin,
                             annotations,
-                            hasFlexibleNullability = lower.nullability != upper.nullability,
+                            hasFlexibleNullability = lower.isMarkedNullable != upper.isMarkedNullable,
                             hasFlexibleMutability = isMutabilityFlexible(),
                             hasFlexibleArrayElementVariance = hasFlexibleArrayElementVariance(),
                             addRawTypeAnnotation = isRaw,
@@ -220,7 +219,7 @@ class Fir2IrTypeConverter(
                     upperBound.toIrType(
                         typeOrigin,
                         annotations,
-                        hasFlexibleNullability = lowerBound.nullability != upperBound.nullability,
+                        hasFlexibleNullability = lowerBound.isMarkedNullable != upperBound.isMarkedNullable,
                         hasFlexibleMutability = isMutabilityFlexible(),
                         hasFlexibleArrayElementVariance = false,
                         addRawTypeAnnotation = false,

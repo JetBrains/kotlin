@@ -549,7 +549,7 @@ private class AnonymousTypesSubstitutor(
         val firClassNode = type.lookupTag.toSymbol(session) as? FirClassSymbol
         firClassNode?.resolvedSuperTypes?.singleOrNull()?.let { return it }
 
-        return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.coneType
+        return if (type.isMarkedNullable) session.builtinTypes.nullableAnyType.coneType
         else session.builtinTypes.anyType.coneType
     }
 

@@ -26,6 +26,9 @@ val ConeRigidType.isMarkedOrFlexiblyNullable: Boolean get() = isMarkedNullable
 
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
+val ConeKotlinType.hasFlexibleMarkedNullability: Boolean
+    get() = this is ConeFlexibleType && lowerBound.isMarkedNullable != upperBound.isMarkedNullable
+
 val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
 
 val ConeKotlinType.lookupTagIfAny: ConeClassifierLookupTag?

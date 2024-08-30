@@ -35,7 +35,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         // Unfortunately, we can get situations when that's not true, when the expected type has captured arguments, see KT-66947.
         // As a workaround, we do an explicit check for the nullability.
         if (symbol.dispatchReceiverType != null &&
-            expression.dispatchReceiver?.resolvedType?.enhancedTypeForWarning?.nullability == ConeNullability.NULLABLE
+            expression.dispatchReceiver?.resolvedType?.enhancedTypeForWarning?.isMarkedNullable == true
         ) {
             expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
                 expectedType = symbol.dispatchReceiverType,
