@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.swiftexport.standalone
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.filterToSetOrEmpty
@@ -36,7 +33,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 
 @ExtendWith(SwiftExportTestSupport::class)
-abstract class AbstractNativeSwiftExportTest {
+abstract class AbstractSwiftExportTest {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
@@ -240,7 +237,7 @@ abstract class AbstractNativeSwiftExportTest {
         sources: List<File>,
         dependencies: Set<TestModule.Exclusive>,
     ): TestCase {
-        val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+        val module = TestModule.newDefaultModule()
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
         val regexes = testPathFull.list()!!

@@ -340,7 +340,7 @@ internal class LibraryCompilation(
     }
 }
 
-internal class ObjCFrameworkCompilation(
+class ObjCFrameworkCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -386,7 +386,7 @@ internal class ObjCFrameworkCompilation(
     }
 }
 
-internal class BinaryLibraryCompilation(
+class BinaryLibraryCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -515,7 +515,7 @@ internal class CInteropCompilation(
     }
 }
 
-internal class SwiftCompilation<T : TestCompilationArtifact>(
+class SwiftCompilation<T : TestCompilationArtifact>(
     testRunSettings: Settings,
     sources: List<File>,
     expectedArtifact: T,
@@ -714,7 +714,7 @@ class ExecutableCompilation(
     }
 }
 
-internal class StaticCacheCompilation(
+class StaticCacheCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     private val options: Options,

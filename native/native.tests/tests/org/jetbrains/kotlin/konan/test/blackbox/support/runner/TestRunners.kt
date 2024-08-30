@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecution
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.native.executors.Executor
 
-internal object TestRunners {
+object TestRunners {
     fun createProperTestRunner(testRun: TestRun, settings: Settings): Runner<Unit> = with(settings) {
         if (get<ForcedNoopTestRunner>().value) {
             NoopTestRunner

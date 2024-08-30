@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests.native.swift.sir
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.tests.frontendFir
 import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.swiftexport.standalone.AbstractSwiftExportExecutionTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractKlibBasedSwiftRunnerTest
@@ -28,7 +29,7 @@ fun main() {
         }
         testGroup(
             "native/swift/swift-export-standalone/tests-gen/",
-            "native/swift/swift-export-standalone/testData"
+            "native/swift/swift-export-standalone/testData/generation"
         ) {
             testClass<AbstractKlibBasedSwiftRunnerTest>(
                 suiteTestClassName = "KlibBasedSwiftExportRunnerTest",
@@ -38,6 +39,21 @@ fun main() {
                 ),
             ) {
                 model("", extension = null, recursive = false)
+            }
+        }
+        // Swift Export
+        testGroup(
+            "native/swift/swift-export-standalone/tests-gen/",
+            "native/swift/swift-export-standalone/testData/execution"
+        ) {
+            testClass<AbstractSwiftExportExecutionTest>(
+                suiteTestClassName = "SwiftExportExecutionTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                ),
+            ) {
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
     }

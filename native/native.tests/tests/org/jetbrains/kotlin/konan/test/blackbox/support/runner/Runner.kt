@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
-internal interface Runner<R> {
+interface Runner<R> {
     fun run(): R
 }

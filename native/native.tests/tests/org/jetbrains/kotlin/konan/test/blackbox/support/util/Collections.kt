@@ -27,7 +27,7 @@ class FailOnDuplicatesSet<E : Any> : Set<E> {
     override fun hashCode() = uniqueElements.hashCode()
 }
 
-internal inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
+inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
     if (this is Collection && isEmpty()) return emptySet()
 
     val result = hashSetOf<R>()

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -14,16 +14,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProv
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
-import org.jetbrains.kotlin.swiftexport.standalone.ErrorTypeStrategy
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
-import org.jetbrains.kotlin.swiftexport.standalone.createDummyLogger
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.junit.jupiter.api.Tag
 import java.io.File
 
-@Tag("swiftexport")
-abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExportTest() {
+abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
     override fun runCompiledTest(

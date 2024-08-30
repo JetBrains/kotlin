@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.swiftexport.standalone
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.io.path.*
 
-abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest() {
+abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 

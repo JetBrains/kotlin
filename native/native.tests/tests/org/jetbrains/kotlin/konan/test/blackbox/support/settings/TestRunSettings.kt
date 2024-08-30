@@ -17,7 +17,7 @@ import java.io.File
  */
 class NativeTestInstances<T>(val allInstances: List<Any>) {
     @Suppress("UNCHECKED_CAST")
-    internal val enclosingTestInstance: T
+    val enclosingTestInstance: T
         get() = allInstances.firstOrNull() as T
     internal val externalSourceTransformersProvider: ExternalSourceTransformersProvider?
         get() = allInstances.firstOrNull() as? ExternalSourceTransformersProvider

@@ -199,7 +199,7 @@ internal class BaseDirs(val testBuildDir: File)
 /**
  * Timeouts.
  */
-internal class Timeouts(val executionTimeout: Duration) {
+class Timeouts(val executionTimeout: Duration) {
     companion object {
         val DEFAULT_EXECUTION_TIMEOUT: Duration get() = 10.minutes
     }
@@ -302,7 +302,7 @@ internal enum class TestGroupCreation {
     }
 }
 
-internal enum class BinaryLibraryKind {
+enum class BinaryLibraryKind {
     STATIC, DYNAMIC
 }
 

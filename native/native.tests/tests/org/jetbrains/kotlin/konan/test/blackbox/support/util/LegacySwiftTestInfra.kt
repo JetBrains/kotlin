@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import java.io.File
 import java.io.FileWriter
 
-internal fun createTestProvider(parentDirectory: File, testSources: List<File>): File {
+fun createTestProvider(parentDirectory: File, testSources: List<File>): File {
     // create a test provider and get main entry point
     val provider = parentDirectory.resolve("provider.swift")
     FileWriter(provider).use { writer ->

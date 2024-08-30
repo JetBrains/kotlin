@@ -536,18 +536,6 @@ fun main() {
                 }
             }
         }
-        // Swift Export
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData/SwiftExport") {
-            testClass<AbstractNativeSwiftExportExecutionTest>(
-                suiteTestClassName = "SwiftExportExecutionTestGenerated",
-                annotations = listOf(
-                    *frontendFir(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                ),
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-        }
         // Stress tests
         testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
             testClass<AbstractNativeBlackBoxTest>(

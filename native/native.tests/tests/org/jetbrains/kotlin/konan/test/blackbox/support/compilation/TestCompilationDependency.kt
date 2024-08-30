@@ -31,7 +31,7 @@ sealed interface TestCompilationDependency<A : TestCompilationArtifact> {
     val type: TestCompilationDependencyType<A>
 }
 
-internal class CompiledDependency<A : TestCompilationArtifact>(
+class CompiledDependency<A : TestCompilationArtifact>(
     val compilation: TestCompilation<A>,
     override val type: TestCompilationDependencyType<A>
 ) : TestCompilationDependency<A> {

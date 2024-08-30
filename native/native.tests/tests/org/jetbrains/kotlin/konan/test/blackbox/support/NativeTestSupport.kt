@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeKlibSyntheticAccessorTestInstances
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeSwiftExportTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateSimpleTestRunProvider
@@ -76,23 +74,7 @@ class NativeSimpleTestSupport : BeforeEachCallback {
     }
 }
 
-class SwiftExportTestSupport : BeforeEachCallback {
-    /**
-     * Note: [BeforeEachCallback.beforeEach] allows accessing test instances while [BeforeAllCallback.beforeAll] which may look
-     * more preferable here does not allow it because it is called at the time when test instances are not created yet.
-     * Also, [TestInstancePostProcessor.postProcessTestInstance] allows accessing only the currently created test instance and does
-     * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
-     */
-    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        val settings = createTestRunSettings(computeSwiftExportTestInstances())
 
-        // Inject the required properties to test instance.
-        with(settings.get<NativeTestInstances<AbstractNativeSwiftExportTest>>().enclosingTestInstance) {
-            testRunSettings = settings
-            testRunProvider = getOrCreateTestRunProvider()
-        }
-    }
-}
 
 /**
  * Used to run tests for IR inlining and synthetic accessors. This test helper effectively does the following:
@@ -671,9 +653,6 @@ object NativeTestSupport {
     }
 
     internal fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
-        NativeTestInstances(requiredTestInstances.allInstances)
-
-    internal fun ExtensionContext.computeSwiftExportTestInstances(): NativeTestInstances<AbstractNativeSwiftExportTest> =
         NativeTestInstances(requiredTestInstances.allInstances)
 
     internal fun ExtensionContext.computeKlibSyntheticAccessorTestInstances(): NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest> =

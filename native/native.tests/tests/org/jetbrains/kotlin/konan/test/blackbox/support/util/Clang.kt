@@ -144,18 +144,6 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
     }
 }
 
-internal fun createModuleMap(moduleName: String, directory: File, umbrellaHeader: File): File {
-    return directory.resolve("module.modulemap").apply {
-        writeText("""
-            module $moduleName {
-                umbrella header "${umbrellaHeader.absolutePath}"
-                export *
-            }
-            """.trimIndent()
-        )
-    }
-}
-
 internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
     clangDistribution: ClangDistribution = defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,

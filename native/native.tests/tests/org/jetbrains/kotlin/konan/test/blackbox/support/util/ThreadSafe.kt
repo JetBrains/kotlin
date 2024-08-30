@@ -23,7 +23,7 @@ internal class ThreadSafeFactory<K : Any, V>(private val function: (K) -> V) {
  * Permits null values. Atomic modifications in concurrent environment.
  */
 @Suppress("UNCHECKED_CAST")
-internal class ThreadSafeCache<K : Any, V> {
+class ThreadSafeCache<K : Any, V> {
     private val map = ConcurrentHashMap<K, Any>()
 
     operator fun get(key: K): V? = unwrap(map[key]) as V?
