@@ -795,6 +795,11 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     ) {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
+        @Suppress("DEPRECATION")
+        if (arguments.outputFile != null) {
+            messageCollector.report(WARNING, "The '-output' command line option does nothing and will be removed in a future release")
+        }
+
         if (arguments.debuggerCustomFormatters) {
             configuration.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, true)
         }

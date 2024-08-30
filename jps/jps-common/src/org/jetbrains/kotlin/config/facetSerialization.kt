@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -184,11 +184,9 @@ private fun readV2AndLaterConfig(
         productionOutputPath = element.getChild("productionOutputPath")?.let {
             (it.content.firstOrNull() as? Text)?.textTrim?.let(FileUtilRt::toSystemDependentName)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputDir
-                ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
         testOutputPath = element.getChild("testOutputPath")?.let {
             (it.content.firstOrNull() as? Text)?.textTrim?.let(FileUtilRt::toSystemDependentName)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputDir
-                ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
 }
 
@@ -242,7 +240,7 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
         }
 
         is K2JSCompilerArguments -> {
-            outputDir = (outputDir ?: outputFile)?.let(FileUtilRt::toSystemIndependentName)
+            outputDir = outputDir?.let(FileUtilRt::toSystemIndependentName)
             libraries = libraries?.let(FileUtilRt::toSystemIndependentName)
         }
 
@@ -359,12 +357,12 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
     }
     (compilerArguments as? K2JSCompilerArguments)?.let { compilerArguments ->
         productionOutputPath?.let {
-            if (it != compilerArguments.outputDir && it != compilerArguments.outputFile) {
+            if (it != compilerArguments.outputDir) {
                 element.addContent(Element("productionOutputPath").apply { addContent(FileUtilRt.toSystemIndependentName(it)) })
             }
         }
         testOutputPath?.let {
-            if (it != compilerArguments.outputDir && it != compilerArguments.outputFile) {
+            if (it != compilerArguments.outputDir) {
                 element.addContent(Element("testOutputPath").apply { addContent(FileUtilRt.toSystemIndependentName(it)) })
             }
         }

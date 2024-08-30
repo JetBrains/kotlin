@@ -16,8 +16,14 @@ class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
         @JvmStatic private val serialVersionUID = 0L
     }
 
+    // TODO: KT-70222 Remove this option in 2.2
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(value = "-output", valueDescription = "<filepath>", description = "Destination *.js file for the compilation result.")
+    @Argument(
+        value = "-output",
+        valueDescription = "<filepath>",
+        description = """This option does nothing and is left for compatibility with the legacy backend.
+It is deprecated and will be removed in Kotlin 2.2."""
+    )
     var outputFile: String? = null
         set(value) {
             checkFrozen()
