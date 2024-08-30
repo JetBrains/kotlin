@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.utils.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.declarations.*
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 // opt-in is safe, this code runs after fir2ir is over and all symbols are bound
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -54,7 +58,13 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     private val implicitType: FirImplicitTypeRef
         get() = FirImplicitTypeRefImplWithoutSource
 
-    private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<Pair<Int, Int>, MutableList<IrConstructorCall>>>()
+    private data class CommonDescriptor(val targetKind: AnnotationTarget, val startOffset: Int, val endOffset: Int)
+
+    private fun IrDeclaration.getCommonDescriptor(kind: AnnotationTarget): CommonDescriptor = CommonDescriptor(kind, startOffset, endOffset)
+    private fun KtSourceElement.getCommonDescriptor(kind: AnnotationTarget): CommonDescriptor =
+        CommonDescriptor(kind, startOffsetSkippingComments() ?: startOffset, endOffset)
+
+    private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<CommonDescriptor, MutableList<IrConstructorCall>>>()
 
     private fun IrConstructorCall.hasOnlySupportedAnnotationArgumentTypes(): Boolean {
         for (i in 0 until valueArgumentsCount) {
@@ -63,6 +73,54 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             }
         }
         return true
+    }
+
+    private fun IrDeclaration.getAnnotationTargetKind(): AnnotationTarget? = when (this) {
+        is IrClass -> {
+            if (isAnnotationClass) AnnotationTarget.ANNOTATION_CLASS
+            else AnnotationTarget.CLASS
+        }
+        is IrTypeParameter -> AnnotationTarget.TYPE_PARAMETER
+        is IrProperty -> AnnotationTarget.PROPERTY
+        is IrField -> AnnotationTarget.FIELD
+        is IrVariable -> AnnotationTarget.LOCAL_VARIABLE
+        is IrValueParameter -> AnnotationTarget.VALUE_PARAMETER
+        is IrConstructor -> AnnotationTarget.CONSTRUCTOR
+        is IrFunction -> {
+            if (isGetter) AnnotationTarget.PROPERTY_GETTER
+            else if (isSetter) AnnotationTarget.PROPERTY_SETTER
+            else AnnotationTarget.FUNCTION
+        }
+        is IrType -> AnnotationTarget.TYPE
+        is IrExpression -> AnnotationTarget.EXPRESSION
+        is IrFile -> AnnotationTarget.FILE
+        is IrTypeAlias -> AnnotationTarget.TYPEALIAS
+        else -> null
+    }
+
+    private fun FirDeclaration.getAnnotationTargetKind(): AnnotationTarget? = when (this) {
+        is FirClass -> {
+            if (classKind.isAnnotationClass) AnnotationTarget.ANNOTATION_CLASS
+            else AnnotationTarget.CLASS
+        }
+        is FirTypeParameter -> AnnotationTarget.TYPE_PARAMETER
+        is FirProperty -> AnnotationTarget.PROPERTY
+        is FirField -> AnnotationTarget.FIELD
+        is FirValueParameter -> AnnotationTarget.VALUE_PARAMETER
+        is FirVariable -> AnnotationTarget.LOCAL_VARIABLE
+        is FirConstructor -> AnnotationTarget.CONSTRUCTOR
+        is FirPropertyAccessor -> {
+            if (isGetter) AnnotationTarget.PROPERTY_GETTER
+            else if (isSetter) AnnotationTarget.PROPERTY_SETTER
+            else shouldNotBeCalled("accessor should be either getter or setter")
+        }
+        is FirFunction -> AnnotationTarget.FUNCTION
+//     those are not declarations, but `FirElement` so we can not annotate types and expressions via `Provider` as it only supports `FirDeclaration`
+//    is FirTypeRef -> AnnotationTarget.TYPE
+//    is FirExpression -> AnnotationTarget.EXPRESSION
+        is FirFile -> AnnotationTarget.FILE
+        is FirTypeAlias -> AnnotationTarget.TYPEALIAS
+        else -> null
     }
 
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
@@ -78,9 +136,16 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         annotations.forEach {
             require(it.symbol.owner.constructedClass.isAnnotationClass) { "${it.render()} is not an annotation constructor call" }
         }
+
+        val declarationKind = declaration.getAnnotationTargetKind()
+        require(declarationKind != null) {
+            "Declaration $declaration could not be annotated"
+        }
+
         val fileFqName = declaration.file.nameWithPackage
         val fileStorage = generatedIrDeclarationsByFileByOffset.getOrPut(fileFqName) { mutableMapOf() }
-        val storage = fileStorage.getOrPut(declaration.startOffset to declaration.endOffset) { mutableListOf() }
+        val descriptor = declaration.getCommonDescriptor(declarationKind)
+        val storage = fileStorage.getOrPut(descriptor) { mutableListOf() }
         storage += annotations
         declaration.annotations += annotations
     }
@@ -369,8 +434,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             val firFile = declaration.containingFile() ?: return emptyList()
             val fileFqName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
             val source = declaration.source ?: return emptyList()
+            val declarationKind = declaration.getAnnotationTargetKind() ?: return emptyList()
             val fileStorage = generatedIrDeclarationsByFileByOffset[fileFqName] ?: return emptyList()
-            return fileStorage[(source.startOffsetSkippingComments() ?: source.startOffset) to source.endOffset] ?: emptyList()
+            val descriptor = source.getCommonDescriptor(declarationKind)
+            return fileStorage[descriptor] ?: emptyList()
         }
 
         private fun FirDeclaration.containingFile(): FirFile? {
