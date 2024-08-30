@@ -79,33 +79,27 @@ object FirKotlinToJvmBytecodeCompiler {
         return true
     }
 
-    fun runFrontendForAnalysis(
-        projectEnvironment: VfsBasedProjectEnvironment,
-        compilerConfiguration: CompilerConfiguration,
+    fun runFrontendForKapt(
+        environment: VfsBasedProjectEnvironment,
+        configuration: CompilerConfiguration,
         messageCollector: MessageCollector,
-        allSources: List<KtFile>,
-        buildFile: File?,
+        sources: List<KtFile>,
         module: Module,
     ): FirResult {
-        val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-        val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-        val project = projectEnvironment.project
-
-        val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
         val context = CompilationContext(
             module,
-            allSources,
-            projectEnvironment,
+            sources,
+            environment,
             messageCollector,
-            moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
-            moduleConfiguration,
-            targetIds,
-            incrementalComponents,
-            extensionRegistrars = FirExtensionRegistrar.getInstances(project),
-            irGenerationExtensions = IrGenerationExtension.getInstances(project)
+            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
+            configuration,
+            configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId),
+            configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+            extensionRegistrars = FirExtensionRegistrar.getInstances(environment.project),
+            irGenerationExtensions = emptyList(),
         )
         val diagnosticsReporter = createPendingReporter(messageCollector)
-        return context.runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
+        return context.runFrontend(sources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
     }
 
     fun compileModulesUsingFrontendIRAndPsi(
