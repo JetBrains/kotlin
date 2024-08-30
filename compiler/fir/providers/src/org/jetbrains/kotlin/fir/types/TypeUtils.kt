@@ -133,7 +133,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
         })
     }
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
-        ?: this.withNullability(ConeNullability.NOT_NULL, typeContext, preserveAttributes = preserveAttributes)
+        ?: this.withNullability(nullable = false, typeContext, preserveAttributes = preserveAttributes)
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
@@ -210,18 +210,27 @@ fun <T : ConeKotlinType> T.withAbbreviation(attribute: AbbreviatedTypeAttribute)
     return withAttributes(clearedAttributes.add(attribute))
 }
 
+fun <T : ConeKotlinType> T.withNullabilityOf(
+    otherType: ConeKotlinType,
+    typeContext: ConeTypeContext
+): T {
+    if (hasFlexibleMarkedNullability && otherType.hasFlexibleMarkedNullability) return this
+
+    return withNullability(otherType.isMarkedNullable, typeContext)
+}
+
 fun <T : ConeKotlinType> T.withNullability(
-    nullability: ConeNullability,
+    nullable: Boolean,
     typeContext: ConeTypeContext,
     attributes: ConeAttributes = this.attributes,
     preserveAttributes: Boolean = false,
 ): T {
     val theAttributes = attributes.butIf(!preserveAttributes) {
         val withoutEnhanced = it.remove(CompilerConeAttributes.EnhancedNullability)
-        withoutEnhanced.transformTypesWith { t -> t.withNullability(nullability, typeContext) } ?: withoutEnhanced
+        withoutEnhanced.transformTypesWith { t -> t.withNullability(nullable, typeContext) } ?: withoutEnhanced
     }
 
-    if (this.nullability == nullability && this.attributes == theAttributes && this.lowerBoundIfFlexible() !is ConeIntersectionType) {
+    if (!this.hasFlexibleMarkedNullability && this.isMarkedNullable == nullable && this.attributes == theAttributes && this.lowerBoundIfFlexible() !is ConeIntersectionType) {
         // Note: this is an optimization, but it's not applicable for ConeIntersectionType,
         // because ConeIntersectionType.nullability is always NOT_NULL, independent on real component nullabilities
         // Second note: we can receive a flexible type with intersection types in bounds, so we need unwrap it first
@@ -231,48 +240,39 @@ fun <T : ConeKotlinType> T.withNullability(
     @Suppress("UNCHECKED_CAST")
     return when (this) {
         is ConeErrorType -> this
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, theAttributes)
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, theAttributes)
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullable, theAttributes)
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullable, theAttributes)
         is ConeDynamicType -> this
         is ConeFlexibleType -> {
-            if (nullability == ConeNullability.UNKNOWN) {
-                if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
-                    return this
-                }
-            }
             coneFlexibleOrSimpleType(
                 typeContext,
-                lowerBound.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes),
-                upperBound.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
+                lowerBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
+                upperBound.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes)
             )
         }
 
-        is ConeTypeVariableType -> ConeTypeVariableType(nullability.isNullable, typeConstructor, theAttributes)
-        is ConeCapturedType -> copy(isMarkedNullable = nullability.isNullable, attributes = theAttributes)
-        is ConeIntersectionType -> when (nullability) {
-            ConeNullability.NULLABLE -> this.mapTypes {
-                it.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
+        is ConeTypeVariableType -> ConeTypeVariableType(isMarkedNullable = nullable, typeConstructor, theAttributes)
+        is ConeCapturedType -> copy(isMarkedNullable = nullable, attributes = theAttributes)
+        is ConeIntersectionType -> when (nullable) {
+            true -> this.mapTypes {
+                it.withNullability(true, typeContext, preserveAttributes = preserveAttributes)
             }
 
-            ConeNullability.UNKNOWN -> this // TODO: is that correct?
-            ConeNullability.NOT_NULL -> if (effectiveNullability == ConeNullability.NOT_NULL) this else this.mapTypes {
-                it.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
+            false -> if (intersectedTypes.any { !it.isFlexibleOrMarkedNullable }) this else this.mapTypes {
+                it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
             }
         }
 
-        is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullability.isNullable)
-        is ConeDefinitelyNotNullType -> when (nullability) {
-            ConeNullability.NOT_NULL -> this
-            ConeNullability.NULLABLE -> original.withNullability(
-                nullability, typeContext, preserveAttributes = preserveAttributes,
-            )
-            ConeNullability.UNKNOWN -> original.withNullability(
-                nullability, typeContext, preserveAttributes = preserveAttributes,
+        is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullable)
+        is ConeDefinitelyNotNullType -> when (nullable) {
+            false -> this
+            true -> original.withNullability(
+                true, typeContext, preserveAttributes = preserveAttributes,
             )
         }
 
-        is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullability.isNullable)
-        is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullability.isNullable)
+        is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullable)
+        is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullable)
         else -> error("sealed: ${this::class}")
     } as T
 }
@@ -501,10 +501,10 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
 
             val lowerIntersectedType =
                 intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound) ?: return null)
-                    .withNullability(ConeNullability.create(type.lowerBound.isNullableType()), this)
+                    .withNullability(type.lowerBound.canBeNull(session), this)
             val upperIntersectedType =
                 intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound) ?: return null)
-                    .withNullability(ConeNullability.create(type.upperBound.isNullableType()), this)
+                    .withNullability(type.upperBound.canBeNull(session), this)
 
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
@@ -512,7 +512,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
-            ).withNullability(type.isNullableType()) as ConeKotlinType
+            ).withNullability(type.canBeNull(session)) as ConeKotlinType
         }
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
@@ -681,7 +681,7 @@ private fun FirTypeParameterSymbol.getProjectionForRawType(
 ): ConeKotlinType {
     return fir.eraseToUpperBound(session, cache, mode = EraseUpperBoundMode.FOR_RAW_TYPE_ERASURE)
         .applyIf(makeNullable) {
-            withNullability(ConeNullability.NULLABLE, session.typeContext)
+            withNullability(nullable = true, session.typeContext)
         }
 }
 
@@ -770,7 +770,7 @@ private fun ConeKotlinType.eraseAsUpperBound(
             lookupTag.typeParameterSymbol.fir.eraseToUpperBound(
                 session, cache, mode
             ).let {
-                if (isMarkedNullable) it.withNullability(nullability, session.typeContext) else it
+                if (isMarkedNullable) it.withNullability(nullable = true, session.typeContext) else it
             }
 
         is ConeDefinitelyNotNullType ->

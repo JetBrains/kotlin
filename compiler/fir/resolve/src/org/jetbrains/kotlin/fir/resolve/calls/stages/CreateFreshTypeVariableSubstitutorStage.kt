@@ -143,8 +143,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         return if (typeParameter.shouldBeFlexible(session.typeContext)) {
             when (type) {
                 is ConeRigidType -> ConeFlexibleType(
-                    type.withNullability(ConeNullability.NOT_NULL, session.typeContext),
-                    type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                    type.withNullability(nullable = false, session.typeContext),
+                    type.withNullability(nullable = true, session.typeContext)
                 )
                 /*
                  * ConeFlexibleTypes have to be handled here
@@ -156,8 +156,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                  * but better safe than sorry when dealing with raw types)
                  */
                 is ConeFlexibleType -> ConeFlexibleType(
-                    type.lowerBound.withNullability(ConeNullability.NOT_NULL, session.typeContext),
-                    type.upperBound.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                    type.lowerBound.withNullability(nullable = false, session.typeContext),
+                    type.upperBound.withNullability(nullable = true, session.typeContext)
                 )
             }
         } else {

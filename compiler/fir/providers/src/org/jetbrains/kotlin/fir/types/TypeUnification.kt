@@ -129,7 +129,7 @@ private fun ConeTypeProjection.removeQuestionMark(session: FirSession): ConeType
         "Expected nullable type, got $type"
     }
 
-    return replaceType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
+    return replaceType(type.withNullability(nullable = false, session.typeContext))
 }
 
 private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypeProjection =

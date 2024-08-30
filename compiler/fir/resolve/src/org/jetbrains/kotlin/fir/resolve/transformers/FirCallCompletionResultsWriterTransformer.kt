@@ -445,7 +445,7 @@ class FirCallCompletionResultsWriterTransformer(
             val explicitArgument = typeArgumentMapping[index].toConeTypeProjection().type ?: continue
 
             overridingMap[freshVariable.typeConstructor] =
-                baseTypeArgument.withNullability(explicitArgument.nullability, session.typeContext)
+                baseTypeArgument.withNullabilityOf(explicitArgument, session.typeContext)
         }
 
         if (overridingMap.isEmpty()) return null
@@ -530,7 +530,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirExpression.wrapInSamExpression(expectedArgumentType: ConeKotlinType): FirExpression {
         return buildSamConversionExpression {
             expression = this@wrapInSamExpression
-            coneTypeOrNull = expectedArgumentType.withNullability(resolvedType.nullability, session.typeContext)
+            coneTypeOrNull = expectedArgumentType.withNullabilityOf(resolvedType, session.typeContext)
                 .let {
                     typeApproximator.approximateToSuperType(
                         it,

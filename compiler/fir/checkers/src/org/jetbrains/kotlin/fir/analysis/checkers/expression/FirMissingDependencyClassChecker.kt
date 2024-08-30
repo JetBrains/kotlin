@@ -118,7 +118,7 @@ internal interface FirMissingDependencyClassProxy {
         }
 
         if (hasMissingClass && !hasError) {
-            val reportedType = type.withNullability(ConeNullability.NOT_NULL, context.session.typeContext)
+            val reportedType = type.withNullability(nullable = false, context.session.typeContext)
             missingTypes.add(reportedType)
         }
     }

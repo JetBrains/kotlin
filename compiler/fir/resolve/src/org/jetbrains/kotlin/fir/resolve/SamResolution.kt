@@ -117,7 +117,7 @@ class FirSamResolver(
         require(functionType is ConeLookupTagBasedType) {
             "Function type should always be ConeLookupTagBasedType, but ${functionType::class} was found"
         }
-        return functionType.withNullability(ConeNullability.create(type.isMarkedNullable), session.typeContext)
+        return functionType.withNullabilityOf(type, session.typeContext)
     }
 
     fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction? {

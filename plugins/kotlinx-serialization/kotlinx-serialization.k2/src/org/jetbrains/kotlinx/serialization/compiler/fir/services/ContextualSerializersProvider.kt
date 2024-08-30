@@ -98,7 +98,7 @@ fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType, c: CheckerContext
     val provider = session.contextualSerializersProvider
     provider.getAdditionalSerializersInScopeForFile(currentFile)[classSymbol to type.isMarkedNullable]?.let { return it }
     if (type.isMarkedNullable) {
-        return findTypeSerializerOrContextUnchecked(type.withNullability(ConeNullability.NOT_NULL, session.typeContext), c)
+        return findTypeSerializerOrContextUnchecked(type.withNullability(nullable = false, session.typeContext), c)
     }
     if (type in provider.getContextualKClassListForFile(currentFile)) {
         return session.dependencySerializationInfoProvider.getClassFromSerializationPackage(SpecialBuiltins.Names.contextSerializer)

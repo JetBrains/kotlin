@@ -510,7 +510,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         }
 
         // If NullIsMissing was *not* reported, the subject can safely be converted to a not-null type.
-        val convertedSubjectType = subjectType.withNullability(nullability = ConeNullability.NOT_NULL, typeContext = session.typeContext)
+        val convertedSubjectType = subjectType.withNullability(nullable = false, typeContext = session.typeContext)
 
         val checkedTypes = mutableSetOf<ConeKotlinType>()
         whenExpression.accept(ConditionChecker, checkedTypes)

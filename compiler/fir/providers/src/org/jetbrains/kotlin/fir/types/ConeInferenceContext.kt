@@ -220,10 +220,9 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
     }
 
-
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return this.withNullability(ConeNullability.create(nullable), this@ConeInferenceContext)
+        return this.withNullability(nullable, this@ConeInferenceContext)
     }
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
@@ -344,7 +343,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return object : AbstractConeSubstitutor(this@ConeInferenceContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 return ((type as? ConeStubTypeForTypeVariableInSubtyping)
-                    ?.constructor?.variable?.defaultType)?.withNullability(type.nullability, this@ConeInferenceContext)
+                    ?.constructor?.variable?.defaultType)?.withNullabilityOf(type, this@ConeInferenceContext)
             }
         }
     }

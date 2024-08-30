@@ -1029,7 +1029,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             SAFE_AS -> {
                 resolved.resultType = conversionTypeRef.coneType.withNullability(
-                    ConeNullability.NULLABLE, session.typeContext,
+                    nullable = true, session.typeContext,
                 )
             }
             else -> error("Unknown type operator: ${resolved.operation}")
@@ -1054,7 +1054,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             it.lookupTag.toSymbol(session)?.fir?.typeParameters?.isEmpty() == true
                 }?.let {
                     if (operation == SAFE_AS)
-                        it.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                        it.withNullability(nullable = true, session.typeContext)
                     else
                         it
                 }

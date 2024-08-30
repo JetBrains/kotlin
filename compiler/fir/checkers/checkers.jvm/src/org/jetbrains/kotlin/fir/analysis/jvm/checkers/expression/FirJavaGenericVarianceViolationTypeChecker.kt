@@ -114,7 +114,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeContext,
                     argTypeWithoutOutProjection,
-                    lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeContext)
+                    lowerBoundWithoutCapturing.withNullability(nullable = true, typeContext)
                 )
             ) {
                 reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)

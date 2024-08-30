@@ -176,7 +176,7 @@ internal object ArgumentCheckingProcessor {
         val capturedType = prepareCapturedType(argumentType, context)
 
         var argumentTypeForApplicabilityCheck = capturedType.applyIf(useNullableArgumentType) {
-            withNullability(ConeNullability.NULLABLE, session.typeContext)
+            withNullability(nullable = true, session.typeContext)
         }
 
         // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
@@ -280,7 +280,7 @@ internal object ArgumentCheckingProcessor {
                     return
                 }
 
-                val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
                     reportDiagnostic(InapplicableNullableReceiver(argumentType))

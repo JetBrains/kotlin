@@ -1204,7 +1204,7 @@ class Fir2IrVisitor(
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
             val originalType = elvisExpression.lhs.resolvedType
-            val notNullType = originalType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+            val notNullType = originalType.withNullability(nullable = false, session.typeContext)
             val irBranches = listOf(
                 IrBranchImpl(
                     startOffset, endOffset,

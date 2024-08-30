@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
-import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -222,7 +221,7 @@ internal class KaFirTypeProvider(
 
     override fun KaType.withNullability(newNullability: KaTypeNullability): KaType = withValidityAssertion {
         require(this is KaFirType)
-        return coneType.withNullability(newNullability.toConeNullability(), rootModuleSession.typeContext).asKtType()
+        return coneType.withNullability(nullable = newNullability == KaTypeNullability.NULLABLE, rootModuleSession.typeContext).asKtType()
     }
 
     override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean = withValidityAssertion {

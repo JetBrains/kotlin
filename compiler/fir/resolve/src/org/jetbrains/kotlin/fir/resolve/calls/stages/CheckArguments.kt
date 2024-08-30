@@ -273,7 +273,7 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
             }?.resolvedReturnType
         }
 
-    return argumentType?.withNullability(candidateExpectedType.nullability, session.typeContext)
+    return argumentType?.withNullabilityOf(candidateExpectedType, session.typeContext)
 }
 
 private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCandidate? =

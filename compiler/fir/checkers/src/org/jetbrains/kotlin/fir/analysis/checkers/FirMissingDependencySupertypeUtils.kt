@@ -42,7 +42,7 @@ fun checkMissingDependencySuperTypes(
         reporter.reportOn(
             source,
             diagnostic,
-            superType.withArguments(emptyArray()).withNullability(ConeNullability.NOT_NULL, context.session.typeContext),
+            superType.withArguments(emptyArray()).withNullability(nullable = false, context.session.typeContext),
             declaration.constructType(emptyArray(), false),
             context
         )

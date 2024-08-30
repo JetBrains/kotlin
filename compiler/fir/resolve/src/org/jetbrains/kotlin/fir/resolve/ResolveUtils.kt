@@ -573,7 +573,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     val resultingType = when {
         selector is FirExpression && !selector.isStatementLikeExpression -> {
             val type = selector.resolvedType
-            type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+            type.withNullability(nullable = true, session.typeContext)
         }
         // Branch for things that shouldn't be used as expressions.
         // They are forced to return not-null `Unit`, regardless of the receiver.

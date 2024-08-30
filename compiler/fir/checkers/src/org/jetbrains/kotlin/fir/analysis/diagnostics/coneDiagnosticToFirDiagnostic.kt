@@ -535,7 +535,7 @@ private fun ConstraintSystemError.toDiagnostic(
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType
                         else
-                            upperConeType.withNullability(ConeNullability.NULLABLE, typeContext)
+                            upperConeType.withNullability(nullable = true, typeContext)
 
                     FirErrors.TYPE_MISMATCH.createOn(
                         qualifiedAccessSource ?: source,

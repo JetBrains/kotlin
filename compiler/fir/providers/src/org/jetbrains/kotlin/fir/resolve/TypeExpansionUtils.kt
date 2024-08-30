@@ -137,7 +137,7 @@ private fun ConeClassLikeType.applyNullabilityFrom(
     session: FirSession,
     abbreviation: ConeClassLikeType
 ): ConeClassLikeType {
-    if (abbreviation.isMarkedNullable) return withNullability(ConeNullability.NULLABLE, session.typeContext)
+    if (abbreviation.isMarkedNullable) return withNullability(nullable = true, session.typeContext)
     return this
 }
 

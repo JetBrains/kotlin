@@ -833,7 +833,7 @@ class CallAndReferenceGenerator(
         if (rValue !is FirSmartCastExpression) return value // Value was not smartcast.
 
         // Convert the original type to not-null, as an implicit cast is not needed in this case.
-        val originalType = rValue.originalExpression.resolvedType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val originalType = rValue.originalExpression.resolvedType.withNullability(nullable = false, session.typeContext)
         val assignmentType = assignment.lValue.resolvedType
         if (originalType.isSubtypeOf(assignmentType, session)) return value // Cast is not needed.
 

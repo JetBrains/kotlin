@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.fir.types.typeArgumentsOfLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.fir.types.withNullabilityOf
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -195,7 +195,7 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
             ) ?: type
         } else {
             type
-        }.withNullability(nullability, session.typeContext)
+        }.withNullabilityOf(this, session.typeContext)
     }
 }
 

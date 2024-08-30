@@ -68,7 +68,7 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds().map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
         ?: session.builtinTypes.nullableAnyType.coneType
-    val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+    val notNullType = type.withNullability(nullable = false, session.typeContext)
     val boundsSymbols = bounds.mapNotNull { it.toClassSymbol(session) }
 
     return TypeInfo(
@@ -80,7 +80,7 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isFinal = boundsSymbols.any { it.isFinalClass },
         isClass = boundsSymbols.any { it.isClass },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.
-        withNullability(ConeNullability.NOT_NULL, session.typeContext).canHaveSubtypesAccordingToK1(session),
+        withNullability(nullable = false, session.typeContext).canHaveSubtypesAccordingToK1(session),
     )
 }
 

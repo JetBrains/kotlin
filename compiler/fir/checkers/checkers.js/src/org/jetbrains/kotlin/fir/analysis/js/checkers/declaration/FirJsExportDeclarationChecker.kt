@@ -239,7 +239,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             return isExportableArgs
         }
 
-        val nonNullable = expandedType.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+        val nonNullable = expandedType.withNullability(nullable = false, session.typeContext)
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
                 || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
 

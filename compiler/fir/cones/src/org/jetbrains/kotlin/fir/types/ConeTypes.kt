@@ -260,9 +260,6 @@ class ConeIntersectionType(
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
 
-    val effectiveNullability: ConeNullability
-        get() = intersectedTypes.maxOf { it.nullability }
-
     override val attributes: ConeAttributes = intersectedTypes.foldMap(
         { it.attributes },
         { a, b -> a.intersect(b) }

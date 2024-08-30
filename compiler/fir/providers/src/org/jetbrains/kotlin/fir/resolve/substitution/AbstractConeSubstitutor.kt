@@ -22,8 +22,8 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     companion object {
         fun ConeKotlinType.updateNullabilityIfNeeded(originalType: ConeKotlinType, typeContext: ConeTypeContext): ConeKotlinType {
             return when {
-                originalType is ConeDefinitelyNotNullType -> this.withNullability(ConeNullability.NOT_NULL, typeContext)
-                originalType.isMarkedNullable -> this.withNullability(ConeNullability.NULLABLE, typeContext)
+                originalType is ConeDefinitelyNotNullType -> this.withNullability(nullable = false, typeContext)
+                originalType.isMarkedNullable -> this.withNullability(nullable = true, typeContext)
                 else -> this
             }
         }
@@ -99,7 +99,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
         val substitutedOriginal = substituteOrNull(original) ?: return null
         val substituted = substitutedOriginal.withNullability(
-            ConeNullability.NOT_NULL,
+            nullable = false,
             typeContext,
             substitutedOriginal.attributes.add(original.attributes),
             preserveAttributes = true,

@@ -140,7 +140,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun RigidTypeMarker.withNullability(nullable: Boolean): RigidTypeMarker {
         require(this is ConeKotlinType)
-        return fullyExpandedType(session).withNullability(ConeNullability.create(nullable), session.typeContext) as RigidTypeMarker
+        return fullyExpandedType(session).withNullability(nullable, session.typeContext) as RigidTypeMarker
     }
 
     override fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker {

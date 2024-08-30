@@ -184,7 +184,7 @@ class Fir2IrTypeConverter(
             is ConeRawType -> {
                 // Upper bound has star projections here, so we take lower one
                 // (some reflection tests rely on this)
-                lowerBound.withNullability(upperBound.nullability, session.typeContext).toIrType(
+                lowerBound.withNullabilityOf(upperBound, session.typeContext).toIrType(
                     typeOrigin,
                     annotations,
                     hasFlexibleNullability = lowerBound.isMarkedNullable != upperBound.isMarkedNullable,

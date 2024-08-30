@@ -181,8 +181,8 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
                 val bound = typeParameters[currentArgLocalIndex].symbol.fir.bounds.first().coneType
                 return@mapIndexed ConeKotlinTypeProjectionOut(
                     ConeFlexibleType(
-                        bound.lowerBoundIfFlexible().withNullability(ConeNullability.NOT_NULL, session.typeContext),
-                        bound.upperBoundIfFlexible().withNullability(ConeNullability.NULLABLE, session.typeContext)
+                        bound.lowerBoundIfFlexible().withNullability(nullable = false, session.typeContext),
+                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext)
                     )
                 )
             }

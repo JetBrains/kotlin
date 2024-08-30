@@ -29,7 +29,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
-        val nullableToDefinitelyNotNull = !subtype.canBeNull(context.session) && supertype.withNullability(ConeNullability.NOT_NULL, typeContext) == subtype
+        val nullableToDefinitelyNotNull = !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }
@@ -38,8 +38,8 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // cast between T and T? is always OK
     if ((supertype !is ConeErrorType && supertype.isMarkedNullable) || (subtype !is ConeErrorType && subtype.isMarkedNullable)) {
         return isCastErased(
-            supertype.withNullability(ConeNullability.NOT_NULL, typeContext),
-            subtype.withNullability(ConeNullability.NOT_NULL, typeContext),
+            supertype.withNullability(nullable = false, typeContext),
+            subtype.withNullability(nullable = false, typeContext),
             context
         )
     }
@@ -195,7 +195,7 @@ internal fun isRefinementUseless(
             // fun f(x: Int?) { x as? Int } // USELESS_CAST is reasonable here
             val refinedTargetType =
                 if (expression.operation == FirOperation.SAFE_AS && lhsType.isMarkedOrFlexiblyNullable) {
-                    targetType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
+                    targetType.withNullability(nullable = true, context.session.typeContext)
                 } else {
                     targetType
                 }
