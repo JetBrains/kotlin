@@ -122,7 +122,7 @@ private class ConeTypeVariableTypePointer(
     builder: KaSymbolByFirBuilder,
 ) : ConeTypePointer<ConeTypeVariableType> {
     private val debugName = coneType.typeConstructor.debugName
-    private val nullability = coneType.nullability
+    private val isMarkedNullable = coneType.isMarkedNullable
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag
@@ -137,7 +137,7 @@ private class ConeTypeVariableTypePointer(
         val typeParameterSymbol = typeParameterSymbolPointer?.let { it.restoreSymbol(session) ?: return null }
 
         val typeConstructor = ConeTypeVariableTypeConstructor(debugName, typeParameterSymbol?.firSymbol?.toLookupTag())
-        return ConeTypeVariableType(nullability, typeConstructor)
+        return ConeTypeVariableType(isMarkedNullable, typeConstructor)
     }
 }
 

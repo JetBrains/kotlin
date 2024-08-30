@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.types.model.*
 // ----------------------------------- Type variable type -----------------------------------
 
 class ConeTypeVariableType(
-    override val nullability: ConeNullability,
+    isMarkedNullable: Boolean,
     val typeConstructor: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType() {
+    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeTypeVariableType) return false
@@ -101,7 +102,7 @@ class ConeStubTypeForTypeVariableInSubtyping(
 
 open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
     val typeConstructor: ConeTypeVariableTypeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)
-    val defaultType: ConeTypeVariableType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
+    val defaultType: ConeTypeVariableType = ConeTypeVariableType(isMarkedNullable = false, typeConstructor)
 
     override fun toString(): String {
         return defaultType.toString()
