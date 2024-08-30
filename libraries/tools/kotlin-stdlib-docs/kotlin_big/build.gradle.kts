@@ -22,7 +22,6 @@ val modules = listOf(
     "kotlin-test-junit5",
     "kotlin-test-junit",
     "kotlin-test-testng",
-    "kotlin-test-common",
 )
 
 
@@ -54,3 +53,28 @@ modules.forEach { module ->
     extractLibs.configure { dependsOn(libsTask) }
 }
 
+val stdlibMetadataAll = configurations.create("kotlin_lib_kotlin-stdlib-metadata") {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class, Category.LIBRARY))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-metadata"))
+    }
+}
+dependencies {
+    stdlibMetadataAll(group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version = artifactsVersion) {
+        isTransitive = false
+    }
+}
+val extractStdlibCommonMain by tasks.registering(org.gradle.jvm.tasks.Jar::class) {
+    archiveBaseName.set("kotlin-stdlib-common")
+    archiveExtension.set("klib")
+    destinationDirectory.set(file("$kotlin_libs/kotlin-stdlib-common"))
+    dependsOn(stdlibMetadataAll)
+    from({ zipTree(stdlibMetadataAll.singleFile) }) {
+        include("commonMain/**")
+        eachFile {
+            relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+        }
+        includeEmptyDirs = false
+    }
+}
+extractLibs.configure { dependsOn(extractStdlibCommonMain) }
