@@ -115,6 +115,12 @@ public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalida
   }
 
   @Test
+  @TestMetadata("crossModuleObjectInitialization")
+  public void testCrossModuleObjectInitialization() {
+    runTest("js/js.translator/testData/incremental/invalidation/crossModuleObjectInitialization/");
+  }
+
+  @Test
   @TestMetadata("crossModuleReferences")
   public void testCrossModuleReferences() {
     runTest("js/js.translator/testData/incremental/invalidation/crossModuleReferences/");
