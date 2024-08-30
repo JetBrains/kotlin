@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontendForAnalysis
+import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontendForKapt
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
@@ -207,7 +207,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         val (analysisTime, analysisResults) = measureTimeMillis {
             val sourceFiles = getSourceFiles(disposable, projectEnvironment, configuration)
-            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, sourceFiles, null, module)
+            runFrontendForKapt(projectEnvironment, configuration, messageCollector, sourceFiles, module)
         }
 
         logger.info { "Initial analysis took $analysisTime ms" }
