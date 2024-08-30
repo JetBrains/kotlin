@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.util.*
 
 internal data class KlibWriterInput(
