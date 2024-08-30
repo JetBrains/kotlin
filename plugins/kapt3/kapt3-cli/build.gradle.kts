@@ -31,7 +31,6 @@ projectTest {
     workingDir = rootDir
     dependsOn(":dist")
     val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    systemProperty("kotlin.proguard.enabled", kotlinBuildProperties.proguard)
     doFirst {
         environment("JAVA_HOME", jdkHome.get())
     }
