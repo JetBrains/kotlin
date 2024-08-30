@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,16 +50,21 @@ It is deprecated and will be removed in Kotlin 2.2."""
         }
 
     @GradleOption(
-        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend.",
-        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
-        removeAfter = LanguageVersion.KOTLIN_2_1,
+        level = DeprecationLevel.ERROR, // TODO: KT-70222 Remove completely in 2.2
+        removeAfter = LanguageVersion.KOTLIN_2_2,
     )
-    @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib in compilation dependencies.")
+    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
+    @Argument(
+        value = "-no-stdlib",
+        description = """This option does nothing and is left for compatibility with the legacy backend.
+It is deprecated and will be removed in Kotlin 2.2."""
+    )
     var noStdlib = false
         set(value) {
             checkFrozen()
@@ -160,17 +165,21 @@ It is deprecated and will be removed in Kotlin 2.2."""
         }
 
     @GradleOption(
-        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend.",
-        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
-        removeAfter = LanguageVersion.KOTLIN_2_1,
+        level = DeprecationLevel.ERROR, // TODO: KT-70222 Remove completely in 2.2
+        removeAfter = LanguageVersion.KOTLIN_2_2,
     )
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use this to create a library.")
+    @Argument(
+        value = "-meta-info",
+        description = """This option does nothing and is left for compatibility with the legacy backend.
+It is deprecated and will be removed in Kotlin 2.2."""
+    )
     var metaInfo = false
         set(value) {
             checkFrozen()

@@ -29,11 +29,11 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val main: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode>
 
     /**
-     * Generate .meta.js and .kjsm files with metadata. Use this to create a library.
+     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
      *
-     * Default value: true
+     * Default value: false
      */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
     @get:org.gradle.api.tasks.Input
     val metaInfo: org.gradle.api.provider.Property<kotlin.Boolean>
 
@@ -58,11 +58,11 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val moduleName: org.gradle.api.provider.Property<kotlin.String>
 
     /**
-     * Don't automatically include the default Kotlin/JS stdlib in compilation dependencies.
+     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in Kotlin 2.2.
      *
-     * Default value: true
+     * Default value: false
      */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
     @get:org.gradle.api.tasks.Input
     val noStdlib: org.gradle.api.provider.Property<kotlin.Boolean>
 

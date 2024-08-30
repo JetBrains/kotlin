@@ -799,6 +799,14 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.outputFile != null) {
             messageCollector.report(WARNING, "The '-output' command line option does nothing and will be removed in a future release")
         }
+        @Suppress("DEPRECATION")
+        if (arguments.noStdlib) {
+            messageCollector.report(WARNING, "The '-no-stdlib' command line option does nothing and will be removed in a future release")
+        }
+        @Suppress("DEPRECATION")
+        if (arguments.metaInfo) {
+            messageCollector.report(WARNING, "The '-meta-info' command line option does nothing and will be removed in a future release")
+        }
 
         if (arguments.debuggerCustomFormatters) {
             configuration.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, true)
