@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -101,37 +102,14 @@ kotlin {
         }
     }
 
-    // Please remove this check after bootstrap and replacing @ExperimentalWasmDsl
-    val newExperimentalWasmDslAvailable = runCatching {
-        Class.forName("org.jetbrains.kotlin.gradle.ExperimentalWasmDsl")
-    }.isSuccess
-
-    if (newExperimentalWasmDslAvailable) {
-        logger.warn(
-            """
-            Apparently kotlin bootstrap just happened. And @ExperimentalWasmDsl annotation was moved to a new FQN.
-            Please replace 'org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl' 
-            with 'org.jetbrains.kotlin.gradle.ExperimentalWasmDsl'
-            and remove this check.
-            
-            Please note that the same check exists in kotlin-stdlib module. Fix it there too.
-            """.trimIndent()
-        )
-    }
-
-    @Suppress("OPT_IN_USAGE")
-    // Remove line above and uncomment line below after bootstrap
-    // @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
     }
-
-    @Suppress("OPT_IN_USAGE")
-    // Remove line above and uncomment line below after bootstrap
-    // @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
