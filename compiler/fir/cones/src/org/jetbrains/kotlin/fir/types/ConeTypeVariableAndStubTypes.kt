@@ -11,16 +11,15 @@ import org.jetbrains.kotlin.types.model.*
 // ----------------------------------- Type variable type -----------------------------------
 
 class ConeTypeVariableType(
-    isMarkedNullable: Boolean,
+    val isMarkedNullable: Boolean,
     val typeConstructor: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType() {
-    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeTypeVariableType) return false
 
-        if (nullability != other.nullability) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
         if (typeConstructor != other.typeConstructor) return false
 
         return true
@@ -28,7 +27,7 @@ class ConeTypeVariableType(
 
     override fun hashCode(): Int {
         var result = 0
-        result = 31 * result + nullability.hashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
         result = 31 * result + typeConstructor.hashCode()
         return result
     }
@@ -62,10 +61,11 @@ data class ConeStubTypeConstructor(
     }
 }
 
-sealed class ConeStubType(val constructor: ConeStubTypeConstructor, isMarkedNullable: Boolean) : StubTypeMarker,
+sealed class ConeStubType(
+    val constructor: ConeStubTypeConstructor,
+    val isMarkedNullable: Boolean,
+) : StubTypeMarker,
     ConeSimpleKotlinType() {
-
-    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
 
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty
@@ -77,7 +77,7 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, isMarkedNull
         other as ConeStubType
 
         if (constructor != other.constructor) return false
-        if (nullability != other.nullability) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
     }
@@ -85,7 +85,7 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, isMarkedNull
     override fun hashCode(): Int {
         var result = 0
         result = 31 * result + constructor.hashCode()
-        result = 31 * result + nullability.hashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
         return result
     }
 }

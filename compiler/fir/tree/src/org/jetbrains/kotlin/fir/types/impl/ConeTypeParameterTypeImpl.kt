@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.ConeAttributes
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 
 class ConeTypeParameterTypeImpl(
     override val lookupTag: ConeTypeParameterLookupTag,
-    isMarkedNullable: Boolean,
+    override val isMarkedNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeTypeParameterType() {
-    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -24,14 +22,14 @@ class ConeTypeParameterTypeImpl(
         other as ConeTypeParameterTypeImpl
 
         if (lookupTag != other.lookupTag) return false
-        if (nullability != other.nullability) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = lookupTag.hashCode()
-        result = 31 * result + nullability.hashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
         return result
     }
 

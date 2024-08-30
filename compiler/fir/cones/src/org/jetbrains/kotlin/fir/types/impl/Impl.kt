@@ -9,18 +9,15 @@ import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.util.WeakPair
 
 class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     typeArguments: Array<out ConeTypeProjection>,
-    isMarkedNullable: Boolean,
+    override val isMarkedNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeClassLikeType() {
     override val typeArguments: Array<out ConeTypeProjection> = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
-
-    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
 
     // Cached expanded type and the relevant session
     var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null
@@ -33,7 +30,7 @@ class ConeClassLikeTypeImpl(
 
         if (lookupTag != other.lookupTag) return false
         if (!typeArguments.contentEquals(other.typeArguments)) return false
-        if (nullability != other.nullability) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
         if (attributes definitelyDifferFrom other.attributes) return false
 
         return true
@@ -42,7 +39,7 @@ class ConeClassLikeTypeImpl(
     override fun hashCode(): Int {
         var result = lookupTag.hashCode()
         result = 31 * result + typeArguments.contentHashCode()
-        result = 31 * result + nullability.hashCode()
+        result = 31 * result + isMarkedNullable.hashCode()
         return result
     }
 }
