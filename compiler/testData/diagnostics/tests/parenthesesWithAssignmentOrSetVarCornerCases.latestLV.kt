@@ -18,19 +18,19 @@ object PlusAndPlusAssign {
 }
 
 object B {
-    val p = Plus
-    val pa = PlusAssign
-    val ppa = PlusAndPlusAssign
+    var p = Plus
+    var pa = PlusAssign
+    var ppa = PlusAndPlusAssign
 }
 
 fun ban(b: B?) {
-    b?.<!VAL_REASSIGNMENT!>p<!> += 10
+    b?.p += 10
     (b?.p) <!NONE_APPLICABLE!>+=<!> 10
 
     b?.pa += 10
     (b?.pa) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 
-    b?.ppa += 10
+    b?.ppa <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 10
     (b?.ppa) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 }
 
@@ -45,14 +45,14 @@ operator fun PlusAndPlusAssignExt?.plus(number: Int) = this.also { println("ppa-
 operator fun PlusAndPlusAssignExt?.plusAssign(number: Int) { println("ppa-ext -> plusAssign") }
 
 object C {
-    val p = PlusExt
-    val pa = PlusAssignExt
-    val ppa = PlusAndPlusAssignExt
+    var p = PlusExt
+    var pa = PlusAssignExt
+    var ppa = PlusAndPlusAssignExt
 }
 
 fun bad(c: C?) {
-    <!ASSIGNMENT_TYPE_MISMATCH!>c?.<!VAL_REASSIGNMENT!>p<!> += 10<!>
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(c?.<!VARIABLE_EXPECTED!>p<!>) += 10<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>c?.p += 10<!>
+    (c?.p) <!NONE_APPLICABLE!>+=<!> 10
 
     c?.pa += 10
     (c?.pa) += 10

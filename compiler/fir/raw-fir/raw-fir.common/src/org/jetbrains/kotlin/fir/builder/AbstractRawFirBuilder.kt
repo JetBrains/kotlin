@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -644,7 +645,9 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         )
     }
 
-
+    /**
+     * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
+     */
     private fun T?.unwrap(): T? {
         // NOTE: By removing surrounding parentheses and labels, FirLabels will NOT be created for those labels.
         // This should be fine since the label is meaningless and unusable for a ++/-- argument or assignment LHS.
@@ -754,7 +757,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     source = receiver.toFirSourceElement(sourceElementKind)
                     name = OperatorNameConventions.SET
                 }
-                explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
+                explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, variable = arrayVariable)
                 argumentList = buildArgumentList {
                     for (indexVar in indexVariables) {
                         arguments += generateResolvedAccessExpression(indexVar.source, indexVar)
@@ -869,6 +872,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         // since there should be different nodes for desugaring as `.set(.., get().plus($rhs1))` and `.get(...).plusAssign($rhs2)`
         // Once KT-50861 is fixed, those two parameters shall be eliminated
         rhsAST: T?,
+        isLhsParenthesized: Boolean,
         convert: T.() -> FirExpression,
     ): FirStatement {
         val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
@@ -895,7 +899,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                         sourceElementForErrorIfSafeCallSelectorIsNotExpression = receiver.source,
                     ) { actualReceiver ->
                         generateIndexedAccessAugmentedAssignment(
-                            actualReceiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
+                            actualReceiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert, isLhsParenthesized,
                         )
                     }
                     source = result.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
@@ -922,18 +926,27 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     )
                 }
 
+            val prohibitSetCallsForParenthesizedLhs = this@AbstractRawFirBuilder.baseSession.languageVersionSettings.supportsFeature(
+                LanguageFeature.ForbidParenthesizedLhsInAssignments
+            )
+
             return buildPossiblyUnderSafeCall(
                 receiverToUse,
                 // For (a?.b) += 1 we don't want to pull `+=` under a safe call
-                isReceiverIsWrappedWithParentheses = lhsReceiver?.isChildInParentheses() == true,
+                isReceiverIsWrappedWithParentheses = isLhsParenthesized,
                 sourceElementForErrorIfSafeCallSelectorIsNotExpression = null
             ) { actualReceiver ->
-                buildAugmentedAssignment {
-                    source = baseSource
-                    this.operation = operation
-                    leftArgument = actualReceiver
-                    rightArgument = rhsExpression
-                    this.annotations += annotations
+                // Disable `set` resolution for `(c?.p) += ...` where `p` has an extension operator `plus()`.
+                if (isLhsParenthesized && prohibitSetCallsForParenthesizedLhs) {
+                    generateAssignmentOperatorCall(operation, baseSource, receiverToUse, rhsExpression, annotations)
+                } else {
+                    buildAugmentedAssignment {
+                        source = baseSource
+                        this.operation = operation
+                        leftArgument = actualReceiver
+                        rightArgument = rhsExpression
+                        this.annotations += annotations
+                    }
                 }
             }
         }
@@ -994,28 +1007,22 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         annotations: List<FirAnnotation>,
         rhs: T?,
         convert: T.() -> FirExpression,
+        isLhsParenthesized: Boolean,
     ): FirStatement {
+        val prohibitSetCallsForParenthesizedLhs = this@AbstractRawFirBuilder.baseSession.languageVersionSettings.supportsFeature(
+            LanguageFeature.ForbidParenthesizedLhsInAssignments
+        )
+
         // For case of LHS is a parenthesized safe call, like (a?.b[3]) += 1
         // Here, we explicitly declare that it can't be desugared as `a?.{ b[3] = b[3] + 1 }` or
         // as some other sort of `plus` + set, thus we leave only `plusAssign` form.
-        if (receiver is FirSafeCallExpression) {
-            return buildFunctionCall {
-                this.source = source
-                explicitReceiver = receiver
-                argumentList = buildUnaryArgumentList(
-                    rhs?.convert() ?: buildErrorExpression(
-                        null,
-                        ConeSyntaxDiagnostic("No value for array set")
-                    )
-                )
-
-                calleeReference = buildSimpleNamedReference {
-                    this.source = baseSource
-                    this.name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
-                }
-                origin = FirFunctionCallOrigin.Operator
-                this.annotations.addAll(annotations)
-            }
+        // Also, disable `set` resolution for `(a[0]) += ...` where `a: Array<A>`.
+        if (receiver is FirSafeCallExpression || isLhsParenthesized && prohibitSetCallsForParenthesizedLhs) {
+            val argument = rhs?.convert() ?: buildErrorExpression(
+                null,
+                ConeSyntaxDiagnostic("No value for array set")
+            )
+            return generateAssignmentOperatorCall(operation, baseSource, receiver, argument, annotations)
         }
 
         require(receiver is FirFunctionCall) {
@@ -1032,6 +1039,27 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             )
             this.arrayAccessSource = arrayAccessSource
             this.annotations += annotations
+        }
+    }
+
+    private fun generateAssignmentOperatorCall(
+        operation: FirOperation,
+        source: KtSourceElement?,
+        receiver: FirExpression?,
+        rhsExpression: FirExpression,
+        annotations: List<FirAnnotation>,
+    ): FirFunctionCall {
+        return buildFunctionCall {
+            this.source = source
+            explicitReceiver = receiver
+            argumentList = buildUnaryArgumentList(rhsExpression)
+
+            calleeReference = buildSimpleNamedReference {
+                this.source = source
+                this.name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
+            }
+            origin = FirFunctionCallOrigin.Operator
+            this.annotations.addAll(annotations)
         }
     }
 

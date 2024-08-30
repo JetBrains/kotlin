@@ -11,9 +11,9 @@ object O {
 
 fun main() {
     var b = O
-    (b)++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(b)++<!>
 
-    (O[1])++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(O[1])<!>++
     (O)[0]++
 }
 

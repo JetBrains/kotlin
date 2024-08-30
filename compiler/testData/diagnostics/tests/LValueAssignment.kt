@@ -1,3 +1,5 @@
+// LATEST_LV_DIFFERENCE
+
 package lvalue_assignment
 
 open class B() {

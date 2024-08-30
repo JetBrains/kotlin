@@ -266,6 +266,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInterpolationPrefix::class
     }
 
+    interface WrappedLhsInAssignmentError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrappedLhsInAssignmentError::class
+    }
+
+    interface WrappedLhsInAssignmentWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrappedLhsInAssignmentWarning::class
+    }
+
     interface InvisibleReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KaSymbol

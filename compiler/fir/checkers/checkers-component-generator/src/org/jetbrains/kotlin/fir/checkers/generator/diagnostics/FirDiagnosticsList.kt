@@ -121,6 +121,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val MISSING_CONSTRUCTOR_KEYWORD by error<PsiElement>()
         val REDUNDANT_INTERPOLATION_PREFIX by warning<PsiElement>()
+        val WRAPPED_LHS_IN_ASSIGNMENT by deprecationError<PsiElement>(LanguageFeature.ForbidParenthesizedLhsInAssignments)
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidCompanionInLocalInnerCl
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidParenthesizedLhsInAssignments
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidProjectionsInAnnotationProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidReifiedTypeParametersOnTypeAliases
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
@@ -185,6 +186,7 @@ object FirErrors {
     val ERROR_SUPPRESSION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ERROR_SUPPRESSION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val MISSING_CONSTRUCTOR_KEYWORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_CONSTRUCTOR_KEYWORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val REDUNDANT_INTERPOLATION_PREFIX: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_INTERPOLATION_PREFIX", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val WRAPPED_LHS_IN_ASSIGNMENT: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("WRAPPED_LHS_IN_ASSIGNMENT", ForbidParenthesizedLhsInAssignments, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Unresolved
     val INVISIBLE_REFERENCE: KtDiagnosticFactory3<FirBasedSymbol<*>, Visibility, ClassId?> = KtDiagnosticFactory3("INVISIBLE_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)

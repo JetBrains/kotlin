@@ -2930,6 +2930,7 @@ open class PsiRawFirBuilder(
                         firOperation,
                         leftArgument.annotations,
                         expression.right,
+                        expression.left?.elementType in UNWRAPPABLE_TOKEN_TYPES,
                     ) {
                         (this as KtExpression).toFirExpression(
                             sourceWhenInvalidExpression = expression,

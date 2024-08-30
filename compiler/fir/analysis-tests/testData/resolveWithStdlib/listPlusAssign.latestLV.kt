@@ -7,7 +7,7 @@ fun List<String>.modify() {
 }
 
 fun Any.modify() {
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VARIABLE_EXPECTED, WRAPPED_LHS_IN_ASSIGNMENT_WARNING{PSI}!>this <!UNCHECKED_CAST!>as List<Int><!><!>) += 42<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>(this <!UNCHECKED_CAST!>as List<Int><!>) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> 42<!>
 }
 
 operator fun <T> Set<T>.plusAssign(x: T) {}

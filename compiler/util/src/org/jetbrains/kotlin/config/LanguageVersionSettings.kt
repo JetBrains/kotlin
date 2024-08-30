@@ -360,6 +360,7 @@ enum class LanguageFeature(
     ForbidProjectionsInAnnotationProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-70002
     ForbidJvmAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-25861
     ForbidFieldAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-70233
+    ForbidParenthesizedLhsInAssignments(KOTLIN_2_2, kind = BUG_FIX), // KT-70507
 
     // 2.3
 
