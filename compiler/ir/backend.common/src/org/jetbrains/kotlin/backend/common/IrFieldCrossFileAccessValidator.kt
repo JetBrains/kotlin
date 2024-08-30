@@ -31,6 +31,7 @@ internal class IrFieldCrossFileAccessValidator(
         super.visitFieldAccess(expression)
 
         val field = expression.symbol.owner
+        if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
         val containingFile = field.fileOrNull ?: return
 
         if (containingFile != file) {
