@@ -635,6 +635,11 @@ class BodyGenerator(
     private fun generateCall(call: IrFunctionAccessExpression) {
         val location = call.getSourceLocation()
 
+        if (call.symbol == unitGetInstance.symbol) {
+            body.buildGetUnit()
+            return
+        }
+
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxBoolean) {
@@ -737,7 +742,7 @@ class BodyGenerator(
         }
 
         // Unit types don't cross function boundaries
-        if (function.returnType.isUnit() && function !is IrConstructor) {
+        if (function.returnType.isUnit() && function !is IrConstructor && function != unitGetInstance) {
             body.buildGetUnit()
         }
     }

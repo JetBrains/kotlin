@@ -609,13 +609,6 @@ private val inlineObjectsWithPureInitializationLoweringPhase = makeIrModulePhase
     prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
 )
 
-private val inlineUnitInstanceGettersLowering = makeIrModulePhase(
-    ::InlineUnitInstanceGettersLowering,
-    name = "InlineUnitInstanceGettersLowering",
-    description = "[Optimization] Inline Unit instance getters whenever it's possible",
-    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
-)
-
 private val whenBranchOptimiserLoweringPhase = makeIrModulePhase(
     ::WhenBranchOptimiserLowering,
     name = "WhenBranchOptimiserLowering",
@@ -754,7 +747,7 @@ fun getWasmLowerings(
     autoboxingTransformerPhase,
 
     objectUsageLoweringPhase,
-    purifyObjectInstanceGettersLoweringPhase,
+    purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental },
 
     explicitlyCastExternalTypesPhase,
     typeOperatorLoweringPhase,
@@ -768,12 +761,6 @@ fun getWasmLowerings(
 
     // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
     inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental },
-
-    // This is applied for IC mode. As of now, we can't rely on InlineObjectsWithPureInitializationLowering
-    //  when performing incremental compilation. Objects initialized to null are expected to be initialized
-    //  by their getters in the first access, but when applying InlineObjectsWithPureInitializationLowering,
-    //  it inlines getters that are supposed to initialize global objects, leading to null dereferencing.
-    inlineUnitInstanceGettersLowering.takeIf { isIncremental },
 
     whenBranchOptimiserLoweringPhase,
     validateIrAfterLowering,

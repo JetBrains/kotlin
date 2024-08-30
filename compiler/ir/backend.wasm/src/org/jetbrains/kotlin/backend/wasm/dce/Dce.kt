@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -70,8 +69,7 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     }
 
     add(context.irBuiltIns.throwableClass.owner)
-    add(context.findUnitInstanceField())
-    add(context.irBuiltIns.unitClass.owner.primaryConstructor!!)
+    add(context.findUnitGetInstanceFunction())
 
     addAll(context.testFunsPerFile.values)
     context.fileContexts.values.forEach {

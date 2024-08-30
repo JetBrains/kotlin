@@ -275,6 +275,14 @@ class WasmCompiledModuleFragment(
         return WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
     }
 
+    private fun getUnitGetInstance(): WasmFunction {
+        val unitGetInstanceDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
+            fragment.functions.defined.values.find { it.name == "kotlin.Unit_getInstance" }
+        }
+        check(unitGetInstanceDeclaration != null)
+        return unitGetInstanceDeclaration
+    }
+
     private fun getRecGroupTypesWithoutPotentiallyRecursiveFunctionTypes(): MutableList<WasmTypeDeclaration> {
         fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
             return when (declaration) {
@@ -355,6 +363,7 @@ class WasmCompiledModuleFragment(
 
         masterInitFunction.instructions.clear()
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
+            buildCall(WasmSymbol(getUnitGetInstance()), serviceCodeLocation)
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.mainFunctionWrappers.forEach { signature ->
