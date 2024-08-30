@@ -936,8 +936,8 @@ abstract class AbstractComposeLowering(
         // but `registerFunctionAsMetadataVisible` is not working for field getter for some reason
         // and there is no api to register properties as metadata-visible
         val stabilityGetter = context.irFactory.buildFun {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
+            startOffset = this@buildStabilityGetter.startOffset
+            endOffset = this@buildStabilityGetter.endOffset
             name = getterName
             returnType = stabilityField.type
             visibility = DescriptorVisibilities.PUBLIC
