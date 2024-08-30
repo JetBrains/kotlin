@@ -227,7 +227,7 @@ private sealed class WhenExhaustivenessChecker {
 
 private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        return subjectType.isNullable
+        return subjectType.isMarkedOrFlexiblyNullable
     }
 
     override fun computeMissingCases(
@@ -260,7 +260,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         }
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Flags) {
-            if (typeOperatorCall.operation == FirOperation.IS && typeOperatorCall.conversionTypeRef.coneType.isNullable) {
+            if (typeOperatorCall.operation == FirOperation.IS && typeOperatorCall.conversionTypeRef.coneType.isMarkedOrFlexiblyNullable) {
                 data.containsNull = true
             }
         }

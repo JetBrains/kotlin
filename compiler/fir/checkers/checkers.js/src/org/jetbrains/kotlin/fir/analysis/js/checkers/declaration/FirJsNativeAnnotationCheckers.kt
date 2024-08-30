@@ -104,7 +104,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
         if (!declaration.hasRequiredAnnotation(context)) return
         super.check(declaration, context, reporter)
 
-        if (!declaration.returnTypeRef.coneType.isNullable) {
+        if (!declaration.returnTypeRef.coneType.isMarkedOrFlexiblyNullable) {
             reporter.reportOn(declaration.source, FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE, context)
         }
     }

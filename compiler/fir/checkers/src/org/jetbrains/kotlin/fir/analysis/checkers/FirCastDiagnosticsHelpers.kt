@@ -194,7 +194,7 @@ internal fun isRefinementUseless(
             // Normalize `targetType` for cases like the following:
             // fun f(x: Int?) { x as? Int } // USELESS_CAST is reasonable here
             val refinedTargetType =
-                if (expression.operation == FirOperation.SAFE_AS && lhsType.isNullable) {
+                if (expression.operation == FirOperation.SAFE_AS && lhsType.isMarkedOrFlexiblyNullable) {
                     targetType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
                 } else {
                     targetType

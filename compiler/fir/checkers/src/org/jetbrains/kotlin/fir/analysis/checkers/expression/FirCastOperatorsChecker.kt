@@ -49,8 +49,8 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK, context)
 
     private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall, context: CheckerContext): Applicability {
-        val isNullableNothingWithNotNull = !l.type.isNullable && r.type.isNullableNothing
-                || l.type.isNullableNothing && !r.type.isNullable
+        val isNullableNothingWithNotNull = !l.type.isMarkedOrFlexiblyNullable && r.type.isNullableNothing
+                || l.type.isNullableNothing && !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             l.type.isNothing -> Applicability.APPLICABLE
@@ -71,7 +71,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         useless: Applicability,
         context: CheckerContext,
     ): Applicability {
-        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
+        val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless

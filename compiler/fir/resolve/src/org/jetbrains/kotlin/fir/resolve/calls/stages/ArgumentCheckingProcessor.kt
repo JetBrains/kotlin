@@ -247,7 +247,7 @@ internal object ArgumentCheckingProcessor {
 
         when {
             isReceiver && isDispatch -> {
-                if (!expectedType.isNullable && argumentType.isMarkedNullable) {
+                if (!expectedType.isMarkedOrFlexiblyNullable && argumentType.isMarkedNullable) {
                     reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
                 }
             }

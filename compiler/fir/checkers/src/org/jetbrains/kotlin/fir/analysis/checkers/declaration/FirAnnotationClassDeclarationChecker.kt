@@ -81,7 +81,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                         coneType is ConeErrorType -> {
                             // DO NOTHING: error types already have diagnostics which are reported elsewhere.
                         }
-                        coneType.isNullable -> {
+                        coneType.isMarkedOrFlexiblyNullable -> {
                             reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
                         }
                         coneType.isPrimitiveOrNullablePrimitive -> {
@@ -149,7 +149,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         val arrayType = (typeArguments[0] as? ConeKotlinTypeProjection)?.type?.fullyExpandedType(session)
             ?: return false
 
-        if (arrayType.isNullable) return false
+        if (arrayType.isMarkedOrFlexiblyNullable) return false
 
         val arrayTypeClassId = arrayType.classId
 

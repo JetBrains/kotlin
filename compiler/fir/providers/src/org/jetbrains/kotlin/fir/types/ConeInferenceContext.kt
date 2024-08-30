@@ -210,7 +210,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isUnit(): Boolean {
         require(this is ConeKotlinType)
-        return this.typeConstructor().isUnitTypeConstructor() && !this.isNullable
+        return this.typeConstructor().isUnitTypeConstructor() && !this.isMarkedOrFlexiblyNullable
     }
 
     override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {

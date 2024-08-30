@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.isMarkedOrFlexiblyNullable
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -41,7 +41,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
             declaration.hasAnnotation(StandardClassIds.Annotations.HidesMembers, context.session) ||
-            declaration.receiverParameter?.typeRef?.coneType?.isNullable != false ||
+            declaration.receiverParameter?.typeRef?.coneType?.isMarkedOrFlexiblyNullable != false ||
             declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
             // A common pattern, KT-70012
             declaration.isActual

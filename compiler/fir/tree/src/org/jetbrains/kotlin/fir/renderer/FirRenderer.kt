@@ -523,7 +523,7 @@ class FirRenderer(
 
             val meaningfulBounds = typeParameter.bounds.filter {
                 if (it !is FirResolvedTypeRef) return@filter true
-                if (!it.coneType.isNullable) return@filter true
+                if (!it.coneType.isMarkedOrFlexiblyNullable) return@filter true
                 val type = it.coneType as? ConeLookupTagBasedType ?: return@filter true
                 (type.lookupTag as? ConeClassLikeLookupTag)?.classId != StandardClassIds.Any
             }

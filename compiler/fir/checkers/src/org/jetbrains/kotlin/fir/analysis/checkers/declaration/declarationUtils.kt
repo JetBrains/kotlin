@@ -124,7 +124,7 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstruc
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
 
 fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
-    typeConstructor().isMultiFieldValueClass() && !isNullable
+    typeConstructor().isMultiFieldValueClass() && !isMarkedNullable
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean

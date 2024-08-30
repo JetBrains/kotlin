@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
+val ConeKotlinType.isMarkedOrFlexiblyNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
 
 @Deprecated(
-    "`isNullable` on non-flexible types is the same as `isMarkedNullable`. Also consider using `canBeNull()`",
+    "`isMarkedOrFlexiblyNullable` on non-flexible types is the same as `isMarkedNullable`. Also consider using `canBeNull()`.",
     level = DeprecationLevel.ERROR
 )
-val ConeRigidType.isNullable: Boolean get() = isMarkedNullable
+val ConeRigidType.isMarkedOrFlexiblyNullable: Boolean get() = isMarkedNullable
 
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 

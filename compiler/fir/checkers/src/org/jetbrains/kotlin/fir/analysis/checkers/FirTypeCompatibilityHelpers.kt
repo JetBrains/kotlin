@@ -48,12 +48,12 @@ class TypeInfo(
 
 private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == StandardClassIds.String || isEnumClass
 
-internal val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
+internal val TypeInfo.isNullableEnum get() = isEnumClass && type.isMarkedOrFlexiblyNullable
 
 internal fun TypeInfo.isIdentityLess(session: FirSession) =
     session.identityLessPlatformDeterminer.isIdentityLess(this) || isValueClass
 
-internal val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isNullable
+internal val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isMarkedOrFlexiblyNullable
 
 private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
 
@@ -85,10 +85,10 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
 }
 
 internal fun ConeKotlinType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isNullable, attributes)
+    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedOrFlexiblyNullable, attributes)
 
 internal fun ConeKotlinType.toPlatformTypeIfKotlin(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isNullable, attributes)
+    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedOrFlexiblyNullable, attributes)
 
 internal class ArgumentInfo(
     val argument: FirExpression,

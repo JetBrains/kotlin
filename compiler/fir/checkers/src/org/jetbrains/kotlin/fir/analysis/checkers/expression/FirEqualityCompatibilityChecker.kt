@@ -84,7 +84,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 
     private fun checkIdentityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
-        val oneIsNotNull = !l.type.isNullable || !r.type.isNullable
+        val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             l.type.isNullableNothing || r.type.isNullableNothing -> Applicability.APPLICABLE
@@ -286,7 +286,7 @@ internal fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
 internal fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
     return when {
         !a.isEnum(session) && !b.isEnum(session) -> true
-        a.isNullable && b.isNullable -> true
+        a.isMarkedOrFlexiblyNullable && b.isMarkedOrFlexiblyNullable -> true
         a.isNothingOrNullableNothing || b.isNothingOrNullableNothing -> true
         else -> !a.isClass(session) || !b.isClass(session)
     }
