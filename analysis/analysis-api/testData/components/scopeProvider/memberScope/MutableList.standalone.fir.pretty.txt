@@ -2,25 +2,25 @@ fun add(element: E): kotlin.Boolean
 
 fun add(index: kotlin.Int, element: E)
 
+fun remove(element: E): kotlin.Boolean
+
 fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
 fun addAll(index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
 fun clear()
+
+operator fun set(index: kotlin.Int, element: E): E
+
+fun removeAt(index: kotlin.Int): E
 
 fun listIterator(): kotlin.collections.MutableListIterator<E>
 
 fun listIterator(index: kotlin.Int): kotlin.collections.MutableListIterator<E>
-
-fun remove(element: E): kotlin.Boolean
-
-fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
-
-fun removeAt(index: kotlin.Int): E
-
-fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
-
-operator fun set(index: kotlin.Int, element: E): E
 
 fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
 
