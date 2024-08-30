@@ -29,11 +29,16 @@ class KotlinMetadataDeserializerForDecompiler(
 
     override val deserializationComponents: DeserializationComponents
 
+    private object Configuration : DeserializationConfiguration by DeserializationConfiguration.Default {
+        override val preserveDeclarationsOrdering: Boolean
+            get() = true
+    }
+
     init {
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
         deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, DeserializationConfiguration.Default,
+            storageManager, moduleDescriptor, Configuration,
             ProtoBasedClassDataFinder(proto, nameResolver, metadataVersion),
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
