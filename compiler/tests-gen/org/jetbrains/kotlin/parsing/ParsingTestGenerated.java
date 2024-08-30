@@ -2903,6 +2903,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/stringTemplates/IncorrectPaddedMultiDollarInterpolationCode.kt");
       }
 
+      @TestMetadata("MultiDollarBacktick.kt")
+      public void testMultiDollarBacktick() {
+        runTest("compiler/testData/psi/stringTemplates/MultiDollarBacktick.kt");
+      }
+
       @TestMetadata("RawStringsWithManyQuotes.kt")
       public void testRawStringsWithManyQuotes() {
         runTest("compiler/testData/psi/stringTemplates/RawStringsWithManyQuotes.kt");

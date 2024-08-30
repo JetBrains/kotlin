@@ -134,7 +134,7 @@ THREE_OR_MORE_QUO = ({THREE_QUO}\"*)
 
 REGULAR_STRING_PART=[^\\\"\n\$]+
 SHORT_TEMPLATE_ENTRY={INTERPOLATION}{IDENTIFIER}
-LONELY_DOLLAR=\$
+LONELY_DOLLAR=\$+
 LONG_TEMPLATE_ENTRY_START={INTERPOLATION}\{
 LONELY_BACKTICK=`
 
@@ -181,9 +181,10 @@ LONELY_BACKTICK=`
                                            int rest = yylength() - interpolationPrefix;
                                            if (interpolationPrefix == requiredInterpolationPrefix) {
                                                pushState(SHORT_TEMPLATE_ENTRY);
-                                               yypushback(yylength() - interpolationPrefix);
+                                               yypushback(rest);
                                                return KtTokens.SHORT_TEMPLATE_ENTRY_START;
                                            } else if (interpolationPrefix < requiredInterpolationPrefix) {
+                                               yypushback(rest);
                                                return KtTokens.REGULAR_STRING_PART;
                                            } else {
                                                yypushback(requiredInterpolationPrefix + rest);
@@ -204,6 +205,7 @@ LONELY_BACKTICK=`
                                                pushState(LONG_TEMPLATE_ENTRY);
                                                return KtTokens.LONG_TEMPLATE_ENTRY_START;
                                            } else if (interpolationPrefix < requiredInterpolationPrefix) {
+                                               yypushback(1);
                                                return KtTokens.REGULAR_STRING_PART;
                                            } else {
                                                yypushback(requiredInterpolationPrefix + 1);
