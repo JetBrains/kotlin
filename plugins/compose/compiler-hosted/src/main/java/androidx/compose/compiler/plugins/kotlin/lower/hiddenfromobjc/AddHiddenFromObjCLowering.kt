@@ -26,11 +26,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.needsComposableRemapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -71,7 +67,7 @@ class AddHiddenFromObjCLowering(
     override fun lower(module: IrModuleFragment) {
         require(context.platform.isNative()) {
             "AddHiddenFromObjCLowering is expected to run only for k/native. " +
-                "The platform - ${context.platform}"
+                    "The platform - ${context.platform}"
         }
         module.transformChildrenVoid(this)
     }
@@ -97,11 +93,16 @@ class AddHiddenFromObjCLowering(
         return cls
     }
 
+    private fun IrFunction.isSyntheticFun(): Boolean =
+        origin == IrDeclarationOrigin.FAKE_OVERRIDE || startOffset < 0 || endOffset < 0
+
+
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val f = super.visitFunction(declaration) as IrFunction
-        if (f.isLocal ||
+        if (f.isLocal || f.isSyntheticFun() ||
             !(f.visibility == DescriptorVisibilities.PUBLIC ||
-                f.visibility == DescriptorVisibilities.PROTECTED))
+                    f.visibility == DescriptorVisibilities.PROTECTED)
+        )
             return f
 
         if (f.hasComposableAnnotation() || f.needsComposableRemapping()) {
@@ -118,8 +119,8 @@ class AddHiddenFromObjCLowering(
         if (p.isLocal || p.visibility != DescriptorVisibilities.PUBLIC) return p
 
         val shouldAdd = p.getter?.hasComposableAnnotation() ?: false ||
-            p.getter?.needsComposableRemapping() ?: false ||
-            p.backingField?.type.containsComposableAnnotation()
+                p.getter?.needsComposableRemapping() ?: false ||
+                p.backingField?.type.containsComposableAnnotation()
 
         if (shouldAdd) {
             p.addHiddenFromObjCAnnotation()
