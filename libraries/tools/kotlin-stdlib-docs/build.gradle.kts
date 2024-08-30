@@ -269,7 +269,7 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
 
-        val kotlinTestCommonClasspath = fileTree("$kotlin_libs/kotlin-test-common")
+        val kotlinTestCommonClasspath = fileTree("$kotlin_libs/kotlin-stdlib-common")
         val kotlinTestJunitClasspath = fileTree("$kotlin_libs/kotlin-test-junit")
         val kotlinTestJunit5Classpath = fileTree("$kotlin_libs/kotlin-test-junit5")
         val kotlinTestTestngClasspath = fileTree("$kotlin_libs/kotlin-test-testng")
