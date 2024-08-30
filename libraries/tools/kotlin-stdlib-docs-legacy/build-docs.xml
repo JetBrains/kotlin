@@ -56,11 +56,6 @@
     <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
   </path>
 
-  <path id="kotlin-test-common.classpath">
-    <fileset dir="${kotlin_libs}/kotlin-test-common" includes="*.jar"/>
-    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
-  </path>
-
   <path id="kotlin-test-junit.classpath">
     <fileset dir="${kotlin_libs}/kotlin-test-junit" includes="*.jar"/>
     <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
@@ -296,7 +291,7 @@
               jdkversion="8"
               analysisplatform="common"
               noStdlibLink="true"
-              classpathref="kotlin-test-common.classpath"
+              classpathref="stdlib-common.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false"
               sincekotlin="1.0">

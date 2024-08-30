@@ -40,7 +40,6 @@ final List<String> modules = [
         "kotlin-test-junit5",
         "kotlin-test-junit",
         "kotlin-test-testng",
-        "kotlin-test-common",
 ]
 
 
@@ -56,6 +55,13 @@ modules.forEach { module ->
     lib_src.attributes {
       attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime"))
       attribute(Attribute.of("org.jetbrains.kotlin.js.compiler", String), "ir")
+    }
+  }
+
+  if (module == "kotlin-stdlib-common") {
+    lib_src.attributes {
+      attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-api"))
+      attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String), "common")
     }
   }
 
