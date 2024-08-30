@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
@@ -49,12 +47,6 @@ internal fun KtExpression.unwrap(): KtExpression {
         is KtFunctionLiteral -> (parent as? KtLambdaExpression)?.unwrap()
         else -> this
     } ?: this
-}
-
-internal fun KaTypeNullability.toConeNullability() = when (this) {
-    KaTypeNullability.NULLABLE -> ConeNullability.NULLABLE
-    KaTypeNullability.NON_NULLABLE -> ConeNullability.NOT_NULL
-    KaTypeNullability.UNKNOWN -> ConeNullability.UNKNOWN
 }
 
 /**

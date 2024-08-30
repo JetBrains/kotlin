@@ -36,7 +36,8 @@ internal class KaFirIntersectionType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    // TODO(KT-71101) Should this use canBeNull instead?
+    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

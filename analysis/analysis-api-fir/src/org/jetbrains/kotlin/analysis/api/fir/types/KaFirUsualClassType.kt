@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.ClassId
@@ -56,7 +57,7 @@ internal class KaFirUsualClassType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion {

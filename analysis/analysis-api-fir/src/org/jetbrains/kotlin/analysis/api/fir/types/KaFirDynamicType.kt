@@ -33,7 +33,7 @@ internal class KaFirDynamicType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.UNKNOWN }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

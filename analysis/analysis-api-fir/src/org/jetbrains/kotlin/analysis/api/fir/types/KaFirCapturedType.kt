@@ -25,7 +25,7 @@ internal class KaFirCapturedType(
     private val builder: KaSymbolByFirBuilder,
 ) : KaCapturedType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
 
     override val projection: KaTypeProjection
         get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }

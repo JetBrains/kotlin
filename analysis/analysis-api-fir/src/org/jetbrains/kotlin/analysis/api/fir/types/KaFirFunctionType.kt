@@ -53,7 +53,7 @@ internal class KaFirFunctionType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion {

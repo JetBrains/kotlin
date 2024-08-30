@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.hasFlexibleMarkedNullability
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirFlexibleType(
@@ -33,7 +35,14 @@ internal class KaFirFlexibleType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability
+        get() = withValidityAssertion {
+            if (coneType.hasFlexibleMarkedNullability) {
+                KaTypeNullability.UNKNOWN
+            } else {
+                KaTypeNullability.create(coneType.lowerBound.isMarkedNullable)
+            }
+        }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

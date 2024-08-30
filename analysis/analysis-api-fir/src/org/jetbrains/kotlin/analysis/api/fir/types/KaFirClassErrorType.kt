@@ -29,12 +29,14 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirClassErrorType(
@@ -55,7 +57,17 @@ internal class KaFirClassErrorType(
             }
         }
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability
+        get() = withValidityAssertion {
+            val coneType = coneType
+            if (coneType is ConeErrorType) {
+                val diagnostic = coneType.diagnostic as? ConeDiagnosticWithNullability
+                    ?: return@withValidityAssertion KaTypeNullability.UNKNOWN
+                KaTypeNullability.create(diagnostic.isNullable)
+            } else {
+                KaTypeNullability.create(coneType.isMarkedNullable)
+            }
+        }
 
     @KaNonPublicApi
     override val presentableText: String?
