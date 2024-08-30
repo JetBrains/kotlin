@@ -10,9 +10,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.UserDataProperty
 
-/**
- * Used by [KtResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider] implementations to
- * store the references on the [KaModule] for which the [VirtualFile] was generated.
- */
+
+@Deprecated("Use 'analysisContextModule' instead.", ReplaceWith("analysisContextModule"), level = DeprecationLevel.ERROR)
 @KaImplementationDetail
-public var VirtualFile.analysisExtensionFileContextModule: KaModule? by UserDataProperty(Key.create("ANALYSIS_CONTEXT_MODULE"))
+public var VirtualFile.analysisExtensionFileContextModule: KaModule?
+    get() = analysisContextModule
+    set(value) {
+        analysisContextModule = value
+    }

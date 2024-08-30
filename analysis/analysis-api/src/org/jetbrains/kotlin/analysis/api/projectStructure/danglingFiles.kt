@@ -28,7 +28,7 @@ public enum class KaDanglingFileResolutionMode {
 public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
-        virtualFile?.analysisExtensionFileContextModule != null -> false
+        virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
         analysisContext != null -> true
         doNotAnalyze != null -> true

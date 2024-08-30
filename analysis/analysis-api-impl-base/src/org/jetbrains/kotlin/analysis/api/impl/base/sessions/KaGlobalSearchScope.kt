@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 
 @KaImplementationDetail
 class KaGlobalSearchScope(
@@ -44,7 +44,7 @@ class KaGlobalSearchScope(
     }
 
     fun isFromGeneratedModule(file: VirtualFile, useSiteModule: KaModule): Boolean {
-        val analysisContextModule = file.analysisExtensionFileContextModule ?: return false
+        val analysisContextModule = file.analysisContextModule ?: return false
         if (analysisContextModule == useSiteModule) return true
         return analysisContextModule in useSiteModule.allDirectDependencies()
     }

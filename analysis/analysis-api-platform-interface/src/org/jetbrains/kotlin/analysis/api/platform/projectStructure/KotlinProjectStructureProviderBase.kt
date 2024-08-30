@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.analysisContext
 
@@ -24,7 +24,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     protected fun computeSpecialModule(file: PsiFile): KaModule? {
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
-            val contextModule = virtualFile.analysisExtensionFileContextModule
+            val contextModule = virtualFile.analysisContextModule
             if (contextModule != null) {
                 return contextModule
             }
@@ -50,7 +50,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     @OptIn(KaImplementationDetail::class)
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.originalFile.takeIf { it !== file }
-        originalFile?.virtualFile?.analysisExtensionFileContextModule?.let { return it }
+        originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         val contextElement = file.context
             ?: file.analysisContext

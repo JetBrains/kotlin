@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisExtensionFileContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -297,7 +297,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     ): KtFile {
         val ktFile = factory.createFile(fileName, fileText)
         val virtualFile = ktFile.virtualFile
-        virtualFile.analysisExtensionFileContextModule = ktModule
+        virtualFile.analysisContextModule = ktModule
         virtualFile.navigationTargetsProvider = navigationTargetsProvider
         return ktFile
     }
