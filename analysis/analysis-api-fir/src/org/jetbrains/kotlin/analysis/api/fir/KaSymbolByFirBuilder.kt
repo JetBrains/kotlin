@@ -402,7 +402,6 @@ internal class KaSymbolByFirBuilder(
                     coneType.lookupTag.toSymbol(rootSession) == null -> {
                         KaFirClassErrorType(
                             coneType = coneType,
-                            coneNullability = coneType.nullability,
                             coneDiagnostic = ConeUnresolvedSymbolError(coneType.lookupTag.classId),
                             builder = this@KaSymbolByFirBuilder
                         )
@@ -414,10 +413,10 @@ internal class KaSymbolByFirBuilder(
             is ConeTypeParameterType -> KaFirTypeParameterType(coneType, this@KaSymbolByFirBuilder)
             is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
                 is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError -> {
-                    KaFirClassErrorType(coneType, coneType.nullability, diagnostic, this@KaSymbolByFirBuilder)
+                    KaFirClassErrorType(coneType, diagnostic, this@KaSymbolByFirBuilder)
                 }
                 else -> {
-                    KaFirErrorType(coneType, coneType.nullability, this@KaSymbolByFirBuilder)
+                    KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
                 }
             }
             is ConeDynamicType -> KaFirDynamicType(coneType, this@KaSymbolByFirBuilder)

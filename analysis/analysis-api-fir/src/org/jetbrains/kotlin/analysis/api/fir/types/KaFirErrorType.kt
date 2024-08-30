@@ -24,18 +24,16 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirErrorType(
     override val coneType: ConeErrorType,
-    private val coneNullability: ConeNullability,
     private val builder: KaSymbolByFirBuilder,
 ) : KaErrorType, KaFirType {
 
     override val token: KaLifetimeToken get() = builder.token
 
-    override val nullability: KaTypeNullability get() = withValidityAssertion { coneNullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     @KaNonPublicApi
     override val errorMessage: String
@@ -65,14 +63,13 @@ internal class KaFirErrorType(
 
     @KaExperimentalApi
     override fun createPointer(): KaTypePointer<KaErrorType> = withValidityAssertion {
-        return KaFirErrorTypePointer(coneType, builder, coneNullability)
+        return KaFirErrorTypePointer(coneType, builder)
     }
 }
 
 private class KaFirErrorTypePointer(
     coneType: ConeErrorType,
     builder: KaSymbolByFirBuilder,
-    private val coneNullability: ConeNullability,
 ) : KaTypePointer<KaErrorType> {
     private val coneTypePointer = coneType.createPointer(builder)
 
@@ -81,6 +78,6 @@ private class KaFirErrorTypePointer(
         requireIsInstance<KaFirSession>(session)
 
         val coneType = coneTypePointer.restore(session) ?: return null
-        return KaFirErrorType(coneType, coneNullability, session.firSymbolBuilder)
+        return KaFirErrorType(coneType, session.firSymbolBuilder)
     }
 }
