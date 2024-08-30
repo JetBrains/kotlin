@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
@@ -941,4 +942,9 @@ for (name in listOf("sources", "distSources")) {
         isCanBeConsumed = true
     }
     artifacts.add(sourcesConfiguration.name, tasks["jvmSourcesJar"])
+}
+
+// Disabling IC for JS tasks as they may produce false-positive compilation failure
+tasks.withType<Kotlin2JsCompile>().configureEach {
+    incremental = false
 }
