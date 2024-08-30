@@ -147,7 +147,7 @@ private class ConeCapturedTypePointer(
 ) : ConeTypePointer<ConeCapturedType> {
     private val captureStatus = coneType.captureStatus
     private val lowerTypePointer = coneType.lowerType?.createPointer(builder)
-    private val nullability = coneType.nullability
+    private val isMarkedNullable = coneType.isMarkedNullable
     private val coneProjectionPointer = ConeTypeProjectionPointer(coneType.constructor.projection, builder)
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder) }
     private val isProjectionNotNull = coneType.isProjectionNotNull
@@ -183,7 +183,7 @@ private class ConeCapturedTypePointer(
         return ConeCapturedType(
             captureStatus,
             lowerType,
-            nullability,
+            isMarkedNullable,
             typeConstructor,
             isProjectionNotNull = isProjectionNotNull
         )

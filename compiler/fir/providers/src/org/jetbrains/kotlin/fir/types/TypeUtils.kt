@@ -248,7 +248,7 @@ fun <T : ConeKotlinType> T.withNullability(
         }
 
         is ConeTypeVariableType -> ConeTypeVariableType(nullability.isNullable, typeConstructor, theAttributes)
-        is ConeCapturedType -> copy(nullability = nullability, attributes = theAttributes)
+        is ConeCapturedType -> copy(isMarkedNullable = nullability.isNullable, attributes = theAttributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)

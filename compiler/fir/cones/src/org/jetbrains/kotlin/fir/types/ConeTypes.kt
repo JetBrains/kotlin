@@ -146,11 +146,13 @@ class ConeCapturedTypeConstructor(
 data class ConeCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: ConeKotlinType?,
-    override val nullability: ConeNullability = ConeNullability.NOT_NULL,
+    val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
     val isProjectionNotNull: Boolean = false
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
+    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
+
     constructor(
         captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
         typeParameterMarker: TypeParameterMarker
