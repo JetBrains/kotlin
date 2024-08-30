@@ -1,0 +1,13 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelFunInsidePrivateInlineMethodInLocalObject.kt */
+
+internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
+    local class <no name provided>
+        private inline fun impl(): String
+            /* TARGET use-site */ privateMethod()
+        public fun run(): String
+            /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt()
+/* TARGET declaration */ private fun privateMethod(): String
+/* ACCESSOR declaration */ public fun access$privateMethod$tUsePrivateTopLevelFunInsidePrivateInlineMethodInLocalObjectKt(): String
+    /* TARGET use-site */ privateMethod()
