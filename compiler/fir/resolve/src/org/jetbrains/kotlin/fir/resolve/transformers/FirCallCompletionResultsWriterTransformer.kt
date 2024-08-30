@@ -776,7 +776,7 @@ class FirCallCompletionResultsWriterTransformer(
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
                     isUnsigned = symbol.isWrappedIntegerOperatorForUnsignedType() && callInfo.name in binaryOperatorsWithSignedArgument,
-                    ConeNullability.NOT_NULL
+                    isMarkedNullable = false
                 )
                 valueParameter.isVararg -> valueParameter.returnTypeRef.substitute(this).varargElementType()
                 else -> valueParameter.returnTypeRef.substitute(this)

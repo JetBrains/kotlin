@@ -259,11 +259,11 @@ private class ConeIntegerLiteralConstantTypePointer(
     private val value = coneType.value
     private val possibleTypePointers = coneType.possibleTypes.map { it.createPointer(builder) }
     private val isUnsigned = coneType.isUnsigned
-    private val nullability = coneType.nullability
+    private val isMarkedNullable = coneType.isMarkedNullable
 
     override fun restore(session: KaFirSession): ConeIntegerLiteralConstantType? {
         val possibleTypes = possibleTypePointers.restore(session) ?: return null
-        return ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullability)
+        return ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, isMarkedNullable)
     }
 }
 
@@ -271,10 +271,10 @@ private class ConeIntegerConstantOperatorTypePointer(
     coneType: ConeIntegerConstantOperatorType
 ) : ConeTypePointer<ConeIntegerConstantOperatorType> {
     private val isUnsigned = coneType.isUnsigned
-    private val nullability = coneType.nullability
+    private val isMarkedNullable = coneType.isMarkedNullable
 
     override fun restore(session: KaFirSession): ConeIntegerConstantOperatorType? {
-        return ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullability)
+        return ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable)
     }
 }
 

@@ -24,8 +24,8 @@ class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
     override val possibleTypes: Collection<ConeClassLikeType>,
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralConstantType(value, isUnsigned, nullability) {
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralConstantType(value, isUnsigned, isMarkedNullable) {
     override val supertypes: List<ConeClassLikeType> by lazy {
         createSupertypeList(this)
     }
@@ -78,7 +78,7 @@ class ConeIntegerLiteralConstantTypeImpl(
                     }
                 }
             } else {
-                ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullability)
+                ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, isMarkedNullable = false)
             }
         }
 
@@ -98,8 +98,8 @@ class ConeIntegerLiteralConstantTypeImpl(
 
 class ConeIntegerConstantOperatorTypeImpl(
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerConstantOperatorType(isUnsigned, nullability) {
+    isMarkedNullable: Boolean,
+) : ConeIntegerConstantOperatorType(isUnsigned, isMarkedNullable) {
     override val possibleTypes: Collection<ConeClassLikeType> = when (isUnsigned) {
         false -> setOf(
             createClassLikeType(StandardClassIds.Int),
@@ -210,7 +210,7 @@ private object ConeIntegerLiteralTypeExtensions {
         right: ConeIntegerLiteralConstantType
     ): ConeIntegerLiteralConstantType {
         val possibleTypes = left.possibleTypes intersect right.possibleTypes
-        return ConeIntegerLiteralConstantTypeImpl(left.value, possibleTypes, left.isUnsigned, left.nullability)
+        return ConeIntegerLiteralConstantTypeImpl(left.value, possibleTypes, left.isUnsigned, left.isMarkedNullable)
     }
 
     fun ConeFlexibleType.approximateIntegerLiteralBounds(expectedType: ConeKotlinType? = null): ConeFlexibleType {

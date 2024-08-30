@@ -80,7 +80,7 @@ class FirIntegerConstantOperatorScope(
             symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
             origin = FirDeclarationOrigin.WrappedIntegerOperator
             returnTypeRef = buildResolvedTypeRef {
-                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
+                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false)
             }
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol

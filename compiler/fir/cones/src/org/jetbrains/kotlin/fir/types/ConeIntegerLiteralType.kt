@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 sealed class ConeIntegerLiteralType(
     val isUnsigned: Boolean,
-    final override val nullability: ConeNullability
+    isMarkedNullable: Boolean,
 ) : ConeSimpleKotlinType(), ConeTypeConstructorMarker {
+    final override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
@@ -39,10 +40,10 @@ sealed class ConeIntegerLiteralType(
 abstract class ConeIntegerLiteralConstantType(
     val value: Long,
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralType(isUnsigned, nullability)
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralType(isUnsigned, isMarkedNullable)
 
 abstract class ConeIntegerConstantOperatorType(
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralType(isUnsigned, nullability)
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralType(isUnsigned, isMarkedNullable)
