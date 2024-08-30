@@ -25,7 +25,7 @@ internal abstract class AbstractKaFirSubstitutor<T : ConeSubstitutor>(
 
     override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion {
         require(type is KaFirType)
-        substitutor.substituteOrNull(type.coneType)?.type?.let { builder.typeBuilder.buildKtType(it) }
+        substitutor.substituteOrNull(type.coneType)?.let { builder.typeBuilder.buildKtType(it) }
     }
 }
 

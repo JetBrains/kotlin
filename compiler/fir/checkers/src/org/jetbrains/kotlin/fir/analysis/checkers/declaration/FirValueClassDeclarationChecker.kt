@@ -305,7 +305,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         if (this.typeArgumentsOfLowerBoundIfFlexible.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
             return false
 
-        val arrayElementType = arrayElementType()?.type ?: return false
+        val arrayElementType = arrayElementType() ?: return false
         return arrayElementType is ConeTypeParameterType ||
                 arrayElementType.isGenericArrayOfTypeParameter()
     }

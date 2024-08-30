@@ -89,7 +89,7 @@ fun extractLambdaInfoFromFunctionType(
             // (T, ...) -> V can be converter to T.(...) -> V
             val firstValueParameter = argumentValueParameters.firstOrNull()
             val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
-            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter?.type) {
+            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter) {
                 coerceFirstParameterToExtensionReceiver = true
             }
         }

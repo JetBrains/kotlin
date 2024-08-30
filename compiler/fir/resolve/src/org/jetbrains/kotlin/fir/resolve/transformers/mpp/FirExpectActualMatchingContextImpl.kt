@@ -248,7 +248,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.extensionReceiverTypeRef: TypeRefMarker?
         get() = asSymbol().resolvedReceiverTypeRef
     override val CallableSymbolMarker.returnType: KotlinTypeMarker
-        get() = asSymbol().resolvedReturnType.type
+        get() = asSymbol().resolvedReturnType
     override val CallableSymbolMarker.returnTypeRef: TypeRefMarker
         get() = asSymbol().resolvedReturnTypeRef
     override val CallableSymbolMarker.typeParameters: List<TypeParameterSymbolMarker>

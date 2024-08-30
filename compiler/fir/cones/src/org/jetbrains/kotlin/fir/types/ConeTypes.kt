@@ -18,6 +18,7 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
+    @Deprecated("Useless call. Receiver is already a ConeKotlinType.", level = DeprecationLevel.ERROR)
     final override val type: ConeKotlinType
         get() = this
 

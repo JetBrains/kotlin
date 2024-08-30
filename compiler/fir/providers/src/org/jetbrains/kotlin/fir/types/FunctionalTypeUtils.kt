@@ -122,7 +122,7 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
         session = session,
         kind = newKind,
         additionalAnnotations = kind.annotationOnInvokeClassId
-            ?.takeUnless { classId -> type.attributes.customAnnotations.hasAnnotation(classId, session) }
+            ?.takeUnless { classId -> attributes.customAnnotations.hasAnnotation(classId, session) }
             ?.let { annotationClassId ->
                 listOf(buildAnnotation {
                     argumentMapping = FirEmptyAnnotationArgumentMapping

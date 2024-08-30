@@ -68,7 +68,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         }
 
         val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
-        val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
+        val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
         if (candidate.givenExtensionReceiverOptions.isEmpty()) return

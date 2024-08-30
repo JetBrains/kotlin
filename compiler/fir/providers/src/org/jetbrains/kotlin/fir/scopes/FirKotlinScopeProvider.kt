@@ -249,7 +249,7 @@ fun ConeKotlinType.scopeForSupertype(
 
 fun ConeClassLikeType.substitutorForSuperType(useSiteSession: FirSession, classTypeSymbol: FirRegularClassSymbol): ConeSubstitutor {
     return when {
-        this.type.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        this.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
         else -> substitutor(classTypeSymbol, this, useSiteSession)
     }
 }

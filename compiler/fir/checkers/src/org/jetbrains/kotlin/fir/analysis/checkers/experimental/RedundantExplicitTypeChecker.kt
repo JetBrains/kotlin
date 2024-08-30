@@ -86,7 +86,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
 
     private fun ConeKotlinType.isSame(other: ClassId?): Boolean {
         if (this.nullability.isNullable) return false
-        if (this.type.classId == other) return true
+        if (this.classId == other) return true
         return false
     }
 

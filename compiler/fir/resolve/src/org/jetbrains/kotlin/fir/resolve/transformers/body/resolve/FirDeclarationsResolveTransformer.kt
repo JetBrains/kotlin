@@ -276,13 +276,13 @@ open class FirDeclarationsResolveTransformer(
         val propertyReferenceAccess = resolvedArgumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
         val type = propertyReferenceAccess.resolvedType
         if (property.returnTypeRef is FirResolvedTypeRef) {
-            val typeArguments = (type.type as ConeClassLikeType).typeArguments
+            val typeArguments = (type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverParameter?.typeRef?.coneType
             val dispatchType = context.containingRegularClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
             propertyReferenceAccess.replaceConeTypeOrNull(
-                (type.type as ConeClassLikeType).lookupTag.constructClassType(
+                type.lookupTag.constructClassType(
                     typeArguments.mapIndexed { index, argument ->
                         when (index) {
                             typeArguments.lastIndex -> property.returnTypeRef.coneType

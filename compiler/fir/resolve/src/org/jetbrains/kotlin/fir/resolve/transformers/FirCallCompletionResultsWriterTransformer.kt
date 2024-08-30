@@ -633,7 +633,7 @@ class FirCallCompletionResultsWriterTransformer(
         // Substitutor from type variables (not type parameters)
         substitutor: ConeSubstitutor = finalSubstitutor,
     ): ConeKotlinType {
-        val initialType = candidate.substitutor.substituteOrSelf(type)
+        val initialType = candidate.substitutor.substituteOrSelf(this)
         val substitutedType = finallySubstituteOrNull(initialType, substitutor)
         val finalType = typeApproximator.approximateToSuperType(
             type = substitutedType ?: initialType,
@@ -999,7 +999,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun ConeKotlinType.functionTypeKindForDeserializedConeType(): FunctionTypeKind? {
-        val coneClassLikeType = type as? ConeClassLikeType ?: return null
+        val coneClassLikeType = this as? ConeClassLikeType ?: return null
         val classId = coneClassLikeType.classId ?: return null
         return session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(classId, coneClassLikeType.customAnnotations)
     }

@@ -308,9 +308,9 @@ object ConeTypeCompatibilityChecker {
                     is ConeKotlinTypeConflictingProjection -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
                     is ConeKotlinType ->
                         when (typeParameter.variance) {
-                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)
-                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
-                            else -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
+                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.IN_VARIANCE)
+                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.OUT_VARIANCE)
+                            else -> BoundTypeArgument(coneTypeProjection, Variance.INVARIANT)
                         }
                 }
                 val coneKotlinType = boundTypeArgument.type

@@ -644,7 +644,7 @@ object FirFakeOverrideGenerator {
         }
 
         val copiedContextReceiverTypes = newContextReceiverTypes?.map {
-            it?.type?.let(substitutor::substituteOrNull)
+            it?.let(substitutor::substituteOrNull)
         } ?: baseCallable.contextReceivers.map {
             substitutor.substituteOrNull(it.typeRef.coneType)
         }

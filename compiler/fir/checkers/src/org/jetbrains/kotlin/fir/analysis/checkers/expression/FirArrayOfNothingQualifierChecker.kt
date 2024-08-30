@@ -23,7 +23,7 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
 
     fun ConeKotlinType.isArrayOfNothing(): Boolean {
         if (!this.isArrayTypeOrNullableArrayType) return false
-        val typeParameterType = type.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.type ?: return false
+        val typeParameterType = typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.type ?: return false
         return typeParameterType.isNothingOrNullableNothing
     }
 
