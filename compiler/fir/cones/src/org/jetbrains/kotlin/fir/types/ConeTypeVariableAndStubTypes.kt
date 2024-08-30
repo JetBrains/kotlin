@@ -62,8 +62,10 @@ data class ConeStubTypeConstructor(
     }
 }
 
-sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val nullability: ConeNullability) : StubTypeMarker,
+sealed class ConeStubType(val constructor: ConeStubTypeConstructor, isMarkedNullable: Boolean) : StubTypeMarker,
     ConeSimpleKotlinType() {
+
+    override val nullability: ConeNullability = ConeNullability.create(isMarkedNullable)
 
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty
@@ -90,13 +92,13 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val
 
 class ConeStubTypeForTypeVariableInSubtyping(
     constructor: ConeStubTypeConstructor,
-    nullability: ConeNullability
-) : ConeStubType(constructor, nullability) {
-    constructor(variable: ConeTypeVariable, nullability: ConeNullability) : this(
+    isMarkedNullable: Boolean
+) : ConeStubType(constructor, isMarkedNullable) {
+    constructor(variable: ConeTypeVariable, isMarkedNullable: Boolean) : this(
         ConeStubTypeConstructor(
             variable,
             isTypeVariableInSubtyping = true
-        ), nullability
+        ), isMarkedNullable
     )
 }
 
