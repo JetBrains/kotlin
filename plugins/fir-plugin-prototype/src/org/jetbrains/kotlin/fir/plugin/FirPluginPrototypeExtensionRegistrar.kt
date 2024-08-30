@@ -44,6 +44,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::DataFrameLikeTypeMembersGenerator
 
         +::NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument
+        +::NestedClassGeneratorWithLocalClassesSupport
         +::NestedClassSupertypesDependantOnAnnotationArgumentAdder
         +::SupertypesDependantOnAnnotationArgumentComponent
     }
