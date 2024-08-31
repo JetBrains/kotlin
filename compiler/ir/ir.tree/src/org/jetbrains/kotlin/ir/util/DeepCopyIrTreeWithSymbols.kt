@@ -564,6 +564,9 @@ open class DeepCopyIrTreeWithSymbols(
             expression.typeArgumentsCount,
             expression.constructorTypeArgumentsCount,
             expression.valueArgumentsCount,
+            expression.targetContextParameterCount,
+            expression.targetHasDispatchReceiver,
+            expression.targetHasExtensionReceiver,
             mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
@@ -618,7 +621,10 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             newConstructor,
             expression.typeArgumentsCount,
-            expression.valueArgumentsCount
+            expression.valueArgumentsCount,
+            expression.targetContextParameterCount,
+            expression.targetHasDispatchReceiver,
+            expression.targetHasExtensionReceiver,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
@@ -632,7 +638,10 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             newConstructor,
             expression.typeArgumentsCount,
-            expression.valueArgumentsCount
+            expression.valueArgumentsCount,
+            expression.targetContextParameterCount,
+            expression.targetHasDispatchReceiver,
+            expression.targetHasExtensionReceiver,
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)

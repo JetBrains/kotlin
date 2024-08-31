@@ -184,7 +184,11 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             val constructorSymbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor)
             val returnType = constructorDescriptor.returnType.toIrType()
             val irCall = IrEnumConstructorCallImplWithShape(
-                startOffset, endOffset, returnType, constructorSymbol, descriptor.typeParametersCount, descriptor.valueParameters.size
+                startOffset, endOffset, returnType, constructorSymbol, descriptor.typeParametersCount,
+                valueArgumentsCount = descriptor.valueParameters.size,
+                contextParameterCount = descriptor.contextReceiverParameters.size,
+                hasDispatchReceiver = descriptor.dispatchReceiverParameter != null,
+                hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
             )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
             addParametersToCall(startOffset, endOffset, call, irCall, irCall.type, emptyList())

@@ -68,6 +68,9 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                         typeArgumentsCount = 0 /*TODO: properly set type arguments*/,
                         constructorTypeArgumentsCount = 0,
                         valueArgumentsCount = vpCount,
+                        contextParameterCount = 0,
+                        hasDispatchReceiver = false,
+                        hasExtensionReceiver = false,
                         origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
                     ).apply {
                         if (function.isSuspend) {

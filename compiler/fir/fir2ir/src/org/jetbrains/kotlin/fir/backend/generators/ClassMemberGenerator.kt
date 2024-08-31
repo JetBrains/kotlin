@@ -382,7 +382,10 @@ internal class ClassMemberGenerator(
                     constructedIrType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size
+                    valueArgumentsCount = constructor.valueParameters.size,
+                    contextParameterCount = constructor.contextReceivers.size,
+                    hasDispatchReceiver = constructor.dispatchReceiverType != null,
+                    hasExtensionReceiver = constructor.isExtension,
                 )
             } else {
                 IrDelegatingConstructorCallImplWithShape(
@@ -390,7 +393,10 @@ internal class ClassMemberGenerator(
                     builtins.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextReceivers.size
+                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextReceivers.size,
+                    contextParameterCount = constructor.contextReceivers.size,
+                    hasDispatchReceiver = constructor.dispatchReceiverType != null,
+                    hasExtensionReceiver = constructor.isExtension,
                 )
             }.let {
                 if (constructor.typeParameters.isNotEmpty()) {

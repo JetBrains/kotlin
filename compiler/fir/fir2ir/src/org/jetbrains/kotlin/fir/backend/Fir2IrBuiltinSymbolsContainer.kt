@@ -136,6 +136,9 @@ class Fir2IrBuiltinSymbolsContainer(
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
             valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false,
         )
     }
 
