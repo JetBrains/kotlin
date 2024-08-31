@@ -72,6 +72,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
+  @TestMetadata("extensionReceiverPropertyPrivate.kt")
+  public void testExtensionReceiverPropertyPrivate() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverPropertyPrivate.kt");
+  }
+
+  @Test
   @TestMetadata("extensionReceiverSmartCasted.kt")
   public void testExtensionReceiverSmartCasted() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
@@ -87,6 +93,24 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   @TestMetadata("initializer.kt")
   public void testInitializer() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");
+  }
+
+  @Test
+  @TestMetadata("lambda1.kt")
+  public void testLambda1() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda1.kt");
+  }
+
+  @Test
+  @TestMetadata("lambda2.kt")
+  public void testLambda2() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda2.kt");
+  }
+
+  @Test
+  @TestMetadata("lambda3.kt")
+  public void testLambda3() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/lambda3.kt");
   }
 
   @Test

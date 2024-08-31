@@ -89,6 +89,8 @@ object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
 
+object FragmentVisibilityError : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object ResolvedWithSynthetic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)

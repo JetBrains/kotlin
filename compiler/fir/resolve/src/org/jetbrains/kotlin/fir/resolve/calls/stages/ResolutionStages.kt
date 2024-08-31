@@ -580,13 +580,22 @@ internal object DiscriminateSyntheticProperties : ResolutionStage() {
 }
 
 internal object CheckVisibility : ResolutionStage() {
+    private suspend fun CheckerSink.yieldVisibilityError(callInfo: CallInfo) {
+        // The containing declarations structure with the code fragment is always the following:
+        // FirFile
+        //     FirCodeFragment
+        //         ....
+        // See also PsiRawFirBuilder
+        yieldDiagnostic(if (callInfo.containingDeclarations.getOrNull(1) is FirCodeFragment) FragmentVisibilityError else VisibilityError)
+    }
+
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val visibilityChecker = callInfo.session.visibilityChecker
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration && declaration !is FirConstructor) {
             if (!visibilityChecker.isVisible(declaration, candidate)) {
-                sink.yieldDiagnostic(VisibilityError)
+                sink.yieldVisibilityError(callInfo)
                 return
             }
         }
@@ -605,14 +614,14 @@ internal object CheckVisibility : ResolutionStage() {
                     dispatchReceiver = null
                 )
                 if (!visible) {
-                    sink.yieldDiagnostic(VisibilityError)
+                    sink.yieldVisibilityError(callInfo)
                 }
             }
 
             val typeAlias = declaration.typeAliasForConstructor
             if (typeAlias != null) {
                 if (!visibilityChecker.isVisible(typeAlias.fir, candidate)) {
-                    sink.yieldDiagnostic(VisibilityError)
+                    sink.yieldVisibilityError(callInfo)
                 }
             }
         }
