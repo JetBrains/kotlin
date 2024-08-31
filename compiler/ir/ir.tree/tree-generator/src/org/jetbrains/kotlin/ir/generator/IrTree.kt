@@ -653,13 +653,8 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true)
-        +field("extensionReceiver", expression, nullable = true)
         +referencedSymbol(s, mutable = false)
         +field("origin", statementOriginType, nullable = true)
-        +listField("valueArguments", expression.copy(nullable = true), mutability = Array) {
-            visibility = Visibility.PROTECTED
-        }
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
             visibility = Visibility.PROTECTED
         }
