@@ -19,6 +19,8 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymb
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.ATOMICFU
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
+
 import kotlin.collections.set
 
 private const val DISPATCH_RECEIVER = "dispatchReceiver\$$ATOMICFU"

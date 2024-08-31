@@ -24,6 +24,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymb
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.ATOMICFU
+import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
 
 private const val REF_GETTER = "refGetter\$$ATOMICFU"
 private const val ATOMIC_ARRAY = "atomicArray\$$ATOMICFU"

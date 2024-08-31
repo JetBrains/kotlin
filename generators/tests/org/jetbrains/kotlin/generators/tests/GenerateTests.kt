@@ -44,12 +44,12 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsFirTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmFirLightTreeTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuFirCheckerTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsFirTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsIrTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmFirLightTreeTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmIrTest
 import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
-
 
 private class ExcludePattern {
     companion object {
@@ -272,7 +272,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "plugins/atomicfu/atomicfu-compiler/test",
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
@@ -286,10 +286,14 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "plugins/atomicfu/atomicfu-compiler/test",
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
+            testClass<AbstractAtomicfuFirCheckerTest> {
+                model("diagnostics/")
+            }
+
             testClass<AbstractAtomicfuJvmIrTest> {
                 model("box/")
             }

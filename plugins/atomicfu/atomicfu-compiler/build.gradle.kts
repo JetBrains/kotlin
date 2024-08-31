@@ -59,6 +59,14 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:fir:checkers"))
+    compileOnly(project(":compiler:fir:fir2ir"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:frontend"))
@@ -157,9 +165,14 @@ dependencies {
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
 }
 
 testsJar()
