@@ -230,16 +230,45 @@ abstract class TypeCheckerStateForConstraintSystem(
                             !AbstractNullabilityChecker.isSubtypeOfAny(extensionTypeContext, subType) -> {
                         return false
                     }
-                    /*
-                     * Foo <: T? (T is contained in invariant or contravariant positions of a return type) -- Foo <: T
-                     *      Example:
-                     *          fun <T> foo(x: T?): Inv<T> {}
-                     *          fun <K> main(z: K) { val x = foo(z) }
-                     * Foo <: T? (T isn't contained there) -- Foo!! <: T
-                     *      Example:
-                     *          fun <T> foo(x: T?) {}
-                     *          fun <K> main(z: K) { foo(z) }
-                    */
+                    /**
+                     * Pre-2.1 logic was the following here:
+                     *
+                     * `Foo <: T?` (T is contained in invariant or contravariant positions of a return type) --> `Foo <: T`
+                     * ```
+                     * // Example
+                     * fun <T> foo(x: T?): Inv<T> {}
+                     * fun <K> main(z: K) { val x = foo(z) }
+                     * ```
+                     * `Foo <: T?` (T isn't contained there) -- `Foo!! <: T`
+                     * ```
+                     * // Example:
+                     * fun <T> foo(x: T?) {}
+                     * fun <K> main(z: K) { foo(z) }
+                     * ```
+                     * In 2.1 (see [org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21])
+                     * we enhanced the logic here, as a conclusion `Foo <: T?` --> `Foo <: T` might be mathematically wrong
+                     * (e.g., when Foo is a type parameter with nullable upper bound, and T is a type parameter/variable with not-nullable upper bounds),
+                     * thus provoking sometimes an unexpected contradiction,
+                     * and it would be more correct always to conclude `Foo!! <: T` instead.
+                     * However, such a conclusion would affect the inferred return type in examples like
+                     * ```
+                     * class Bar<T>(t: T?)
+                     * fun <Foo> bar(t: Foo) = Bar(t)
+                     * ```
+                     *
+                     * Here we can infer both `Bar<Foo>` and `Bar<Foo & Any>` without inference problems,
+                     * but for us, it's better to infer `Bar<Foo>`, for user convenience and to preserve backward compatibility.
+                     * It's exactly the case when we have `Foo <: T?` constraint and have to choose
+                     * between `Foo!! <: T` and `Foo <: T`.
+                     * While the first conclusion is mathematically correct and the second is not
+                     * (it might lead to unexpected contradictions), it's better for us to consider both of them.
+                     * That's why we use an inference fork here, to conclude either `Foo <: T` (default conclusion)
+                     * or `Foo!! <: T` (secondary conclusion in case the default one provokes contradiction).
+                     * A typical example when the default conclusion doesn't work can be found in KT-61227.
+                     *
+                     * We still infer `Foo!! <: T` without any forking in case
+                     * "T isn't contained in invariant or contravariant positions of a return type", as pre-2.1 versions do.
+                     */
                     typeVariable.isMarkedNullable() -> {
                         val typeVariableTypeConstructor = typeVariable.typeConstructor()
                         val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
@@ -247,40 +276,23 @@ abstract class TypeCheckerStateForConstraintSystem(
                                 !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
                         val inferenceCompatibilityEnabled = languageVersionSettings.supportsFeature(InferenceCompatibility)
 
-                        fun KotlinTypeMarker.withCapturedNonNullProjection(): KotlinTypeMarker =
-                            if (inferenceCompatibilityEnabled && this is CapturedTypeMarker) {
-                                withNotNullProjection()
-                            } else {
-                                this
-                            }
-
                         val resultType = if (needToMakeDefNotNull) {
                             subType.makeDefinitelyNotNullOrNotNull()
                         } else {
                             val notNullType = if (!inferenceCompatibilityEnabled && subType is CapturedTypeMarker) {
+                                // TODO: KT-71134 (consider getting rid of withNotNullProjection)
                                 subType.withNotNullProjection()
                             } else {
                                 subType.withNullability(false)
                             }
-                            if (languageVersionSettings.supportsFeature(InferenceEnhancementsIn21)) {
-                                val variantTypes = listOf(notNullType, subType.makeDefinitelyNotNullOrNotNull()).distinct()
-                                when (variantTypes.size) {
-                                    1 -> variantTypes.single()
-                                    else -> {
-                                        runForkingPoint {
-                                            for (variant in variantTypes.map { it.withCapturedNonNullProjection() }) {
-                                                fork {
-                                                    addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint)
-                                                    true
-                                                }
-                                            }
-                                        }
-                                        return true
-                                    }
-                                }
-                            } else {
-                                notNullType
+
+                            if (addForkPointForDifferentDnnAndMarkedNotNullable(
+                                    subType, notNullType, typeVariableTypeConstructor, isFromNullabilityConstraint
+                                )
+                            ) {
+                                return true
                             }
+                            notNullType
                         }
                         resultType.withCapturedNonNullProjection()
                     }
@@ -332,6 +344,63 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         return true
     }
+
+    /**
+     * This function attempts to create a fork point
+     * ```
+     *               --> (1) Foo <: T
+     * Foo <: T? --> |
+     *               --> (2) Foo!! <: T
+     * ```
+     *
+     * This is needed for situations like below
+     *
+     * ```
+     * // Example (1)
+     * // By default we want to infer Bar<B> here (for backward compatibility & better convenience), we need B <: BT constraint
+     * fun <B> goBar(t: B) = Bar(t)
+     * class Bar<BT>(t: T?)
+     *
+     * // Example (2)
+     * // But now to avoid type mismatch Bar<B & Any> should be inferred as a return type, so B!! <: BT constraint is needed
+     * fun <B> goBar(t: B) = Bar<B & Any>(t)
+     * class Bar<BT>(t: BT?)
+     * ```
+     *
+     * The order (1), (2) in a fork is important as we prefer a less-conservative constraint `Foo <: T` to be used.
+     *
+     * @return true if a fork was created, false otherwise. Does nothing (and returns false) in pre-2.1 versions.
+     */
+    private fun addForkPointForDifferentDnnAndMarkedNotNullable(
+        subType: KotlinTypeMarker,
+        notNullSubType: KotlinTypeMarker,
+        typeVariableTypeConstructor: TypeConstructorMarker,
+        isFromNullabilityConstraint: Boolean,
+    ): Boolean = with(extensionTypeContext) {
+        if (!languageVersionSettings.supportsFeature(InferenceEnhancementsIn21)) return false
+
+        val dnnSubType = subType.makeDefinitelyNotNullOrNotNull()
+        if (dnnSubType == notNullSubType) return false
+
+        runForkingPoint {
+            for (variant in listOf(notNullSubType, dnnSubType).map { it.withCapturedNonNullProjection() }) {
+                fork {
+                    addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint)
+                    true
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun KotlinTypeMarker.withCapturedNonNullProjection(): KotlinTypeMarker =
+        if (languageVersionSettings.supportsFeature(InferenceCompatibility) && this is CapturedTypeMarker) {
+            // TODO: KT-71134 (consider getting rid of withNotNullProjection)
+            with(extensionTypeContext) { withNotNullProjection() }
+        } else {
+            this
+        }
 
     private fun assertFlexibleTypeVariable(typeVariable: FlexibleTypeMarker) = with(typeSystemContext) {
         assert(typeVariable.lowerBound().typeConstructor() == typeVariable.upperBound().typeConstructor()) {
