@@ -591,8 +591,9 @@ class FirCallResolver(
     fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
         val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
+        val annotationTypeRef = annotation.annotationTypeRef
+        val annotationConeType = annotationTypeRef.coneType
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
-            val annotationConeType = annotation.annotationTypeRef.coneType
             val constructorSymbol = getAnnotationConstructorSymbol(annotationConeType, annotationClassSymbol)
 
             transformer.transformAnnotationCallArguments(annotation, constructorSymbol)
@@ -617,12 +618,18 @@ class FirCallResolver(
 
             buildReferenceWithErrorCandidate(
                 callInfo,
-                if (annotationClassSymbol != null) ConeIllegalAnnotationError(reference.name)
-                //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
-                else ConeUnreportedDuplicateDiagnostic(
-                    //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
-                    (annotation.resolvedType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
-                        ?: ConeUnresolvedNameError(reference.name)),
+                if (annotationClassSymbol != null) {
+                    ConeIllegalAnnotationError(reference.name)
+                } else if (annotationConeType is ConeErrorType || annotationConeType !is ConeClassLikeType) {
+                    //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
+                    ConeUnreportedDuplicateDiagnostic(
+                        //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
+                        (annotationConeType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
+                            ?: ConeUnresolvedNameError(reference.name)
+                    )
+                } else {
+                    ConeIllegalAnnotationError(reference.name)
+                },
                 reference.source
             )
         }
