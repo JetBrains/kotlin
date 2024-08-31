@@ -374,8 +374,7 @@ fun IrBuilderWithScope.irFunctionReference(type: IrType, symbol: IrFunctionSymbo
         endOffset,
         type,
         symbol,
-        symbol.owner.typeParameters.size,
-        symbol.owner.valueParameters.size
+        symbol.owner.typeParameters.size
     )
 
 fun IrBuilderWithScope.irTry(type: IrType, tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?) =

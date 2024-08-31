@@ -157,7 +157,6 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
                             implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
                             staticProxy.symbol,
                             staticProxy.typeParameters.size,
-                            staticProxy.valueParameters.size,
                             implFunRef.reflectionTarget, implFunRef.origin
                         )
                     )

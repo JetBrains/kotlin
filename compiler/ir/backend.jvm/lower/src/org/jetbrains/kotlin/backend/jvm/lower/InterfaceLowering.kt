@@ -297,7 +297,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             if (newFunction != null) {
                 with(expression) {
                     IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size, newFunction.valueParameters.size,
+                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size,
                         expression.reflectionTarget, origin
                     ).apply {
                         copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)

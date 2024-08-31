@@ -140,7 +140,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             type = irReferenceType,
             symbol = irAdapterFun.symbol,
             typeArgumentsCount = irAdapterFun.typeParameters.size,
-            valueArgumentsCount = irAdapterFun.valueParameters.size,
             reflectionTarget = irAdapterFun.symbol,
             origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
         )
@@ -293,7 +292,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             val receiver = irDispatchReceiver ?: irExtensionReceiver
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, irFunctionalType, irAdapterFun.symbol, irAdapterFun.typeParameters.size,
-                irAdapterFun.valueParameters.size, adapteeSymbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                adapteeSymbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
             IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                 statements.add(irAdapterFun)

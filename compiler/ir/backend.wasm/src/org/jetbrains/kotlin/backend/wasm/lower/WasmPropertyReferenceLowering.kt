@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.lower.WasmPropertyReferenceLowering.KTypeGeneratorInterface
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -222,7 +221,6 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                     type = getterKFunctionType,
                     symbol = expression.getter!!,
                     typeArgumentsCount = getter.typeParameters.size,
-                    valueArgumentsCount = getter.valueParameters.size,
                     reflectionTarget = expression.getter!!
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
@@ -245,7 +243,6 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                         type = setterKFunctionType,
                         symbol = expression.setter!!,
                         typeArgumentsCount = setter.typeParameters.size,
-                        valueArgumentsCount = setter.valueParameters.size,
                         reflectionTarget = expression.setter!!
                     ).apply {
                         this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }

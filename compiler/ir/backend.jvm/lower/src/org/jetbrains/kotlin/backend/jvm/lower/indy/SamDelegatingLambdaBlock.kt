@@ -219,7 +219,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             expression.type,
             lambda.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = lambda.valueParameters.size,
             reflectionTarget = null,
             origin = IrStatementOrigin.LAMBDA
         )

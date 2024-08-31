@@ -187,7 +187,7 @@ class LegacySyntheticAccessorLowering(private val context: CommonBackendContext)
             functionMap[callee]?.let { newFunction ->
                 val newExpression = expression.run {
                     // TODO: What has to be done with `reflectionTarget`?
-                    IrFunctionReferenceImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount, valueArgumentsCount)
+                    IrFunctionReferenceImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount)
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)

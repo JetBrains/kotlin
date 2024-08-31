@@ -151,7 +151,7 @@ internal class AdapterGenerator(
             }
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, type, irAdapterFunction.symbol, typeArgumentsCount = 0,
-                irAdapterFunction.valueParameters.size, null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             ).apply {
                 extensionReceiver = boundDispatchReceiver ?: boundExtensionReceiver
                 reflectionTarget = adapteeSymbol
@@ -590,7 +590,7 @@ internal class AdapterGenerator(
             val irAdapterFunction = createAdapterFunctionForArgument(startOffset, endOffset, suspendConvertedType, type, invokeSymbol)
             val irAdapterRef = IrFunctionReferenceImpl(
                 startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                irAdapterFunction.valueParameters.size, null, IrStatementOrigin.SUSPEND_CONVERSION
+                null, IrStatementOrigin.SUSPEND_CONVERSION
             )
             IrBlockImpl(startOffset, endOffset, suspendConvertedType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
                 statements.add(irAdapterFunction)
@@ -707,7 +707,6 @@ internal class AdapterGenerator(
                 type = irReferenceType,
                 symbol = irAdapterFun.symbol,
                 typeArgumentsCount = irAdapterFun.typeParameters.size,
-                valueArgumentsCount = irAdapterFun.valueParameters.size,
                 reflectionTarget = irAdapterFun.symbol,
                 origin = IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE
             )

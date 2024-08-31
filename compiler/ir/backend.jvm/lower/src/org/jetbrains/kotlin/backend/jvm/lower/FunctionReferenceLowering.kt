@@ -340,8 +340,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             startOffset, endOffset,
             reference.type,
             proxyFun.symbol,
-            0, // TODO generic function reference?
-            proxyFun.valueParameters.size
+            0 // TODO generic function reference?
         )
 
         return IrBlockImpl(
@@ -911,7 +910,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                        irFunctionReference.typeArgumentsCount, target.owner.valueParameters.size,
+                        irFunctionReference.typeArgumentsCount,
                         irFunctionReference.reflectionTarget, null
                     ).apply {
                         copyTypeArgumentsFrom(irFunctionReference)

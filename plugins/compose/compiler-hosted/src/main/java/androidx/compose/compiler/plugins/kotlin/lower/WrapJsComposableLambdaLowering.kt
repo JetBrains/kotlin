@@ -152,8 +152,7 @@ class WrapJsComposableLambdaLowering(
             endOffset = UNDEFINED_OFFSET,
             type = lambda.type,
             symbol = invokeSymbol,
-            typeArgumentsCount = invokeSymbol.owner.typeParameters.size,
-            valueArgumentsCount = invokeSymbol.owner.valueParameters.size
+            typeArgumentsCount = invokeSymbol.owner.typeParameters.size
         ).also { reference ->
             reference.dispatchReceiver = dispatchReceiver
         }

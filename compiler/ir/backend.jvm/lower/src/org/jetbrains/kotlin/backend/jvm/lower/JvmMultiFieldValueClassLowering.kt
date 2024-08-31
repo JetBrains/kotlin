@@ -806,7 +806,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             buildReplacement(function, expression, replacement) {
                 IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset,
-                    expression.type, replacement.symbol, function.typeParameters.size, replacement.valueParameters.size,
+                    expression.type, replacement.symbol, function.typeParameters.size,
                     expression.reflectionTarget, expression.origin
                 ).copyAttributes(expression)
             }
@@ -852,7 +852,6 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             type = expression.type,
             symbol = wrapper.symbol,
             typeArgumentsCount = expression.typeArgumentsCount,
-            valueArgumentsCount = expression.valueArgumentsCount,
             reflectionTarget = expression.reflectionTarget,
             origin = expression.origin,
         ).apply {

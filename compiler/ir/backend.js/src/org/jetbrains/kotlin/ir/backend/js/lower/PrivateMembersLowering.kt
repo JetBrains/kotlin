@@ -153,7 +153,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                             expression.startOffset, expression.endOffset,
                             expression.type,
                             it.symbol, expression.typeArgumentsCount,
-                            expression.valueArgumentsCount, expression.reflectionTarget, expression.origin
+                            expression.reflectionTarget, expression.origin
                         )
                     }
                 } ?: expression

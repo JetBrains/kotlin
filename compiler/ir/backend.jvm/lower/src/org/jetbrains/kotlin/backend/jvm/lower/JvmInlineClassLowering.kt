@@ -229,7 +229,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
             replacement.symbol, function.typeParameters.size,
-            replacement.valueParameters.size, expression.reflectionTarget, expression.origin
+            expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
         }.copyAttributes(expression)

@@ -491,7 +491,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
             reference.startOffset, reference.endOffset, reference.type,
             lambda.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = newValueParameters.size,
             reflectionTarget = null,
             origin = reference.origin
         )

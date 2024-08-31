@@ -183,7 +183,6 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                         type = getterKFunctionType,
                         symbol = expression.getter!!,
                         typeArgumentsCount = getter.typeParameters.size,
-                        valueArgumentsCount = getter.valueParameters.size,
                         reflectionTarget = expression.getter!!
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
@@ -206,7 +205,6 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                             type = setterKFunctionType,
                             symbol = expression.setter!!,
                             typeArgumentsCount = setter.typeParameters.size,
-                            valueArgumentsCount = setter.valueParameters.size,
                             reflectionTarget = expression.setter!!
                     ).apply {
                         this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }

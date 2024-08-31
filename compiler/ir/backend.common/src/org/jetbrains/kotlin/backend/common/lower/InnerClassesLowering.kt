@@ -289,7 +289,6 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                         type,
                         newCallee.symbol,
                         typeArgumentsCount = typeArgumentsCount,
-                        valueArgumentsCount = newCallee.valueParameters.size,
                         reflectionTarget = newReflectionTarget?.symbol,
                         origin = origin
                     )
