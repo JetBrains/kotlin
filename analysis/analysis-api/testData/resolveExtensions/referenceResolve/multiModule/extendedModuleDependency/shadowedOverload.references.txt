@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in generated) fun kotlin.Any.generatedOverloadedExtensionFunction(): kotlin.Int [origin = SOURCE]
+KtNameReferenceExpression(131,167): 'generatedOverloadedExtensionFunction'
+  KtSimpleNameReference:
+    (in generated) fun kotlin.Any.generatedOverloadedExtensionFunction(): kotlin.Int [origin = SOURCE]

@@ -23,9 +23,9 @@ namespace {
 
 } // namespace
 
-std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionReauestReason = nullptr;
+std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
     : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
 {
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
@@ -34,11 +34,11 @@ ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(c
     RuntimeLogDebug({logging::Tag::kPause}, "Suspending mutation (%s)", reason_);
 }
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
     if (!resumed) resume();
 }
 
-ALWAYS_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexcept {
+PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexcept {
     RuntimeAssert(!resumed, "Must not be resumed yet");
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
     RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
@@ -65,7 +65,7 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        auto pauseHandle = pauseMutationInScope(internal::gSuspensionReauestReason.load(std::memory_order_relaxed));
+        auto pauseHandle = pauseMutationInScope(internal::gSuspensionRequestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionRequestMutex);
@@ -84,7 +84,7 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
     }
 }
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
     return MutatorPauseHandle(reason, threadData_);
 }
 
@@ -105,11 +105,11 @@ bool kotlin::mm::TryRequestThreadsSuspension(internal::SuspensionReason reason) 
     {
         std::unique_lock lock(gSuspensionRequestMutex);
         // Someone else has already suspended threads.
-        if (internal::gSuspensionReauestReason.load(std::memory_order_relaxed) != nullptr) {
+        if (internal::gSuspensionRequestReason.load(std::memory_order_relaxed) != nullptr) {
             return false;
         }
         gSafePointActivator = mm::SafePointActivator();
-        internal::gSuspensionReauestReason.store(reason);
+        internal::gSuspensionRequestReason.store(reason);
     }
 
     return true;
@@ -134,7 +134,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     // https://en.cppreference.com/w/cpp/thread/condition_variable
     {
         std::unique_lock lock(gSuspensionRequestMutex);
-        internal::gSuspensionReauestReason.store(nullptr);
+        internal::gSuspensionRequestReason.store(nullptr);
     }
     gSuspensionCondVar.notify_all();
 }

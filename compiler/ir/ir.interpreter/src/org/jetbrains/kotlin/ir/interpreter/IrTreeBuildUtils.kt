@@ -32,7 +32,7 @@ internal val TEMP_CLASS_FOR_INTERPRETER = IrDeclarationOriginImpl("TEMP_CLASS_FO
 internal val TEMP_FUNCTION_FOR_INTERPRETER = IrDeclarationOriginImpl("TEMP_FUNCTION_FOR_INTERPRETER")
 
 @Deprecated("Please migrate to `org.jetbrains.kotlin.ir.util.toIrConst`", level = DeprecationLevel.HIDDEN)
-fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*> =
+fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst =
     toIrConst(irType, startOffset, endOffset)
 
 internal fun IrFunction.createCall(origin: IrStatementOrigin? = null): IrCall {
@@ -122,7 +122,6 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
         is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
         is IrEnumConstructorCall ->
             IrEnumConstructorCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol, typeArgumentsCount, valueArgumentsCount)
-        else -> TODO("Expression $this cannot be copied")
     }.apply {
         if (copyTypeArguments) {
             (0 until this@shallowCopy.typeArgumentsCount).forEach { this.putTypeArgument(it, this@shallowCopy.getTypeArgument(it)) }
@@ -152,7 +151,7 @@ internal fun IrBuiltIns.irIfNullThenElse(nullableArg: IrExpression, ifTrue: IrEx
     val trueBranch = IrBranchImpl(nullCondition, ifTrue) // use default
     val elseBranch = IrElseBranchImpl(IrConstImpl.constTrue(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.booleanType), ifFalse)
 
-    return IrIfThenElseImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, ifTrue.type).apply { branches += listOf(trueBranch, elseBranch) }
+    return IrWhenImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, ifTrue.type).apply { branches += listOf(trueBranch, elseBranch) }
 }
 
 internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorCall {
@@ -172,7 +171,7 @@ internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorC
     return constructorCall
 }
 
-internal fun IrConst<*>.toConstantValue(): ConstantValue<*> {
+internal fun IrConst.toConstantValue(): ConstantValue<*> {
     if (value == null) return NullValue
 
     val constType = this.type.makeNotNull().removeAnnotations()
@@ -224,7 +223,7 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
     }
 
     return when (this) {
-        is IrConst<*> -> this.toConstantValue()
+        is IrConst -> this.toConstantValue()
         is IrConstructorCall -> {
             if (!this.type.isAnnotation()) return null
             val classId = this.symbol.owner.constructedClass.classId ?: return null

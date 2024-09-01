@@ -1,0 +1,61 @@
+packages: 0
+classifiers: 0
+callables: 1
+  KaNamedFunctionSymbol:
+    annotations: []
+    callableId: /dummyTest
+    compilerVisibility: Public
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: true
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: false
+    isTailRec: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: dummyTest
+    origin: PLUGIN
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    typeParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: PLUGIN
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
+    visibility: PUBLIC
+constructors: 0

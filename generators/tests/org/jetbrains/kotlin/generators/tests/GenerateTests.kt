@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import androidx.compose.compiler.plugins.kotlin.AbstractCompilerFacilityTestForComposeCompilerPlugin
 import org.jetbrains.kotlin.allopen.*
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBytecodeListingTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
@@ -29,7 +24,6 @@ import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
@@ -38,9 +32,9 @@ import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt4.AbstractKotlinKapt4ContextTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractKaptStubConverterTest
+import org.jetbrains.kotlin.kapt4.AbstractFirKaptStubConverterTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
@@ -50,9 +44,12 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
-import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
-
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuFirCheckerTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsFirTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsIrTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmFirLightTreeTest
+import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmIrTest
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 
 private class ExcludePattern {
     companion object {
@@ -188,22 +185,6 @@ fun main(args: Array<String>) {
             testClass<AbstractAndroidBytecodeShapeTest> {
                 model("codegen/bytecodeShape", recursive = false, extension = null)
             }
-
-            testClass<AbstractParcelBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
-            }
         }
 
         testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {
@@ -235,12 +216,10 @@ fun main(args: Array<String>) {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
-    }
 
-    generateTestGroupSuiteWithJUnit5(additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
-        testGroup("plugins/compose/compiler-hosted/tests-gen", "plugins/compose/compiler-hosted/testData") {
-            testClass<AbstractCompilerFacilityTestForComposeCompilerPlugin> {
-                model("codegen")
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData/") {
+            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
+                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
     }
@@ -293,21 +272,33 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "plugins/atomicfu/atomicfu-compiler/test",
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
             testClass<AbstractAtomicfuJsIrTest> {
                 model("box/")
             }
+
+            testClass<AbstractAtomicfuJsFirTest> {
+                model("box/")
+            }
         }
 
         testGroup(
-            "plugins/atomicfu/atomicfu-compiler/test",
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
+            testClass<AbstractAtomicfuFirCheckerTest> {
+                model("diagnostics/")
+            }
+
             testClass<AbstractAtomicfuJvmIrTest> {
+                model("box/")
+            }
+
+            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
                 model("box/")
             }
         }
@@ -412,14 +403,14 @@ fun main(args: Array<String>) {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
-
-            testClass<AbstractIrClassFileToSourceStubConverterTest> {
+            testClass<AbstractKaptStubConverterTest> {
                 model("converter")
             }
         }
-        testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/") {
-            testClass<AbstractKotlinKapt4ContextTest> {
-                model("../kapt3/kapt3-compiler/testData/converter")
+
+        testGroup("plugins/kapt4/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+            testClass<AbstractFirKaptStubConverterTest> {
+                model("converter")
             }
         }
 

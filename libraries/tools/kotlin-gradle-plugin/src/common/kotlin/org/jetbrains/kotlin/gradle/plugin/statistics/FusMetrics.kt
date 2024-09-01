@@ -66,7 +66,6 @@ internal object CompilerArgumentMetrics : FusMetrics {
                 val args = K2JVMCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
                 metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
-                metricsConsumer.report(StringMetrics.USE_FIR, args.useK2.toString())
 
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
@@ -76,6 +75,10 @@ internal object CompilerArgumentMetrics : FusMetrics {
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_PARSELIZE, "kotlin-parcelize-compiler-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ATOMICFU, "atomicfu-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_POWER_ASSERT, "kotlin-power-assert-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_KOVER, "kover-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_SERIALIZATION, "serialization-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_DOKKA, "dokka-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_BINARY_COMPATIBILITY_VALIDATOR, "binary-compatibility-validator-.*jar"),
                 )
                 val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
                 if (pluginJars != null) {

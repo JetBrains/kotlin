@@ -22,6 +22,7 @@ import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.codeStyle.JavaFileCodeStyleFacadeFactory
 import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.meta.MetaDataContributor
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -87,6 +88,10 @@ class KotlinCoreApplicationEnvironment private constructor(
 
     fun idleCleanup() {
         fastJarFileSystemField?.clearHandlersCache()
+    }
+
+    override fun createLocalFileSystem(): KotlinLocalFileSystem {
+        return KotlinLocalFileSystem()
     }
 
     companion object {

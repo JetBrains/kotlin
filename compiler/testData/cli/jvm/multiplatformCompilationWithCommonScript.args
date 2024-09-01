@@ -5,8 +5,6 @@ $TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/jvm.kt
 $TESTDATA_DIR$/scripts/s.kts
 $TESTDATA_DIR$/scripts/s1.kts
 -Xcommon-sources=$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt,$TESTDATA_DIR$/scripts/s1.kts
--language-version
-2.0
 -cp
 .
 -d

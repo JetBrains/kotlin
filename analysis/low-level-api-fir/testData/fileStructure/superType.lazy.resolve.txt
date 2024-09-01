@@ -2,7 +2,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superType.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] typealias AS = R|A<kotlin/String>|
-    public final [ResolvedTo(BODY_RESOLVE)] class C : R|AS| {
+    public final [ResolvedTo(BODY_RESOLVE)] class C : R|{AS=} A<kotlin/String>| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }

@@ -15,7 +15,7 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-integration"))
     testRuntimeOnly(intellijCore())
     testRuntimeOnly("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion)
     testApi(platform(libs.junit.bom))

@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-null
+KtNameReferenceExpression(45,56): 'testPackage'
+  null

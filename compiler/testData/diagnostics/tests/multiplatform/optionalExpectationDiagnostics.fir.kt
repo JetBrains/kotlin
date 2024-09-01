@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalMultiplatform
+// MUTE_LL_FIR: LL tests don't run IR actualizer to report NO_ACTUAL_FOR_EXPECT
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -10,8 +11,8 @@ expect annotation class A()
 
 fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>) = a.toString()
 
-<!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
-expect class NotAnAnnotationClass
+<!NO_ACTUAL_FOR_EXPECT{JVM}!><!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
+expect class NotAnAnnotationClass<!>
 
 <!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED!>@OptionalExpectation<!>
 annotation class NotAnExpectedClass

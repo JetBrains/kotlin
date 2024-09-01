@@ -2,5 +2,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> checkSubtype([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val ab: R|kotlin/collections/List<kotlin/Int>?| = R|/checkSubtype|<R|kotlin/collections/List<kotlin/Int>?|>(Q|java/util/Collections|.R|java/util/Collections.emptyList|<R|kotlin/Int!|>())
+    public final [ResolvedTo(BODY_RESOLVE)] val ab: R|kotlin/collections/List<kotlin/Int>?| = R|/checkSubtype|<R|kotlin/collections/List<kotlin/Int>?|>(Q|java/util/Collections|.R|java/util/Collections.emptyList|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|>())
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/List<kotlin/Int>?|

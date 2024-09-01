@@ -1,2 +1,2 @@
-KtBinaryExpression:
-NO_CANDIDATES
+KtBinaryExpression(32,38): '1 == 2'
+  NO_CANDIDATES

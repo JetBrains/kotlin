@@ -1,7 +1,9 @@
 <caret_1>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(30,38): 'I.length'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_2>:
-  KDocReference:
-    (in kotlin.String) open val length: kotlin.Int
-  
+  KDocName(58,71): 'String.length'
+    KDocReference:
+      (in kotlin.String) open val length: kotlin.Int

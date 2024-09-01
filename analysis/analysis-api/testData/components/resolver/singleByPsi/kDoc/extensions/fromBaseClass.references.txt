@@ -1,7 +1,9 @@
 <caret_1>:
-  KDocReference:
-    (in test.Base) fun test.Receiver.ext()
+  KDocName(85,97): 'Receiver.ext'
+    KDocReference:
+      (in test.Base) fun test.Receiver.ext()
 
 <caret_2>:
-  KDocReference:
-    (in test.Base) fun test.Receiver.ext()
+  KDocName(142,154): 'Receiver.ext'
+    KDocReference:
+      (in test.Base) fun test.Receiver.ext()

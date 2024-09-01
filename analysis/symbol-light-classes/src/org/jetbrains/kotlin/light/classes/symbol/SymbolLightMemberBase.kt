@@ -10,7 +10,7 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.javadoc.PsiDocComment
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -21,7 +21,7 @@ internal abstract class SymbolLightMemberBase<T : PsiMember>(
     override val lightMemberOrigin: LightMemberOrigin?,
     private val containingClass: SymbolLightClassBase,
 ) : KtLightElementBase(containingClass), PsiMember, KtLightMember<T> {
-    val ktModule: KtModule get() = containingClass.ktModule
+    val ktModule: KaModule get() = containingClass.ktModule
 
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 

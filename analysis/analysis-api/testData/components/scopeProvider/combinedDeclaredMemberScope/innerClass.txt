@@ -1,8 +1,9 @@
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: test/B.ClassInB
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,28 +12,29 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: ClassInB
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: test/B.InnerClassInB
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -41,26 +43,27 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: true
+  location: CLASS
   modality: FINAL
   name: InnerClassInB
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: test/B
   contextReceivers: []
   hasStableParameterNames: true
@@ -68,17 +71,18 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
+  modality: FINAL
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/B
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingJvmClassName: test.B
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -14,7 +16,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
@@ -54,7 +58,10 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
     )
 
     private val thinArchiveMagic = listOf(0x21, 0x3c, 0x61, 0x72)
-    private val thinMachOMagic = listOf(0xfe, 0xed, 0xfa, 0xcf).reversed()
+    private val thinMachOMagic: List<Int>
+        get() = listOf(
+            0xfe, 0xed, 0xfa, if (targets.testTarget.has32BitPointers()) 0xce else 0xcf
+        ).reversed()
 
     enum class ImageType(val clangOptions: List<String>) {
         DYLIB(
@@ -115,21 +122,28 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val emptySource = buildDir.resolve("stub.c")
         assert(emptySource.createNewFile())
 
+        val configurables = testRunSettings.configurables
+
         val armImage = compileWithArch(
             inputFile = emptySource,
             arch = "arm64",
             imageType = imageType,
         )
-        val intelImage = compileWithArch(
+        val otherImage = compileWithArch(
             inputFile = emptySource,
-            arch = "x86_64",
+            arch = if (configurables.target.family == Family.OSX || configurables.targetTriple.isSimulator) {
+                "x86_64"
+            } else {
+                // Apple devices SDKs don't support x86_64, but support arm64e.
+                "arm64e"
+            },
             imageType = imageType,
         )
 
         val outputImage = buildDir.resolve("output.a")
         if (outputImage.exists()) outputImage.delete()
         return lipoCreate(
-            inputFiles = listOf(armImage, intelImage),
+            inputFiles = listOf(armImage, otherImage),
             outputFile = outputImage,
         ).assertSuccess().resultingArtifact.libraryFile
     }

@@ -1,8 +1,9 @@
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: java/lang/String
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,35 +12,35 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: String
-  origin: JAVA
+  origin: JAVA_LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: java/io/Serializable
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaFlexibleType:
-          annotationsList: []
+          annotations: []
           type: kotlin/String!
       ]
       type: kotlin/Comparable<kotlin/String!>
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/CharSequence
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null

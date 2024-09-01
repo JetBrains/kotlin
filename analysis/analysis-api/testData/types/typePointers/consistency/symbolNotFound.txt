@@ -1,0 +1,28 @@
+Restored type is the same as the original one
+
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for Foo
+  nullability: NON_NULLABLE
+  presentableText: Foo
+  qualifiers: [
+    qualifier:
+      name: Foo
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+  ]

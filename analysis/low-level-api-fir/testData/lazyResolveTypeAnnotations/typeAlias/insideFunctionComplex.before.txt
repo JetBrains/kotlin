@@ -1,14 +1,22 @@
-@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>
+@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
 
-@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>
+@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
 
-@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias
+@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
-  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
+  anchor -> [FirTypeAliasSymbol pack/MyTypeAlias, FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe]
+
+@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
+  anchor -> [FirTypeAliasSymbol pack/MyTypeAlias]
+
+@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol pack/resolveMe
+  anchor -> [FirTypeAliasSymbol pack/MyTypeAlias]
 
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -22,5 +30,5 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
-    public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias>>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
+    public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|pack/TypeAnnWithArg|(<strcat>(String(parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(<strcat>(String(nested parameter: ), constant#))  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  @R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  {@R|pack/TypeAnnWithArg|(<strcat>(String(nested nested parameter: ), constant#))  pack/MyTypeAlias=} kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|pack/TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>>>|): R|kotlin/Unit| { LAZY_BLOCK }

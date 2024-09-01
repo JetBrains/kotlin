@@ -1,0 +1,38 @@
+KtNameReferenceExpression(51,57): 'length'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/test)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Any
+              visibility: LOCAL
+            type = kotlin.Any
+          type = kotlin.String
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = length
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val length: kotlin.Int
+          callableId = kotlin/String.length
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

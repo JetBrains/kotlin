@@ -10,6 +10,8 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(toolsJarApi())
     implementation(project(":kotlin-annotation-processing-compiler"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":analysis:analysis-api-standalone"))
@@ -27,7 +29,7 @@ dependencies {
     embedded(project(":analysis:analysis-api-fir")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-impl-barebone")) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-providers")) { isTransitive = false }
+    embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }

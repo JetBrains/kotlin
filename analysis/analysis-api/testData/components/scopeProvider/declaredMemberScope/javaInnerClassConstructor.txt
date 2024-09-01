@@ -1,6 +1,7 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: PackageVisibility
   containingClassId: JavaClass.InnerClass
   contextReceivers: []
   hasStableParameterNames: false
@@ -8,45 +9,51 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass.InnerClass
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: other
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: JavaClass!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass.InnerClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

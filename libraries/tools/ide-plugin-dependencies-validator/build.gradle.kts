@@ -68,7 +68,7 @@ fun Project.checkIdeDependencyConfiguration() {
         val projectApiVersion = compileTask.compilerOptions.apiVersion.get()
         check(projectApiVersion <= expectedApiVersion) {
             "Expected the API Version to be less or equal to `$kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin`" +
-                    " for the project `$name`, " +
+                    " for the project `$path`, " +
                     "but `$projectApiVersion` found. The project is used in the IntelliJ, so it should use the same API version" +
                     "for binary compatibility with Kotlin stdlib . " +
                     "See KT-62510 for details."
@@ -78,7 +78,7 @@ fun Project.checkIdeDependencyConfiguration() {
             ExperimentalAnnotationsCollector().getUsedExperimentalAnnotations(compileTask.compilerOptions.freeCompilerArgs.get())
 
         check(enabledExperimentalAnnotations.isEmpty()) {
-            "`$name` allows using experimental kotlin stdlib API marked with ${enabledExperimentalAnnotations.joinToString()}. " +
+            "`$path` allows using experimental kotlin stdlib API marked with ${enabledExperimentalAnnotations.joinToString()}. " +
                     "The project is used in the IntelliJ Kotlin Plugin, so it cannot use experimental Kotlin stdlib API " +
                     "for binary compatibility with Kotlin stdlib . " +
                     "See KT-62510 for details."

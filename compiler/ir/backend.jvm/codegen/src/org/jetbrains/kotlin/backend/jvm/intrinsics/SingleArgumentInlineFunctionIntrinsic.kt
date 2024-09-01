@@ -17,7 +17,6 @@ object SingleArgumentInlineFunctionIntrinsic : IntrinsicMethod() {
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
             lambdaInfo.generateLambdaBody(sourceCompiler)
-            codegen.context.typeToCachedSMAP[lambdaInfo.lambdaClassType] = lambdaInfo.node.classSMAP
         }
 
         return codegen.unitValue

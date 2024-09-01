@@ -1,3 +1,5 @@
+// LATEST_LV_DIFFERENCE
+// RENDER_DIAGNOSTICS_FULL_TEXT
 internal open class My
 
 abstract class Your {

@@ -1,5 +1,3 @@
-// SKIP_SOURCEMAP_REMAPPING
-
 fun box(): String {
     var state = 0
     val name = (state++)::toString.name

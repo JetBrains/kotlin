@@ -102,6 +102,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         return when {
             classId.isLocal -> null
             classId.isNestedClass -> {
+                // Note: session.symbolProvider is important here, as we need a full composite provider and not only this extension provider
                 val owner = session.symbolProvider.getClassLikeSymbolByClassId(classId.outerClassId!!) as? FirClassSymbol<*> ?: return null
                 val nestedClassifierScope = session.nestedClassifierScope(owner.fir) ?: return null
                 var result: FirClassLikeSymbol<*>? = null
@@ -151,7 +152,10 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
 
-        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+        override fun getPackageNames(): Set<String> =
+            getPackageNamesWithTopLevelClassifiers() + getPackageNamesWithTopLevelCallables()
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> =
             buildSet {
                 extensions.forEach { extension ->
                     extension.topLevelClassIdsCache.getValue().mapTo(this) { it.packageFqName.asString() }

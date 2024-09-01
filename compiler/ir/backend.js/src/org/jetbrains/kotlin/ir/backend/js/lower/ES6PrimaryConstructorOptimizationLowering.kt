@@ -115,9 +115,13 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                                 map[declaration.symbol] = classThisSymbol
 
                                 val externalConstructor =
-                                    superClass?.primaryConstructor?.symbol ?: error("Expect to have external constructor here")
+                                    superClass?.primaryConstructor?.symbol ?: irError("Expect to have external constructor here") {
+                                        superClass?.let { withIrEntry("superClass", it) }
+                                    }
                                 val parameters = initializer.getValueArgument(CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS) as? IrVararg
-                                    ?: error("Wrong type of argument was provided")
+                                    ?: irError("Wrong type of argument was provided") {
+                                        withIrEntry("initializer", initializer)
+                                    }
 
                                 return JsIrBuilder.buildDelegatingConstructorCall(externalConstructor).apply {
                                     parameters.elements.forEachIndexed { i, it -> putValueArgument(i, it as IrExpression) }

@@ -89,7 +89,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val reportMetricsList = arrayOf(
             "Task 'kotlinProject' finished in",
             "Task info:",
-            "Kotlin language version: 2.0",
+            "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
             "Time metrics:",
             "Jps iteration:",
             "Compiler code analysis:",

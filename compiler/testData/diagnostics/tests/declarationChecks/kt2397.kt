@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 //KT-2397 Prohibit final methods in traits with no implementation
 package a
 

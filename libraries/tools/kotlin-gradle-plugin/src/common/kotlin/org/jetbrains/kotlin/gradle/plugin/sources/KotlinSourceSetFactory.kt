@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.setAttribute
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
-    protected val project: Project
+    protected val project: Project,
 ) : NamedDomainObjectFactory<KotlinSourceSet> {
 
     abstract val itemClass: Class<T>
@@ -73,7 +73,7 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
 
 
 internal class DefaultKotlinSourceSetFactory(
-    project: Project
+    project: Project,
 ) : KotlinSourceSetFactory<DefaultKotlinSourceSet>(project) {
 
     override val itemClass: Class<DefaultKotlinSourceSet>
@@ -105,7 +105,7 @@ internal class DefaultKotlinSourceSetFactory(
                 }
 
                 if (project.isKotlinGranularMetadataEnabled) {
-                    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                    setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
                 }
             }
         }

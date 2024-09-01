@@ -1,0 +1,4 @@
+[IncompatibleGradleVersionTooLowFatalError | FATAL] Kotlin Gradle Plugin <-> Gradle compatibility issue:
+The applied Kotlin Gradle is not compatible with the used Gradle version (Gradle 7.5.1).
+
+Please update the Gradle version to at least Gradle 7.6.3.

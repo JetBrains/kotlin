@@ -1,8 +1,8 @@
 // MODULE: common
 // TARGET_PLATFORM: Common
-expect abstract class Foo() {
-    abstract fun foo()
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect abstract class Foo() {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>abstract fun foo()<!>
+}<!>
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Impl<!> : Foo() {}
 

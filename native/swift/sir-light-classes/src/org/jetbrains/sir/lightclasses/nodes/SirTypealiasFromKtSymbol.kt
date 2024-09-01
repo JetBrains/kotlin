@@ -5,8 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
@@ -18,7 +19,7 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KaTypeAliasSymbol,
-    override val ktModule: KtModule,
+    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirTypealias(), SirFromKtSymbol<KaTypeAliasSymbol> {
 
@@ -30,18 +31,22 @@ internal class SirTypealiasFromKtSymbol(
     override val name: String by lazy {
         ktSymbol.name.asString()
     }
+
+    @OptIn(KaExperimentalApi::class)
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
-            analysisSession,
+            useSiteSession,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
-            processTypeImports = ktSymbol.getContainingModule().sirModule()::updateImports
+            processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
         )
     }
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
+
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
 }

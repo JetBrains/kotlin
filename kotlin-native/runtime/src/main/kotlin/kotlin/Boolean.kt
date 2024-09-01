@@ -12,14 +12,14 @@ import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
 /** Represents a value which is either `true` or `false`. */
-public class Boolean private constructor() : Comparable<Boolean> {
+public actual class Boolean private constructor() : Comparable<Boolean> {
     @SinceKotlin("1.3")
-    public companion object {}
+    public actual companion object {}
 
     /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.NOT)
-    public external operator fun not(): Boolean
+    public actual external operator fun not(): Boolean
 
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
@@ -27,7 +27,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.AND)
-    public external infix fun and(other: Boolean): Boolean
+    public actual external infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
@@ -35,26 +35,26 @@ public class Boolean private constructor() : Comparable<Boolean> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.OR)
-    public external infix fun or(other: Boolean): Boolean
+    public actual external infix fun or(other: Boolean): Boolean
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.XOR)
-    public external infix fun xor(other: Boolean): Boolean
+    public actual external infix fun xor(other: Boolean): Boolean
 
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)
-    public external override fun compareTo(other: Boolean): Int
+    public actual external override fun compareTo(other: Boolean): Int
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String =
+    public actual override fun toString(): String =
         if (this) "true" else "false"
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
+    public actual override fun equals(other: Any?): Boolean =
         other is Boolean && kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int =
+    public actual override fun hashCode(): Int =
         if (this) 1231 else 1237
 
     @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
@@ -20,17 +19,25 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 val IR_DECLARATION_ORIGIN_VOLATILE = IrDeclarationOriginImpl("VOLATILE")
+
+enum class AtomicFunctionType {
+    COMPARE_AND_EXCHANGE, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD,
+    ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
+}
+
+private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+internal var IrSimpleFunction.volatileField: IrField? by irAttribute(followAttributeOwner = false)
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.ir.symbols
@@ -100,25 +107,25 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
             }
 
 
-    private inline fun atomicFunction(irField: IrField, type: NativeMapping.AtomicFunctionType, builder: () -> IrSimpleFunction): IrSimpleFunction {
-        val key = NativeMapping.AtomicFunctionKey(irField, type)
-        return context.mapping.volatileFieldToAtomicFunction.getOrPut(key) {
+    private inline fun atomicFunction(irField: IrField, type: AtomicFunctionType, builder: () -> IrSimpleFunction): IrSimpleFunction {
+        val atomicFunctions = irField::atomicFunction.getOrSetIfNull { mutableMapOf() }
+        return atomicFunctions.getOrPut(type) {
             builder().also {
-                context.mapping.functionToVolatileField[it] = irField
+                it.volatileField = irField
             }
         }
     }
 
-    private fun compareAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_SET) {
+    private fun compareAndSetFunction(irField: IrField) = atomicFunction(irField, AtomicFunctionType.COMPARE_AND_SET) {
         this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_SET, this.context.irBuiltIns.booleanType)
     }
-    private fun compareAndExchangeFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_EXCHANGE) {
+    private fun compareAndExchangeFunction(irField: IrField) = atomicFunction(irField, AtomicFunctionType.COMPARE_AND_EXCHANGE) {
         this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_EXCHANGE, irField.type)
     }
-    private fun getAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.GET_AND_SET) {
+    private fun getAndSetFunction(irField: IrField) = atomicFunction(irField, AtomicFunctionType.GET_AND_SET) {
         this.buildAtomicRWMFunction(irField, IntrinsicType.GET_AND_SET)
     }
-    private fun getAndAddFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.GET_AND_ADD) {
+    private fun getAndAddFunction(irField: IrField) = atomicFunction(irField, AtomicFunctionType.GET_AND_ADD) {
         this.buildAtomicRWMFunction(irField, IntrinsicType.GET_AND_ADD)
     }
 
@@ -148,17 +155,12 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         it.backingField?.hasAnnotation(KonanFqNames.volatile) != true -> null
                         else -> {
                             val field = it.backingField!!
-                            if (field.type.binaryTypeIsReference() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
-                                it.annotations = it.annotations.filterNot { it.symbol.owner.parentAsClass.hasEqualFqName(KonanFqNames.volatile) }
-                                null
-                            } else {
-                                listOfNotNull(it,
-                                        compareAndSetFunction(field),
-                                        compareAndExchangeFunction(field),
-                                        getAndSetFunction(field),
-                                        if (field.isInteger()) getAndAddFunction(field) else null
-                                )
-                            }
+                            listOfNotNull(it,
+                                    compareAndSetFunction(field),
+                                    compareAndExchangeFunction(field),
+                                    getAndSetFunction(field),
+                                    if (field.isInteger()) getAndAddFunction(field) else null
+                            )
                         }
                     }
                 }
@@ -229,9 +231,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
-                if (backingField?.type?.binaryTypeIsReference() == true && context.memoryModel != MemoryModel.EXPERIMENTAL) {
-                    return unsupported("Only primitives are supported for $intrinsicType with legacy memory model")
-                }
                 if (backingField?.hasAnnotation(KonanFqNames.volatile) != true) {
                     return unsupported("Only volatile properties are supported for $intrinsicType")
                 }

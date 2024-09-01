@@ -15,21 +15,6 @@ import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
 
 @Tag("kotlin-test")
-@PredefinedTestCases(
-    TC(
-        name = "default",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    )
-)
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
-    @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("default"))
-}
-
-@Tag("kotlin-test")
 @Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
@@ -41,7 +26,7 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
 )
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
+class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }

@@ -562,6 +562,18 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("annotationRetentions.kt")
+      public void testAnnotationRetentions() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationRetentions.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationRetentionsMultiModule.kt")
+      public void testAnnotationRetentionsMultiModule() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationRetentionsMultiModule.kt");
+      }
+
+      @Test
       @TestMetadata("annotationsInAnnotationArguments.kt")
       public void testAnnotationsInAnnotationArguments() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
@@ -715,6 +727,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       @TestMetadata("receiverParameterWithAnnotations.kt")
       public void testReceiverParameterWithAnnotations() {
         runTest("compiler/testData/ir/irText/declarations/annotations/receiverParameterWithAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("specialAnnotationsMetadata.kt")
+      public void testSpecialAnnotationsMetadata() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/specialAnnotationsMetadata.kt");
       }
 
       @Test
@@ -1014,6 +1032,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         @TestMetadata("expectedEnumClass.kt")
         public void testExpectedEnumClass() {
           runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedEnumClass.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedFun.kt")
+        public void testExpectedFun() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedFun.kt");
         }
 
         @Test
@@ -1713,6 +1737,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("lambdaWithParameterName.kt")
+    public void testLambdaWithParameterName() {
+      runTest("compiler/testData/ir/irText/expressions/lambdaWithParameterName.kt");
+    }
+
+    @Test
     @TestMetadata("literals.kt")
     public void testLiterals() {
       runTest("compiler/testData/ir/irText/expressions/literals.kt");
@@ -2004,6 +2034,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @TestMetadata("vararg.kt")
     public void testVararg() {
       runTest("compiler/testData/ir/irText/expressions/vararg.kt");
+    }
+
+    @Test
+    @TestMetadata("varargListOfJsStatement.kt")
+    public void testVarargListOfJsStatement() {
+      runTest("compiler/testData/ir/irText/expressions/varargListOfJsStatement.kt");
     }
 
     @Test
@@ -2360,6 +2396,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     @Test
     public void testAllFilesPresentInFakeOverrides() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("capturedTypeInFakeOverride.kt")
+    public void testCapturedTypeInFakeOverride() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/capturedTypeInFakeOverride.kt");
     }
 
     @Test

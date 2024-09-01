@@ -39,7 +39,6 @@ import kotlin.test.assertTrue
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Git connected K/N tests with cocoapods")
 @NativeGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @OptIn(EnvironmentalVariablesOverride::class)
 class CocoaPodsGitIT : KGPBaseTest() {
 
@@ -53,11 +52,11 @@ class CocoaPodsGitIT : KGPBaseTest() {
     private val groovyTemplateProjectName = "native-cocoapods-template-groovy"
     private val outdatedRepoName = "native-cocoapods-outdated-repo"
 
-    private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
-    private val defaultPodName = "AFNetworking"
+    private val defaultPodRepo = "https://github.com/ekscrypto/Base64"
+    private val defaultPodName = "Base64"
     private val defaultTarget = "IOS"
     private val defaultFamily = "ios"
-    private val defaultSDK = "iphonesimulator"
+    private val defaultAppleTarget = "iosSimulator"
     private val privateSpecGitRepo = "privateSpec.git"
     private val privateSpecName = "KMPPrivateSpec"
     private val customPodLibraryName = "cocoapodsLibrary"
@@ -78,11 +77,11 @@ class CocoaPodsGitIT : KGPBaseTest() {
     private fun podGenFullTaskName(familyName: String = defaultFamily) =
         podGenTaskName + familyName.capitalize()
 
-    private fun podSetupBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podSetupBuildTaskName + podName.capitalize() + sdkName.capitalize()
+    private fun podSetupBuildFullTaskName(podName: String = defaultPodName, appleTarget: String = defaultAppleTarget) =
+        podSetupBuildTaskName + podName.capitalize() + appleTarget.capitalize()
 
-    private fun podBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podBuildTaskName + podName.capitalize() + sdkName.capitalize()
+    private fun podBuildFullTaskName(podName: String = defaultPodName, appleTarget: String = defaultAppleTarget) =
+        podBuildTaskName + podName.capitalize() + appleTarget.capitalize()
 
     private fun cinteropFullTaskName(podName: String = defaultPodName, targetName: String = defaultTarget) =
         cinteropTaskName + podName.capitalize() + targetName.capitalize()
@@ -101,19 +100,19 @@ class CocoaPodsGitIT : KGPBaseTest() {
     @DisplayName("Downloading pod from git with specifying tag")
     @GradleTest
     fun testPodDownloadGitTag(gradleVersion: GradleVersion) {
-        doTestGit(gradleVersion, tag = "4.0.0")
+        doTestGit(gradleVersion, tag = "1.1.2")
     }
 
     @DisplayName("Downloading pod from git with specifying commit")
     @GradleTest
     fun testPodDownloadGitCommit(gradleVersion: GradleVersion) {
-        doTestGit(gradleVersion, commit = "9c07ac0a5645abb58850253eeb109ed0dca515c1")
+        doTestGit(gradleVersion, commit = "f0edb29fd723a21ad2208d2a6d51edbf36c03b5f")
     }
 
     @DisplayName("Downloading pod from git with specifying branch")
     @GradleTest
     fun testPodDownloadGitBranch(gradleVersion: GradleVersion) {
-        doTestGit(gradleVersion, branch = "2974")
+        doTestGit(gradleVersion, branch = "master")
     }
 
     @DisplayName("Downloading pod's subspec from git")
@@ -132,8 +131,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
     fun testPodDownloadGitBranchAndCommit(gradleVersion: GradleVersion) {
         doTestGit(
             gradleVersion,
-            branch = "2974",
-            commit = "21637dd6164c0641e414bdaf3885af6f1ef15aee"
+            branch = "master",
+            commit = "b33c69bd76c18d44a8a4b0e79593b752a6467d8d"
         )
     }
 
@@ -143,8 +142,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
     fun testPodDownloadGitBranchAndTag(gradleVersion: GradleVersion) {
         doTestGit(
             gradleVersion,
-            tag = "4.0.0",
-            branch = "2974"
+            tag = "1.1.2",
+            branch = "master"
         )
     }
 
@@ -154,7 +153,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
         doTestGit(
             gradleVersion,
             groovyTemplateProjectName,
-            tag = "4.0.0",
+            tag = "1.1.2",
             isGradleBuildScript = true
         )
     }
@@ -211,9 +210,10 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod(defaultPodName, produceGitBlock())
             testImport()
 
-            val anotherPodName = "Base64"
-            val anotherPodRepo = "https://github.com/ekscrypto/Base64"
-            buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo, tagName = "1.2.2"))
+            val anotherPodName = "SSZipArchive"
+            val anotherPodRepo = "https://github.com/ZipArchive/ZipArchive"
+            buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo, tagName = "2.5.5"))
+            buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"16.0\"")
             testImport(repos = listOf(defaultPodRepo, anotherPodRepo)) {
 
                 assertTasksExecuted(
@@ -263,15 +263,15 @@ class CocoaPodsGitIT : KGPBaseTest() {
                 defaultCinteropTaskName
             )
             val anotherTarget = "MacosX64"
-            val anotherSdk = "macosx"
+            val anotherAppleTarget = "macos"
             val anotherFamily = "macos"
             buildGradleKts.addKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
 
             testImport {
                 assertTasksExecuted(
                     podGenFullTaskName(anotherFamily),
-                    podSetupBuildFullTaskName(sdkName = anotherSdk),
-                    podBuildFullTaskName(sdkName = anotherSdk),
+                    podSetupBuildFullTaskName(appleTarget = anotherAppleTarget),
+                    podBuildFullTaskName(appleTarget = anotherAppleTarget),
                     cinteropFullTaskName(targetName = anotherTarget)
                 )
                 assertTasksUpToDate(tasks)
@@ -280,8 +280,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.replaceText(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()", "")
             testImport {
                 assertOutputDoesNotContain(podGenFullTaskName(anotherFamily))
-                assertOutputDoesNotContain(podSetupBuildFullTaskName(sdkName = anotherSdk))
-                assertOutputDoesNotContain(podBuildFullTaskName(sdkName = anotherSdk))
+                assertOutputDoesNotContain(podSetupBuildFullTaskName(appleTarget = anotherAppleTarget))
+                assertOutputDoesNotContain(podBuildFullTaskName(appleTarget = anotherAppleTarget))
                 assertOutputDoesNotContain(cinteropFullTaskName(targetName = anotherTarget))
                 assertTasksUpToDate(tasks)
             }
@@ -299,17 +299,17 @@ class CocoaPodsGitIT : KGPBaseTest() {
             }
 
             val anotherTarget = "MacosX64"
-            val anotherSdk = "macosx"
-            val anotherSdkDefaultPodTaskName = podBuildFullTaskName(sdkName = anotherSdk)
+            val anotherAppleTarget = "macos"
+            val anotherTargetDefaultPodTaskName = podBuildFullTaskName(appleTarget = anotherAppleTarget)
             buildGradleKts.addCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
             buildGradleKts.addKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
 
             testImport {
                 assertTasksUpToDate(defaultBuildTaskName)
-                assertTasksExecuted(anotherSdkDefaultPodTaskName)
+                assertTasksExecuted(anotherTargetDefaultPodTaskName)
             }
             testImport {
-                assertTasksUpToDate(defaultBuildTaskName, anotherSdkDefaultPodTaskName)
+                assertTasksUpToDate(defaultBuildTaskName, anotherTargetDefaultPodTaskName)
             }
         }
     }
@@ -412,7 +412,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
     fun testSpecReposUTD(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
 
-            buildGradleKts.addPod("AFNetworking")
+            buildGradleKts.addPod("Base64")
             build(defaultPodGenTaskName) {
                 assertTasksExecuted(defaultPodGenTaskName)
             }
@@ -435,18 +435,6 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod("SDWebImage/Core")
             buildGradleKts.addPod("SDWebImage/MapKit")
             testImport()
-        }
-    }
-
-    @DisplayName("Checking useLibraries mode")
-    @GradleTest
-    fun testUseLibrariesMode(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(projectName = "native-cocoapods-template-groovy", gradleVersion = gradleVersion) {
-            buildGradle.addCocoapodsBlock("useLibraries()".trimIndent())
-            buildGradle.addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
-            testImport {
-                assertHasDiagnostic(CocoapodsPluginDiagnostics.UseLibrariesUsed)
-            }
         }
     }
 

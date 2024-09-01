@@ -1,35 +1,42 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtCallableSymbol.translateToObjCExportStub(): List<ObjCExportStub> {
+internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbol): List<ObjCExportStub> {
     val result = mutableListOf<ObjCExportStub>()
-    when (this) {
-        is KtPropertySymbol -> {
-            if (isObjCProperty) {
-                result.addIfNotNull(translateToObjCProperty())
+    when (symbol) {
+        is KaPropertySymbol -> {
+            if (analysisSession.isObjCProperty(symbol)) {
+                result.addIfNotNull(translateToObjCProperty(symbol))
             } else {
-                result.addIfNotNull(this.getter?.translateToObjCMethod())
-                result.addIfNotNull(this.setter?.translateToObjCMethod())
+                symbol.getter?.let { getter ->
+                    result.addIfNotNull(translateToObjCMethod(getter))
+                }
+
+                symbol.setter?.let { setter ->
+                    result.addIfNotNull(translateToObjCMethod(setter))
+                }
             }
         }
-        is KtFunctionSymbol -> result.addIfNotNull(translateToObjCMethod())
+        is KaNamedFunctionSymbol -> result.addIfNotNull(translateToObjCMethod(symbol))
         else -> Unit
     }
     return result
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtClassOrObjectSymbol.translateToObjCExportStub(): ObjCClass? = when (classKind) {
-    KtClassKind.INTERFACE -> translateToObjCProtocol()
-    KtClassKind.CLASS -> translateToObjCClass()
-    KtClassKind.OBJECT -> translateToObjCObject()
-    KtClassKind.ENUM_CLASS -> translateToObjCClass()
-    KtClassKind.COMPANION_OBJECT -> translateToObjCObject()
+internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaClassSymbol): ObjCClass? = when (symbol.classKind) {
+    KaClassKind.INTERFACE -> translateToObjCProtocol(symbol)
+    KaClassKind.CLASS -> translateToObjCClass(symbol)
+    KaClassKind.OBJECT -> translateToObjCObject(symbol)
+    KaClassKind.ENUM_CLASS -> translateToObjCClass(symbol)
+    KaClassKind.COMPANION_OBJECT -> translateToObjCObject(symbol)
     else -> null
 }

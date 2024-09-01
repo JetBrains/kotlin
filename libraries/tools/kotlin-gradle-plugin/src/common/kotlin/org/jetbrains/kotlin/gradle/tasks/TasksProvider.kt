@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.UnknownTaskException
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
+import org.jetbrains.kotlin.gradle.utils.named
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -61,6 +61,34 @@ internal fun TaskProvider<*>.dependsOn(other: Task) = configure { it.dependsOn(o
 internal fun TaskProvider<*>.dependsOn(otherPath: String) = configure { it.dependsOn(otherPath) }
 
 internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
+
+/**
+ * Returns a task provider by [name].
+ *
+ * The same as `tasks.named` but:
+ * 1) It doesn't fail if the task is not registered at the moment
+ * 2) It returns Provider<Task> instead of TaskProvider, therefore one can't call `configure`
+ *
+ * @see configureByName
+ */
+internal inline fun <reified T : Task> Project.providerOfTask(name: String): Provider<T> {
+    return project.provider { name }.flatMap { tasks.named<T>(name) }
+}
+
+/**
+ *  Configures a task by [name]. The same as `named().configure { .. }`, but works when the task isn't registered yet.
+ *
+ *  Note that it will not emit any error if the task is never registered.
+ *
+ *  @see providerOfTask
+ */
+internal inline fun <reified T : Task> TaskContainer.configureByName(name: String, crossinline configure: (T) -> Unit) {
+    withType<T>().configureEach { task ->
+        if (name == task.name) {
+            configure(task)
+        }
+    }
+}
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.

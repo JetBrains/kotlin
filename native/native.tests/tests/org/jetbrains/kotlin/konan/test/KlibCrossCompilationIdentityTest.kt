@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
-import org.junit.Assume
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -133,13 +133,13 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
             return md.digest().toHexString()
         }
 
-        private fun isCrossDistAvailable(): Boolean = false // TODO(KT-66968): need CI support
+        private fun isCrossDistAvailable(): Boolean =
+            HostManager.hostIsMac || System.getProperty(FULL_CROSS_DIST_ENABLED_PROPERTY)?.toBoolean() ?: false
+
+        // If you rename/change it, adjust native/native.tests/build.gradle.kts as well
+        private const val FULL_CROSS_DIST_ENABLED_PROPERTY = "kotlin.native.internal.fullCrossDistEnabled"
     }
 }
-
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-@EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
-class ClassicFEKlibCrossCompilationIdentityTest : KlibCrossCompilationIdentityTest()
 
 @FirPipeline
 @Tag("frontend-fir")

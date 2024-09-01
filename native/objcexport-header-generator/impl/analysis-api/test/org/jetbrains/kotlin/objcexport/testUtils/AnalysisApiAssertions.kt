@@ -1,66 +1,104 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.testUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
 
-context(KtAnalysisSession)
-fun KtFile.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
-    return getFileSymbol().getFileScope().getClassOrFail(name)
+
+@JvmName("getClassOrFailKaSession")
+fun KaSession.getClassOrFail(file: KtFile, name: String): KaNamedClassSymbol {
+    return getClassOrFail(file.symbol.fileScope, name)
 }
 
-context(KtAnalysisSession)
-fun KtScope.getClassOrFail(name: String): KtNamedClassOrObjectSymbol {
-    val allSymbols = getClassifierSymbols(Name.identifier(name)).toList()
+fun KtFile.getClassOrFail(name: String, kaSession: KaSession): KaNamedClassSymbol {
+    val file = this
+    return getClassOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+fun KtFile.getFunctionOrFail(name: String, kaSession: KaSession): KaNamedFunctionSymbol {
+    val file = this
+    return getFunctionOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+fun KtFile.getPropertyOrFail(name: String, kaSession: KaSession): KaPropertySymbol {
+    val file = this
+    return getPropertyOrFail(with(kaSession) { file.symbol.fileScope }, name)
+}
+
+@JvmName("getClassOrFailKaScope")
+fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
+    return getClassOrFail(this, name)
+}
+
+fun getClassOrFail(scope: KaScope, name: String): KaNamedClassSymbol {
+    val allSymbols = scope.classifiers(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing class '$name'")
     if (allSymbols.size > 1) fail("Found multiple classes with name '$name'")
     val classifier = allSymbols.single()
-    if (classifier !is KtNamedClassOrObjectSymbol) fail("$classifier is not a named class or object")
+    if (classifier !is KaNamedClassSymbol) fail("$classifier is not a named class or object")
     return classifier
 }
 
-context(KtAnalysisSession)
-fun KtFile.getFunctionOrFail(name: String): KtFunctionSymbol {
-    return getFileSymbol().getFileScope().getFunctionOrFail(name)
+fun KaSession.getFunctionOrFail(file: KtFile, name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(file.symbol.fileScope, name)
 }
 
-context(KtAnalysisSession)
-fun KtFile.getPropertyOrFail(name: String): KtPropertySymbol {
-    return getFileSymbol().getFileScope().getPropertyOrFail(name)
+
+@JvmName("getPropertyOrFailKaSession")
+fun KaSession.getPropertyOrFail(file: KtFile, name: String): KaPropertySymbol {
+    return getPropertyOrFail(file.symbol.fileScope, name)
 }
 
-context(KtAnalysisSession)
-fun KtScope.getFunctionOrFail(name: String): KtFunctionSymbol {
-    val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
+fun KaClassSymbol.getFunctionOrFail(name: String, kaSession: KaSession): KaNamedFunctionSymbol {
+    val symbol = this
+    return getFunctionOrFail(with(kaSession) { symbol.memberScope }, name)
+}
+
+@JvmName("getFunctionOrFailKaScope")
+fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(this, name)
+}
+
+@JvmName("getPropertyOrFailKaScope")
+fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
+    return getPropertyOrFail(this, name)
+}
+
+fun getFunctionOrFail(scope: KaScope, name: String): KaNamedFunctionSymbol {
+    val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing function '$name'")
     if (allSymbols.size > 1) fail("Found multiple functions with name '$name'")
     val symbol = allSymbols.single()
-    if (symbol !is KtFunctionSymbol) fail("$symbol is not a function")
+    if (symbol !is KaNamedFunctionSymbol) fail("$symbol is not a function")
     return symbol
 }
 
-context(KtAnalysisSession)
-fun KtScope.getPropertyOrFail(name: String): KtPropertySymbol {
-    val allSymbols = getCallableSymbols(Name.identifier(name)).toList()
+fun getPropertyOrFail(scope: KaScope, name: String): KaPropertySymbol {
+    val allSymbols = scope.callables(Name.identifier(name)).toList()
     if (allSymbols.isEmpty()) fail("Missing property '$name'")
     if (allSymbols.size > 1) fail("Found multiple callables with name '$name'")
     val symbol = allSymbols.single()
-    if (symbol !is KtPropertySymbol) fail("$symbol is not a property")
+    if (symbol !is KaPropertySymbol) fail("$symbol is not a property")
     return symbol
 }
 
-context(KtAnalysisSession)
-fun KtClassOrObjectSymbol.getFunctionOrFail(name: String): KtFunctionSymbol {
-    return this.getMemberScope().getFunctionOrFail(name)
+@JvmName("getFunctionOrFailKaSession")
+fun KaSession.getFunctionOrFail(symbol: KaClassSymbol, name: String): KaNamedFunctionSymbol {
+    return getFunctionOrFail(symbol.memberScope, name)
 }
+
+fun KaSession.getPropertyOrFail(symbol: KaClassSymbol, name: String): KaPropertySymbol {
+    return symbol.memberScope.getPropertyOrFail(name)
+}
+

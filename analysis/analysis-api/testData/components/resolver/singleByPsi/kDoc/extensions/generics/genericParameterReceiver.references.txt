@@ -1,11 +1,19 @@
 <caret_1>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(70,82): 'PARAM.anyExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_2>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(88,104): 'PARAM.genericExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_3>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(175,193): 'CLASS_PARAM.anyExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_4>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(203,225): 'CLASS_PARAM.genericExt'
+    KDocReference:
+      Nothing (Unresolved reference)

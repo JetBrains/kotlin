@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 val npmPackages = listOf(
     NpmPackage("webpack"),
     NpmPackage("webpack-cli"),
-    NpmPackage("webpack-dev-server"),
+    NpmPackage("webpack-dev-server", "4.15.2"),
     NpmPackage("source-map-loader"),
     NpmPackage("source-map-support"),
     NpmPackage("css-loader"),
@@ -29,6 +29,7 @@ val npmPackages = listOf(
     NpmPackage("karma-webpack"),
     NpmPackage("karma-sourcemap-loader"),
     NpmPackage("typescript"),
+    NpmPackage("kotlin-web-helpers"),
 )
 
 data class NpmPackage(

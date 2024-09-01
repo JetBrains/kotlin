@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 
 fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression(session: FirSession): FirPropertyAccessExpression =
     buildPropertyAccessExpression {
-        val entryPropertySymbol = session.symbolProvider.getClassDeclaredPropertySymbols(
+        val entryPropertySymbol = session.getClassDeclaredPropertySymbols(
             enumClassId, enumEntryName,
         ).firstOrNull { it.isStatic }
 

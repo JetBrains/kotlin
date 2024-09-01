@@ -1,2 +1,3 @@
-KtConstructorDelegationReference:
-  (in ClassWithType) constructor(i: T)
+KtConstructorDelegationReferenceExpression(144,149): 'super'
+  KtConstructorDelegationReference:
+    (in ClassWithType) constructor(i: T)

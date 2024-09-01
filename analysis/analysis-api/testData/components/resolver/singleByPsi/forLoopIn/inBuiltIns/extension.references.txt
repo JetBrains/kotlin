@@ -1,4 +1,5 @@
-KtForLoopInReference:
-  0: (in kotlin.collections) inline operator fun <T> kotlin.collections.Iterator<T>.iterator(): kotlin.collections.Iterator<T>
-  1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
-  2: (in kotlin.collections.Iterator) operator fun next(): T
+KtForExpression(47,74): 'for (i in it.iterator()) {}'
+  KtForLoopInReference:
+    0: (in kotlin.collections) inline operator fun <T> kotlin.collections.Iterator<T>.iterator(): kotlin.collections.Iterator<T>
+    1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+    2: (in kotlin.collections.Iterator) operator fun next(): T

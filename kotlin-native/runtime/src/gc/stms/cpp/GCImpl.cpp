@@ -51,12 +51,12 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 }
 
 // static
-ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
+PERFORMANCE_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
     gc::internal::processObjectInMark<gc::internal::MarkTraits>(state, object);
 }
 
 // static
-ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
+PERFORMANCE_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
     gc::internal::processArrayInMark<gc::internal::MarkTraits>(state, array);
 }
 
@@ -80,9 +80,9 @@ bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
     return impl_->gc().mainThreadFinalizerProcessor().available();
 }
 
-ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {}
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
-ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
+ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
 }
 
@@ -90,7 +90,7 @@ bool gc::isMarked(ObjHeader* object) noexcept {
     return alloc::objectDataForObject(object).marked();
 }
 
-ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
+PERFORMANCE_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
 

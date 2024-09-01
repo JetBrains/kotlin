@@ -20,9 +20,7 @@ FILE: expectConstructor.kt
     public open expect class IOException : R|kotlin/Any| {
         public expect constructor(message: R|kotlin/String|, cause: R|kotlin/Throwable?|): R|IOException|
 
-        public expect constructor(message: R|kotlin/String|): R|IOException| {
-            super<R|kotlin/Any|>()
-        }
+        public expect constructor(message: R|kotlin/String|): R|IOException|
 
     }
     public final expect class EOFException : R|IOException| {

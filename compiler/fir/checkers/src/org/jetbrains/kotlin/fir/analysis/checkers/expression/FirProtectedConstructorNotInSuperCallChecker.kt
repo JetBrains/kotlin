@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.getConstructedClass
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -43,6 +44,7 @@ object FirProtectedConstructorNotInSuperCallChecker : FirFunctionCallChecker(Mpp
     @OptIn(PrivateForInline::class)
     private fun shouldAllowSuchCallNonetheless(symbol: FirConstructorSymbol, context: CheckerContext): Boolean {
         val containingFile = context.containingFile ?: return false
+        if (containingFile.declarations.singleOrNull() is FirCodeFragment) return true
         val original = symbol.originalIfFakeOverride() ?: symbol
         return original.origin.isJavaOrEnhancement && original.callableId.packageName == containingFile.packageFqName
     }

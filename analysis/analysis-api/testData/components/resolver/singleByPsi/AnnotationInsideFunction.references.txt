@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.Annotation) constructor()
+KtNameReferenceExpression(59,69): 'Annotation'
+  KtSimpleNameReference:
+    (in test.Annotation) constructor()

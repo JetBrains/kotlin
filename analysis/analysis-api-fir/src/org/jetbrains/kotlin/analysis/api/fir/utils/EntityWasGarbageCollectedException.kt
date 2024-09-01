@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-class EntityWasGarbageCollectedException(entity: String) : IllegalStateException() {
+internal class EntityWasGarbageCollectedException(entity: String) : IllegalStateException() {
     override val message: String = "$entity was garbage collected while KaSession session is still valid"
 }

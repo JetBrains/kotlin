@@ -1,44 +1,53 @@
 KaSamConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: java/lang/Runnable
+  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
+  location: TOP_LEVEL
+  modality: FINAL
   name: Runnable
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/Runnable
-  symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: function
       origin: SOURCE
       receiverParameter: null
-      returnType: KaFunctionalType:
-        annotationsList: []
+      returnType: KaFunctionType:
+        annotations: []
         typeArguments: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: null
       getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
@@ -46,7 +55,8 @@ KaSamConstructorSymbol:
 
       deprecationStatus: null
   ]
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null

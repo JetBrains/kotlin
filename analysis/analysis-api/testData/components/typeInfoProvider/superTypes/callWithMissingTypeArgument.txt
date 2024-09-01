@@ -1,0 +1,14 @@
+[direct super types]
+I<ERROR(Cannot infer argument for type parameter T)>
+
+[approximated direct super types]
+I<ERROR(Cannot infer argument for type parameter T)>
+
+[all super types]
+I<ERROR(Cannot infer argument for type parameter T)>
+kotlin.Any
+
+[approximated all super types]
+I<ERROR(Cannot infer argument for type parameter T)>
+kotlin.Any
+

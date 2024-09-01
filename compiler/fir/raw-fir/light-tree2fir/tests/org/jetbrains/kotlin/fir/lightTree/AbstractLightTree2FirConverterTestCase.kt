@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -15,7 +16,7 @@ import java.nio.file.Paths
 
 
 abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTestCase() {
-
+    @OptIn(ObsoleteTestInfrastructure::class)
     fun doTest(filePath: String) {
         val firFile = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(),

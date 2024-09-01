@@ -25,7 +25,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
     /** Constructs an empty string builder. */
     public actual constructor() : this("")
 
-    private var string: String = if (content !== undefined) content else ""
+    private var string: String = content
 
     actual override val length: Int
         get() = string.asDynamic().length

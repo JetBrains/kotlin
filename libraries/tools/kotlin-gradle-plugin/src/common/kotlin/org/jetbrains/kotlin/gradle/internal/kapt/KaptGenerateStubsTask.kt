@@ -137,7 +137,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.destinationAsFile = destinationDirectory.get().asFile
 
             if (useK2Kapt.get()) {
-                args.freeArgs += "-Xuse-kapt4"
+                args.freeArgs += "-Xuse-k2-kapt"
             }
         }
 
@@ -158,7 +158,4 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
         }
     }
-
-    override fun isIncrementalCompilationEnabled(): Boolean =
-        super.isIncrementalCompilationEnabled() && !useK2Kapt.get() && ("-Xuse-kapt4" !in compilerOptions.freeCompilerArgs.get())
 }

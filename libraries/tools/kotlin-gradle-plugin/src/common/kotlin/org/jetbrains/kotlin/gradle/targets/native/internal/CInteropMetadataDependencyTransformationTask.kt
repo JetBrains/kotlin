@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -14,6 +15,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -106,14 +109,12 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 
 
 @DisableCachingByDefault(because = "Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load")
-internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
+internal abstract class CInteropMetadataDependencyTransformationTask @Inject constructor(
     @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val cleaning: Cleaning,
     objectFactory: ObjectFactory,
-) : DefaultTask() {
-
-    private val currentBuild = project.currentBuild
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
 
@@ -137,12 +138,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputDirectory.resolve("${project.path.replace(":", ".")}-${sourceSet.name}.cinteropLibraries")) }
+        .apply { set(outputDirectory.resolve("${project.path.replace(":", ".")}-${sourceSet.name}.cinteropLibraries.json")) }
 
     @get:Internal
     internal val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
-            KotlinMetadataLibrariesIndexFile(file.asFile).read()
+            KotlinMetadataLibrariesIndexFile(file.asFile).readFiles()
         }
     }
 
@@ -155,15 +156,23 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         with bad 'visibleSourceSetNamesExcludingDependsOn'. This is okay, since cinterop transformations do not look
         into this field
          */
-        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty)
+        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty, PreparedKotlinToolingDiagnosticsCollector.create(this))
         val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.resolutionsToTransform()
-        val transformedLibraries = chooseVisibleSourceSets.flatMap(::materializeMetadata)
+        val transformedLibraries = chooseVisibleSourceSets.flatMap { resolution ->
+            materializeMetadata(resolution).map { (sourceSetName, cinteropFile) ->
+                TransformedMetadataLibraryRecord(
+                    moduleId = resolution.dependency.id.toString(),
+                    file = cinteropFile.toString(),
+                    sourceSetName = sourceSetName
+                )
+            }
+        }
         KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
     }
 
     private fun materializeMetadata(
         chooseVisibleSourceSets: ChooseVisibleSourceSets,
-    ): Iterable<File> {
+    ): Iterable<Pair<String /* sourceSetName */, File>> {
         return when (val metadataProvider = chooseVisibleSourceSets.metadataProvider) {
             /* Project to Project commonized cinterops are shared using configurations */
             is ProjectMetadataProvider -> emptyList()
@@ -174,14 +183,15 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
                 sourceSetContent.cinteropMetadataBinaries
                     .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
-                    .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
             }
         }
     }
 
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
-            .filterNot { it.dependency in currentBuild }
+            // filter all Project dependencies, this includes both from composite builds and the current build
+            .filterNot { it.dependency.id is ProjectComponentIdentifier }
     }
 }
 

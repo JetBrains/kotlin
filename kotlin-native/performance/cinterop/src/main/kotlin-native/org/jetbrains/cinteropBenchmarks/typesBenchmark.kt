@@ -131,3 +131,19 @@ actual class BoxedIntBenchmark actual constructor() {
         }
     }
 }
+
+actual class PinnedArrayBenchmark actual constructor() {
+    val size = 36
+    val vec1 = FloatArray(size) { it.toFloat() / 10 }
+    val vec2 = FloatArray(size) { it.toFloat() / 3 }
+
+    actual fun pinnedArrayBenchmark() {
+        for (i in 1..benchmarkSize) {
+            vec1.usePinned { first ->
+                vec2.usePinned { second ->
+                    vecSumAssign(size, first.addressOf(0), second.addressOf(0))
+                }
+            }
+        }
+    }
+}

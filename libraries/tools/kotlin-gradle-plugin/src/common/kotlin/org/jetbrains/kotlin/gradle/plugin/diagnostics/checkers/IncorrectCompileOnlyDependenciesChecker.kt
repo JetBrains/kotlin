@@ -5,11 +5,21 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncorrectCompileOnlyDependencyWarning.CompilationDependenciesPair
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 
+/**
+ * Verify that if a dependency is declared as `compileOnly`, in non-JVM targets it is also exposed as an `api` element.
+ * Exposing dependencies in this way is required to ensure that the Gradle metadata and KLib metadata are aligned.
+ */
+// Generally, this checker needs to be rethought.
+// - It's not good Gradle practice to compare declared dependencies, as they might change during resolution.
+//   See KT-69759
+// - KGP probably shouldn't even allow `compileOnly` in incompatible targets.
+//   See KT-58976
 internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChecker {
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
@@ -33,7 +43,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
     /**
      * Extract all dependencies of [target], satisfying:
      * 1. they are `compileOnly`
-     * 2. they are not exposed as api elements.
+     * 2. they are not exposed as `api` elements.
      *
      * Fetches Configurations leniently, just in case a plugin (e.g. AGP) isn't configured correctly.
      */
@@ -46,7 +56,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
             .orEmpty()
 
         fun Dependency.isInApiElements(): Boolean =
-            apiElementsDependencies.any { it.contentEquals(this) }
+            apiElementsDependencies.any { other -> this.isEquivalentTo(other) }
 
         val compilationsIncompatibleWithCompileOnly = target.compilations
             .filter { it.isPublished() }
@@ -85,7 +95,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
 
             // Technically, compileOnly dependencies should also be forbidden for
             // common compilations, but in practice such dependencies will
-            // filtered down to the actual target-specific compilations.
+            // filter down to the actual target-specific compilations.
             // Therefore, to avoid duplicated warning messages for dependencies
             // in commonMain and a ${target}Main, don't check common targets.
             KotlinPlatformType.common,
@@ -107,4 +117,25 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
         append(name)
         version?.let { append(':').append(it) }
     }
+
+    /**
+     * Approximate equality of two [Dependency]s.
+     *
+     * - Ignore [Dependency.getVersion], because `api("org.foo:lib:2.0")`
+     *   should prevent warnings about `compileOnly("org.foo:lib:1.0")`.
+     *
+     * - Don't use [Dependency.contentEquals], because it doesn't handle
+     *   Version Catalog or typesafe project accessors nicely.
+     *   See KT-69759.
+     *
+     * - Compare [Dependency.isProject], to avoid
+     *   `api(project(":foo"))` (which has `group = "test"`)
+     *   getting confused with `compileOnly("test:foo:1.0")`.
+     */
+    private fun Dependency.isEquivalentTo(other: Dependency): Boolean =
+        this.group == other.group
+                && this.name == other.name
+                && this.isProject() == other.isProject()
+
+    private fun Dependency.isProject(): Boolean = this is ProjectDependency
 }

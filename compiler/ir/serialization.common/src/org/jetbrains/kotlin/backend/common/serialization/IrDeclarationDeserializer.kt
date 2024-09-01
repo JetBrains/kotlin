@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -67,6 +69,7 @@ class IrDeclarationDeserializer(
     val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
     parent: IrDeclarationParent,
+    private val allowAlreadyBoundSymbols: Boolean,
     val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
@@ -100,6 +103,7 @@ class IrDeclarationDeserializer(
         return makeTypeProjection(deserializeIrType(encoding.typeIndex), encoding.variance)
     }
 
+    // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
         return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
     }
@@ -119,7 +123,6 @@ class IrDeclarationDeserializer(
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
-            null,
             symbol,
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
@@ -137,7 +140,6 @@ class IrDeclarationDeserializer(
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
-            null,
             symbol,
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
@@ -154,14 +156,14 @@ class IrDeclarationDeserializer(
             deserializeAnnotations(proto.annotationList)
         )
 
-    private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
 
     private fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
         return if (proto.annotationCount == 0) {
             SIMPLE_DYNAMIC_TYPE
         } else {
             val annotations = deserializeAnnotations(proto.annotationList)
-            IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
+            IrDynamicTypeImpl(annotations, Variance.INVARIANT)
         }
     }
 
@@ -245,16 +247,18 @@ class IrDeclarationDeserializer(
         val flags = TypeParameterFlags.decode(proto.base.flags)
 
         val factory = { symbol: IrTypeParameterSymbol ->
-            irFactory.createTypeParameter(
-                startOffset = coordinates.startOffset,
-                endOffset = coordinates.endOffset,
-                origin = deserializeIrDeclarationOrigin(proto.base.originName),
-                name = name,
-                symbol = symbol,
-                variance = flags.variance,
-                index = index,
-                isReified = flags.isReified
-            )
+            createIfUnbound(symbol) {
+                irFactory.createTypeParameter(
+                    startOffset = coordinates.startOffset,
+                    endOffset = coordinates.endOffset,
+                    origin = deserializeIrDeclarationOrigin(proto.base.originName),
+                    name = name,
+                    symbol = symbol,
+                    variance = flags.variance,
+                    index = index,
+                    isReified = flags.isReified
+                )
+            }
         }
 
         val sig: IdSignature
@@ -287,7 +291,7 @@ class IrDeclarationDeserializer(
         return result
     }
 
-    private fun deserializeIrValueParameter(proto: ProtoValueParameter, index: Int, setParent: Boolean = true): IrValueParameter =
+    private fun deserializeIrValueParameter(proto: ProtoValueParameter, setParent: Boolean = true): IrValueParameter =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -299,7 +303,6 @@ class IrDeclarationDeserializer(
                 type = deserializeIrType(nameAndType.typeIndex),
                 isAssignable = flags.isAssignable,
                 symbol = symbol.checkSymbolType(fallbackSymbolKind = null),
-                index = index,
                 varargElementType = if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
                 isCrossinline = flags.isCrossInline,
                 isNoinline = flags.isNoInline,
@@ -321,24 +324,26 @@ class IrDeclarationDeserializer(
                 flags.modality
             }
             symbolTable.declareClass(signature, { symbol.checkSymbolType(CLASS_SYMBOL) }) {
-                irFactory.createClass(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(proto.name),
-                    visibility = flags.visibility,
-                    symbol = it,
-                    kind = flags.kind,
-                    modality = effectiveModality,
-                    isExternal = flags.isExternal || isEffectivelyExternal,
-                    isCompanion = flags.isCompanion,
-                    isInner = flags.isInner,
-                    isData = flags.isData,
-                    isValue = flags.isValue,
-                    isExpect = flags.isExpect,
-                    isFun = flags.isFun,
-                    hasEnumEntries = flags.hasEnumEntries,
-                )
+                createIfUnbound(it) {
+                    irFactory.createClass(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(proto.name),
+                        visibility = flags.visibility,
+                        symbol = it,
+                        kind = flags.kind,
+                        modality = effectiveModality,
+                        isExternal = flags.isExternal || isEffectivelyExternal,
+                        isCompanion = flags.isCompanion,
+                        isInner = flags.isInner,
+                        isData = flags.isData,
+                        isValue = flags.isValue,
+                        isExpect = flags.isExpect,
+                        isFun = flags.isFun,
+                        hasEnumEntries = flags.hasEnumEntries,
+                    )
+                }
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
 
@@ -353,7 +358,7 @@ class IrDeclarationDeserializer(
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                 }
 
-                thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
+                thisReceiver = deserializeIrValueParameter(proto.thisReceiver)
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
@@ -397,18 +402,20 @@ class IrDeclarationDeserializer(
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, setParent: Boolean = true): IrTypeAlias =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             symbolTable.declareTypeAlias(uniqId, { symbol.checkSymbolType(TYPEALIAS_SYMBOL) }) {
-                val flags = TypeAliasFlags.decode(fcode)
-                val nameType = BinaryNameAndType.decode(proto.nameType)
-                irFactory.createTypeAlias(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(nameType.nameIndex),
-                    visibility = flags.visibility,
-                    symbol = it,
-                    isActual = flags.isActual,
-                    expandedType = deserializeIrType(nameType.typeIndex),
-                )
+                createIfUnbound(it) {
+                    val flags = TypeAliasFlags.decode(fcode)
+                    val nameType = BinaryNameAndType.decode(proto.nameType)
+                    irFactory.createTypeAlias(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(nameType.nameIndex),
+                        visibility = flags.visibility,
+                        symbol = it,
+                        isActual = flags.isActual,
+                        expandedType = deserializeIrType(nameType.typeIndex),
+                    )
+                }
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
             }
@@ -432,7 +439,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeValueParameters(protos: List<ProtoValueParameter>): List<IrValueParameter> {
-        return protos.memoryOptimizedMapIndexed { index, proto -> deserializeIrValueParameter(proto, index) }
+        return protos.memoryOptimizedMap { proto -> deserializeIrValueParameter(proto) }
     }
 
     /**
@@ -532,10 +539,10 @@ class IrDeclarationDeserializer(
                 withBodyGuard {
                     valueParameters = deserializeValueParameters(proto.valueParameterList)
                     dispatchReceiverParameter =
-                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
+                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver)
                         else null
                     extensionReceiverParameter =
-                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
+                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver)
                         else null
                     contextReceiverParametersCount =
                         if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
@@ -565,25 +572,27 @@ class IrDeclarationDeserializer(
         ) { symbol, idSig, startOffset, endOffset, origin, fcode ->
             val flags = FunctionFlags.decode(fcode)
             symbolTable.declareSimpleFunction(idSig, { symbol }) {
-                val nameType = BinaryNameAndType.decode(proto.base.nameType)
-                irFactory.createSimpleFunction(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(nameType.nameIndex),
-                    visibility = flags.visibility,
-                    isInline = flags.isInline,
-                    isExpect = flags.isExpect,
-                    returnType = null,
-                    modality = flags.modality,
-                    symbol = it,
-                    isTailrec = flags.isTailrec,
-                    isSuspend = flags.isSuspend,
-                    isOperator = flags.isOperator,
-                    isInfix = flags.isInfix,
-                    isExternal = flags.isExternal || isEffectivelyExternal,
-                    isFakeOverride = flags.isFakeOverride,
-                )
+                createIfUnbound(it) {
+                    val nameType = BinaryNameAndType.decode(proto.base.nameType)
+                    irFactory.createSimpleFunction(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(nameType.nameIndex),
+                        visibility = flags.visibility,
+                        isInline = flags.isInline,
+                        isExpect = flags.isExpect,
+                        returnType = null,
+                        modality = flags.modality,
+                        symbol = it,
+                        isTailrec = flags.isTailrec,
+                        isSuspend = flags.isSuspend,
+                        isOperator = flags.isOperator,
+                        isInfix = flags.isInfix,
+                        isExternal = flags.isExternal || isEffectivelyExternal,
+                        isFakeOverride = flags.isFakeOverride,
+                    )
+                }
             }.apply {
                 overriddenSymbols =
                     proto.overriddenList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(FUNCTION_SYMBOL) }
@@ -612,7 +621,9 @@ class IrDeclarationDeserializer(
     private fun deserializeIrEnumEntry(proto: ProtoEnumEntry, setParent: Boolean = true): IrEnumEntry =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, uniqId, startOffset, endOffset, origin, _ ->
             symbolTable.declareEnumEntry(uniqId, { symbol.checkSymbolType(ENUM_ENTRY_SYMBOL) }) {
-                irFactory.createEnumEntry(startOffset, endOffset, origin, deserializeName(proto.name), it)
+                createIfUnbound(it) {
+                    irFactory.createEnumEntry(startOffset, endOffset, origin, deserializeName(proto.name), it)
+                }
             }.apply {
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
@@ -640,19 +651,21 @@ class IrDeclarationDeserializer(
             val flags = FunctionFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.base.nameType)
             symbolTable.declareConstructor(idSig, { symbol }) {
-                irFactory.createConstructor(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(nameType.nameIndex),
-                    visibility = flags.visibility,
-                    isInline = flags.isInline,
-                    isExpect = flags.isExpect,
-                    returnType = null,
-                    symbol = it,
-                    isPrimary = flags.isPrimary,
-                    isExternal = flags.isExternal || isEffectivelyExternal,
-                )
+                createIfUnbound(it) {
+                    irFactory.createConstructor(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(nameType.nameIndex),
+                        visibility = flags.visibility,
+                        isInline = flags.isInline,
+                        isExpect = flags.isExpect,
+                        returnType = null,
+                        symbol = it,
+                        isPrimary = flags.isPrimary,
+                        isExternal = flags.isExternal || isEffectivelyExternal,
+                    )
+                }
             }
         }
 
@@ -664,18 +677,20 @@ class IrDeclarationDeserializer(
             val flags = FieldFlags.decode(fcode)
 
             val field = symbolTable.declareField(uniqId, { symbol.checkSymbolType(FIELD_SYMBOL) }) {
-                irFactory.createField(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(nameType.nameIndex),
-                    visibility = flags.visibility,
-                    symbol = it,
-                    type = type,
-                    isFinal = flags.isFinal,
-                    isStatic = flags.isStatic,
-                    isExternal = flags.isExternal || isEffectivelyExternal,
-                )
+                createIfUnbound(it) {
+                    irFactory.createField(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(nameType.nameIndex),
+                        visibility = flags.visibility,
+                        symbol = it,
+                        type = type,
+                        isFinal = flags.isFinal,
+                        isStatic = flags.isStatic,
+                        isExternal = flags.isExternal || isEffectivelyExternal,
+                    )
+                }
             }
 
             field.usingParent {
@@ -720,22 +735,24 @@ class IrDeclarationDeserializer(
             val flags = PropertyFlags.decode(fcode)
             val propertySymbol: IrPropertySymbol = symbol.checkSymbolType(PROPERTY_SYMBOL)
             val prop = symbolTable.declareProperty(uniqId, { propertySymbol }) {
-                irFactory.createProperty(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = deserializeName(proto.name),
-                    visibility = flags.visibility,
-                    modality = flags.modality,
-                    symbol = it,
-                    isVar = flags.isVar,
-                    isConst = flags.isConst,
-                    isLateinit = flags.isLateinit,
-                    isDelegated = flags.isDelegated,
-                    isExternal = flags.isExternal || isEffectivelyExternal,
-                    isExpect = flags.isExpect,
-                    isFakeOverride = flags.isFakeOverride,
-                )
+                createIfUnbound(it) {
+                    irFactory.createProperty(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = origin,
+                        name = deserializeName(proto.name),
+                        visibility = flags.visibility,
+                        modality = flags.modality,
+                        symbol = it,
+                        isVar = flags.isVar,
+                        isConst = flags.isConst,
+                        isLateinit = flags.isLateinit,
+                        isDelegated = flags.isDelegated,
+                        isExternal = flags.isExternal || isEffectivelyExternal,
+                        isExpect = flags.isExpect,
+                        isFakeOverride = flags.isFakeOverride,
+                    )
+                }
             }
 
             prop.apply {
@@ -837,5 +854,14 @@ class IrDeclarationDeserializer(
         }
 
         throw IrSymbolTypeMismatchException(S::class.java, this)
+    }
+
+    private inline fun <Declaration : IrDeclaration, Symbol : IrBindableSymbol<*, Declaration>> createIfUnbound(
+        symbol: Symbol,
+        create: () -> Declaration,
+    ): Declaration = if (allowAlreadyBoundSymbols && symbol.isBound) {
+        symbol.owner
+    } else {
+        create()
     }
 }

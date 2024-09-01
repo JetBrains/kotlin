@@ -97,6 +97,166 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContainerSource {
+    @Test
+    public void testAllFilesPresentInContainerSource() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Js {
+      @Test
+      public void testAllFilesPresentInJs() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("memberFunction.kt")
+      public void testMemberFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("memberProperty.kt")
+      public void testMemberProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/memberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("primaryConstructor.kt")
+      public void testPrimaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/primaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("secondaryConstructor.kt")
+      public void testSecondaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/secondaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunction.kt")
+      public void testTopLevelFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelProperty.kt")
+      public void testTopLevelProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/js/topLevelProperty.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Jvm {
+      @Test
+      public void testAllFilesPresentInJvm() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("memberFunction.kt")
+      public void testMemberFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("memberProperty.kt")
+      public void testMemberProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/memberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("primaryConstructor.kt")
+      public void testPrimaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/primaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("secondaryConstructor.kt")
+      public void testSecondaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/secondaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunction.kt")
+      public void testTopLevelFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunctionWithJvmName.kt")
+      public void testTopLevelFunctionWithJvmName() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelFunctionWithJvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelProperty.kt")
+      public void testTopLevelProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelPropertyWithJvmName.kt")
+      public void testTopLevelPropertyWithJvmName() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/jvm/topLevelPropertyWithJvmName.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Metadata {
+      @Test
+      public void testAllFilesPresentInMetadata() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("memberFunction.kt")
+      public void testMemberFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("memberProperty.kt")
+      public void testMemberProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/memberProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("primaryConstructor.kt")
+      public void testPrimaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/primaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("secondaryConstructor.kt")
+      public void testSecondaryConstructor() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/secondaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFunction.kt")
+      public void testTopLevelFunction() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelProperty.kt")
+      public void testTopLevelProperty() {
+        runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/containerSource/metadata/topLevelProperty.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js")
   @TestDataPath("$PROJECT_ROOT")
   public class Js {

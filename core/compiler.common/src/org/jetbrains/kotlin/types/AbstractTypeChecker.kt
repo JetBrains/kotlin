@@ -138,9 +138,6 @@ open class TypeCheckerState(
 
         deque.push(start)
         while (deque.isNotEmpty()) {
-            if (visitedSupertypes.size > 1000) {
-                error("Too many supertypes for type: $start. Supertypes = ${visitedSupertypes.joinToString()}")
-            }
             val current = deque.pop()
             if (!visitedSupertypes.add(current)) continue
 
@@ -223,10 +220,18 @@ object AbstractTypeChecker {
         typeConstructor: TypeConstructorMarker,
         superConstructor: TypeConstructorMarker
     ): Boolean {
+        return isSubtypeOfClass(state.typeSystemContext, typeConstructor, superConstructor)
+    }
+
+    fun isSubtypeOfClass(
+        typeSystemContext: TypeSystemContext,
+        typeConstructor: TypeConstructorMarker,
+        superConstructor: TypeConstructorMarker,
+    ): Boolean {
         if (typeConstructor == superConstructor) return true
-        with(state.typeSystemContext) {
+        with(typeSystemContext) {
             for (superType in typeConstructor.supertypes()) {
-                if (isSubtypeOfClass(state, superType.typeConstructor(), superConstructor)) {
+                if (isSubtypeOfClass(typeSystemContext, superType.typeConstructor(), superConstructor)) {
                     return true
                 }
             }

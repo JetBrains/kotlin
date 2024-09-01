@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  Value [classTypeParameter.kt]
+KtNameReferenceExpression(48,53): 'Value'
+  KtSimpleNameReference:
+    (in <local>: Foo) Value [classTypeParameter.kt]

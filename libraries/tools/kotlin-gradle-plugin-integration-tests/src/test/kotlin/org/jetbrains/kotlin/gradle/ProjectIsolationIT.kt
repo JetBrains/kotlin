@@ -14,13 +14,10 @@ import kotlin.io.path.appendText
 class ProjectIsolationIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(configurationCache = true, projectIsolation = true)
+        get() = super.defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED, projectIsolation = true)
 
     @DisplayName("JVM project should be compatible with project isolation")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_1,
-    )
     @GradleTest
     fun testProjectIsolationInJvmSimple(gradleVersion: GradleVersion) {
         project(
@@ -34,16 +31,13 @@ class ProjectIsolationIT : KGPBaseTest() {
     }
 
     @DisplayName("project with buildSrc should be compatible with project isolation")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4
-    )
     @JvmGradlePluginTests
     @GradleTest
     fun testProjectIsolationWithBuildSrc(gradleVersion: GradleVersion) {
         project(
             projectName = "kt-63990-buildSrcWithKotlinJvmPlugin",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = null)
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED)
         ) {
             build("tasks")
         }

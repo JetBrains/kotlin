@@ -6,21 +6,26 @@
 #include <cstdint>
 #include <random>
 
-#include "Cell.hpp"
-#include "CustomAllocConstants.hpp"
-#include "ExtraObjectPage.hpp"
+#include "CustomAllocatorTestSupport.hpp"
 #include "gtest/gtest.h"
+
+#include "Cell.hpp"
+#include "ExtraObjectPage.hpp"
+#include "FixedBlockPage.hpp"
 #include "NextFitPage.hpp"
 #include "TypeInfo.h"
+
+using testing::_;
 
 namespace {
 
 using NextFitPage = typename kotlin::alloc::NextFitPage;
+using FixedBlockPage = typename kotlin::alloc::FixedBlockPage;
 using Cell = typename kotlin::alloc::Cell;
 
 TypeInfo fakeType = {.typeInfo_ = &fakeType, .flags_ = 0}; // a type without a finalizer
 
-inline constexpr const size_t MIN_BLOCK_SIZE = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1;
+inline constexpr const size_t MIN_BLOCK_SIZE = FixedBlockPage::MAX_BLOCK_SIZE + 1;
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;
@@ -129,10 +134,22 @@ TEST(CustomAllocTest, NextFitPageSweepCoallesce) {
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
     NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
-    EXPECT_TRUE(alloc(page, (NEXT_FIT_PAGE_CELL_COUNT-1) / 2 - 1));
+    EXPECT_TRUE(alloc(page, (NextFitPage::cellCount()-1) / 2 - 1));
     EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
-    EXPECT_TRUE(alloc(page, (NEXT_FIT_PAGE_CELL_COUNT-1) - 1));
+    EXPECT_TRUE(alloc(page, (NextFitPage::cellCount()-1) - 1));
     page->Destroy();
+}
+
+
+TEST(CustomAllocTest, NextFitPageSchedulerNotification) {
+    kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;
+    EXPECT_CALL(hookHandle.hook(), Call(_));
+
+    NextFitPage * page = NextFitPage ::Create(MIN_BLOCK_SIZE);
+    while (alloc(page, MIN_BLOCK_SIZE)) {}
+    page->Destroy();
+
+    testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
 }
 
 #undef MIN_BLOCK_SIZE

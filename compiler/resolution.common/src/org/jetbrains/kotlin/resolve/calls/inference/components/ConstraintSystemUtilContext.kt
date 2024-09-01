@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
  *   but we need access classes from :compiler:resolution for this function implementation
  */
 interface ConstraintSystemUtilContext {
+    /**
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
+     */
     fun TypeVariableMarker.shouldBeFlexible(): Boolean
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
     fun KotlinTypeMarker.unCapture(): KotlinTypeMarker

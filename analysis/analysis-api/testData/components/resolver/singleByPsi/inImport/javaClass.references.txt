@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in java.util) open class HashMap<K : kotlin.Any!, V : kotlin.Any!> : java.util.AbstractMap<K!, V!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableMap<K, V>
+KtNameReferenceExpression(17,24): 'HashMap'
+  KtSimpleNameReference:
+    (in java.util) open class HashMap<K : kotlin.Any!, V : kotlin.Any!> : java.util.AbstractMap<K!, V!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableMap<K, V>

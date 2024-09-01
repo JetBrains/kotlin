@@ -1,5 +1,6 @@
-KtSimpleNameReference:
-  (in MyMap) operator fun set(k: K, v: V)
-
-KtSimpleNameReference:
-  (in MyMap) operator fun set(k: K, v: V)
+KtOperationReferenceExpression(128,130): '++'
+  KtSimpleNameReference:
+    (in MyMap) operator fun set(k: K, v: V)
+  
+  KtSimpleNameReference:
+    (in MyMap) operator fun set(k: K, v: V)

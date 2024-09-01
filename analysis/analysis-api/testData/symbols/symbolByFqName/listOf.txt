@@ -1,8 +1,9 @@
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,24 +12,24 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: FileWalkDirection
   origin: LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/io/FileWalkDirection
       ]
       type: kotlin/Enum<kotlin/io/FileWalkDirection>
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
   deprecationStatus: null

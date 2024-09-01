@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -78,5 +81,13 @@ class FirDefaultStarImportingScope(
         if (!wasFoundAny) {
             second.processDeclaredConstructors(processor)
         }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDefaultStarImportingScope {
+        return FirDefaultStarImportingScope(
+            first.withReplacedSessionOrNull(newSession, newScopeSession),
+            second.withReplacedSessionOrNull(newSession, newScopeSession),
+        )
     }
 }

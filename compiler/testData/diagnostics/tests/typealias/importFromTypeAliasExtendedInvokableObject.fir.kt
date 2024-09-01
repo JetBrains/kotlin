@@ -12,4 +12,4 @@ object TestCase {
 }
 
 // FILE: 2.kt
-import simpleObject.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_WARNING("SimpleObject; TestCase")!>SimpleObject<!>.extendedPropertyLikeClbl
+import simpleObject.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("SimpleObject; TestCase")!>SimpleObject<!>.extendedPropertyLikeClbl

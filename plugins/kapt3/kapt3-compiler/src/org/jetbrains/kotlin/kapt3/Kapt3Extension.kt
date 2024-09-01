@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
-import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
+import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
+import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.modules.TargetId
@@ -263,11 +263,11 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, generationState)
+        return KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, generationState, emptyList())
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
-        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass = true)
+        val converter = KaptStubConverter(kaptContext, generateNonExistentClass = true)
 
         val (stubGenerationTime, kaptStubs) = measureTimeMillis {
             converter.convert()
@@ -324,7 +324,7 @@ abstract class AbstractKapt3Extension(
     protected open fun saveIncrementalData(
         kaptContext: KaptContextForStubGeneration,
         messageCollector: MessageCollector,
-        converter: ClassFileToSourceStubConverter
+        converter: KaptStubConverter
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 

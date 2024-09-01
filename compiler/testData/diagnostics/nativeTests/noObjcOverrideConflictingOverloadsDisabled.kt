@@ -1,5 +1,4 @@
 // LANGUAGE: -ObjCSignatureOverrideAnnotation
-// FIR_IDENTICAL
 // WITH_PLATFORM_LIBS
 
 import kotlinx.cinterop.*

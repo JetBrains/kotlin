@@ -1,20 +1,24 @@
 <caret_1>:
-  KDocReference:
-    0: (in test) fun kotlin.Any.function()
-    1: (in test) fun test.Base.function(i: kotlin.Int)
+  KDocName(113,126): 'test.function'
+    KDocReference:
+      0: (in test) fun kotlin.Any.function()
+      1: (in test) fun test.Base.function(i: kotlin.Int)
 
 <caret_2>:
-  KDocReference:
-    0: (in test) fun kotlin.Any.function()
-    1: (in test) fun test.Base.function(i: kotlin.Int)
+  KDocName(132,140): 'function'
+    KDocReference:
+      0: (in test) fun kotlin.Any.function()
+      1: (in test) fun test.Base.function(i: kotlin.Int)
 
 <caret_3>:
-  KDocReference:
-    0: (in test) fun kotlin.Any.function()
-    1: (in test) fun test.Base.function(i: kotlin.Int)
-    2: (in test.Base) fun function()
+  KDocName(150,163): 'Base.function'
+    KDocReference:
+      0: (in test) fun kotlin.Any.function()
+      1: (in test) fun test.Base.function(i: kotlin.Int)
+      2: (in test.Base) fun function()
 
 <caret_4>:
-  KDocReference:
-    0: (in test) fun kotlin.Any.function()
-    1: (in test) fun test.Base.function(i: kotlin.Int)
+  KDocName(169,187): 'test.Base.function'
+    KDocReference:
+      0: (in test) fun kotlin.Any.function()
+      1: (in test) fun test.Base.function(i: kotlin.Int)

@@ -143,7 +143,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     private fun SmartPrinter.printInfo(declaration: FirCallableDeclaration, scope: FirTypeScope, counter: SymbolCounter) {
-        val origin = declaration.origin.takeUnless { it == FirDeclarationOrigin.BuiltIns } ?: FirDeclarationOrigin.Library
+        val origin = declaration.origin.takeUnless { it.isBuiltIns } ?: FirDeclarationOrigin.Library
         print("[$origin]: ")
         if (declaration.hiddenEverywhereBesideSuperCallsStatus != null) {
             print("/* hidden beside supers */ ")

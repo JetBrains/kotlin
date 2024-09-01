@@ -39,8 +39,16 @@ class SummaryReport {
 
     private fun PrintWriter.writeReportBody() {
         tag("p") {
-            println("Total defects: ${totalDefects().tag("b")}, unique: ${totalUnique().tag("b")}")
+            println("<h1>Total defects: ${totalDefects().tag("b")}, unique: ${totalUnique().tag("b")}</h1>")
         }
+
+        val defectMessagesCounter = defectsByInfo.keys.groupingBy { it.type.messageText }.eachCount()
+        for (defect in defectMessagesCounter.keys) {
+            tag("p") {
+                println("<b>${defectMessagesCounter[defect]}</b> reports of <b>$defect</b>")
+            }
+        }
+
 
         for (info in defectsByInfo.keys.sorted()) {
             val locations = defectsByInfo[info]!!
@@ -79,28 +87,28 @@ class SummaryReport {
                 when (location) {
                     is Location.JarFile ->
                         tableDataWithClass(
-                                "location",
-                                location.jarFileName.replace("-", NON_BREAKING_HYPHEN)
+                            "location",
+                            location.jarFileName.replace("-", NON_BREAKING_HYPHEN)
                         )
                     is Location.Class ->
                         tableDataWithClass(
-                                "location",
-                                location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
-                                location.className.withTag("code")
+                            "location",
+                            location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
+                            location.className.withTag("code")
                         )
                     is Location.Method ->
                         tableDataWithClass(
-                                "location",
-                                location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
-                                location.className.withTag("code"),
-                                location.methodName.withTag("code")
+                            "location",
+                            location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
+                            location.className.withTag("code"),
+                            location.methodName.withTag("code")
                         )
                     is Location.Field ->
                         tableDataWithClass(
-                                "location",
-                                location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
-                                location.className.withTag("code"),
-                                location.fieldName.withTag("code")
+                            "location",
+                            location.jarFileName.replace("-", NON_BREAKING_HYPHEN),
+                            location.className.withTag("code"),
+                            location.fieldName.withTag("code")
                         )
                 }
             }

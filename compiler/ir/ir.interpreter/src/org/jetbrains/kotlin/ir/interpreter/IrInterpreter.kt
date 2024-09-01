@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
@@ -105,7 +106,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             is IrGetObjectValue -> interpretGetObjectValue(element)
             is IrGetEnumValue -> interpretGetEnumValue(element)
             is IrEnumEntry -> interpretEnumEntry(element)
-            is IrConst<*> -> interpretConst(element)
+            is IrConst -> interpretConst(element)
             is IrVariable -> interpretVariable(element)
             is IrSetValue -> interpretSetValue(element)
             is IrTypeOperatorCall -> interpretTypeOperatorCall(element)
@@ -286,7 +287,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         interpretConstructorCall(constructorCall)
     }
 
-    private fun interpretConst(expression: IrConst<*>) {
+    private fun interpretConst(expression: IrConst) {
         fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
             UnsignedType.UBYTE -> irBuiltIns.byteType
             UnsignedType.USHORT -> irBuiltIns.shortType
@@ -374,7 +375,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic -> {
                 // for java static variables
                 when (val initializerExpression = field.initializer?.expression) {
-                    is IrConst<*> -> callStack.pushSimpleInstruction(initializerExpression)
+                    is IrConst -> callStack.pushSimpleInstruction(initializerExpression)
                     else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
@@ -384,7 +385,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.property
                 val isConst = propertyOwner.isConst ||
-                        propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
+                        propertyOwner?.backingField?.initializer?.expression is IrConst ||
                         propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
                 verify(isConst) { "Cannot interpret get method on top level non const properties" }
                 callStack.pushCompoundInstruction(field.initializer?.expression)
@@ -525,12 +526,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val args = expression.elements.flatMap {
             return@flatMap when (val result = callStack.popState()) {
                 is Wrapper -> listOf(result.value)
-                is Primitive<*> -> when {
+                is Primitive -> when {
                     expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> listOf(result)
                     else -> arrayToList(result.value)
                 }
                 is Common -> when {
-                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive<*>).value)
+                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive).value)
                     else -> listOf(result.asProxy(callInterceptor))
                 }
                 else -> listOf(result)
@@ -543,7 +544,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
                 val primitiveArray = args.map {
                     when (it) {
-                        is Proxy -> (it.state.fields.values.single() as Primitive<*>).value  // is unsigned number
+                        is Proxy -> (it.state.fields.values.single() as Primitive).value  // is unsigned number
                         else -> it                                                                 // is primitive number
                     }
                 }
@@ -578,7 +579,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val result = mutableListOf<String>()
         repeat(expression.arguments.size) {
             result += when (val state = callStack.popState()) {
-                is Primitive<*> -> state.value.toString()
+                is Primitive -> state.value.toString()
                 is Wrapper -> state.value.toString()
                 else -> state.toString()
             }

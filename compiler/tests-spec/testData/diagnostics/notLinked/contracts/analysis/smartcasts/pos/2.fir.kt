@@ -28,7 +28,7 @@ fun case_2(value_1: Any?, value_2: Any?) {
 fun case_3(value_1: Any?, value_2: Any?) {
     funWithReturnsAndInvertCondition(value_1 !is String || value_2 != null)
     println(value_1.length)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 4
@@ -95,19 +95,19 @@ fun case_7(value_1: Any?, value_2: Any?) {
 fun case_8(value_1: Any?, value_2: Any?) {
     if (funWithReturnsTrueAndInvertCondition(value_1 !is String || value_2 != null)) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!funWithReturnsFalseAndInvertCondition(value_1 !is String || value_2 != null)) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNullAndInvertCondition(value_1 !is String || value_2 != null) != null) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 !is String || value_2 != null) == null) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 

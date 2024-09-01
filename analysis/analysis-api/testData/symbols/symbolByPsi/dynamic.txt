@@ -1,52 +1,60 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.p)
     receiverParameter: null
     returnType: KaDynamicType:
-      annotationsList: []
+      annotations: []
       type: dynamic
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Foo.p
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaDynamicType:
-      annotationsList: []
+      annotations: []
       type: dynamic
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Foo
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -62,24 +70,24 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: p
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getP
@@ -87,27 +95,32 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaAnonymousFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
+  location: LOCAL
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
-  symbolKind: LOCAL
-  typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /Foo.f
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -123,55 +136,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: f
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p
       origin: SOURCE
       receiverParameter: null
       returnType: KaDynamicType:
-        annotationsList: []
+        annotations: []
         type: dynamic
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(dynamic.kt)
       getContainingJvmClassName: Foo
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -180,19 +199,19 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Foo
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

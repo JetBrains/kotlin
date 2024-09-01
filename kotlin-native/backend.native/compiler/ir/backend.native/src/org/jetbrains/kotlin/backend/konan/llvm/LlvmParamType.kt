@@ -15,4 +15,4 @@ class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParamete
 /**
  * LLVM function's return type with its attributes.
  */
-class LlvmRetType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList(), val isObjectType: Boolean = false)
+class LlvmRetType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList(), val isObjectType: Boolean)

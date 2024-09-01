@@ -23,7 +23,7 @@ class B :  LinkedList<Int>(), List<Int> {
     override val size: Int
         get() = 2
 
-    override fun addFirst(e: Int?) {}
+    override fun addFirst(e: Int) {}
 }
 
 class C : LinkedList<Int?>(), MutableList<Int?>
@@ -53,7 +53,6 @@ fun test(a: A, b: B, c: C, d: D){
     a.removeAt(1)
     a.remove(1)
     a.addFirst(1)
-    a.addLast(null)
     a.removeFirst()
     a.removeLast()
 
@@ -64,7 +63,6 @@ fun test(a: A, b: B, c: C, d: D){
     b.removeAt(1)
     b.remove(1)
     b.addFirst(1)
-    b.addLast(null)
     b.removeFirst()
     b.removeLast()
 
@@ -75,7 +73,6 @@ fun test(a: A, b: B, c: C, d: D){
     c.removeAt(1)
     c.remove(1)
     c.addFirst(1)
-    c.addLast(null)
     c.removeFirst()
     c.removeLast()
 
@@ -86,7 +83,6 @@ fun test(a: A, b: B, c: C, d: D){
     d.removeAt(1)
     d.remove(1)
     d.addFirst(1)
-    d.addLast(null)
     d.removeFirst()
     d.removeLast()
 }

@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.mpp.TypeRefMarker
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.resolvedTypeRef]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedTypeRef]
  */
 abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
-    abstract val type: ConeKotlinType
+    abstract val coneType: ConeKotlinType
     abstract val delegatedTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

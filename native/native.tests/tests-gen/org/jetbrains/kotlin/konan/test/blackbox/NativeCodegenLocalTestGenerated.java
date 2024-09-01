@@ -60,6 +60,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     public void testAssociatedObjects1_testGlobalOptimizations2() {
       runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations2.kt");
     }
+
+    @Test
+    @TestMetadata("associatedObjects_multiFile.kt")
+    public void testAssociatedObjects_multiFile() {
+      runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects_multiFile.kt");
+    }
   }
 
   @Nested
@@ -851,6 +857,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("assertDisabled.kt")
+    public void testAssertDisabled() {
+      runTest("native/native.tests/testData/codegen/fileCheck/assertDisabled.kt");
+    }
+
+    @Test
     @TestMetadata("atomics.kt")
     public void testAtomics() {
       runTest("native/native.tests/testData/codegen/fileCheck/atomics.kt");
@@ -989,6 +1001,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("localClassesInInlineFunctionExtraction.kt")
+    public void testLocalClassesInInlineFunctionExtraction() {
+      runTest("native/native.tests/testData/codegen/fileCheck/localClassesInInlineFunctionExtraction.kt");
+    }
+
+    @Test
     @TestMetadata("no_frame_on_constant_object_access.kt")
     public void testNo_frame_on_constant_object_access() {
       runTest("native/native.tests/testData/codegen/fileCheck/no_frame_on_constant_object_access.kt");
@@ -1004,6 +1022,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     @TestMetadata("replace_invoke_with_call.kt")
     public void testReplace_invoke_with_call() {
       runTest("native/native.tests/testData/codegen/fileCheck/replace_invoke_with_call.kt");
+    }
+
+    @Test
+    @TestMetadata("runtime_attributes_compatible.kt")
+    public void testRuntime_attributes_compatible() {
+      runTest("native/native.tests/testData/codegen/fileCheck/runtime_attributes_compatible.kt");
     }
 
     @Test
@@ -1832,6 +1856,35 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       @TestMetadata("callOnValueOverPrimitiveClass.kt")
       public void testCallOnValueOverPrimitiveClass() {
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/reflection/objc")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Objc {
+      @Test
+      public void testAllFilesPresentInObjc() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("class.kt")
+      public void testClass() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/class.kt");
+      }
+
+      @Test
+      @TestMetadata("platformClass.kt")
+      public void testPlatformClass() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/platformClass.kt");
+      }
+
+      @Test
+      @TestMetadata("protocol.kt")
+      public void testProtocol() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/protocol.kt");
       }
     }
   }

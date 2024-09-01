@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-NO_CANDIDATES
+KtNameReferenceExpression(7,8): 'S'
+  NO_CANDIDATES

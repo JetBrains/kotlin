@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: kotlin/collections/listOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,59 +17,136 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: listOf
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
     ]
     type: kotlin/collections/List<T>
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: element
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.CollectionsKt
-      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/collections/listOf
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
+  typeParameters: [
+    KaTypeParameterSymbol(T)
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: elements
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin.collections.CollectionsKt
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/internal/InlineOnly()
       psi: null
   ]
   callableId: kotlin/collections/listOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -84,90 +162,25 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: listOf
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
     ]
     type: kotlin/collections/List<T>
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
-
-KaFunctionSymbol:
-  annotationsList: []
-  callableId: kotlin/collections/listOf
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  modality: FINAL
-  name: listOf
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotationsList: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotationsList: []
-        type: T
-    ]
-    type: kotlin/collections/List<T>
-  symbolKind: TOP_LEVEL
-  typeParameters: [
-    KaTypeParameterSymbol(T)
-  ]
-  valueParameters: [
-    KaValueParameterSymbol:
-      annotationsList: []
-      callableId: null
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isCrossinline: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVararg: true
-      name: elements
-      origin: SOURCE
-      receiverParameter: null
-      returnType: KaTypeParameterType:
-        annotationsList: []
-        type: T
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingFileSymbol: null
-      getContainingJvmClassName: kotlin.collections.CollectionsKt
-      getContainingModule: KtLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
-  ]
-  visibility: Public
-  getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin.collections.CollectionsKt
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in MyRestrictedApi) constructor(explanation: kotlin.String, allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, allowedInTestonlyTargets: kotlin.Boolean) (psi: ClsClassImpl)
+KtNameReferenceExpression(138,153): 'MyRestrictedApi'
+  KtSimpleNameReference:
+    (in MyRestrictedApi) constructor(explanation: kotlin.String, allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, allowedInTestonlyTargets: kotlin.Boolean) (psi: ClsClassImpl)

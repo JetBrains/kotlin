@@ -102,7 +102,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                     is VariableAssignmentNode -> {
                         node.fir.rValue.mark()
                     }
-                    is FunctionCallNode -> {
+                    is FunctionCallExitNode -> {
                         node.fir.forEachArgument { arg, range ->
                             if (!isValidScope || range == null) {
                                 arg.mark()
@@ -125,8 +125,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     private class InvocationDataCollector(
         val lambdaSymbols: Set<FirBasedSymbol<*>>
     ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
-        override fun visitFunctionCallNode(
-            node: FunctionCallNode,
+        override fun visitFunctionCallExitNode(
+            node: FunctionCallExitNode,
             data: PathAwareLambdaInvocationInfo
         ): PathAwareLambdaInvocationInfo {
             var dataForNode = visitNode(node, data)

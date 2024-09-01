@@ -90,7 +90,7 @@ public class VarArgTest extends CodegenTestCase {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
         Method main = generateFunction("test");
         String[] args = {"mama", "papa"};
-        String[] result = (String []) main.invoke(null, new Object[] {args});
+        String[] result = (String[]) main.invoke(null, new Object[] {args});
         assertNotSame(args, result);
         assertTrue(Arrays.equals(args, result));
     }

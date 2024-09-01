@@ -1,7 +1,8 @@
-Assertion failed
+---
 assert(hello.reversed() == emptyList<String>())
        |     |          |  |
        |     |          |  []
        |     |          false
        |     [World, Hello]
        [Hello, World]
+---

@@ -1,16 +1,19 @@
 packages: 2
   KaPackageSymbol:
     fqName: rex1
+    location: TOP_LEVEL
     origin: SOURCE
   KaPackageSymbol:
     fqName: rex2
+    location: TOP_LEVEL
     origin: SOURCE
 classifiers: 2
-  KaNamedClassOrObjectSymbol:
-    annotationsList: []
+  KaNamedClassSymbol:
+    annotations: []
     classId: rex1/RexClass1
     classKind: INTERFACE
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -19,27 +22,28 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    location: TOP_LEVEL
     modality: ABSTRACT
     name: RexClass1
     origin: SOURCE
     superTypes: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any
     ]
-    symbolKind: TOP_LEVEL
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtClass RexClass1 [from rex1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass RexClass1]
-  KaNamedClassOrObjectSymbol:
-    annotationsList: []
+  KaNamedClassSymbol:
+    annotations: []
     classId: rex2/RexClass2
     classKind: INTERFACE
     companionObject: null
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -48,26 +52,27 @@ classifiers: 2
     isFun: false
     isInline: false
     isInner: false
+    location: TOP_LEVEL
     modality: ABSTRACT
     name: RexClass2
     origin: SOURCE
     superTypes: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any
     ]
-    symbolKind: TOP_LEVEL
     typeParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtClass RexClass2 [from rex2.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass RexClass2]
 callables: 2
-  KaFunctionSymbol:
-    annotationsList: []
+  KaNamedFunctionSymbol:
+    annotations: []
     callableId: rex1/rexCallable1
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -83,25 +88,26 @@ callables: 2
     isStatic: false
     isSuspend: false
     isTailRec: false
+    location: TOP_LEVEL
     modality: FINAL
     name: rexCallable1
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
-    symbolKind: TOP_LEVEL
     typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtNamedFunction rexCallable1 [from rex1.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction rexCallable1]
-  KaFunctionSymbol:
-    annotationsList: []
+  KaNamedFunctionSymbol:
+    annotations: []
     callableId: rex2/rexCallable2
+    compilerVisibility: Public
     contextReceivers: []
     contractEffects: []
     hasStableParameterNames: true
@@ -117,18 +123,18 @@ callables: 2
     isStatic: false
     isSuspend: false
     isTailRec: false
+    location: TOP_LEVEL
     modality: FINAL
     name: rexCallable2
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
-    symbolKind: TOP_LEVEL
     typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     PSI: KtNamedFunction rexCallable2 [from rex2.kt]
       From resolve extension: true
       Resolve extension navigation targets: 1

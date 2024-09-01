@@ -1,7 +1,8 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   getter: null
   hasBackingField: true
@@ -18,23 +19,23 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: FINAL
   name: dynamicPropertyAccess
   origin: JS_DYNAMIC
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   getContainingFileSymbol: null
   getContainingJvmClassName: null
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getDynamicPropertyAccess

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in JavaClass) constructor(s: kotlin.String)
+KtNameReferenceExpression(51,60): 'JavaClass'
+  KtSimpleNameReference:
+    (in JavaClass) constructor(s: kotlin.String)

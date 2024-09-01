@@ -9,13 +9,15 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
@@ -27,7 +29,7 @@ import javax.inject.Inject
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     providerFactory: ProviderFactory,
-    objectsFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
 ) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -47,7 +49,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
     @get:Optional
     @get:Input
-    val targetDeviceIdentifier: Property<String> = objectsFactory.property<String>().convention(
+    val targetDeviceIdentifier: Property<String> = objectFactory.property<String>().convention(
         providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
     )
 
@@ -62,30 +64,28 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val packageBuildDir: DirectoryProperty
 
     @get:OutputDirectory
-    val interfacesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val interfacesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-interfaces"))
     }
 
     @get:OutputDirectory
-    val objectFilesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val objectFilesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-o-files"))
     }
 
     @get:OutputDirectory
-    val libraryFilesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val libraryFilesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-a-files"))
     }
 
     @get:OutputFile
-    val packageLibrary: RegularFileProperty = objectsFactory.fileProperty().apply {
+    val packageLibrary: RegularFileProperty = objectFactory.fileProperty().apply {
         set(libraryFilesPath.file(swiftLibraryName.map { "lib${it}.a" }))
     }
 
     private val libraryTools by lazy { LibraryTools(logger) }
 
     private val packageRootPath get() = packageRoot.getFile()
-    private val architecture: Provider<String> by lazy { target.map { it.appleArchitecture() } }
-    private val platform: Provider<String> by lazy { target.map { it.applePlatform() } }
 
     @TaskAction
     fun run() {
@@ -101,19 +101,27 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "BUILT_PRODUCTS_DIR" to interfacesPath.getFile().canonicalPath,
         )
 
+        val swiftModuleName = swiftApiModuleName.get()
+
         val buildArguments = mapOf(
-            "ARCHS" to architecture.get(),
+            "ARCHS" to target.map { it.appleArchitecture }.get(),
             "CONFIGURATION" to configuration.get(),
+
+            /*
+            We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
+            All object files will be merged in `lib${swiftApiModuleName}.a`
+            More information can be found here: https://github.com/swiftlang/swift/pull/35936
+             */
+            "OTHER_SWIFT_FLAGS" to "-Xfrontend -public-autolink-library -Xfrontend $swiftModuleName"
         )
 
         val derivedData = packageDerivedData.getFile()
-        val scheme = swiftApiModuleName.get()
 
         val command = listOf(
             "xcodebuild",
             "-derivedDataPath", derivedData.relativeOrAbsolute(packageRootPath),
-            "-scheme", scheme,
-            "-destination", destination(),
+            "-scheme", swiftModuleName,
+            "-destination", destination()
         ) + (intermediatesDestination + buildArguments).map { (k, v) -> "$k=$v" }
 
         // FIXME: This will not work with dynamic libraries
@@ -121,6 +129,14 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             command,
             logger = logger,
             processConfiguration = {
+                environment().apply {
+                    keys.filter {
+                        AppleSdk.xcodeEnvironmentDebugDylibVars.contains(it)
+                    }.forEach {
+                        remove(it)
+                    }
+                }
+
                 directory(packageRootPath)
             }
         )
@@ -142,7 +158,6 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val deviceId = targetDeviceIdentifier.orNull
         if (deviceId != null) return "id=$deviceId"
 
-        val platformName = platform.orNull ?: error("Missing platform name")
-        return "generic/platform=$platformName"
+        return target.get().appleTarget.genericPlatformDestination
     }
 }

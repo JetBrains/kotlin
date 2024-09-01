@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -34,9 +35,10 @@ internal fun FirElement.getAllowedPsi() = when (val source = source) {
     else -> null
 }
 
-fun FirElement.findPsi(): PsiElement? =
+internal fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
 
+@KaImplementationDetail
 fun FirBasedSymbol<*>.findPsi(): PsiElement? {
     return if (this is FirCallableSymbol<*>) {
         fir.unwrapFakeOverridesOrDelegated().findPsi()
@@ -50,7 +52,7 @@ fun FirBasedSymbol<*>.findPsi(): PsiElement? {
  * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
-fun FirDeclaration.findReferencePsi(): PsiElement? {
+internal fun FirDeclaration.findReferencePsi(): PsiElement? {
     return if (this is FirCallableDeclaration) {
         unwrapFakeOverridesOrDelegated().psi
     } else {

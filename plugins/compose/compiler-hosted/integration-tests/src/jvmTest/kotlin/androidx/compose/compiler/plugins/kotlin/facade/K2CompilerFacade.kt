@@ -112,7 +112,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
             predefinedJavaComponents = null,
             needRegisterJavaElementFinder = true,
-            registerExtraComponents = {},
             init = {}
         )
     }
@@ -146,7 +145,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             projectEnvironment.getPackagePartProvider(librariesScope),
             configuration.languageVersionSettings,
             predefinedJavaComponents = null,
-            registerExtraComponents = {}
         )
 
         val commonModuleData = FirModuleDataImpl(

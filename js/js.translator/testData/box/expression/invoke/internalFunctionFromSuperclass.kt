@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1292
 abstract class A {
     final internal fun foo() = "OK"
 }

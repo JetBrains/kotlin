@@ -328,10 +328,10 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     final override fun visitClassReference(expression: IrClassReference, data: Nothing?): IrExpression =
         visitClassReference(expression)
 
-    open fun visitConst(expression: IrConst<*>): IrExpression =
+    open fun visitConst(expression: IrConst): IrExpression =
         visitExpression(expression)
 
-    final override fun visitConst(expression: IrConst<*>, data: Nothing?): IrExpression =
+    final override fun visitConst(expression: IrConst, data: Nothing?): IrExpression =
         visitConst(expression)
 
     open fun visitConstantValue(expression: IrConstantValue): IrConstantValue {

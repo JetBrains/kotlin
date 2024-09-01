@@ -14,6 +14,7 @@ fun copyK2MetadataCompilerArguments(from: K2MetadataCompilerArguments, to: K2Met
     to.destination = from.destination
     to.enabledInJps = from.enabledInJps
     to.friendPaths = from.friendPaths?.copyOf()
+    to.legacyMetadataJar = from.legacyMetadataJar
     to.moduleName = from.moduleName
     to.refinesPaths = from.refinesPaths?.copyOf()
 

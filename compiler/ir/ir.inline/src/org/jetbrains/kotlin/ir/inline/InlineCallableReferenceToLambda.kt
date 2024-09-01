@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -19,11 +20,19 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
+
+private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
+
+fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == LoweredDeclarationOrigins.INLINE_LAMBDA
 
 // This lowering transforms CR passed to inline function to lambda which would be inlined
 //
@@ -35,39 +44,35 @@ import org.jetbrains.kotlin.name.Name
 //
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
-    private val inlineFunctionResolver: InlineFunctionResolver,
-) : FileLoweringPass {
-    override fun lower(irFile: IrFile) =
-        irFile.accept(InlineCallableReferenceToLambdaVisitor(context, inlineFunctionResolver), null)
-}
+    protected val inlineFunctionResolver: InlineFunctionResolver,
+) : FileLoweringPass, IrElementTransformer<IrDeclarationParent?> {
+    override fun lower(irFile: IrFile) {
+        irFile.transform(this, null)
+    }
 
-const val STUB_FOR_INLINING = "stub_for_inlining"
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
+        super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-private class InlineCallableReferenceToLambdaVisitor(
-    val context: CommonBackendContext,
-    val inlineFunctionResolver: InlineFunctionResolver,
-) : IrElementVisitor<Unit, IrDeclaration?> {
-    override fun visitElement(element: IrElement, data: IrDeclaration?) =
-        element.acceptChildren(this, element as? IrDeclaration ?: data)
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
-        expression.acceptChildren(this, data)
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?): IrElement {
+        expression.transformChildren(this, data)
         val function = expression.symbol.owner
         if (inlineFunctionResolver.needsInlining(function)) {
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transform(data))
+                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transformToLambda(data))
                 }
             }
         }
+
+        return expression
     }
 
-    private fun IrExpression.transform(scope: IrDeclaration?) = when {
+    protected fun IrExpression.transformToLambda(scope: IrDeclarationParent?) = when {
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
             reference.symbol.owner.origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            statements[statements.lastIndex] = reference.replaceOrigin(LoweredStatementOrigins.INLINE_LAMBDA)
+            reference.origin = LoweredStatementOrigins.INLINE_LAMBDA
         }
 
         this is IrFunctionReference -> {
@@ -96,7 +101,7 @@ private class InlineCallableReferenceToLambdaVisitor(
         context.irFactory.buildFun {
             setSourceRange(this@wrapField)
             origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            name = Name.identifier(STUB_FOR_INLINING)
+            name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
         }.apply {
@@ -107,7 +112,10 @@ private class InlineCallableReferenceToLambdaVisitor(
                     boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
                     else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                 }
-                irExprBody(irGetField(fieldReceiver, field))
+                irBlockBody {
+                    val exprToReturn = irGetField(fieldReceiver, field)
+                    +irReturn(exprToReturn)
+                }
             }
         }
 
@@ -115,47 +123,73 @@ private class InlineCallableReferenceToLambdaVisitor(
         context.irFactory.buildFun {
             setSourceRange(this@wrapFunction)
             origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            name = Name.identifier(STUB_FOR_INLINING)
+            name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                // TODO: could there be a star projection here?
-                val argumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
                 val boundReceiverParameter = when {
                     dispatchReceiver != null -> referencedFunction.dispatchReceiverParameter
                     extensionReceiver != null -> referencedFunction.extensionReceiverParameter
                     else -> null
                 }
-                irExprBody(irCall(referencedFunction.symbol, returnType).apply {
-                    copyTypeArgumentsFrom(this@wrapFunction)
-                    for (parameter in referencedFunction.explicitParameters) {
-                        val next = valueParameters.size
-                        when {
-                            boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
-                            parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
-                                irGet(addValueParameter("p$next", argumentTypes[next]))
-                            parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
-                                error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
-                            next >= argumentTypes.size -> null
-                            else -> irGet(addValueParameter("p$next", argumentTypes[next]))
-                        }?.let { putArgument(referencedFunction, parameter, it) }
+
+                // TODO: could there be a star projection here?
+                val unboundArgumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
+                val argumentTypes = getAllArgumentsWithIr()
+                    .filter { it.first != boundReceiverParameter }
+                    .map { it.second }
+                    .let { boundArguments ->
+                        var i = 0
+                        // if the argument is bound, then use the argument's type, otherwise take a type from reference's return type
+                        boundArguments.map { it?.type ?: unboundArgumentTypes[i++] }
                     }
-                })
+
+                irBlockBody {
+                    val exprToReturn = irCall(referencedFunction.symbol, returnType).apply {
+                        copyTypeArgumentsFrom(this@wrapFunction)
+                        for (parameter in referencedFunction.explicitParameters) {
+                            val next = valueParameters.size
+                            val getOnNewParameter = when {
+                                boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
+                                next >= argumentTypes.size ->
+                                    error(
+                                        "The number of parameters for reference and referenced function is different\n" +
+                                                "Reference: ${this@wrapFunction.render()}\n" +
+                                                "Referenced function: ${referencedFunction.render()}\n"
+                                    )
+                                parameter.isVararg && parameter.type == argumentTypes[next] ->
+                                    irGet(addValueParameter("p$next", argumentTypes[next]))
+                                parameter.isVararg && !parameter.hasDefaultValue() ->
+                                    error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
+                                else -> irGet(addValueParameter("p$next", argumentTypes[next]))
+                            }
+                            putArgument(referencedFunction, parameter, getOnNewParameter)
+                        }
+                    }
+                    +irReturn(exprToReturn)
+                }
             }
         }
 
-    private fun IrSimpleFunction.toLambda(original: IrCallableReference<*>, scope: IrDeclaration) =
-        context.createIrBuilder(scope.symbol).irBlock(startOffset, endOffset, IrStatementOrigin.LAMBDA) {
-            this@toLambda.parent = parent
+    private fun IrSimpleFunction.toLambda(original: IrCallableReference<*>, scope: IrDeclarationParent) =
+        context.createIrBuilder(symbol).irBlock(startOffset, endOffset, IrStatementOrigin.LAMBDA) {
+            this@toLambda.parent = scope
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
-                startOffset, endOffset, original.type, symbol, typeArgumentsCount = 0, reflectionTarget = null,
+                startOffset, endOffset, original.type.convertKPropertyToKFunction(context.irBuiltIns), symbol,
+                typeArgumentsCount = 0, reflectionTarget = null,
                 origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
+                if (original is IrFunctionReference) {
+                    // It is required to copy value arguments if any
+                    copyValueArgumentsFrom(original, this@toLambda)
+                    // Don't need to copy the dispatch receiver because it was remapped on extension receiver
+                    dispatchReceiver = null
+                }
                 extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
             }
         }
@@ -164,8 +198,9 @@ private class InlineCallableReferenceToLambdaVisitor(
 private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
-private fun IrFunctionReference.replaceOrigin(origin: IrStatementOrigin): IrFunctionReference =
-    IrFunctionReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin).also {
-        it.copyAttributes(this)
-        it.copyTypeAndValueArgumentsFrom(this)
-    }
+private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
+    if (this !is IrSimpleType) return this
+    if (!this.isKProperty() && !this.isKMutableProperty()) return this
+
+    return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+}

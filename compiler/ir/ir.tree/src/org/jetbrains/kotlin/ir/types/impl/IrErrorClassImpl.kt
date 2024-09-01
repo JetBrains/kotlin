@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -46,4 +49,14 @@ val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     source = SourceElement.NO_SOURCE,
 ).apply {
     parent = ErrorFile
+    createImplicitParameterDeclarationWithWrappedDescriptor()
+
+    // Primary constructor is needed so that we could create annotations with error types in KAPT3+K2.
+    // (In KAPT3+K1, error class is created based on ErrorClassDescriptor, which has a primary constructor.)
+    addConstructor {
+        startOffset = SYNTHETIC_OFFSET
+        endOffset = SYNTHETIC_OFFSET
+        visibility = DescriptorVisibilities.INTERNAL
+        isPrimary = true
+    }
 }

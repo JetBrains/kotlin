@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.checkSubTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.contextReceiversTypes
+import org.jetbrains.kotlin.fir.types.hasContextReceivers
 
-object FirContextReceiversTypeChecker : FirTypeRefChecker(MppCheckerKind.Platform) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef) return
+object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Platform) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
         if (!typeRef.coneType.hasContextReceivers) return
         val source = typeRef.source?.findContextReceiverListSource() ?: return

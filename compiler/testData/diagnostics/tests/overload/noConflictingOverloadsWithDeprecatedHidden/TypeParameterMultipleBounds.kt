@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 import java.io.Serializable
 
 interface Test1 {

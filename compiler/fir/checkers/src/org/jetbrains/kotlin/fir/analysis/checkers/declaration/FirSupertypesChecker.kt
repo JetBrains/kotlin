@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -52,12 +52,13 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             // skip implicit super types like Enum or Any
             if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
 
-            val coneType = superTypeRef.coneType
-            if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {
+            val expandedSupertype = superTypeRef.coneType.fullyExpandedType(context.session)
+            val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
+            if (!nullableSupertypeReported && originalSupertype.nullability == ConeNullability.NULLABLE) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
                 nullableSupertypeReported = true
             }
-            if (!extensionFunctionSupertypeReported && coneType.isExtensionFunctionType &&
+            if (!extensionFunctionSupertypeReported && originalSupertype.isExtensionFunctionType &&
                 !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
             ) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, context)
@@ -66,8 +67,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
 
             checkAnnotationOnSuperclass(superTypeRef, context, reporter)
 
-            val fullyExpandedType = coneType.fullyExpandedType(context.session)
-            val symbol = fullyExpandedType.toSymbol(context.session)
+            val symbol = expandedSupertype.toSymbol(context.session)
 
             if (symbol is FirRegularClassSymbol) {
                 if (!superClassSymbols.add(symbol)) {
@@ -98,14 +98,8 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
             checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
 
-            val shouldCheckSupertypeOnTypealiasWithTypeProjection = if (coneType.typeArguments.isNotEmpty()) {
-                !checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
-            } else {
-                !checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, context)
-            }
-
-            if (shouldCheckSupertypeOnTypealiasWithTypeProjection) {
-                checkSupertypeOnTypeAliasWithTypeProjection(coneType, fullyExpandedType, superTypeRef, reporter, context)
+            if (!checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef, reporter, context)) {
+                checkSupertypeOnTypeAliasWithTypeProjection(originalSupertype, expandedSupertype, superTypeRef, reporter, context)
             }
         }
 
@@ -113,7 +107,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         checkDelegationWithoutPrimaryConstructor(declaration, context, reporter)
 
         if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
-            checkInconsistentTypeParameters(listOf(Pair(null, declaration.symbol)), context, reporter, declaration.source, true)
+            checkInconsistentTypeParameters(listOf(null to declaration.symbol), context, reporter, declaration.source, isValues = true)
         }
     }
 
@@ -148,7 +142,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
     ): Boolean {
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return false
         var result = false
-        for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
+        for ((index, typeArgument) in coneType.typeArgumentsOfLowerBoundIfFlexible.withIndex()) {
             if (typeArgument.isConflictingOrNotInvariant) {
                 val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
                 reporter.reportOn(
@@ -162,25 +156,6 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         return result
     }
 
-    private fun checkExpandedTypeCannotBeInherited(
-        symbol: FirBasedSymbol<*>?,
-        fullyExpandedType: ConeKotlinType,
-        reporter: DiagnosticReporter,
-        superTypeRef: FirTypeRef,
-        coneType: ConeKotlinType,
-        context: CheckerContext,
-    ): Boolean {
-        if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
-            for (typeArgument in fullyExpandedType.typeArguments) {
-                if (typeArgument.isConflictingOrNotInvariant) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     private fun checkSupertypeOnTypeAliasWithTypeProjection(
         coneType: ConeKotlinType,
         fullyExpandedType: ConeKotlinType,
@@ -189,7 +164,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         context: CheckerContext,
     ) {
         if (coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
-            fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
+            fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible.any { it.isConflictingOrNotInvariant }
         ) {
             reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
         }

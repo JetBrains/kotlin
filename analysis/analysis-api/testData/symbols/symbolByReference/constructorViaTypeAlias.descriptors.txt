@@ -1,6 +1,7 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/util/ArrayList
   contextReceivers: []
   hasStableParameterNames: false
@@ -8,47 +9,53 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: E
     ]
     type: java/util/ArrayList<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(E)
   ]
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: null
       getContainingJvmClassName: java.util.ArrayList
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.util.ArrayList
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null

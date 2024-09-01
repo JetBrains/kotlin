@@ -66,7 +66,7 @@ class CinteropIT : KGPBaseTest() {
             val defFilePath = projectPath.resolve("def/cinterop.def").toFile().canonicalFile.absolutePath
 
             build(":assemble") {
-                assertTasksUpToDate(":createDefFileTask") // this task does not have any action, so it always just UpToDate
+                assertTasksExecuted(":createDefFileTask")
                 extractNativeTasksCommandLineArgumentsFromOutput(":cinteropCinteropNative", toolName = NativeToolKind.C_INTEROP) {
                     assertCommandLineArgumentsContainSequentially("-def", defFilePath)
                 }
@@ -96,6 +96,34 @@ class CinteropIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-45559: cinterop checks headers content for up-to-date checks")
+    @GradleTest
+    fun cinteropHeadersContentUTDChecks(gradleVersion: GradleVersion) {
+        nativeProject("KT-45559-cinterop-header-UTD-checks", gradleVersion = gradleVersion) {
+            build(":cinteropCinteropNative") {
+                assertTasksExecuted(":cinteropCinteropNative")
+            }
+
+            projectPath.resolve("compilerOptionIncludeDir").resolve("dummyFromCompilerOption.h").replaceText(
+                "void dummyFromCompilerOption();", "void dummyFromCompilerOption(){};"
+            )
+            build(":cinteropCinteropNative") {
+                assertTasksExecuted(":cinteropCinteropNative")
+            }
+
+            projectPath.resolve("includeDirs").resolve("dummyFromIncludeDirs.h").replaceText(
+                "void dummyFromIncludeDirs();", "void dummyFromIncludeDirs(){};"
+            )
+            build(":cinteropCinteropNative") {
+                assertTasksExecuted(":cinteropCinteropNative")
+            }
+
+            build(":cinteropCinteropNative") {
+                assertTasksUpToDate(":cinteropCinteropNative")
+            }
+        }
+    }
+
     @DisplayName("KT-62800: validation fails if neither definitionFile nor packageName was specified")
     @GradleTest
     fun cinteropWithoutDefinitionFileAndPackageName(gradleVersion: GradleVersion) {
@@ -121,7 +149,7 @@ class CinteropIT : KGPBaseTest() {
             "cinterop-with-header",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = true
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
             )
         ) {
             val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().canonicalPath

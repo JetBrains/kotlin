@@ -1,3 +1,6 @@
+// TODO(KT-65977): reenable these tests with caches
+//IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+//IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 import kotlinx.atomicfu.*
 import kotlin.test.*
 
@@ -11,53 +14,48 @@ class LoopTest {
 
     class A(val s: String)
 
-    fun atomicfuIntLoopTest() {
+    fun atomicfuIntLoopTest(): Int {
         a.loop { value ->
             if (a.compareAndSet(value, 777)) {
                 assertEquals(777, a.value)
-                return
+                return a.value
             }
         }
     }
 
-    fun atomicfuBooleanLoopTest() {
+    fun atomicfuBooleanLoopTest(): Boolean {
         b.loop { value ->
             assertTrue(value)
-            if (!b.value) return
             if (b.compareAndSet(value, false)) {
-                return
+                return b.value
             }
         }
     }
 
-    fun atomicfuLongLoopTest() {
+    fun atomicfuLongLoopTest(): Long {
         l.loop { cur ->
             if (l.compareAndSet(5000000003, 9000000000)) {
-                return
+                return l.value
             } else {
                 l.incrementAndGet()
             }
         }
     }
 
-    fun atomicfuRefLoopTest() {
+    fun atomicfuRefLoopTest(): A {
         r.loop { cur ->
             assertEquals("aaaa", cur.s)
             if (r.compareAndSet(cur, A("bbbb"))) {
-                return
+                return r.value
             }
         }
     }
 
     fun atomicfuLoopTest() {
-        atomicfuIntLoopTest()
-        assertEquals(777, a.value)
-        atomicfuBooleanLoopTest()
-        assertFalse(b.value)
-        atomicfuLongLoopTest()
-        assertEquals(9000000000, l.value)
-        atomicfuRefLoopTest()
-        assertEquals("bbbb", r.value.s)
+        assertEquals(777, atomicfuIntLoopTest())
+        assertFalse(atomicfuBooleanLoopTest())
+        assertEquals(9000000000, atomicfuLongLoopTest())
+        assertEquals("bbbb", atomicfuRefLoopTest().s)
     }
 
     fun atomicfuUpdateTest() {
@@ -101,20 +99,21 @@ class LoopTest {
     }
 
     fun atomicfuGetAndUpdateTest() {
-        a.getAndUpdate { value ->
+        a.lazySet(50)
+        assertEquals(50, a.getAndUpdate { value ->
             if (value >= 0) Int.MAX_VALUE else value
-        }
+        })
         assertEquals(Int.MAX_VALUE, a.value)
-        b.getAndUpdate { true }
+        b.lazySet(false)
+        assertFalse(b.getAndUpdate { true })
         assertTrue(b.value)
-        l.getAndUpdate { cur ->
+        l.lazySet(50)
+        assertEquals(50, l.getAndUpdate { cur ->
             if (cur >= 0L) Long.MAX_VALUE else cur
-        }
+        })
         assertEquals(Long.MAX_VALUE, l.value)
         r.lazySet(A("aaaa"))
-        r.getAndUpdate { cur ->
-            A("cccc${cur.s}")
-        }
+        assertEquals("aaaa", r.getAndUpdate { cur -> A("cccc${cur.s}") }.s)
         assertEquals("ccccaaaa", r.value.s)
     }
 }

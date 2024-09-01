@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -96,16 +97,27 @@ var Project.mainPublicationName: String
         project.extra.set(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY, value)
     }
 
-@OptIn(ExperimentalStdlibApi::class)
 private fun humanReadableName(name: String) =
     name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
 
-fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDescription: String? = null, packaging: String = "jar") {
+fun MavenPublication.configureKotlinPomAttributes(
+    project: Project,
+    explicitDescription: String? = null,
+    packaging: String = "jar",
+    explicitName: String? = null,
+) = configureKotlinPomAttributes(project, project.provider { explicitDescription }, packaging, project.provider { explicitName })
+
+fun MavenPublication.configureKotlinPomAttributes(
+    project: Project,
+    explicitDescription: Provider<String>,
+    packaging: String = "jar",
+    explicitName: Provider<String>,
+) {
     val publication = this
     pom {
         this.packaging = packaging
-        name.set(humanReadableName(publication.artifactId))
-        description.set(explicitDescription ?: project.description ?: humanReadableName(publication.artifactId))
+        name.set(explicitName.orElse(humanReadableName(publication.artifactId)))
+        description.set(explicitDescription.orElse(project.description ?: humanReadableName(publication.artifactId)))
         url.set("https://kotlinlang.org/")
         licenses {
             license {

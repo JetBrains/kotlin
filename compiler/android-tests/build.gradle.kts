@@ -1,8 +1,9 @@
-import TaskUtils.useAndroidEmulator
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("android-sdk-provisioner")
 }
 
 dependencies {
@@ -53,7 +54,9 @@ projectTest {
     }
 
     workingDir = rootDir
-    useAndroidEmulator(this)
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
+    }
 }
 
 val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {

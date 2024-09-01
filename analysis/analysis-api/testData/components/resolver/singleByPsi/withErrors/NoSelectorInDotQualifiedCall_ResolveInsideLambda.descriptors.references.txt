@@ -1,5 +1,7 @@
-KtSimpleNameReference:
-  0: (in testing) fun test()
-  1: (in testing) fun test()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(159,163): 'test'
+  KtSimpleNameReference:
+    0: (in testing) fun test()
+    1: (in testing) fun test()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

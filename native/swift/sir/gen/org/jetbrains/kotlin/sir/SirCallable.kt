@@ -16,6 +16,7 @@ sealed class SirCallable : SirElementBase(), SirDeclaration {
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
+    abstract override val attributes: MutableList<SirAttribute>
     abstract val kind: SirCallableKind
     abstract var body: SirFunctionBody?
 }

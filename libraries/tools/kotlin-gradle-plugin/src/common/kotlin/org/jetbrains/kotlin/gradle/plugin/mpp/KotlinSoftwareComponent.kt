@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.PublishOnlyIf
 import org.jetbrains.kotlin.gradle.targets.metadata.*
@@ -209,7 +210,7 @@ class DefaultKotlinUsageContext(
         val result = project.configurations.detachedResolvable().attributes
 
         configurationAttributes.copyAttributesTo(
-            project,
+            project.providers,
             dest = result,
             keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
         )
@@ -245,7 +246,15 @@ class DefaultKotlinUsageContext(
                      * as it will switch to KotlinPlatformType.jvm and requires this additional attribute to disambiguate
                      * Android from the JVM
                      */
-                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute)
+                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute) &&
+                    /**
+                     * Non-packed klibs are used only locally and should not be published.
+                     * Thus, it does not make sense to publish this attribute as well.
+                     *
+                     * Another option could be to put this attribute only on the secondary variant that is non-packed.
+                     * However, disambiguation rules do not work well on old Gradle versions with this.
+                     */
+                    it.name != KlibPackaging.ATTRIBUTE.name
         }
 
 }

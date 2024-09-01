@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -63,7 +64,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     val initExpression = initializer.expression
                     val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
                     if (isConst)
-                        require(initExpression is IrConst<*>) { "Const val can only be initialized with a const: ${declaration.render()}" }
+                        require(initExpression is IrConst) { "Const val can only be initialized with a const: ${declaration.render()}" }
                     (if (isConst) constInitializers else initializers).add(
                             IrBlockImpl(startOffset, endOffset,
                                     context.irBuiltIns.unitType,
@@ -160,7 +161,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                 override fun visitConstructor(declaration: IrConstructor): IrStatement {
                     val body = declaration.body ?: return declaration
                     val blockBody = body as? IrBlockBody
-                            ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
+                            ?: compilationException("Unexpected constructor body", declaration)
 
                     blockBody.statements.transformFlat {
                         when {

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         analyseForTest(mainFile) {
-            val fileSymbol = mainFile.getFileSymbol()
-            val module = fileSymbol.getContainingModule()
+            val fileSymbol = mainFile.symbol
+            val module = fileSymbol.containingModule
 
-            val providerModule = ProjectStructureProvider.getModule(mainFile.project, mainFile, contextualModule = null)
+            val providerModule = KotlinProjectStructureProvider.getModule(mainFile.project, mainFile, useSiteModule = null)
             assert(module == providerModule)
             assert(module == mainModule.ktModule)
 

@@ -1,5 +1,6 @@
 // Test
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
 
 abstract class Base
 

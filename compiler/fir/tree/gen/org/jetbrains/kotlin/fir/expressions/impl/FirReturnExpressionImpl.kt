@@ -62,7 +62,9 @@ internal class FirReturnExpressionImpl(
         return this
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }
+    }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

@@ -11,13 +11,18 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.types.ConstantValueKind
 
-object FirMultiDollarInterpolationChecker : FirStringConcatenationCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStringConcatenationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+abstract class FirMultiDollarInterpolationChecker<E : FirExpression> : FirExpressionChecker<E>(MppCheckerKind.Common) {
+    abstract fun E.getInterpolationPrefix(): String?
+
+    override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
         // no interpolation prefix => always OK
-        if (expression.interpolationPrefix.isEmpty()) return
+        if (expression.getInterpolationPrefix().isNullOrEmpty()) return
 
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiDollarInterpolation)) {
             reporter.reportOn(
@@ -26,8 +31,15 @@ object FirMultiDollarInterpolationChecker : FirStringConcatenationCallChecker(Mp
                 LanguageFeature.MultiDollarInterpolation to context.session.languageVersionSettings,
                 context
             )
-        } else if (expression.interpolationPrefix.length == 1) {
-            reporter.reportOn(expression.source, FirErrors.SINGLE_DOLLAR_INTERPOLATION_PREFIX, context)
         }
     }
+}
+
+object FirMultiDollarInterpolationCheckerConcatenation : FirMultiDollarInterpolationChecker<FirStringConcatenationCall>() {
+    override fun FirStringConcatenationCall.getInterpolationPrefix(): String = interpolationPrefix
+}
+
+object FirMultiDollarInterpolationCheckerLiteral : FirMultiDollarInterpolationChecker<FirLiteralExpression>() {
+    override fun FirLiteralExpression.getInterpolationPrefix(): String? =
+        prefix?.takeIf { this.kind == ConstantValueKind.String }
 }

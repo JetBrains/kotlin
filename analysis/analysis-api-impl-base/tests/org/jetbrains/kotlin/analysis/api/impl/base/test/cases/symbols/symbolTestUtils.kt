@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,7 +23,7 @@ internal fun KaSession.checkContainingFileSymbol(
     testServices: TestServices
 ) {
     if (symbol.origin != KaSymbolOrigin.SOURCE) return
-    val containingFileSymbol = symbol.getContainingFileSymbol()
+    val containingFileSymbol = symbol.containingFile
     testServices.assertions.assertEquals(ktFileSymbol, containingFileSymbol) {
         "Invalid file for $symbol, expected $ktFileSymbol but $containingFileSymbol found"
     }
@@ -37,7 +37,7 @@ internal fun KaSession.checkContainingJvmClassName(
 ) {
     if (ktFile.isScript()) return
     val expectedClassName = when {
-        symbol.symbolKind == KaSymbolKind.LOCAL ->
+        symbol.isLocal ->
             null
         ktClass != null ->
             // member
@@ -46,7 +46,7 @@ internal fun KaSession.checkContainingJvmClassName(
             // top-level
             ktFile.javaFileFacadeFqName.asString()
     }
-    val actualClassName = symbol.getContainingJvmClassName()
+    val actualClassName = symbol.containingJvmClassName
     testServices.assertions.assertEquals(expectedClassName, actualClassName) {
         "Invalid JvmClassName for $symbol, expected $expectedClassName but $actualClassName found"
     }

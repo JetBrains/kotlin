@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 
@@ -27,7 +28,9 @@ object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionC
         if (expression.nonFatalDiagnostics.none { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }) return
 
         // This 'if' is needed just to choose one of two diagnostics
-        if (expression.dispatchReceiver is FirResolvedQualifier || expression.extensionReceiver is FirResolvedQualifier) {
+        if (expression.dispatchReceiver?.unwrapSmartcastExpression() is FirResolvedQualifier ||
+            expression.extensionReceiver?.unwrapSmartcastExpression() is FirResolvedQualifier
+        ) {
             reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY, context)
         } else if (context.containingDeclarations.any { it is FirClass && it.isEnumClass }) {
             reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, context)

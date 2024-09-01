@@ -38,12 +38,15 @@ internal object LiveLiterals%TestKt {
       return Int%init%class-ViewModel
     }
     val tmp0 = State%Int%init%class-ViewModel
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%init%class-ViewModel", Int%init%class-ViewModel)
-      State%Int%init%class-ViewModel = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%init%class-ViewModel", Int%init%class-ViewModel)
+        State%Int%init%class-ViewModel = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -55,12 +58,15 @@ internal object LiveLiterals%TestKt {
       return Int%init-1%class-ViewModel
     }
     val tmp0 = State%Int%init-1%class-ViewModel
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%init-1%class-ViewModel", Int%init-1%class-ViewModel)
-      State%Int%init-1%class-ViewModel = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%init-1%class-ViewModel", Int%init-1%class-ViewModel)
+        State%Int%init-1%class-ViewModel = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }
@@ -72,12 +78,15 @@ internal object LiveLiterals%TestKt {
       return Int%class-ViewModel
     }
     val tmp0 = State%Int%class-ViewModel
-    return if (tmp0 == null) {
-      val tmp1 = liveLiteral("Int%class-ViewModel", Int%class-ViewModel)
-      State%Int%class-ViewModel = tmp1
-      tmp1
-    } else {
-      tmp0
+    return when {
+      tmp0 == null -> {
+        val tmp1 = liveLiteral("Int%class-ViewModel", Int%class-ViewModel)
+        State%Int%class-ViewModel = tmp1
+        tmp1
+      }
+      else -> {
+        tmp0
+      }
     }
     .value
   }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider

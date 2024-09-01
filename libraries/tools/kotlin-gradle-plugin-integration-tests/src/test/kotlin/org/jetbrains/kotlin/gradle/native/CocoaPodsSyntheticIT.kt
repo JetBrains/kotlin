@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests with synthetic cocoapods")
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @NativeGradlePluginTests
 class CocoaPodsSyntheticIT : KGPBaseTest() {
 
@@ -46,7 +45,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
                 """
                 ios.deploymentTarget = "14.1"
                 pod("SSZipArchive")
-                pod("AFNetworking", "~> 4.0.1")
+                pod("Base64", "~> 1.1.0")
                 pod("Alamofire") {
                     source = git("https://github.com/Alamofire/Alamofire.git") {
                         tag = "5.6.1"
@@ -62,7 +61,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
                     podfile,
                     "platform :ios, '14.1'",
                     "pod 'SSZipArchive'",
-                    "pod 'AFNetworking', '~> 4.0.1'",
+                    "pod 'Base64', '~> 1.1.0'",
                     "pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '5.6.1'",
                     "config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = \"\"",
                     "config.build_settings['CODE_SIGNING_REQUIRED'] = \"NO\"",
@@ -100,11 +99,11 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
     fun testPodInstallInvalidatesUTD(gradleVersion: GradleVersion) {
         nativeProject(templateProjectName, gradleVersion, environmentVariables = environmentVariables) {
             preparePodfile("ios-app", ImportMode.FRAMEWORKS)
-            buildGradleKts.addPod("AFNetworking")
+            buildGradleKts.addPod("Base64")
 
             build(defaultPodInstallSyntheticTaskName) {
                 assertTasksExecuted(defaultPodInstallSyntheticTaskName)
-                assertTrue { projectPath.resolve("build/cocoapods/synthetic/ios/Pods/AFNetworking").toFile().deleteRecursively() }
+                assertTrue { projectPath.resolve("build/cocoapods/synthetic/ios/Pods/Base64").toFile().deleteRecursively() }
             }
 
             build(defaultPodInstallSyntheticTaskName) {

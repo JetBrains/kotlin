@@ -3,9 +3,9 @@
 
 package kotlin
 
-public inline fun <reified @kotlin.internal.PureReifiable T> arrayOf(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
+public inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
 
-public fun <reified @kotlin.internal.PureReifiable T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
+public fun <reified T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
 
 public fun booleanArrayOf(vararg elements: kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
 
@@ -15,7 +15,7 @@ public fun charArrayOf(vararg elements: kotlin.Char): kotlin.CharArray { /* comp
 
 public fun doubleArrayOf(vararg elements: kotlin.Double): kotlin.DoubleArray { /* compiled code */ }
 
-public inline fun <reified @kotlin.internal.PureReifiable T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
+public inline fun <reified T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
 
 @kotlin.SinceKotlin public inline fun <reified T : kotlin.Enum<T>> enumValueOf(name: kotlin.String): T { /* compiled code */ }
 

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -29,7 +31,7 @@ internal fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
     else -> this
 }
 
-internal class TypeInfo(
+class TypeInfo(
     val type: ConeKotlinType,
     val notNullType: ConeKotlinType,
     val directType: ConeKotlinType,
@@ -41,14 +43,15 @@ internal class TypeInfo(
     val isClass: Boolean,
     val canHaveSubtypesAccordingToK1: Boolean,
 ) {
-    override fun toString() = "$type"
+    override fun toString(): String = "$type"
 }
 
 private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == StandardClassIds.String || isEnumClass
 
 internal val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
 
-internal val TypeInfo.isIdentityLess get() = isPrimitive || isValueClass
+internal fun TypeInfo.isIdentityLess(session: FirSession) =
+    session.identityLessPlatformDeterminer.isIdentityLess(this) || isValueClass
 
 internal val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isNullable
 
@@ -64,7 +67,7 @@ internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(
 internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds().map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
-        ?: session.builtinTypes.nullableAnyType.type
+        ?: session.builtinTypes.nullableAnyType.coneType
     val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
     val boundsSymbols = bounds.mapNotNull { it.toClassSymbol(session) }
 
@@ -82,10 +85,10 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
 }
 
 internal fun ConeKotlinType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArguments, isNullable, attributes)
+    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isNullable, attributes)
 
 internal fun ConeKotlinType.toPlatformTypeIfKotlin(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArguments, isNullable, attributes)
+    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isNullable, attributes)
 
 internal class ArgumentInfo(
     val argument: FirExpression,

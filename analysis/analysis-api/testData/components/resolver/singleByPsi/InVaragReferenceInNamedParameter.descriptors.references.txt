@@ -1,6 +1,10 @@
-KtSimpleNameReference:
-  vararg a: test.A
+KtNameReferenceExpression(87,88): 'a'
+  KtSimpleNameReference:
+    vararg a: test.A
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
 
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-
-KtInvokeFunctionReference: Nothing (Unresolved reference)
+KtCallExpression(82,104): 'some(a = arrayOf(A()))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

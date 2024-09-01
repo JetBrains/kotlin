@@ -37,17 +37,16 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         val containingElements = context.containingElements
         if (!calleeReference.isError()) {
             expression.resolvedType.forEachType {
-                if (it is ConeErrorType) {
-                    // To report error instead of warning in a known corner case (KT-66356)
-                    val partOfErroneousOuterCall =
-                        containingElements.any { it is FirFunctionCall && it.calleeReference is FirResolvedErrorReference } &&
-                                !context.session.languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent)
-                    considerType(
-                        type = it,
-                        missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression,
-                        context
-                    )
-                }
+                // To report error instead of warning in a known corner case (KT-66356)
+                val partOfErroneousOuterCall =
+                    it is ConeErrorType && containingElements.any {
+                        it is FirFunctionCall && it.calleeReference is FirResolvedErrorReference
+                    } && !context.session.languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent)
+                considerType(
+                    type = it,
+                    missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression,
+                    context
+                )
             }
         }
 
@@ -60,11 +59,18 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
 
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
         considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
-        symbol.resolvedReceiverTypeRef?.coneType?.let {
-            considerType(it, missingTypes, context)
+        symbol.resolvedReceiverTypeRef?.coneType?.let { type ->
+            considerType(type, missingTypes, context)
+            type.forEachType {
+                considerType(it, missingTypesFromExpression, context)
+            }
         }
         (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach {
-            considerType(it.resolvedReturnTypeRef.coneType, missingTypes, context)
+            val type = it.resolvedReturnTypeRef.coneType
+            considerType(type, missingTypes, context)
+            type.forEachType {
+                considerType(it, missingTypesFromExpression, context)
+            }
         }
         reportMissingTypes(
             expression.source, missingTypes, context, reporter,
@@ -139,13 +145,13 @@ internal interface FirMissingDependencyClassProxy {
             // We report an error MISSING_DEPENDENCY_CLASS generally,
             // but report a deprecation warning in two corner cases instead to avoid breaking code immediately
             when {
-                missingTypeOrigin is LambdaParameter && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaParameter && missingType.typeArgumentsOfLowerBoundIfFlexible.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(
                         source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, withoutArguments, missingTypeOrigin.name, context
                     )
                 }
-                missingTypeOrigin is LambdaReceiver && missingType.typeArguments.isEmpty() &&
+                missingTypeOrigin is LambdaReceiver && missingType.typeArgumentsOfLowerBoundIfFlexible.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, withoutArguments, context)
                 }

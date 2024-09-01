@@ -26,7 +26,7 @@ fun box(): String {
         hasFoo::class,
         expectedQualifiedName = null,
         expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
-        expectedToStringName = "class codegen.kclass.kclass0.MainKt\$1",
+        expectedToStringName = "class codegen.kclass.kclass0.AnonymousObjectInInlineFunctionKt\$1",
         expectedInstance = hasFoo,
         expectedNotInstance = Any()
     )

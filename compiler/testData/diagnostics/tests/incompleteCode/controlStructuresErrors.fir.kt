@@ -1,4 +1,3 @@
-
 fun test1() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (<!UNRESOLVED_REFERENCE!>rr<!>) {
         <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (<!UNRESOLVED_REFERENCE!>l<!>) {
@@ -19,7 +18,7 @@ fun test1() {
 }
 
 fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
-    l.<!UNRESOLVED_REFERENCE!>map<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+    l.<!UNRESOLVED_REFERENCE!>map<!> {
         <!UNRESOLVED_REFERENCE!>it<!>!!
-    }<!>
+    }
 }

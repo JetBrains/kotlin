@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.collections) inline operator fun <T> kotlin.collections.MutableCollection<in T>.plusAssign(element: T)
+KtOperationReferenceExpression(54,56): '+='
+  KtSimpleNameReference:
+    (in kotlin.collections) inline operator fun <T> kotlin.collections.MutableCollection<in T>.plusAssign(element: T)

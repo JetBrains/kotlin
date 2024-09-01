@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.enumEntryDeserializedAccessExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.enumEntryDeserializedAccessExpression]
  */
 abstract class FirEnumEntryDeserializedAccessExpression : FirExpression() {
     abstract override val source: KtSourceElement?

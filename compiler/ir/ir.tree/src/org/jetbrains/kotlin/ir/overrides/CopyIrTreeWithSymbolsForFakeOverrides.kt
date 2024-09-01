@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.copyAnnotations
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -42,7 +41,6 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         return when (overridableMember) {
             is IrSimpleFunction -> copier.copySimpleFunction(overridableMember)
             is IrProperty -> copier.copyProperty(overridableMember)
-            else -> error("Unsupported member: ${overridableMember.render()}")
         }
     }
 

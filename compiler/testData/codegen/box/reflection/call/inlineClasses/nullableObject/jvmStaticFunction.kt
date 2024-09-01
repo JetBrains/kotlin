@@ -5,7 +5,8 @@
 import kotlin.reflect.KFunction
 import kotlin.test.assertEquals
 
-inline class S(val value: String?) {
+@JvmInline
+value class S(val value: String?) {
     operator fun plus(other: S): S = S(this.value!! + other.value!!)
 }
 

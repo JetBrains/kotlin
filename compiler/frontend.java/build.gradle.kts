@@ -14,7 +14,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
 }
 

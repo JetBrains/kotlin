@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -28,16 +27,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import kotlin.collections.List
-import kotlin.collections.Set
-import kotlin.collections.filterIsInstance
-import kotlin.collections.getOrNull
-import kotlin.collections.mapNotNull
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
-import kotlin.collections.withIndex
 
 fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
@@ -126,16 +117,14 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fi
         val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
         map[typeParameter.symbol] = typeProjection.typeRef.coneType
     }
-    return ConeSubstitutorByMap.create(map, c.session)
+    return substitutorByMap(map, c.session)
 }
 
 internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fir2IrConversionScope? = null, block: () -> R): R {
     try {
         return block()
-    } catch (e: ProcessCanceledException) {
-        throw e
     } catch (e: Throwable) {
-        errorWithAttachment("Exception was thrown during transformation of ${element::class.java}", cause = e) {
+        rethrowExceptionWithDetails("Exception was thrown during transformation of ${element::class.java}", e) {
             withFirEntry("element", element)
             conversionScope?.containingFileIfAny()?.let { withEntry("file", it.path) }
         }
@@ -163,16 +152,8 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
     }
 }
 
-fun IrType.toArrayOrPrimitiveArrayType(builtins: Fir2IrBuiltinSymbolsContainer): IrType {
-    return when {
-        isPrimitiveType() -> builtins.primitiveArrayForType[this]?.defaultType ?: error("$this not in primitiveArrayForType")
-        else -> builtins.arrayClass.typeWith(this)
-    }
-}
-
 val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
     get() = IrSimpleTypeImpl(
-        kotlinType = null,
         classifier = this,
         nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
         arguments = emptyList(),

@@ -1,0 +1,11 @@
+KT element: KtProperty
+KT element text:
+public val prop: kotlin.Int /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+FIR container source: JvmStubDeserializedFacadeContainerSource test/ChangedFileName
+File name: ChangedFileName.class
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

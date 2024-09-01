@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val type: ConeKotlinType,
+    override val coneType: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
 ) : FirResolvedTypeRef() {
 

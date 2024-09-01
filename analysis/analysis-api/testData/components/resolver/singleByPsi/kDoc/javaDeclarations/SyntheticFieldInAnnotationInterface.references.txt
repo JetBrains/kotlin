@@ -1,7 +1,9 @@
 <caret_1>:
-  KDocReference:
-    (in Storage) val value: kotlin.String
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      (in Storage) val value: kotlin.String
 
 <caret_2>:
-  KDocReference:
-    (in Storage2) val value2: kotlin.String
+  KDocName(44,59): 'Storage2.value2'
+    KDocReference:
+      (in Storage2) val value2: kotlin.String

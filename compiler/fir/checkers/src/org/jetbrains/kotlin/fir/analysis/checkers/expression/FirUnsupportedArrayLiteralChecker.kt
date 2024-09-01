@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
     override fun check(expression: FirArrayLiteral, context: CheckerContext, reporter: DiagnosticReporter) {

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+KtOperationReferenceExpression(112,114): '!='
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean

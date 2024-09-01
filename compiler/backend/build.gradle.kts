@@ -13,7 +13,7 @@ dependencies {
     api(project(":compiler:backend.common.jvm"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
 }
 

@@ -57,6 +57,10 @@ internal class FirAnonymousFunctionExpressionImpl(
         return this
     }
 
+    override fun replaceAnonymousFunction(newAnonymousFunction: FirAnonymousFunction) {
+        anonymousFunction = newAnonymousFunction
+    }
+
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         shouldNotBeCalled("anonymousFunction.replaceTypeRef() should be called instead")
     }

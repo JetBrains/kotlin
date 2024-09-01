@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {

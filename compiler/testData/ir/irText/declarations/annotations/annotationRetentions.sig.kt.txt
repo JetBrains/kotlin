@@ -1,0 +1,72 @@
+// CHECK:
+//   Mangled name: Binary
+//   Public signature: /Binary|null[0]
+@Retention(value = AnnotationRetention.BINARY)
+open annotation class Binary : Annotation {
+  // CHECK:
+  //   Mangled name: Binary#<init>(){}
+  //   Public signature: /Binary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Runtime
+//   Public signature: /Runtime|null[0]
+@Retention(value = AnnotationRetention.RUNTIME)
+open annotation class Runtime : Annotation {
+  // CHECK:
+  //   Mangled name: Runtime#<init>(){}
+  //   Public signature: /Runtime.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Source
+//   Public signature: /Source|null[0]
+@Retention(value = AnnotationRetention.SOURCE)
+open annotation class Source : Annotation {
+  // CHECK:
+  //   Mangled name: Source#<init>(){}
+  //   Public signature: /Source.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #binary(){}
+//   Public signature: /binary|3138115587891576778[0]
+//   Public signature debug description: binary(){}
+// CHECK JVM_IR:
+//   Mangled name: #binary(){}
+//   Public signature: /binary|3138115587891576778[0]
+//   Public signature debug description: binary(){}
+@Binary
+fun binary(): Unit
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #runtime(){}
+//   Public signature: /runtime|-5081402553506548901[0]
+//   Public signature debug description: runtime(){}
+// CHECK JVM_IR:
+//   Mangled name: #runtime(){}
+//   Public signature: /runtime|-5081402553506548901[0]
+//   Public signature debug description: runtime(){}
+@Runtime
+fun runtime(): Unit
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #source(){}
+//   Public signature: /source|5801313071320040615[0]
+//   Public signature debug description: source(){}
+// CHECK JVM_IR:
+//   Mangled name: #source(){}
+//   Public signature: /source|5801313071320040615[0]
+//   Public signature debug description: source(){}
+@Source
+fun source(): Unit
+

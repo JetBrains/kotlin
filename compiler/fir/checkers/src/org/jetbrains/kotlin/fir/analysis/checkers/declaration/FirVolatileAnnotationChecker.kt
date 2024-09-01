@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,8 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassIds
 
 object FirVolatileAnnotationChecker : FirPropertyChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.source?.kind != KtRealSourceElementKind) return
-
         val volatileAnnotations = context.session.annotationPlatformSupport.volatileAnnotations
         val fieldAnnotation = declaration.backingField?.annotations?.getAnnotationByClassIds(volatileAnnotations, context.session)
             ?: return

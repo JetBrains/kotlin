@@ -1,4 +1,4 @@
-Assertion failed
+---
 assert(text != null && (text.length == 1 || text.toLowerCase() == text))
        |    |           |    |      |       |    |             |  |
        |    |           |    |      |       |    |             |  Hello
@@ -10,3 +10,4 @@ assert(text != null && (text.length == 1 || text.toLowerCase() == text))
        |    |           Hello
        |    true
        Hello
+---

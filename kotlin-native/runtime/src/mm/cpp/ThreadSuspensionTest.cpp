@@ -5,6 +5,7 @@
 
 #include "ThreadSuspension.hpp"
 
+#include <cstdint>
 #include <future>
 #include <iostream>
 #include <vector>
@@ -268,7 +269,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     ASSERT_FALSE(mm::IsThreadSuspensionRequested());
 
-    int lock = internal::FILE_NOT_INITIALIZED;
+    uintptr_t lock = internal::FILE_NOT_INITIALIZED;
 
     auto scopedInitializationMock = ScopedInitializationMock();
     EXPECT_CALL(*scopedInitializationMock, Call()).WillOnce([] {

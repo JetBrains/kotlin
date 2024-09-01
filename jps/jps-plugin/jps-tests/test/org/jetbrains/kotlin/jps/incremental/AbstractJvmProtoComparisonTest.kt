@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
@@ -29,7 +31,7 @@ import java.io.File
 
 abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<LocalFileKotlinClass>() {
     override fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, LocalFileKotlinClass> {
-        MockLibraryUtil.compileKotlin(sourceDir.path, outputDir, extraOptions = listOf("-Xdisable-default-scripting-plugin"))
+        MockLibraryUtil.compileKotlin(sourceDir.path, outputDir, extraOptions = listOf(K2JVMCompilerArguments::disableDefaultScriptingPlugin.cliArgument))
 
         val classFiles = outputDir.walkMatching { it.name.endsWith(".class") }
         val localClassFiles = classFiles.map { LocalFileKotlinClass.create(it, JvmMetadataVersion.INSTANCE)!! }

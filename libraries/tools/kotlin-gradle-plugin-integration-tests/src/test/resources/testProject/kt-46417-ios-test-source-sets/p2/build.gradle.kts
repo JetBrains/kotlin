@@ -4,7 +4,9 @@ plugins {
 
 kotlin {
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     val commonMain by sourceSets.getting
     commonMain.dependencies {

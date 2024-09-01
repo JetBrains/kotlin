@@ -22,6 +22,13 @@ package org.jetbrains.kotlin.konan
 open class KonanException(message: String = "", cause: Throwable? = null) : Exception(message, cause)
 
 /**
+ * The message is reported as a compilation error. Used when MessageCollector instance is unavailable.
+ */
+interface KonanPendingCompilationError {
+    val message: String
+}
+
+/**
  * An error occurred during external tool invocation. Such as non-zero exit code.
  */
 class KonanExternalToolFailure(message: String, val toolName: String, cause: Throwable? = null) : KonanException(message, cause)
@@ -29,7 +36,7 @@ class KonanExternalToolFailure(message: String, val toolName: String, cause: Thr
 /**
  * An exception indicating a failed attempt to access some parts of Xcode (e.g. get SDK paths or version).
  */
-class MissingXcodeException(message: String, cause: Throwable? = null) : KonanException(message, cause)
+class MissingXcodeException(override val message: String, cause: Throwable? = null) : KonanException(message, cause), KonanPendingCompilationError
 
 /**
  * Native exception handling in Kotlin: terminate, wrap, etc.

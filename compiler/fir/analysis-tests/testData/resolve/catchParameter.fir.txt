@@ -3,7 +3,7 @@ FILE: catchParameter.kt
     public final fun <T : R|kotlin/Throwable|> test(): R|kotlin/Unit| {
         try {
         }
-        catch (e: R|kotlin/NullPointerException|) {
+        catch (e: R|{kotlin/NullPointerException=} java/lang/NullPointerException|) {
         }
 
         try {
@@ -18,7 +18,7 @@ FILE: catchParameter.kt
 
         try {
         }
-        catch (e: R|StringType|) {
+        catch (e: R|{StringType=} kotlin/String|) {
         }
 
         try {

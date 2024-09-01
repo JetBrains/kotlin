@@ -150,7 +150,7 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildMapInternal(builderAction)
@@ -181,7 +181,7 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-@Suppress("DEPRECATION")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildMapInternal(capacity, builderAction)

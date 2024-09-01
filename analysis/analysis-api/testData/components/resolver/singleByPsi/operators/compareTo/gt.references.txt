@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int
+KtOperationReferenceExpression(114,115): '>'
+  KtSimpleNameReference:
+    (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int

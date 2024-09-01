@@ -29,7 +29,7 @@ object CompilerConeAttributes {
     }
 
     object NoInfer : ConeAttribute<NoInfer>() {
-        val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin.internal"), Name.identifier("NoInfer"))
+        val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.NoInfer
 
         override fun union(other: NoInfer?): NoInfer? = null
         override fun intersect(other: NoInfer?): NoInfer? = null
@@ -146,6 +146,9 @@ val ConeKotlinType.hasEnhancedNullability: Boolean
 
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
+
+val ConeKotlinType.hasNoInfer: Boolean
+    get() = attributes.noInfer != null
 
 val ConeKotlinType.hasContextReceivers: Boolean
     get() = attributes.contextReceiversNumberForFunctionType > 0

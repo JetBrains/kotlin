@@ -2,7 +2,6 @@
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 internal external class A(v: String) {

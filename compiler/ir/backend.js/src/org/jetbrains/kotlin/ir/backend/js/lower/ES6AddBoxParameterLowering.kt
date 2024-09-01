@@ -77,7 +77,6 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
         return JsIrBuilder.buildValueParameter(
             parent = this,
             name = Namer.ES6_BOX_PARAMETER_NAME,
-            index = valueParameters.size,
             type = irClass.defaultType.makeNullable(),
             origin = ES6_BOX_PARAMETER,
             isAssignable = true

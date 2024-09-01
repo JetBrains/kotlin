@@ -22,7 +22,6 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
@@ -699,7 +698,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                 //language=Gradle
                 """
                 $it
-                $SYSTEM_LINE_SEPARATOR
+                ${System.lineSeparator()}
                 compileKotlin { kotlinOptions.freeCompilerArgs = ['$arg'] }
                 """.trimIndent()
             }
@@ -745,10 +744,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             buildAndFail("build") {
                 val actual = getErrorMessages()
                 assertEquals(
-                    expected = genJavaErrorString(
-                        7,
-                        if (buildOptions.languageVersion?.startsWith("2") ?: (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0)) 18 else 19
-                    ),
+                    expected = genJavaErrorString(7, 19),
                     actual = actual
                 )
             }
@@ -1254,35 +1250,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("Kapt runs in fallback mode with useK2 = true")
-    @GradleTest
-    open fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |      useK2 = true
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputContains("Falling back to 1.9.")
-            }
-        }
-    }
-
     @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
     @GradleTest
     open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
@@ -1337,12 +1304,12 @@ open class Kapt3IT : Kapt3BaseIT() {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
                 assertOutputDoesNotContain("Falling back to 1.9.")
-                assertOutputContains("K2 kapt is an experimental feature. Use with caution.")
+                assertOutputContains("K2 kapt is in Alpha. Use with caution.")
             }
             build("-Pkapt.use.k2=true", "cleanCompileKotlin", "compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
                 // The warning should not be displayed for the compile task.
-                assertOutputDoesNotContain("K2 kapt is an experimental feature. Use with caution.")
+                assertOutputDoesNotContain("K2 kapt is in Alpha. Use with caution.")
             }
         }
     }

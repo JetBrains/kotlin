@@ -1,2 +1,3 @@
-KDocReference:
-  AA
+KDocName(8,10): 'AA'
+  KDocReference:
+    (in <local>: C) AA

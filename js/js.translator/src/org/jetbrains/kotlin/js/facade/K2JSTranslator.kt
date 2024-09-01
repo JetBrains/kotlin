@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
@@ -115,7 +114,7 @@ class K2JSTranslator @JvmOverloads constructor(
         packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace
-        TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext, ErrorTolerancePolicy.NONE)
+        TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
         val moduleDescriptor = analysisResult.moduleDescriptor
         val diagnostics = bindingTrace.bindingContext.diagnostics
         val pathResolver = SourceFilePathResolver.create(config)
@@ -155,7 +154,7 @@ class K2JSTranslator @JvmOverloads constructor(
         packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace
-        TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext, ErrorTolerancePolicy.NONE)
+        TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
         val moduleDescriptor = analysisResult.moduleDescriptor
         val diagnostics = bindingTrace.bindingContext.diagnostics
         val pathResolver = SourceFilePathResolver.create(config)

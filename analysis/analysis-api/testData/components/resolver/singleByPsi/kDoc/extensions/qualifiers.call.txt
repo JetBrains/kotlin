@@ -1,17 +1,23 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(54,57): 'one'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(71,78): 'one.two'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(91,94): 'Foo'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(104,115): 'one.two.Foo'
+    null
 
-<caret_5>: KDocName:
-null
+<caret_5>:
+  KDocName(128,131): 'one'
+    null
 
-<caret_6>: KDocName:
-null
+<caret_6>:
+  KDocName(149,156): 'one.two'
+    null

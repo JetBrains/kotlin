@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo) expect constructor()
+KtNameReferenceExpression(149,152): 'Foo'
+  KtSimpleNameReference:
+    (in Foo) expect constructor()

@@ -1,6 +1,6 @@
 FILE: backingFieldWithSmartTypeParameters.kt
     public final val items: R|kotlin/collections/List<kotlin/String>|
-        private <explicit backing field>: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        private final backing field field: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
         public get(): R|kotlin/collections/List<kotlin/String>|
     public final fun test(): R|kotlin/Unit| {
         R|/items|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(one more item))

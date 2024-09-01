@@ -1,9 +1,3 @@
 expression: 42 / 0
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: error("Division by zero")
 constantValueKind: Error
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: error("Division by zero")
-constantLikeValueKind: Error

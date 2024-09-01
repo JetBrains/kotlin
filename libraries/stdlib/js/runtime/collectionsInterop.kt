@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(ExperimentalJsCollectionsApi::class)
@@ -64,7 +64,8 @@ private fun <E> createJsArrayViewWith(
     listDecreaseSize: (Int) -> Unit,
     listIncreaseSize: (Int) -> Unit,
 ): dynamic {
-    val arrayView = objectCreate<JsArrayView<*>>()
+    val arrayView = JsArray<E>()
+    JsObject.setPrototypeOf(arrayView, JsArrayView::class.js.asDynamic().prototype)
 
     return js("""
        new Proxy(arrayView, {
@@ -211,7 +212,7 @@ private fun <K, V> createJsMapViewWith(
             'delete': mapRemove,
             clear: mapClear,
             has: mapContains,
-            keys: valuesIterator,
+            keys: keysIterator,
             values: valuesIterator,
             entries: entriesIterator,
             forEach: function (cb, thisArg) { forEach(cb, thisArg || mapView) }
@@ -223,13 +224,19 @@ private fun <K, V> createJsMapViewWith(
 private fun <T> createJsIteratorFrom(iterator: Iterator<T>, transform: (T) -> dynamic = { it }): dynamic {
     val iteratorNext = { iterator.next() }
     val iteratorHasNext = { iterator.hasNext() }
-    return js("""{
-        next: function() {
-            var result = { done: !iteratorHasNext() };
-            if (!result.done) result.value = transform(iteratorNext());
-            return result;
+    val jsIterator = js(
+        """
+        {
+            next: function() {
+                var result = { done: !iteratorHasNext() };
+                if (!result.done) result.value = transform(iteratorNext());
+                return result;
+            }
         }
-    }""")
+        """
+    )
+    js("jsIterator[Symbol.iterator] = function() { return this; }")
+    return jsIterator
 }
 
 private fun forEach(cb: (dynamic, dynamic, dynamic) -> Unit, thisArg: dynamic) {

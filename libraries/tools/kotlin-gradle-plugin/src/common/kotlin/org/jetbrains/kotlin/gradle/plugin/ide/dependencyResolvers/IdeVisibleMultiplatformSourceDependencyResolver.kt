@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
@@ -13,10 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.resolvableMetadataConfigurationForEachSourSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.projectDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 
-internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver {
+internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
         return sourceSet.resolveMetadata<MetadataDependencyResolution.ChooseVisibleSourceSets>()
@@ -46,5 +48,9 @@ internal object IdeVisibleMultiplatformSourceDependencyResolver : IdeDependencyR
                 )
             )
         }
+    }
+
+    override fun dependencies(project: Project): Iterable<Any> {
+        return resolvableMetadataConfigurationForEachSourSet(project)
     }
 }

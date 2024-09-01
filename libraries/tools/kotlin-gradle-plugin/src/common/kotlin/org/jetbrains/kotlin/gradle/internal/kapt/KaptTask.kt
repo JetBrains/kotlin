@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
@@ -74,7 +72,7 @@ abstract class KaptTask @Inject constructor(
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
         .propertyWithNewInstance({ null })
 
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
+    final override val kotlinJavaToolchainProvider: Provider<out KotlinJavaToolchain> = defaultKotlinJavaToolchain
 
     @Suppress("unused", "DeprecatedCallableAddReplaceWith")
     @Deprecated(
@@ -269,7 +267,6 @@ abstract class KaptTask @Inject constructor(
             return project
                 .providers
                 .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
-                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 .map { it.toString().toBoolean() }
                 .orElse(false)
         }

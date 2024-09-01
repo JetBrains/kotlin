@@ -74,7 +74,7 @@ abstract class E1 : WithVarInternalSet(), IVal
 abstract class F1 : WithVarProtectedSet(), IVal
 abstract class G1 : WithVarPrivateSet(), IVal
 
-abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_WARNING!>class A2<!> : WithVal(), IVar
+abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR!>class A2<!> : WithVal(), IVar
 abstract class B2 : WithVar(), IVar
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C2<!> : WithProtectedVar(), IVar
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D2<!> : WithInternalVar(), IVar
@@ -90,7 +90,7 @@ abstract class E3 : IVal, WithVarInternalSet()
 abstract class F3 : IVal, WithVarProtectedSet()
 abstract class G3 : IVal, WithVarPrivateSet()
 
-abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_WARNING!>class A4<!> : IVar, WithVal()
+abstract <!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR!>class A4<!> : IVar, WithVal()
 abstract class B4 : IVar, WithVar()
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>C4<!> : IVar, WithProtectedVar()
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>D4<!> : IVar, WithInternalVar()

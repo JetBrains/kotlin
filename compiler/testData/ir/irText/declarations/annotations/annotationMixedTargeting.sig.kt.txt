@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+class Foo {
+  // CHECK:
+  //   Mangled name: Foo{}y
+  //   Public signature: /Foo.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
+  @JavaPropertyAnnotation
+  val y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Foo#<get-y>(){}kotlin.Int
+    //   Public signature: /Foo.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: Foo{}x
+  //   Public signature: /Foo.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  @JavaPropertyAnnotation
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Foo#<get-x>(){}kotlin.Int
+    //   Public signature: /Foo.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: Foo#<init>(kotlin.Int){}
+  //   Public signature: /Foo.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(y: Int) /* primary */
+
+  // CHECK:
+  //   Mangled name: Foo#foo(){}
+  //   Public signature: /Foo.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  fun foo(): Unit
+
+}
+

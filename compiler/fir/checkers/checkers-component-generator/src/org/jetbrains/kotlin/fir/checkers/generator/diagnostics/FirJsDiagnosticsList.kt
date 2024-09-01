@@ -60,6 +60,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("name")
             parameter<Collection<FirBasedSymbol<*>>>("existing")
+            isSuppressible = true
         }
         val JS_FAKE_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("name")

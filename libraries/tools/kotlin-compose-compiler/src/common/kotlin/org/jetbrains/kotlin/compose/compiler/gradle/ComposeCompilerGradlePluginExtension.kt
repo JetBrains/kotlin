@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -83,6 +85,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * }
      * ```
      */
+    @Deprecated("Use the featureFlags option instead")
     val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
@@ -95,6 +98,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      *
      * This feature is still considered experimental and is thus disabled by default.
      */
+    @Deprecated("Use the featureFlags option instead")
     val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     /**
@@ -107,7 +111,8 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [AndroidX strong skipping](https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/strong-skipping.md)
      */
-    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    @Deprecated("Use the featureFlags option instead")
+    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * Path to the stability configuration file.
@@ -115,7 +120,16 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
      */
+    @Deprecated("Use the stabilityConfigurationFiles option instead")
     abstract val stabilityConfigurationFile: RegularFileProperty
+
+    /**
+     * List of paths to the stability configuration file.
+     *
+     * For more information, see this link:
+     *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
+     */
+    abstract val stabilityConfigurationFiles: ListProperty<RegularFile>
 
     /**
      * Include composition trace markers in the generated code.
@@ -126,7 +140,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
-    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * A set of Kotlin platforms to which the Compose plugin will be applied.
@@ -145,8 +159,10 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * composeCompiler {
      *     targetKotlinPlatforms.set(
      *         KotlinPlatformType.values()
-     *             .filterNot { it == KotlinPlatformType.native || it == KotlinPlatformType.js }
-     *             .asIterable()
+     *             .filterNot {
+     *                it == KotlinPlatformType.native ||
+     *                it == KotlinPlatformType.js
+     *             }.asIterable()
      *     )
      * }
      * ```
@@ -154,4 +170,26 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
     val targetKotlinPlatforms: SetProperty<KotlinPlatformType> = objectFactory
         .setProperty(KotlinPlatformType::class.java)
         .convention(KotlinPlatformType.values().asIterable())
+
+    /**
+     * A set of feature flags to enable. A feature requires a feature flags when it is in the process of becoming the default
+     * behavior of the Compose compiler. Features in this set will eventually be removed and disabling will no longer be
+     * supported. See [ComposeFeatureFlag] for the list of features currently recognized by the plugin.
+     *
+     * @see ComposeFeatureFlag
+     */
+    @Suppress("DEPRECATION")
+    val featureFlags: SetProperty<ComposeFeatureFlag> = objectFactory
+        .setProperty(ComposeFeatureFlag::class.java)
+        .convention(
+            // Add features that used to be added by deprecated options. No other features should be added this way.
+            enableIntrinsicRemember.zip(enableStrongSkippingMode) { intrinsicRemember, strongSkippingMode ->
+                setOfNotNull(
+                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
+                    if (!strongSkippingMode) ComposeFeatureFlag.StrongSkipping.disabled() else null
+                )
+            }.zip(enableNonSkippingGroupOptimization) { features, nonSkippingGroupsOptimization ->
+                if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features
+            }
+        )
 }

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(132,138): 'listOf'
+  KtSimpleNameReference:
+    (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

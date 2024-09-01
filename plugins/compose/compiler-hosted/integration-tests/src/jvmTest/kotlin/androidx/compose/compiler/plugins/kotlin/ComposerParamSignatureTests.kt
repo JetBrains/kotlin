@@ -160,7 +160,11 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
                     Foo()
                 }
             }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeAnimationJar()
+        )
     )
 
     @Test
@@ -886,7 +890,8 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
                     if (condition()) Color.Red else Color.Blue
                 }
             }
-        """
+        """,
+        additionalPaths = listOf(Classpath.composeUiGraphicsJar())
     )
 
     @Test

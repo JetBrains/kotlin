@@ -16,8 +16,3 @@ class C {
         fun testJvmStatic() {}
     }
 }
-
-inline class IC(val x: Int) {
-    @Synchronized
-    fun testInlineClassFun() {}
-}

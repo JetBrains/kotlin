@@ -45,7 +45,13 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
             .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .matching { it is Executable }
             .all { productionExecutable ->
-                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(productionExecutable.linkTask)
+                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(
+                    if (productionExecutable is ExecutableWasm) {
+                        productionExecutable.optimizeTask
+                    } else {
+                        productionExecutable.linkTask
+                    }
+                )
             }
     }
 

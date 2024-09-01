@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTestCase() {
     override fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)

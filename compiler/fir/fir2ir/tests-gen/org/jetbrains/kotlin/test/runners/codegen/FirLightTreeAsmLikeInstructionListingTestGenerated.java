@@ -129,6 +129,12 @@ public class FirLightTreeAsmLikeInstructionListingTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("dontEmitInternal.kt")
+    public void testDontEmitInternal() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/dontEmitInternal.kt");
+    }
+
+    @Test
     @TestMetadata("enumClassConstructor.kt")
     public void testEnumClassConstructor() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
@@ -198,6 +204,12 @@ public class FirLightTreeAsmLikeInstructionListingTestGenerated extends Abstract
     @TestMetadata("simple2Params.kt")
     public void testSimple2Params() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple2Params.kt");
+    }
+
+    @Test
+    @TestMetadata("simple2TypeArguments.kt")
+    public void testSimple2TypeArguments() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple2TypeArguments.kt");
     }
 
     @Test

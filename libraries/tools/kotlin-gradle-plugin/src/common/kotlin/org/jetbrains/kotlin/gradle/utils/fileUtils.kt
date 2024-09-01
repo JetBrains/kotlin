@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -78,9 +77,6 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     }
 }
 
-internal fun File.absolutePathWithoutExtension(): String =
-    normalize().absolutePath.substringBeforeLast(".")
-
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
 fun contentEquals(file1: File, file2: File): Boolean {
@@ -124,7 +120,7 @@ internal fun Provider<Directory>.getFile(): File = get().asFile
  * NOTE: You can remove this method and all its usages since the minimal supported version of gradle become 8.0
  */
 internal fun File.existsCompat(): Boolean =
-    if (isGradleVersionAtLeast(8, 0)) {
+    if (GradleVersion.current() >= GradleVersion.version("8.0")) {
         true
     } else {
         exists()
@@ -142,7 +138,6 @@ internal val Project.localProperties: Provider<Map<String, String>>
                 project.rootDir.resolve("local.properties")
             )
         }
-        .usedAtConfigurationTime(configurationTimePropertiesAccessor)
 
 /**
  * Returns file collection [this] excluding files from [excludes] if not null

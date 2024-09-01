@@ -1,2 +1,2 @@
-KtProperty:
-NO_CANDIDATES
+KtProperty(0,37): '// WITH_STDLIB'
+  NO_CANDIDATES

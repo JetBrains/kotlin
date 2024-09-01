@@ -1,2 +1,2 @@
-KtCallExpression:
-null
+KtCallExpression(71,80): 'Test<Bar>'
+  null

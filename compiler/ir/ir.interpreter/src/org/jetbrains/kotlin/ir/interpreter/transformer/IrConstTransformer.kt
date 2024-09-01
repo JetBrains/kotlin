@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.interpreter.transformer
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 fun IrElement.transformConst(
     irFile: IrFile,
@@ -124,9 +124,8 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.canBeInterpreted(): Boolean {
         return try {
             this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
-        } catch (e: ProcessCanceledException) {
-            throw e
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
                 return false
             }
@@ -137,9 +136,8 @@ internal abstract class IrConstTransformer(
     protected fun IrExpression.interpret(failAsError: Boolean): IrExpression {
         val result = try {
             interpreter.interpret(this, irFile)
-        } catch (e: ProcessCanceledException) {
-            throw e
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             if (suppressExceptions) {
                 return this
             }
@@ -148,7 +146,7 @@ internal abstract class IrConstTransformer(
 
         result.saveInConstTracker()
 
-        if (result is IrConst<*>) {
+        if (result is IrConst) {
             reportInlinedJavaConst(result)
         }
 
@@ -162,7 +160,7 @@ internal abstract class IrConstTransformer(
         )
     }
 
-    private fun IrExpression.reportInlinedJavaConst(result: IrConst<*>) {
+    private fun IrExpression.reportInlinedJavaConst(result: IrConst) {
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -185,7 +183,7 @@ internal abstract class IrConstTransformer(
     }
 }
 
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst<*>) {
+fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
     if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
 
     val path = irFile.path

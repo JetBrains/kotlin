@@ -20,16 +20,16 @@ val value_3 = <!ILLEGAL_UNDERSCORE!>1_E-_2F<!>
 val value_4 = <!ILLEGAL_UNDERSCORE!>3_e+_0f<!>
 
 // TESTCASE NUMBER: 5
-val value_5 = <!ILLEGAL_UNDERSCORE!>5_E_<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!>0
+val value_5 = <!ILLEGAL_UNDERSCORE!>5_E_<!>-0
 
 // TESTCASE NUMBER: 6
-val value_6 = <!ILLEGAL_UNDERSCORE!>5_e_<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!>0F
+val value_6 = <!ILLEGAL_UNDERSCORE!>5_e_<!>-0F
 
 // TESTCASE NUMBER: 7
 val value_7 = <!ILLEGAL_UNDERSCORE!>5_e_00000000<!>
 
 // TESTCASE NUMBER: 8
-val value_8 = <!ILLEGAL_UNDERSCORE!>0.0_0___E____<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!>0__0_0F
+val value_8 = <!ILLEGAL_UNDERSCORE!>0.0_0___E____<!>-0__0_0F
 
 // TESTCASE NUMBER: 9
 val value_9 = <!ILLEGAL_UNDERSCORE!>0__0.0_____e___0f<!>
@@ -53,7 +53,7 @@ val value_14 = <!ILLEGAL_UNDERSCORE!>5_________555_________5.0____e____<!>-<!UNR
 val value_15 = <!ILLEGAL_UNDERSCORE!>666_666.0__________________________________________________1_E+_2___________________________________________________________________0F<!>
 
 // TESTCASE NUMBER: 16
-val value_16 = <!ILLEGAL_UNDERSCORE!>9_______9______9_____9____9___9__9_9.0___E__<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!>1
+val value_16 = <!ILLEGAL_UNDERSCORE!>9_______9______9_____9____9___9__9_9.0___E__<!>-1
 
 // TESTCASE NUMBER: 17
 val value_17 = <!ILLEGAL_UNDERSCORE!>0_0_0_0_0_0_0_0_0_0.12345678___e+__90F<!>
@@ -74,7 +74,7 @@ val value_21 = <!ILLEGAL_UNDERSCORE!>6_54.76_5_e-_4<!>
 val value_22 = <!ILLEGAL_UNDERSCORE!>7_6543.8____E____7654_3<!>
 
 // TESTCASE NUMBER: 23
-val value_23 = <!ILLEGAL_UNDERSCORE!>9_____________87654321.0__e__<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>-<!>9_8765432_____________1F
+val value_23 = <!ILLEGAL_UNDERSCORE!>9_____________87654321.0__e__<!>-9_8765432_____________1F
 
 // TESTCASE NUMBER: 24
 val value_24 = <!ILLEGAL_UNDERSCORE!>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000___0.000000000000000000000000_e_000000000000000000000000000000000000000000000000000000000000000_0F<!>

@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // FILE: Java1.java
 public abstract class Java1 extends Number { }

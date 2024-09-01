@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
+import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -44,14 +42,16 @@ internal class CAdapterCodegen(
         when {
             isFunction -> {
                 val function = declaration as FunctionDescriptor
-                val irFunction = irSymbol.owner as IrFunction
+                val irFunction = irSymbol.owner.let {
+                    it as? IrSimpleFunction ?: context.getLoweredConstructorFunction(it as IrConstructor)
+                }
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 val signature = LlvmFunctionSignature(irFunction, this@CAdapterCodegen)
                 val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)
                 // If function is virtual, we need to resolve receiver properly.
                 generateFunction(codegen, bridgeFunctionProto) {
                     val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) && irFunction.isOverridable) {
-                        codegen.getVirtualFunctionTrampoline(irFunction as IrSimpleFunction)
+                        codegen.getVirtualFunctionTrampoline(irFunction)
                     } else {
                         // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
                         // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
@@ -114,7 +114,7 @@ internal class CAdapterCodegen(
         }
     }
 
-    private val kGetTypeFuncType = LlvmFunctionSignature(LlvmRetType(codegen.kTypeInfoPtr))
+    private val kGetTypeFuncType = LlvmFunctionSignature(LlvmRetType(codegen.kTypeInfoPtr, isObjectType = false))
 
     // Abstraction leak for slot :(.
     private val kGetObjectFuncType = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(codegen.kObjHeaderPtrPtr)))

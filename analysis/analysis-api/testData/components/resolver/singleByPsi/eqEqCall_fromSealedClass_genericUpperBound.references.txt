@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  oldItem: T
+KtNameReferenceExpression(357,364): 'oldItem'
+  KtSimpleNameReference:
+    oldItem: T

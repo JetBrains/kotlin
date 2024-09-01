@@ -1,4 +1,3 @@
-// SKIP_KLIB_TEST
 // TARGET_BACKEND: JVM_IR
 import java.util.Date
 

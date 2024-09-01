@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>
+KtNameReferenceExpression(87,100): 'mutableListOf'
+  KtSimpleNameReference:
+    (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>

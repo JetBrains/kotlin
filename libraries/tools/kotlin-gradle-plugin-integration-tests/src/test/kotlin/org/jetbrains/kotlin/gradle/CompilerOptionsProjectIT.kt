@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -499,8 +501,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
             build(":compileKotlinLinuxX64") {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64") {
-                    assertCommandLineArgumentsContain("-language-version", "1.7")
-                    assertCommandLineArgumentsContain("-api-version", "1.7")
+                    assertCommandLineArgumentsContain(CommonCompilerArguments::languageVersion.cliArgument, "1.7")
+                    assertCommandLineArgumentsContain(CommonCompilerArguments::apiVersion.cliArgument, "1.7")
                     assertCommandLineArgumentsContain("-progressive")
                 }
             }

@@ -292,6 +292,7 @@ abstract class IrBasedDataClassMembersGenerator(
     fqName: FqName?,
     origin: IrDeclarationOrigin,
     forbidDirectFieldAccess: Boolean,
+    private val generateBodies: Boolean,
 ) : DataClassMembersGenerator(context, symbolTable, irClass, fqName, origin, forbidDirectFieldAccess) {
     fun generateComponentFunction(irFunction: IrFunction, irProperty: IrProperty) {
         buildMember(irFunction) {
@@ -339,7 +340,9 @@ abstract class IrBasedDataClassMembersGenerator(
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
             function.buildWithScope {
                 generateSyntheticFunctionParameterDeclarations(function)
-                body(function)
+                if (generateBodies) {
+                    body(function)
+                }
             }
         }
     }

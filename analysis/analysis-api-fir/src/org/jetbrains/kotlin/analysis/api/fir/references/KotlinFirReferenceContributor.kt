@@ -3,9 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.references
+package org.jetbrains.kotlin.analysis.api.fir.references
 
-import org.jetbrains.kotlin.analysis.api.fir.references.KaFirKDocReference
+import org.jetbrains.kotlin.idea.references.KotlinPsiReferenceRegistrar
+import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -17,7 +20,7 @@ internal class KotlinFirReferenceContributor : KotlinReferenceProviderContributo
         with(registrar) {
             registerProvider(factory = ::KaFirForLoopInReference)
             registerProvider(factory = ::KaFirInvokeFunctionReference)
-            registerProvider(factory = ::KtFirPropertyDelegationMethodsReference)
+            registerProvider(factory = ::KaFirPropertyDelegationMethodsReference)
             registerProvider(factory = ::KaFirDestructuringDeclarationReference)
             registerProvider(factory = ::KaFirArrayAccessReference)
             registerProvider(factory = ::KaFirConstructorDelegationReference)

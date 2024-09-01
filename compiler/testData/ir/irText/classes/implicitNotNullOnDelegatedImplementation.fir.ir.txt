@@ -156,7 +156,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK1'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=@[EnhancedNullability] kotlin.String origin=null
+            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.K1' type=@[EnhancedNullability] kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final] declared in <root>.TestK1' type=<root>.K1 origin=null
                 receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

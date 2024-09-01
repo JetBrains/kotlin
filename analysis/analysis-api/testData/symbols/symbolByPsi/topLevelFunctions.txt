@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /x
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,26 +17,27 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: x
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(topLevelFunctions.kt)
   getContainingJvmClassName: TopLevelFunctionsKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /y
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -51,19 +53,19 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: y
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(topLevelFunctions.kt)
   getContainingJvmClassName: TopLevelFunctionsKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

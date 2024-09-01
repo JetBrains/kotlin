@@ -1,0 +1,20 @@
+KtDotQualifiedExpression(77,82): 'f.foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo<kotlin.String>
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = Foo<kotlin.String>
+          returnType = kotlin.Int
+          symbol = val foo: kotlin.Int
+          callableId = /foo
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        A -> (kotlin.String)
+      }
+    isInBestCandidates = true

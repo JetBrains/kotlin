@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -47,7 +47,8 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     val primaryConstructorVisibility = declaration.primaryConstructorIfAny(context.session)?.visibility
                     primaryConstructorVisibility == Visibilities.Public
                 }
-                val isConstructorVisibilityRespected = context.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility()
+                val isConstructorVisibilityRespected =
+                    context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 
                 if (consistentCopy != null && (isPrimaryConstructorVisibilityPublic || isConstructorVisibilityRespected)) {
                     reporter.reportOn(

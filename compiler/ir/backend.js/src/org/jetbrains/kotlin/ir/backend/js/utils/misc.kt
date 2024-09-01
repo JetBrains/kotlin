@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.invokeFun
@@ -53,7 +50,7 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
                 owner.getter?.getJsName() != null
             }
         }
-        else -> true
+        is IrConstructor -> true
     }
 
     return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter
@@ -102,6 +99,7 @@ fun IrBody.prependFunctionCall(
                 call
             )
         }
+        is IrSyntheticBody -> Unit
     }
 }
 
@@ -112,7 +110,7 @@ fun JsCommonBackendContext.findUnitInstanceField(): IrField =
     mapping.objectToInstanceField[irBuiltIns.unitClass.owner]!!
 
 val JsCommonBackendContext.compileSuspendAsJsGenerator: Boolean
-    get() = configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true
+    get() = this is JsIrBackendContext && configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true
 
 fun IrDeclaration.isImportedFromModuleOnly(): Boolean {
     return isTopLevel && isEffectivelyExternal() && (getJsModule() != null && !isJsNonModule() || (parent as? IrAnnotationContainer)?.getJsModule() != null)

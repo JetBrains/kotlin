@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: one/ValueClass.toString
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,23 +17,23 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: one/ValueClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.ValueClass
-  getContainingModule: KtLibraryModule "Library lib"
+  getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null

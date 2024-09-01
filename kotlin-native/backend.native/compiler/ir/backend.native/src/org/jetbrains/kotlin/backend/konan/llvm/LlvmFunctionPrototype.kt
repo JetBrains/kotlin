@@ -12,9 +12,9 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 
@@ -105,11 +105,10 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
     }
 }
 
-internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
+internal fun ContextUtils.getLlvmFunctionReturnType(function: IrSimpleFunction): LlvmRetType {
     val returnType = when {
-        function is IrConstructor -> LlvmRetType(llvm.voidType)
         function.isSuspend -> error("Suspend functions should be lowered out at this point, but ${function.render()} is still here")
-        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType)
+        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType, isObjectType = false)
         else -> LlvmRetType(
                 function.returnType.toLLVMType(llvm),
                 argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),
@@ -119,7 +118,7 @@ internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmR
     return returnType
 }
 
-internal fun LlvmFunctionSignature(irFunction: IrFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
+internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
     val returnType = contextUtils.getLlvmFunctionReturnType(irFunction)
     val parameterTypes = ArrayList(irFunction.allParameters.map {
         LlvmParamType(it.type.toLLVMType(contextUtils.llvm), contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
@@ -191,7 +190,7 @@ internal class LlvmFunctionProto(
       val linkage: LLVMLinkage,
       val independent: Boolean = false,
 ) {
-    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
+    constructor(irFunction: IrSimpleFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
             name = symbolName,
             signature = LlvmFunctionSignature(irFunction, contextUtils),
             origin = FunctionOrigin.OwnedBy(irFunction),
@@ -214,9 +213,9 @@ internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?
 
 
 
-private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
+private fun mustNotInline(context: Context, irFunction: IrSimpleFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {
-        if (irFunction is IrConstructor && irFunction.isPrimary && irFunction.returnType.isThrowable()) {
+        if (irFunction.originalConstructor?.let { it.isPrimary && it.returnType.isThrowable() } == true) {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
             return true
         }
@@ -228,7 +227,7 @@ private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
     return false
 }
 
-private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFunction): List<LlvmFunctionAttribute> =
+private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrSimpleFunction): List<LlvmFunctionAttribute> =
         mutableListOf<LlvmFunctionAttribute>().apply {
             if (irFunction.returnType.isNothing()) {
                 require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point"}

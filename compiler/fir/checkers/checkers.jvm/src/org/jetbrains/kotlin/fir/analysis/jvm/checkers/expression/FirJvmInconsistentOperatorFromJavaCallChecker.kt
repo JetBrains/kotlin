@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isAny
@@ -61,7 +61,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(Mp
         }
 
         // Check explicitly overridden contains
-        val containingClass = containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return false
+        val containingClass = containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return false
         val overriddenFunctions = overriddenFunctions(containingClass, context)
         for (overriddenFunction in overriddenFunctions) {
             if (overriddenFunction is FirNamedFunctionSymbol && overriddenFunction.check(source, context, reporter)) {

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.Int) operator fun inc(): kotlin.Int
+KtOperationReferenceExpression(182,184): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int

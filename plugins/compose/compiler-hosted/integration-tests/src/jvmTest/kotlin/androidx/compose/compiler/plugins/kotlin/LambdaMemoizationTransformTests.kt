@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.junit.Ignore
 import org.junit.Test
 
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -156,7 +155,11 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 targetState: S,
                 content: @Composable AnimatedVisibilityScope.(targetState: S) -> Unit
             ) { }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeAnimationJar()
+        )
     )
 
     @Test
@@ -486,7 +489,11 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     }
                 }
             }
-            """
+            """,
+            additionalPaths = listOf(
+                Classpath.composeUiJar(),
+                Classpath.composeFoundationJar()
+            )
         )
     }
 
@@ -743,4 +750,36 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
             """
         )
+
+    @Test
+    fun testMemoizingFromDelegate() = verifyGoldenComposeIrTransform(
+        extra = """
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
+    )
 }

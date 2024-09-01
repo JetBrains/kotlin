@@ -1,14 +1,14 @@
-Assertion failed
+---
 assert("Hello, world!" !is String)
                        |
                        false
-
-Assertion failed
+---
+---
 assert(" !is " !is String)
                |
                false
-
-Assertion failed
+---
+---
 assert(
     " !is "
 
@@ -18,14 +18,15 @@ assert(
 
             String
 )
-
-Assertion failed
+---
+---
 assert("Hello, world!"/*!is*/!is/*!is*/String)
                              |
                              false
-
-Assertion failed
+---
+---
 assert(("Hello, world!" !is String) !is Boolean)
                         |           |
                         |           false
                         false
+---

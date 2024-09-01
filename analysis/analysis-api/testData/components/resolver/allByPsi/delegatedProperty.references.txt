@@ -1,0 +1,52 @@
+KtNameReferenceExpression(24,30): 'myPack'
+  KtSimpleNameReference:
+    package myPack
+
+KtNameReferenceExpression(39,45): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(46,53): 'reflect'
+  KtSimpleNameReference:
+    package kotlin.reflect
+
+KtNameReferenceExpression(54,63): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtPropertyDelegate(74,87): 'by Delegate()'
+  KtPropertyDelegationMethodsReference:
+    0: (in myPack.Delegate) operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+    1: (in myPack.Delegate) operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String)
+
+KtCallExpression(77,87): 'Delegate()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(77,85): 'Delegate'
+  KtSimpleNameReference:
+    (in myPack.Delegate) constructor()
+
+KtNameReferenceExpression(141,144): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(157,166): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtNameReferenceExpression(172,178): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(241,244): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(257,266): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtNameReferenceExpression(278,284): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

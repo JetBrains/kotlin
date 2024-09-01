@@ -51,6 +51,6 @@ interface ScenarioModule {
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit = {},
+        assertions: CompilationOutcome.(Module, ScenarioModule) -> Unit = { _, _ -> },
     )
 }

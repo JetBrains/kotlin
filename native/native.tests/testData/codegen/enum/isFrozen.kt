@@ -13,17 +13,9 @@ enum class Zzz(val zzz: String, var value: Int = 0) {
 }
 
 fun box(): String {
-    if (Platform.memoryModel == MemoryModel.STRICT) {
-        assertTrue(Zzz.Z1.isFrozen)
-        assertFailsWith<InvalidMutabilityException> {
-            Zzz.Z1.value = 42
-        }
-        assertEquals(0, Zzz.Z1.value)
-    } else {
-        assertFalse(Zzz.Z1.isFrozen)
-        Zzz.Z1.value = 42
-        assertEquals(42, Zzz.Z1.value)
-    }
+    assertFalse(Zzz.Z1.isFrozen)
+    Zzz.Z1.value = 42
+    assertEquals(42, Zzz.Z1.value)
 
     return "OK"
 }

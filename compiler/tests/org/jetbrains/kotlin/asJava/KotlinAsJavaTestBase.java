@@ -64,5 +64,4 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
         finder = null;
         super.tearDown();
     }
-
 }

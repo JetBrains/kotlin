@@ -9,17 +9,32 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.name.FqName
 
-open class FirExplicitStarImportingScope(
-    imports: List<FirImport>,
+open class FirExplicitStarImportingScope private constructor(
     session: FirSession,
     scopeSession: ScopeSession,
+    override val starImports: List<FirResolvedImport>,
     excludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = true, excludedImportNames) {
-    override val starImports: List<FirResolvedImport> = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
+    constructor(
+        imports: List<FirImport>,
+        session: FirSession,
+        scopeSession: ScopeSession,
+        excludedImportNames: Set<FqName>
+    ) : this(
+        session, scopeSession,
+        starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder },
+        excludedImportNames
+    )
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         starImports.mapTo(LinkedHashSet()) { it.packageFqName.asString() }.toList()
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirExplicitStarImportingScope {
+        return FirExplicitStarImportingScope(newSession, newScopeSession, starImports, excludedImportNames)
     }
 }

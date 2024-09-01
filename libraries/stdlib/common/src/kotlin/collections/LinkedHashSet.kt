@@ -52,8 +52,8 @@ public expect class LinkedHashSet<E> : MutableSet<E> {
 
     override val size: Int
     override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    override fun contains(element: E): Boolean
+    override fun containsAll(elements: Collection<E>): Boolean
 
     // From MutableSet
 

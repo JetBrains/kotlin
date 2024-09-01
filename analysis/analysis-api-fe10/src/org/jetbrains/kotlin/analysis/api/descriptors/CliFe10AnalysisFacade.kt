@@ -10,9 +10,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -35,13 +35,13 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
-class CliFe10AnalysisFacade : Fe10AnalysisFacade {
+internal class CliFe10AnalysisFacade : Fe10AnalysisFacade {
     override fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext {
         val handler = getHandler(element)
         return getAnalysisContext(handler, token)
     }
 
-    override fun getAnalysisContext(ktModule: KtModule, token: KaLifetimeToken): Fe10AnalysisContext {
+    override fun getAnalysisContext(ktModule: KaModule, token: KaLifetimeToken): Fe10AnalysisContext {
         val handler = KaFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
         return getAnalysisContext(handler, token)
     }
@@ -70,7 +70,7 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
 
     private fun getHandler(useSiteElement: KtElement): KaFe10AnalysisHandlerExtension {
         val project = useSiteElement.project
-        val ktModule = ProjectStructureProvider.getModule(project, useSiteElement, contextualModule = null)
+        val ktModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return KaFe10AnalysisHandlerExtension.getInstance(project, ktModule)
     }
 
@@ -78,11 +78,11 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
         this ?: error("Resolution is not performed")
 }
 
-class KaFe10AnalysisHandlerExtension(
-    private val useSiteModule: KtSourceModule? = null
+internal class KaFe10AnalysisHandlerExtension(
+    private val useSiteModule: KaSourceModule? = null
 ) : AnalysisHandlerExtension {
     internal companion object {
-        fun getInstance(area: AreaInstance, module: KtModule): KaFe10AnalysisHandlerExtension {
+        fun getInstance(area: AreaInstance, module: KaModule): KaFe10AnalysisHandlerExtension {
             val extensions = AnalysisHandlerExtension.extensionPointName.getExtensions(area)
                 .filterIsInstance<KaFe10AnalysisHandlerExtension>()
             return extensions.firstOrNull { it.useSiteModule == module }
@@ -120,9 +120,9 @@ class KaFe10AnalysisHandlerExtension(
         // Single-module [KtFe10AnalysisHandlerExtension] can be registered without specific use-site module.
         // Simple null-check below will skip the bail-out.
         if (useSiteModule != null &&
-            module.name.asString().removeSurrounding("<", ">") != useSiteModule.moduleName
+            module.name.asString().removeSurrounding("<", ">") != useSiteModule.name
         ) {
-            // there is no way to properly map KtModule to ModuleDescriptor,
+            // there is no way to properly map KaModule to ModuleDescriptor,
             // Multi-module [KtFe10AnalysisHandlerExtension]s are used only for tests,
             // so just by name comparison should work as all module names are different
             return null

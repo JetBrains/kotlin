@@ -28,7 +28,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox,firBox,firPsiBox,firLightTreeBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
@@ -58,6 +58,13 @@
           <value>
             <array>
               <option value="$PROJECT_DIR$/js/js.tests/build/node/out/webDemoExamples/$TEST_DATA_FILE$_v5.js{.map,}" />
+            </array>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData/box">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/build/{out,out-min,out-per-module,out-per-module-min}/codegen/serializationBoxIr/plugins/js-plain-objects/compiler-plugin/testData/box/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
@@ -91,6 +98,7 @@
         <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
         <option value="$PROJECT_DIR$/native/native.tests/testData" />
         <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
+        <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
       </array>
     </option>
   </component>

@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
@@ -26,8 +25,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
@@ -119,8 +118,9 @@ private inline fun IrClass.runPluginSafe(block: () -> Unit) {
     try {
         block()
     } catch (e: Throwable) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
         throw when (e) {
-            is VirtualMachineError, is ThreadDeath, is ProcessCanceledException -> e
+            is VirtualMachineError, is ThreadDeath -> e
             else -> CompilationException(
                 "kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause",
                 this.fileParent,

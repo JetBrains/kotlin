@@ -1,0 +1,11 @@
+KT element: KtProperty
+KT element text:
+public final val prop: kotlin.String /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+FIR container source: null
+File name: 0_test.knm
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|

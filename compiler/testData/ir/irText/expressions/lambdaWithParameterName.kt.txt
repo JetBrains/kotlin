@@ -1,0 +1,52 @@
+val x1: String
+  field = foo<String, String>(t = "", block = local fun <anonymous>(x: String): String {
+    return x
+  }
+)
+  get
+
+val x2: String
+  field = foo<String, String>(t = "", block = local fun <anonymous>(it: String): String {
+    return it
+  }
+)
+  get
+
+val expectedType1: Function1<@ParameterName(name = "s") String, Int>
+  field = local fun <anonymous>(it: String): Int {
+    return it.<get-length>()
+  }
+
+  get
+
+val expectedType2: Function1<@ParameterName(name = "s") String, Int>
+  field = local fun <anonymous>(x: String): Int {
+    return x.<get-length>()
+  }
+
+  get
+
+fun bar(): String {
+  return foo<String, String>(t = "", block = local fun <anonymous>(x: String): String {
+    return x
+  }
+)
+}
+
+fun <T : Any?, R : Any?> foo(t: T, block: Function1<@ParameterName(name = "something") T, R>): R {
+  return TODO()
+}
+
+fun myMain() {
+  val y: String = foo<String, String>(t = "", block = local fun <anonymous>(x: String): String {
+    return x
+  }
+)
+  local fun baz(): String {
+    return foo<String, String>(t = "", block = local fun <anonymous>(x: String): String {
+      return x
+    }
+)
+  }
+
+}

@@ -17,14 +17,17 @@ internal external interface JsRawArray<E> {
     var length: Int
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun <E> JsRawArray<E>.getElement(index: Int): E {
     return (this.asDynamic()[index]).unsafeCast<E>()
 }
 
+@Suppress("NOTHING_TO_INLINE")
 private inline fun <E> JsRawArray<E>.setElement(index: Int, element: E) {
     this.asDynamic()[index] = element
 }
 
+@Suppress("NOTHING_TO_INLINE")
 private inline fun <E> JsRawArray<E>.replaceElementAtWithLast(index: Int) {
     setElement(index, getElement(length - 1))
     pop()

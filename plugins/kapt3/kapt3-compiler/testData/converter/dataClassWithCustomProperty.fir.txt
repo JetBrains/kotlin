@@ -1,0 +1,76 @@
+/**
+ * public final data class C : kotlin/Any {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(x: kotlin/Int)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: copy(I)LC;
+ *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *)): C
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // getter: getS()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // field: x:I
+ *   // getter: getX()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+    private final int x = 0;
+
+    public C(int x) {
+        super();
+    }
+
+    public final int getX() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getS() {
+        return null;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final C copy(int x) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}

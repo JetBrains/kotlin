@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCInteropArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.defFileIsSupportedOn
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
 import org.jetbrains.kotlin.konan.util.CInteropHints
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
@@ -113,6 +115,13 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             else
                 metadata
 
+            if (filteredMetadata.contains("@kotlinx/cinterop/ObjCMethod")) {
+                // The golden data is 64-bit-specific because it contains Obj-C method encodings
+                // which depend on pointer size.
+                // Mute such tests:
+                Assumptions.assumeFalse(targets.testTarget.has32BitPointers())
+                // https://youtrack.jetbrains.com/issue/KT-70980 tracks improving this.
+            }
             assertEqualsToFile(goldenFile, filteredMetadata)
         }
     }
@@ -150,18 +159,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
 }
 
 internal fun muteCInteropTestIfNecessary(defFile: File, target: KonanTarget) {
-    if (target.family.isAppleFamily) return
-
-    defFile.readLines().forEach { line ->
-        if (line.startsWith("---")) return
-
-        val parts = line.split('=')
-        if (parts.size == 2
-            && parts[0].trim().equals("language", ignoreCase = true)
-            && parts[1].trim().equals("Objective-C", ignoreCase = true)
-        ) {
-            Assumptions.abort<Nothing>("C-interop tests with Objective-C are not supported at non-Apple targets, def file: $defFile")
-        }
+    if (!defFile.defFileIsSupportedOn(target)) {
+        Assumptions.abort<Nothing>("C-interop tests with Objective-C are not supported at non-Apple targets, def file: $defFile")
     }
 }
-//Assumptions.assumeFalse(defHasObjC && !targets.testTarget.family.isAppleFamily)

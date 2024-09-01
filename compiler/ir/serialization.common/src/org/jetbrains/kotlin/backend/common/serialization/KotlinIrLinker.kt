@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
-    val messageLogger: IrMessageLogger,
+    val messageCollector: MessageCollector,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
@@ -79,13 +80,13 @@ abstract class KotlinIrLinker(
                     problemModuleDeserializer = moduleDeserializer,
                     allModuleDeserializers = deserializersForModules.values,
                     userVisibleIrModulesSupport = userVisibleIrModulesSupport
-                ).raiseIssue(messageLogger)
+                ).raiseIssue(messageCollector)
         }
     }
 
     fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
         return deserializersForModules[module.name.asString()]
-            ?: NoDeserializerForModule(module.name, idSignature).raiseIssue(messageLogger)
+            ?: NoDeserializerForModule(module.name, idSignature).raiseIssue(messageCollector)
     }
 
     protected abstract fun createModuleDeserializer(
@@ -153,7 +154,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
+                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageCollector)
             }
         }
 

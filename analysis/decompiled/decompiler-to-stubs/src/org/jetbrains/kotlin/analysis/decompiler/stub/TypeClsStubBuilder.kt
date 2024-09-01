@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
 private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
+private val CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME = Name.identifier("count")
 
 const val COMPILED_DEFAULT_PARAMETER_VALUE = "COMPILED_CODE"
 
@@ -110,6 +110,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
+        val abbreviatedType = type.abbreviatedType(c.typeTable)?.let { createKotlinClassTypeBean(it) }
+
         val shouldBuildAsFunctionType = isBuiltinFunctionClass(classId) && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val (extensionAnnotations, notExtensionAnnotations) = annotations.partition {
@@ -135,10 +137,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
                 0
             } else {
-                val argument = type.getExtension(JvmProtoBuf.typeAnnotation).find { c.nameResolver.getClassId(it.id).asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams }!!.getArgument(0)
-                argument.value.intValue.toInt()
+                annotations.map { it.annotationWithArgs }.find { annotationWithArgs ->
+                    annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
+                }?.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
+                    ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
 
             return
         }
@@ -146,7 +150,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         createTypeAnnotationStubs(parent, type, annotations)
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
-        val abbreviatedType = type.abbreviatedType(c.typeTable)?.let { createKotlinClassTypeBean(it) }
 
         createStubForTypeName(
             classId,
@@ -251,9 +254,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         isExtensionFunctionType: Boolean,
         isSuspend: Boolean,
         numContextReceivers: Int,
+        abbreviatedType: KotlinClassTypeBean?,
     ) {
         val typeArgumentList = type.argumentList
-        val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
+        val functionType = KotlinFunctionTypeStubImpl(parent, abbreviatedType)
         var processedTypes = 0
 
         if (numContextReceivers != 0) {

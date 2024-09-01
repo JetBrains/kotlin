@@ -8,7 +8,7 @@ interface Some {
 
     <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> var xx: Int
     open var yy = <!PROPERTY_INITIALIZER_IN_INTERFACE!>1<!>
-    <!BACKING_FIELD_IN_INTERFACE!>open var zz: Int<!>
+    open <!BACKING_FIELD_IN_INTERFACE!>var zz: Int<!>
         set(value) {
             field = value
         }

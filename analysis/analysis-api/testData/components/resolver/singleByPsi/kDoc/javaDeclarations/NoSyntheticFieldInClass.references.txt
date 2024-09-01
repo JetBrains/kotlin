@@ -1,10 +1,14 @@
 <caret_1>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_2>:
-  KDocReference:
-    (in Storage) open fun setValue(value: kotlin.String!)
+  KDocName(44,60): 'Storage.setValue'
+    KDocReference:
+      (in Storage) open fun setValue(value: kotlin.String!)
 
 <caret_3>:
-  KDocReference:
-    (in Storage) open fun prop()
+  KDocName(66,78): 'Storage.prop'
+    KDocReference:
+      (in Storage) open fun prop()

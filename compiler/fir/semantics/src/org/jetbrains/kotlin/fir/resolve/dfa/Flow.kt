@@ -14,12 +14,13 @@ abstract class Flow {
     abstract val knownVariables: Set<RealVariable>
     abstract fun unwrapVariable(variable: RealVariable): RealVariable
     abstract fun getTypeStatement(variable: RealVariable): TypeStatement?
+    abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 }
 
 class PersistentFlow internal constructor(
     private val previousFlow: PersistentFlow?,
     private val approvedTypeStatements: PersistentMap<RealVariable, PersistentTypeStatement>,
-    val implications: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
+    internal val implications: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
     // RealVariable describes a storage in memory; a pair of RealVariable with its assignment
     // index at a particular execution point forms an SSA value corresponding to the result of
     // an initializer.
@@ -35,11 +36,17 @@ class PersistentFlow internal constructor(
     override val knownVariables: Set<RealVariable>
         get() = approvedTypeStatements.keys + directAliasMap.keys
 
+    val allVariablesForDebug: Set<DataFlowVariable>
+        get() = knownVariables + implications.keys + implications.values.flatten().map { it.effect.variable }
+
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: RealVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
+
+    override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
+        implications[variable]
 
     fun lowestCommonAncestor(other: PersistentFlow): PersistentFlow? {
         var left = this
@@ -92,6 +99,9 @@ class MutableFlow internal constructor(
 
     override fun getTypeStatement(variable: RealVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
+
+    override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
+        implications[variable]
 
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,

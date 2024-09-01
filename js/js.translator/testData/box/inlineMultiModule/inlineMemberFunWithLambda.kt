@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1397
 // MODULE: lib
 // FILE: lib.kt
 open class C {

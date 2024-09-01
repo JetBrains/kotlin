@@ -1,0 +1,1 @@
+@Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation|

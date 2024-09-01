@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
-import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.mpp.*
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.Companion.abstractMutableListModCountCallableId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class IrExpectActualMatchingContext(
     val typeContext: IrTypeSystemContext,
-    val expectToActualClassMap: Map<ClassId, IrClassSymbol>
+    val expectToActualClassMap: ClassActualizationInfo.ActualClassMapping
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
     // This incompatibility is often suppressed in the source code (e.g. in kotlin-stdlib).
     // The backend must be able to do expect-actual matching to emit bytecode
@@ -312,7 +311,6 @@ internal abstract class IrExpectActualMatchingContext(
                 // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                 // I didn't manage to invent a test that would check this condition
                 .filter { !it.asIr().isFakeOverride }
-            else -> error("Unknown IR node: $node")
         }
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
@@ -449,13 +447,10 @@ internal abstract class IrExpectActualMatchingContext(
         private fun substituteArgumentOrNull(argument: IrTypeArgument): IrTypeArgument? {
             return when (argument) {
                 is IrStarProjection -> null
-                is IrTypeProjection -> when (argument) {
-                    is IrTypeProjectionImpl -> {
-                        val newType = substituteOrNull(argument.type) ?: return null
-                        makeTypeProjection(newType, argument.variance)
-                    }
-                    is IrTypeBase -> substituteOrNull(argument) as IrTypeBase?
-                    else -> shouldNotBeCalled()
+                is IrType -> substituteOrNull(argument)
+                is IrTypeProjection -> {
+                    val newType = substituteOrNull(argument.type) ?: return null
+                    makeTypeProjection(newType, argument.variance)
                 }
             }
         }
@@ -495,7 +490,10 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
     override val CallableSymbolMarker.isJavaField: Boolean
-        get() = this is IrPropertySymbol && owner.let { it.getter == null && it.setter == null }
+        get() = this is IrPropertySymbol && owner.isPropertyForJavaField()
+
+    override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
+        get() = this is IrPropertySymbol && callableId == abstractMutableListModCountCallableId
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
@@ -512,14 +510,13 @@ internal abstract class IrExpectActualMatchingContext(
                     is IrTypeAliasSymbol -> actualSymbol.owner.expandedType.getClass()!!.symbol
                     else -> actualSymbol.unexpectedSymbolKind<IrClassifierSymbol>()
                 }
-                onMatchedClasses(expectSymbol, actualClassSymbol)
+                onMatchedDeclarations(expectSymbol, actualClassSymbol)
             }
-            else -> onMatchedCallables(expectSymbol, actualSymbol)
+            else -> onMatchedDeclarations(expectSymbol, actualSymbol)
         }
     }
 
-    abstract fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol)
-    abstract fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
+    abstract fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol)
 
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)

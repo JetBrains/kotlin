@@ -9,13 +9,13 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -72,27 +72,27 @@ private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
     ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
         val platform = testModule.targetPlatform
-        val ktModule = KtNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
+        val ktModule = KaNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
         return KtTestModule(TestModuleKind.NotUnderContentRoot, testModule, ktModule, psiFiles)
     }
 }
 
-internal class KtNotUnderContentRootModuleForTest(
+internal class KaNotUnderContentRootModuleForTest(
     override val name: String,
     override val file: PsiFile,
-    override val platform: TargetPlatform
-) : KtNotUnderContentRootModule {
-    override val directRegularDependencies: List<KtModule> by lazy {
-        listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(platform))
+    override val targetPlatform: TargetPlatform
+) : KaNotUnderContentRootModule {
+    override val directRegularDependencies: List<KaModule> by lazy {
+        listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(targetPlatform))
     }
 
-    override val directDependsOnDependencies: List<KtModule>
+    override val directDependsOnDependencies: List<KaModule>
         get() = emptyList()
 
-    override val transitiveDependsOnDependencies: List<KtModule>
+    override val transitiveDependsOnDependencies: List<KaModule>
         get() = emptyList()
 
-    override val directFriendDependencies: List<KtModule>
+    override val directFriendDependencies: List<KaModule>
         get() = emptyList()
 
     override val contentScope: GlobalSearchScope

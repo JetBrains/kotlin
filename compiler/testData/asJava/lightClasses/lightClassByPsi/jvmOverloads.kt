@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class C @JvmOverloads constructor(
     val type: String?,
     val p1: Boolean = false,

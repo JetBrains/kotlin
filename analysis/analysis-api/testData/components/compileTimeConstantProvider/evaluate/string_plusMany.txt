@@ -1,9 +1,3 @@
 expression: "na" + "na" + "na" + "na" + "na" + "na" + "na" + "na " + "batman"
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: "nananananananana batman"
 constantValueKind: String
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: "nananananananana batman"
-constantLikeValueKind: String

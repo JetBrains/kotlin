@@ -1,6 +1,4 @@
 $TESTDATA_DIR$/firFriendlyErrorIfNoJdkOptionIsSet.kt
--language-version
-2.0
 -d
 $TEMP_DIR$
 -no-jdk

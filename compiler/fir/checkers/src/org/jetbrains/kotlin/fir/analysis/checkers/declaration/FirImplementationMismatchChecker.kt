@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
@@ -250,7 +249,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
             buildList {
-                addIfNotNull(function.resolvedReceiverTypeRef?.type)
+                addIfNotNull(function.resolvedReceiverTypeRef?.coneType)
                 function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
             }
         }.values

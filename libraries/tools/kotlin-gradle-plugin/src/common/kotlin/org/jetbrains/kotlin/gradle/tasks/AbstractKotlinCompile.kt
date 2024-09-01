@@ -104,16 +104,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     // This allows us to treat friendPaths as Input rather than InputFiles
     @get:Input
-    internal val friendPathsSet: Set<String>
+    internal val friendPathsSet: Provider<Set<String>>
         get() {
             val buildDirFile = projectLayout.buildDirectory.asFile.get()
-            return friendPaths
-                .filter { it.exists() }
-                .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }.toSet()
+            return friendPaths.elements.map { providedSet ->
+                providedSet
+                    .map { it.asFile }
+                    .filter { it.exists() }
+                    .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }
+                    .toSet()
+            }
         }
-
-    @get:Internal
-    val startParameters = BuildReportsService.getStartParameters(project)
 
     @get:Input
     @get:Optional
@@ -161,8 +162,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
-
-    private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
@@ -316,13 +315,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     protected fun getChangedFiles(
         inputChanges: InputChanges,
-        incrementalProps: List<FileCollection>
+        incrementalProps: List<FileCollection>,
+        filter: (File) -> Boolean = { true },
     ) = if (!inputChanges.isIncremental) {
         SourcesChanges.Unknown
     } else {
         incrementalProps
             .fold(mutableListOf<File>() to mutableListOf<File>()) { (modified, removed), prop ->
                 inputChanges.getFileChanges(prop).forEach {
+                    if (!filter(it.file)) return@forEach
                     when (it.changeType) {
                         ChangeType.ADDED, ChangeType.MODIFIED -> modified.add(it.file)
                         ChangeType.REMOVED -> removed.add(it.file)

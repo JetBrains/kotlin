@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
@@ -58,7 +58,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun IrConstructorCall.hasOnlySupportedAnnotationArgumentTypes(): Boolean {
         for (i in 0 until valueArgumentsCount) {
-            if (getValueArgument(i) !is IrConst<*>) {
+            if (getValueArgument(i) !is IrConst) {
                 return false
             }
         }
@@ -220,7 +220,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     private fun IrDeclarationParent.toFirClass(): FirRegularClass? {
-        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toFirRegularClass(session)
+        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toRegularClassSymbol(session)?.fir
     }
 
     private fun IrAnnotationContainer.convertAnnotations(): List<FirAnnotation> {
@@ -234,7 +234,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val lookupTag = classifier.toLookupTag()
                     lookupTag.constructType(
                         this.arguments.map { it.toConeTypeProjection() }.toTypedArray(),
-                        isNullable = this.isNullable()
+                        isNullable = this.isMarkedNullable()
                     )
                 }
                 is IrDynamicType -> ConeDynamicType.create(session)
@@ -256,7 +256,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val typeParameter = when (val parent = owner.parent) {
                         originalFunction -> convertedFunction.typeParameters[owner.index]
                         is IrClass -> {
-                            val firClass = parent.classIdOrFail.toLookupTag().toFirRegularClass(session)
+                            val firClass = parent.classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
                                 ?: error("Fir class for ${parent.render()} not found")
                             firClass.typeParameters[owner.index]
                         }
@@ -279,7 +279,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             argumentMapping = buildAnnotationArgumentMapping {
                 for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {
                     val name = this@toFirAnnotation.symbol.owner.valueParameters[i].name
-                    val argument = this@toFirAnnotation.getValueArgument(i) as IrConst<*>
+                    val argument = this@toFirAnnotation.getValueArgument(i) as IrConst
                     this.mapping[name] = when (argument.kind) {
                         IrConstKind.Boolean -> buildLiteralExpression(
                             source = null,

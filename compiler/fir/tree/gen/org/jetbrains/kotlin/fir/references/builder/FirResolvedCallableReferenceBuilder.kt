@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.references.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
@@ -26,7 +27,7 @@ class FirResolvedCallableReferenceBuilder {
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
     val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
-    lateinit var mappedArguments: CallableReferenceMappedArguments
+    lateinit var mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
     fun build(): FirResolvedCallableReference {
         return FirResolvedCallableReferenceImpl(

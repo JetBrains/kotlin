@@ -1,0 +1,1 @@
+@PROPERTY_GETTER:R|pack/MyAnno|[Types](s = String(str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|

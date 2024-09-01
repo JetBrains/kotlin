@@ -1,19 +1,24 @@
 KaBackingFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Local
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
+  isVal: true
+  location: PROPERTY
+  modality: FINAL
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(/x)
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: LOCAL
-  typeParameters: []
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

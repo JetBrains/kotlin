@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-/*
+/**
  * This provider is needed because we need to have ability to disable FirExtensionDeclarationsSymbolProvider during
  *   phase of annotations for plugins resolution. At this stage predicateBasedProvider is not indexed, so it will return
  *   empty results for all requests
  *
  * This is also legal, because plugins can not generate annotation classes which can influence other plugins or this plugin itself
  */
-class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
+open class FirSwitchableExtensionDeclarationsSymbolProvider protected constructor(
     private val delegate: FirExtensionDeclarationsSymbolProvider
 ) : FirSymbolProvider(delegate.session) {
     companion object {
@@ -32,7 +32,7 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
             FirExtensionDeclarationsSymbolProvider.createIfNeeded(session)?.let { FirSwitchableExtensionDeclarationsSymbolProvider(it) }
     }
 
-    private var disabled: Boolean = false
+    protected open var disabled: Boolean = false
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
         override fun getPackageNames(): Set<String>? =
@@ -87,13 +87,37 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
 
     @FirSymbolProviderInternals
     fun disable() {
+        require(!disabled) {
+            "Attempt to disable already disabled ${FirSwitchableExtensionDeclarationsSymbolProvider::class}"
+        }
+
         disabled = true
     }
 
     @FirSymbolProviderInternals
     fun enable() {
+        require(disabled) {
+            "Attempt to enable already enabled ${FirSwitchableExtensionDeclarationsSymbolProvider::class}"
+        }
+
         disabled = false
     }
+
+    @FirSymbolProviderInternals
+    internal fun isDisabled(): Boolean = disabled
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+
+@FirSymbolProviderInternals
+fun FirSession.withGeneratedDeclarationsSymbolProviderDisabled(action: () -> Unit) {
+    val enabledProvider = generatedDeclarationsSymbolProvider?.takeUnless { it.isDisabled() }
+
+    enabledProvider?.disable()
+
+    try {
+        action()
+    } finally {
+        enabledProvider?.enable()
+    }
+}

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.types.SmartcastStability
 
 internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents {
     val scopeSession = ScopeSession()
@@ -46,6 +46,7 @@ internal open class StubBodyResolveTransformerComponents(
     scopeSession,
     transformer,
     context,
+    expandTypeAliases = true,
 ) {
     override val dataFlowAnalyzer: FirDataFlowAnalyzer
         get() = object : FirDataFlowAnalyzer(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
@@ -55,10 +56,10 @@ internal open class StubBodyResolveTransformerComponents(
             override val receiverStack: Iterable<ImplicitReceiverValue<*>>
                 get() = error("Should not be called")
 
-            override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) =
+            override fun receiverUpdated(info: TypeStatement) =
                 error("Should not be called")
 
-            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<PropertyStability, MutableList<ConeKotlinType>>? =
+            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? =
                 null
         }
 }

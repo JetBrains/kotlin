@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.klass]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.klass]
  */
 sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?

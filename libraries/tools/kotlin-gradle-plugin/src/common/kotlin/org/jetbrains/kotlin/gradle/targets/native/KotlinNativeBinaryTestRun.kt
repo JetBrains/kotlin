@@ -50,8 +50,8 @@ abstract class AbstractKotlinNativeTestRun<T : KotlinNativeTest>(testRunName: St
     final override var executionSource: NativeBinaryTestRunSource
         get() = _executionSource
         private set(value) {
-            executionTask.configure {
-                it.executable(value.binary.linkTask) { value.binary.outputFile }
+            executionTask.configure { task ->
+                task.executable(value.binary.linkTaskProvider.map { it.outputFile.get() })
             }
             _executionSource = value
         }

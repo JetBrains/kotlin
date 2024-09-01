@@ -4,7 +4,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/binary-compatibility-validator" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value=" --tests * " />
+      <option name="scriptParameters" value="-Poverwrite.output=true" />
       <option name="taskDescriptions">
         <list />
       </option>
@@ -12,10 +12,16 @@
         <list>
           <option value=":tools:binary-compatibility-validator:cleanTest" />
           <option value=":tools:binary-compatibility-validator:test" />
+          <option value="--tests" />
+          <option value="*" />
         </list>
       </option>
-      <option name="vmOptions" value="-Doverwrite.output=true" />
+      <option name="vmOptions" value="" />
     </ExternalSystemSettings>
-    <method />
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
+    <method v="2" />
   </configuration>
 </component>

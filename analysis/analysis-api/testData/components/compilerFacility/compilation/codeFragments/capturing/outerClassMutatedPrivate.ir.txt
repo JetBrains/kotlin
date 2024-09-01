@@ -9,6 +9,6 @@ MODULE_FRAGMENT
         VALUE_PARAMETER name:p0 index:0 type:<root>.Test
         EXPRESSION_BODY
           BLOCK type=kotlin.Unit origin=null
-            CALL 'private final fun <set-a> (value: kotlin.String): kotlin.Unit declared in <root>.Test' type=kotlin.Unit origin=EQ
+            CALL 'private final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Test' type=kotlin.Unit origin=EQ
               $this: GET_VAR 'p0: <root>.Test declared in <root>.CodeFragment.run' type=<root>.Test origin=null
-              value: CONST String type=kotlin.String value="bar"
+              <set-?>: CONST String type=kotlin.String value="bar"

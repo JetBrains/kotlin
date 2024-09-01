@@ -19,12 +19,10 @@ public expect open class CancellationException : IllegalStateException {
  * Creates an instance of [CancellationException] with the given [message] and [cause].
  */
 @SinceKotlin("1.4")
-@Suppress("FunctionName", "NO_ACTUAL_FOR_EXPECT")
 public expect fun CancellationException(message: String?, cause: Throwable?): CancellationException
 
 /**
  * Creates an instance of [CancellationException] with the given [cause].
  */
 @SinceKotlin("1.4")
-@Suppress("FunctionName", "NO_ACTUAL_FOR_EXPECT")
 public expect fun CancellationException(cause: Throwable?): CancellationException

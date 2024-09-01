@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractScopeTestBase : AbstractSymbolByFqNameTest() {
     protected abstract fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope
 
-    protected open fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.getAllSymbols()
+    protected open fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.declarations
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         super.doTestByMainFile(mainFile, mainModule, testServices)

@@ -47,13 +47,18 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     /**
      * for errors on smartcast types then the type is brought in by an implicit this receiver expression
      */
-    object ImplicitThisReceiverExpression : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = false)
+    object ImplicitThisReceiverExpression : KtFakeSourceElementKind()
 
     /**
      * for type arguments that were inferred as opposed to specified
      * explicitly via `<>`
      */
     object ImplicitTypeArgument : KtFakeSourceElementKind()
+
+    /**
+     * for ConeErrorTypes seen through a typealias expansion
+     */
+    object ErroneousTypealiasExpansion : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
      * for return types of anonymous functions, because ImplicitTypeRef
@@ -385,11 +390,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * with a fake source which refers to corresponding component
      */
     object JavaRecordComponentField : KtFakeSourceElementKind()
-
-    /**
-     * for Java annotations that have been replaced by an equivalent Kotlin version
-     */
-    object JavaAnnotationMappedToKotlin : KtFakeSourceElementKind()
 
     /**
      * for the implicit field storing the delegated object for class delegation

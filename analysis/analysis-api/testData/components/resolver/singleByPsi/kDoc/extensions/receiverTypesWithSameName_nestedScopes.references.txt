@@ -1,35 +1,44 @@
 <caret_1>:
-  KDocReference:
-    (in test.Outer) class Foo
+  KDocName(88,91): 'Foo'
+    KDocReference:
+      (in test.Outer) class Foo
 
 <caret_2>:
-  KDocReference:
-    (in test.Outer) class Foo
+  KDocName(112,121): 'Outer.Foo'
+    KDocReference:
+      (in test.Outer) class Foo
 
 <caret_3>:
-  KDocReference:
-    (in test.Outer) class Foo
+  KDocName(135,149): 'test.Outer.Foo'
+    KDocReference:
+      (in test.Outer) class Foo
 
 <caret_4>:
-  KDocReference:
-    (in test) class Foo
+  KDocName(170,178): 'test.Foo'
+    KDocReference:
+      (in test) class Foo
 
 <caret_nested_1>:
-  KDocReference:
-    (in test.Outer.Nested) class Foo
+  KDocName(275,278): 'Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
 
 <caret_nested_2>:
-  KDocReference:
-    (in test.Outer.Nested) class Foo
+  KDocName(307,317): 'Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
 
 <caret_nested_3>:
-  KDocReference:
-    (in test.Outer.Nested) class Foo
+  KDocName(335,351): 'Outer.Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
 
 <caret_nested_4>:
-  KDocReference:
-    (in test.Outer.Nested) class Foo
+  KDocName(369,390): 'test.Outer.Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
 
 <caret_nested_5>:
-  KDocReference:
-    (in test) class Foo
+  KDocName(419,427): 'test.Foo'
+    KDocReference:
+      (in test) class Foo

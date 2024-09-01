@@ -1,6 +1,6 @@
 FILE: javaLangComparator.kt
     public final fun test_2(list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
-        lval comp: R|java/util/Comparator<kotlin/Int>| = Q|java/util|.R|java/util/Comparator|<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|kotlin/Int!|, y: R|kotlin/Int!|): R|kotlin/Int| <inline=NoInline>  {
+        lval comp: R|java/util/Comparator<kotlin/Int>| = Q|java/util|.R|java/util/Comparator|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|>(<L> = Comparator@fun <anonymous>(x: R|kotlin/Int!|, y: R|kotlin/Int!|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(1)
         }
         )

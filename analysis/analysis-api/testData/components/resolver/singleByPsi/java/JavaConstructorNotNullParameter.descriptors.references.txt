@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in JavaClass) constructor(s: kotlin.String)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(51,60): 'JavaClass'
+  KtSimpleNameReference:
+    (in JavaClass) constructor(s: kotlin.String)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

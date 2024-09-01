@@ -34,8 +34,8 @@ void enableBarriers(int64_t epoch) noexcept;
 void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 
-void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
 
-ObjHeader* weakRefReadBarrier(std::atomic<ObjHeader*>& weakReferee) noexcept;
+ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 } // namespace kotlin::gc::barriers

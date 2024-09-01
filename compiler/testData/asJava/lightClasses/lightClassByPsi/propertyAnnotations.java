@@ -66,6 +66,14 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
 
   private static final int deprecated = 0 /* initializer type: int */;
 
+  private static final int privateProperty = 1 /* initializer type: int */;
+
+  public static final int constProperty = 1 /* initializer type: int */ /* constant value 1 */;
+
+  @Anno(p = "const")
+  @java.lang.Deprecated()
+  public static void getConstProperty$annotations();//  getConstProperty$annotations()
+
   @Anno(p = "nonNullable")
   @java.lang.Deprecated()
   public static void getNonNullable$annotations();//  getNonNullable$annotations()
@@ -73,6 +81,10 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
   @Anno(p = "nullable")
   @java.lang.Deprecated()
   public static void getNullable$annotations();//  getNullable$annotations()
+
+  @Anno(p = "private")
+  @java.lang.Deprecated()
+  private static void getPrivateProperty$annotations();//  getPrivateProperty$annotations()
 
   @Anno(p = "property")
   @java.lang.Deprecated()

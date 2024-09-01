@@ -1,10 +1,13 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 
@@ -13,24 +16,23 @@ import org.jetbrains.kotlin.name.Name
  * to construct the functions manually. Potentially, there is a way to get those functions from
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtClassOrObjectSymbol.translateEnumMembers(): List<ObjCExportStub> {
-    if (classKind != KtClassKind.ENUM_CLASS) return emptyList()
-    return getEnumEntries() + listOf(getEnumValuesMethod(), getEnumEntriesProperty())
+internal fun ObjCExportContext.translateEnumMembers(symbol: KaClassSymbol): List<ObjCExportStub> {
+    if (symbol.classKind != KaClassKind.ENUM_CLASS) return emptyList()
+    return getEnumEntries(symbol) + listOf(getEnumValuesMethod(symbol), getEnumEntriesProperty(symbol))
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
-    val staticMembers = this.getStaticDeclaredMemberScope().getCallableSymbols().toList()
-    return staticMembers.filterIsInstance<KtEnumEntrySymbol>().map { entry ->
+private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCProperty> {
 
-        val entryName = entry.getEnumEntryName(false)
-        val swiftName = entry.getEnumEntryName(true)
+    val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
+    return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
+
+        val entryName = getEnumEntryName(entry, false)
+        val swiftName = getEnumEntryName(entry, true)
         ObjCProperty(
             name = entryName,
             comment = null,
             origin = null,
-            type = entry.returnType.mapToReferenceTypeIgnoringNullability(),
+            type = mapToReferenceTypeIgnoringNullability(entry.returnType),
             propertyAttributes = listOf("class", "readonly"),
             declarationAttributes = listOf(swiftNameAttribute(swiftName))
         )
@@ -40,13 +42,13 @@ private fun KtClassOrObjectSymbol.getEnumEntries(): List<ObjCProperty> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumValuesMethod]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
-    val valuesFunctionSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("values")).firstOrNull()
+private fun ObjCExportContext.getEnumValuesMethod(symbol: KaClassSymbol): ObjCMethod {
+    val valuesFunctionSymbol = with(analysisSession) { symbol.staticMemberScope }.callables(Name.identifier("values")).firstOrNull()
+    val returnType = valuesFunctionSymbol?.returnType
     return ObjCMethod(
         comment = null,
         isInstanceMethod = false,
-        returnType = valuesFunctionSymbol?.returnType?.translateToObjCReferenceType() ?: ObjCIdType,
+        returnType = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         selectors = listOf("values"),
         parameters = emptyList(),
         attributes = listOf(swiftNameAttribute("values()")),
@@ -57,14 +59,14 @@ private fun KtClassOrObjectSymbol.getEnumValuesMethod(): ObjCMethod {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildEnumEntriesProperty]
  */
-context(KtAnalysisSession, KtObjCExportSession)
-private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
-    val entriesSymbol = getStaticMemberScope().getCallableSymbols(Name.identifier("entries")).firstOrNull()
+private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): ObjCProperty {
+    val entriesSymbol = with(analysisSession) { symbol.staticMemberScope }.callables(Name.identifier("entries")).firstOrNull()
 
+    val returnType = entriesSymbol?.returnType
     return ObjCProperty(
         name = "entries",
         comment = null,
-        type = entriesSymbol?.returnType?.translateToObjCReferenceType() ?: ObjCIdType,
+        type = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         propertyAttributes = listOf("class", "readonly"),
         declarationAttributes = listOf(swiftNameAttribute("entries")),
         origin = null,
@@ -73,10 +75,9 @@ private fun KtClassOrObjectSymbol.getEnumEntriesProperty(): ObjCProperty {
     )
 }
 
-context(KtAnalysisSession)
-private fun KtEnumEntrySymbol.getEnumEntryName(forSwift: Boolean): String {
+private fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
 
-    val propertyName: String = getObjCPropertyName().run {
+    val propertyName: String = getObjCPropertyName(symbol).run {
         when {
             forSwift -> this.swiftName
             else -> this.objCName

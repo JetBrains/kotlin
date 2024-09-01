@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinStringBuilder, KotlinCharArray, KotlinCharIterator;
+@class KotlinCharArray, KotlinCharIterator, KotlinStringBuilder;
 
-@protocol KotlinCharSequence, KotlinAppendable, KotlinIterator;
+@protocol KotlinAppendable, KotlinCharSequence, KotlinIterator;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push

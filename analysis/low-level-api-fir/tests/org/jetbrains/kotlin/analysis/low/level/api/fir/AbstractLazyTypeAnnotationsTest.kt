@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -161,7 +161,7 @@ private fun FirElementWithResolveState.collectConeTypes(): Collection<ConeTypeWi
         override fun visitElement(element: FirElement) {
             contextStack.withStack(element) {
                 when (element) {
-                    is FirResolvedTypeRef -> element.type.forEachType {
+                    is FirResolvedTypeRef -> element.coneType.forEachType {
                         if (it.customAnnotations.isNotEmpty()) {
                             types += ConeTypeWithContext(it, contextStack.dumpContext())
                         }

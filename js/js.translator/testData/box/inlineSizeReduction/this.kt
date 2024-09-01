@@ -1,10 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1288
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
-
-// FIXME: The IR backend generates a lot of redundant vars
-// CHECK_VARS_COUNT: function=test count=0 TARGET_BACKENDS=JS
 
 internal class A(val x: Int) {
     inline fun f(): Int = x

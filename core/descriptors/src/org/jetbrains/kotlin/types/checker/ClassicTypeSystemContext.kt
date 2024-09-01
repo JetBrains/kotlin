@@ -708,16 +708,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.attributes.toList()
     }
 
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return !this.attributes.isEmpty() && this.getCustomAttributes().size > 0
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is KotlinType, this::errorMessage)
-        return this.attributes.filterNot { it is AnnotationsTypeAttribute }
-    }
-
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return captureFromExpressionInternal(type as UnwrappedType)
     }
@@ -930,6 +920,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override val isK2: Boolean
         get() = false
+
+    override fun supportsImprovedVarianceInCst(): Boolean {
+        return false
+    }
 }
 
 fun TypeVariance.convertVariance(): Variance {

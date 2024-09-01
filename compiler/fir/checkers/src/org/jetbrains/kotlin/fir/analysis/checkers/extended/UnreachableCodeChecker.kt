@@ -51,10 +51,11 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
                 this is EnterNodeMarker ||
                 this is StubNode ||
                 this is SplitPostponedLambdasNode ||
-                this is BinaryOrExitLeftOperandNode ||
-                this is BinaryOrEnterRightOperandNode ||
-                this is BinaryAndExitLeftOperandNode ||
-                this is BinaryAndEnterRightOperandNode ||
+                this is PostponedLambdaExitNode ||
+                this is MergePostponedLambdaExitsNode ||
+                this is FunctionCallExitNode ||
+                this is BooleanOperatorExitLeftOperandNode ||
+                this is BooleanOperatorEnterRightOperandNode ||
                 this is WhenSyntheticElseBranchNode ||
                 this is WhenBranchResultEnterNode ||
                 this is WhenBranchResultExitNode

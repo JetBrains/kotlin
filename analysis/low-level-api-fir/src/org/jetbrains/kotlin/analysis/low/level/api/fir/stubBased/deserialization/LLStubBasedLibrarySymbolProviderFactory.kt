@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createNativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
+/**
+ * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.STUBS][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.STUBS].
+ */
+internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
@@ -142,11 +145,12 @@ private class StubBasedBuiltInsSymbolProvider(
     session,
     SingleModuleDataProvider(moduleData),
     kotlinScopeProvider,
+    BuiltinsDeserializedContainerSourceProvider,
     project,
-    createBuiltInsScope(project),
+    BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project),
     isFallbackDependenciesProvider = false,
 ) {
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
+    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider.initialize(
         session,
         moduleData,
         kotlinScopeProvider
@@ -169,9 +173,4 @@ private class StubBasedBuiltInsSymbolProvider(
         // this provider operates only on builtins files, no need to check anything
         return FirDeclarationOrigin.BuiltIns
     }
-}
-
-private fun createBuiltInsScope(project: Project): GlobalSearchScope {
-    val builtInFiles = BuiltInsVirtualFileProvider.getInstance().getBuiltInVirtualFiles()
-    return GlobalSearchScope.filesScope(project, builtInFiles)
 }

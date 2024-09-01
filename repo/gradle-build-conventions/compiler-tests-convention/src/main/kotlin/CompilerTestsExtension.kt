@@ -69,7 +69,7 @@ abstract class CompilerTestsExtension(private val project: Project) {
     }
 
     fun withStdlibCommon() {
-        add(stdlibCommonRuntimeForTests) { project(":kotlin-stdlib-common") }
+        add(stdlibCommonRuntimeForTests) { project(":kotlin-stdlib", "commonMainMetadataElements") }
     }
 
     fun withScriptRuntime() {

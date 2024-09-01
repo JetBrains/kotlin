@@ -1,5 +1,4 @@
 // NO_COMMON_FILES
-// EXPECTED_REACHABLE_NODES: 1283
 // MODULE: lib
 // FILE: a.kt
 package a.p

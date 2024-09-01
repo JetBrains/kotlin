@@ -60,6 +60,8 @@ class TestFile(
     val directives: RegisteredDirectives
 ) {
     val name: String = relativePath.split("/").last()
+
+    override fun toString(): String = relativePath
 }
 
 val TestFile.nameWithoutExtension: String

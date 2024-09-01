@@ -26,7 +26,7 @@ internal val UserDefinedAttributesSetupAction = KotlinProjectSetupCoroutine {
         target.internal.kotlinComponents.flatMap { it.internal.usages }.forEach { usage ->
             val dependencyConfiguration = target.project.configurations.findByName(usage.dependencyConfigurationName) ?: return@forEach
             usage.compilation.copyAttributesTo(
-                this@KotlinProjectSetupCoroutine,
+                this@KotlinProjectSetupCoroutine.providers,
                 dest = dependencyConfiguration.attributes
             )
         }
@@ -36,7 +36,7 @@ internal val UserDefinedAttributesSetupAction = KotlinProjectSetupCoroutine {
                 .mapNotNull { configurationName -> project.configurations.findByName(configurationName) }
                 .forEach { configuration ->
                     compilation.copyAttributesTo(
-                        this@KotlinProjectSetupCoroutine,
+                        this@KotlinProjectSetupCoroutine.providers,
                         dest = configuration
                     )
                 }
@@ -47,7 +47,7 @@ internal val UserDefinedAttributesSetupAction = KotlinProjectSetupCoroutine {
             val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
             if (hostSpecificMetadataElements != null) {
                 target.copyAttributesTo(
-                    this@KotlinProjectSetupCoroutine,
+                    this@KotlinProjectSetupCoroutine.providers,
                     dest = hostSpecificMetadataElements
                 )
             }

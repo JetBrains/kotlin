@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,14 +63,24 @@ data class KotlinLikeDumpOptions(
     val labelPrintingStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
     val bodyPrintingStrategy: BodyPrintingStrategy = BodyPrintingStrategy.PRINT_BODIES,
-    val printElseAsTrue: Boolean = false,
+    val inferElseBranches: Boolean = false,
     val printUnitReturnType: Boolean = false,
     val stableOrder: Boolean = false,
     val normalizeNames: Boolean = false,
+    val printExpectDeclarations: Boolean = true,
+
+    /**
+     * Whether to print member declarations (default: true).
+     * - For [IrDeclarationContainer]s such as [IrFile] and [IrClass] these are the direct member declarations.
+     * - For [IrProperty] these are the backing [IrField] and accessors.
+     */
+    val printMemberDeclarations: Boolean = true,
+
+    /** When exactly the declaration visibility should be printed? */
+    val visibilityPrintingStrategy: VisibilityPrintingStrategy = VisibilityPrintingStrategy.PRINT_IF_NON_PUBLIC,
+
     /*
     TODO add more options:
-     always print visibility?
-     omit local visibility?
      always print modality
      print special names as is, and other strategies?
      print body for default accessors
@@ -99,6 +109,12 @@ enum class BodyPrintingStrategy {
     PRINT_BODIES,
 }
 
+enum class VisibilityPrintingStrategy {
+    ALWAYS,
+    PRINT_IF_NON_PUBLIC,
+    // TODO: omit local visibility?
+}
+
 /**
  * An interface for customizing the Kotlin-like dump.
  * It allows to e.g. skip certain declarations or annotations from the dump, or print arbitrary text before and after each IR element.
@@ -107,7 +123,7 @@ interface CustomKotlinLikeDumpStrategy {
 
     fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer): Boolean = true
 
-    fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer): Boolean = true
+    fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer, options: KotlinLikeDumpOptions): Boolean = true
 
     fun didPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer) {}
 
@@ -169,6 +185,7 @@ interface CustomKotlinLikeDumpStrategy {
 
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
     private val variableNameData = VariableNameData(options.normalizeNames)
+    private var currentWhenStmt: IrWhen? = null
 
     private val IrSymbol.safeName
         get() = if (!isBound) {
@@ -232,7 +249,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private inline fun wrap(element: IrElement, container: IrDeclaration?, block: () -> Unit) {
-        if (!options.customDumpStrategy.willPrintElement(element, container, p)) return
+        if (!options.customDumpStrategy.willPrintElement(element, container, p, options)) return
         try {
             block()
         } finally {
@@ -269,7 +286,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
         if (!p.isEmpty) p.printlnWithNoIndent()
 
-        declaration.declarations.ordered().forEach { it.accept(this, null) }
+        if (options.printMemberDeclarations) {
+            declaration.declarations.ordered().forEach { it.accept(this, null) }
+        }
 
         if (options.printRegionsPerFile) p.println("//endregion")
     }
@@ -279,6 +298,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO omit Companion name for companion objects?
         // TODO do we need to print info about `thisReceiver`?
         // TODO special support for objects?
+        if (declaration.isExpect && !options.printExpectDeclarations) return
 
         declaration.printlnAnnotations()
         p.printIndent()
@@ -325,11 +345,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         declaration.printWhereClauseIfNeededWithNoIndent()
 
         p.printlnWithNoIndent(" {")
-        p.pushIndent()
 
-        declaration.declarations.ordered().forEach { it.accept(this, declaration) }
+        if (options.printMemberDeclarations) {
+            p.pushIndent()
+            declaration.declarations.ordered().forEach { it.accept(this, declaration) }
+            p.popIndent()
+        }
 
-        p.popIndent()
         p.println("}")
         p.printlnWithNoIndent()
     }
@@ -395,7 +417,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun printVisibility(visibility: DescriptorVisibility) {
         // TODO don't print visibility if it's not changed in override?
-        p(visibility, DescriptorVisibilities.DEFAULT_VISIBILITY) { name }
+        val shouldBePrinted = visibility != DescriptorVisibilities.DEFAULT_VISIBILITY ||
+                options.visibilityPrintingStrategy == VisibilityPrintingStrategy.ALWAYS
+
+        p(condition = shouldBePrinted, visibility.name)
     }
 
     private fun printParameterModifiersWithNoIndent(
@@ -602,9 +627,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
+        if (declaration.isExpect && !options.printExpectDeclarations) return
+        val keyword = buildString {
+            if (declaration.isStatic) {
+                append(customModifier("static"))
+                append(' ')
+            }
+            append("fun ")
+        }
         declaration.printSimpleFunction(
             data,
-            "fun ",
+            keyword,
             declaration.name.asString(),
             printTypeParametersAndExtensionReceiver = true,
             printSignatureAndBody = true,
@@ -811,6 +844,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO we can omit type for set parameter
 
         p(declaration.isConst, "const")
+        p(declaration.getter?.isStatic == true, customModifier("static"))
         p.printWithNoIndent(if (declaration.isVar) "var" else "val")
         p.printWithNoIndent(" ")
 
@@ -846,41 +880,44 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         p.printlnWithNoIndent()
-        p.pushIndent()
 
-        // TODO share code with visitField?
-        // it's not valid kotlin
-        declaration.backingField?.initializer?.let {
-            if (options.bodyPrintingStrategy != BodyPrintingStrategy.NO_BODIES) {
-                // If the strategy is PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS, the local declarations in the backing field initializer
-                // will be printed under 'field'.
-                p.print("field")
+        if (options.printMemberDeclarations) {
+            p.pushIndent()
+
+            // TODO share code with visitField?
+            // it's not valid kotlin
+            declaration.backingField?.initializer?.let {
+                if (options.bodyPrintingStrategy != BodyPrintingStrategy.NO_BODIES) {
+                    // If the strategy is PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS, the local declarations in the backing field initializer
+                    // will be printed under 'field'.
+                    p.print("field")
+                }
+                if (options.bodyPrintingStrategy == BodyPrintingStrategy.PRINT_BODIES) {
+                    p.printWithNoIndent(" = ")
+                }
+                it.accept(this, declaration)
+                if (options.bodyPrintingStrategy != BodyPrintingStrategy.NO_BODIES) {
+                    p.printlnWithNoIndent()
+                }
             }
-            if (options.bodyPrintingStrategy == BodyPrintingStrategy.PRINT_BODIES) {
-                p.printWithNoIndent(" = ")
-            }
-            it.accept(this, declaration)
-            if (options.bodyPrintingStrategy != BodyPrintingStrategy.NO_BODIES) {
-                p.printlnWithNoIndent()
-            }
+
+            // TODO generate better name for set parameter `<set-?>`?
+            declaration.getter?.printAccessor("get", declaration)
+            declaration.setter?.printAccessor("set", declaration)
+
+            p.popIndent()
+            p.printlnWithNoIndent()
         }
-
-        // TODO generate better name for set parameter `<set-?>`?
-        declaration.getter?.printAccessor("get", declaration)
-        declaration.setter?.printAccessor("set", declaration)
-
-        p.popIndent()
-        p.printlnWithNoIndent()
     }
 
     private fun IrSimpleFunction.printAccessor(s: String, property: IrDeclaration) {
-        val isDefaultAccessor = origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        val isCustomAccessor = origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         printSimpleFunction(
             property,
             keyword = "",
             name = s,
             printTypeParametersAndExtensionReceiver = false,
-            printSignatureAndBody = isDefaultAccessor,
+            printSignatureAndBody = isCustomAccessor,
             printExtraTrailingNewLine = false,
         )
     }
@@ -1309,7 +1346,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    override fun visitConst(expression: IrConst<*>, data: IrDeclaration?) = wrap(expression, data) {
+    override fun visitConst(expression: IrConst, data: IrDeclaration?) = wrap(expression, data) {
         val kind = expression.kind
 
         val (prefix, postfix) = when (kind) {
@@ -1382,7 +1419,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent("when {")
         p.pushIndent()
 
+        val savedWhenStmt = currentWhenStmt
+        currentWhenStmt = expression
         expression.branches.forEach { it.accept(this, data) }
+        currentWhenStmt = savedWhenStmt
 
         p.popIndent()
         p.print("}")
@@ -1390,7 +1430,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitBranch(branch: IrBranch, data: IrDeclaration?) = wrap(branch, data) {
         p.printIndent()
-        branch.condition.accept(this, data)
+        branch.condition.let {
+            // Deserialized IR contains no IrElseBranch nodes. They are represented with IrBranch(condition=true)
+            // To match Kotlin-like IR dump before serialization, the following logic tried to infer IR node which was before serialization
+            if (options.inferElseBranches && it is IrConst && it.value == true && branch == currentWhenStmt?.branches?.last())
+                p.printWithNoIndent("else")
+            else
+                it.accept(this, data)
+        }
         p.printWithNoIndent(" -> ")
         branch.result.accept(this, data)
         p.println()
@@ -1398,8 +1445,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) = wrap(branch, data) {
         p.printIndent()
-        if ((branch.condition as? IrConst<*>)?.value == true) {
-            p.printWithNoIndent(if (options.printElseAsTrue) "true" else "else")
+        if ((branch.condition as? IrConst)?.value == true) {
+            p.printWithNoIndent("else")
         } else {
             p.printWithNoIndent("/* else */ ")
             branch.condition.accept(this, data)

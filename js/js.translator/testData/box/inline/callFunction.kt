@@ -1,7 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1288
 // IGNORE_BACKEND: JS_IR_ES6
-// CHECK_CONTAINS_NO_CALLS: box except=equals;Baz_getInstance;callLocal;callLocalExtension TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension IGNORED_BACKENDS=JS
+// CHECK_CONTAINS_NO_CALLS: box except=Foo_getInstance;Bar;Baz_getInstance;callLocal;callLocalExtension
 // CHECK_CONTAINS_NO_CALLS: callLocal
 // CHECK_CONTAINS_NO_CALLS: callLocalExtension
 
@@ -34,8 +32,8 @@ fun callLocalExtension(a: Int): String {
     return Boo().call(a)
 }
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {
     var result = call(1)
     if (result != "call(1)") return "fail1: $result"

@@ -294,3 +294,15 @@ private fun Kotlin_ObjCExport_getWrappedError(throwable: Throwable): Any? =
 @ExportTypeInfo("theOpaqueFunctionTypeInfo")
 @PublishedApi
 internal class OpaqueFunction : Function<Any?>
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_hashCode")
+internal fun Kotlin_hashCode(obj: Any): Int = obj.hashCode()
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_equals")
+internal fun Kotlin_equals(lhs: Any, rhs: Any): Boolean = lhs == rhs
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_toString")
+internal fun Kotlin_toString(obj: Any): String = obj.toString()

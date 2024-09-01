@@ -2,10 +2,10 @@ expression: {
             s: String -> 0
     }
 expected type: KaUsualClassType:
-  annotationsList: []
+  annotations: []
   typeArguments: [
     KaFlexibleType:
-      annotationsList: []
+      annotations: []
       type: kotlin/String!
   ]
   type: java/lang/Comparable<kotlin/String!>

@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/localCompanion.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.runMe.Foo
         CLASS OBJECT name:Companion modality:FINAL visibility:local [companion] superTypes:[kotlin.Any]
           annotations:
-            Suppress(names = ["WRONG_MODIFIER_CONTAINING_DECLARATION"])
+            Suppress(names = ["WRONG_MODIFIER_CONTAINING_DECLARATION"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.runMe.Foo.Companion
           CONSTRUCTOR visibility:private <> () returnType:<root>.runMe.Foo.Companion [primary]
             BLOCK_BODY

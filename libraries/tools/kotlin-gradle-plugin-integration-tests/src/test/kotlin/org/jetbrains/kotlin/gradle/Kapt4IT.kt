@@ -27,10 +27,6 @@ class Kapt4IT : Kapt3IT() {
 
     @Disabled("Doesn't make sense in Kapt 4")
     @GradleTest
-    override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    @GradleTest
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
@@ -58,17 +54,9 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
         forceKapt4()
     }
 
-    @Disabled("Enable when KT-61845 is fixed")
-    @GradleTest
-    override fun testKt18799(gradleVersion: GradleVersion) {}
-
     @Disabled("Doesn't make sense in Kapt 4")
     @GradleTest
     override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {}
-
-    @Disabled("Doesn't make sense in Kapt 4")
-    @GradleTest
-    override fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
     @GradleTest
@@ -84,7 +72,7 @@ fun TestProject.forceKapt4() {
                 try {
                     Class.forName('org.jetbrains.kotlin.gradle.tasks.KotlinCompile')
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-kapt4', '-Xsuppress-version-warnings'])
+                       compilerOptions.freeCompilerArgs.addAll(['-Xuse-k2-kapt', '-Xsuppress-version-warnings'])
                     }
                 } catch(ClassNotFoundException ignore) {
                 }
@@ -97,7 +85,7 @@ fun TestProject.forceKapt4() {
                 try {
                     Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class.java).configureEach {
-                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-kapt4", "-Xsuppress-version-warnings"))
+                       compilerOptions.freeCompilerArgs.addAll(listOf("-Xuse-k2-kapt", "-Xsuppress-version-warnings"))
                     }
                 } catch(ignore: ClassNotFoundException) {
                 }

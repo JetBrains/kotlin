@@ -134,4 +134,10 @@ public class FirIdeNormalAnalysisSourceModuleDeclaredMemberScopeTestGenerated ex
   public void testJavaInnerClassConstructor() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/javaInnerClassConstructor.kt");
   }
+
+  @Test
+  @TestMetadata("substitutionOverrideOfKotlinInJava.kt")
+  public void testSubstitutionOverrideOfKotlinInJava() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/declaredMemberScope/substitutionOverrideOfKotlinInJava.kt");
+  }
 }

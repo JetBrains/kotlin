@@ -74,8 +74,8 @@ FILE: c.kt
         ^test3 R|b/z|
     }
     context(R|c/Bar|)
-    public final fun test4(): R|kotlin/String| {
-        ^test4 this@R|c/test4|.R|c/Bar.entries|
+    public final fun test4(): R|kotlin/enums/EnumEntries<c/Foo>| {
+        ^test4 Q|c/Foo|.R|c/Foo.entries*s|
     }
     context(R|c/Bar|)
     public final fun R|c/Baz|.test5(): R|kotlin/Int| {

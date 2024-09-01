@@ -10,9 +10,9 @@ FILE: InnerClassOfThrowableOnObject.kt
             }
 
             public final fun foo(): R|kotlin/Unit| {
-                lval x: R|<anonymous>| = object : R|kotlin/Exception| {
+                lval x: R|<anonymous>| = object : R|{kotlin/Exception=} java/lang/Exception| {
                     private constructor(): R|<anonymous>| {
-                        super<R|kotlin/Exception|>()
+                        super<R|{kotlin/Exception=} java/lang/Exception|>()
                     }
 
                 }
@@ -27,9 +27,9 @@ FILE: InnerClassOfThrowableOnObject.kt
             }
 
             public final fun foo(): R|kotlin/Unit| {
-                lval x: R|<anonymous>| = object : R|kotlin/Exception| {
+                lval x: R|<anonymous>| = object : R|{kotlin/Exception=} java/lang/Exception| {
                     private constructor(): R|<anonymous>| {
-                        super<R|kotlin/Exception|>()
+                        super<R|{kotlin/Exception=} java/lang/Exception|>()
                     }
 
                 }
@@ -44,9 +44,9 @@ FILE: InnerClassOfThrowableOnObject.kt
             }
 
             public final fun foo(): R|kotlin/Unit| {
-                lval x: R|<anonymous><T>| = object : R|kotlin/Exception| {
+                lval x: R|<anonymous><T>| = object : R|{kotlin/Exception=} java/lang/Exception| {
                     private constructor(): R|<anonymous><T>| {
-                        super<R|kotlin/Exception|>()
+                        super<R|{kotlin/Exception=} java/lang/Exception|>()
                     }
 
                 }

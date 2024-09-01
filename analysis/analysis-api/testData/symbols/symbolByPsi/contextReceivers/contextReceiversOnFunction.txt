@@ -1,17 +1,18 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /y
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
     KtContextReceiver:
       label: s
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
   ]
@@ -29,19 +30,19 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: y
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
   getContainingJvmClassName: ContextReceiversOnFunctionKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

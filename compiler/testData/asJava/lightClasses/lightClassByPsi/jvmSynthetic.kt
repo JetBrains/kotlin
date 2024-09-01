@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class A {
     @JvmSynthetic
     fun foo() {}

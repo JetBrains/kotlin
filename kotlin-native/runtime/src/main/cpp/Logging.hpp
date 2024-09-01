@@ -40,8 +40,9 @@ enum class Tag : int32_t {
     kBarriers = 8,
     kGCMark = 9,
     kGCScheduler = 10,
+    kMemoryDump = 11,
 
-    kEnumSize = 11
+    kEnumSize = 12
 };
 
 namespace internal {
@@ -69,10 +70,11 @@ inline const char* name(Tag tag) {
         case Tag::kBarriers: return "barriers";
         case Tag::kGCMark: return "gcMark";
         case Tag::kGCScheduler: return "gcScheduler";
+        case Tag::kMemoryDump: return "memoryDump";
 
         case Tag::kEnumSize: break;
     }
-    RuntimeFail("Unexpected logging tag %d", tag);
+    RuntimeFail("Unexpected logging tag %d", static_cast<int>(tag));
 }
 
 ALWAYS_INLINE inline Level maxLevel(Tag tag, const int32_t logLevels[]) {

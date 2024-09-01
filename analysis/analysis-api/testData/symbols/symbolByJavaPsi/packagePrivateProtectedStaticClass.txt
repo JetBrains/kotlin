@@ -1,0 +1,30 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: JavaClass.NestedClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: ProtectedStaticVisibility
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: OPEN
+  name: NestedClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PACKAGE_PROTECTED
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

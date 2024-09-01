@@ -19,6 +19,7 @@ class SirVariableBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     lateinit var type: SirType
     lateinit var getter: SirGetter
@@ -29,6 +30,7 @@ class SirVariableBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             name,
             type,
             getter,
@@ -55,6 +57,7 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter

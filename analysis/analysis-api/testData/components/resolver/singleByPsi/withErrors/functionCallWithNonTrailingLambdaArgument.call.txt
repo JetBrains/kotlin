@@ -1,0 +1,109 @@
+KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = O1
+            symbol = a: O1
+            callableId = null),
+          { s -> true } -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            callableId = null),
+          "str" -> (KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = T1
+            symbol = c: T1
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = O1
+                symbol = a: O1
+                callableId = null,
+              KaVariableSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+                symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+                callableId = null,
+              KaVariableSignature:
+                name = c
+                receiverType = null
+                returnType = T1
+                symbol = c: T1
+                callableId = null
+            ]
+            callableId = /function
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = O2
+            symbol = a: O2
+            callableId = null),
+          { s -> true } -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+            callableId = null),
+          "str" -> (KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = T2
+            symbol = c: T2
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = O2
+                symbol = a: O2
+                callableId = null,
+              KaVariableSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+                symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+                callableId = null,
+              KaVariableSignature:
+                name = c
+                receiverType = null
+                returnType = T2
+                symbol = c: T2
+                callableId = null
+            ]
+            callableId = /function
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T1, O1> function(a: O1, b: (Int) -> Boolean, c: T1): Unit
+    fun <T2, O2> function(a: O2, b: (String) -> Boolean, c: T2): Unit>

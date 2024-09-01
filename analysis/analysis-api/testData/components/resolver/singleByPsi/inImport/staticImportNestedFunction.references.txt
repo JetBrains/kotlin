@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in one.two.TopLevelObject.Nested) fun foo()
+KtNameReferenceExpression(80,83): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.Nested) fun foo()

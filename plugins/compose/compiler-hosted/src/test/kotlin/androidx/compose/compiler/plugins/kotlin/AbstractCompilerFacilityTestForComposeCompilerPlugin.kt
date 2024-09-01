@@ -42,22 +42,16 @@ fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     )
 }
 
-// TODO(KT-68111): Integrate this hard-coded path into compiler-tests-convention.
-private const val COMPOSE_COMPILER_JAR_DIR = "plugins/compose/compiler-hosted/build/libs/"
+private const val COMPOSE_COMPILER_PATH = "compose.compiler.hosted.jar.path"
+
+private val composeCompilerPath by lazy {
+    System.getProperty(COMPOSE_COMPILER_PATH) ?: error("System property \"$COMPOSE_COMPILER_PATH\" is not found")
+}
 
 private fun flagToEnableComposeCompilerPlugin(): String {
-    val libDir = File(COMPOSE_COMPILER_JAR_DIR)
-    if (!libDir.exists() || !libDir.isDirectory) {
-        error("No directory \"$COMPOSE_COMPILER_JAR_DIR\" is found")
+    val libFile = File(composeCompilerPath)
+    if (!libFile.exists()) {
+        error("No file \"$composeCompilerPath\" is found")
     }
-
-    return libDir.listFiles { _, name -> name.startsWith("compiler-hosted") && name.endsWith(".jar") && !name.contains("tests") }
-        .let { files ->
-            when {
-                files == null -> error("Can't read the directory $libDir")
-                files.isEmpty() -> error("Missing jar file started with \"compiler\" under $COMPOSE_COMPILER_JAR_DIR")
-                files.size > 1 -> error("Multiple jar files found ${files.joinToString { it.path }}")
-                else -> files.single()
-            }
-        }.let { "-Xplugin=${it.absolutePath}" }
+    return "-Xplugin=${libFile.absolutePath}"
 }

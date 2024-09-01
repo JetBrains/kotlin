@@ -61,10 +61,11 @@ digraph elvisReturnSimple_kt {
             31 [label="Stub" style="filled" fillcolor=gray];
             32 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
             33 [label="Exit ?:" style="filled" fillcolor=gray];
-            34 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
-            35 [label="Exit block" style="filled" fillcolor=gray];
+            34 [label="Stub" style="filled" fillcolor=gray];
+            35 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+            36 [label="Exit block" style="filled" fillcolor=gray];
         }
-        36 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
+        37 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -86,7 +87,7 @@ digraph elvisReturnSimple_kt {
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {36};
+    22 -> {37};
     22 -> {23} [style=dotted];
     23 -> {24} [style=dotted];
     24 -> {25} [style=dotted];
@@ -96,12 +97,13 @@ digraph elvisReturnSimple_kt {
     27 -> {32} [style=dotted];
     28 -> {29};
     29 -> {30};
-    30 -> {36};
+    30 -> {37};
     30 -> {31} [style=dotted];
     31 -> {33} [style=dotted];
     32 -> {33} [style=dotted];
     33 -> {34} [style=dotted];
     34 -> {35} [style=dotted];
     35 -> {36} [style=dotted];
+    36 -> {37} [style=dotted];
 
 }

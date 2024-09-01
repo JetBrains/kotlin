@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS_IR
+// ISSUE: KT-70117
+
 fun foo() {
     var x = "foo"
     println("before: $x")

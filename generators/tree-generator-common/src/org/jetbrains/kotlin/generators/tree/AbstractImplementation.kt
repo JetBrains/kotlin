@@ -17,8 +17,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     val name: String?,
 ) : FieldContainer<Field>, ImplementationKindOwner
         where Implementation : AbstractImplementation<Implementation, Element, Field>,
-              Element : AbstractElement<Element, *, Implementation>,
-              Field : AbstractField<*> {
+              Element : AbstractElement<Element, Field, Implementation>,
+              Field : AbstractField<Field> {
 
     override val allParents: List<Element>
         get() = listOf(element)

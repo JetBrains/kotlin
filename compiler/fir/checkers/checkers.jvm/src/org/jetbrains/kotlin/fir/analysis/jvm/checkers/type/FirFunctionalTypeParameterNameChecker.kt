@@ -9,14 +9,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirFunctionTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-object FirFunctionalTypeParameterNameChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirFunctionTypeRef) return
+object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirFunctionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         for (parameter in typeRef.parameters) {
             check(parameter, context, reporter)
         }

@@ -144,7 +144,7 @@ class A : Java1 {
   //   Mangled name: A#removeAt(kotlin.Int){}kotlin.Int?{EnhancedNullability}
   //   Public signature: /A.removeAt|-3455962882000909435[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int?{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int?
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int?
 
   // CHECK JVM_IR:
   //   Mangled name: A#removeIf(java.util.function.Predicate<in|kotlin.Int?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
@@ -461,7 +461,7 @@ class B : Java1 {
   //   Mangled name: B#removeAt(kotlin.Int){}kotlin.Int
   //   Public signature: /B.removeAt|1718425690973201805[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int
-  override operator fun removeAt(index: Int): Int
+  override fun removeAt(index: Int): Int
 
   // CHECK:
   //   Mangled name: B{}size
@@ -481,3 +481,4 @@ class B : Java1 {
 //   Public signature: /test|-2533013708701322011[0]
 //   Public signature debug description: test(A;B){}
 fun test(a: A, b: B): Unit
+

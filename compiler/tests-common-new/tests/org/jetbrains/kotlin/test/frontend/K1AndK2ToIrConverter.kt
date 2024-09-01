@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.frontend
 
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInputsFromK1AndK2
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -23,7 +23,7 @@ class K1AndK2ToIrConverter(testServices: TestServices) :
     ) {
 
     private val classicFrontend2IrConverter = ClassicFrontend2IrConverter(testServices)
-    private val fir2IrConverter = Fir2IrJvmResultsConverter(testServices)
+    private val fir2IrConverter = Fir2IrResultsConverter(testServices)
     override fun transform(module: TestModule, inputArtifact: K1AndK2OutputArtifact): IrBackendInputsFromK1AndK2? {
         val irFromClassic = classicFrontend2IrConverter.transform(module, inputArtifact.k1Artifact)
         val irFromFir =

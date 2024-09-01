@@ -153,6 +153,10 @@ API for measuring time intervals and calculating durations.
 
 For more information, see our [Time measurement](https://kotlinlang.org/docs/time-measurement.html) guide.
 
+# Package kotlin.uuid
+
+Multiplatform `Uuid` class and utility functions for working with UUIDs.
+
 # Package org.khronos.webgl
 
 Kotlin JavaScript wrappers for the WebGL API.

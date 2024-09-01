@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(113,126): 'test.function'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(132,140): 'function'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(150,163): 'Base.function'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(169,187): 'test.Base.function'
+    NO_CANDIDATES

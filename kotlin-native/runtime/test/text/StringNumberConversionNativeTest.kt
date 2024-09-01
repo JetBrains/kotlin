@@ -35,6 +35,15 @@ class StringNumberConversionNativeTest {
         assertFailsWith<NumberFormatException> {
             "5.5.3e123d".toDouble()
         }
+        assertFailsWith<NumberFormatException> {
+            "1e+".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "1e+-".toDouble()
+        }
+        assertFailsWith<NumberFormatException> {
+            "1e-".toDouble()
+        }
 
         // regression of incorrect processing of long lines - such values returned Infinity
         assertFailsWith<NumberFormatException> {
@@ -90,6 +99,15 @@ class StringNumberConversionNativeTest {
         }
         assertFailsWith<NumberFormatException> {
             "5.5.3e123f".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "1e+".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "1e+-".toFloat()
+        }
+        assertFailsWith<NumberFormatException> {
+            "1e-".toFloat()
         }
 
         // regression of incorrect processing of long lines - such values returned Infinity

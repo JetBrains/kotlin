@@ -1,0 +1,14 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
+// MODULE: lib
+// FILE: a.kt
+
+private const val privateConstVal = "OK"
+
+internal inline fun internalInlineMethod() = privateConstVal
+
+// MODULE: main()(lib)
+// FILE: main.kt
+fun box(): String {
+    return internalInlineMethod()
+}

@@ -1,0 +1,45 @@
+FILE: safeCallsWithImplicitInvoke.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val alias: R|Foo| = this@R|/Foo|
+            public get(): R|Foo|
+
+        public final fun identityFunction(): R|Foo| {
+            ^identityFunction this@R|/Foo|
+        }
+
+        public final val identityProperty: R|() -> Foo| = R|kotlin/TODO|()
+            public get(): R|() -> Foo|
+
+        public final val nestedIdentityProperty: R|() -> kotlin/Function0<Foo>| = R|kotlin/TODO|()
+            public get(): R|() -> kotlin/Function0<Foo>|
+
+        public final operator fun get(index: R|kotlin/Int|): R|Foo| {
+            ^get this@R|/Foo|
+        }
+
+        public final operator fun invoke(arg: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun huh(arg: R|Foo?|): R|kotlin/Unit| {
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)).R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityFunction|() }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityFunction|().R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityFunction|().R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityFunction|().R|/Foo.get|(Int(42)).R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|() }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.identityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.get|(Int(42)).R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.nestedIdentityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|() -> Foo|>|().R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|() }
+        R|<local>/arg|?.{ $subj$.R|/Foo.nestedIdentityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|() -> Foo|>|().R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.nestedIdentityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|() -> Foo|>|().R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.nestedIdentityProperty|.R|SubstitutionOverride<kotlin/Function0.invoke: R|() -> Foo|>|().R|SubstitutionOverride<kotlin/Function0.invoke: R|Foo|>|().R|/Foo.get|(Int(42)).R|/Foo.invoke|(String()) }
+    }

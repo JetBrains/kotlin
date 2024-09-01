@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope

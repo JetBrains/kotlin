@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -215,15 +216,11 @@ class Fir2IrClassifierStorage(
 
         classCache[firClass] = symbol
         check(irParent.isExternalParent()) { "Source classes should be created separately before referencing" }
-        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
-        // NB: this is needed to prevent recursions in case of self bounds
-        irClass.prepareTypeParameters()
-
-        return irClass
+        return lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        val firClassSymbol = lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return null
+        val firClassSymbol = lookupTag.toClassSymbol(session) ?: return null
         return getIrClass(firClassSymbol.fir)
     }
 
@@ -251,7 +248,7 @@ class Fir2IrClassifierStorage(
 
         return fieldsForContextReceivers.getOrPut(irClass) {
             klass.contextReceivers.withIndex().map { (index, contextReceiver) ->
-                c.irFactory.createField(
+                IrFactoryImpl.createField(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     origin = IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER,
@@ -404,10 +401,8 @@ class Fir2IrClassifierStorage(
         )!!
 
         val symbol = IrTypeAliasSymbolImpl()
-        val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         typeAliasCache[firTypeAlias] = symbol
-        irTypeAlias.prepareTypeParameters()
-
+        lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
         return symbol
     }
 

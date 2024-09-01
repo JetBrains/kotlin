@@ -1,0 +1,65 @@
+// MODULE: lib
+// FILE: lib.kt
+
+// CHECK:
+//   Mangled name: {}extensionFunctionType
+//   Public signature: /extensionFunctionType|-412098023012013921[0]
+//   Public signature debug description: {}extensionFunctionType
+val extensionFunctionType: @ExtensionFunctionType Function1<Int, Unit>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-extensionFunctionType>(){}
+  //   Public signature: /extensionFunctionType.<get-extensionFunctionType>|-4462968860344069873[0]
+  //   Public signature debug description: <get-extensionFunctionType>(){}
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-extensionFunctionType>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
+  //   Public signature: /extensionFunctionType.<get-extensionFunctionType>|-3997169507546902545[0]
+  //   Public signature debug description: <get-extensionFunctionType>(){}kotlin.Function1<kotlin.Int,kotlin.Unit>
+  get
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #exact(){}
+//   Public signature: /exact|-8851949475093084163[0]
+//   Public signature debug description: exact(){}
+// CHECK JVM_IR:
+//   Mangled name: #exact(){}kotlin.String
+//   Public signature: /exact|-1330240864746906231[0]
+//   Public signature debug description: exact(){}kotlin.String
+fun exact(): @Exact String
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #noInfer(){}
+//   Public signature: /noInfer|-5614123907426831418[0]
+//   Public signature debug description: noInfer(){}
+// CHECK JVM_IR:
+//   Mangled name: #noInfer(){}kotlin.String
+//   Public signature: /noInfer|-2156294571581880586[0]
+//   Public signature debug description: noInfer(){}kotlin.String
+fun noInfer(): @NoInfer String
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #unsafeVariance(){}
+//   Public signature: /unsafeVariance|900844940385182182[0]
+//   Public signature debug description: unsafeVariance(){}
+// CHECK JVM_IR:
+//   Mangled name: #unsafeVariance(){}kotlin.String
+//   Public signature: /unsafeVariance|-2477055077799422548[0]
+//   Public signature debug description: unsafeVariance(){}kotlin.String
+fun unsafeVariance(): String
+
+// MODULE: main
+// FILE: main.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%main.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|-4803378304852097838[0]
+//   Public signature by Frontend debug description: main(){}%main.kt
+// CHECK JS_IR NATIVE:
+//   Mangled name: #main(){}
+//   Public signature: /main|-4284757841571462650[0]
+//   Public signature debug description: main(){}
+fun main(): Unit
+

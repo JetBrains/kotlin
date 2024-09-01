@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class WasmCompiledModuleFragment(
     val irBuiltIns: IrBuiltIns,
     generateTrapsInsteadOfExceptions: Boolean,
+    itsPossibleToCatchJsErrorSeparately: Boolean
 ) {
     val functions =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
@@ -46,13 +48,24 @@ class WasmCompiledModuleFragment(
     val constantArrayDataSegmentId =
         ReferencableElements<Pair<List<Long>, WasmType>, Int>()
 
-    private val tagFuncType = WasmFunctionType(
+    internal val throwableTagFuncType = WasmFunctionType(
         listOf(
             WasmRefNullType(WasmHeapType.Type(gcTypes.reference(irBuiltIns.throwableClass)))
         ),
         emptyList()
     )
-    val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
+
+    internal val jsExceptionTagFuncType = WasmFunctionType(
+        listOf(WasmExternRef),
+        emptyList()
+    )
+
+    val tags = listOfNotNull(
+        runIf(!generateTrapsInsteadOfExceptions && itsPossibleToCatchJsErrorSeparately) {
+            WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", "js_error_tag"))
+        },
+        runIf(!generateTrapsInsteadOfExceptions) { WasmTag(throwableTagFuncType) }
+    )
 
     val typeInfo = ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
 
@@ -195,7 +208,9 @@ class WasmCompiledModuleFragment(
         // Export name "memory" is a WASI ABI convention.
         exports += WasmExport.Memory("memory", memory)
 
+        val (importedTags, definedTags) = tags.partition { it.importPair != null }
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()
+        val importsInOrder = importedFunctions + importedTags
 
         fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
             return when (declaration) {
@@ -218,7 +233,7 @@ class WasmCompiledModuleFragment(
         globals.addAll(globalVTables.elements)
         globals.addAll(globalClassITables.elements.distinct())
 
-        val allFunctionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType
+        val allFunctionTypes = canonicalFunctionTypes.values.toList() + throwableTagFuncType + jsExceptionTagFuncType + masterInitFunctionType
 
         // Partition out function types that can't be recursive,
         // we don't need to put them into a rec group
@@ -230,8 +245,9 @@ class WasmCompiledModuleFragment(
         val module = WasmModule(
             functionTypes = nonRecursiveFunctionTypes,
             recGroupTypes = recGroupTypes,
-            importsInOrder = importedFunctions,
+            importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
+            importedTags = importedTags,
             definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>() + masterInitFunction,
             tables = emptyList(),
             memories = listOf(memory),
@@ -241,7 +257,7 @@ class WasmCompiledModuleFragment(
             elements = emptyList(),
             data = data,
             dataCount = true,
-            tags = tags
+            tags = definedTags
         )
         module.calculateIds()
         return module

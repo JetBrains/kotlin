@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.config.doesDataClassCopyRespectConstructorVisibility
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -329,7 +329,7 @@ class FirStatusResolver(
             return when {
                 containingClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) ->
                     Visibilities.Public
-                session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
+                session.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility) ||
                         containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) ->
                     containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
                 else -> fallbackVisibility
@@ -358,6 +358,7 @@ class FirStatusResolver(
                 val containingPropertyModality = containingProperty?.modality
                 when {
                     containingClass == null -> Modality.FINAL
+                    declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     containingClass.classKind == ClassKind.INTERFACE -> {
                         when {
                             declaration.visibility == Visibilities.Private -> Modality.FINAL
@@ -365,7 +366,6 @@ class FirStatusResolver(
                             else -> Modality.OPEN
                         }
                     }
-                    declaration is FirPropertyAccessor && containingPropertyModality != null -> containingPropertyModality
                     declaration.isOverride -> Modality.OPEN
                     else -> Modality.FINAL
                 }

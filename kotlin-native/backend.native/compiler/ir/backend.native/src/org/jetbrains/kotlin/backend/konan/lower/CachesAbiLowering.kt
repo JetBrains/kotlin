@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,10 +19,16 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 
 /**
  * Allows to distinguish external declarations to internal ABI.
@@ -36,15 +41,13 @@ internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
  * In case of compiler caches, this means that it is not accessible as Lazy IR
  * and we have to explicitly add an external declaration.
  */
-internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
-    private val outerThisAccessors = mapping.outerThisCacheAccessors
-    private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
+internal class CachesAbiSupport(mapping: Mapping, private val irFactory: IrFactory) {
     private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
 
 
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
-        return outerThisAccessors.getOrPut(irClass) {
+        return irClass::outerThisAccessor.getOrSetIfNull {
             irFactory.buildFun {
                 name = getMangledNameFor("outerThis", irClass)
                 origin = INTERNAL_ABI_ORIGIN
@@ -62,9 +65,23 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
         }
     }
 
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    fun getTopLevelFieldAccessor(irField: IrField): IrSimpleFunction {
+        require(irField.isTopLevel)
+        return irField::topLevelFieldAccessor.getOrSetIfNull {
+            irFactory.buildFun {
+                name = getMangledNameFor("${irField.name}_get", irField.parent)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irField.type
+            }.apply {
+                parent = irField.parent
+            }
+        }
+    }
+
     fun getLateinitPropertyAccessor(irProperty: IrProperty): IrSimpleFunction {
         require(irProperty.isLateinit) { "Expected a lateinit property but was: ${irProperty.render()}" }
-        return lateinitPropertyAccessors.getOrPut(irProperty) {
+        return irProperty::lateinitPropertyAccessor.getOrSetIfNull {
             val backingField = irProperty.backingField ?: error("Lateinit property ${irProperty.render()} should have a backing field")
             val actualField = lateInitFieldToNullableField[backingField] ?: backingField
             val owner = irProperty.parent
@@ -91,7 +108,7 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
      * Generate name for declaration that will be a part of internal ABI.
      */
     private fun getMangledNameFor(declarationName: String, parent: IrDeclarationParent): Name {
-        val prefix = parent.fqNameForIrSerialization
+        val prefix = (parent as? IrFile)?.path ?: parent.fqNameForIrSerialization
         return "$prefix.$declarationName".synthesizedName
     }
 }
@@ -146,6 +163,21 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
         }
         data.add(function)
     }
+
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    override fun visitField(declaration: IrField, data: MutableList<IrFunction>) {
+        declaration.acceptChildren(this, data)
+
+        if (!declaration.isTopLevel || DescriptorVisibilities.isPrivate(declaration.visibility)) return
+
+        val getter = cachesAbiSupport.getTopLevelFieldAccessor(declaration)
+        context.createIrBuilder(getter.symbol).apply {
+            getter.body = irBlockBody {
+                +irReturn(irGetField(null, declaration))
+            }
+        }
+        data.add(getter)
+    }
 }
 
 internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
@@ -193,6 +225,12 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                             putValueArgument(0, expression.receiver)
                     }
                 }
+            }
+
+            field.isTopLevel -> {
+                val accessor = cachesAbiSupport.getTopLevelFieldAccessor(field)
+                dependenciesTracker.add(field)
+                createIrBuilder().irCall(accessor)
             }
 
             else -> expression

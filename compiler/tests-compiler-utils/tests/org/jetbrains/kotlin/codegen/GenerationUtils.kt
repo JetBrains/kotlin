@@ -12,6 +12,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -97,6 +99,10 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+        if (FirAnalysisHandlerExtension.analyze(project, configuration) == false) {
+            throw CompilationErrorException()
+        }
 
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,15 +9,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -25,57 +24,58 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
         ktAnalysisSession: KaSession,
-        ktModule: KtModule,
-        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
+        ktModule: KaModule,
+        classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
-        classOrObjectSymbol = classOrObjectSymbol,
+        classSymbol = classSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind == KaClassKind.INTERFACE)
+        require(classSymbol.classKind == KaClassKind.INTERFACE)
     }
 
-    constructor(classOrObject: KtClassOrObject, ktModule: KtModule) : super(classOrObject, ktModule) {
+    constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
         require(classOrObject is KtClass && classOrObject.isInterface())
     }
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            val result = mutableListOf<KtLightMethod>()
+        withClassSymbol { classSymbol ->
+            val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols().filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 
             createMethods(visibleDeclarations, result)
-            addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
+            addMethodsFromCompanionIfNeeded(result, classSymbol)
 
             result
         }
     }
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean =
-        !(symbol is KaFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
+        !(symbol is KaNamedFunctionSymbol && symbol.visibility == KaSymbolVisibility.PRIVATE || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
-        SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+        SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes)
+        withClassSymbol { classSymbol ->
+            createInheritanceList(forExtendsList = true, classSymbol.superTypes)
         }
     }
 

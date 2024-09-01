@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
@@ -72,9 +70,9 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        val container = declaration.getContainingClassSymbol(context.session) ?: return
+        val container = declaration.getContainingClassSymbol() ?: return
 
-        if (!container.isCompanion() || container.containerIsInterface(context)) {
+        if (!container.isCompanion() || container.containerIsInterface()) {
             reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION, context)
         }
 
@@ -149,8 +147,8 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (declaration.isConst) reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_CONST, context)
     }
 
-    private fun FirClassLikeSymbol<*>.containerIsInterface(context: CheckerContext): Boolean {
-        return getContainingClassSymbol(context.session)?.classKind?.isInterface == true
+    private fun FirClassLikeSymbol<*>.containerIsInterface(): Boolean {
+        return getContainingClassSymbol()?.classKind?.isInterface == true
     }
 
     private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true

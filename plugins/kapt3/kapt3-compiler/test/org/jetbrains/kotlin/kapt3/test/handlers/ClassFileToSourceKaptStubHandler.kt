@@ -6,19 +6,22 @@
 package org.jetbrains.kotlin.kapt3.test.handlers
 
 import com.intellij.openapi.util.text.StringUtil
-import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
-import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
+import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR_K1
+import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR_K2
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NO_VALIDATION
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.jetbrains.kotlin.test.utils.withExtension
 import java.util.*
 
 class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
@@ -29,9 +32,11 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
         val validate = NO_VALIDATION !in module.directives
-        val expectedErrors = module.directives[EXPECTED_ERROR].sorted()
-
         val kaptContext = info.kaptContext
+        val expectedErrors = (
+                module.directives[EXPECTED_ERROR] +
+                        module.directives[if (module.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
+                ).sorted()
 
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 
@@ -46,27 +51,27 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
-        if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
-            val log = Log.instance(kaptContext.context) as KaptJavaLogBase
+        val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
-            val actualErrors = log.reportedDiagnostics
-                .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
-                .map {
-                    // Unfortunately, we can't use the file name as it can contain temporary prefix
-                    val name = it.source?.name?.substringAfterLast("/") ?: ""
-                    val kind = when (name.substringAfterLast(".").lowercase()) {
-                        "kt" -> "kotlin"
-                        "java" -> "java"
-                        else -> "other"
-                    }
-
-                    val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
-                    javaLocation + it.getMessage(Locale.US).lines().first()
+        val actualErrors = log.reportedDiagnostics
+            .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
+            .map {
+                // Unfortunately, we can't use the file name as it can contain temporary prefix
+                val name = it.source?.name?.substringAfterLast("/") ?: ""
+                val kind = when (name.substringAfterLast(".").lowercase()) {
+                    "kt" -> "kotlin"
+                    "java" -> "java"
+                    else -> "other"
                 }
-                .sorted()
 
-            log.flush()
+                val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
+                javaLocation + it.getMessage(Locale.US).lines().first()
+            }
+            .sorted()
 
+        log.flush()
+
+        if (actualErrors.isNotEmpty()) {
             val lineSeparator = System.getProperty("line.separator")
             val actualErrorsStr = actualErrors.joinToString(lineSeparator) { it.toDirectiveView() }
 
@@ -83,7 +88,17 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
             }
         }
 
-        assertions.checkTxtAccordingToBackend(module, actual)
+        val isFir = module.frontendKind == FrontendKinds.FIR
+        val testDataFile = module.files.first().originalFile
+        val firFile = testDataFile.withExtension("fir.txt")
+        val txtFile = testDataFile.withExtension("txt")
+        val expectedFile = if (isFir && firFile.exists()) firFile else txtFile
+
+        assertions.assertEqualsToFile(expectedFile, actual)
+
+        if (isFir && firFile.exists() && txtFile.exists() && txtFile.readText() == firFile.readText()) {
+            assertions.fail { ".fir.txt and .txt golden files are identical. Remove $firFile." }
+        }
     }
 
     private fun String.toDirectiveView(): String = "// ${EXPECTED_ERROR.name}: $this"

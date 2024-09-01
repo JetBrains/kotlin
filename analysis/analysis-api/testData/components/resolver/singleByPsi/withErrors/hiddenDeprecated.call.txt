@@ -1,4 +1,4 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'a'.>
+KtCallExpression(76,79): 'a()'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'a'.>

@@ -1,2 +1,2 @@
-KtProperty:
-null
+KtProperty(0,20): 'var x : Int by Baz()'
+  null

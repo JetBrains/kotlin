@@ -1,0 +1,32 @@
+// MODULE: lib
+// FILE: lib.kt
+@file:Suppress(names = ["INVISIBLE_REFERENCE", "INVISIBLE_MEMBER"])
+
+val extensionFunctionType: @ExtensionFunctionType Function1<Int, Unit>
+  field = local fun Int.<anonymous>() {
+    return Unit
+  }
+
+  get
+
+fun exact(): @Exact String {
+  return "OK"
+}
+
+fun noInfer(): @NoInfer String {
+  return "OK"
+}
+
+fun unsafeVariance(): @UnsafeVariance String {
+  return "OK"
+}
+
+// MODULE: main
+// FILE: main.kt
+
+fun main() {
+  val mainExact: String = exact()
+  val mainNoInfer: String = noInfer()
+  val mainUnsafeVariance: String = unsafeVariance()
+  val mainExtensionFunctionType: @ExtensionFunctionType Function1<Int, Unit> = <get-extensionFunctionType>()
+}

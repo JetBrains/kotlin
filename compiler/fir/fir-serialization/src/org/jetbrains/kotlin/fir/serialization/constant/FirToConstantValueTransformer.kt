@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -18,18 +21,23 @@ import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isArrayType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
@@ -82,7 +90,7 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                     EnumValue(classId, symbol.name)
                 }
                 is FirConstructorSymbol -> {
-                    val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
+                    val constructedClassSymbol = symbol.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
                     if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
                     val constructorCall = this as FirFunctionCall
@@ -135,8 +143,8 @@ private fun FirAnnotation.evaluateToAnnotationValue(session: FirSession, scopeSe
 }
 
 fun FirAnnotation.toAnnotationValue(mapping: Map<Name, ConstantValue<*>>, session: FirSession, scopeSession: ScopeSession): AnnotationValue {
-    val coneClassType = this.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)
-    val classId = coneClassType?.lookupTag?.classId
+    val annotationType = this.annotationTypeRef.coneType.fullyExpandedType(session)
+    val classId = annotationType.classId
         ?: errorWithAttachment("Annotation without proper lookup tag }") {
             withFirEntry("annotation", this@toAnnotationValue)
         }
@@ -213,7 +221,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
             symbol is FirFieldSymbol -> symbol.fir.isFinal
 
             symbol is FirConstructorSymbol -> {
-                symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
+                symbol.containingClassLookupTag()?.toRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {

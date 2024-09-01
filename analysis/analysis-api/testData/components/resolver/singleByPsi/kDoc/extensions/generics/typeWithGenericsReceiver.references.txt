@@ -1,7 +1,9 @@
 <caret_1>:
-  KDocReference:
-    (in test) fun test.WithGenerics<kotlin.Int>.intExt()
+  KDocName(121,140): 'WithGenerics.intExt'
+    KDocReference:
+      (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
 <caret_2>:
-  KDocReference:
-    (in test) fun test.WithGenerics<kotlin.String>.stringExt()
+  KDocName(146,168): 'WithGenerics.stringExt'
+    KDocReference:
+      (in test) fun test.WithGenerics<kotlin.String>.stringExt()

@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.name.ClassId
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
  * B.foo.hasThrowsAnnotation = false
  * ```
  */
-internal val KtCallableSymbol.hasThrowsAnnotation: Boolean
+internal val KaCallableSymbol.hasThrowsAnnotation: Boolean
     get() {
-        return annotationsList.hasAnnotation(ClassId.topLevel(KonanFqNames.throws))
+        return ClassId.topLevel(KonanFqNames.throws) in annotations
     }

@@ -5,34 +5,34 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
-context(KtAnalysisSession)
-internal fun KtType.getInlineTargetTypeOrNull(): KtType? {
-    if (this !is KtNonErrorClassType) return null
-    val classSymbol = symbol as? KtNamedClassOrObjectSymbol ?: return null
-    return classSymbol.getInlineTargetTypeOrNull()?.markNullableIf(isMarkedNullable)
+
+internal fun KaSession.getInlineTargetTypeOrNull(type: KaType): KaType? {
+    if (type !is KaClassType) return null
+    val classSymbol = type.symbol as? KaNamedClassSymbol ?: return null
+    val inlinedType = getInlineTargetTypeOrNull(classSymbol) ?: return null
+    return markNullableIf(inlinedType, type.isMarkedNullable)
 }
 
-context(KtAnalysisSession)
-internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
-    if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
+internal fun KaSession.getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): KaType? {
+    if (!isInlineIncludingKotlinNativeSpecialClasses(symbol)) return null
 
-    val constructor = getDeclaredMemberScope().getConstructors()
+    val constructor = symbol.declaredMemberScope.constructors
         .find { constructor -> constructor.isPrimary && constructor.valueParameters.size == 1 }
         ?: return null
 
     val inlinedType = constructor.valueParameters.single().returnType
 
     /* What if this type is also inline type? */
-    val inlineInlineType = inlinedType.getInlineTargetTypeOrNull()
+    val inlineInlineType = getInlineTargetTypeOrNull(inlinedType)
     if (inlineInlineType != null) {
         return inlineInlineType
     }
@@ -46,13 +46,12 @@ internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
  * However, there seemingly exist classes like 'kotlin.native.internal.NativePtr' which shall also be considered 'inline'
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
-context(KtAnalysisSession)
-private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
-    if (this.isInline) return true
-    val classId = classId ?: return false
+private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaNamedClassSymbol): Boolean {
+    if (symbol.isInline) return true
+    val classId = symbol.classId ?: return false
 
     /* Top Level symbols can be special K/N types */
-    if (getContainingSymbol() is KtClassOrObjectSymbol) return false
+    if (symbol.containingDeclaration is KaClassSymbol) return false
 
     if (classId.packageFqName == KonanFqNames.internalPackageName && classId.shortClassName == KonanFqNames.nativePtr.shortName()) {
         return true
@@ -65,13 +64,11 @@ private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClass
     return false
 }
 
-context(KtAnalysisSession)
-private fun KtType.markNullable(): KtType {
-    if (this.nullability == KtTypeNullability.NULLABLE) return this
-    return this.withNullability(KtTypeNullability.NULLABLE)
+private fun KaSession.markNullable(type: KaType): KaType {
+    if (type.nullability == KaTypeNullability.NULLABLE) return type
+    return type.withNullability(KaTypeNullability.NULLABLE)
 }
 
-context(KtAnalysisSession)
-private fun KtType.markNullableIf(shouldMarkNullable: Boolean): KtType {
-    return if (shouldMarkNullable) markNullable() else this
+private fun KaSession.markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {
+    return if (shouldMarkNullable) markNullable(type) else type
 }

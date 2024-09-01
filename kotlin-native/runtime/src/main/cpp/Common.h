@@ -21,20 +21,20 @@
 #define RUNTIME_NORETURN __attribute__((noreturn))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
-#define RUNTIME_USED __attribute__((used))
+
+#if __has_attribute(retain)
+// See https://youtrack.jetbrains.com/issue/KT-68640
+#define RUNTIME_EXPORT __attribute__((used,retain))
+#else
+#define RUNTIME_EXPORT __attribute__((used))
+#endif
+
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
-#if KONAN_NEED_SMALL_BINARY
-  // On the one hand, ALWAYS_INLINE forces many performance-critical function to be, well,
-  // inlined. Which is good for performance, of course.
-  // On the other hand, 32-bit Mach-O object files can't be really big.
-  // As a compromise, we let the compiler decide what should be inlined or not.
-  #define ALWAYS_INLINE
-#else
-  #define ALWAYS_INLINE __attribute__((always_inline))
-#endif
+#define ALWAYS_INLINE __attribute__((always_inline))
 #define NO_INLINE __attribute__((noinline))
+#define PERFORMANCE_INLINE __attribute__((annotate("performance_inline")))
 
 #define OPTNONE __attribute__((optnone))
 

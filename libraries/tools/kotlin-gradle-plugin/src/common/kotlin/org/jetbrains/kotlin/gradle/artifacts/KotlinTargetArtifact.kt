@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.gradle.artifacts
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -53,7 +53,7 @@ internal fun KotlinTarget.createPublishArtifact(
 
     elementsConfiguration.filterNotNull().forEach { configuration ->
         configuration.outgoing.artifacts.add(artifact)
-        configuration.outgoing.attributes.setAttribute(project.artifactTypeAttribute, artifactType)
+        configuration.outgoing.attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactType)
     }
 
     return artifact

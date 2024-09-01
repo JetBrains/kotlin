@@ -32,11 +32,16 @@ import kotlin.test.fail
 @MppGradlePluginTests
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions
+            .disableConfigurationCache_KT70416()
+            .enableKmpIsolatedProjectSupport()
+
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {
         with(project("commonizeHierarchically", gradleVersion)) {
             resolveIdeDependencies(":p1") { dependencies ->
-                if (task(":commonizeNativeDistribution") == null) fail("Missing :commonizeNativeDistribution task")
+                if (task(":p1:commonizeNativeDistribution") == null) fail("Missing :commonizeNativeDistribution task")
 
                 fun Iterable<IdeaKotlinDependency>.filterNativePlatformDependencies() =
                     filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
@@ -125,7 +130,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
                 // CInterops are currently imported as extra roots of a platform publication, not as separate libraries
                 // This is a bit inconsistent with other CInterop dependencies, but correctly represents the published artifacts
-                fun assertDependencyOnPublishedProjectCInterop(sourceSetName: String) {
+                fun assertDependencyOnPublishedProjectCInterop(sourceSetName: String, targetName: String) {
                     val publishedProjectDependencies = dependencies[sourceSetName].filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
                         .filter { it.coordinates?.module?.contains("dep-with-cinterop") == true }
 
@@ -134,17 +139,22 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         .map { file -> file.name }
                         .toSet()
 
-                    assert(fileNames == setOf("dep-with-cinterop.klib", "dep-with-cinterop-cinterop-dep.klib")) {
+                    assert(
+                        fileNames == setOf(
+                            "dep-with-cinterop-${targetName}Main-1.0.klib",
+                            "dep-with-cinterop-${targetName}Cinterop-depMain-1.0.klib"
+                        )
+                    ) {
                         """Unexpected cinterop dependencies for the source set :client-for-binary-dep:$sourceSetName.
                             |Expected a project dependency and a cinterop dependency, but instead found:
                             |$fileNames""".trimMargin()
                     }
                 }
 
-                assertDependencyOnPublishedProjectCInterop("linuxX64Main")
-                assertDependencyOnPublishedProjectCInterop("linuxX64Test")
-                assertDependencyOnPublishedProjectCInterop("linuxArm64Main")
-                assertDependencyOnPublishedProjectCInterop("linuxArm64Test")
+                assertDependencyOnPublishedProjectCInterop("linuxX64Main", "linuxX64")
+                assertDependencyOnPublishedProjectCInterop("linuxX64Test", "linuxX64")
+                assertDependencyOnPublishedProjectCInterop("linuxArm64Main", "linuxArm64")
+                assertDependencyOnPublishedProjectCInterop("linuxArm64Test", "linuxArm64")
             }
 
             resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
@@ -258,7 +268,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     binaryCoordinates(Regex("com.example:cinterop-.*-dummy:linux_x64")),
                     IdeaKotlinDependencyMatcher("Unresolved 'failing' cinterop") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && dependency.cause.orEmpty().contains(
-                            "cinterop-withFailingCInteropProcess-cinterop-failing.klib"
+                            "cinterop-withFailingCInteropProcess-linuxX64Cinterop-failing"
                         )
                     }
                 )
@@ -346,7 +356,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun `test dependency on java testFixtures and feature source sets`(gradleVersion: GradleVersion) {
         project(
@@ -383,12 +392,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project("kt-61466-lenient-dependency-resolution", gradleVersion) {
             resolveIdeDependencies(":consumer") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    kotlinStdlibDependencies,
                     kotlinNativeDistributionDependencies,
                 )
 
                 dependencies["linuxMain"].assertMatches(
-                    kotlinStdlibDependencies,
                     kotlinNativeDistributionDependencies,
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/nativeMain")
@@ -417,7 +424,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     @GradleTest
     fun `test resolve sources for dependency with multiple capabilities`(gradleVersion: GradleVersion) {
         project(

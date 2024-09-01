@@ -132,7 +132,7 @@ class A : Java1 {
   //   Mangled name: A#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /A.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK:
   //   Mangled name: A#removeRange(kotlin.Int;kotlin.Int){}
@@ -329,7 +329,7 @@ open class KotlinClass : ArrayList<Int> {
   //   Mangled name: KotlinClass#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /KotlinClass.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK:
   //   Mangled name: KotlinClass#removeRange(kotlin.Int;kotlin.Int){}

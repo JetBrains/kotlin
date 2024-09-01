@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  reified T
+KtNameReferenceExpression(61,62): 'T'
+  KtSimpleNameReference:
+    (in <local>: functionWithVararg) reified T

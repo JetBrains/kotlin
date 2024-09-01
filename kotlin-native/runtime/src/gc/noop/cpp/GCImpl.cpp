@@ -62,9 +62,9 @@ bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
     return false;
 }
 
-ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {}
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
-ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
+ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
 }
 

@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgai
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
-import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
@@ -55,11 +53,39 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("compiler/tests-gen", "compiler/testData") {
+        testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
             }
 
+            testClass<AbstractCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
+            }
+
+            testClass<AbstractIrCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractReplInterpreterTest> {
+                model("repl", extension = "repl")
+            }
+
+            testClass<AbstractCliTest> {
+                model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
+                model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
+            }
+
+            testClass<AbstractAntTaskTest> {
+                model("integration/ant/jvm", extension = null, recursive = false)
+            }
+        }
+
+        testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractResolveTest> {
                 model("resolve", extension = "resolve")
             }
@@ -106,14 +132,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM, excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
@@ -227,25 +245,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractWriteSignatureTest> {
                 model("writeSignature")
-            }
-
-            testClass<AbstractCliTest> {
-                model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
-                model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
-            }
-
-            testClass<AbstractReplInterpreterTest> {
-                model("repl", extension = "repl")
-            }
-
-            testClass<AbstractAntTaskTest> {
-                model("integration/ant/jvm", extension = null, recursive = false)
             }
 
             testClass<AbstractControlFlowTest> {
@@ -440,21 +439,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
-            }
-        }
-
-        testGroup(
-            testsRoot = "compiler/tests-gen",
-            testDataRoot = "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective", // FIXME: This is a temporary hack to smooth the transition to the new test infrastructure
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_KLIB: \"")
-        ) {
-            testClass<AbstractKlibJsIrTextTestCase> {
-                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractKlibIrTextTestCase> {
-                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
         }
 

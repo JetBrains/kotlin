@@ -1,35 +1,46 @@
 KaTypeParameterSymbol:
-  annotationsList: [
+  annotations: [
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
   ]
+  compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
+  location: CLASS
+  modality: FINAL
   name: T
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
+  compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
+  location: CLASS
+  modality: FINAL
   name: R
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: A
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -38,22 +49,22 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: A
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
     KaTypeParameterSymbol(R)
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

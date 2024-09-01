@@ -98,9 +98,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 
-            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// USE_K2") != null) {
-                useK2 = true
-            }
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// INHERIT_MULTIFILE_PARTS") != null) {
                 inheritMultifileParts = true
             }

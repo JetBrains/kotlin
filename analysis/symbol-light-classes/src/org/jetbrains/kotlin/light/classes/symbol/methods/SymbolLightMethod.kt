@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
-internal abstract class SymbolLightMethod<FType : KaFunctionLikeSymbol> private constructor(
+internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private constructor(
     protected val functionSymbolPointer: KaSymbolPointer<FType>,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -100,11 +100,11 @@ internal abstract class SymbolLightMethod<FType : KaFunctionLikeSymbol> private 
                     }
                 }
 
-                if ((functionSymbol as? KaFunctionSymbol)?.isSuspend == true) {
+                if ((functionSymbol as? KaNamedFunctionSymbol)?.isSuspend == true) {
                     builder.addParameter(
                         @Suppress("UNCHECKED_CAST")
                         SymbolLightSuspendContinuationParameter(
-                            functionSymbolPointer = functionSymbolPointer as KaSymbolPointer<KaFunctionSymbol>,
+                            functionSymbolPointer = functionSymbolPointer as KaSymbolPointer<KaNamedFunctionSymbol>,
                             containingMethod = this@SymbolLightMethod,
                         )
                     )

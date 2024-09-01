@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
 var log = ""
 
 inline fun foo(x: Int, action: (Int) -> Unit) = action(x)

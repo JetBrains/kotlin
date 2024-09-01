@@ -60,7 +60,7 @@ fun box(): String {
 //CHECK-LABEL: define i64 @"kfun:#callDirect(){}kotlin.ULong"()
 fun callDirect(): ULong {
     val cc = CallingConventions()
-    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i64 42)
+    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(ptr %{{[0-9]+}}, i64 42)
     return cc.direct(42uL)
 }
 
@@ -68,6 +68,6 @@ fun callDirect(): ULong {
 //CHECK-LABEL: define i64 @"kfun:#callRegular(){}kotlin.ULong"()
 fun callRegular(): ULong {
     val cc = CallingConventions()
-    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(i8* %{{[0-9]+}}, i8* %{{[0-9]+}}, i64 42)
+    //CHECK: invoke i64 @_{{[a-zA-Z0-9]+}}_knbridge{{[0-9]+}}(ptr %{{[0-9]+}}, ptr %{{[0-9]+}}, i64 42)
     return cc.regular(42uL)
 }

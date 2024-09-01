@@ -43,7 +43,7 @@ public abstract @interface Anno2 {
  *   // field: prop:Ljava/lang/String;
  *   // getter: getProp()Ljava/lang/String;
  *   // synthetic method for annotations: getProp$annotations()V
- *   public final val prop: kotlin/String (* = ... *)
+ *   public final val prop: kotlin/String
  *     public final get
  *
  *   // module name: main

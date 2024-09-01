@@ -10,7 +10,6 @@ import com.intellij.psi.util.MethodSignature
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
@@ -210,9 +209,10 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
-        is KtLightPsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
+        is PsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
         is PsiAnnotation -> renderAnnotation()
         is KtLightPsiLiteral -> renderKtLightPsiLiteral()
+        is PsiClassObjectAccessExpression -> operand.type.canonicalText + ".class"
         else -> text
     }
 

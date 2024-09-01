@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-null
+KtNameReferenceExpression(97,98): 'Y'
+  null

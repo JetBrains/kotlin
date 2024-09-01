@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.script]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.script]
  */
 abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?

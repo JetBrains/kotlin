@@ -42,13 +42,13 @@ sealed class FirJsMultipleInheritanceChecker(mppKind: MppCheckerKind) : FirClass
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = OperatorNameConventions.GET,
-            supertype = context.session.builtinTypes.charSequenceType.type,
+            supertype = context.session.builtinTypes.charSequenceType.coneType,
             context, reporter,
         )
 
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = StandardNames.NEXT_CHAR,
-            supertype = context.session.builtinTypes.charIteratorType.type,
+            supertype = context.session.builtinTypes.charIteratorType.coneType,
             context, reporter,
         )
     }

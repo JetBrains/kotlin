@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1301
-
 public interface A {
     @JsName("foo")
     fun foo() {
@@ -26,14 +24,6 @@ fun box(): String {
 
     if (!hasProp(b, "foo")) return "B hasn't foo"
     if (!hasProp(b, "boo")) return "B hasn't boo"
-
-    // Legacy scheme exports interfaces
-    if (testUtils.isLegacyBackend()) {
-        val PREFIX = "_"
-        if (eval("$PREFIX.A") == null) return "$PREFIX.A not found"
-        if (eval("$PREFIX.B") == null) return "$PREFIX.B not found"
-        if (eval("$PREFIX.A === $PREFIX.B") as Boolean) return "A and B refer to the same object"
-    }
 
     return "OK"
 }

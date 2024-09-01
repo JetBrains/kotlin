@@ -26,7 +26,7 @@ MODULE_FRAGMENT
                               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
                                 arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
                                   $this: GET_VAR '$changed: kotlin.Int declared in home.ComposableSingletons$MainKt.lambda-1.<anonymous>' type=kotlin.Int origin=null
-                                  other: CONST Int type=kotlin.Int value=11
+                                  other: CONST Int type=kotlin.Int value=3
                                 arg1: CONST Int type=kotlin.Int value=2
                             then: CONST Boolean type=kotlin.Boolean value=true
                           BRANCH
@@ -42,7 +42,7 @@ MODULE_FRAGMENT
                                 key: CONST Int type=kotlin.Int value=-1263890955
                                 dirty1: GET_VAR '$changed: kotlin.Int declared in home.ComposableSingletons$MainKt.lambda-1.<anonymous>' type=kotlin.Int origin=null
                                 dirty2: CONST Int type=kotlin.Int value=-1
-                                info: CONST String type=kotlin.String value="home.ComposableSingletons$MainKt.lambda-1.<anonymous> (main.kt:57)"
+                                info: CONST String type=kotlin.String value="home.ComposableSingletons$MainKt.lambda-1.<anonymous> (main.kt:60)"
                           GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                           WHEN type=kotlin.Unit origin=IF
                             BRANCH
@@ -76,7 +76,7 @@ MODULE_FRAGMENT
               key: CONST Int type=kotlin.Int value=289538687
           CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
-            sourceInformation: CONST String type=kotlin.String value="C(Home)54@259L151:main.kt#1wrmn"
+            sourceInformation: CONST String type=kotlin.String value="C(Home)57@262L151:main.kt#1wrmn"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: WHEN type=kotlin.Boolean origin=OROR
@@ -99,7 +99,7 @@ MODULE_FRAGMENT
                     key: CONST Int type=kotlin.Int value=289538687
                     dirty1: GET_VAR '$changed: kotlin.Int declared in home.Home' type=kotlin.Int origin=null
                     dirty2: CONST Int type=kotlin.Int value=-1
-                    info: CONST String type=kotlin.String value="home.Home (main.kt:53)"
+                    info: CONST String type=kotlin.String value="home.Home (main.kt:56)"
               CALL 'public final fun Column (content: @[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit [inline] declared in compose.ui' type=kotlin.Unit origin=null
                 content: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:compose.ui.ColumnScope, $composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int) returnType:kotlin.Unit
@@ -112,8 +112,8 @@ MODULE_FRAGMENT
                       BLOCK type=kotlin.Unit origin=null
                         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                           composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                          key: CONST Int type=kotlin.Int value=735127670
-                          sourceInformation: CONST String type=kotlin.String value="C55@301L28,56@338L66:main.kt#1wrmn"
+                          key: CONST Int type=kotlin.Int value=735130646
+                          sourceInformation: CONST String type=kotlin.String value="C58@304L28,59@341L66:main.kt#1wrmn"
                         COMPOSITE type=kotlin.Unit origin=null
                           VAR name:dominantColorState type:util.DominantColorState [val]
                             CALL 'public final fun rememberDominantColorState (defaultOnColor: compose.ui.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): util.DominantColorState declared in util.DominantColorStateKt' type=util.DominantColorState origin=null

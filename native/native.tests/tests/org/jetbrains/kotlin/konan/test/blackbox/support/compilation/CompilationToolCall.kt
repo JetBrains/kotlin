@@ -101,7 +101,7 @@ fun callCompilerWithoutOutputInterceptor(
     val duration = measureTime {
         val compilerClass = Class.forName("org.jetbrains.kotlin.cli.bc.K2Native", true, kotlinNativeClassLoader)
         val entryPoint = compilerClass.getMethod(
-            "exec",
+            "execFullPathsInMessages",
             PrintStream::class.java,
             Array<String>::class.java
         )

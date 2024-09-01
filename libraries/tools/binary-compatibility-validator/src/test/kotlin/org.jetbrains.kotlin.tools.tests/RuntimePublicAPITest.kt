@@ -43,7 +43,7 @@ class RuntimePublicAPITest {
         nonPublicAnnotations: List<String> = emptyList()
     ) {
         val base = File(basePath).absoluteFile.normalize()
-        val jarFile = getJarPath(base, jarPattern, System.getProperty("kotlinVersion"))
+        val jarFile = getJarFile(base, jarPattern, System.getProperty("kotlinVersion"))
 
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
@@ -58,16 +58,7 @@ class RuntimePublicAPITest {
         api.dumpAndCompareWith(target)
     }
 
-    private fun getJarPath(base: File, jarPattern: String, kotlinVersion: String?): File {
-        val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
-        val regex = Regex(jarPattern + versionPattern + "\\.jar")
-        val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
-            .filter { it.name.let {
-                    it matches regex
-                            && !it.endsWith("-sources.jar")
-                            && !it.endsWith("-javadoc.jar") } }
-
-        return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
-    }
+    private fun getJarFile(base: File, jarPattern: String, kotlinVersion: String?): File =
+        getLibFile(base, jarPattern, kotlinVersion, "jar")
 
 }

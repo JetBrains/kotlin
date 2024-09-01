@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.parcelize.diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
 
 object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
@@ -98,6 +99,13 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            ErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED,
+            "Type is not directly supported by ''Parcelize'' because it contains an instance of {0}. " +
+                    "Add the ''@TypeParceler<{0}, ...>'' annotation to provide the missing serialization logic.",
+            RENDER_TYPE,
+        )
+
+        MAP.put(
             ErrorsParcelize.PARCELER_SHOULD_BE_OBJECT,
             "Parceler should be an object"
         )
@@ -148,6 +156,11 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
         MAP.put(
             ErrorsParcelize.DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
+        )
+
+        MAP.put(
+            ErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY,
+            "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
         )
     }
 }

@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -136,10 +136,10 @@ class ExpressionMarkerProvider : TestService {
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
-        files: Collection<KtFile>,
+    inline fun <reified P : PsiElement> getElementsOfTypeAtCarets(
+        files: Collection<PsiFile>,
         caretTag: String? = null,
-    ): Collection<Pair<P, KtFile>> {
+    ): Collection<Pair<P, PsiFile>> {
         return files.mapNotNull { file ->
             getCaretPositionOrNull(file, caretTag)?.let { offset ->
                 file.findElementAt(offset)?.parentOfType<P>()?.let { element ->
@@ -149,12 +149,12 @@ class ExpressionMarkerProvider : TestService {
         }
     }
 
-    inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
+    inline fun <reified P : PsiElement> getElementsOfTypeAtCarets(
         testServices: TestServices,
         caretTag: String? = null,
-    ): Collection<Pair<P, KtFile>> {
+    ): Collection<Pair<P, PsiFile>> {
         return testServices.ktTestModuleStructure.mainModules.flatMap { ktTestModule ->
-            getElementsOfTypeAtCarets<P>(ktTestModule.ktFiles, caretTag)
+            getElementsOfTypeAtCarets<P>(ktTestModule.files, caretTag)
         }
     }
 

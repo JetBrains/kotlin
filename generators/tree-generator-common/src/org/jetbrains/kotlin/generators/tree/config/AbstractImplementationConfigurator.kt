@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.generators.tree.printer.call
  * Provides a DSL to configure `Impl` classes for tree nodes.
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-abstract class AbstractImplementationConfigurator<Implementation, Element, ElementField, ImplementationField>
-        where Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
+abstract class AbstractImplementationConfigurator<Implementation, Element, ElementField>
+        where Implementation : AbstractImplementation<Implementation, Element, ElementField>,
               Element : AbstractElement<Element, ElementField, Implementation>,
-              ElementField : AbstractField<ElementField>,
-              ImplementationField : AbstractField<*> {
+              ElementField : AbstractField<ElementField> {
 
     private val elementsWithImpl = mutableSetOf<Element>()
 
@@ -102,7 +101,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                                 .mapNotNull { it.implementationDefaultStrategy }
                             if (inheritedDefaults.isNotEmpty()) {
                                 field.implementationDefaultStrategy = inheritedDefaults.singleOrNull()
-                                    ?: error("Field $field has ambitious default value, please specify it explicitly for the ${element.name} element")
+                                    ?: error("Field $field has ambiguous default value, please specify it explicitly for the ${element.name} element")
                                 break
                             }
                         }
@@ -130,7 +129,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
     protected fun configureFieldInAllImplementations(
         fieldName: String?,
         implementationPredicate: (Implementation) -> Boolean = { true },
-        fieldPredicate: (ImplementationField) -> Boolean = { true },
+        fieldPredicate: (ElementField) -> Boolean = { true },
         config: ImplementationContext.(field: String) -> Unit,
     ) {
         for (element in elementsWithImpl) {
@@ -263,7 +262,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
          */
         fun defaultEmptyList(vararg fields: String, withGetter: Boolean = false) {
             for (field in fields) {
-                require(fieldContainer[field].origin is ListField) {
+                require(fieldContainer[field] is ListField) {
                     "$field is list field"
                 }
                 default(field) {
@@ -407,7 +406,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
      * A DSL for configuring one or more implementation classes.
      */
     protected inner class ImplementationContext(val implementation: Implementation) :
-        FieldContainerContext<ImplementationField>(implementation) {
+        FieldContainerContext<ElementField>(implementation) {
         /**
          * Call this function if you want this implementation class to be marked with an [OptIn] annotation.
          *

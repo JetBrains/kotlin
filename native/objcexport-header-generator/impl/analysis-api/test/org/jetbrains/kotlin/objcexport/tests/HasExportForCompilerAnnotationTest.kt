@@ -1,8 +1,9 @@
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasExportForCompilerAnnotation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getPropertyOrFail
@@ -27,22 +28,22 @@ class HasExportForCompilerAnnotationTest(
 
         analyze(ktFile) {
             assertTrue(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("array"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("array", this))
             )
             assertFalse(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("iterator"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("iterator", this))
             )
             assertFalse(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("foo"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("foo", this))
             )
         }
     }
 }
 
-context(KtAnalysisSession)
-private fun verifyHasExportForCompilerAnnotation(property: KtPropertySymbol): Boolean {
+@OptIn(KaExperimentalApi::class)
+private fun KaSession.verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
     return property
         .returnType
-        .getTypeScope()?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }
+        .scope?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }
         ?: fail("Property return type has no constructors: ${property.returnType}")
 }

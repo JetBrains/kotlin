@@ -8,14 +8,17 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependencies
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriendDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
+import org.jetbrains.kotlin.test.util.joinToArrayString
 import java.io.File
 
 /**
@@ -86,31 +89,60 @@ sealed class TestModule {
 
     data class Exclusive(
         override val name: String,
-        val directDependencySymbols: Set<String>,
-        val directFriendSymbols: Set<String>,
-        val directDependsOnSymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        val directRegularDependencySymbols: Set<String>,
+        val directFriendDependencySymbols: Set<String>,
+        val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
     ) : TestModule() {
+        init {
+            val intersection = buildSet {
+                addAll(directRegularDependencySymbols intersect directFriendDependencySymbols)
+                addAll(directRegularDependencySymbols intersect directDependsOnDependencySymbols)
+                addAll(directFriendDependencySymbols intersect directDependsOnDependencySymbols)
+            }
+            require(intersection.isEmpty()) {
+                val m = if (intersection.size == 1) "module" else "modules"
+                val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
+                """Module `$name` depends on $m $names with different kinds simultaneously"""
+            }
+        }
+
         override val files: FailOnDuplicatesSet<TestFile<Exclusive>> = FailOnDuplicatesSet()
 
-        lateinit var directDependencies: Set<TestModule>
-        lateinit var directFriends: Set<TestModule>
-        lateinit var directDependsOn: Set<TestModule>
+        private lateinit var directRegularDependencies: Set<TestModule>
+        private lateinit var directFriendDependencies: Set<TestModule>
+        private lateinit var directDependsOnDependencies: Set<TestModule>
 
         // N.B. The following two properties throw an exception on attempt to resolve cyclic dependencies.
-        val allDependencies: Set<TestModule> by SM.lazyNeighbors({ directDependencies }, { it.allDependencies })
-        val allFriends: Set<TestModule> by SM.lazyNeighbors({ directFriends }, { it.allFriends })
-        val allDependsOn: Set<TestModule> by SM.lazyNeighbors({ directDependsOn }, { it.allDependsOn })
+        val allRegularDependencies: Set<TestModule> by SM.lazyNeighbors({ directRegularDependencies }, { it.allRegularDependencies })
+        val allFriendDependencies: Set<TestModule> by SM.lazyNeighbors({ directFriendDependencies }, { it.allFriendDependencies })
+        val allDependsOnDependencies: Set<TestModule> by SM.lazyNeighbors({ directDependsOnDependencies }, { it.allDependsOnDependencies })
 
         lateinit var testCase: TestCase
+            private set
 
         fun commit() {
             files.forEach { it.commit() }
         }
 
+        /** Initialize all lateinit properties */
+        fun initialize(
+            testCase: TestCase,
+            directRegularDependencies: Set<TestModule>,
+            directFriendDependencies: Set<TestModule>,
+            directDependsOnDependencies: Set<TestModule>
+        ) {
+            this.testCase = testCase
+
+            this.directRegularDependencies = directRegularDependencies
+            this.directFriendDependencies = directFriendDependencies
+            this.directDependsOnDependencies = directDependsOnDependencies
+        }
+
         fun haveSameSymbols(other: Exclusive) =
-            other.directDependencySymbols == directDependencySymbols &&
-                    other.directFriendSymbols == directFriendSymbols &&
-                    other.directDependsOnSymbols == directDependsOnSymbols
+            other.directRegularDependencySymbols == directRegularDependencySymbols &&
+                    other.directFriendDependencySymbols == directFriendDependencySymbols &&
+                    other.directDependsOnDependencySymbols == directDependsOnDependencySymbols
     }
 
     data class Shared(override val name: String) : TestModule() {
@@ -131,21 +163,21 @@ sealed class TestModule {
     companion object {
         fun newDefaultModule() = Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
 
-        val TestModule.allDependencies: Set<TestModule>
+        val TestModule.allRegularDependencies: Set<TestModule>
             get() = when (this) {
-                is Exclusive -> allDependencies
+                is Exclusive -> allRegularDependencies
                 is Shared, is Given -> emptySet()
             }
 
-        val TestModule.allFriends: Set<TestModule>
+        val TestModule.allFriendDependencies: Set<TestModule>
             get() = when (this) {
-                is Exclusive -> allFriends
+                is Exclusive -> allFriendDependencies
                 is Shared, is Given -> emptySet()
             }
 
-        val TestModule.allDependsOn: Set<TestModule>
+        val TestModule.allDependsOnDependencies: Set<TestModule>
             get() = when (this) {
-                is Exclusive -> allDependsOn
+                is Exclusive -> allDependsOnDependencies
                 is Shared, is Given -> emptySet()
             }
 
@@ -220,14 +252,16 @@ class TestCase(
         val allModules = hashSetOf<TestModule>()
         modules.forEach { module ->
             allModules += module
-            allModules += module.allDependencies
-            allModules += module.allDependsOn
+            allModules += module.allRegularDependencies
+            allModules += module.allFriendDependencies
+            allModules += module.allDependsOnDependencies
         }
 
         val rootModules = allModules.toHashSet()
         allModules.forEach { module ->
-            rootModules -= module.allDependencies
-            rootModules -= module.allDependsOn
+            rootModules -= module.allRegularDependencies
+            rootModules -= module.allFriendDependencies
+            rootModules -= module.allDependsOnDependencies
         }
 
         assertTrue(rootModules.isNotEmpty()) { "$id: No root modules in test case." }
@@ -245,7 +279,7 @@ class TestCase(
     val sharedModules: Set<TestModule.Shared> by lazy {
         buildSet {
             modules.forEach { module ->
-                module.allDependencies.forEach { dependency ->
+                module.allRegularDependencies.forEach { dependency ->
                     if (dependency is TestModule.Shared) this += dependency
                 }
             }
@@ -274,15 +308,16 @@ class TestCase(
 
         modules.forEach { module ->
             module.commit() // Save to the file system and release the memory.
-            module.testCase = this
 
-            module.directDependencies = buildSet {
-                module.directDependencySymbols.mapTo(this, ::findModule)
-                givenModules?.let(this@buildSet::addAll)
-            }
-
-            module.directFriends = module.directFriendSymbols.mapToSet(::findModule)
-            module.directDependsOn = module.directDependsOnSymbols.mapToSet(::findModule)
+            module.initialize(
+                testCase = this,
+                directRegularDependencies = buildSet {
+                    module.directRegularDependencySymbols.mapTo(this, ::findModule)
+                    givenModules?.let(this@buildSet::addAll)
+                },
+                directFriendDependencies = module.directFriendDependencySymbols.mapToSet(::findModule),
+                directDependsOnDependencies = module.directDependsOnDependencySymbols.mapToSet(::findModule)
+            )
         }
     }
 }

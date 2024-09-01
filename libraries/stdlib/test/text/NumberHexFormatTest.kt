@@ -106,6 +106,22 @@ class NumberHexFormatTest {
     }
 
     @Test
+    fun formatMinLength() {
+        // minLength < typeHexLength
+        assertEquals(longHex3a, 58L.toHexString(HexFormat { number.minLength = 15 }))
+        assertEquals(longHex3a.takeLast(15), 58L.toHexString(HexFormat { number { minLength = 15; removeLeadingZeros = true } }))
+        assertEquals("3a", 58L.toHexString(HexFormat { number { minLength = 1; removeLeadingZeros = true } }))
+
+        // minLength == typeHexLength
+        assertEquals("003a", 58.toShort().toHexString(HexFormat { number.minLength = 4 }))
+        assertEquals("003a", 58.toShort().toHexString(HexFormat { number { minLength = 4; removeLeadingZeros = true } }))
+
+        // minLength > typeHexLength
+        assertEquals(longHex3a, 58.toHexString(HexFormat { number.minLength = 16 }))
+        assertEquals(longHex3a, 58.toHexString(HexFormat { number { minLength = 16; removeLeadingZeros = true } }))
+    }
+
+    @Test
     fun parseLongFromSubstring() {
         val url = "https://magnuschatt.medium.com/why-you-should-totally-switch-to-kotlin-c7bbde9e10d5"
         val articleId = url.substringAfterLast('-').hexToLong()
@@ -183,24 +199,43 @@ class NumberHexFormatTest {
     }
 
     @Test
-    fun parseLimitsHexLength() {
-        testParse("3", 3, HexFormat.Default)  // length = 1
-        testParse("00", 0, HexFormat.Default)  // length = 2
-        testParse("3a", 58, HexFormat.Default)  // length = 2
-        assertFailsWith<NumberFormatException> { "03a".hexToByte() } // length = 3
-        assertFailsWith<NumberFormatException> { "03a".hexToUByte() } // length = 3
-        testParse("03a", 58, HexFormat.Default)  // length = 3
-        testParse("003a", 58, HexFormat.Default)  // length = 4
-        assertFailsWith<NumberFormatException> { "0003a".hexToShort() } // length = 5
-        assertFailsWith<NumberFormatException> { "0003a".hexToUShort() } // length = 5
-        testParse("0003a", 58, HexFormat.Default)  // length = 5
-        testParse("0000003a", 58, HexFormat.Default)  // length = 8
-        assertFailsWith<NumberFormatException> { "00000003a".hexToInt() } // length = 9
-        assertFailsWith<NumberFormatException> { "00000003a".hexToUInt() } // length = 9
-        testParse("00000003a", 58, HexFormat.Default)  // length = 9
-        testParse("000000000000003a", 58, HexFormat.Default)  // length = 16
-        assertFailsWith<NumberFormatException> { "00000000000000003a".hexToLong() } // length = 17
-        assertFailsWith<NumberFormatException> { "00000000000000003a".hexToULong() } // length = 17
+    fun parseIgnoresMinLength() {
+        assertEquals(58, "3a".hexToInt(HexFormat { number.minLength = 4 }))
+        assertEquals(58, "3a".hexToInt(HexFormat { number.minLength = 8 }))
+        assertEquals(58L, "3a".hexToLong(HexFormat { number.minLength = 20 }))
+    }
+
+    @Test
+    fun parseRequiresValueFitTheType() {
+        val zeros = "0".repeat(20)
+        val fs = "f".repeat(20)
+
+        fun <T> test(typeHexLength: Int, toType: Long.() -> T, hexToType: String.() -> T) {
+            assertEquals(0L.toType(), zeros.hexToType())
+
+            val maxHex = fs.take(typeHexLength)
+            assertEquals((-1L).toType(), maxHex.hexToType())
+
+            val paddedMaxHex = "${zeros}${maxHex}"
+            assertEquals((-1L).toType(), paddedMaxHex.hexToType())
+
+            val hexLengthZeros = fs.take(typeHexLength)
+            assertFailsWith<NumberFormatException> {
+                "1$hexLengthZeros".hexToType()
+            }
+            assertFailsWith<NumberFormatException> {
+                "${zeros}1$hexLengthZeros".hexToType()
+            }
+        }
+
+        test(2, Long::toByte, String::hexToByte)
+        test(2, Long::toUByte, String::hexToUByte)
+        test(4, Long::toShort, String::hexToShort)
+        test(4, Long::toUShort, String::hexToUShort)
+        test(8, Long::toInt, String::hexToInt)
+        test(8, Long::toUInt, String::hexToUInt)
+        test(16, Long::toLong, String::hexToLong)
+        test(16, Long::toULong, String::hexToULong)
     }
 
     // Invalid HexFormat configuration
@@ -215,5 +250,12 @@ class NumberHexFormatTest {
     fun suffixWithNewLine() {
         assertFailsWith<IllegalArgumentException> { HexFormat { number.suffix = "ab\ncd" } }
         assertFailsWith<IllegalArgumentException> { HexFormat { number.suffix = "ab\rcd" } }
+    }
+
+    @Test
+    fun minLengthNonPositive() {
+        assertFailsWith<IllegalArgumentException> { HexFormat { number.minLength = 0 } }
+        assertFailsWith<IllegalArgumentException> { HexFormat { number.minLength = -1 } }
+        assertFailsWith<IllegalArgumentException> { HexFormat { number.minLength = Int.MIN_VALUE } }
     }
 }

@@ -300,7 +300,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
             description = "Source files of Android ${variantName}."
             isVisible = false
 
-            apiElementsConfiguration.copyAttributesTo(project, dest = this)
+            apiElementsConfiguration.copyAttributesTo(project.providers, dest = this)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
         }
     }

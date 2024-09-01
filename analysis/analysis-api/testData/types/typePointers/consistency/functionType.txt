@@ -1,0 +1,104 @@
+Restored type is the same as the original one
+
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  arity: 1
+  classId: kotlin/Function1
+  contextReceivers: []
+  hasContextReceivers: false
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  nullability: NON_NULLABLE
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  qualifiers: [
+    qualifier:
+      name: Function1
+      symbol: KaNamedClassSymbol(kotlin/Function1)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Int
+    nullability: NULLABLE
+    qualifiers: [
+      qualifier:
+        name: Int
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Int)
+    typeArguments: []
+  symbol: KaNamedClassSymbol(kotlin/Function1)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      nullability: NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]

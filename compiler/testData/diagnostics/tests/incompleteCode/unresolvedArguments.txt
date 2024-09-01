@@ -1,7 +1,0 @@
-package
-
-public fun bar(/*0*/ i: kotlin.Int): kotlin.Unit
-public fun bar(/*0*/ s: kotlin.String): kotlin.Unit
-public fun </*0*/ T> foo(/*0*/ i: kotlin.Int, /*1*/ t: T): kotlin.Unit
-public fun </*0*/ T> foo(/*0*/ s: kotlin.String, /*1*/ t: T): kotlin.Unit
-public fun test(): kotlin.Unit

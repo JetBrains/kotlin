@@ -1,5 +1,5 @@
 package top
 
-/*p:top*/fun typeAliasUsage(a: /*p:top*/TypeAlias) {
-    /*p:top(TypeAlias) p:top.Foo(prop) p:top.TypeAlias(prop)*/a.prop
+/*p:top*/fun typeAliasUsage(a: /*p:top p:top(Foo)*/TypeAlias) {
+    /*p:top(Foo) p:top.Foo(prop)*/a.prop
 }

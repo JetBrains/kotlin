@@ -8,54 +8,64 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffectCoroutine
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-internal val SetupKotlinNativePlatformDependenciesAndStdlib =
-    KotlinCompilationSideEffectCoroutine<AbstractKotlinNativeCompilation> { compilation ->
-        val project = compilation.project
+internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetupAction {
+    val kotlin = multiplatformExtensionOrNull ?: return@KotlinProjectSetupAction
 
-        // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
-        val commonizerTarget = compilation.commonizerTarget.await() ?: return@KotlinCompilationSideEffectCoroutine
-        val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
-        val stdlib = project.files(project.konanDistribution.stdlib)
-
-        val updatedCompileDependencyFiles = project.files().from(
-            stdlib,
-            nativeDistributionDependencies,
-            compilation.compileDependencyFiles
-        )
-
-        compilation.compileDependencyFiles = updatedCompileDependencyFiles
+    val stdlib = project.files(project.konanDistribution.stdlib)
+    kotlin.targets.all { target ->
+        target.compilations.all { compilation ->
+            if (compilation is AbstractKotlinNativeCompilation) {
+                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
+            }
+        }
     }
 
-internal val ExcludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks = KotlinProjectSetupAction {
-    tasks.withType<KotlinNativeLink>().configureEach { task ->
-        @Suppress("DEPRECATION")
-        val konanTarget = task.compilation.konanTarget
-        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
-    }
-    tasks.withType<KotlinNativeCompile>().configureEach { task ->
-        // metadata compilations should have commonized platform libraries in the classpath i.e. they are not "original"
-        if (task.isMetadataCompilation) return@configureEach
-        val konanTarget = task.konanTarget
-        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
+    launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
+}
+
+private fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
+    stdlib: FileCollection
+) {
+    val updatedCompileDependencyFiles = project.files().from(
+        stdlib,
+        compileDependencyFiles
+    )
+
+    compileDependencyFiles = updatedCompileDependencyFiles
+}
+
+/**
+ * Stdlib is added from Kotlin Native Distribution in [configureStdlibAndPlatformDependencies]
+ * But stdlib is also declared as dependency, to prevent from stdlib duplication, exclude it from dependency resolution
+ */
+private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSetDependencies() {
+    awaitSourceSets().forEach { sourceSet ->
+        if (sourceSet.isNativeSourceSet.await()) {
+            sourceSet.internal
+                .resolvableMetadataConfiguration
+                .exclude(mapOf("group" to KOTLIN_MODULE_GROUP, "module" to KOTLIN_STDLIB_MODULE_NAME))
+        }
     }
 }
 
-internal val SetupKotlinNativePlatformDependenciesForLegacyImport = KotlinProjectSetupCoroutine {
+internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
     val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
     val sourceSets = multiplatform
         .awaitSourceSets()
@@ -75,11 +85,8 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
     return when (target) {
         is LeafCommonizerTarget -> getOriginalPlatformLibrariesFor(target)
         is SharedCommonizerTarget -> {
-            val commonizerTaskProvider = commonizeNativeDistributionTask ?: return project.files()
-            val commonizedLibrariesProvider = commonizerTaskProvider.flatMap { task ->
-                task.rootOutputDirectoryProperty.map { getCommonizedPlatformLibrariesFor(it.asFile, target) }
-            }
-            project.files(commonizedLibrariesProvider)
+            val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return project.files()
+            project.files(klibs)
         }
     }
 }
@@ -87,13 +94,8 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
     getOriginalPlatformLibrariesFor(target.konanTarget)
 
-private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
+internal fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
     konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
-}
-
-private fun getCommonizedPlatformLibrariesFor(rootOutputDirectory: File, target: SharedCommonizerTarget): List<File> {
-    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
-    return targetOutputDirectory.listLibraryFiles()
 }
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()

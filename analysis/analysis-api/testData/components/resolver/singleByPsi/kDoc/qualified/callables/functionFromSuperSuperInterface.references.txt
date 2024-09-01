@@ -1,2 +1,3 @@
-KDocReference:
-  (in Baz) fun foo()
+KDocName(95,102): 'Foo.foo'
+  KDocReference:
+    (in Baz) fun foo()

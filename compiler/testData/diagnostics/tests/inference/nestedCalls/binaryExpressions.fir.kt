@@ -41,7 +41,7 @@ fun test2(z: Z) {
 }
 
 //'equals' operation
-fun Z.equals(any: Any): Int { use(any); return 1 }
+fun Z.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(any: Any): Int { use(any); return 1 }
 
 fun test3(z: Z) {
     z == <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>()

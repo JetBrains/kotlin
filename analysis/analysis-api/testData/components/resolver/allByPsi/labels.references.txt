@@ -1,0 +1,45 @@
+KtNameReferenceExpression(22,26): 'Unit'
+  KtSimpleNameReference:
+    (in kotlin) object Unit
+
+KtCallExpression(34,42): 'action()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(34,40): 'action'
+  KtSimpleNameReference:
+    action: () -> kotlin.Unit
+
+KtCallExpression(64,102): 'foo label@{'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(64,67): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo(action: () -> kotlin.Unit)
+
+KtLabelReferenceExpression(68,74): 'label@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(90,96): '@label'
+  KtSimpleNameReference:
+    (in <local>: usage) fun(): kotlin.Unit
+
+KtLabelReferenceExpression(108,114): 'myFor@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtForExpression(115,161): 'for (i in 0..1) {'
+  KtForLoopInReference:
+    0: (in kotlin.collections.IntIterator) operator fun next(): kotlin.Int
+    1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+    2: (in kotlin.ranges.IntProgression) open operator fun iterator(): kotlin.collections.IntIterator
+
+KtOperationReferenceExpression(126,128): '..'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange
+
+KtLabelReferenceExpression(149,155): '@myFor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

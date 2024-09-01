@@ -1,0 +1,2 @@
+warning: using new faster version of JAR FS: it should make your build faster, but the new implementation is not thoroughly tested with language versions below 2.0
+OK

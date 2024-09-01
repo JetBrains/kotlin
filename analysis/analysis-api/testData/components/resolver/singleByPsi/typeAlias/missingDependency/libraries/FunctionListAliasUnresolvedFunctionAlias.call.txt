@@ -1,0 +1,32 @@
+KtNameReferenceExpression(157,162): 'check'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {library2.ListAlias<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          symbol = list: {library2.ListAlias<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = library3.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = library3/MyInterface.check(<dispatch receiver>: library3.MyInterface, list: {library2.ListAlias<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = list
+              receiverType = null
+              returnType = {library2.ListAlias<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              symbol = list: {library2.ListAlias<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{library1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              callableId = null
+          ]
+          callableId = library3/MyInterface.check
+      typeArgumentsMapping = {}

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataLibrariesIndexFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.TransformedMetadataLibraryRecord
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -48,7 +49,14 @@ class KotlinMetadataLibrariesIndexFileTest {
 
     private fun testWriteRead(files: Iterable<File>) {
         val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.newFile())
-        index.write(files)
-        assertEquals(files.toList(), index.read())
+        val records = files.map {
+            TransformedMetadataLibraryRecord(
+                moduleId = "a",
+                file = it.absolutePath,
+                sourceSetName = it.name
+            )
+        }
+        index.write(records)
+        assertEquals(records, index.read())
     }
 }

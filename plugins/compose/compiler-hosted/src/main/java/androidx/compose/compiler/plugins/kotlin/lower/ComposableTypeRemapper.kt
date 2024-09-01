@@ -20,53 +20,23 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.isComposableAnnotation
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.SymbolRemapper
-import org.jetbrains.kotlin.ir.util.SymbolRenamer
-import org.jetbrains.kotlin.ir.util.TypeRemapper
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.packageFqName
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.remapTypes
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -98,9 +68,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
     private val context: IrPluginContext,
     private val symbolRemapper: DeepCopySymbolRemapper,
     private val typeRemapper: TypeRemapper,
-    @Suppress("DEPRECATION") symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
-) : DeepCopyPreservingMetadata(symbolRemapper, typeRemapper, symbolRenamer) {
-
+) : DeepCopyPreservingMetadata(symbolRemapper, typeRemapper) {
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
         if (declaration.symbol.isRemappedAndBound()) {
             return symbolRemapper.getReferencedSimpleFunction(declaration.symbol).owner
@@ -127,7 +95,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
                 // so we potentially need to update composable types for it.
                 // if the function is in the current module, it should be updated eventually
                 // by this deep copy pass.
-                if (overriddenFn.needsComposableRemapping() && !overriddenFn.isDecoy()) {
+                if (overriddenFn.needsComposableRemapping()) {
                     overriddenFn.remapTypes(typeRemapper)
                 }
             }
@@ -146,22 +114,6 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         includeFileNameInExceptionTrace(declaration) {
             return super.visitFile(declaration)
         }
-    }
-
-    override fun visitWhen(expression: IrWhen): IrWhen {
-        if (expression is IrIfThenElseImpl) {
-            return IrIfThenElseImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type.remapType(),
-                mapStatementOrigin(expression.origin),
-            ).also {
-                expression.branches.mapTo(it.branches) { branch ->
-                    branch.transform()
-                }
-            }.copyAttributes(expression)
-        }
-        return super.visitWhen(expression)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
@@ -459,7 +411,7 @@ class ComposerTypeRemapper(
         if (!name.startsWith("Function")) return false
         val packageFqName = cls.owner.packageFqName
         return packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
-            packageFqName == KotlinFunctionsBuiltInsPackageFqName
+                packageFqName == KotlinFunctionsBuiltInsPackageFqName
     }
 
     private fun IrType.isComposableFunction(): Boolean {
@@ -469,10 +421,6 @@ class ComposerTypeRemapper(
     override fun remapType(type: IrType): IrType {
         if (type !is IrSimpleType) return type
         if (!type.isComposableFunction()) return underlyingRemapType(type)
-        // do not convert types for decoys
-        if (scopeStack.peek()?.isDecoy() == true) {
-            return underlyingRemapType(type)
-        }
 
         val oldIrArguments = type.arguments
         val realParams = oldIrArguments.size - 1
@@ -489,14 +437,13 @@ class ComposerTypeRemapper(
         }
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +
-                extraArgs +
-                oldIrArguments.last()
+                    extraArgs +
+                    oldIrArguments.last()
 
         val newArgSize = oldIrArguments.size - 1 + extraArgs.size
         val functionCls = context.function(newArgSize)
 
         return IrSimpleTypeImpl(
-            null,
             functionCls,
             type.nullability,
             newIrArguments.map { remapTypeArgument(it) },
@@ -509,7 +456,6 @@ class ComposerTypeRemapper(
 
     private fun underlyingRemapType(type: IrSimpleType): IrType {
         return IrSimpleTypeImpl(
-            null,
             symbolRemapper.getReferencedClassifier(type.classifier),
             type.nullability,
             type.arguments.map { remapTypeArgument(it) },

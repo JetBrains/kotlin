@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expres
 
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtExpression
@@ -21,8 +21,8 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest
 
         val actualExpectedTypeText: String? = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                val expectedType = expressionAtCaret.getExpectedType() ?: return@analyseForTest null
-                DebugSymbolRenderer().renderType(analysisSession, expectedType)
+                val expectedType = expressionAtCaret.expectedType ?: return@analyseForTest null
+                DebugSymbolRenderer().renderType(useSiteSession, expectedType)
             }
         }
 

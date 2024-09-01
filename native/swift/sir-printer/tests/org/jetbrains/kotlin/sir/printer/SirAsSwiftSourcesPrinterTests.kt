@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.sir.printer
 
+import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
+import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
@@ -168,6 +171,14 @@ class SirAsSwiftSourcesPrinterTests {
                             SirParameter(
                                 argumentName = "arg7",
                                 type = SirNominalType(SirSwiftModule.float)
+                            ),
+                            SirParameter(
+                                argumentName = "arg8",
+                                type = SirNominalType(SirSwiftModule.utf16CodeUnit)
+                            ),
+                            SirParameter(
+                                argumentName = "arg9",
+                                type = SirNominalType(SirSwiftModule.bool).optional()
                             ),
                         )
                     )
@@ -421,7 +432,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "Foo"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -444,7 +457,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "INNER_CLASS"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -497,6 +512,10 @@ class SirAsSwiftSourcesPrinterTests {
                                     SirParameter(
                                         argumentName = "arg7",
                                         type = SirNominalType(SirSwiftModule.float)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg8",
+                                        type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                                     ),
                                 )
                             )
@@ -590,6 +609,10 @@ class SirAsSwiftSourcesPrinterTests {
                                     SirParameter(
                                         argumentName = "arg7",
                                         type = SirNominalType(SirSwiftModule.float)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg8",
+                                        type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                                     ),
                                 )
                             )
@@ -727,6 +750,17 @@ class SirAsSwiftSourcesPrinterTests {
                             }
                         }
                     )
+                    declarations.add(
+                        buildVariable {
+                            name = "my_variable3"
+                            type = SirNominalType(
+                                SirSwiftModule.int32,
+                            ).optional()
+                            getter = buildGetter {
+                                kind = SirCallableKind.INSTANCE_METHOD
+                            }
+                        }
+                    )
                 }
             )
         }
@@ -755,6 +789,16 @@ class SirAsSwiftSourcesPrinterTests {
             name = "Test"
             declarations.add(`typealias`)
             declarations.add(sampleType)
+
+            declarations.add(
+                buildTypealias {
+                    origin = SirOrigin.Unknown
+                    name = "OptionalInt"
+                    type = SirNominalType(
+                        SirSwiftModule.int32,
+                    ).optional()
+                }
+            )
         }.apply {
             `typealias`.parent = this
             sampleType.parent = this
@@ -891,6 +935,26 @@ class SirAsSwiftSourcesPrinterTests {
         )
     }
 
+    @Test
+    fun `should print imports`() {
+        val module = buildModule {
+            name = "Test"
+        }
+
+        module.updateImports(
+            listOf(
+                SirImport(moduleName = "DEMO_PACKAGE"),
+                SirImport(moduleName = "ExportedModule", mode = SirImport.Mode.Exported),
+                SirImport(moduleName = "PrivateModule", mode = SirImport.Mode.ImplementationOnly),
+            )
+        )
+
+        runTest(
+            module,
+            "testData/imports"
+        )
+    }
+
     private fun runTest(module: SirModule, goldenDataFile: String) {
         val expectedSwiftSrc = File(KtTestUtil.getHomeDirectory()).resolve("$goldenDataFile.golden.swift")
         val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(
@@ -900,5 +964,130 @@ class SirAsSwiftSourcesPrinterTests {
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
+    }
+
+    @Test
+    fun `should elide extra visibility modifiers when modality spedified`() {
+        val module = buildModule {
+            name = "Test"
+
+            declarations.addAllIfNotNull(
+                buildClass {
+                    name = "OPEN_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    modality = SirClassModality.OPEN
+                },
+                buildClass {
+                    name = "FINAL_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    modality = SirClassModality.FINAL
+                },
+                buildClass {
+                    name = "UNSPECIDIED_PUBLIC"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                },
+                buildClass {
+                    name = "OPEN_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                    modality = SirClassModality.OPEN
+                },
+                buildClass {
+                    name = "FINAL_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                    modality = SirClassModality.FINAL
+                },
+                buildClass {
+                    name = "UNSPECIFIED_INTERNAL"
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.INTERNAL
+                },
+            )
+        }
+
+        runTest(
+            module,
+            "testData/modality"
+        )
+    }
+
+    @Test
+    fun `attributes`() {
+
+        val clazz = buildClass {
+            name = "OPEN_INTERNAL"
+            origin = SirOrigin.Unknown
+            attributes += SirAttribute.Available(message = "Deprecated class", deprecated = true, obsoleted = false)
+            declarations += buildFunction {
+                origin = SirOrigin.Unknown
+                kind = SirCallableKind.FUNCTION
+                visibility = SirVisibility.PUBLIC
+                name = "method"
+                returnType = SirNominalType(SirSwiftModule.bool)
+                documentation = "// Check that nested attributes handled properly"
+                attributes += SirAttribute.Available(message = "Available method", deprecated = false, obsoleted = false)
+            }
+        }
+
+        val module = buildModule {
+            name = "Test"
+        }.apply {
+            addChild {
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    kind = SirCallableKind.FUNCTION
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                    attributes += SirAttribute.Available(message = "Oh no", deprecated = true, obsoleted = true)
+                }
+            }
+            addChild {
+                buildVariable {
+                    name = "myVariable"
+                    type = SirNominalType(SirSwiftModule.bool)
+                    getter = buildGetter {
+                        kind = SirCallableKind.INSTANCE_METHOD
+                    }
+                    documentation = """
+                            /// Example docstring
+                        """.trimIndent()
+                    attributes += SirAttribute.Available(message = "Obsolete variable", deprecated = false, obsoleted = true)
+                }
+            }
+            addChild {
+                clazz
+            }
+        }
+        runTest(
+            module,
+            "testData/attributes"
+        )
+    }
+
+    @Test
+    fun `function returns nullable type`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    kind = SirCallableKind.FUNCTION
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    returnType = SirNominalType(
+                        SirSwiftModule.bool
+                    ).optional()
+                }
+            )
+        }
+        runTest(
+            module,
+            "testData/simple_function_returns_nullable"
+        )
     }
 }

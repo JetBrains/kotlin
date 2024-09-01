@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  c: C
+KtNameReferenceExpression(100,101): 'c'
+  KtSimpleNameReference:
+    c: C

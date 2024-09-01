@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
@@ -40,6 +39,14 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
@@ -48,10 +55,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractLenientSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractLenientTypeEqualityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractTypeEqualityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientSubtypingTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientTypeEqualityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractSubtypingTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractTypeEqualityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
@@ -65,6 +72,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassIdSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSymbolSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassIdSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSymbolSubtypingTypeRelationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest
@@ -78,7 +89,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAbbr
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypePointerConsistencyTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
@@ -94,7 +105,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
                 analysisSessionModeIs(AnalysisSessionMode.Normal),
     ) {
-        val init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+        val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
             val excludeDirs = buildList {
                 if (data.analysisApiMode == AnalysisApiMode.Standalone ||
                     data.frontend == FrontendKind.Fe10 ||
@@ -122,12 +133,22 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
         }
 
-        test<AbstractResolveCallTest>(init = init)
-        test<AbstractResolveCandidatesTest>(init = init)
-        test<AbstractReferenceResolveTest>(init = init)
+        test<AbstractResolveCallTest>(init = singleByPsiInit)
+        test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
+        test<AbstractResolveReferenceTest>(init = singleByPsiInit)
+
+        group(filter = testModuleKindIs(TestModuleKind.Source)) {
+            val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+                model(data, "allByPsi")
+            }
+
+            test<AbstractResolveCallByFileTest>(init = allByPsiInit)
+            test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
+            test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
+        }
     }
 
-    test<AbstractDanglingFileReferenceResolveTest>(
+    test<AbstractResolveDanglingFileReferenceTest>(
         filter = frontendIs(FrontendKind.Fir)
                 and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
     ) {
@@ -159,14 +180,20 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         generateResolveExtensionsTests()
     }
 
-    generateAnalysisApiNonComponentsTests()
-
-    group(
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinaryDecompiled) and
-                analysisApiModeIs(AnalysisApiMode.Standalone)
+    component(
+        "compilerPluginGeneratedDeclarationsProvider",
+        filter = frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
-        generateAnalysisApiStandaloneTests()
+        test<AbstractCompilerPluginGeneratedDeclarationsTest> {
+            model(it, "compilerPluginGeneratedDeclarations")
+        }
     }
+
+
+    generateAnalysisApiNonComponentsTests()
 }
 
 private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
@@ -176,7 +203,7 @@ private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
                 frontendIs(FrontendKind.Fir) and
                 testModuleKindIs(TestModuleKind.Source)
     ) {
-        test<AbstractReferenceResolveWithResolveExtensionTest> {
+        test<AbstractResolveReferenceWithResolveExtensionTest> {
             model(it, "referenceResolve")
         }
     }
@@ -279,10 +306,15 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             test<AbstractBuiltInTypeTest> {
                 model(it, "builtins")
             }
+
+            group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractTypePointerConsistencyTest> {
+                    model(it, "consistency")
+                }
+            }
         }
 
-        // Skip `TestModuleKind.Source` due to `KT-65038`.
-        group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.LibraryBinary)) {
+        group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
             test<AbstractAbbreviatedTypeTest> {
                 model(it, "abbreviatedType")
             }
@@ -321,22 +353,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
             model("sessionInvalidation")
-        }
-    }
-}
-
-private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
-    group("standalone") {
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.Source)
-        ) {
-            model(it, "source")
-        }
-
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.LibraryBinaryDecompiled)
-        ) {
-            model(it, "binary")
         }
     }
 }
@@ -583,7 +599,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("subtyping") {
+    component("typeRelationChecker") {
         test<AbstractTypeEqualityTest> {
             model(it, "subtypingAndEquality")
         }
@@ -597,6 +613,22 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
 
         test<AbstractLenientSubtypingTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
             model(it, "subtypingAndEquality")
         }
     }
@@ -635,11 +667,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model(it, "packageScope")
             }
 
-            group(filter = frontendIs(FrontendKind.Fir)) {
-                test<AbstractSubstitutionOverridesUnwrappingTest> {
-                    model(it, "substitutionOverridesUnwrapping")
-                }
+            test<AbstractSubstitutionOverridesUnwrappingTest> {
+                model(it, "substitutionOverridesUnwrapping")
+            }
 
+            group(filter = frontendIs(FrontendKind.Fir)) {
                 test<AbstractMemberScopeTest> {
                     when (it.analysisApiMode) {
                         AnalysisApiMode.Ide ->

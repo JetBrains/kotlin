@@ -1,4 +1,6 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/extensions/compiler.xml"/>
+
   <extensionPoints>
     <extensionPoint
         qualifiedName="org.jetbrains.kotlin.kaResolveExtensionProvider"
@@ -22,20 +24,32 @@
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinMessageBusProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseModuleProvider"
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.KotlinProjectMessageBusProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.lifetime.KaLifetimeTracker"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
     />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
+
+    <registryKey
+        defaultValue="false"
+        description="Throw an exception in the case of inconsistency in decompiled light classes"
+        key="kotlin.decompiled.light.classes.check.inconsistency"
+        restartRequired="false"
+    />
   </extensions>
 </idea-plugin>

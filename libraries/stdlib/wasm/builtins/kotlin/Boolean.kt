@@ -14,14 +14,14 @@ import kotlin.wasm.internal.*
 
 /** Represents a value which is either `true` or `false`. */
 @WasmAutoboxed
-public class Boolean private constructor(private val value: Boolean) : Comparable<Boolean> {
+public actual class Boolean private constructor(private val value: Boolean) : Comparable<Boolean> {
     @SinceKotlin("1.3")
-    public companion object {}
+    public actual companion object {}
 
     /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_EQZ)
-    public operator fun not(): Boolean =
+    public actual operator fun not(): Boolean =
         implementedAsIntrinsic
 
     /**
@@ -30,7 +30,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_AND)
-    public infix fun and(other: Boolean): Boolean =
+    public actual infix fun and(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     /**
@@ -39,25 +39,25 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_OR)
-    public infix fun or(other: Boolean): Boolean =
+    public actual infix fun or(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_XOR)
-    public infix fun xor(other: Boolean): Boolean =
+    public actual infix fun xor(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun compareTo(other: Boolean): Int =
+    public actual override fun compareTo(other: Boolean): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String =
+    public actual override fun toString(): String =
         if (this) "true" else "false"
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean {
+    public actual override fun equals(other: Any?): Boolean {
         return if (other !is Boolean) {
             false
         } else {
@@ -65,7 +65,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         }
     }
 
-    public override fun hashCode(): Int =
+    public actual override fun hashCode(): Int =
         if (this) 1231 else 1237
 
     @WasmNoOpCast

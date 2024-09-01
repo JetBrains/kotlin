@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -24,7 +24,7 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                         appendLine(declaration.getNameWithPositionString())
                     } else {
                         analyseForTest(declaration) {
-                            val returnType = declaration.getReturnKaType()
+                            val returnType = declaration.returnType
                             append(declaration.getNameWithPositionString())
                             append(" : ")
                             appendLine(returnType.render(position = Variance.INVARIANT))

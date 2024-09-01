@@ -1,0 +1,419 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(TYPES)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): <implicit>
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): <implicit>
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @org.jetbrains.kotlin.fir.plugin.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] val generatedMethodReference: <implicit> = Serializer#::serializeFirstTarget#
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>| = Q|test/Serializer|::R|test/Serializer.serializeFirstTarget|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/reflect/KFunction2<test/Serializer, test/FirstTarget, kotlin/Unit>|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport_twoAnnotationsChain.kt
+    @R|test/FirstTarget.NestedAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|[Types]() @R|test/OuterAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/CoreSerializer|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class Serializer : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val generatedMethodReference: <ERROR TYPE REF: Unresolved reference: serializeFirstTarget> = Q|test/Serializer|::<Unresolved reference: serializeFirstTarget>#
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved reference: serializeFirstTarget>

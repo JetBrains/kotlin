@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
-import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
@@ -34,7 +34,7 @@ abstract class AbstractJsIrTest(
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
 ) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
+    FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
@@ -43,7 +43,7 @@ abstract class AbstractJsIrTest(
         get() = ::ClassicFrontend2IrConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::JsKlibBackendFacade
+        get() = ::JsKlibSerializerFacade
 
     override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
         get() = ::JsIrBackendFacade

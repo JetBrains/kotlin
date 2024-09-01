@@ -5,7 +5,7 @@ const val f = 24
 const val l = 3
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-<!MUST_BE_INITIALIZED!>const val k: Int<!>
+const <!MUST_BE_INITIALIZED!>val k: Int<!>
     <!CONST_VAL_WITH_GETTER!>get<!>
 
 const val t: Int

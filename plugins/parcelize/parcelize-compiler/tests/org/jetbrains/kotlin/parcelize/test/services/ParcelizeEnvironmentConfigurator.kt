@@ -49,6 +49,8 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         // Hard coding a name of an additional annotation for parcelize. Test that use this, need to provide the
         // additional annotations as part of the test sources.
         configuration.put(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION, listOf("test.TriggerParcelize"))
+        // Allow bare value arguments for inherited classes.
+        configuration.put(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION, true)
     }
 
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
@@ -57,9 +59,11 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
     ) {
         if (ENABLE_PARCELIZE !in module.directives) return
         val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
+        val experimentalCodeGeneration = configuration.get(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION) ?: false
         ParcelizeComponentRegistrar.registerParcelizeComponents(
             this,
             additionalAnnotation,
+            experimentalCodeGeneration,
             useFir = module.frontendKind == FrontendKinds.FIR
         )
     }

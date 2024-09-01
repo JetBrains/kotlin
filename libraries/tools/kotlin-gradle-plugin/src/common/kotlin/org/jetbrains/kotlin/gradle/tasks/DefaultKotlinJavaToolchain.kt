@@ -20,6 +20,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.*
@@ -156,7 +157,21 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
             providedJvm.set(
                 objects.providerWithLazyConvention {
-                    Jvm.discovered(jdkHomeLocation, null, jdkVersion)
+                    if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                        // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                        @Suppress("DEPRECATION")
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion
+                        )
+                    } else {
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion.majorVersion.toInt()
+                        )
+                    }
                 }
             )
 
@@ -258,12 +273,21 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
         private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
             val metadata = javaLauncher.metadata
-            val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
-            return Jvm.discovered(
-                metadata.installationPath.asFile,
-                null,
-                javaVersion
-            )
+            return if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                @Suppress("DEPRECATION")
+                // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    JavaVersion.toVersion(metadata.languageVersion.asInt())
+                )
+            } else {
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    metadata.languageVersion.asInt()
+                )
+            }
         }
     }
 }

@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 
 internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
@@ -18,6 +19,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         "kotlin.internal.single.build.metrics.file",
         "kotlin.build.report.dir",
         "kotlin.native.ignoreIncorrectDependencies",
+        "kotlin.wasm.stability.nowarn",
+        KotlinJsCompilerType.jsCompilerProperty,
+        "${KotlinJsCompilerType.jsCompilerProperty}.nowarn",
+        "kotlin.mpp.androidGradlePluginCompatibility.nowarn", // Since 2.1.0
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {

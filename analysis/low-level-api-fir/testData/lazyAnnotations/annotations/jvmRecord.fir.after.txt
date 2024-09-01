@@ -1,0 +1,1 @@
+@R|kotlin/jvm/JvmRecord|[Types]() public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|

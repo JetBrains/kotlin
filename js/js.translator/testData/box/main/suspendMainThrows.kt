@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1299
 // CALL_MAIN
 
 import kotlin.coroutines.*

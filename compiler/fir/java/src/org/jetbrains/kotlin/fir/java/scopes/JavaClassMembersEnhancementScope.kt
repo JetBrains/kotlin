@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.syntheticNamesProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -94,5 +95,16 @@ class JavaClassMembersEnhancementScope(
 
     override fun toString(): String {
         return "Java enhancement scope for ${owner.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): JavaClassMembersEnhancementScope {
+        return JavaClassMembersEnhancementScope(
+            newSession, owner,
+            useSiteMemberScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        )
     }
 }

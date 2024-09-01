@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeIn
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
@@ -63,9 +63,9 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
                         // ```
                         // smart cast is available for `(@Denotable("...") a)` and not for `a` or `@Denotable("...") a`.
                         val ktType = if (parent != null && deparenthesize(parent.receiverExpression) == deparenthesize(base)) {
-                            parent.receiverExpression.getKaType()
+                            parent.receiverExpression.expressionType
                         } else {
-                            expression.getKaType()
+                            expression.expressionType
                         }
                         val actualHasDenotableType = ktType?.isDenotable ?: error("${base.text} does not have a type.")
                         when (actualHasDenotableType) {

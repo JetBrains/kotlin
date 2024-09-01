@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
-import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -39,7 +39,7 @@ internal inline fun <F> PhaseContext.firFrontend(
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
     val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-        val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isInterop }
+        val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
         dependencies(regularLibs.map { it.libraryFile.absolutePath })
         if (interopLibs.isNotEmpty()) {
             val interopModuleData =

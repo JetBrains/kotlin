@@ -72,6 +72,12 @@ object ComposeErrors {
         )
 
     @JvmField
+    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE =
+        DiagnosticFactory0.create<PsiElement>(
+            Severity.ERROR
+        )
+
+    @JvmField
     val COMPOSABLE_FUN_MAIN =
         DiagnosticFactory0.create<PsiElement>(
             Severity.ERROR

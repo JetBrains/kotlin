@@ -2,7 +2,6 @@
 // ^^^ K1 as well as K1-based test infra do not support "fragment refinement".
 
 // FIR_IDENTICAL
-// SKIP_KLIB_TEST
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

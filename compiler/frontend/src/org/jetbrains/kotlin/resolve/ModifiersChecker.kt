@@ -122,12 +122,9 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val deprecatedModifierReplacement = deprecatedKmpModifierMap[modifier]
         val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
         when {
-            deprecatedModifierReplacement != null ->
-                trace.report(Errors.DEPRECATED_MODIFIER.on(node.psi, modifier, deprecatedModifierReplacement))
             actualTargets.any { it in deprecatedTargets } ->
                 trace.report(
                     Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(

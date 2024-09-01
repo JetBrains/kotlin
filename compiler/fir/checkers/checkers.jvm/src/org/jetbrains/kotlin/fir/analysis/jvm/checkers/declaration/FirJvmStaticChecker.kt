@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -42,20 +44,13 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        val declarationAnnotation = declaration.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session)
-
-        if (declarationAnnotation != null) {
-            checkAnnotated(declaration, context, reporter, declaration.source)
-        }
-
         fun checkIfAnnotated(it: FirDeclaration) {
-            if (!it.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session)) {
-                return
-            }
-            val targetSource = it.source ?: declaration.source
+            val annotation = it.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session) ?: return
+            val targetSource = annotation.source ?: it.source ?: declaration.source
             checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
         }
 
+        checkIfAnnotated(declaration)
         if (declaration is FirProperty) {
             declaration.getter?.let { checkIfAnnotated(it) }
             declaration.setter?.let { checkIfAnnotated(it) }
@@ -75,9 +70,10 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         val container = context.getContainerAt(0) ?: return
         val supportsJvmStaticInInterface = context.supports(LanguageFeature.JvmStaticInInterface)
-        val containerIsAnonymous = container.classId.shortClassName == SpecialNames.ANONYMOUS
+        val containerIsAnonymous = container is FirClassSymbol && container.classId.shortClassName == SpecialNames.ANONYMOUS
 
         if (
+            container !is FirClassSymbol ||
             container.classKind != ClassKind.OBJECT ||
             !container.isCompanion() && containerIsAnonymous
         ) {
@@ -207,7 +203,8 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     }
 
     private fun CheckerContext.containerIsInterface(outerLevel: Int): Boolean {
-        return this.getContainerAt(outerLevel)?.classKind?.isInterface == true
+        val container = this.getContainerAt(outerLevel)
+        return container is FirClassSymbol && container.classKind.isInterface
     }
 
     private fun CheckerContext.containerIsNonCompanionObject(outerLevel: Int): Boolean {
@@ -216,18 +213,14 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         return containingClass.classKind == ClassKind.OBJECT && !containingClass.isCompanion
     }
 
-    private fun CheckerContext.getContainerAt(outerLevel: Int): FirClassLikeSymbol<*>? {
+    private fun CheckerContext.getContainerAt(outerLevel: Int): FirBasedSymbol<*>? {
         val correction = if (this.containingDeclarations.lastOrNull() is FirProperty) {
             1
         } else {
             0
         }
         val last = this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
-        return if (last is FirClassLikeDeclaration) {
-            last.symbol
-        } else {
-            null
-        }
+        return last?.symbol
     }
 
     private fun CheckerContext.supports(feature: LanguageFeature) = session.languageVersionSettings.supportsFeature(feature)

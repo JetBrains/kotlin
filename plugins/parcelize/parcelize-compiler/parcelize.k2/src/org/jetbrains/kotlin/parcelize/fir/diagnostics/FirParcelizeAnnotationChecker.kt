@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
@@ -32,7 +32,7 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
     FirAnnotationCallChecker(MppCheckerKind.Platform) {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType ?: return
-        val resolvedAnnotationSymbol = annotationType.lookupTag.toFirRegularClassSymbol(context.session) ?: return
+        val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol(context.session) ?: return
         when (val annotationClassId = resolvedAnnotationSymbol.classId) {
             in TYPE_PARCELER_CLASS_IDS -> {
                 if (checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = true)) {

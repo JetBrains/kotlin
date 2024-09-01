@@ -36,7 +36,7 @@ class NpmImportedPackagesVersionResolver(
                 selected
             } else versions.single()
 
-            importedProjectWorkspaces.add(selected.path.relativeTo(nodeJsWorldDir).path)
+            importedProjectWorkspaces.add(selected.path.relativeTo(nodeJsWorldDir).invariantSeparatorsPath)
         }
     }
 }

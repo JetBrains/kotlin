@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
@@ -22,14 +22,13 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
-    override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
+    override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
             register(
                 FirSymbolProvider::class,
@@ -38,6 +37,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
                         context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
                     ),
                     context.dependencyProvider,
                 )
@@ -47,7 +47,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
+    override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
             register(
                 FirSymbolProvider::class,
@@ -64,13 +64,13 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+    override fun createBinaryLibrarySession(module: KaLibraryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
 
-    override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+    override fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         return doCreateDanglingFileSession(module, contextSession) {
             register(
                 FirSymbolProvider::class,
@@ -100,7 +100,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
             addAll(
-                LLFirLibrarySymbolProviderFactory.getService(project).createCommonLibrarySymbolProvider(
+                LLLibrarySymbolProviderFactory.fromSettings(project).createCommonLibrarySymbolProvider(
                     session,
                     moduleData,
                     kotlinScopeProvider,
@@ -122,8 +122,8 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
         }
     }
 
-    private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KtModule) {
-        if (module.platform.has<JvmPlatform>())
+    private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
+        if (module.targetPlatform.has<JvmPlatform>())
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
     }
 }

@@ -13,10 +13,12 @@ import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.FileViewProviderFactory
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
+import com.intellij.psi.impl.compiled.ClsDecompilerImpl
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.disposableProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(JavaClassFileType.INSTANCE, ClassFileViewProviderFactory())
+        FileTypeFileViewProviders.INSTANCE.addExplicitExtension(KotlinBuiltInFileType, ClassFileViewProviderFactory())
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(
             KlibMetaFileType,
             FileViewProviderFactory { file, _, manager, _ ->
@@ -40,6 +43,7 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
                 LoadingOrder.FIRST,
                 testServices.disposableProvider.getApplicationDisposable()
             )
+            registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,11 +35,11 @@ internal class TailCallOptimizationLowering(private val context: JvmBackendConte
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 
-            override fun visitContainerExpression(expression: IrContainerExpression, data: TailCallOptimizationData?): IrExpression {
-                if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-                    return expression
+            override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: TailCallOptimizationData?): IrExpression {
+                if (inlinedBlock.isFunctionInlining()) {
+                    return inlinedBlock
                 }
-                return super.visitContainerExpression(expression, data)
+                return super.visitInlinedFunctionBlock(inlinedBlock, data)
             }
 
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
@@ -83,6 +83,8 @@ private class TailCallOptimizationData(val function: IrSimpleFunction) {
         when (val body = function.body) {
             is IrBlockBody -> body.statements.findTailCall(returnsUnit)?.findCallsOnTailPositionWithoutImmediateReturn()
             is IrExpressionBody -> body.expression.findCallsOnTailPositionWithoutImmediateReturn(immediateReturn = true)
+            is IrSyntheticBody -> {}
+            null -> {}
         }
     }
 }

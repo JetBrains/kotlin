@@ -1,14 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -100,7 +98,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         return mangleMemberNameIfRequired(function.name.asString(), function)
     }
 
-    private fun IrType.isJavaLangRecord() = getClass()!!.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME)
+    private fun IrType.isJavaLangRecord(): Boolean =
+        getClass()?.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME) == true
 
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
@@ -123,7 +122,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun IrSimpleFunction.isInvisibleInMultifilePart(): Boolean =
         name.asString() != "<clinit>" &&
-                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart.keys &&
+                (parent as? IrClass)?.multifileFacadeForPart != null &&
                 (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
                         originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 
@@ -152,9 +151,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         (if (function is IrLazyFunctionBase)
             getJvmModuleNameForDeserialized(function)
         else null) ?: context.state.moduleName
-
-    private fun IrSimpleFunction.isPublishedApi(): Boolean =
-        propertyIfAccessor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null, materialized: Boolean = true): Type {
         if (declaration !is IrFunction) {
@@ -275,7 +271,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
         // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
-        if (specialSignatureInfo != null && function !in context.functionsWithSpecialBridges) {
+        if (specialSignatureInfo != null && !function.hasSpecialBridge) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }
@@ -295,8 +291,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                     toIrBasedDescriptor()
                 else
                     IrBasedSimpleFunctionDescriptorWithOriginalOverrides(this, context)
-            else ->
-                throw AssertionError("Unexpected function kind: $this")
         }
 
     private class IrBasedSimpleFunctionDescriptorWithOriginalOverrides(
@@ -304,7 +298,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         private val context: JvmBackendContext
     ) : IrBasedSimpleFunctionDescriptor(owner) {
         override fun getOverriddenDescriptors(): List<FunctionDescriptor> =
-            context.getOverridesWithoutStubs(owner).map {
+            (owner.overridesWithoutStubs ?: owner.overriddenSymbols).map {
                 IrBasedSimpleFunctionDescriptorWithOriginalOverrides(it.owner, context)
             }
     }
@@ -364,7 +358,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
             getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
+                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst)?.value as? Boolean ?: true else null
             }
     }
 
@@ -520,8 +514,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 irFun
             is IrSimpleFunction ->
                 findSuperDeclaration(irFun, false, context.config.jvmDefaultMode)
-            else ->
-                throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
         }
 
         val irParentClass = irNonFakeFun.parent as? IrClass

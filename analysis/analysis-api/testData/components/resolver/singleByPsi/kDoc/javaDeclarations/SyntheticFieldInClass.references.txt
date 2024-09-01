@@ -1,7 +1,9 @@
 <caret_1>:
-  KDocReference:
-    (in Storage) open fun getValue(): kotlin.String!
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      (in Storage) open fun getValue(): kotlin.String!
 
 <caret_2>:
-  KDocReference:
-    (in Storage) open fun getValue(): kotlin.String!
+  KDocName(44,60): 'Storage.getValue'
+    KDocReference:
+      (in Storage) open fun getValue(): kotlin.String!

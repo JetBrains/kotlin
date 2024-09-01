@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClass
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
@@ -115,14 +114,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     PointerWithRenderedSymbol(
                         safePointer(symbol),
                         when (symbol) {
+                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
-                                printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
+                                printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
                                     append(it.render(prettyRenderer))
                                 }
                             }
-
-                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(analysisSession, symbol)
                             else -> error(symbol::class.toString())
                         },
                     )
@@ -167,15 +165,23 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun KaSession.checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
-        val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty { it.getFileSymbol() }
+        val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty { it.symbol }
 
         for (symbol in symbols) {
             if (symbol.origin != KaSymbolOrigin.SOURCE) continue
 
-            val containingFileSymbol = symbol.getContainingFileSymbol()
-            if (containingFileSymbol !in allowedContainingFileSymbols) {
-                testServices.assertions.fail {
-                    "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."
+            val containingFileSymbol = symbol.containingFile
+            when {
+                symbol is KaFileSymbol -> {
+                    testServices.assertions.assertEquals(null, containingFileSymbol) {
+                        "'containingFile' for ${KaFileSymbol::class.simpleName} should be 'null'"
+                    }
+                }
+
+                containingFileSymbol !in allowedContainingFileSymbols -> {
+                    testServices.assertions.fail {
+                        "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."
+                    }
                 }
             }
         }
@@ -310,7 +316,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
     protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
         val renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES }
-        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(analysisSession, symbol) }
+        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(useSiteSession, symbol) }
     }
 }
 
@@ -400,7 +406,7 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     return sequence {
         yield(ktSymbol)
 
-        if (ktSymbol is KaSymbolWithTypeParameters) {
+        if (ktSymbol is KaDeclarationSymbol) {
             for (parameter in ktSymbol.typeParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }
@@ -411,7 +417,7 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
             yieldAll(ktSymbol.setter.withImplicitSymbols())
         }
 
-        if (ktSymbol is KaFunctionLikeSymbol) {
+        if (ktSymbol is KaFunctionSymbol) {
             for (parameter in ktSymbol.valueParameters) {
                 yieldAll(parameter.withImplicitSymbols())
             }

@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExt
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.has
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import java.io.File
+import kotlin.time.Duration
 
 internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
     // Create and cache test cases in groups on demand.
@@ -132,6 +132,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             val location = Location(testDataFile, lineNumber)
             val expectFileDirectiveAfterModuleDirective =
                 lastParsedDirective == TestDirectives.MODULE // Only FILE directive may follow MODULE directive.
+            // actually, between module and file should be placed directives with applicability MODULE
 
             val rawDirective = RegisteredDirectivesParser.parseDirective(line)
             if (rawDirective != null) {
@@ -149,11 +150,15 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 }
 
                 if (parsedDirective != null) {
-                    when (val directive = parsedDirective.directive) {
-                        TestDirectives.FILE -> {
+                    val directive = parsedDirective.directive
+                    when {
+                        directive == TestDirectives.FILE -> {
                             val newFileName = parseFileName(parsedDirective, location)
                             finishTestFile(forceFinish = false, location)
                             beginTestFile(newFileName)
+                        }
+                        directive.applicability == DirectiveApplicability.Module -> {
+                            currentTestModule?.directives?.add(parsedDirective)
                         }
                         else -> {
                             assertFalse(expectFileDirectiveAfterModuleDirective) {
@@ -202,8 +207,12 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         if (settings.isDisabledNative(registeredDirectives))
             return null
 
+        if (testModules.values.any {
+                it.files.any { it.location.extension == "def" && !it.text.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
+            }) return null
+
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
-        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
+        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
 
         val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
 
@@ -285,12 +294,11 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             }
         }
 
-        private fun computeExecutionTimeoutCheck(settings: Settings, expectedTimeoutFailure: Boolean): ExecutionTimeout {
-            val executionTimeout = settings.get<Timeouts>().executionTimeout
-            return if (expectedTimeoutFailure)
-                ExecutionTimeout.ShouldExceed(executionTimeout)
+        private fun computeExecutionTimeoutCheck(settings: Settings, expectedTimeoutFailure: Duration?): ExecutionTimeout {
+            return if (expectedTimeoutFailure != null)
+                ExecutionTimeout.ShouldExceed(expectedTimeoutFailure)
             else
-                ExecutionTimeout.ShouldNotExceed(executionTimeout)
+                ExecutionTimeout.ShouldNotExceed(settings.get<Timeouts>().executionTimeout)
         }
 
         private fun computeExitCodeCheck(testKind: TestKind, registeredDirectives: RegisteredDirectives, location: Location): ExitCode =

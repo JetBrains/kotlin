@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
+import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -35,13 +38,45 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        val source = errorTypeRef.source
-        reportFirDiagnostic(errorTypeRef.diagnostic, source, data)
+        if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
+        if (errorTypeRef.hasExpandedTypeAliasDeclarationSiteError()) return
+
+        reportFirDiagnostic(errorTypeRef.diagnostic, errorTypeRef.source, data)
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] is the implicit return type ref of a lambda and the diagnostic doesn't need to be reported.
+     * More specifically, the diagnostic can be skipped if it's duplicated in the outer call or in a return expression of the lambda.
+     */
+    private fun FirErrorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data: CheckerContext): Boolean {
+        if (source?.kind != KtFakeSourceElementKind.ImplicitFunctionReturnType) return false
+
+        val containingDeclaration = data.containingDeclarations.lastOrNull()
+        if (containingDeclaration !is FirAnonymousFunction || containingDeclaration.returnTypeRef != this) return false
+
+        return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
+                data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] contains an expanded typealias type with an error,
+     * i.e., the error originates from the typealias itself.
+     * In this case, we don't need to report anything because the error will already be reported on the declaration site.
+     */
+    private fun FirErrorTypeRef.hasExpandedTypeAliasDeclarationSiteError(): Boolean {
+        if ((coneType as? ConeErrorType)?.diagnostic != this.diagnostic) return false
+        return coneType.abbreviatedType != null
+    }
+
+    private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {
+        if ((resolvedType as? ConeErrorType)?.diagnostic == diagnostic) return true
+        if ((toReference(session) as? FirDiagnosticHolder)?.diagnostic == diagnostic) return true
+        return false
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
-        assert(resolvedTypeRef.type !is ConeErrorType) {
-            "Instead use FirErrorTypeRef for ${resolvedTypeRef.type.renderForDebugging()}"
+        assert(resolvedTypeRef.coneType !is ConeErrorType) {
+            "Instead use FirErrorTypeRef for ${resolvedTypeRef.coneType.renderForDebugging()}"
         }
     }
 
@@ -89,7 +124,8 @@ class ErrorNodeDiagnosticCollectorComponent(
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
-                    diagnostic.kind == DiagnosticKind.UnresolvedLabel
+                    diagnostic.kind == DiagnosticKind.UnresolvedLabel ||
+                    diagnostic.kind == DiagnosticKind.AmbiguousLabel
             else -> false
         }
     }
@@ -143,7 +179,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement?,
         context: CheckerContext,
-        callOrAssignmentSource: KtSourceElement? = null
+        callOrAssignmentSource: KtSourceElement? = null,
     ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {

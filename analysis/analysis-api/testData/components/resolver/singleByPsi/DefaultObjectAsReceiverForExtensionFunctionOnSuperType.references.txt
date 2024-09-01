@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in t.A) companion object : t.Trait
+KtNameReferenceExpression(131,132): 'A'
+  KtSimpleNameReference:
+    (in t.A) companion object : t.Trait

@@ -45,7 +45,7 @@ internal class DefaultModulesProvider private constructor(
             val name = manifestData.uniqueName
             val dependencies = manifestData.dependencies.toSet()
 
-            val cInteropAttributes = if (manifestData.isInterop) {
+            val cInteropAttributes = if (manifestData.isCInterop) {
                 val packageFqName = manifestData.packageFqName ?: error("Main package FQ name not specified for module $name")
                 ModulesProvider.CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
             } else null

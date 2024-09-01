@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in F) fun peek(): F
+KtNameReferenceExpression(93,97): 'peek'
+  KtSimpleNameReference:
+    (in F) fun peek(): F

@@ -71,9 +71,6 @@ object AnalysisFlags {
     val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val consistentDataClassCopyVisibility by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val allowFullyQualifiedNameInKClass by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
@@ -84,9 +81,22 @@ object AnalysisFlags {
 
     @JvmStatic
     val stdlibCompilation by AnalysisFlag.Delegates.Boolean
+
+    /**
+     * Setting this flag to `false` disable automatic expansion of aliased types during type resolution,
+     *   which was added in scope of KT-65038 (see commit 156a51b7 and its neighbors).
+     * Should be used only for testing purposes
+     */
+    @JvmStatic
+    val expandTypeAliasesInTypeResolution by AnalysisFlag.Delegates.Boolean(defaultValue = true)
+
+    val globallySuppressedDiagnostics by AnalysisFlag.Delegates.ListOfStrings
 }
 
-fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean {
-    return getFlag(AnalysisFlags.consistentDataClassCopyVisibility) ||
-            supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
+@Deprecated(
+    message = "Deprecated. Not needed",
+    replaceWith = ReplaceWith("supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)")
+)
+fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean { // Used in IDE
+    return supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
@@ -59,5 +60,10 @@ object JsDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJsPackageDirectiveChecker,
             FirJsNameClashFileTopLevelDeclarationsChecker
+        )
+
+    override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
+        get() = setOf(
+            FirWebCommonExternalPropertyAccessorChecker,
         )
 }

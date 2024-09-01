@@ -158,7 +158,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
 
     private fun FirTypeRef.renderTypeAsKotlinType(isVararg: Boolean = false): String {
         val rendered = when (this) {
-            is FirResolvedTypeRef -> type.renderTypeAsKotlinType()
+            is FirResolvedTypeRef -> coneType.renderTypeAsKotlinType()
             is FirUserTypeRef -> {
                 val renderedQualifier = qualifier.joinToString(separator = ".") { part ->
                     buildString {
@@ -223,7 +223,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             }
             append(typeRef.renderTypeAsKotlinType())
         }
-        else -> errorWithFirSpecificEntries("Invalid type reference", fir = this)
+        is FirPlaceholderProjection -> "_"
     }
 
     private fun isTheSameTypes(

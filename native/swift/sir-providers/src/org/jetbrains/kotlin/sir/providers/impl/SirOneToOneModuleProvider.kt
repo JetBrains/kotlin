@@ -5,32 +5,39 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 
 /**
- * A module provider implementation that generates a [SirModule] for each given [KtModule]
+ * A module provider implementation that generates a [SirModule] for each given [KaModule]
  */
-public class SirOneToOneModuleProvider(
-    private val mainModuleName: String
-) : SirModuleProvider {
+public class SirOneToOneModuleProvider : SirModuleProvider {
 
-    private val moduleCache = mutableMapOf<KtModule, SirModule>()
+    private val moduleCache = mutableMapOf<KaModule, SirModule>()
 
-    public val modules: Map<KtModule, SirModule>
+    public val modules: Map<KaModule, SirModule>
         get() = moduleCache.toMap()
 
-    override fun KtModule.sirModule(): SirModule = moduleCache.getOrPut(this) {
+    override fun KaModule.sirModule(): SirModule = moduleCache.getOrPut(this) {
         buildModule {
             name = getModuleName(this@sirModule)
         }
     }
 
-    private fun getModuleName(ktModule: KtModule): String {
-        // For now, we use the same name as we put all modules in the same file.
-        // Later we should use proper module names.
-        return mainModuleName
+    private fun getModuleName(ktModule: KaModule): String {
+        return ktModule.moduleName
     }
 }
+
+@OptIn(KaExperimentalApi::class)
+private val KaModule.moduleName: String
+    get() = when(this) {
+        is KaLibraryModule -> libraryName
+        is KaSourceModule -> name
+        else -> error("Tried to calculate KaModule.moduleName for unknown module type: $this, described as: ${this.moduleDescription}")
+    }

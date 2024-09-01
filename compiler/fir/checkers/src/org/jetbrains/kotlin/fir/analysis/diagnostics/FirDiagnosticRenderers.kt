@@ -15,30 +15,34 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.types.getConstructor
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
-            is FirClassLikeSymbol<*>,
-            is FirCallableSymbol<*>,
-            -> FirRenderer(
+            is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
                 typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
                 idRenderer = ConeIdShortRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
@@ -48,7 +52,7 @@ object FirDiagnosticRenderers {
                 modifierRenderer = FirPartialModifierRenderer(),
                 valueParameterRenderer = FirValueParameterRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
-                annotationRenderer = FirAnnotationRendererForReadability(),
+                annotationRenderer = null,
                 lineBreakAfterContextReceivers = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
@@ -113,6 +117,14 @@ object FirDiagnosticRenderers {
         name.asString()
     }
 
+    val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirCallableSymbol<*> -> symbol.name.asString()
+            is FirClassLikeSymbol<*> -> symbol.classId.asFqNameString()
+            else -> return@Renderer "???"
+        }
+    }
+
     val RENDER_CLASS_OR_OBJECT_QUOTED = Renderer { classSymbol: FirClassSymbol<*> ->
         val name = classSymbol.classId.relativeClassName.asString()
         val classOrObject = when (classSymbol.classKind) {
@@ -161,14 +173,29 @@ object FirDiagnosticRenderers {
                 val coneTypes = objectsToRender.filterIsInstance<ConeKotlinType>() +
                         objectsToRender.filterIsInstance<Iterable<*>>().flatMap { it.filterIsInstance<ConeKotlinType>() }
 
-                val simpleRepresentationsByType: Map<ConeKotlinType, String> = coneTypes.associateWith { it.renderReadableWithFqNames() }
-                val typesByRepresentation: Map<String, List<ConeKotlinType>> =
-                    simpleRepresentationsByType.entries.groupBy({ it.value }, { it.key })
+                val constructors = buildSet {
+                    coneTypes.forEach {
+                        it.forEachType { typeWithinIt ->
+                            val lowerBound = typeWithinIt.lowerBoundIfFlexible()
 
-                return coneTypes.associateWith {
-                    val representation = simpleRepresentationsByType.getValue(it)
+                            if (lowerBound !is ConeIntersectionType) {
+                                add(lowerBound.getConstructor())
+                            }
+                        }
+                    }
+                }
 
-                    val typesWithSameRepresentation = typesByRepresentation.getValue(representation)
+                val simpleRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
+                    buildString { ConeTypeRendererForReadability(this) { ConeIdRendererForDiagnostics() }.renderConstructor(it) }
+                }
+
+                val constructorsByRepresentation: Map<String, List<TypeConstructorMarker>> =
+                    simpleRepresentationsByConstructor.entries.groupBy({ it.value }, { it.key })
+
+                val finalRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
+                    val representation = simpleRepresentationsByConstructor.getValue(it)
+
+                    val typesWithSameRepresentation = constructorsByRepresentation.getValue(representation)
                     if (typesWithSameRepresentation.size == 1) return@associateWith representation
 
                     val index = typesWithSameRepresentation.indexOf(it) + 1
@@ -178,29 +205,22 @@ object FirDiagnosticRenderers {
                         append('#')
                         append(index)
 
-                        if (it is ConeTypeParameterType) {
+                        if (it is ConeTypeParameterLookupTag) {
                             append(" (type parameter of ")
-                            append(SYMBOL.render(it.lookupTag.typeParameterSymbol.containingDeclarationSymbol))
+                            append(SYMBOL.render(it.typeParameterSymbol.containingDeclarationSymbol))
                             append(')')
                         }
                     }
+                }
+
+                return coneTypes.associateWith {
+                    it.renderReadableWithFqNames(finalRepresentationsByConstructor)
                 }
             }
         }
 
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
-
-    val FQ_NAMES_IN_TYPES = Renderer { symbol: FirBasedSymbol<*> ->
-        val idRendererCreator = { ConeIdFullRenderer() }
-        @OptIn(SymbolInternals::class)
-        FirRenderer(
-            annotationRenderer = null,
-            bodyRenderer = null,
-            idRenderer = idRendererCreator(),
-            typeRenderer = ConeTypeRendererForReadability(idRendererCreator)
-        ).renderElementAsString(symbol.fir, trim = true)
-    }
 
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
         candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
@@ -266,5 +286,33 @@ object FirDiagnosticRenderers {
 
     val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirCallableSymbol<*> ->
         "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_CONTAINING_DECLARATION_OR_FILE.render(symbol.callableId)}"
+    }
+
+    val SYMBOL_KIND = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirPropertyAccessorSymbol -> "property accessor"
+            is FirConstructorSymbol -> "constructor"
+            is FirFunctionSymbol -> "function"
+            is FirPropertySymbol -> "property"
+            is FirBackingFieldSymbol -> "backing field"
+            is FirDelegateFieldSymbol -> "delegate field"
+            is FirEnumEntrySymbol -> "enum entry"
+            is FirFieldSymbol -> "field"
+            is FirValueParameterSymbol -> "value parameter"
+            is FirFileSymbol -> "file"
+            is FirAnonymousInitializerSymbol -> "initializer"
+            is FirTypeParameterSymbol -> "type parameter"
+            is FirRegularClassSymbol -> when (symbol.classKind) {
+                ClassKind.CLASS -> "class"
+                ClassKind.INTERFACE -> "interface"
+                ClassKind.ENUM_CLASS -> "enum class"
+                ClassKind.ENUM_ENTRY -> "enum entry"
+                ClassKind.ANNOTATION_CLASS -> "annotation class"
+                ClassKind.OBJECT -> "object"
+            }
+            is FirAnonymousObjectSymbol -> "anonymous object"
+            is FirTypeAliasSymbol -> "type alias"
+            else -> "declaration"
+        }
     }
 }

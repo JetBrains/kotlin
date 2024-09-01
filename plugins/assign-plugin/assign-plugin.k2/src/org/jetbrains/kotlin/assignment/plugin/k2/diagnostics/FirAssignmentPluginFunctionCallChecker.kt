@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCand
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
 object FirAssignmentPluginFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {

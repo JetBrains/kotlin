@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,7 +23,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         val element = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
 
         analyseForTest(element) { elementToAnalyze ->
-            val scopeContext = mainFile.getScopeContextForPosition(elementToAnalyze)
+            val scopeContext = mainFile.scopeContext(elementToAnalyze)
 
             val scopeContextStringRepresentation = renderForTests(elementToAnalyze, scopeContext)
             val scopeContextStringRepresentationPretty = renderForTests(elementToAnalyze, scopeContext, printPretty = true)
@@ -39,7 +39,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         printPretty: Boolean = false,
     ): String = prettyPrint {
         appendLine("element: ${element.text}")
-        renderForTests(analysisSession, scopeContext, this@prettyPrint, printPretty) { scopeKind ->
+        renderForTests(useSiteSession, scopeContext, this@prettyPrint, printPretty) { scopeKind ->
             scopeKind !is KaScopeKind.DefaultSimpleImportingScope && scopeKind !is KaScopeKind.DefaultStarImportingScope
         }
     }

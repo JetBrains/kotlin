@@ -1,7 +1,7 @@
 KaUsualClassType:
-  abbreviatedType: KaUsualClassType:
-    abbreviatedType: null
-    annotationsList: []
+  abbreviation: KaUsualClassType:
+    abbreviation: null
+    annotations: []
     classId: expansion/StringAlias
     nullability: NON_NULLABLE
     qualifiers: [
@@ -12,16 +12,16 @@ KaUsualClassType:
     ]
     symbol: KaTypeAliasSymbol(expansion/StringAlias)
     typeArguments: []
-  annotationsList: []
+  annotations: []
   classId: kotlin/String
   nullability: NULLABLE
   qualifiers: [
     qualifier:
       name: String
-      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
   ]
-  symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+  symbol: KaNamedClassSymbol(kotlin/String)
   typeArguments: []
 
 Rendered type:

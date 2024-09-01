@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1321
-
 // MODULE: lib
 // FILE: lib.kt
 inline fun <reified T: Any> klassLib() = T::class

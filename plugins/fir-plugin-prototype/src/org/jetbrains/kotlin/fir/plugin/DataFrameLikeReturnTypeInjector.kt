@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -26,7 +27,7 @@ class DataFrameLikeReturnTypeInjector(session: FirSession) : FirExpressionResolu
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val callReturnType = functionCall.resolvedType
         if (callReturnType.classId != DF_CLASS_ID) return emptyList()
-        val rootMarker = callReturnType.typeArguments[0]
+        val rootMarker = callReturnType.typeArgumentsOfLowerBoundIfFlexible[0]
         if (rootMarker !is ConeClassLikeType) {
             return emptyList()
         }

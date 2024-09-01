@@ -1,4 +1,6 @@
 // GENERATE_PROPERTY_ANNOTATIONS_METHODS
+// LIBRARY_PLATFORMS: JVM
+
 class KotlinClass {
     lateinit var classLateinitVariable: Custom
 

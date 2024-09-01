@@ -1,8 +1,9 @@
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: kotlin/reflect/KClass
   classKind: INTERFACE
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -11,29 +12,29 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: ABSTRACT
   name: KClass
   origin: LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KDeclarationContainer
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KAnnotatedElement
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KClassifier
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
   deprecationStatus: null

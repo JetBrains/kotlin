@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 
 object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Platform) {

@@ -57,7 +57,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
                     verbose = true
                     annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-                    modifiers = DescriptorRendererModifier.ALL
+                    modifiers = DescriptorRendererModifier.ALL - DescriptorRendererModifier.ACTUAL
                     excludedTypeAnnotationClasses = setOf(StandardNames.FqNames.unsafeVariance)
                     annotationFilter = ::isSignificantAnnotation
                 }

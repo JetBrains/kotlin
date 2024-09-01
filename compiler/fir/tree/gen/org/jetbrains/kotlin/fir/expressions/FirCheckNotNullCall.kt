@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.checkNotNullCall]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.checkNotNullCall]
  */
 abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
     abstract override val source: KtSourceElement?

@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -201,16 +201,23 @@ inline fun IrBlockBuilder.forUntil(upperBound: IrExpression, loopBody: IrBlockBu
     }
 }
 
-fun IrTypeArgument.upperBound(builtIns: IrBuiltIns): IrType =
+fun IrTypeArgument.upperBoundOrNull(): IrType? =
     when (this) {
-        is IrStarProjection -> builtIns.anyNType
-        is IrTypeProjection -> {
-            if (variance == Variance.OUT_VARIANCE || variance == Variance.INVARIANT)
-                type
-            else
-                builtIns.anyNType
-        }
+        is IrStarProjection -> null
+        is IrTypeProjection -> type.takeIf { variance == Variance.OUT_VARIANCE || variance == Variance.INVARIANT }
     }
+
+fun IrTypeArgument.upperBound(builtIns: IrBuiltIns): IrType =
+    upperBoundOrNull() ?: builtIns.anyNType
+
+fun IrClass.typeParameterMapping(instantiation: IrType): Map<IrTypeParameterSymbol, IrType> = buildMap {
+    (instantiation as? IrSimpleType)?.arguments?.zip(typeParameters) { arg, parameter ->
+        put(parameter.symbol, arg.upperBoundOrNull() ?: parameter.representativeUpperBound)
+    }
+}
+
+val IrField.isFromPrimaryConstructor: Boolean
+    get() = (initializer?.expression as? IrGetValue)?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
 
 private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol

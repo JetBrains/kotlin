@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelVarFromInternalInlineFun.kt */
+
+private var privateVar: Int
+    /* TARGET declaration */ private fun <get-privateVar>(): Int
+    /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+internal inline fun customSetVar(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(<set-?> = value)
+internal inline fun customGetVar(): Int
+    /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt()
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(): Int
+    /* TARGET use-site */ <get-privateVar>()
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineFunKt(<set-?>: Int)
+    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)

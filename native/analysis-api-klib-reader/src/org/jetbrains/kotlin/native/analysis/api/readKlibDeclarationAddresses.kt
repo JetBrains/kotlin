@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.native.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
@@ -24,7 +24,7 @@ import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 
 /**
- * Provides a set of [KlibDeclarationAddress] contained within the given [KtLibraryModule] (if the library is based upon a klib file).
+ * Provides a set of [KlibDeclarationAddress] contained within the given [KaLibraryModule] (if the library is based upon a klib file).
  * These addresses will contain all top level declarations such as top level classes, interfaces, objects, ... and
  * top level callables such as functions and properties.
  *
@@ -42,15 +42,15 @@ import kotlin.io.path.isDirectory
  * ```
  *
  * The read addresses will include `topLevelFunction` as well as `Foo`, as both declarations are top level.
- * These addresses can then be resolved to its given [KtSymbol] by
+ * These addresses can then be resolved to its given [KaSymbol] by
  *
  * - [KlibClassAddress.getClassOrObjectSymbol]: Resolves to the class symbol or null
  * - [KlibCallableAddress.getCallableSymbols]: Resolves all callable symbols under this given address
  *
  * @return The returned set has a stable order
  */
-public fun KtLibraryModule.readKlibDeclarationAddresses(): Set<KlibDeclarationAddress>? {
-    val binary = getBinaryRoots().singleOrNull() ?: return null
+public fun KaLibraryModule.readKlibDeclarationAddresses(): Set<KlibDeclarationAddress>? {
+    val binary = binaryRoots.singleOrNull() ?: return null
     if (!(binary.extension == "klib" || binary.isDirectory())) return null
     return readKlibDeclarationAddresses(binary)
 }
@@ -83,6 +83,7 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAddress> {
     return class_List.mapNotNull { classProto ->
         val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
@@ -99,6 +100,7 @@ internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAdd
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibTypeAliasAddress> {
     return this.`package`.typeAliasList.map { typeAliasProto ->
         val name = Name.identifier(nameResolver.getString(typeAliasProto.name))
@@ -111,6 +113,7 @@ internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibType
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPropertyAddress> {
     return `package`.propertyList.map { propertyProto ->
         KlibPropertyAddress(
@@ -125,6 +128,7 @@ internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPrope
 }
 
 context(PackageFragmentReadingContext)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun ProtoBuf.PackageFragment.readKlibFunctionAddresses(): Set<KlibFunctionAddress> {
     return `package`.functionList.map { functionProto ->
         KlibFunctionAddress(

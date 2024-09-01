@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class KlibDeserializedContainerSource(
     override val isPreReleaseInvisible: Boolean,
     override val presentableString: String,
-    val isFromNativeInteropLibrary: Boolean
+    val isFromCInteropLibrary: Boolean
 ) : DeserializedContainerSource {
 
     constructor(
@@ -29,7 +29,7 @@ class KlibDeserializedContainerSource(
         configuration.reportErrorsOnPreReleaseDependencies &&
                 (header.flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0,
         "Package '$packageFqName'",
-        library.isInteropLibrary()
+        library.isCInteropLibrary()
     )
 
     override val incompatibility: IncompatibleVersionErrorData<*>?

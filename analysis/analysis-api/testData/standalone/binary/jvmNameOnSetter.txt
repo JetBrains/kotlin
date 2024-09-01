@@ -1,0 +1,2 @@
+Resolved to:
+PsiMethod:getExt(p: PsiType:Test): PsiType:int

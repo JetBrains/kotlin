@@ -1,7 +1,6 @@
 // KT-61929
 // WITH_SDTLIB
 // IGNORE_BACKEND: JVM
-// EXPECTED_REACHABLE_NODES: 1301
 package foo
 
 fun doSomething(lambda: () -> Unit) { lambda() }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
@@ -99,7 +100,7 @@ class IrInlineCodegen(
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
-                val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo())
+                val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo(), eraseType = false)
                 putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
             }
         } else {
@@ -127,7 +128,7 @@ class IrInlineCodegen(
                 ValueKind.METHOD_HANDLE_IN_DEFAULT ->
                     StackValue.constant(null, AsmTypes.OBJECT_TYPE)
                 ValueKind.DEFAULT_MASK ->
-                    StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
+                    StackValue.constant((argumentExpression as IrConst).value, Type.INT_TYPE)
                 ValueKind.DEFAULT_PARAMETER, ValueKind.DEFAULT_INLINE_PARAMETER ->
                     StackValue.createDefaultValue(parameterType)
                 else -> {
@@ -138,7 +139,7 @@ class IrInlineCodegen(
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
                     val argValue = if (irValueParameter.index >= 0)
-                        codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                        codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     else
                         codegen.genToStackValue(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                     if (inlineArgumentsInPlace) {
@@ -183,7 +184,7 @@ class IrExpressionLambdaImpl(
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
     // points towards the function containing the lambda.
-    override val lambdaClassType: Type = codegen.context.getLocalClassType(reference)
+    override val lambdaClassType: Type = reference.localClassType
         ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     override val capturedVars: List<CapturedParamDesc>

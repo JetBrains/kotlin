@@ -1,0 +1,3 @@
+/nestedInheritance.kt:11:25: error: 'public' sub-interface exposes its 'internal' supertype containing declaration Outer
+    interface Derived : Base
+                        ^^^^

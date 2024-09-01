@@ -35,8 +35,6 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
 
     abstract var isExpect: Boolean
 
-    abstract override var isFakeOverride: Boolean
-
     abstract var backingField: IrField?
 
     abstract var getter: IrSimpleFunction?

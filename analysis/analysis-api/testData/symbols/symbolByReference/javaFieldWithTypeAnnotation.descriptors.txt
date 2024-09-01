@@ -1,31 +1,33 @@
 KaJavaFieldSymbol:
-  annotationsList: [
+  annotations: [
     Anno1()
       psi: null
   ]
   callableId: /JavaClass.field
+  compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: FINAL
   name: field
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: [
+    annotations: [
       Anno1()
         psi: null
     ]
     type: @R|Anno1|()  @R|Anno1|()  kotlin/String!
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

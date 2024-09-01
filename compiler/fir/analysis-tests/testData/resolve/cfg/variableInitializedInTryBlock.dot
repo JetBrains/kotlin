@@ -31,68 +31,71 @@ digraph variableInitializedInTryBlock_kt {
                             8 [label="Function call arguments enter"];
                             9 [label="Function call arguments exit"];
                         }
-                        10 [label="Function call: R|/getStringOrNull|()" style="filled" fillcolor=yellow];
-                        11 [label="Exit lhs of ?:"];
-                        12 [label="Enter rhs of ?:"];
-                        13 [label="Jump: ^test Unit"];
-                        14 [label="Stub" style="filled" fillcolor=gray];
-                        15 [label="Lhs of ?: is not null"];
-                        16 [label="Exit ?:"];
-                        17 [label="Variable declaration: lval s: R|kotlin/String|"];
-                        18 [label="Access variable R|<local>/s|"];
-                        19 [label="Access variable R|kotlin/String.length|"];
-                        20 [label="Const: Int(0)"];
-                        21 [label="Equality operator !="];
-                        22 [label="Assignment: R|<local>/b|"];
-                        23 [label="Exit block"];
+                        10 [label="Function call enter: R|/getStringOrNull|()"];
+                        11 [label="Function call exit: R|/getStringOrNull|()" style="filled" fillcolor=yellow];
+                        12 [label="Exit lhs of ?:"];
+                        13 [label="Enter rhs of ?:"];
+                        14 [label="Jump: ^test Unit"];
+                        15 [label="Stub" style="filled" fillcolor=gray];
+                        16 [label="Lhs of ?: is not null"];
+                        17 [label="Exit ?:"];
+                        18 [label="Variable declaration: lval s: R|kotlin/String|"];
+                        19 [label="Access variable R|<local>/s|"];
+                        20 [label="Access variable R|kotlin/String.length|"];
+                        21 [label="Const: Int(0)"];
+                        22 [label="Equality operator !="];
+                        23 [label="Assignment: R|<local>/b|"];
+                        24 [label="Exit block"];
                     }
-                    24 [label="Try main block exit"];
+                    25 [label="Try main block exit"];
                 }
                 subgraph cluster_7 {
                     color=blue
-                    25 [label="Enter finally"];
+                    26 [label="Enter finally"];
                     subgraph cluster_8 {
                         color=blue
-                        26 [label="Enter block"];
+                        27 [label="Enter block"];
                         subgraph cluster_9 {
                             color=blue
-                            27 [label="Function call arguments enter"];
-                            28 [label="Function call arguments exit"];
+                            28 [label="Function call arguments enter"];
+                            29 [label="Function call arguments exit"];
                         }
-                        29 [label="Function call: R|/test|()" style="filled" fillcolor=yellow];
-                        30 [label="Exit block"];
+                        30 [label="Function call enter: R|/test|()"];
+                        31 [label="Function call exit: R|/test|()" style="filled" fillcolor=yellow];
+                        32 [label="Exit block"];
                     }
-                    31 [label="Exit finally"];
+                    33 [label="Exit finally"];
                 }
-                32 [label="Try expression exit"];
+                34 [label="Try expression exit"];
             }
             subgraph cluster_10 {
                 color=blue
-                33 [label="Function call arguments enter"];
-                34 [label="Access variable R|<local>/b|"];
-                35 [label="Function call arguments exit"];
+                35 [label="Function call arguments enter"];
+                36 [label="Access variable R|<local>/b|"];
+                37 [label="Function call arguments exit"];
             }
-            36 [label="Function call: R|/takeBoolean|(...)" style="filled" fillcolor=yellow];
-            37 [label="Exit block"];
+            38 [label="Function call enter: R|/takeBoolean|(...)"];
+            39 [label="Function call exit: R|/takeBoolean|(...)" style="filled" fillcolor=yellow];
+            40 [label="Exit block"];
         }
-        38 [label="Exit function test" style="filled" fillcolor=red];
+        41 [label="Exit function test" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
     4 -> {5};
     5 -> {6};
-    5 -> {25} [label="onUncaughtException"];
+    5 -> {26} [label="onUncaughtException"];
     6 -> {7};
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12 15};
-    12 -> {13};
-    13 -> {25} [label="return@/test"];
-    13 -> {14} [style=dotted];
-    14 -> {16} [style=dotted];
-    15 -> {16};
+    11 -> {12};
+    12 -> {13 16};
+    13 -> {14};
+    14 -> {26} [label="return@/test"];
+    14 -> {15} [style=dotted];
+    15 -> {17} [style=dotted];
     16 -> {17};
     17 -> {18};
     18 -> {19};
@@ -100,8 +103,8 @@ digraph variableInitializedInTryBlock_kt {
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    22 -> {25} [label="onUncaughtException"];
     23 -> {24};
+    23 -> {26} [label="onUncaughtException"];
     24 -> {25};
     25 -> {26};
     26 -> {27};
@@ -110,47 +113,50 @@ digraph variableInitializedInTryBlock_kt {
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    31 -> {38} [label="return@/test"];
     32 -> {33};
     33 -> {34};
+    33 -> {41} [label="return@/test"];
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
 
     subgraph cluster_11 {
         color=red
-        39 [label="Enter function takeBoolean" style="filled" fillcolor=red];
+        42 [label="Enter function takeBoolean" style="filled" fillcolor=red];
         subgraph cluster_12 {
             color=blue
-            40 [label="Enter block"];
-            41 [label="Exit block"];
+            43 [label="Enter block"];
+            44 [label="Exit block"];
         }
-        42 [label="Exit function takeBoolean" style="filled" fillcolor=red];
+        45 [label="Exit function takeBoolean" style="filled" fillcolor=red];
     }
-    39 -> {40};
-    40 -> {41};
-    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
 
     subgraph cluster_13 {
         color=red
-        43 [label="Enter function getStringOrNull" style="filled" fillcolor=red];
+        46 [label="Enter function getStringOrNull" style="filled" fillcolor=red];
         subgraph cluster_14 {
             color=blue
-            44 [label="Enter block"];
-            45 [label="Const: String(hello)"];
-            46 [label="Jump: ^getStringOrNull String(hello)"];
-            47 [label="Stub" style="filled" fillcolor=gray];
-            48 [label="Exit block" style="filled" fillcolor=gray];
+            47 [label="Enter block"];
+            48 [label="Const: String(hello)"];
+            49 [label="Jump: ^getStringOrNull String(hello)"];
+            50 [label="Stub" style="filled" fillcolor=gray];
+            51 [label="Exit block" style="filled" fillcolor=gray];
         }
-        49 [label="Exit function getStringOrNull" style="filled" fillcolor=red];
+        52 [label="Exit function getStringOrNull" style="filled" fillcolor=red];
     }
-    43 -> {44};
-    44 -> {45};
-    45 -> {46};
-    46 -> {49};
-    46 -> {47} [style=dotted];
-    47 -> {48} [style=dotted];
-    48 -> {49} [style=dotted];
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {52};
+    49 -> {50} [style=dotted];
+    50 -> {51} [style=dotted];
+    51 -> {52} [style=dotted];
 
 }

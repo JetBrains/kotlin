@@ -1,19 +1,19 @@
 KaUsualClassType:
-  abbreviatedType: null
-  annotationsList: []
+  abbreviation: null
+  annotations: []
   classId: <local>/B.C
   nullability: NON_NULLABLE
   qualifiers: [
     qualifier:
       name: B
-      symbol: KaNamedClassOrObjectSymbol(<local>/B)
+      symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: []
     qualifier:
       name: C
-      symbol: KaNamedClassOrObjectSymbol(<local>/C)
+      symbol: KaNamedClassSymbol(<local>/C)
       typeArguments: []
   ]
-  symbol: KaNamedClassOrObjectSymbol(<local>/C)
+  symbol: KaNamedClassSymbol(<local>/C)
   typeArguments: []
 
 Rendered type:

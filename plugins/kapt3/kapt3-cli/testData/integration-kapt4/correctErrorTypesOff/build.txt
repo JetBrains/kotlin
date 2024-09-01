@@ -21,7 +21,7 @@ ap/Processor.kt
 
 # kapt
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
@@ -34,7 +34,7 @@ Test.kt
 
 # kapt
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -Kapt-mode=apt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
@@ -58,5 +58,5 @@ test.Test
 # after
 Return code: 1
 
-warning: k2 kapt is an experimental feature. Use with caution.
+warning: k2 kapt is in Alpha. Use with caution.
 error: error: NonExistentClass type occurred

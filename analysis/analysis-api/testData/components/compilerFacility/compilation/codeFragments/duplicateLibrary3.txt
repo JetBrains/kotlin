@@ -1,0 +1,5 @@
+public final class CodeFragment {
+    // source: 'module_main_duplicateLibrary3.kt'
+    public method <init>(): void
+    public final static method run(): int
+}

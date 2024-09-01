@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:getOrDefault(p: PsiType:Map<? extends K, ? extends V>, p1: PsiType:K, p2: PsiType:V): PsiType:V

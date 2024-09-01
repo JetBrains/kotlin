@@ -1,6 +1,7 @@
 override fun <TT1 : test.Foo, TT2 : test.OtherInterface> funWithOuterAndOwnGenericsAndBounds(tT1: TT1?, tT2: TT2?)
 
 override val <TT1 : test.Foo, TT2 : test.OtherInterface> test.TwoParams<TT1, TT2>.propWithOuterAndOwnGenericsAndBounds: test.Foo?
+  get()
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

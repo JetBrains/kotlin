@@ -1,0 +1,259 @@
+KtNameReferenceExpression(16,22): 'Target'
+  KtSimpleNameReference:
+    (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+
+KtValueArgument(23,44): 'AnnotationTarget.TYPE'
+  KtDefaultAnnotationArgumentReference:
+    vararg allowedTargets: kotlin.annotation.AnnotationTarget
+
+KtNameReferenceExpression(23,39): 'AnnotationTarget'
+  KtSimpleNameReference:
+    (in kotlin.annotation) enum class AnnotationTarget
+
+KtNameReferenceExpression(40,44): 'TYPE'
+  KtSimpleNameReference:
+    (in kotlin.annotation.AnnotationTarget) TYPE
+
+KtNameReferenceExpression(82,88): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(149,153): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(154,176): '"parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(171,175): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(178,182): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(184,188): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(189,218): '"nested parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(213,217): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(220,230): 'Collection'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface Collection<out E> : kotlin.collections.Iterable<E>
+
+KtNameReferenceExpression(232,236): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(237,273): '"nested nested parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(268,272): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(275,281): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(287,291): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(292,312): '"defaultValue $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(307,311): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(322,326): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(327,367): '"anonymousFunction parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(362,366): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(369,372): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(376,380): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(381,418): '"anonymousFunction return type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(413,417): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(420,423): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtConstructorDelegationReferenceExpression(427,427): ''
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(481,485): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(486,509): '"super type call $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(504,508): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(511,524): 'AbstractClass'
+  KtSimpleNameReference:
+    (in AbstractClass) constructor()
+
+KtNameReferenceExpression(526,530): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(531,560): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(555,559): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(562,566): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(568,572): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(573,609): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(604,608): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(611,614): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(654,658): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(659,682): '"super type call $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(677,681): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(684,697): 'AbstractClass'
+  KtSimpleNameReference:
+    (in AbstractClass) constructor()
+
+KtNameReferenceExpression(699,703): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(704,733): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(728,732): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(735,739): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(741,745): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(746,782): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(777,781): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(784,787): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(841,845): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(846,868): '"super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(863,867): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(870,874): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(876,880): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(881,910): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(905,909): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(912,916): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
+KtNameReferenceExpression(918,922): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(position: kotlin.String)
+
+KtValueArgument(923,959): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    position: kotlin.String
+
+KtNameReferenceExpression(954,958): 'prop'
+  KtSimpleNameReference:
+    (in ROOT) const val prop: kotlin.String
+
+KtNameReferenceExpression(961,962): 'I'
+  KtSimpleNameReference:
+    (in ROOT) interface I

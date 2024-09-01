@@ -65,7 +65,7 @@ data class SourceFile(
 
                     // The offsets of the receiver will *not* include surrounding parentheses so these need to be checked for
                     // manually.
-                    val substring = safeSubstring(range.first - 1, receiver.endOffset + 1)
+                    val substring = getText(range.first - 1, receiver.endOffset + 1)
                     if (substring.startsWith('(') && substring.endsWith(')')) {
                         range = (range.first - 1)..range.last
                     }
@@ -76,11 +76,12 @@ data class SourceFile(
     }
 
     fun getText(info: SourceRangeInfo): String {
-        return safeSubstring(info.startOffset, info.endOffset)
+        return getText(info.startOffset, info.endOffset)
     }
 
-    private fun safeSubstring(start: Int, end: Int): String =
-        source.substring(maxOf(start, 0), minOf(end, source.length))
+    fun getText(start: Int, end: Int): String {
+        return source.substring(maxOf(start, 0), minOf(end, source.length))
+    }
 
     fun getCompilerMessageLocation(element: IrElement): CompilerMessageLocation {
         val info = getSourceRangeInfo(element)

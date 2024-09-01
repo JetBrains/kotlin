@@ -66,7 +66,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
     @Test
     public void testAllFilesPresentInTests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
     }
 
     @Test
@@ -79,6 +79,30 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("ambiguityNamedVararg.kt")
     public void testAmbiguityNamedVararg() {
       runTest("compiler/testData/diagnostics/tests/ambiguityNamedVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguityWithVararg.kt")
+    public void testAmbiguityWithVararg() {
+      runTest("compiler/testData/diagnostics/tests/ambiguityWithVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguityWithVarargManyExamples.kt")
+    public void testAmbiguityWithVarargManyExamples() {
+      runTest("compiler/testData/diagnostics/tests/ambiguityWithVarargManyExamples.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousLabelInExtensionFunctionWithOuterClass.kt")
+    public void testAmbiguousLabelInExtensionFunctionWithOuterClass() {
+      runTest("compiler/testData/diagnostics/tests/ambiguousLabelInExtensionFunctionWithOuterClass.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousLabelInSuper.kt")
+    public void testAmbiguousLabelInSuper() {
+      runTest("compiler/testData/diagnostics/tests/ambiguousLabelInSuper.kt");
     }
 
     @Test
@@ -115,6 +139,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("assigningAssignments.kt")
     public void testAssigningAssignments() {
       runTest("compiler/testData/diagnostics/tests/assigningAssignments.kt");
+    }
+
+    @Test
+    @TestMetadata("assignmentsAndSmartcastsToUnrelatedProperty.kt")
+    public void testAssignmentsAndSmartcastsToUnrelatedProperty() {
+      runTest("compiler/testData/diagnostics/tests/assignmentsAndSmartcastsToUnrelatedProperty.kt");
     }
 
     @Test
@@ -244,6 +274,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("compilerCrashInRedCode.kt")
+    public void testCompilerCrashInRedCode() {
+      runTest("compiler/testData/diagnostics/tests/compilerCrashInRedCode.kt");
+    }
+
+    @Test
     @TestMetadata("compilerCrashInTypeParameterBoundsChecker.kt")
     public void testCompilerCrashInTypeParameterBoundsChecker() {
       runTest("compiler/testData/diagnostics/tests/compilerCrashInTypeParameterBoundsChecker.kt");
@@ -253,6 +289,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("compilerCrashParameterType.kt")
     public void testCompilerCrashParameterType() {
       runTest("compiler/testData/diagnostics/tests/compilerCrashParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("compilerRequiredAnnotationAsTypealias.kt")
+    public void testCompilerRequiredAnnotationAsTypealias() {
+      runTest("compiler/testData/diagnostics/tests/compilerRequiredAnnotationAsTypealias.kt");
     }
 
     @Test
@@ -364,6 +406,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("DisabledMultiDollarInterpolation.kt")
+    public void testDisabledMultiDollarInterpolation() {
+      runTest("compiler/testData/diagnostics/tests/DisabledMultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("dnnAsSuperTypeTypeArgument.kt")
     public void testDnnAsSuperTypeTypeArgument() {
       runTest("compiler/testData/diagnostics/tests/dnnAsSuperTypeTypeArgument.kt");
@@ -418,6 +466,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("EnabledMultiDollarInterpolation.kt")
+    public void testEnabledMultiDollarInterpolation() {
+      runTest("compiler/testData/diagnostics/tests/EnabledMultiDollarInterpolation.kt");
+    }
+
+    @Test
     @TestMetadata("EnumEntryAsType.kt")
     public void testEnumEntryAsType() {
       runTest("compiler/testData/diagnostics/tests/EnumEntryAsType.kt");
@@ -466,6 +520,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("extensionShadowedByMember.kt")
+    public void testExtensionShadowedByMember() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByMember.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionShadowedByMemberWithMpp.kt")
+    public void testExtensionShadowedByMemberWithMpp() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberWithMpp.kt");
+    }
+
+    @Test
     @TestMetadata("ExternalAccessors.kt")
     public void testExternalAccessors() {
       runTest("compiler/testData/diagnostics/tests/ExternalAccessors.kt");
@@ -499,6 +565,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("falseNegativeDuplicateDefaultValues3.kt")
     public void testFalseNegativeDuplicateDefaultValues3() {
       runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues3.kt");
+    }
+
+    @Test
+    @TestMetadata("falseNegativeSuperCallWithDefaults.kt")
+    public void testFalseNegativeSuperCallWithDefaults() {
+      runTest("compiler/testData/diagnostics/tests/falseNegativeSuperCallWithDefaults.kt");
+    }
+
+    @Test
+    @TestMetadata("falsePositiveRedundantVisibility.kt")
+    public void testFalsePositiveRedundantVisibility() {
+      runTest("compiler/testData/diagnostics/tests/falsePositiveRedundantVisibility.kt");
     }
 
     @Test
@@ -580,6 +658,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("illegalCharsInPackageWithDots.kt")
+    public void testIllegalCharsInPackageWithDots() {
+      runTest("compiler/testData/diagnostics/tests/illegalCharsInPackageWithDots.kt");
+    }
+
+    @Test
     @TestMetadata("implicitIntersection.kt")
     public void testImplicitIntersection() {
       runTest("compiler/testData/diagnostics/tests/implicitIntersection.kt");
@@ -610,9 +694,39 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("incGenericExtensionProperty.kt")
+    public void testIncGenericExtensionProperty() {
+      runTest("compiler/testData/diagnostics/tests/incGenericExtensionProperty.kt");
+    }
+
+    @Test
     @TestMetadata("IncorrectCharacterLiterals.kt")
     public void testIncorrectCharacterLiterals() {
       runTest("compiler/testData/diagnostics/tests/IncorrectCharacterLiterals.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectMultiDollarInterpolationCodeA.kt")
+    public void testIncorrectMultiDollarInterpolationCodeA() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectMultiDollarInterpolationCodeA.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectMultiDollarInterpolationCodeB.kt")
+    public void testIncorrectMultiDollarInterpolationCodeB() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectMultiDollarInterpolationCodeB.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectPaddedMultiDollarInterpolationCodeA.kt")
+    public void testIncorrectPaddedMultiDollarInterpolationCodeA() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectPaddedMultiDollarInterpolationCodeA.kt");
+    }
+
+    @Test
+    @TestMetadata("IncorrectPaddedMultiDollarInterpolationCodeB.kt")
+    public void testIncorrectPaddedMultiDollarInterpolationCodeB() {
+      runTest("compiler/testData/diagnostics/tests/IncorrectPaddedMultiDollarInterpolationCodeB.kt");
     }
 
     @Test
@@ -718,6 +832,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("intersectionTypeRendering.kt")
+    public void testIntersectionTypeRendering() {
+      runTest("compiler/testData/diagnostics/tests/intersectionTypeRendering.kt");
+    }
+
+    @Test
     @TestMetadata("intersectionWithMultipleDefaultsInJava.kt")
     public void testIntersectionWithMultipleDefaultsInJava() {
       runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJava.kt");
@@ -733,6 +853,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt")
     public void testIntersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed() {
       runTest("compiler/testData/diagnostics/tests/intersectionWithMultipleDefaultsInJavaWithAdditionalSymbolsAfterNonSubsumed.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidAnnotation.kt")
+    public void testInvalidAnnotation() {
+      runTest("compiler/testData/diagnostics/tests/invalidAnnotation.kt");
     }
 
     @Test
@@ -940,6 +1066,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("labelNameClash.kt")
+    public void testLabelNameClash() {
+      runTest("compiler/testData/diagnostics/tests/labelNameClash.kt");
+    }
+
+    @Test
     @TestMetadata("labeledLambda.kt")
     public void testLabeledLambda() {
       runTest("compiler/testData/diagnostics/tests/labeledLambda.kt");
@@ -973,6 +1105,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("missingConflictingOverloads.kt")
     public void testMissingConflictingOverloads() {
       runTest("compiler/testData/diagnostics/tests/missingConflictingOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("missingDependencyTypealias.kt")
+    public void testMissingDependencyTypealias() {
+      runTest("compiler/testData/diagnostics/tests/missingDependencyTypealias.kt");
     }
 
     @Test
@@ -1084,6 +1222,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("nothingBound.kt")
+    public void testNothingBound() {
+      runTest("compiler/testData/diagnostics/tests/nothingBound.kt");
+    }
+
+    @Test
     @TestMetadata("Nullability.kt")
     public void testNullability() {
       runTest("compiler/testData/diagnostics/tests/Nullability.kt");
@@ -1186,9 +1330,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("packageWithModifiers.kt")
+    public void testPackageWithModifiers() {
+      runTest("compiler/testData/diagnostics/tests/packageWithModifiers.kt");
+    }
+
+    @Test
     @TestMetadata("phantomIntersections.kt")
     public void testPhantomIntersections() {
       runTest("compiler/testData/diagnostics/tests/phantomIntersections.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignVsPrivateSetter.kt")
+    public void testPlusAssignVsPrivateSetter() {
+      runTest("compiler/testData/diagnostics/tests/plusAssignVsPrivateSetter.kt");
     }
 
     @Test
@@ -1225,6 +1381,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("PrivateSetterForOverridden.kt")
     public void testPrivateSetterForOverridden() {
       runTest("compiler/testData/diagnostics/tests/PrivateSetterForOverridden.kt");
+    }
+
+    @Test
+    @TestMetadata("privateSetterSmartcastsToPublicSetter.kt")
+    public void testPrivateSetterSmartcastsToPublicSetter() {
+      runTest("compiler/testData/diagnostics/tests/privateSetterSmartcastsToPublicSetter.kt");
     }
 
     @Test
@@ -1288,6 +1450,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("propertyPrivateSetttersPlusAssign.kt")
+    public void testPropertyPrivateSetttersPlusAssign() {
+      runTest("compiler/testData/diagnostics/tests/propertyPrivateSetttersPlusAssign.kt");
+    }
+
+    @Test
     @TestMetadata("protectedWithGenericsInDifferentPackage.kt")
     public void testProtectedWithGenericsInDifferentPackage() {
       runTest("compiler/testData/diagnostics/tests/protectedWithGenericsInDifferentPackage.kt");
@@ -1348,9 +1516,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("recursiveTypealiasWithProjection.kt")
+    public void testRecursiveTypealiasWithProjection() {
+      runTest("compiler/testData/diagnostics/tests/recursiveTypealiasWithProjection.kt");
+    }
+
+    @Test
     @TestMetadata("referenceToParameterizedFun.kt")
     public void testReferenceToParameterizedFun() {
       runTest("compiler/testData/diagnostics/tests/referenceToParameterizedFun.kt");
+    }
+
+    @Test
+    @TestMetadata("renderConstructorWithIntersection.kt")
+    public void testRenderConstructorWithIntersection() {
+      runTest("compiler/testData/diagnostics/tests/renderConstructorWithIntersection.kt");
     }
 
     @Test
@@ -1501,12 +1681,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("StringTemplates.kt")
     public void testStringTemplates() {
       runTest("compiler/testData/diagnostics/tests/StringTemplates.kt");
-    }
-
-    @Test
-    @TestMetadata("StringTemplatesMultiDollarInterpolation.kt")
-    public void testStringTemplatesMultiDollarInterpolation() {
-      runTest("compiler/testData/diagnostics/tests/StringTemplatesMultiDollarInterpolation.kt");
     }
 
     @Test
@@ -1666,6 +1840,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("typeExposureAsABound.kt")
+    public void testTypeExposureAsABound() {
+      runTest("compiler/testData/diagnostics/tests/typeExposureAsABound.kt");
+    }
+
+    @Test
     @TestMetadata("TypeInference.kt")
     public void testTypeInference() {
       runTest("compiler/testData/diagnostics/tests/TypeInference.kt");
@@ -1675,6 +1855,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestMetadata("TypeMismatchOnOverrideWithSyntaxErrors.kt")
     public void testTypeMismatchOnOverrideWithSyntaxErrors() {
       runTest("compiler/testData/diagnostics/tests/TypeMismatchOnOverrideWithSyntaxErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasAnnotationWithFixedTypeArgument.kt")
+    public void testTypealiasAnnotationWithFixedTypeArgument() {
+      runTest("compiler/testData/diagnostics/tests/typealiasAnnotationWithFixedTypeArgument.kt");
     }
 
     @Test
@@ -1792,6 +1978,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("valueParameterWithoutExplicitType.kt")
+    public void testValueParameterWithoutExplicitType() {
+      runTest("compiler/testData/diagnostics/tests/valueParameterWithoutExplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("varOverriddenByValThroughIntersection.kt")
     public void testVarOverriddenByValThroughIntersection() {
       runTest("compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt");
@@ -1827,7 +2019,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -1954,6 +2146,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("AnnotationIdentifier.kt")
       public void testAnnotationIdentifier() {
         runTest("compiler/testData/diagnostics/tests/annotations/AnnotationIdentifier.kt");
+      }
+
+      @Test
+      @TestMetadata("AnnotationInContract.kt")
+      public void testAnnotationInContract() {
+        runTest("compiler/testData/diagnostics/tests/annotations/AnnotationInContract.kt");
       }
 
       @Test
@@ -2682,7 +2880,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationParameterMustBeConstant {
         @Test
         public void testAllFilesPresentInAnnotationParameterMustBeConstant() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -2752,7 +2950,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class FunctionalTypes {
         @Test
         public void testAllFilesPresentInFunctionalTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/functionalTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/functionalTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -2765,6 +2963,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("nonParenthesizedAnnotationsWithoutError.kt")
         public void testNonParenthesizedAnnotationsWithoutError() {
           runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/nonParenthesizedAnnotationsWithoutError.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterName.kt")
+        public void testParameterName() {
+          runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parameterName.kt");
         }
 
         @Test
@@ -2786,7 +2990,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Options {
         @Test
         public void testAllFilesPresentInOptions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -2909,7 +3113,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
           @Test
           public void testAllFilesPresentInTargets() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options/targets"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options/targets"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -2991,6 +3195,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           }
 
           @Test
+          @TestMetadata("mixedTargeting.kt")
+          public void testMixedTargeting() {
+            runTest("compiler/testData/diagnostics/tests/annotations/options/targets/mixedTargeting.kt");
+          }
+
+          @Test
           @TestMetadata("nested.kt")
           public void testNested() {
             runTest("compiler/testData/diagnostics/tests/annotations/options/targets/nested.kt");
@@ -3046,7 +3256,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Parameters {
         @Test
         public void testAllFilesPresentInParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -3097,7 +3307,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Expressions {
           @Test
           public void testAllFilesPresentInExpressions() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters/expressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/parameters/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -3312,7 +3522,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Rendering {
         @Test
         public void testAllFilesPresentInRendering() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/rendering"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/rendering"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -3394,7 +3604,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/repeatable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/repeatable"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -3500,7 +3710,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TypeUse {
         @Test
         public void testAllFilesPresentInTypeUse() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/typeUse"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/typeUse"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -3558,7 +3768,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class WithUseSiteTarget {
         @Test
         public void testAllFilesPresentInWithUseSiteTarget() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -3737,7 +3947,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -3974,7 +4184,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor {
         @Test
         public void testAllFilesPresentInProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -4088,724 +4298,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
-      @Test
-      public void testAllFilesPresentInBuilderInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-      }
-
-      @Test
-      @TestMetadata("contextReceivers.kt")
-      public void testContextReceivers() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/contextReceivers.kt");
-      }
-
-      @Test
-      @TestMetadata("overloadResolutionByLambdaReturnType.kt")
-      public void testOverloadResolutionByLambdaReturnType() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionByLambdaReturnType.kt");
-      }
-
-      @Test
-      @TestMetadata("overloadResolutionWithTypeVariables.kt")
-      public void testOverloadResolutionWithTypeVariables() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionWithTypeVariables.kt");
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/additional")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Additional {
-        @Test
-        public void testAllFilesPresentInAdditional() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/additional"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInClassifiers() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt");
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInFunctions.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInFunctions() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInFunctions.kt");
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInProperties.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInProperties() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/issues")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Issues {
-        @Test
-        public void testAllFilesPresentInIssues() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/issues"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-        }
-
-        @Test
-        @TestMetadata("kt43710.kt")
-        public void testKt43710() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt43710.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47989a.kt")
-        public void testKt47989a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt47989a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47989b.kt")
-        public void testKt47989b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt47989b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160a.kt")
-        public void testKt49160a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160b.kt")
-        public void testKt49160b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160c.kt")
-        public void testKt49160c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160d.kt")
-        public void testKt49160d() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160d.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160e.kt")
-        public void testKt49160e() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160e.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49263.kt")
-        public void testKt49263() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49263.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50453.kt")
-        public void testKt50453() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt50453.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50827.kt")
-        public void testKt50827() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt50827.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52757.kt")
-        public void testKt52757() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52757.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838a.kt")
-        public void testKt52838a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838b.kt")
-        public void testKt52838b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838c.kt")
-        public void testKt52838c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53109.kt")
-        public void testKt53109() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53109.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422a.kt")
-        public void testKt53422a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53422a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422b.kt")
-        public void testKt53422b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53422b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53478.kt")
-        public void testKt53478() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53478.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53553.kt")
-        public void testKt53553() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53553.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53639.kt")
-        public void testKt53639() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53639.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53740a.kt")
-        public void testKt53740a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53740a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53740b.kt")
-        public void testKt53740b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53740b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400a.kt")
-        public void testKt54400a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400b.kt")
-        public void testKt54400b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400c.kt")
-        public void testKt54400c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54664.kt")
-        public void testKt54664() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54664.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54767a.kt")
-        public void testKt54767a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54767a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54767b.kt")
-        public void testKt54767b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54767b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55056.kt")
-        public void testKt55056() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55056.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55057.kt")
-        public void testKt55057() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55057.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55281.kt")
-        public void testKt55281() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55281.kt");
-        }
-
-        @Test
-        @TestMetadata("kt56949.kt")
-        public void testKt56949() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt56949.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57707.kt")
-        public void testKt57707() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57707.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57709.kt")
-        public void testKt57709() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57709.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57834.kt")
-        public void testKt57834() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57834.kt");
-        }
-
-        @Test
-        @TestMetadata("kt59426.kt")
-        public void testKt59426() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt59426.kt");
-        }
-
-        @Test
-        @TestMetadata("kt59798.kt")
-        public void testKt59798() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt59798.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291a.kt")
-        public void testKt60291a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291b.kt")
-        public void testKt60291b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291c.kt")
-        public void testKt60291c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60447a.kt")
-        public void testKt60447a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60447a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60447b.kt")
-        public void testKt60447b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60447b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt61310.kt")
-        public void testKt61310() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt61310.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63648.kt")
-        public void testKt63648() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63648.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63733.kt")
-        public void testKt63733() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63733.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840a.kt")
-        public void testKt63840a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840b.kt")
-        public void testKt63840b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840c.kt")
-        public void testKt63840c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63841.kt")
-        public void testKt63841() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63841.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64066.kt")
-        public void testKt64066() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64066disabled.kt")
-        public void testKt64066disabled() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066disabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64077.kt")
-        public void testKt64077() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64077.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64222.kt")
-        public void testKt64222() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64222.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300a.kt")
-        public void testKt65300a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300b.kt")
-        public void testKt65300b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300c.kt")
-        public void testKt65300c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300d.kt")
-        public void testKt65300d() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300d.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300e.kt")
-        public void testKt65300e() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300e.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300f.kt")
-        public void testKt65300f() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300f.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300g.kt")
-        public void testKt65300g() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300g.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300h.kt")
-        public void testKt65300h() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300h.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300i.kt")
-        public void testKt65300i() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300i.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300j.kt")
-        public void testKt65300j() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300j.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66229.kt")
-        public void testKt66229() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66229.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66243.kt")
-        public void testKt66243() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66243.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66272.kt")
-        public void testKt66272() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66272.kt");
-        }
-
-        @Test
-        @TestMetadata("kt67875.kt")
-        public void testKt67875() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67875.kt");
-        }
-
-        @Test
-        @TestMetadata("kt67993.kt")
-        public void testKt67993() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67993.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter")
-      @TestDataPath("$PROJECT_ROOT")
-      public class OneParameter {
-        @Test
-        public void testAllFilesPresentInOneParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable")
-        @TestDataPath("$PROJECT_ROOT")
-        public class OneTypeVariable {
-          @Test
-          public void testAllFilesPresentInOneTypeVariable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
-          @TestDataPath("$PROJECT_ROOT")
-          public class OneTypeInfoOrigin {
-            @Test
-            public void testAllFilesPresentInOneTypeInfoOrigin() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-            }
-
-            @Test
-            @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
-            public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
-              runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
-            @TestDataPath("$PROJECT_ROOT")
-            public class SourceSinkFeedContexts {
-              @Test
-              public void testAllFilesPresentInSourceSinkFeedContexts() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-              }
-
-              @Test
-              @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
-              public void testByAssignmentToALocalVariableMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
-              public void testByAssignmentToALocalVariableYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("InsideLocalClass.kt")
-              public void testInsideLocalClass() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
-              }
-
-              @Test
-              @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
-              public void testInsideNestedBuilderInferenceLambda() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
-              }
-
-              @Test
-              @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
-              public void testThroughDelegatedLocalVariableMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ThroughGenericFunctionCall.kt")
-              public void testThroughGenericFunctionCall() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TargetTypes {
-              @Test
-              public void testAllFilesPresentInTargetTypes() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-              }
-
-              @Test
-              @TestMetadata("FunctionWithParameterToUnitImplicitLiteralsCase.kt")
-              public void testFunctionWithParameterToUnitImplicitLiteralsCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnitImplicitLiteralsCase.kt");
-              }
-
-              @Test
-              @TestMetadata("FunctionWithReceiverToUnitImplicitLiteralsCase.kt")
-              public void testFunctionWithReceiverToUnitImplicitLiteralsCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnitImplicitLiteralsCase.kt");
-              }
-
-              @Test
-              @TestMetadata("NothingMaterializeCase.kt")
-              public void testNothingMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("NullableNothingNullLiteralMaterializeCase.kt")
-              public void testNullableNothingNullLiteralMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralMaterializeCase.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TypeInfoSinks {
-              @Test
-              public void testAllFilesPresentInTypeInfoSinks() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-              }
-
-              @Test
-              @TestMetadata("ExtensionFunctions.kt")
-              public void testExtensionFunctions() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
-              }
-
-              @Test
-              @TestMetadata("ImmutableExtensionProperties.kt")
-              public void testImmutableExtensionProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("ImmutableProperties.kt")
-              public void testImmutableProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
-              public void testMutableExtensionPropertiesMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
-              public void testMutableExtensionPropertiesYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutablePropertiesMaterializeCase.kt")
-              public void testMutablePropertiesMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutablePropertiesYieldCase.kt")
-              public void testMutablePropertiesYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ParametersOfBuilderArguments.kt")
-              public void testParametersOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReceiversOfBuilderArguments.kt")
-              public void testReceiversOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TypeInfoSources {
-              @Test
-              public void testAllFilesPresentInTypeInfoSources() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-              }
-
-              @Test
-              @TestMetadata("ExtensionFunctions.kt")
-              public void testExtensionFunctions() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
-              }
-
-              @Test
-              @TestMetadata("ExtensionProperties.kt")
-              public void testExtensionProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("ParametersOfBuilderArguments.kt")
-              public void testParametersOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReceiversOfBuilderArguments.kt")
-              public void testReceiversOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReturnTypesOfBuilderParameters.kt")
-              public void testReturnTypesOfBuilderParameters() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
-              }
-
-              @Test
-              @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
-              public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
-              }
-
-              @Test
-              @TestMetadata("UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt")
-              public void testUnitReturnTypeOfBuilderParametersLastStatementReturnCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt");
-              }
-            }
-          }
-        }
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReference {
       @Test
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -5186,7 +4684,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInAdapted() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -5208,7 +4706,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/bound"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/bound"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -5344,7 +4842,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInFunction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/function"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/function"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -5660,7 +5158,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Generic {
         @Test
         public void testAllFilesPresentInGeneric() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/generic"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/generic"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -5796,7 +5294,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInProperty() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/property"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/property"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -5920,7 +5418,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInResolve() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -6224,7 +5722,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Unsupported {
         @Test
         public void testAllFilesPresentInUnsupported() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/unsupported"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/unsupported"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -6289,7 +5787,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Cast {
       @Test
       public void testAllFilesPresentInCast() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -6712,7 +6210,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Bare {
         @Test
         public void testAllFilesPresentInBare() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast/bare"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast/bare"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -6842,7 +6340,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NeverSucceeds {
         @Test
         public void testAllFilesPresentInNeverSucceeds() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast/neverSucceeds"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cast/neverSucceeds"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -6895,7 +6393,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class CheckArguments {
       @Test
       public void testAllFilesPresentInCheckArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/checkArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/checkArguments"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -7001,7 +6499,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ClassLiteral {
       @Test
       public void testAllFilesPresentInClassLiteral() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/classLiteral"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/classLiteral"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -7107,7 +6605,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ClassObjects {
       @Test
       public void testAllFilesPresentInClassObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/classObjects"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/classObjects"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -7279,7 +6777,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class CollectionLiterals {
       @Test
       public void testAllFilesPresentInCollectionLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/collectionLiterals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/collectionLiterals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -7292,6 +6790,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("argumentsOfAnnotationWithKClass.kt")
       public void testArgumentsOfAnnotationWithKClass() {
         runTest("compiler/testData/diagnostics/tests/collectionLiterals/argumentsOfAnnotationWithKClass.kt");
+      }
+
+      @Test
+      @TestMetadata("arrayLiteralInNestedAnnotationCall.kt")
+      public void testArrayLiteralInNestedAnnotationCall() {
+        runTest("compiler/testData/diagnostics/tests/collectionLiterals/arrayLiteralInNestedAnnotationCall.kt");
       }
 
       @Test
@@ -7355,7 +6859,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ConstantEvaluator {
       @Test
       public void testAllFilesPresentInConstantEvaluator() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Nested
@@ -7364,7 +6868,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Constant {
         @Test
         public void testAllFilesPresentInConstant() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/constant"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/constant"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -7554,7 +7058,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class IsPure {
         @Test
         public void testAllFilesPresentInIsPure() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/isPure"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/isPure"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -7594,7 +7098,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class UsesVariableAsConstant {
         @Test
         public void testAllFilesPresentInUsesVariableAsConstant() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constantEvaluator/usesVariableAsConstant"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -7641,7 +7145,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInConstructorConsistency() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constructorConsistency"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/constructorConsistency"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -7813,7 +7317,13 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("nonKotlinContractCall.kt")
+      public void testNonKotlinContractCall() {
+        runTest("compiler/testData/diagnostics/tests/contracts/nonKotlinContractCall.kt");
       }
 
       @Nested
@@ -7828,7 +7338,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInNeg() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts/neg"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts/neg"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
       }
 
@@ -7850,7 +7360,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInPos() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts/pos"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/contracts/pos"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
       }
     }
@@ -7891,7 +7401,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInControlFlowAnalysis() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -8072,6 +7582,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("enumEntryAccessInCapturedBlock.kt")
       public void testEnumEntryAccessInCapturedBlock() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAccessInCapturedBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryAssignment.kt")
+      public void testEnumEntryAssignment() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAssignment.kt");
       }
 
       @Test
@@ -8339,6 +7855,42 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("lambdaCaptureInConstructor.kt")
+      public void testLambdaCaptureInConstructor() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInExtensionReceiver.kt")
+      public void testLambdaCaptureInExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInJavaFunction.kt")
+      public void testLambdaCaptureInJavaFunction() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInJavaFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureInitializedPropertyInOtherArgument.kt")
+      public void testLambdaCaptureInitializedPropertyInOtherArgument() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureInitializedPropertyInOtherArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureUninitializedInOtherArgument.kt")
+      public void testLambdaCaptureUninitializedInOtherArgument() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedInOtherArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaCaptureUninitializedProperty.kt")
+      public void testLambdaCaptureUninitializedProperty() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedProperty.kt");
+      }
+
+      @Test
       @TestMetadata("localClasses.kt")
       public void testLocalClasses() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");
@@ -8381,6 +7933,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("nestedTryFinallyLambda.kt")
+      public void testNestedTryFinallyLambda() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinallyLambda.kt");
+      }
+
+      @Test
       @TestMetadata("nonLocalReturnUnreachable.kt")
       public void testNonLocalReturnUnreachable() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nonLocalReturnUnreachable.kt");
@@ -8420,6 +7978,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("propertiesOrderInPackage.kt")
       public void testPropertiesOrderInPackage() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesOrderInPackage.kt");
+      }
+
+      @Test
+      @TestMetadata("reassignmenGraphLoop.kt")
+      public void testReassignmenGraphLoop() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmenGraphLoop.kt");
       }
 
       @Test
@@ -8486,6 +8050,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("smartCastInCatch.kt")
       public void testSmartCastInCatch() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartCastInCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("smartcastOnThisInInitializationSection.kt")
+      public void testSmartcastOnThisInInitializationSection() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartcastOnThisInInitializationSection.kt");
       }
 
       @Test
@@ -8584,7 +8154,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DeadCode {
         @Test
         public void testAllFilesPresentInDeadCode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -8597,6 +8167,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("commentsInDeadCode.kt")
         public void testCommentsInDeadCode() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/commentsInDeadCode.kt");
+        }
+
+        @Test
+        @TestMetadata("deadAnonymousObject.kt")
+        public void testDeadAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadAnonymousObject.kt");
         }
 
         @Test
@@ -8738,6 +8314,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("nonLocalJump.kt")
+        public void testNonLocalJump() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/nonLocalJump.kt");
+        }
+
+        @Test
         @TestMetadata("reassignementInUnreachableCode.kt")
         public void testReassignementInUnreachableCode() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/reassignementInUnreachableCode.kt");
@@ -8762,7 +8344,19 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DefiniteReturn {
         @Test
         public void testAllFilesPresentInDefiniteReturn() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("elvisOperator.kt")
+        public void testElvisOperator() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/elvisOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("InlineReturn.kt")
+        public void testInlineReturn() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/InlineReturn.kt");
         }
 
         @Test
@@ -8809,12 +8403,28 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/postponed")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Postponed {
+        @Test
+        public void testAllFilesPresentInPostponed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/postponed"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("postponedLambdaUnreachable.kt")
+        public void testPostponedLambdaUnreachable() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/postponed/postponedLambdaUnreachable.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit")
       @TestDataPath("$PROJECT_ROOT")
       public class UnnecessaryLateinit {
         @Test
         public void testAllFilesPresentInUnnecessaryLateinit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/unnecessaryLateinit"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -8897,7 +8507,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ControlStructures {
       @Test
       public void testAllFilesPresentInControlStructures() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -9249,7 +8859,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -9262,6 +8872,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("modifierFormBuiltinSuspendFun.kt")
       public void testModifierFormBuiltinSuspendFun() {
         runTest("compiler/testData/diagnostics/tests/coroutines/modifierFormBuiltinSuspendFun.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendCallInInit.kt")
+      public void testSuspendCallInInit() {
+        runTest("compiler/testData/diagnostics/tests/coroutines/suspendCallInInit.kt");
       }
 
       @Test
@@ -9294,7 +8910,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/callableReference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/callableReference"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -9316,7 +8932,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SuspendFunctionAsSupertype {
         @Test
         public void testAllFilesPresentInSuspendFunctionAsSupertype() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Nested
@@ -9325,7 +8941,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class KSuspendFunctionN {
           @Test
           public void testAllFilesPresentInKSuspendFunctionN() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/kSuspendFunctionN"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -9365,7 +8981,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Simple {
           @Test
           public void testAllFilesPresentInSimple() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/simple"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -9405,7 +9021,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class SuspendFunctionN {
           @Test
           public void testAllFilesPresentInSuspendFunctionN() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/suspendFunctionAsSupertype/suspendFunctionN"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -9447,7 +9063,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class CyclicHierarchy {
       @Test
       public void testAllFilesPresentInCyclicHierarchy() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -9546,7 +9162,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class WithCompanion {
         @Test
         public void testAllFilesPresentInWithCompanion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -9629,13 +9245,25 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DataClassNonPublicConstructor {
       @Test
       public void testAllFilesPresentInDataClassNonPublicConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
       @TestMetadata("deprecationPhase1_incompatibleAnnotations.kt")
       public void testDeprecationPhase1_incompatibleAnnotations() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_incompatibleAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase1_inlineFun.kt")
+      public void testDeprecationPhase1_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_inlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationPhase1_inlineFun_privateToThis.kt")
+      public void testDeprecationPhase1_inlineFun_privateToThis() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase1_inlineFun_privateToThis.kt");
       }
 
       @Test
@@ -9669,6 +9297,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("deprecationPhase2_inlineFun.kt")
+      public void testDeprecationPhase2_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_inlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase2_internalConstructor.kt")
       public void testDeprecationPhase2_internalConstructor() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase2_internalConstructor.kt");
@@ -9699,6 +9333,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("deprecationPhase3_inlineFun.kt")
+      public void testDeprecationPhase3_inlineFun() {
+        runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase3_inlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationPhase3_invisibleReference.kt")
       public void testDeprecationPhase3_invisibleReference() {
         runTest("compiler/testData/diagnostics/tests/dataClassNonPublicConstructor/deprecationPhase3_invisibleReference.kt");
@@ -9723,7 +9363,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DataClasses {
       @Test
       public void testAllFilesPresentInDataClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -9961,7 +9601,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DataFlow {
       @Test
       public void testAllFilesPresentInDataFlow() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -10012,7 +9652,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Assignment {
         @Test
         public void testAllFilesPresentInAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow/assignment"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow/assignment"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10052,7 +9692,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow/local"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlow/local"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10135,7 +9775,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DataFlowInfoTraversal {
       @Test
       public void testAllFilesPresentInDataFlowInfoTraversal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlowInfoTraversal"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlowInfoTraversal"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -10456,7 +10096,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Smartcasts {
         @Test
         public void testAllFilesPresentInSmartcasts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/smartcasts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10479,7 +10119,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DataObjects {
       @Test
       public void testAllFilesPresentInDataObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataObjects"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dataObjects"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -10495,7 +10135,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DeclarationChecks {
       @Test
       public void testAllFilesPresentInDeclarationChecks() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -10655,6 +10295,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("memberPropertyInitialized.kt")
+      public void testMemberPropertyInitialized() {
+        runTest("compiler/testData/diagnostics/tests/declarationChecks/memberPropertyInitialized.kt");
+      }
+
+      @Test
       @TestMetadata("mulitpleVarargParameters.kt")
       public void testMulitpleVarargParameters() {
         runTest("compiler/testData/diagnostics/tests/declarationChecks/mulitpleVarargParameters.kt");
@@ -10732,7 +10378,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DestructuringDeclarations {
         @Test
         public void testAllFilesPresentInDestructuringDeclarations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/destructuringDeclarations"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10832,7 +10478,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class FiniteBoundRestriction {
         @Test
         public void testAllFilesPresentInFiniteBoundRestriction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/finiteBoundRestriction"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/finiteBoundRestriction"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10860,7 +10506,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NonExpansiveInheritanceRestriction {
         @Test
         public void testAllFilesPresentInNonExpansiveInheritanceRestriction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/nonExpansiveInheritanceRestriction"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/declarationChecks/nonExpansiveInheritanceRestriction"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -10895,13 +10541,19 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/defaultArguments"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
       @TestMetadata("kt5232.kt")
       public void testKt5232() {
         runTest("compiler/testData/diagnostics/tests/defaultArguments/kt5232.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithoutDefaultButBaseWithDefaultAndKMP.kt")
+      public void testOverrideWithoutDefaultButBaseWithDefaultAndKMP() {
+        runTest("compiler/testData/diagnostics/tests/defaultArguments/overrideWithoutDefaultButBaseWithDefaultAndKMP.kt");
       }
 
       @Test
@@ -10941,7 +10593,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInDelegatedProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -11232,7 +10884,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -11458,7 +11110,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ProvideDelegate {
         @Test
         public void testAllFilesPresentInProvideDelegate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -11583,7 +11235,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Delegation {
       @Test
       public void testAllFilesPresentInDelegation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -11676,7 +11328,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Clashes {
         @Test
         public void testAllFilesPresentInClashes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/clashes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/clashes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -11740,7 +11392,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CovariantOverrides {
         @Test
         public void testAllFilesPresentInCovariantOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/covariantOverrides"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/covariantOverrides"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -11780,7 +11432,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInMemberHidesSupertypeOverride() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/memberHidesSupertypeOverride"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/memberHidesSupertypeOverride"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -11875,7 +11527,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Deparenthesize {
       @Test
       public void testAllFilesPresentInDeparenthesize() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deparenthesize"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deparenthesize"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -11921,7 +11573,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Deprecated {
       @Test
       public void testAllFilesPresentInDeprecated() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -12212,7 +11864,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DeprecatedSinceKotlin {
         @Test
         public void testAllFilesPresentInDeprecatedSinceKotlin() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -12277,7 +11929,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Destructuring {
       @Test
       public void testAllFilesPresentInDestructuring() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/destructuring"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -12291,6 +11943,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public void testDestructuringInInitializer() {
         runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInInitializer.kt");
       }
+
+      @Test
+      @TestMetadata("destructuringInWhenSubject.kt")
+      public void testDestructuringInWhenSubject() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInWhenSubject.kt");
+      }
     }
 
     @Nested
@@ -12299,7 +11957,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DynamicTypes {
       @Test
       public void testAllFilesPresentInDynamicTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dynamicTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/dynamicTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -12345,7 +12003,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -12744,7 +12402,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Entries {
         @Test
         public void testAllFilesPresentInEntries() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum/entries"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum/entries"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -12946,7 +12604,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inner {
         @Test
         public void testAllFilesPresentInInner() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum/inner"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/enum/inner"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -13029,7 +12687,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Evaluate {
       @Test
       public void testAllFilesPresentInEvaluate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/evaluate"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/evaluate"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -13182,7 +12840,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/evaluate/inlineClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/evaluate/inlineClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -13199,7 +12857,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Exceptions {
       @Test
       public void testAllFilesPresentInExceptions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/exceptions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/exceptions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -13249,6 +12907,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public void testTransformErrorTypeChildrenWhileTransformingPartiallyResolvedType() {
         runTest("compiler/testData/diagnostics/tests/exceptions/transformErrorTypeChildrenWhileTransformingPartiallyResolvedType.kt");
       }
+
+      @Test
+      @TestMetadata("unresolvedReferenceDuringProjectionRelationChecking.kt")
+      public void testUnresolvedReferenceDuringProjectionRelationChecking() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/unresolvedReferenceDuringProjectionRelationChecking.kt");
+      }
     }
 
     @Nested
@@ -13257,7 +12921,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ExplicitDefinitelyNotNullableViaIntersection {
       @Test
       public void testAllFilesPresentInExplicitDefinitelyNotNullableViaIntersection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -13369,7 +13033,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Exposed {
       @Test
       public void testAllFilesPresentInExposed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/exposed"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/exposed"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -13466,6 +13130,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("nested.kt")
       public void testNested() {
         runTest("compiler/testData/diagnostics/tests/exposed/nested.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedInheritance.kt")
+      public void testNestedInheritance() {
+        runTest("compiler/testData/diagnostics/tests/exposed/nestedInheritance.kt");
       }
 
       @Test
@@ -13571,7 +13241,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Extensions {
       @Test
       public void testAllFilesPresentInExtensions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -13688,7 +13358,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ContextReceivers {
         @Test
         public void testAllFilesPresentInContextReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -13707,6 +13377,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("conflictingWithDifferentOrder.kt")
         public void testConflictingWithDifferentOrder() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/conflictingWithDifferentOrder.kt");
+        }
+
+        @Test
+        @TestMetadata("contextAndNoContextOverloads.kt")
+        public void testContextAndNoContextOverloads() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextAndNoContextOverloads.kt");
         }
 
         @Test
@@ -13737,6 +13413,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("contextualFunctionalTypeConversion.kt")
         public void testContextualFunctionalTypeConversion() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextualFunctionalTypeConversion.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/deprecated.kt");
         }
 
         @Test
@@ -13961,7 +13643,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class FromKEEP {
           @Test
           public void testAllFilesPresentInFromKEEP() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/extensions/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -14051,7 +13733,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class External {
       @Test
       public void testAllFilesPresentInExternal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/external"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/external"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14067,7 +13749,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FieldRename {
       @Test
       public void testAllFilesPresentInFieldRename() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/fieldRename"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/fieldRename"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14119,7 +13801,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/funInterface"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/funInterface"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14237,7 +13919,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FunctionAsExpression {
       @Test
       public void testAllFilesPresentInFunctionAsExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionAsExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionAsExpression"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14367,7 +14049,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FunctionLiterals {
       @Test
       public void testAllFilesPresentInFunctionLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14580,7 +14262,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DestructuringInLambdas {
         @Test
         public void testAllFilesPresentInDestructuringInLambdas() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/destructuringInLambdas"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -14650,7 +14332,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Return {
         @Test
         public void testAllFilesPresentInReturn() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/return"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/return"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -14865,7 +14547,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -14908,6 +14590,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("commonSupertypeContravariant2.kt")
       public void testCommonSupertypeContravariant2() {
         runTest("compiler/testData/diagnostics/tests/generics/commonSupertypeContravariant2.kt");
+      }
+
+      @Test
+      @TestMetadata("conflictingStarAndTypeParameterBounds.kt")
+      public void testConflictingStarAndTypeParameterBounds() {
+        runTest("compiler/testData/diagnostics/tests/generics/conflictingStarAndTypeParameterBounds.kt");
       }
 
       @Test
@@ -15004,6 +14692,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("localClassTypeRefWithTypeParameterFromFunction.kt")
       public void testLocalClassTypeRefWithTypeParameterFromFunction() {
         runTest("compiler/testData/diagnostics/tests/generics/localClassTypeRefWithTypeParameterFromFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt")
+      public void testNoInconsistentTypeParameterBoundsWithDifferentProjectionKinds() {
+        runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithDifferentProjectionKinds.kt");
+      }
+
+      @Test
+      @TestMetadata("noInconsistentTypeParameterBoundsWithStarProjections.kt")
+      public void testNoInconsistentTypeParameterBoundsWithStarProjections() {
+        runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithStarProjections.kt");
       }
 
       @Test
@@ -15126,7 +14826,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CapturedParameters {
         @Test
         public void testAllFilesPresentInCapturedParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/capturedParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/capturedParameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15172,7 +14872,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CyclicBounds {
         @Test
         public void testAllFilesPresentInCyclicBounds() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/cyclicBounds"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/cyclicBounds"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15194,7 +14894,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class InnerClasses {
         @Test
         public void testAllFilesPresentInInnerClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15365,7 +15065,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class ImplicitArguments {
           @Test
           public void testAllFilesPresentInImplicitArguments() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -15430,7 +15130,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class MultipleBoundsMemberScope {
         @Test
         public void testAllFilesPresentInMultipleBoundsMemberScope() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15482,7 +15182,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Nullability {
         @Test
         public void testAllFilesPresentInNullability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/nullability"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/nullability"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15612,7 +15312,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInProjectionsScope() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/projectionsScope"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/projectionsScope"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15790,7 +15490,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class StarProjections {
         @Test
         public void testAllFilesPresentInStarProjections() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/starProjections"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/starProjections"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15836,7 +15536,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TpAsReified {
         @Test
         public void testAllFilesPresentInTpAsReified() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/tpAsReified"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/tpAsReified"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15922,6 +15622,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public void testReifiedClass() {
           runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedClass.kt");
         }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasDisabled.kt")
+        public void testReifiedTypeAliasDisabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasEnabled.kt")
+        public void testReifiedTypeAliasEnabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasEnabled.kt");
+        }
       }
 
       @Nested
@@ -15930,7 +15642,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class VarProjection {
         @Test
         public void testAllFilesPresentInVarProjection() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/varProjection"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/varProjection"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -15971,7 +15683,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInImports() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/imports"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/imports"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -16293,6 +16005,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("noImportFromRootPackage.kt")
+      public void testNoImportFromRootPackage() {
+        runTest("compiler/testData/diagnostics/tests/imports/noImportFromRootPackage.kt");
+      }
+
+      @Test
       @TestMetadata("OperatorRenameOnImport.kt")
       public void testOperatorRenameOnImport() {
         runTest("compiler/testData/diagnostics/tests/imports/OperatorRenameOnImport.kt");
@@ -16389,7 +16107,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class IncompleteCode {
       @Test
       public void testAllFilesPresentInIncompleteCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/incompleteCode"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/incompleteCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -16542,7 +16260,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DiagnosticWithSyntaxError {
         @Test
         public void testAllFilesPresentInDiagnosticWithSyntaxError() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -16661,7 +16379,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -16764,6 +16482,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("conflictingSubstitutions.kt")
       public void testConflictingSubstitutions() {
         runTest("compiler/testData/diagnostics/tests/inference/conflictingSubstitutions.kt");
+      }
+
+      @Test
+      @TestMetadata("crashWithNestedLambdasRedCode.kt")
+      public void testCrashWithNestedLambdasRedCode() {
+        runTest("compiler/testData/diagnostics/tests/inference/crashWithNestedLambdasRedCode.kt");
       }
 
       @Test
@@ -17229,6 +16953,30 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt68570.kt")
+      public void testKt68570() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt68570.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69159Simplified.kt")
+      public void testKt69159Simplified() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159Simplified.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69159WithComparable.kt")
+      public void testKt69159WithComparable() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69159WithComparable.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69326.kt")
+      public void testKt69326() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt69326.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAgainstSimpleTypeMismatch.kt")
       public void testLambdaAgainstSimpleTypeMismatch() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaAgainstSimpleTypeMismatch.kt");
@@ -17517,6 +17265,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("underscoredTypeArgumentInErroneousCall.kt")
+      public void testUnderscoredTypeArgumentInErroneousCall() {
+        runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeArgumentInErroneousCall.kt");
+      }
+
+      @Test
       @TestMetadata("underscoredTypeInForbiddenPositions.kt")
       public void testUnderscoredTypeInForbiddenPositions() {
         runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeInForbiddenPositions.kt");
@@ -17565,668 +17319,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
-      @TestDataPath("$PROJECT_ROOT")
-      public class BuilderInference {
-        @Test
-        public void testAllFilesPresentInBuilderInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-        }
-
-        @Test
-        @TestMetadata("assignmentUsingIncompletePCLACall.kt")
-        public void testAssignmentUsingIncompletePCLACall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/assignmentUsingIncompletePCLACall.kt");
-        }
-
-        @Test
-        @TestMetadata("bothOuterAndProperConstraints.kt")
-        public void testBothOuterAndProperConstraints() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
-        }
-
-        @Test
-        @TestMetadata("bothReceiverAndValueParameterNotFixed.kt")
-        public void testBothReceiverAndValueParameterNotFixed() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothReceiverAndValueParameterNotFixed.kt");
-        }
-
-        @Test
-        @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
-        public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
-        }
-
-        @Test
-        @TestMetadata("builderPassedAsNamedArgument.kt")
-        public void testBuilderPassedAsNamedArgument() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
-        }
-
-        @Test
-        @TestMetadata("callableReferenceAsArgumentForTransaction.kt")
-        public void testCallableReferenceAsArgumentForTransaction() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceAsArgumentForTransaction.kt");
-        }
-
-        @Test
-        @TestMetadata("callableReferenceInsideInvokeCall.kt")
-        public void testCallableReferenceInsideInvokeCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");
-        }
-
-        @Test
-        @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
-        public void testChangingResolveIfDontUseBuilderInference() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/changingResolveIfDontUseBuilderInference.kt");
-        }
-
-        @Test
-        @TestMetadata("considerContractsOfIncompleteCalls.kt")
-        public void testConsiderContractsOfIncompleteCalls() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/considerContractsOfIncompleteCalls.kt");
-        }
-
-        @Test
-        @TestMetadata("elvisWithReturnInLastStatementOfLastLambda.kt")
-        public void testElvisWithReturnInLastStatementOfLastLambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/elvisWithReturnInLastStatementOfLastLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("equalityChecksOnIntegerTypes.kt")
-        public void testEqualityChecksOnIntegerTypes() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("equalityChecksOnIntegerTypesProgressive.kt")
-        public void testEqualityChecksOnIntegerTypesProgressive() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypesProgressive.kt");
-        }
-
-        @Test
-        @TestMetadata("errorOnStubReceiver.kt")
-        public void testErrorOnStubReceiver() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/errorOnStubReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingDependentVariablesForReceivers.kt")
-        public void testFixingDependentVariablesForReceivers() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceivers.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
-        public void testFixingDependentVariablesForReceiversInitial() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceiversInitial.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter2() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter3() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
-        }
-
-        @Test
-        @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
-        public void testIncompleteCallInReturnArgumentsWithProperExpectType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/incompleteCallInReturnArgumentsWithProperExpectType.kt");
-        }
-
-        @Test
-        @TestMetadata("innerTvFixationFromLowerConstraints.kt")
-        public void testInnerTvFixationFromLowerConstraints() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/innerTvFixationFromLowerConstraints.kt");
-        }
-
-        @Test
-        @TestMetadata("invalidateKeys.kt")
-        public void testInvalidateKeys() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
-        }
-
-        @Test
-        @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
-        public void testInvokeExtensionReceiverWithNotFixedVariables() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariables.kt");
-        }
-
-        @Test
-        @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
-        public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47744.kt")
-        public void testKt47744() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Default.kt")
-        public void testKt47986Default() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Default.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Disabled.kt")
-        public void testKt47986Disabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Disabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Enabled.kt")
-        public void testKt47986Enabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Enabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_2.kt")
-        public void testKt47986_2() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_2.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_3.kt")
-        public void testKt47986_3() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_3.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_4.kt")
-        public void testKt47986_4() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_4.kt");
-        }
-
-        @Test
-        @TestMetadata("kt48031.kt")
-        public void testKt48031() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt48031.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49285.kt")
-        public void testKt49285() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49285.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49828.kt")
-        public void testKt49828() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49828.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49829.kt")
-        public void testKt49829() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49829_noCast.kt")
-        public void testKt49829_noCast() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829_noCast.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50498.kt")
-        public void testKt50498() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50498.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50989.kt")
-        public void testKt50989() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50989.kt");
-        }
-
-        @Test
-        @TestMetadata("kt51148.kt")
-        public void testKt51148() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt51148.kt");
-        }
-
-        @Test
-        @TestMetadata("kt51464.kt")
-        public void testKt51464() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt51464.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422.kt")
-        public void testKt53422() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53422.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53639.kt")
-        public void testKt53639() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53639.kt");
-        }
-
-        @Test
-        @TestMetadata("labaledCall.kt")
-        public void testLabaledCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/labaledCall.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareType.kt")
-        public void testLambdaParameterForBareType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareType.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeAs.kt")
-        public void testLambdaParameterForBareTypeAs() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeAs.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt")
-        public void testLambdaParameterForBareTypeEarlyFixationAffectsBehavior() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeOnOuterTypeVariable.kt")
-        public void testLambdaParameterForBareTypeOnOuterTypeVariable() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeOnOuterTypeVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForNonBareType.kt")
-        public void testLambdaParameterForNonBareType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForNonBareType.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterTypeFixation.kt")
-        public void testLambdaParameterTypeFixation() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterTypeFixation.kt");
-        }
-
-        @Test
-        @TestMetadata("lastLambdaStatementWithFixedVariables.kt")
-        public void testLastLambdaStatementWithFixedVariables() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lastLambdaStatementWithFixedVariables.kt");
-        }
-
-        @Test
-        @TestMetadata("manyArgsDifferentYields.kt")
-        public void testManyArgsDifferentYields() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
-        }
-
-        @Test
-        @TestMetadata("memberScopeOfCapturedTypeForPostponedCall.kt")
-        public void testMemberScopeOfCapturedTypeForPostponedCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/memberScopeOfCapturedTypeForPostponedCall.kt");
-        }
-
-        @Test
-        @TestMetadata("multiLambdaRestriction.kt")
-        public void testMultiLambdaRestriction() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
-        }
-
-        @Test
-        @TestMetadata("multiLambdaRestrictionDisabled.kt")
-        public void testMultiLambdaRestrictionDisabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestrictionDisabled.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
-        public void testNestedLambdaWithLastLambdaContainingCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithLastLambdaContainingCall.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
-        public void testNestedLambdaWithNonLastYieldStatement() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithNonLastYieldStatement.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdasWithOverloadResolutionByReturnType.kt")
-        public void testNestedLambdasWithOverloadResolutionByReturnType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdasWithOverloadResolutionByReturnType.kt");
-        }
-
-        @Test
-        @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
-        public void testNewTvFromLamdaAreNotCountedAsProper() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/newTvFromLamdaAreNotCountedAsProper.kt");
-        }
-
-        @Test
-        @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
-        public void testNoBuilderInferenceRestrictionReceiverInconsistency() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
-        }
-
-        @Test
-        @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
-        public void testOverloadResolutionByLambdaReturnTypeInsideBI() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/overloadResolutionByLambdaReturnTypeInsideBI.kt");
-        }
-
-        @Test
-        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
-        public void testPropertyInvokeInsidePCLALambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertyInvokeInsidePCLALambda.kt");
-        }
-
-        @Test
-        @TestMetadata("propertySubstitution.kt")
-        public void testPropertySubstitution() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
-        }
-
-        @Test
-        @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
-        public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
-        }
-
-        @Test
-        @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
-        public void testSingleBranchConditionLastStatementInLambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/singleBranchConditionLastStatementInLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
-        public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
-        }
-
-        @Test
-        @TestMetadata("smartCastOnBuilderController.kt")
-        public void testSmartCastOnBuilderController() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/smartCastOnBuilderController.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferences.kt")
-        public void testSpecialCallsWithCallableReferences() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferences.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
-        public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
-        public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-        public void testSpecialCallsWithCallableReferencesErrorType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesErrorTypeUnrestricted.kt")
-        public void testSpecialCallsWithCallableReferencesErrorTypeUnrestricted() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorTypeUnrestricted.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
-        public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesUnrestricted.kt")
-        public void testSpecialCallsWithCallableReferencesUnrestricted() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesUnrestricted.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithLambdas.kt")
-        public void testSpecialCallsWithLambdas() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
-        }
-
-        @Test
-        @TestMetadata("substitutedSyntheticPropertyUsage.kt")
-        public void testSubstitutedSyntheticPropertyUsage() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/substitutedSyntheticPropertyUsage.kt");
-        }
-
-        @Test
-        @TestMetadata("theSimplestBuilder.kt")
-        public void testTheSimplestBuilder() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/theSimplestBuilder.kt");
-        }
-
-        @Test
-        @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
-        public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
-        }
-
-        @Test
-        @TestMetadata("withoutAnnotationDisabledFeature.kt")
-        public void testWithoutAnnotationDisabledFeature() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/withoutAnnotationDisabledFeature.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/constraints")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Constraints {
-          @Test
-          public void testAllFilesPresentInConstraints() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/constraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-          }
-
-          @Test
-          @TestMetadata("violating.kt")
-          public void testViolating() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/violating.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/csForks")
-        @TestDataPath("$PROJECT_ROOT")
-        public class CsForks {
-          @Test
-          public void testAllFilesPresentInCsForks() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/csForks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-          }
-
-          @Test
-          @TestMetadata("postponingForksNecessary.kt")
-          public void testPostponingForksNecessary() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessary.kt");
-          }
-
-          @Test
-          @TestMetadata("postponingForksNecessaryWithLambda.kt")
-          public void testPostponingForksNecessaryWithLambda() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessaryWithLambda.kt");
-          }
-
-          @Test
-          @TestMetadata("relatedToOuter.kt")
-          public void testRelatedToOuter() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuter.kt");
-          }
-
-          @Test
-          @TestMetadata("relatedToOuterGreen.kt")
-          public void testRelatedToOuterGreen() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuterGreen.kt");
-          }
-
-          @Test
-          @TestMetadata("simple.kt")
-          public void testSimple() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simple.kt");
-          }
-
-          @Test
-          @TestMetadata("simpleGreen.kt")
-          public void testSimpleGreen() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simpleGreen.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/regresssions")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Regresssions {
-          @Test
-          public void testAllFilesPresentInRegresssions() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/regresssions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-          }
-
-          @Test
-          @TestMetadata("exponentialErrorsInCS.kt")
-          public void testExponentialErrorsInCS() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialErrorsInCS.kt");
-          }
-
-          @Test
-          @TestMetadata("exponentialErrorsInCSInitial.kt")
-          public void testExponentialErrorsInCSInitial() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialErrorsInCSInitial.kt");
-          }
-
-          @Test
-          @TestMetadata("exponentialForksInCS.kt")
-          public void testExponentialForksInCS() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialForksInCS.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes")
-        @TestDataPath("$PROJECT_ROOT")
-        public class StubTypes {
-          @Test
-          public void testAllFilesPresentInStubTypes() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
-          }
-
-          @Test
-          @TestMetadata("capturedTypes.kt")
-          public void testCapturedTypes() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypes.kt");
-          }
-
-          @Test
-          @TestMetadata("capturedTypesId.kt")
-          public void testCapturedTypesId() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypesId.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperType.kt")
-          public void testCommonSuperType() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperType.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeContravariant.kt")
-          public void testCommonSuperTypeContravariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeContravariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeCovariant.kt")
-          public void testCommonSuperTypeCovariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeCovariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeInvariant.kt")
-          public void testCommonSuperTypeInvariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeInvariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeNullable.kt")
-          public void testCommonSuperTypeNullable() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeNullable.kt");
-          }
-
-          @Test
-          @TestMetadata("intersect.kt")
-          public void testIntersect() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/intersect.kt");
-          }
-
-          @Test
-          @TestMetadata("memberScope.kt")
-          public void testMemberScope() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/memberScope.kt");
-          }
-
-          @Test
-          @TestMetadata("nullability.kt")
-          public void testNullability() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/nullability.kt");
-          }
-
-          @Test
-          @TestMetadata("renderingStubTypes.kt")
-          public void testRenderingStubTypes() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
-          }
-
-          @Test
-          @TestMetadata("simpleIntersection.kt")
-          public void testSimpleIntersection() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/simpleIntersection.kt");
-          }
-
-          @Test
-          @TestMetadata("stubTypeReceiverRestriction.kt")
-          public void testStubTypeReceiverRestriction() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestriction.kt");
-          }
-
-          @Test
-          @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
-          public void testStubTypeReceiverRestrictionDisabled() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
-          }
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/callableReferences")
       @TestDataPath("$PROJECT_ROOT")
       public class CallableReferences {
         @Test
         public void testAllFilesPresentInCallableReferences() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/callableReferences"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/callableReferences"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -18260,7 +17358,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CapturedTypes {
         @Test
         public void testAllFilesPresentInCapturedTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/capturedTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/capturedTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -18612,7 +17710,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInCoercionToUnit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/coercionToUnit"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/coercionToUnit"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -18724,7 +17822,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CommonSystem {
         @Test
         public void testAllFilesPresentInCommonSystem() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/commonSystem"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/commonSystem"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -18896,7 +17994,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Completion {
         @Test
         public void testAllFilesPresentInCompletion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19007,7 +18105,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class PostponedArgumentsAnalysis {
           @Test
           public void testAllFilesPresentInPostponedArgumentsAnalysis() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -19078,7 +18176,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Constraints {
         @Test
         public void testAllFilesPresentInConstraints() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19256,7 +18354,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class EmptyIntersectionTypes {
         @Test
         public void testAllFilesPresentInEmptyIntersectionTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19620,7 +18718,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Forks {
         @Test
         public void testAllFilesPresentInForks() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/forks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/forks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19654,7 +18752,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NestedCalls {
         @Test
         public void testAllFilesPresentInNestedCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/nestedCalls"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/nestedCalls"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19748,7 +18846,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NothingType {
         @Test
         public void testAllFilesPresentInNothingType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/nothingType"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/nothingType"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -19927,12 +19025,1400 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Pcla {
+        @Test
+        public void testAllFilesPresentInPcla() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("assignmentUsingIncompletePCLACall.kt")
+        public void testAssignmentUsingIncompletePCLACall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/assignmentUsingIncompletePCLACall.kt");
+        }
+
+        @Test
+        @TestMetadata("bothOuterAndProperConstraints.kt")
+        public void testBothOuterAndProperConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/bothOuterAndProperConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("bothReceiverAndValueParameterNotFixed.kt")
+        public void testBothReceiverAndValueParameterNotFixed() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/bothReceiverAndValueParameterNotFixed.kt");
+        }
+
+        @Test
+        @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
+        public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
+        }
+
+        @Test
+        @TestMetadata("builderPassedAsNamedArgument.kt")
+        public void testBuilderPassedAsNamedArgument() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/builderPassedAsNamedArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceAsArgumentForTransaction.kt")
+        public void testCallableReferenceAsArgumentForTransaction() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/callableReferenceAsArgumentForTransaction.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceInsideInvokeCall.kt")
+        public void testCallableReferenceInsideInvokeCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/callableReferenceInsideInvokeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
+        public void testChangingResolveIfDontUseBuilderInference() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/changingResolveIfDontUseBuilderInference.kt");
+        }
+
+        @Test
+        @TestMetadata("considerContractsOfIncompleteCalls.kt")
+        public void testConsiderContractsOfIncompleteCalls() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/considerContractsOfIncompleteCalls.kt");
+        }
+
+        @Test
+        @TestMetadata("contextReceivers.kt")
+        public void testContextReceivers() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/contextReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisWithNothingRHS.kt")
+        public void testElvisWithNothingRHS() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/elvisWithNothingRHS.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisWithReturnInLastStatementOfLastLambda.kt")
+        public void testElvisWithReturnInLastStatementOfLastLambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/elvisWithReturnInLastStatementOfLastLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityChecksOnIntegerTypes.kt")
+        public void testEqualityChecksOnIntegerTypes() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/equalityChecksOnIntegerTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityChecksOnIntegerTypesProgressive.kt")
+        public void testEqualityChecksOnIntegerTypesProgressive() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/equalityChecksOnIntegerTypesProgressive.kt");
+        }
+
+        @Test
+        @TestMetadata("errorOnStubReceiver.kt")
+        public void testErrorOnStubReceiver() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/errorOnStubReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingDependentVariablesForReceivers.kt")
+        public void testFixingDependentVariablesForReceivers() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingDependentVariablesForReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
+        public void testFixingDependentVariablesForReceiversInitial() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingDependentVariablesForReceiversInitial.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter2() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter3() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
+        public void testIncompleteCallInReturnArgumentsWithProperExpectType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/incompleteCallInReturnArgumentsWithProperExpectType.kt");
+        }
+
+        @Test
+        @TestMetadata("innerTvFixationFromLowerConstraints.kt")
+        public void testInnerTvFixationFromLowerConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/innerTvFixationFromLowerConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidateKeys.kt")
+        public void testInvalidateKeys() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invalidateKeys.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
+        public void testInvokeExtensionReceiverWithNotFixedVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invokeExtensionReceiverWithNotFixedVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
+        public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
+        }
+
+        @Test
+        @TestMetadata("labaledCall.kt")
+        public void testLabaledCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/labaledCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareType.kt")
+        public void testLambdaParameterForBareType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareType.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeAs.kt")
+        public void testLambdaParameterForBareTypeAs() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeAs.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt")
+        public void testLambdaParameterForBareTypeEarlyFixationAffectsBehavior() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeOnOuterTypeVariable.kt")
+        public void testLambdaParameterForBareTypeOnOuterTypeVariable() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeOnOuterTypeVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForNonBareType.kt")
+        public void testLambdaParameterForNonBareType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForNonBareType.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterTypeFixation.kt")
+        public void testLambdaParameterTypeFixation() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterTypeFixation.kt");
+        }
+
+        @Test
+        @TestMetadata("lastLambdaStatementWithFixedVariables.kt")
+        public void testLastLambdaStatementWithFixedVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lastLambdaStatementWithFixedVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("manyArgsDifferentYields.kt")
+        public void testManyArgsDifferentYields() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/manyArgsDifferentYields.kt");
+        }
+
+        @Test
+        @TestMetadata("memberScopeOfCapturedTypeForPostponedCall.kt")
+        public void testMemberScopeOfCapturedTypeForPostponedCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/memberScopeOfCapturedTypeForPostponedCall.kt");
+        }
+
+        @Test
+        @TestMetadata("multiLambdaRestriction.kt")
+        public void testMultiLambdaRestriction() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/multiLambdaRestriction.kt");
+        }
+
+        @Test
+        @TestMetadata("multiLambdaRestrictionDisabled.kt")
+        public void testMultiLambdaRestrictionDisabled() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/multiLambdaRestrictionDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
+        public void testNestedLambdaWithLastLambdaContainingCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdaWithLastLambdaContainingCall.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
+        public void testNestedLambdaWithNonLastYieldStatement() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdaWithNonLastYieldStatement.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdasWithOverloadResolutionByReturnType.kt")
+        public void testNestedLambdasWithOverloadResolutionByReturnType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdasWithOverloadResolutionByReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
+        public void testNewTvFromLamdaAreNotCountedAsProper() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/newTvFromLamdaAreNotCountedAsProper.kt");
+        }
+
+        @Test
+        @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
+        public void testNoBuilderInferenceRestrictionReceiverInconsistency() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/noBuilderInferenceRestrictionReceiverInconsistency.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionByLambdaReturnType.kt")
+        public void testOverloadResolutionByLambdaReturnType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionByLambdaReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
+        public void testOverloadResolutionByLambdaReturnTypeInsideBI() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionByLambdaReturnTypeInsideBI.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionWithTypeVariables.kt")
+        public void testOverloadResolutionWithTypeVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionWithTypeVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+        public void testPropertyInvokeInsidePCLALambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/propertyInvokeInsidePCLALambda.kt");
+        }
+
+        @Test
+        @TestMetadata("propertySubstitution.kt")
+        public void testPropertySubstitution() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/propertySubstitution.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+        public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+        }
+
+        @Test
+        @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
+        public void testSingleBranchConditionLastStatementInLambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/singleBranchConditionLastStatementInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+        public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+        }
+
+        @Test
+        @TestMetadata("smartCastOnBuilderController.kt")
+        public void testSmartCastOnBuilderController() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/smartCastOnBuilderController.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferences.kt")
+        public void testSpecialCallsWithCallableReferences() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
+        public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
+        public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
+        public void testSpecialCallsWithCallableReferencesErrorType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesErrorType.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesErrorTypeUnrestricted.kt")
+        public void testSpecialCallsWithCallableReferencesErrorTypeUnrestricted() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesErrorTypeUnrestricted.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
+        public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesUnrestricted.kt")
+        public void testSpecialCallsWithCallableReferencesUnrestricted() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesUnrestricted.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithLambdas.kt")
+        public void testSpecialCallsWithLambdas() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithLambdas.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutedSyntheticPropertyUsage.kt")
+        public void testSubstitutedSyntheticPropertyUsage() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/substitutedSyntheticPropertyUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("theSimplestBuilder.kt")
+        public void testTheSimplestBuilder() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/theSimplestBuilder.kt");
+        }
+
+        @Test
+        @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
+        public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
+        }
+
+        @Test
+        @TestMetadata("withoutAnnotationDisabledFeature.kt")
+        public void testWithoutAnnotationDisabledFeature() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/withoutAnnotationDisabledFeature.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/additional")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Additional {
+          @Test
+          public void testAllFilesPresentInAdditional() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/additional"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInClassifiers() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt");
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInFunctions.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInFunctions() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInFunctions.kt");
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInProperties.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInProperties() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/constraints")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Constraints {
+          @Test
+          public void testAllFilesPresentInConstraints() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/constraints"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("violating.kt")
+          public void testViolating() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/constraints/violating.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/csForks")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CsForks {
+          @Test
+          public void testAllFilesPresentInCsForks() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/csForks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessary.kt")
+          public void testPostponingForksNecessary() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/postponingForksNecessary.kt");
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessaryWithLambda.kt")
+          public void testPostponingForksNecessaryWithLambda() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/postponingForksNecessaryWithLambda.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuter.kt")
+          public void testRelatedToOuter() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/relatedToOuter.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuterGreen.kt")
+          public void testRelatedToOuterGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/relatedToOuterGreen.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleGreen.kt")
+          public void testSimpleGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/simpleGreen.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/issues")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Issues {
+          @Test
+          public void testAllFilesPresentInIssues() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/issues"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("kt43710.kt")
+          public void testKt43710() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt43710.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47744.kt")
+          public void testKt47744() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47744.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Default.kt")
+          public void testKt47986Default() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Default.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Disabled.kt")
+          public void testKt47986Disabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Disabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Enabled.kt")
+          public void testKt47986Enabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Enabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_2.kt")
+          public void testKt47986_2() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_2.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_3.kt")
+          public void testKt47986_3() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_3.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_4.kt")
+          public void testKt47986_4() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_4.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47989a.kt")
+          public void testKt47989a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47989a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47989b.kt")
+          public void testKt47989b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47989b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt48031.kt")
+          public void testKt48031() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt48031.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160a.kt")
+          public void testKt49160a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160b.kt")
+          public void testKt49160b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160c.kt")
+          public void testKt49160c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160d.kt")
+          public void testKt49160d() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160d.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160e.kt")
+          public void testKt49160e() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160e.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49263.kt")
+          public void testKt49263() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49263.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49285.kt")
+          public void testKt49285() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49285.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49828.kt")
+          public void testKt49828() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49828.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49829.kt")
+          public void testKt49829() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49829.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49829_noCast.kt")
+          public void testKt49829_noCast() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49829_noCast.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50453.kt")
+          public void testKt50453() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50453.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50498.kt")
+          public void testKt50498() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50498.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50827.kt")
+          public void testKt50827() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50827.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50989.kt")
+          public void testKt50989() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50989.kt");
+          }
+
+          @Test
+          @TestMetadata("kt51148.kt")
+          public void testKt51148() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt51148.kt");
+          }
+
+          @Test
+          @TestMetadata("kt51464.kt")
+          public void testKt51464() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt51464.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52757.kt")
+          public void testKt52757() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52757.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838a.kt")
+          public void testKt52838a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838b.kt")
+          public void testKt52838b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838c.kt")
+          public void testKt52838c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53109.kt")
+          public void testKt53109() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53109.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422.kt")
+          public void testKt53422() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422a.kt")
+          public void testKt53422a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422b.kt")
+          public void testKt53422b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53478.kt")
+          public void testKt53478() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53478.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53553.kt")
+          public void testKt53553() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53553.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53639.kt")
+          public void testKt53639() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53639.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53639Simple.kt")
+          public void testKt53639Simple() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53639Simple.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53740a.kt")
+          public void testKt53740a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53740a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53740b.kt")
+          public void testKt53740b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53740b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400a.kt")
+          public void testKt54400a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400b.kt")
+          public void testKt54400b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400c.kt")
+          public void testKt54400c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54664.kt")
+          public void testKt54664() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54664.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54767a.kt")
+          public void testKt54767a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54767a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54767b.kt")
+          public void testKt54767b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54767b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55056.kt")
+          public void testKt55056() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55056.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55057.kt")
+          public void testKt55057() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55057.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55281.kt")
+          public void testKt55281() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55281.kt");
+          }
+
+          @Test
+          @TestMetadata("kt56949.kt")
+          public void testKt56949() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt56949.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57707.kt")
+          public void testKt57707() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57707.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57709.kt")
+          public void testKt57709() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57709.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57834.kt")
+          public void testKt57834() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57834.kt");
+          }
+
+          @Test
+          @TestMetadata("kt59426.kt")
+          public void testKt59426() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt59426.kt");
+          }
+
+          @Test
+          @TestMetadata("kt59798.kt")
+          public void testKt59798() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt59798.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291a.kt")
+          public void testKt60291a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291b.kt")
+          public void testKt60291b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291c.kt")
+          public void testKt60291c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60447a.kt")
+          public void testKt60447a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60447a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60447b.kt")
+          public void testKt60447b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60447b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt61310.kt")
+          public void testKt61310() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt61310.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63648.kt")
+          public void testKt63648() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63648.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63733.kt")
+          public void testKt63733() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63733.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840a.kt")
+          public void testKt63840a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840b.kt")
+          public void testKt63840b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840c.kt")
+          public void testKt63840c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63841.kt")
+          public void testKt63841() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63841.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64066.kt")
+          public void testKt64066() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64066.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64066disabled.kt")
+          public void testKt64066disabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64066disabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64077.kt")
+          public void testKt64077() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64077.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64222.kt")
+          public void testKt64222() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64222.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300a.kt")
+          public void testKt65300a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300b.kt")
+          public void testKt65300b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300c.kt")
+          public void testKt65300c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300d.kt")
+          public void testKt65300d() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300d.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300e.kt")
+          public void testKt65300e() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300e.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300f.kt")
+          public void testKt65300f() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300f.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300g.kt")
+          public void testKt65300g() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300g.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300h.kt")
+          public void testKt65300h() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300h.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300i.kt")
+          public void testKt65300i() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300i.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300j.kt")
+          public void testKt65300j() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300j.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66229.kt")
+          public void testKt66229() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66229.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66243.kt")
+          public void testKt66243() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66243.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66272.kt")
+          public void testKt66272() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66272.kt");
+          }
+
+          @Test
+          @TestMetadata("kt67875.kt")
+          public void testKt67875() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt67875.kt");
+          }
+
+          @Test
+          @TestMetadata("kt67993.kt")
+          public void testKt67993() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt67993.kt");
+          }
+
+          @Test
+          @TestMetadata("kt68889.kt")
+          public void testKt68889() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt68889.kt");
+          }
+
+          @Test
+          @TestMetadata("kt69170.kt")
+          public void testKt69170() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt69170.kt");
+          }
+
+          @Test
+          @TestMetadata("kt69170Original.kt")
+          public void testKt69170Original() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt69170Original.kt");
+          }
+
+          @Test
+          @TestMetadata("namedArgumentTypeSubstitution.kt")
+          public void testNamedArgumentTypeSubstitution() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/namedArgumentTypeSubstitution.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        public class OneParameter {
+          @Test
+          public void testAllFilesPresentInOneParameter() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable")
+          @TestDataPath("$PROJECT_ROOT")
+          public class OneTypeVariable {
+            @Test
+            public void testAllFilesPresentInOneTypeVariable() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
+            @TestDataPath("$PROJECT_ROOT")
+            public class OneTypeInfoOrigin {
+              @Test
+              public void testAllFilesPresentInOneTypeInfoOrigin() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+              }
+
+              @Test
+              @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
+              public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
+                runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+              @TestDataPath("$PROJECT_ROOT")
+              public class SourceSinkFeedContexts {
+                @Test
+                public void testAllFilesPresentInSourceSinkFeedContexts() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+                public void testByAssignmentToALocalVariableMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+                public void testByAssignmentToALocalVariableYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("InsideLocalClass.kt")
+                public void testInsideLocalClass() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
+                }
+
+                @Test
+                @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
+                public void testInsideNestedBuilderInferenceLambda() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
+                }
+
+                @Test
+                @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+                public void testThroughDelegatedLocalVariableMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ThroughGenericFunctionCall.kt")
+                public void testThroughGenericFunctionCall() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TargetTypes {
+                @Test
+                public void testAllFilesPresentInTargetTypes() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("FunctionWithParameterToUnitImplicitLiteralsCase.kt")
+                public void testFunctionWithParameterToUnitImplicitLiteralsCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnitImplicitLiteralsCase.kt");
+                }
+
+                @Test
+                @TestMetadata("FunctionWithReceiverToUnitImplicitLiteralsCase.kt")
+                public void testFunctionWithReceiverToUnitImplicitLiteralsCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnitImplicitLiteralsCase.kt");
+                }
+
+                @Test
+                @TestMetadata("NothingMaterializeCase.kt")
+                public void testNothingMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("NullableNothingNullLiteralMaterializeCase.kt")
+                public void testNullableNothingNullLiteralMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralMaterializeCase.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TypeInfoSinks {
+                @Test
+                public void testAllFilesPresentInTypeInfoSinks() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("ExtensionFunctions.kt")
+                public void testExtensionFunctions() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("ImmutableExtensionProperties.kt")
+                public void testImmutableExtensionProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("ImmutableProperties.kt")
+                public void testImmutableProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
+                public void testMutableExtensionPropertiesMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
+                public void testMutableExtensionPropertiesYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutablePropertiesMaterializeCase.kt")
+                public void testMutablePropertiesMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutablePropertiesYieldCase.kt")
+                public void testMutablePropertiesYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ParametersOfBuilderArguments.kt")
+                public void testParametersOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReceiversOfBuilderArguments.kt")
+                public void testReceiversOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TypeInfoSources {
+                @Test
+                public void testAllFilesPresentInTypeInfoSources() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("ExtensionFunctions.kt")
+                public void testExtensionFunctions() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("ExtensionProperties.kt")
+                public void testExtensionProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("ParametersOfBuilderArguments.kt")
+                public void testParametersOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReceiversOfBuilderArguments.kt")
+                public void testReceiversOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReturnTypesOfBuilderParameters.kt")
+                public void testReturnTypesOfBuilderParameters() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
+                public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
+                }
+
+                @Test
+                @TestMetadata("UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt")
+                public void testUnitReturnTypeOfBuilderParametersLastStatementReturnCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt");
+                }
+              }
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/regresssions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Regresssions {
+          @Test
+          public void testAllFilesPresentInRegresssions() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/regresssions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("exponentialErrorsInCS.kt")
+          public void testExponentialErrorsInCS() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialErrorsInCS.kt");
+          }
+
+          @Test
+          @TestMetadata("exponentialErrorsInCSInitial.kt")
+          public void testExponentialErrorsInCSInitial() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialErrorsInCSInitial.kt");
+          }
+
+          @Test
+          @TestMetadata("exponentialForksInCS.kt")
+          public void testExponentialForksInCS() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialForksInCS.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/stubTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class StubTypes {
+          @Test
+          public void testAllFilesPresentInStubTypes() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/stubTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("capturedTypes.kt")
+          public void testCapturedTypes() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/capturedTypes.kt");
+          }
+
+          @Test
+          @TestMetadata("capturedTypesId.kt")
+          public void testCapturedTypesId() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/capturedTypesId.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperType.kt")
+          public void testCommonSuperType() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperType.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeContravariant.kt")
+          public void testCommonSuperTypeContravariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeContravariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeCovariant.kt")
+          public void testCommonSuperTypeCovariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeCovariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeInvariant.kt")
+          public void testCommonSuperTypeInvariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeInvariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeNullable.kt")
+          public void testCommonSuperTypeNullable() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeNullable.kt");
+          }
+
+          @Test
+          @TestMetadata("intersect.kt")
+          public void testIntersect() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/intersect.kt");
+          }
+
+          @Test
+          @TestMetadata("memberScope.kt")
+          public void testMemberScope() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/memberScope.kt");
+          }
+
+          @Test
+          @TestMetadata("nullability.kt")
+          public void testNullability() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/nullability.kt");
+          }
+
+          @Test
+          @TestMetadata("renderingStubTypes.kt")
+          public void testRenderingStubTypes() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/renderingStubTypes.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleIntersection.kt")
+          public void testSimpleIntersection() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/simpleIntersection.kt");
+          }
+
+          @Test
+          @TestMetadata("stubTypeReceiverRestriction.kt")
+          public void testStubTypeReceiverRestriction() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/stubTypeReceiverRestriction.kt");
+          }
+
+          @Test
+          @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
+          public void testStubTypeReceiverRestrictionDisabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/publicApproximation")
       @TestDataPath("$PROJECT_ROOT")
       public class PublicApproximation {
         @Test
         public void testAllFilesPresentInPublicApproximation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/publicApproximation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/publicApproximation"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20038,7 +20524,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class RecursiveCalls {
         @Test
         public void testAllFilesPresentInRecursiveCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveCalls"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveCalls"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20054,7 +20540,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class RecursiveLocalFuns {
         @Test
         public void testAllFilesPresentInRecursiveLocalFuns() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20088,7 +20574,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class RecursiveTypes {
         @Test
         public void testAllFilesPresentInRecursiveTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20193,7 +20679,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class SelfTypes {
           @Test
           public void testAllFilesPresentInSelfTypes() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Nested
@@ -20202,7 +20688,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class DisabledInferenceOnSelfTypes {
             @Test
             public void testAllFilesPresentInDisabledInferenceOnSelfTypes() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/disabledInferenceOnSelfTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
             }
 
             @Test
@@ -20230,7 +20716,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class EnabledInferenceOnSelfTypes {
             @Test
             public void testAllFilesPresentInEnabledInferenceOnSelfTypes() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveTypes/selfTypes/enabledInferenceOnSelfTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
             }
 
             @Test
@@ -20278,7 +20764,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Regressions {
         @Test
         public void testAllFilesPresentInRegressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/regressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/regressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20726,7 +21212,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ReportingImprovements {
         @Test
         public void testAllFilesPresentInReportingImprovements() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/reportingImprovements"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/reportingImprovements"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20814,7 +21300,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Substitutions {
         @Test
         public void testAllFilesPresentInSubstitutions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/substitutions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/substitutions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20896,7 +21382,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class UpperBounds {
         @Test
         public void testAllFilesPresentInUpperBounds() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/upperBounds"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/upperBounds"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -20973,7 +21459,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Infos {
       @Test
       public void testAllFilesPresentInInfos() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/infos"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/infos"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -20995,7 +21481,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -21257,6 +21743,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("publishedApiSubstitutionOverride.kt")
+      public void testPublishedApiSubstitutionOverride() {
+        runTest("compiler/testData/diagnostics/tests/inline/publishedApiSubstitutionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("recursion.kt")
       public void testRecursion() {
         runTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
@@ -21382,7 +21874,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class BinaryExpressions {
         @Test
         public void testAllFilesPresentInBinaryExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/binaryExpressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/binaryExpressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21440,7 +21932,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NonLocalBreakContinue {
         @Test
         public void testAllFilesPresentInNonLocalBreakContinue() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21510,7 +22002,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NonLocalReturns {
         @Test
         public void testAllFilesPresentInNonLocalReturns() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonLocalReturns"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonLocalReturns"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21628,7 +22120,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NonPublicMember {
         @Test
         public void testAllFilesPresentInNonPublicMember() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonPublicMember"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonPublicMember"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21716,7 +22208,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Property {
         @Test
         public void testAllFilesPresentInProperty() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/property"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/property"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21750,7 +22242,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Regressions {
         @Test
         public void testAllFilesPresentInRegressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/regressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/regressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21766,7 +22258,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class UnaryExpressions {
         @Test
         public void testAllFilesPresentInUnaryExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/unaryExpressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/unaryExpressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -21795,7 +22287,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -21901,6 +22393,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/inlineClasses/kt51366.kt");
+      }
+
+      @Test
       @TestMetadata("lateinitInlineClassesOff.kt")
       public void testLateinitInlineClassesOff() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOff.kt");
@@ -22003,7 +22501,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInInner() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inner"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inner"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -22312,7 +22810,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class QualifiedExpression {
         @Test
         public void testAllFilesPresentInQualifiedExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inner/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inner/qualifiedExpression"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -22383,7 +22881,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class IntegerLiterals {
       @Test
       public void testAllFilesPresentInIntegerLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/integerLiterals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/integerLiterals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -22396,6 +22894,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("constantUnaryOperators.kt")
       public void testConstantUnaryOperators() {
         runTest("compiler/testData/diagnostics/tests/integerLiterals/constantUnaryOperators.kt");
+      }
+
+      @Test
+      @TestMetadata("IltAsExtensionReceiver.kt")
+      public void testIltAsExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/integerLiterals/IltAsExtensionReceiver.kt");
       }
 
       @Test
@@ -22447,7 +22951,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInJ_k() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -22529,6 +23033,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("defaultMethodsIndirectInheritance_before.kt")
+      public void testDefaultMethodsIndirectInheritance_before() {
+        runTest("compiler/testData/diagnostics/tests/j+k/defaultMethodsIndirectInheritance_before.kt");
+      }
+
+      @Test
+      @TestMetadata("defaultMethods_before.kt")
+      public void testDefaultMethods_before() {
+        runTest("compiler/testData/diagnostics/tests/j+k/defaultMethods_before.kt");
+      }
+
+      @Test
       @TestMetadata("differentFilename.kt")
       public void testDifferentFilename() {
         runTest("compiler/testData/diagnostics/tests/j+k/differentFilename.kt");
@@ -22562,6 +23078,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("fieldOverridesNothing.kt")
       public void testFieldOverridesNothing() {
         runTest("compiler/testData/diagnostics/tests/j+k/fieldOverridesNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("fileJvmNameSameAsClass.kt")
+      public void testFileJvmNameSameAsClass() {
+        runTest("compiler/testData/diagnostics/tests/j+k/fileJvmNameSameAsClass.kt");
       }
 
       @Test
@@ -22910,6 +23432,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("orderOfSupertypesAndFakeOverrides_2.kt")
       public void testOrderOfSupertypesAndFakeOverrides_2() {
         runTest("compiler/testData/diagnostics/tests/j+k/orderOfSupertypesAndFakeOverrides_2.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideForMemberExtensionProp.kt")
+      public void testOverrideForMemberExtensionProp() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideForMemberExtensionProp.kt");
       }
 
       @Test
@@ -23308,7 +23836,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class BrokenCode {
         @Test
         public void testAllFilesPresentInBrokenCode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/brokenCode"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/brokenCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23330,7 +23858,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CollectionOverrides {
         @Test
         public void testAllFilesPresentInCollectionOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/collectionOverrides"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/collectionOverrides"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23448,6 +23976,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("overrideAnClashWithJvmSignatureInMPP.kt")
+        public void testOverrideAnClashWithJvmSignatureInMPP() {
+          runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/overrideAnClashWithJvmSignatureInMPP.kt");
+        }
+
+        @Test
         @TestMetadata("removeAt.kt")
         public void testRemoveAt() {
           runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAt.kt");
@@ -23472,7 +24006,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Deprecations {
         @Test
         public void testAllFilesPresentInDeprecations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/deprecations"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/deprecations"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23512,7 +24046,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class GenericConstructor {
         @Test
         public void testAllFilesPresentInGenericConstructor() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/genericConstructor"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/genericConstructor"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23576,7 +24110,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class PolymorphicSignature {
         @Test
         public void testAllFilesPresentInPolymorphicSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/polymorphicSignature"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/polymorphicSignature"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23598,7 +24132,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class PrimitiveOverrides {
         @Test
         public void testAllFilesPresentInPrimitiveOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverrides"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverrides"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23680,7 +24214,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class PrimitiveOverridesWithInlineClass {
         @Test
         public void testAllFilesPresentInPrimitiveOverridesWithInlineClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverridesWithInlineClass"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverridesWithInlineClass"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23696,7 +24230,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Properties {
         @Test
         public void testAllFilesPresentInProperties() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/properties"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/properties"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23838,7 +24372,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23896,6 +24430,30 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("lambdaParameterRemainFlexible.kt")
+        public void testLambdaParameterRemainFlexible() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexible.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleRegularConstructor.kt")
+        public void testLambdaParameterRemainFlexibleRegularConstructor() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleRegularConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation.kt")
+        public void testLambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleWithDnnRepresentation.kt")
+        public void testLambdaParameterRemainFlexibleWithDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleWithDnnRepresentation.kt");
+        }
+
+        @Test
         @TestMetadata("privateCandidatesWithWrongArguments.kt")
         public void testPrivateCandidatesWithWrongArguments() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/privateCandidatesWithWrongArguments.kt");
@@ -23950,7 +24508,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SamByProjectedType {
         @Test
         public void testAllFilesPresentInSamByProjectedType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/samByProjectedType"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/samByProjectedType"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -23996,7 +24554,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SignatureAnnotations {
         @Test
         public void testAllFilesPresentInSignatureAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/signatureAnnotations"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/signatureAnnotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24018,7 +24576,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SpecialBuiltIns {
         @Test
         public void testAllFilesPresentInSpecialBuiltIns() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/specialBuiltIns"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/specialBuiltIns"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24046,7 +24604,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/types"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/types"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24219,7 +24777,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInJava8Overrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/java8Overrides"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/java8Overrides"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24283,7 +24841,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Javac {
       @Test
       public void testAllFilesPresentInJavac() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24316,7 +24874,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class FieldsResolution {
         @Test
         public void testAllFilesPresentInFieldsResolution() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/fieldsResolution"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/fieldsResolution"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24398,7 +24956,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Imports {
         @Test
         public void testAllFilesPresentInImports() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/imports"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/imports"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24510,7 +25068,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inheritance {
         @Test
         public void testAllFilesPresentInInheritance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inheritance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inheritance"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24622,7 +25180,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inners {
         @Test
         public void testAllFilesPresentInInners() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inners"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inners"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24674,7 +25232,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class QualifiedExpression {
         @Test
         public void testAllFilesPresentInQualifiedExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/qualifiedExpression"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24714,7 +25272,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TypeParameters {
         @Test
         public void testAllFilesPresentInTypeParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/typeParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/typeParameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24767,7 +25325,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Labels {
       @Test
       public void testAllFilesPresentInLabels() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/labels"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/labels"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24859,6 +25417,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public void testQualifiedThisInExtensionProperty() {
         runTest("compiler/testData/diagnostics/tests/labels/qualifiedThisInExtensionProperty.kt");
       }
+
+      @Test
+      @TestMetadata("unknownLabel.kt")
+      public void testUnknownLabel() {
+        runTest("compiler/testData/diagnostics/tests/labels/unknownLabel.kt");
+      }
     }
 
     @Nested
@@ -24867,7 +25431,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Lateinit {
       @Test
       public void testAllFilesPresentInLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/lateinit"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/lateinit"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24894,7 +25458,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/lateinit/local"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/lateinit/local"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -24923,7 +25487,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Library {
       @Test
       public void testAllFilesPresentInLibrary() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/library"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/library"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24945,7 +25509,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/localClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/localClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -24962,12 +25526,28 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/metadata")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Metadata {
+      @Test
+      public void testAllFilesPresentInMetadata() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/metadata"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveExpectBoolean.kt")
+      public void testExhaustiveExpectBoolean() {
+        runTest("compiler/testData/diagnostics/tests/metadata/exhaustiveExpectBoolean.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/modifiers")
     @TestDataPath("$PROJECT_ROOT")
     public class Modifiers {
       @Test
       public void testAllFilesPresentInModifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -25037,6 +25617,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("OpenInterface2.kt")
+      public void testOpenInterface2() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/OpenInterface2.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructorMissingBrackets.kt")
       public void testPrimaryConstructorMissingBrackets() {
         runTest("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingBrackets.kt");
@@ -25096,7 +25682,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Const {
         @Test
         public void testAllFilesPresentInConst() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/const"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/const"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25334,7 +25920,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class OperatorInfix {
         @Test
         public void testAllFilesPresentInOperatorInfix() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operatorInfix"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operatorInfix"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25363,7 +25949,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Multimodule {
       @Test
       public void testAllFilesPresentInMultimodule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -25463,6 +26049,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("SupertypesWithInaccessibleTypeArguments.kt")
+      public void testSupertypesWithInaccessibleTypeArguments() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/SupertypesWithInaccessibleTypeArguments.kt");
+      }
+
+      @Test
       @TestMetadata("varargConflict.kt")
       public void testVarargConflict() {
         runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
@@ -25474,7 +26066,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DuplicateClass {
         @Test
         public void testAllFilesPresentInDuplicateClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateClass"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateClass"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25562,7 +26154,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DuplicateMethod {
         @Test
         public void testAllFilesPresentInDuplicateMethod() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateMethod"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateMethod"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25722,7 +26314,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DuplicateSuper {
         @Test
         public void testAllFilesPresentInDuplicateSuper() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateSuper"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/duplicateSuper"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25756,7 +26348,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class HiddenClass {
         @Test
         public void testAllFilesPresentInHiddenClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/hiddenClass"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule/hiddenClass"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25791,7 +26383,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class NamedArguments {
       @Test
       public void testAllFilesPresentInNamedArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/namedArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/namedArguments"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -25890,7 +26482,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class MixedNamedPosition {
         @Test
         public void testAllFilesPresentInMixedNamedPosition() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -25949,7 +26541,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class NullabilityAndSmartCasts {
       @Test
       public void testAllFilesPresentInNullabilityAndSmartCasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/nullabilityAndSmartCasts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26193,7 +26785,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class NullableTypes {
       @Test
       public void testAllFilesPresentInNullableTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/nullableTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/nullableTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26329,7 +26921,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Numbers {
       @Test
       public void testAllFilesPresentInNumbers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/numbers"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/numbers"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26423,7 +27015,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Objects {
       @Test
       public void testAllFilesPresentInObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/objects"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/objects"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26516,7 +27108,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Kt21515 {
         @Test
         public void testAllFilesPresentInKt21515() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/objects/kt21515"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/objects/kt21515"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -26677,7 +27269,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class OperatorRem {
       @Test
       public void testAllFilesPresentInOperatorRem() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorRem"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorRem"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26795,7 +27387,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class OperatorsOverloading {
       @Test
       public void testAllFilesPresentInOperatorsOverloading() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorsOverloading"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorsOverloading"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -26978,7 +27570,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Until {
         @Test
         public void testAllFilesPresentInUntil() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorsOverloading/until"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/operatorsOverloading/until"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -27013,7 +27605,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Overload {
       @Test
       public void testAllFilesPresentInOverload() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/overload"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/overload"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -27185,6 +27777,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("OverloadingByTypeParameterNullability.kt")
+      public void testOverloadingByTypeParameterNullability() {
+        runTest("compiler/testData/diagnostics/tests/overload/OverloadingByTypeParameterNullability.kt");
+      }
+
+      @Test
       @TestMetadata("overloadsFromCurrentAndSuperClass.kt")
       public void testOverloadsFromCurrentAndSuperClass() {
         runTest("compiler/testData/diagnostics/tests/overload/overloadsFromCurrentAndSuperClass.kt");
@@ -27226,7 +27824,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NoConflictingOverloadsWithDeprecatedHidden {
         @Test
         public void testAllFilesPresentInNoConflictingOverloadsWithDeprecatedHidden() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/overload/noConflictingOverloadsWithDeprecatedHidden"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -27387,7 +27985,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -27733,6 +28331,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("nothingToOverrideMessage.kt")
+      public void testNothingToOverrideMessage() {
+        runTest("compiler/testData/diagnostics/tests/override/nothingToOverrideMessage.kt");
+      }
+
+      @Test
       @TestMetadata("ObjectDelegationManyImpl.kt")
       public void testObjectDelegationManyImpl() {
         runTest("compiler/testData/diagnostics/tests/override/ObjectDelegationManyImpl.kt");
@@ -27810,7 +28414,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ClashesOnInheritance {
         @Test
         public void testAllFilesPresentInClashesOnInheritance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/clashesOnInheritance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/clashesOnInheritance"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -27934,7 +28538,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DerivedClasses {
         @Test
         public void testAllFilesPresentInDerivedClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/derivedClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/derivedClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -27980,7 +28584,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ParameterNames {
         @Test
         public void testAllFilesPresentInParameterNames() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/parameterNames"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/parameterNames"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28044,7 +28648,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TypeParameters {
         @Test
         public void testAllFilesPresentInTypeParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/typeParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/override/typeParameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28079,7 +28683,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ParenthesizedTypes {
       @Test
       public void testAllFilesPresentInParenthesizedTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/parenthesizedTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/parenthesizedTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -28107,7 +28711,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class PlatformTypes {
       @Test
       public void testAllFilesPresentInPlatformTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -28254,7 +28858,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CommonSupertype {
         @Test
         public void testAllFilesPresentInCommonSupertype() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/commonSupertype"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/commonSupertype"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28312,7 +28916,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class GenericVarianceViolation {
         @Test
         public void testAllFilesPresentInGenericVarianceViolation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28400,7 +29004,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class MethodCall {
         @Test
         public void testAllFilesPresentInMethodCall() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/methodCall"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/methodCall"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28536,7 +29140,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NotNullTypeParameter {
         @Test
         public void testAllFilesPresentInNotNullTypeParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28594,7 +29198,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NullabilityWarnings {
         @Test
         public void testAllFilesPresentInNullabilityWarnings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -28790,7 +29394,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class RawTypes {
         @Test
         public void testAllFilesPresentInRawTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/rawTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/rawTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29004,7 +29608,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TypeEnhancement {
         @Test
         public void testAllFilesPresentInTypeEnhancement() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29045,7 +29649,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class PrivateInFile {
       @Test
       public void testAllFilesPresentInPrivateInFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/privateInFile"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/privateInFile"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29079,7 +29683,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29160,7 +29764,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/backingField"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/backingField"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29176,7 +29780,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class InferenceFromGetters {
         @Test
         public void testAllFilesPresentInInferenceFromGetters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/inferenceFromGetters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/inferenceFromGetters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29252,7 +29856,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JavaFieldAndKotlinProperty {
         @Test
         public void testAllFilesPresentInJavaFieldAndKotlinProperty() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/javaFieldAndKotlinProperty"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/properties/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29341,7 +29945,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class QualifiedExpression {
       @Test
       public void testAllFilesPresentInQualifiedExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/qualifiedExpression"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29411,7 +30015,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class RawTypes {
       @Test
       public void testAllFilesPresentInRawTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/rawTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/rawTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29445,7 +30049,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInReassignment() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/reassignment"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/reassignment"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29509,7 +30113,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInRecovery() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/recovery"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/recovery"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29543,7 +30147,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Redeclarations {
       @Test
       public void testAllFilesPresentInRedeclarations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/redeclarations"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/redeclarations"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29697,6 +30301,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("RedeclarationMainInOtherFile.kt")
+      public void testRedeclarationMainInOtherFile() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInOtherFile.kt");
+      }
+
+      @Test
       @TestMetadata("RedeclarationOfMain.kt")
       public void testRedeclarationOfMain() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationOfMain.kt");
@@ -29786,7 +30396,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ShadowedExtension {
         @Test
         public void testAllFilesPresentInShadowedExtension() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -29881,7 +30491,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Regressions {
       @Test
       public void testAllFilesPresentInRegressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/regressions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/regressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -29906,6 +30516,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("correctResultSubstitutorForErrorCandidate.kt")
       public void testCorrectResultSubstitutorForErrorCandidate() {
         runTest("compiler/testData/diagnostics/tests/regressions/correctResultSubstitutorForErrorCandidate.kt");
+      }
+
+      @Test
+      @TestMetadata("crashWithStarProjection.kt")
+      public void testCrashWithStarProjection() {
+        runTest("compiler/testData/diagnostics/tests/regressions/crashWithStarProjection.kt");
       }
 
       @Test
@@ -29972,6 +30588,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
       public void testErrorsOnIbjectExpressionsAsParameters() {
         runTest("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("functionTypeFromTypeParameterType.kt")
+      public void testFunctionTypeFromTypeParameterType() {
+        runTest("compiler/testData/diagnostics/tests/regressions/functionTypeFromTypeParameterType.kt");
       }
 
       @Test
@@ -30856,7 +31478,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Kt7585 {
         @Test
         public void testAllFilesPresentInKt7585() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/regressions/kt7585"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/regressions/kt7585"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -30891,7 +31513,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInResolve() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -30916,6 +31538,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("callToProtectedOnSmartcast.kt")
       public void testCallToProtectedOnSmartcast() {
         runTest("compiler/testData/diagnostics/tests/resolve/callToProtectedOnSmartcast.kt");
+      }
+
+      @Test
+      @TestMetadata("callableReferenceAgainstTypeVariable.kt")
+      public void testCallableReferenceAgainstTypeVariable() {
+        runTest("compiler/testData/diagnostics/tests/resolve/callableReferenceAgainstTypeVariable.kt");
       }
 
       @Test
@@ -31188,7 +31816,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class DslMarker {
         @Test
         public void testAllFilesPresentInDslMarker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/dslMarker"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/dslMarker"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31366,7 +31994,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31585,7 +32213,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Errors {
           @Test
           public void testAllFilesPresentInErrors() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke/errors"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke/errors"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -31644,7 +32272,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NestedCalls {
         @Test
         public void testAllFilesPresentInNestedCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/nestedCalls"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/nestedCalls"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31708,7 +32336,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NoCandidates {
         @Test
         public void testAllFilesPresentInNoCandidates() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/noCandidates"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/noCandidates"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31736,7 +32364,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class OverloadConflicts {
         @Test
         public void testAllFilesPresentInOverloadConflicts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/overloadConflicts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/overloadConflicts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31884,7 +32512,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Priority {
         @Test
         public void testAllFilesPresentInPriority() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/priority"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/priority"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -31984,7 +32612,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SpecialConstructions {
         @Test
         public void testAllFilesPresentInSpecialConstructions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/specialConstructions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/specialConstructions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -32031,7 +32659,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SafeCalls {
       @Test
       public void testAllFilesPresentInSafeCalls() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/safeCalls"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/safeCalls"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -32053,7 +32681,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SamConversions {
       @Test
       public void testAllFilesPresentInSamConversions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/samConversions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/samConversions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -32183,6 +32811,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("samConversionToGenericWrongNullabilityForbidden.kt")
+      public void testSamConversionToGenericWrongNullabilityForbidden() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityForbidden.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithCallableReference.kt")
       public void testSamConversionWithCallableReference() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReference.kt");
@@ -32297,7 +32931,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Scopes {
       @Test
       public void testAllFilesPresentInScopes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -32552,7 +33186,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ClassHeader {
         @Test
         public void testAllFilesPresentInClassHeader() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/classHeader"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/classHeader"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -32646,7 +33280,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inheritance {
         @Test
         public void testAllFilesPresentInInheritance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -32739,7 +33373,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Statics {
           @Test
           public void testAllFilesPresentInStatics() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
           }
 
           @Test
@@ -32874,7 +33508,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
             @Test
             public void testAllFilesPresentInCompanionObject() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
             }
 
             @Test
@@ -32922,7 +33556,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ProtectedVisibility {
         @Test
         public void testAllFilesPresentInProtectedVisibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/protectedVisibility"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/protectedVisibility"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -33040,7 +33674,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class VariantProjections {
         @Test
         public void testAllFilesPresentInVariantProjections() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/variantProjections"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/variantProjections"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -33081,7 +33715,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInScript() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/script"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -33217,7 +33851,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Sealed {
       @Test
       public void testAllFilesPresentInSealed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -33526,7 +34160,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Interfaces {
         @Test
         public void testAllFilesPresentInInterfaces() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed/interfaces"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed/interfaces"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -33561,7 +34195,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SecondaryConstructors {
       @Test
       public void testAllFilesPresentInSecondaryConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -33858,7 +34492,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInHeaderCallChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -33959,7 +34593,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SenselessComparison {
       @Test
       public void testAllFilesPresentInSenselessComparison() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/senselessComparison"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/senselessComparison"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -33987,7 +34621,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Shadowing {
       @Test
       public void testAllFilesPresentInShadowing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/shadowing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/shadowing"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -34075,7 +34709,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInSmartCasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -34091,9 +34725,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("annotations.kt")
+      public void testAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/annotations.kt");
+      }
+
+      @Test
       @TestMetadata("binaryOperatorsWithJumps.kt")
       public void testBinaryOperatorsWithJumps() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/binaryOperatorsWithJumps.kt");
+      }
+
+      @Test
+      @TestMetadata("binaryOperatorsWithJumps_before.kt")
+      public void testBinaryOperatorsWithJumps_before() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/binaryOperatorsWithJumps_before.kt");
       }
 
       @Test
@@ -34517,6 +35163,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt68970.kt")
+      public void testKt68970() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/kt68970.kt");
+      }
+
+      @Test
       @TestMetadata("kt7561.kt")
       public void testKt7561() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/kt7561.kt");
@@ -34727,6 +35379,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("qualifiedObjectAfterSmartCast.kt")
+      public void testQualifiedObjectAfterSmartCast() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/qualifiedObjectAfterSmartCast.kt");
+      }
+
+      @Test
       @TestMetadata("safeAs.kt")
       public void testSafeAs() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/safeAs.kt");
@@ -34799,9 +35457,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("smartCastWithAndTrue.kt")
+      public void testSmartCastWithAndTrue() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithAndTrue.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastWithOrFalse.kt")
       public void testSmartCastWithOrFalse() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithOrFalse.kt");
+      }
+
+      @Test
+      @TestMetadata("smartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions.kt")
+      public void testSmartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions.kt");
       }
 
       @Test
@@ -34856,6 +35526,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("smartcastWithComplexFlexibleType.kt")
       public void testSmartcastWithComplexFlexibleType() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastWithComplexFlexibleType.kt");
+      }
+
+      @Test
+      @TestMetadata("stabilityOnReceiverWithDifferentModality.kt")
+      public void testStabilityOnReceiverWithDifferentModality() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/stabilityOnReceiverWithDifferentModality.kt");
       }
 
       @Test
@@ -34979,6 +35655,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("varOnFinalReceiver.kt")
+      public void testVarOnFinalReceiver() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/varOnFinalReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("variableRedeclaration.kt")
       public void testVariableRedeclaration() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/variableRedeclaration.kt");
@@ -35014,7 +35696,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Castchecks {
         @Test
         public void testAllFilesPresentInCastchecks() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/castchecks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/castchecks"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35078,19 +35760,13 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Elvis {
         @Test
         public void testAllFilesPresentInElvis() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/elvis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/elvis"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
         @TestMetadata("basicOff.kt")
         public void testBasicOff() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/elvis/basicOff.kt");
-        }
-
-        @Test
-        @TestMetadata("basicOn.kt")
-        public void testBasicOn() {
-          runTest("compiler/testData/diagnostics/tests/smartCasts/elvis/basicOn.kt");
         }
 
         @Test
@@ -35112,7 +35788,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/inference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/inference"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35230,7 +35906,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class IntersectionScope {
         @Test
         public void testAllFilesPresentInIntersectionScope() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/intersectionScope"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/intersectionScope"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35336,7 +36012,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class LambdasWithContracts {
         @Test
         public void testAllFilesPresentInLambdasWithContracts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/lambdasWithContracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35394,7 +36070,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Loops {
         @Test
         public void testAllFilesPresentInLoops() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/loops"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/loops"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35746,7 +36422,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ObjectLiterals {
         @Test
         public void testAllFilesPresentInObjectLiterals() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/objectLiterals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/objectLiterals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35810,7 +36486,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInPublicVals() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/publicVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/publicVals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -35892,7 +36568,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Safecalls {
         @Test
         public void testAllFilesPresentInSafecalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/safecalls"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/safecalls"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -36094,7 +36770,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/variables"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/variables"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -36107,6 +36783,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("assignmentConversion.kt")
         public void testAssignmentConversion() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/assignmentConversion.kt");
+        }
+
+        @Test
+        @TestMetadata("branchesBeforeAssignment.kt")
+        public void testBranchesBeforeAssignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/branchesBeforeAssignment.kt");
         }
 
         @Test
@@ -36284,6 +36966,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("reassignment.kt")
+        public void testReassignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignment.kt");
+        }
+
+        @Test
         @TestMetadata("staticJavaFieldFromOtherModule.kt")
         public void testStaticJavaFieldFromOtherModule() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/staticJavaFieldFromOtherModule.kt");
@@ -36338,7 +37026,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Varnotnull {
         @Test
         public void testAllFilesPresentInVarnotnull() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/varnotnull"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/varnotnull"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -36375,6 +37063,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         @TestMetadata("capturedInlineModifiedBefore.kt")
         public void testCapturedInlineModifiedBefore() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/capturedInlineModifiedBefore.kt");
+        }
+
+        @Test
+        @TestMetadata("classDelegationDeprecated.kt")
+        public void testClassDelegationDeprecated() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegationDeprecated.kt");
+        }
+
+        @Test
+        @TestMetadata("classDelegationError.kt")
+        public void testClassDelegationError() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/varnotnull/classDelegationError.kt");
         }
 
         @Test
@@ -36667,7 +37367,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SourceCompatibility {
       @Test
       public void testAllFilesPresentInSourceCompatibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -36688,7 +37388,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ApiVersion {
         @Test
         public void testAllFilesPresentInApiVersion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sourceCompatibility/apiVersion"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -36765,7 +37465,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Substitutions {
       @Test
       public void testAllFilesPresentInSubstitutions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/substitutions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/substitutions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -36805,7 +37505,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Subtyping {
       @Test
       public void testAllFilesPresentInSubtyping() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/subtyping"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/subtyping"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -36953,7 +37653,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Suppress {
       @Test
       public void testAllFilesPresentInSuppress() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Nested
@@ -36962,7 +37662,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AllWarnings {
         @Test
         public void testAllFilesPresentInAllWarnings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/allWarnings"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/allWarnings"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37032,7 +37732,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ManyWarnings {
         @Test
         public void testAllFilesPresentInManyWarnings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/manyWarnings"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/manyWarnings"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37096,7 +37796,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class OneWarning {
         @Test
         public void testAllFilesPresentInOneWarning() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/oneWarning"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/oneWarning"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37191,7 +37891,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SuspendConversion {
       @Test
       public void testAllFilesPresentInSuspendConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suspendConversion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/suspendConversion"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37216,6 +37916,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("chainedFunSuspendConversionForSimpleExpression.kt")
       public void testChainedFunSuspendConversionForSimpleExpression() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/chainedFunSuspendConversionForSimpleExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("conversionInLastStatementOfWhenBranch.kt")
+      public void testConversionInLastStatementOfWhenBranch() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/conversionInLastStatementOfWhenBranch.kt");
       }
 
       @Test
@@ -37327,7 +38033,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Syntax {
       @Test
       public void testAllFilesPresentInSyntax() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntax"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37347,6 +38053,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public void testIncorrectLTGTFallback() {
         runTest("compiler/testData/diagnostics/tests/syntax/incorrectLTGTFallback.kt");
       }
+
+      @Test
+      @TestMetadata("legacyHeaderAndImplKeywordsInEnumDefinition.kt")
+      public void testLegacyHeaderAndImplKeywordsInEnumDefinition() {
+        runTest("compiler/testData/diagnostics/tests/syntax/legacyHeaderAndImplKeywordsInEnumDefinition.kt");
+      }
     }
 
     @Nested
@@ -37355,7 +38067,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class SyntheticExtensions {
       @Test
       public void testAllFilesPresentInSyntheticExtensions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Nested
@@ -37370,7 +38082,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInJavaProperties() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37572,7 +38284,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SamAdapters {
         @Test
         public void testAllFilesPresentInSamAdapters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37673,7 +38385,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TargetedBuiltIns {
       @Test
       public void testAllFilesPresentInTargetedBuiltIns() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/targetedBuiltIns"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/targetedBuiltIns"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37730,7 +38442,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class BackwardCompatibility {
         @Test
         public void testAllFilesPresentInBackwardCompatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/targetedBuiltIns/backwardCompatibility"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/targetedBuiltIns/backwardCompatibility"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -37783,7 +38495,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TestWithModifiedMockJdk {
       @Test
       public void testAllFilesPresentInTestWithModifiedMockJdk() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testWithModifiedMockJdk"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testWithModifiedMockJdk"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37817,7 +38529,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TestsWithExplicitApi {
       @Test
       public void testAllFilesPresentInTestsWithExplicitApi() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitApi"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitApi"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37905,7 +38617,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TestsWithExplicitReturnTypes {
       @Test
       public void testAllFilesPresentInTestsWithExplicitReturnTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37957,7 +38669,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TestsWithJava17 {
       @Test
       public void testAllFilesPresentInTestsWithJava17() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -37972,7 +38684,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmRecord {
         @Test
         public void testAllFilesPresentInJvmRecord() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -38054,7 +38766,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SealedClasses {
         @Test
         public void testAllFilesPresentInSealedClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17/sealedClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava17/sealedClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -38095,7 +38807,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TestsWithJava21 {
       @Test
       public void testAllFilesPresentInTestsWithJava21() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava21"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava21"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -38141,9 +38853,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("newListMethodsImmutable.kt")
-      public void testNewListMethodsImmutable() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable.kt");
+      @TestMetadata("newListMethodsImmutable20.kt")
+      public void testNewListMethodsImmutable20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable20.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsImmutable21.kt")
+      public void testNewListMethodsImmutable21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsImmutable22.kt")
+      public void testNewListMethodsImmutable22() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable22.kt");
       }
 
       @Test
@@ -38243,7 +38967,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInThisAndSuper() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -38286,6 +39010,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("QualifiedThis.kt")
       public void testQualifiedThis() {
         runTest("compiler/testData/diagnostics/tests/thisAndSuper/QualifiedThis.kt");
+      }
+
+      @Test
+      @TestMetadata("QualifiedThisAsExtensionCallableExpressionBody.kt")
+      public void testQualifiedThisAsExtensionCallableExpressionBody() {
+        runTest("compiler/testData/diagnostics/tests/thisAndSuper/QualifiedThisAsExtensionCallableExpressionBody.kt");
       }
 
       @Test
@@ -38354,7 +39084,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class UnqualifiedSuper {
         @Test
         public void testAllFilesPresentInUnqualifiedSuper() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -38443,7 +39173,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TraitWithRequired {
       @Test
       public void testAllFilesPresentInTraitWithRequired() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/traitWithRequired"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/traitWithRequired"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -38465,7 +39195,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typeParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -38697,7 +39427,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInTypealias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/typealias"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -38779,9 +39509,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("expansionWithinElvis.kt")
+      public void testExpansionWithinElvis() {
+        runTest("compiler/testData/diagnostics/tests/typealias/expansionWithinElvis.kt");
+      }
+
+      @Test
       @TestMetadata("exposedExpandedType.kt")
       public void testExposedExpandedType() {
         runTest("compiler/testData/diagnostics/tests/typealias/exposedExpandedType.kt");
+      }
+
+      @Test
+      @TestMetadata("flexibleTypeExpansion.kt")
+      public void testFlexibleTypeExpansion() {
+        runTest("compiler/testData/diagnostics/tests/typealias/flexibleTypeExpansion.kt");
       }
 
       @Test
@@ -39004,6 +39746,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("kt67628.kt")
       public void testKt67628() {
         runTest("compiler/testData/diagnostics/tests/typealias/kt67628.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69227.kt")
+      public void testKt69227() {
+        runTest("compiler/testData/diagnostics/tests/typealias/kt69227.kt");
       }
 
       @Test
@@ -39379,7 +40127,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class UnderscoresInNumericLiterals {
       @Test
       public void testAllFilesPresentInUnderscoresInNumericLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/underscoresInNumericLiterals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/underscoresInNumericLiterals"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -39395,7 +40143,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Unit {
       @Test
       public void testAllFilesPresentInUnit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unit"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unit"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -39411,7 +40159,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class UnitConversion {
       @Test
       public void testAllFilesPresentInUnitConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unitConversion"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unitConversion"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -39487,7 +40235,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class UnsignedTypes {
       @Test
       public void testAllFilesPresentInUnsignedTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -39580,7 +40328,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Conversions {
         @Test
         public void testAllFilesPresentInConversions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes/conversions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes/conversions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -39633,7 +40381,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ValueClasses {
       @Test
       public void testAllFilesPresentInValueClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/valueClasses"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/valueClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -39694,6 +40442,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("jvmInlineApplicability.kt")
       public void testJvmInlineApplicability() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/jvmInlineApplicability.kt");
+      }
+
+      @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/valueClasses/kt51366.kt");
       }
 
       @Test
@@ -39817,7 +40571,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Varargs {
       @Test
       public void testAllFilesPresentInVarargs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/varargs"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/varargs"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -40049,7 +40803,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Variance {
       @Test
       public void testAllFilesPresentInVariance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/variance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/variance"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -40136,7 +40890,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
         @Test
         public void testAllFilesPresentInPrivateToThis() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/variance/privateToThis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/variance/privateToThis"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -40189,7 +40943,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -40343,6 +41097,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("privateSealedNested.kt")
+      public void testPrivateSealedNested() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateSealedNested.kt");
+      }
+
+      @Test
       @TestMetadata("privateToThis.kt")
       public void testPrivateToThis() {
         runTest("compiler/testData/diagnostics/tests/visibility/privateToThis.kt");
@@ -40409,7 +41169,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class WarningsForBreakingChanges {
       @Test
       public void testAllFilesPresentInWarningsForBreakingChanges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/warningsForBreakingChanges"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/warningsForBreakingChanges"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Nested
@@ -40418,7 +41178,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CapturedTypes {
         @Test
         public void testAllFilesPresentInCapturedTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/warningsForBreakingChanges/capturedTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/warningsForBreakingChanges/capturedTypes"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -40447,7 +41207,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
 
       @Test
@@ -40604,6 +41364,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("ExhaustiveNullable.kt")
       public void testExhaustiveNullable() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveNullableSelfType.kt")
+      public void testExhaustiveNullableSelfType() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveNullableSelfType.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveOnTypeParameterWithSealedUpperBound.kt")
+      public void testExhaustiveOnTypeParameterWithSealedUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedUpperBound.kt");
       }
 
       @Test
@@ -40919,6 +41691,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("nullableSubjectWithIsCheck.kt")
+      public void testNullableSubjectWithIsCheck() {
+        runTest("compiler/testData/diagnostics/tests/when/nullableSubjectWithIsCheck.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyNotInitialized.kt")
       public void testPropertyNotInitialized() {
         runTest("compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt");
@@ -41002,7 +41780,91 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Guard {
         @Test
         public void testAllFilesPresentInGuard() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/guard"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/guard"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("diverseBooleanExpression.kt")
+        public void testDiverseBooleanExpression() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/diverseBooleanExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("earlyJumps.kt")
+        public void testEarlyJumps() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/earlyJumps.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisOperator.kt")
+        public void testElvisOperator() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/elvisOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveness.kt")
+        public void testExhaustiveness() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/exhaustiveness.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedTypeInGuard.kt")
+        public void testExpectedTypeInGuard() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/expectedTypeInGuard.kt");
+        }
+
+        @Test
+        @TestMetadata("guardWithNoSubject.kt")
+        public void testGuardWithNoSubject() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/guardWithNoSubject.kt");
+        }
+
+        @Test
+        @TestMetadata("ifElseExpressions.kt")
+        public void testIfElseExpressions() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/ifElseExpressions.kt");
+        }
+
+        @Test
+        @TestMetadata("initializationAnalyses.kt")
+        public void testInitializationAnalyses() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/initializationAnalyses.kt");
+        }
+
+        @Test
+        @TestMetadata("lambda.kt")
+        public void testLambda() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/lambda.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleCondition.kt")
+        public void testMultipleCondition() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/multipleCondition.kt");
+        }
+
+        @Test
+        @TestMetadata("returnAnalysis.kt")
+        public void testReturnAnalysis() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/returnAnalysis.kt");
+        }
+
+        @Test
+        @TestMetadata("smartCasts.kt")
+        public void testSmartCasts() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/smartCasts.kt");
+        }
+
+        @Test
+        @TestMetadata("thisInSubject.kt")
+        public void testThisInSubject() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/thisInSubject.kt");
+        }
+
+        @Test
+        @TestMetadata("typeCheckerBehaves.kt")
+        public void testTypeCheckerBehaves() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/typeCheckerBehaves.kt");
         }
 
         @Test
@@ -41022,6 +41884,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public void testWhenWithGuardSyntax() {
           runTest("compiler/testData/diagnostics/tests/when/guard/whenWithGuardSyntax.kt");
         }
+
+        @Test
+        @TestMetadata("whenWithNamedSubject.kt")
+        public void testWhenWithNamedSubject() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/whenWithNamedSubject.kt");
+        }
+
+        @Test
+        @TestMetadata("whenWithSealed.kt")
+        public void testWhenWithSealed() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/whenWithSealed.kt");
+        }
       }
 
       @Nested
@@ -41030,7 +41904,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class WithSubjectVariable {
         @Test
         public void testAllFilesPresentInWithSubjectVariable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
@@ -41150,7 +42024,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
     @Test
     public void testAllFilesPresentInTestsWithStdLib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -41447,7 +42321,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -41570,7 +42444,19 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationApplicability {
         @Test
         public void testAllFilesPresentInAnnotationApplicability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("annotationPropertyGettersDisabled.kt")
+        public void testAnnotationPropertyGettersDisabled() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationPropertyGettersDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationPropertyGettersEnabled.kt")
+        public void testAnnotationPropertyGettersEnabled() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationPropertyGettersEnabled.kt");
         }
 
         @Test
@@ -41628,7 +42514,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationParameterMustBeConstant {
         @Test
         public void testAllFilesPresentInAnnotationParameterMustBeConstant() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41662,7 +42548,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationParameters {
         @Test
         public void testAllFilesPresentInAnnotationParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41720,7 +42606,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationWithVarargParameter {
         @Test
         public void testAllFilesPresentInAnnotationWithVarargParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationWithVarargParameter"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41742,7 +42628,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JavaAnnotationsWithKClassParameter {
         @Test
         public void testAllFilesPresentInJavaAnnotationsWithKClassParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/javaAnnotationsWithKClassParameter"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/javaAnnotationsWithKClassParameter"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41824,7 +42710,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmDefault {
         @Test
         public void testAllFilesPresentInJvmDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41851,7 +42737,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class AllCompatibility {
           @Test
           public void testAllFilesPresentInAllCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -41867,7 +42753,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class JvmDefaultWithCompatibility {
           @Test
           public void testAllFilesPresentInJvmDefaultWithCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -41889,7 +42775,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class JvmDefaultWithoutCompatibility {
           @Test
           public void testAllFilesPresentInJvmDefaultWithoutCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithoutCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithoutCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -41912,7 +42798,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmField {
         @Test
         public void testAllFilesPresentInJvmField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41952,7 +42838,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmOverloads {
         @Test
         public void testAllFilesPresentInJvmOverloads() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -41998,7 +42884,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmPackageName {
         @Test
         public void testAllFilesPresentInJvmPackageName() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42014,7 +42900,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmSpecialFunctions {
         @Test
         public void testAllFilesPresentInJvmSpecialFunctions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmSpecialFunctions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42030,7 +42916,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class JvmStatic {
         @Test
         public void testAllFilesPresentInJvmStatic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42130,7 +43016,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class KClass {
         @Test
         public void testAllFilesPresentInKClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42182,7 +43068,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class ProhibitPositionedArgument {
         @Test
         public void testAllFilesPresentInProhibitPositionedArgument() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42222,7 +43108,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SubclassOptInRequired {
         @Test
         public void testAllFilesPresentInSubclassOptInRequired() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/subclassOptInRequired"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42341,7 +43227,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Assert {
       @Test
       public void testAllFilesPresentInAssert() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/assert"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/assert"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -42358,172 +43244,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
-      @Test
-      public void testAllFilesPresentInBuilderInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builderInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("buildListRemoveAddInBranches.kt")
-      public void testBuildListRemoveAddInBranches() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListRemoveAddInBranches.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBound.kt")
-      public void testBuildListToUpperBound() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBound.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundForbidden.kt")
-      public void testBuildListToUpperBoundForbidden() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundForbidden.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundInLazy.kt")
-      public void testBuildListToUpperBoundInLazy() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazy.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundInLazyForbidden.kt")
-      public void testBuildListToUpperBoundInLazyForbidden() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazyForbidden.kt");
-      }
-
-      @Test
-      @TestMetadata("completeIrrelevantCalls.kt")
-      public void testCompleteIrrelevantCalls() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference.kt")
-      public void testInconsistentTypeInference() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference2.kt")
-      public void testInconsistentTypeInference2() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference2.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference_noReporting.kt")
-      public void testInconsistentTypeInference_noReporting() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference_noReporting.kt");
-      }
-
-      @Test
-      @TestMetadata("incorrectCalls.kt")
-      public void testIncorrectCalls() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCalls.kt");
-      }
-
-      @Test
-      @TestMetadata("incorrectCallsWithRestrictions.kt")
-      public void testIncorrectCallsWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCallsWithRestrictions.kt");
-      }
-
-      @Test
-      @TestMetadata("inferCoroutineTypeInOldVersion.kt")
-      public void testInferCoroutineTypeInOldVersion() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferCoroutineTypeInOldVersion.kt");
-      }
-
-      @Test
-      @TestMetadata("inferenceFromLambdaReturnStatement.kt")
-      public void testInferenceFromLambdaReturnStatement() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnStatement.kt");
-      }
-
-      @Test
-      @TestMetadata("inferenceFromLambdaReturnType.kt")
-      public void testInferenceFromLambdaReturnType() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnType.kt");
-      }
-
-      @Test
-      @TestMetadata("k2StubTypeLeak.kt")
-      public void testK2StubTypeLeak() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/k2StubTypeLeak.kt");
-      }
-
-      @Test
-      @TestMetadata("resolveUsualCallWithBuilderInference.kt")
-      public void testResolveUsualCallWithBuilderInference() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
-      }
-
-      @Test
-      @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
-      public void testResolveUsualCallWithBuilderInferenceWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
-      }
-
-      @Test
-      @TestMetadata("typeVariableShouldNotBeFixed.kt")
-      public void testTypeVariableShouldNotBeFixed() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/typeVariableShouldNotBeFixed.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignment.kt")
-      public void testUnsafeAssignment() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignmentExtra.kt")
-      public void testUnsafeAssignmentExtra() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignmentExtra.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignment_noReport.kt")
-      public void testUnsafeAssignment_noReport() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment_noReport.kt");
-      }
-
-      @Test
-      @TestMetadata("upperBoundViolation.kt")
-      public void testUpperBoundViolation() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation.kt");
-      }
-
-      @Test
-      @TestMetadata("upperBoundViolation_noReporting.kt")
-      public void testUpperBoundViolation_noReporting() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation_noReporting.kt");
-      }
-
-      @Test
-      @TestMetadata("useInferenceInformationFromExtension.kt")
-      public void testUseInferenceInformationFromExtension() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtension.kt");
-      }
-
-      @Test
-      @TestMetadata("useInferenceInformationFromExtensionWithRestrictions.kt")
-      public void testUseInferenceInformationFromExtensionWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtensionWithRestrictions.kt");
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins")
     @TestDataPath("$PROJECT_ROOT")
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builtins"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builtins"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -42539,7 +43265,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Cast {
       @Test
       public void testAllFilesPresentInCast() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -42567,7 +43293,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -42582,7 +43308,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Controlflow {
         @Test
         public void testAllFilesPresentInControlflow() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -42591,7 +43317,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class FlowInlining {
           @Test
           public void testAllFilesPresentInFlowInlining() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -42709,7 +43435,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Initialization {
           @Test
           public void testAllFilesPresentInInitialization() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Nested
@@ -42718,7 +43444,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class AtLeastOnce {
             @Test
             public void testAllFilesPresentInAtLeastOnce() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/atLeastOnce"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/atLeastOnce"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
             }
 
             @Test
@@ -42746,7 +43472,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class ExactlyOnce {
             @Test
             public void testAllFilesPresentInExactlyOnce() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/exactlyOnce"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/exactlyOnce"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
             }
 
             @Test
@@ -42792,7 +43518,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class Unknown {
             @Test
             public void testAllFilesPresentInUnknown() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/unknown"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/unknown"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
             }
 
             @Test
@@ -42810,7 +43536,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Dsl {
         @Test
         public void testAllFilesPresentInDsl() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -42849,7 +43575,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
           @Test
           public void testAllFilesPresentInErrors() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -42962,7 +43688,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class FromStdlib {
         @Test
         public void testAllFilesPresentInFromStdlib() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -43020,7 +43746,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NewSyntax {
         @Test
         public void testAllFilesPresentInNewSyntax() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -43054,7 +43780,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Smartcasts {
         @Test
         public void testAllFilesPresentInSmartcasts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -43201,7 +43927,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class Multieffect {
           @Test
           public void testAllFilesPresentInMultieffect() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/multieffect"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/multieffect"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -43223,7 +43949,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class OperatorsTests {
           @Test
           public void testAllFilesPresentInOperatorsTests() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/operatorsTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/operatorsTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -43287,7 +44013,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class When {
           @Test
           public void testAllFilesPresentInWhen() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/when"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -43323,7 +44049,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -43345,18 +44071,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("allowResultInReturnType_1_3.kt")
-      public void testAllowResultInReturnType_1_3() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_3.kt");
-      }
-
-      @Test
-      @TestMetadata("allowResultInReturnType_1_4.kt")
-      public void testAllowResultInReturnType_1_4() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_4.kt");
-      }
-
-      @Test
       @TestMetadata("basicBuildListBuildMap.kt")
       public void testBasicBuildListBuildMap() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/basicBuildListBuildMap.kt");
@@ -43372,6 +44086,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("coroutineContext.kt")
       public void testCoroutineContext() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutineContext.kt");
+      }
+
+      @Test
+      @TestMetadata("disallowResultInReturnType.kt")
+      public void testDisallowResultInReturnType() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/disallowResultInReturnType.kt");
       }
 
       @Test
@@ -43627,12 +44347,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("usageOfResultTypeInReturnType_1_4.kt")
-      public void testUsageOfResultTypeInReturnType_1_4() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType_1_4.kt");
-      }
-
-      @Test
       @TestMetadata("usageOfResultTypeWithNullableOperators.kt")
       public void testUsageOfResultTypeWithNullableOperators() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeWithNullableOperators.kt");
@@ -43644,7 +44358,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/callableReference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -43678,7 +44392,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44012,7 +44726,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class InlineCrossinline {
         @Test
         public void testAllFilesPresentInInlineCrossinline() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inlineCrossinline"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44094,7 +44808,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Release {
         @Test
         public void testAllFilesPresentInRelease() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/release"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/release"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44110,7 +44824,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class RestrictSuspension {
         @Test
         public void testAllFilesPresentInRestrictSuspension() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44180,7 +44894,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class SuspendFunctionType {
         @Test
         public void testAllFilesPresentInSuspendFunctionType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendFunctionType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44274,7 +44988,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class TailCalls {
         @Test
         public void testAllFilesPresentInTailCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/tailCalls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44321,7 +45035,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DelegateInference {
       @Test
       public void testAllFilesPresentInDelegateInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/delegateInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/delegateInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44343,7 +45057,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Deprecated {
       @Test
       public void testAllFilesPresentInDeprecated() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/deprecated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/deprecated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44365,7 +45079,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class DuplicateJvmSignature {
       @Test
       public void testAllFilesPresentInDuplicateJvmSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44386,7 +45100,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Statics {
         @Test
         public void testAllFilesPresentInStatics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -44403,7 +45117,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Evaluate {
       @Test
       public void testAllFilesPresentInEvaluate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/evaluate"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/evaluate"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44419,7 +45133,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Experimental {
       @Test
       public void testAllFilesPresentInExperimental() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/experimental"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/experimental"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44477,6 +45191,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("delegatedConstructorCall.kt")
+      public void testDelegatedConstructorCall() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/delegatedConstructorCall.kt");
+      }
+
+      @Test
       @TestMetadata("diffrentModules.kt")
       public void testDiffrentModules() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/diffrentModules.kt");
@@ -44486,6 +45206,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("duration.kt")
       public void testDuration() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/duration.kt");
+      }
+
+      @Test
+      @TestMetadata("enumCompanion.kt")
+      public void testEnumCompanion() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/enumCompanion.kt");
       }
 
       @Test
@@ -44597,6 +45323,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("overrideErrorOnPrimaryConstructorProperty.kt")
+      public void testOverrideErrorOnPrimaryConstructorProperty() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideErrorOnPrimaryConstructorProperty.kt");
+      }
+
+      @Test
       @TestMetadata("overrideInAnonymousObject.kt")
       public void testOverrideInAnonymousObject() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideInAnonymousObject.kt");
@@ -44687,7 +45419,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FactoryPattern {
       @Test
       public void testAllFilesPresentInFactoryPattern() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/factoryPattern"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/factoryPattern"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44757,7 +45489,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class ForInArrayLoop {
       @Test
       public void testAllFilesPresentInForInArrayLoop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44797,7 +45529,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class FunctionLiterals {
       @Test
       public void testAllFilesPresentInFunctionLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44819,7 +45551,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -44832,6 +45564,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("callableReferenceOnParameter.kt")
       public void testCallableReferenceOnParameter() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/inference/callableReferenceOnParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("expectedSetForLambdaParameter.kt")
+      public void testExpectedSetForLambdaParameter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/expectedSetForLambdaParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("expectedSetForLambdaParameter2.kt")
+      public void testExpectedSetForLambdaParameter2() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/expectedSetForLambdaParameter2.kt");
       }
 
       @Test
@@ -44949,6 +45693,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("mapNotNullWithElvis.kt")
+      public void testMapNotNullWithElvis() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/mapNotNullWithElvis.kt");
+      }
+
+      @Test
       @TestMetadata("plusAssignOnArrayList.kt")
       public void testPlusAssignOnArrayList() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/inference/plusAssignOnArrayList.kt");
@@ -44966,7 +45716,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AnnotationsForResolve {
         @Test
         public void testAllFilesPresentInAnnotationsForResolve() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -45138,7 +45888,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Completion {
         @Test
         public void testAllFilesPresentInCompletion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Nested
@@ -45147,7 +45897,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public class PostponedArgumentsAnalysis {
           @Test
           public void testAllFilesPresentInPostponedArgumentsAnalysis() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
           }
 
           @Test
@@ -45228,7 +45978,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
           public class Performance {
             @Test
             public void testAllFilesPresentInPerformance() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
             }
 
             @Test
@@ -45276,7 +46026,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Delegates {
         @Test
         public void testAllFilesPresentInDelegates() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/delegates"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/delegates"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -45310,7 +46060,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class NothingType {
         @Test
         public void testAllFilesPresentInNothingType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -45332,7 +46082,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class Performance {
         @Test
         public void testAllFilesPresentInPerformance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -45361,7 +46111,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45389,7 +46139,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Java {
       @Test
       public void testAllFilesPresentInJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/java"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/java"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45453,7 +46203,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Kt7585 {
       @Test
       public void testAllFilesPresentInKt7585() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kt7585"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kt7585"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45469,7 +46219,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Lateinit {
       @Test
       public void testAllFilesPresentInLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/lateinit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/lateinit"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45484,14 +46234,26 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     @TestDataPath("$PROJECT_ROOT")
     public class Multiplatform {
       @Test
+      @TestMetadata("actualExternalInJs.kt")
+      public void testActualExternalInJs() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/actualExternalInJs.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
       @TestMetadata("collections.kt")
       public void testCollections() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/collections.kt");
+      }
+
+      @Test
+      @TestMetadata("duplicateSupertype.kt")
+      public void testDuplicateSupertype() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/duplicateSupertype.kt");
       }
 
       @Test
@@ -45513,7 +46275,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
 
       @Test
       public void testAllFilesPresentInNative() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/native"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/native"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45566,12 +46328,172 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/pcla")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Pcla {
+      @Test
+      public void testAllFilesPresentInPcla() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/pcla"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("buildListRemoveAddInBranches.kt")
+      public void testBuildListRemoveAddInBranches() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListRemoveAddInBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBound.kt")
+      public void testBuildListToUpperBound() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundForbidden.kt")
+      public void testBuildListToUpperBoundForbidden() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundInLazy.kt")
+      public void testBuildListToUpperBoundInLazy() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundInLazy.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundInLazyForbidden.kt")
+      public void testBuildListToUpperBoundInLazyForbidden() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundInLazyForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("completeIrrelevantCalls.kt")
+      public void testCompleteIrrelevantCalls() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/completeIrrelevantCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference.kt")
+      public void testInconsistentTypeInference() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference2.kt")
+      public void testInconsistentTypeInference2() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference2.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference_noReporting.kt")
+      public void testInconsistentTypeInference_noReporting() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference_noReporting.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectCalls.kt")
+      public void testIncorrectCalls() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/incorrectCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectCallsWithRestrictions.kt")
+      public void testIncorrectCallsWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/incorrectCallsWithRestrictions.kt");
+      }
+
+      @Test
+      @TestMetadata("inferCoroutineTypeInOldVersion.kt")
+      public void testInferCoroutineTypeInOldVersion() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferCoroutineTypeInOldVersion.kt");
+      }
+
+      @Test
+      @TestMetadata("inferenceFromLambdaReturnStatement.kt")
+      public void testInferenceFromLambdaReturnStatement() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferenceFromLambdaReturnStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("inferenceFromLambdaReturnType.kt")
+      public void testInferenceFromLambdaReturnType() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferenceFromLambdaReturnType.kt");
+      }
+
+      @Test
+      @TestMetadata("k2StubTypeLeak.kt")
+      public void testK2StubTypeLeak() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/k2StubTypeLeak.kt");
+      }
+
+      @Test
+      @TestMetadata("resolveUsualCallWithBuilderInference.kt")
+      public void testResolveUsualCallWithBuilderInference() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/resolveUsualCallWithBuilderInference.kt");
+      }
+
+      @Test
+      @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
+      public void testResolveUsualCallWithBuilderInferenceWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
+      }
+
+      @Test
+      @TestMetadata("typeVariableShouldNotBeFixed.kt")
+      public void testTypeVariableShouldNotBeFixed() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/typeVariableShouldNotBeFixed.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignment.kt")
+      public void testUnsafeAssignment() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignmentExtra.kt")
+      public void testUnsafeAssignmentExtra() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignmentExtra.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignment_noReport.kt")
+      public void testUnsafeAssignment_noReport() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignment_noReport.kt");
+      }
+
+      @Test
+      @TestMetadata("upperBoundViolation.kt")
+      public void testUpperBoundViolation() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/upperBoundViolation.kt");
+      }
+
+      @Test
+      @TestMetadata("upperBoundViolation_noReporting.kt")
+      public void testUpperBoundViolation_noReporting() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/upperBoundViolation_noReporting.kt");
+      }
+
+      @Test
+      @TestMetadata("useInferenceInformationFromExtension.kt")
+      public void testUseInferenceInformationFromExtension() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/useInferenceInformationFromExtension.kt");
+      }
+
+      @Test
+      @TestMetadata("useInferenceInformationFromExtensionWithRestrictions.kt")
+      public void testUseInferenceInformationFromExtensionWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/useInferenceInformationFromExtensionWithRestrictions.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection")
     @TestDataPath("$PROJECT_ROOT")
     public class PurelyImplementedCollection {
       @Test
       public void testAllFilesPresentInPurelyImplementedCollection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45647,13 +46569,19 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Reflection {
       @Test
       public void testAllFilesPresentInReflection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reflection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
       @TestMetadata("classArrayInAnnotation.kt")
       public void testClassArrayInAnnotation() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/classArrayInAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaInsteadOfKFunction.kt")
+      public void testLambdaInsteadOfKFunction() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/lambdaInsteadOfKFunction.kt");
       }
 
       @Test
@@ -45669,7 +46597,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Regression {
       @Test
       public void testAllFilesPresentInRegression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/regression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/regression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45769,7 +46697,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Reified {
       @Test
       public void testAllFilesPresentInReified() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reified"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/reified"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45809,7 +46737,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Resolve {
       @Test
       public void testAllFilesPresentInResolve() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -45902,7 +46830,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       public class AmbiguousTypeReferences {
         @Test
         public void testAllFilesPresentInAmbiguousTypeReferences() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
 
         @Test
@@ -46015,7 +46943,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Smartcasts {
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/smartcasts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46127,7 +47055,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Streams {
       @Test
       public void testAllFilesPresentInStreams() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/streams"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/streams"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46149,7 +47077,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TargetedBuiltIns {
       @Test
       public void testAllFilesPresentInTargetedBuiltIns() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/targetedBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46165,7 +47093,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TrailingComma {
       @Test
       public void testAllFilesPresentInTrailingComma() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/trailingComma"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/trailingComma"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46253,7 +47181,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class TryCatch {
       @Test
       public void testAllFilesPresentInTryCatch() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tryCatch"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/tryCatch"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46281,33 +47209,15 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
-      @TestMetadata("correctSmartcasts_after.kt")
-      public void testCorrectSmartcasts_after() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/correctSmartcasts_after.kt");
-      }
-
-      @Test
       @TestMetadata("falseNegativeSmartcasts.kt")
       public void testFalseNegativeSmartcasts() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falseNegativeSmartcasts.kt");
       }
 
       @Test
-      @TestMetadata("falseNegativeSmartcasts_after.kt")
-      public void testFalseNegativeSmartcasts_after() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falseNegativeSmartcasts_after.kt");
-      }
-
-      @Test
       @TestMetadata("falsePositiveSmartcasts.kt")
       public void testFalsePositiveSmartcasts() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falsePositiveSmartcasts.kt");
-      }
-
-      @Test
-      @TestMetadata("falsePositiveSmartcasts_after.kt")
-      public void testFalsePositiveSmartcasts_after() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/tryCatch/falsePositiveSmartcasts_after.kt");
       }
 
       @Test
@@ -46323,7 +47233,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Typealias {
       @Test
       public void testAllFilesPresentInTypealias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/typealias"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/typealias"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46381,7 +47291,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class Varargs {
       @Test
       public void testAllFilesPresentInVarargs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/varargs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/varargs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -46409,7 +47319,7 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/when"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/when"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test

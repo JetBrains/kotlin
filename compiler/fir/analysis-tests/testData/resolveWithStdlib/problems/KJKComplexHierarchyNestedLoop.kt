@@ -1,6 +1,6 @@
 // FILE: K1.kt
-class K2: <!UNRESOLVED_REFERENCE!>J1<!>() {
-    class Q : <!UNRESOLVED_REFERENCE!>Nested<!>()
+class K2: <!CYCLIC_INHERITANCE_HIERARCHY!>J1<!>() {
+    class Q : Nested()
     fun bar() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         <!UNRESOLVED_REFERENCE!>baz<!>()
@@ -11,7 +11,7 @@ class K2: <!UNRESOLVED_REFERENCE!>J1<!>() {
 }
 
 // FILE: J1.java
-public class J1 extends K2() {
+public class J1 extends K2 {
     public class Nested {}
 
     void baz() {}

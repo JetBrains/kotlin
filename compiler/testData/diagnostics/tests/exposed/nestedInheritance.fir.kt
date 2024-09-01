@@ -1,0 +1,12 @@
+// ISSUE: KT-69794
+// RENDER_DIAGNOSTICS_FULL_TEXT
+
+import Outer.Base
+
+internal class Outer {
+    interface Base
+}
+
+class Container {
+    interface Derived : <!EXPOSED_SUPER_INTERFACE("public; Outer;  containing declaration; internal")!>Base<!>
+}

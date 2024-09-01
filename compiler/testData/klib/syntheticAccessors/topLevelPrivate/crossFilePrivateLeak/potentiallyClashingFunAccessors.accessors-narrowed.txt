@@ -1,0 +1,18 @@
+/* MODULE name=<main> */
+
+/* FILE package=org.sample fileName=file1.kt */
+
+/* TARGET declaration */ private fun fileName(): String
+internal inline fun inlineFun1(): String
+    /* ACCESSOR use-site */ access$fileName$tFile1Kt()
+/* ACCESSOR declaration */ internal fun access$fileName$tFile1Kt(): String
+    /* TARGET use-site */ fileName()
+
+
+/* FILE package=org.sample fileName=file2.kt */
+
+/* TARGET declaration */ private fun fileName(): String
+internal inline fun inlineFun2(): String
+    /* ACCESSOR use-site */ access$fileName$tFile2Kt()
+/* ACCESSOR declaration */ internal fun access$fileName$tFile2Kt(): String
+    /* TARGET use-site */ fileName()

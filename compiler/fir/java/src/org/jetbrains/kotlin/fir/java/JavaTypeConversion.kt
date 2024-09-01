@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -60,7 +60,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     source: KtSourceElement?,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): ConeKotlinType =
-    (resolveIfJavaType(session, javaTypeParameterStack, source, mode) as? FirResolvedTypeRef)?.type
+    (resolveIfJavaType(session, javaTypeParameterStack, source, mode) as? FirResolvedTypeRef)?.coneType
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
@@ -75,9 +75,9 @@ internal fun JavaType?.toFirResolvedTypeRef(
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirResolvedTypeRef {
     return buildResolvedTypeRef {
-        type = toConeKotlinType(session, javaTypeParameterStack, mode, source)
+        coneType = toConeKotlinType(session, javaTypeParameterStack, mode, source)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
-        annotations += type.attributes.customAnnotations
+        annotations += coneType.customAnnotations
         this.source = source
     }
 }
@@ -209,7 +209,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 isRaw -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.toRegularClassSymbol(session)?.typeParameterSymbols
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when {
                         mode.insideAnnotation -> Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
@@ -221,7 +221,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.toRegularClassSymbol(session)?.typeParameterSymbols
                     Array(typeArguments.size) { index ->
                         // TODO: check this
                         val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
@@ -231,7 +231,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                     }
                 }
 
-                else -> lowerBound?.typeArguments
+                else -> lowerBound?.typeArgumentsOfLowerBoundIfFlexible
             }
 
             lookupTag.constructClassType(mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY, isNullable = lowerBound != null, attributes)
@@ -278,7 +278,7 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
-        mutableClassId.toLookupTag().toFirRegularClassSymbol(session)?.typeParameterSymbols?.lastOrNull()?.variance
+        mutableClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.lastOrNull()?.variance
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE

@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirControlFlowGraphReferenceImpl(
     val controlFlowGraph: ControlFlowGraph,
-    val dataFlowInfo: DataFlowInfo? = null
 ) : FirControlFlowGraphReference() {
     override val source: KtSourceElement? get() = null
 
@@ -25,10 +23,5 @@ class FirControlFlowGraphReferenceImpl(
     }
 }
 
-class DataFlowInfo(val variableStorage: VariableStorage)
-
 val FirControlFlowGraphReference.controlFlowGraph: ControlFlowGraph?
     get() = (this as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph
-
-val FirControlFlowGraphReference.dataFlowInfo: DataFlowInfo?
-    get() = (this as? FirControlFlowGraphReferenceImpl)?.dataFlowInfo

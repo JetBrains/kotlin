@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
@@ -68,6 +66,10 @@ object TestReferenceResolveResultRenderer {
                 append("(in $fqName) ")
             }
             when (symbol) {
+                is KaReceiverParameterSymbol -> {
+                    append("extension receiver with type ")
+                    append(symbol.returnType.render(renderer.typeRenderer, position = Variance.INVARIANT))
+                }
                 is KaDeclarationSymbol -> {
                     append(symbol.render(renderer))
                     if (renderPsiClassName) {
@@ -75,10 +77,6 @@ object TestReferenceResolveResultRenderer {
                     }
                 }
                 is KaPackageSymbol -> append("package ${symbol.fqName}")
-                is KaReceiverParameterSymbol -> {
-                    append("extension receiver with type ")
-                    append(symbol.type.render(renderer.typeRenderer, position = Variance.INVARIANT))
-                }
                 else -> error("Unexpected symbol ${symbol::class}")
             }
             additionalInfo(symbol)?.let { append(" [$it]") }
@@ -99,8 +97,8 @@ object TestReferenceResolveResultRenderer {
             FqName.ROOT -> return "ROOT"
             else -> return nonLocalFqName.asString()
         }
-        val container = (symbol as? KaSymbolWithKind)?.getContainingSymbol() ?: return null
-        val parents = generateSequence(container) { it.getContainingSymbol() }.toList().asReversed()
-        return "<local>: " + parents.joinToString(separator = ".") { (it as? KaNamedSymbol)?.name?.asString() ?: "<no name>" }
+        val container = symbol.containingDeclaration ?: return null
+        val parents = generateSequence(container) { it.containingDeclaration }.toList().asReversed()
+        return "<local>: " + parents.joinToString(separator = ".") { it.name?.asString() ?: "<no name>" }
     }
 }

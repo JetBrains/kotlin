@@ -3,7 +3,7 @@ fun import() {
 }
 
 fun composite() {
-    val s = 13<!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!>~<!><!UNRESOLVED_REFERENCE!>/<!>12
+    val s = 13+<!SYNTAX!>~<!><!UNRESOLVED_REFERENCE!>/<!>12
 }
 
 fun html() {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
-import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -77,7 +77,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibWithBackend : AbstractDiagnost
         super.configureTestBuilder(builder)
 
         psi2IrStep()
-        facadeStep { JsKlibBackendFacade(it, true) }
+        facadeStep { JsKlibSerializerFacade(it, true) }
 
         // TODO: Currently do not run lowerings, because they don't report anything;
         //      see KT-61881, KT-61882

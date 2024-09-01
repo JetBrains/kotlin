@@ -86,6 +86,7 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs(
                 compilerArgs = listOf(
                     "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
+                    "-module-name", "kt43502"
                 ), cinteropArgs = listOf("-header", rootDir.resolve("kt43502.h").absolutePath)
             ),
             nominalPackageName = PackageName("kt43502"),

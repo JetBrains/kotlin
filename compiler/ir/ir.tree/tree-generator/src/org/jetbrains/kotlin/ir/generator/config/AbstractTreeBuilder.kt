@@ -10,20 +10,12 @@ import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
-import org.jetbrains.kotlin.ir.generator.model.SingleField
+import org.jetbrains.kotlin.ir.generator.model.SimpleField
 
 abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field, Element.Category>() {
 
     override fun createElement(name: String, propertyName: String, category: Element.Category): Element {
         return Element(name, propertyName, category)
-    }
-
-    protected fun Field.skipInIrFactory() {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.No
-    }
-
-    protected fun Field.useFieldInIrFactory(customType: TypeRef? = null, defaultValue: String? = null) {
-        customUseInIrFactoryStrategy = Field.UseFieldAsParameterInIrFactoryStrategy.Yes(customType, defaultValue)
     }
 
     protected fun Element.needAcceptMethod() {
@@ -48,9 +40,9 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         nullable: Boolean = false,
         mutable: Boolean = true,
         isChild: Boolean = true,
-        initializer: SingleField.() -> Unit = {}
-    ): SingleField {
-        return SingleField(name, type.copy(nullable), mutable, isChild).apply {
+        initializer: SimpleField.() -> Unit = {}
+    ): SimpleField {
+        return SimpleField(name, type.copy(nullable), mutable, isChild).apply {
             initializer()
         }
     }
@@ -97,7 +89,7 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
+        initializer: SimpleField.() -> Unit = {},
     ) = field(name, type, nullable, mutable) {
         symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
         initializer()
@@ -110,7 +102,7 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
+        initializer: SimpleField.() -> Unit = {},
     ) = referencedSymbol("symbol", type, nullable, mutable, initializer)
 
     /**
@@ -125,11 +117,5 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
     ) = listField(name, baseType, nullable, mutability) {
         symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
         initializer()
-    }
-
-    companion object {
-        val int = type<Int>()
-        val string = type<String>()
-        val boolean = type<Boolean>()
     }
 }

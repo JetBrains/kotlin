@@ -1,0 +1,25 @@
+/nothingToOverrideMessage.kt:7:1: error: class 'Simple' is not abstract and does not implement abstract member public abstract fun foo(s: String): Unit defined in I
+class Simple : I {
+^^^^^^^^^^^^
+/nothingToOverrideMessage.kt:8:5: error: 'foo' overrides nothing
+    override fun foo() {}
+    ^^^^^^^^
+/nothingToOverrideMessage.kt:12:5: error: 'foo' overrides nothing
+    override fun foo() {}
+    ^^^^^^^^
+/nothingToOverrideMessage.kt:20:1: error: class 'GenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: R): Unit defined in Generic
+class GenericOverride<R> : Generic<R> {
+^^^^^^^^^^^^^^^^^^^^^
+/nothingToOverrideMessage.kt:21:5: error: 'foo' overrides nothing
+    override fun foo() {}
+    ^^^^^^^^
+/nothingToOverrideMessage.kt:24:1: error: class 'NonGenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: String): Unit defined in Generic
+class NonGenericOverride : Generic<String> {
+^^^^^^^^^^^^^^^^^^^^^^^^
+/nothingToOverrideMessage.kt:25:5: error: 'foo' overrides nothing
+    override fun foo() {}
+    ^^^^^^^^
+/nothingToOverrideMessage.kt:33:5: error: 'foo' overrides nothing
+    override fun foo() {}
+    ^^^^^^^^
+

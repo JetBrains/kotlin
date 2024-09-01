@@ -1,2 +1,0 @@
-KtSimpleNameReference:
-  m: MyMap<kotlin.String, A>

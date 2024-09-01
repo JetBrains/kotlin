@@ -7,9 +7,17 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByFqNameTest
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.AnalysisApiSymbolLightClassesDecompiledTestConfigurator
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 abstract class AbstractSymbolLightClassesByFqNameForLibraryTest : AbstractSymbolLightClassesByFqNameTest(
-    AnalysisApiSymbolLightClassesDecompiledTestConfigurator,
+    AnalysisApiSymbolLightClassesDecompiledTestConfigurator(JvmPlatforms.defaultJvmPlatform),
     EXTENSIONS.LIB_JAVA,
+    isTestAgainstCompiledCode = true,
+)
+
+abstract class AbstractJsSymbolLightClassesByFqNameForLibraryTest : AbstractSymbolLightClassesByFqNameTest(
+    AnalysisApiSymbolLightClassesDecompiledTestConfigurator(JsPlatforms.defaultJsPlatform),
+    EXTENSIONS.KMP_LIB_JAVA,
     isTestAgainstCompiledCode = true,
 )

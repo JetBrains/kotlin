@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.getAdapteeFromAdaptedForReferenceFunction
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -207,8 +206,8 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         private val isLambda = functionReference.origin.isLambda
         private val isK = functionReference.type.isKFunction() || functionReference.type.isKSuspendFunction()
         private val isSuspend = functionReference.type.isSuspendFunction() || functionReference.type.isKSuspendFunction()
-        private val adaptedReferenceOriginalTarget = referencedFunction.getAdapteeFromAdaptedForReferenceFunction()
-        private val functionReferenceTarget = adaptedReferenceOriginalTarget ?:referencedFunction
+        private val adaptedReferenceOriginalTarget = functionReference.reflectionTarget?.owner
+        private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
 
         /**
          * The first element of a pair is a type parameter of [referencedFunction], the second element is its argument in
@@ -359,7 +358,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     transformedSuperMethod = functionClass.invokeFun!!
                 }
             }
-            val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
+            val originalSuperMethod = transformedSuperMethod.suspendFunction ?: transformedSuperMethod
             buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
@@ -428,7 +427,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 parameter.copyTo(
                         this,
                         DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        index,
                         type = substituteBoundValueParameterType(parameter.type)
                 )
             }
@@ -470,7 +468,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         }
 
         private fun IrBuilderWithScope.getDescription() : IrConstantValue {
-            val kTypeGenerator = KTypeGenerator(this@FunctionReferenceBuilder.context, irFile, functionReference)
+            val kTypeGenerator = toNativeConstantReflectionBuilder(this@FunctionReferenceBuilder.context.ir.symbols)
 
             return irConstantObject(
                     kFunctionDescriptionSymbol.owner,
@@ -479,7 +477,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                             "arity" to irConstantPrimitive(irInt(getArity())),
                             "fqName" to irConstantPrimitive(irString(getFqName())),
                             "name" to irConstantPrimitive(irString(getName().asString())),
-                            "returnType" to with(kTypeGenerator) { irKType(referencedFunction.returnType) }
+                            "returnType" to kTypeGenerator.irKType(referencedFunction.returnType)
                     )
             )
         }
@@ -582,11 +580,11 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                                                         && functionParameterTypes[unboundIndex].isNothing()
                                                 ) {
                                                     parameter.copyTo(
-                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                                                             type = parameter.type)
                                                 } else {
                                                     superFunction.valueParameters[unboundIndex].copyTo(
-                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                                                             type = functionParameterTypes[unboundIndex])
                                                 }
                                                 ++unboundIndex

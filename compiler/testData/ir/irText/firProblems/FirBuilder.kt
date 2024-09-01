@@ -1,6 +1,4 @@
 // FIR_IDENTICAL
-// IGNORE_BACKEND_K1: JS_IR
-
 // MODULE: m1
 // FILE: BaseFirBuilder.kt
 

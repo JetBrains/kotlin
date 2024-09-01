@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -15,13 +14,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -35,8 +34,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
@@ -49,18 +48,86 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
     source: KtSourceElement?,
     isDeprecatedInJavaDoc: Boolean,
-): List<FirAnnotation> = buildList {
-    var isDeprecated = false
+): List<FirAnnotation> {
+    var annotationWithJavaTarget: FirAnnotation? = null
+    var annotationWithKotlinTarget: FirAnnotation? = null
+    val result = buildList {
+        var isDeprecated = false
 
-    this@convertAnnotationsToFir.mapTo(this) {
-        if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
-        it.toFirAnnotationCall(session, source)
-    }
+        this@convertAnnotationsToFir.mapTo(this) {
+            if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
+            val firAnnotationCall = it.toFirAnnotationCall(session, source)
+            if (firAnnotationCall.toAnnotationClassId(session) == StandardClassIds.Annotations.Target) {
+                val unmappedKotlinAnnotation = it.classId == StandardClassIds.Annotations.Target
+                if (annotationWithJavaTarget == null && !unmappedKotlinAnnotation) {
+                    annotationWithJavaTarget = firAnnotationCall
+                }
+                if (annotationWithKotlinTarget == null && unmappedKotlinAnnotation) {
+                    annotationWithKotlinTarget = firAnnotationCall
+                }
+            }
+            firAnnotationCall
+        }
 
-    if (!isDeprecated && isDeprecatedInJavaDoc) {
-        add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
+        if (!isDeprecated && isDeprecatedInJavaDoc) {
+            add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session, source))
+        }
     }
+    if (annotationWithKotlinTarget == null) return result
+
+    // TODO: remove after K1 build no more needed
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+    return result.mergeTargetAnnotations(annotationWithJavaTarget, annotationWithKotlinTarget!!)
 }
+
+// Special code for situation with java.lang.annotation.Target and kotlin.annotation.Target together
+private fun List<FirAnnotation>.mergeTargetAnnotations(
+    annotationWithJavaTarget: FirAnnotation?,
+    annotationWithKotlinTarget: FirAnnotation,
+): List<FirAnnotation> {
+    return filter { it !== annotationWithJavaTarget && it !== annotationWithKotlinTarget } +
+            buildAnnotationCopy(annotationWithKotlinTarget) {
+                argumentMapping = buildAnnotationArgumentMapping {
+                    this.source = annotationWithKotlinTarget.argumentMapping.source
+                    mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = buildVarargArgumentsExpressionWithTargets {
+                        arguments += if (annotationWithJavaTarget == null) {
+                            JAVA_DEFAULT_TARGET_SET.map {
+                                buildEnumEntryDeserializedAccessExpression {
+                                    enumClassId = StandardClassIds.AnnotationTarget
+                                    enumEntryName = Name.identifier(it.name)
+                                }
+                            }
+                        } else {
+                            annotationWithJavaTarget.targetArgumentExpressions()
+                        }
+                        arguments += annotationWithKotlinTarget.targetArgumentExpressions()
+                    }
+                }
+            }
+}
+
+inline fun buildVarargArgumentsExpressionWithTargets(
+    init: FirVarargArgumentsExpressionBuilder.() -> Unit = {}
+): FirVarargArgumentsExpression {
+    return FirVarargArgumentsExpressionBuilder().apply {
+        init()
+        val elementConeType = ConeClassLikeTypeImpl(
+            StandardClassIds.AnnotationTarget.toLookupTag(),
+            emptyArray(),
+            isNullable = false,
+            ConeAttributes.Empty
+        )
+        coneTypeOrNull = elementConeType.createOutArrayType()
+        coneElementTypeOrNull = elementConeType
+    }.build()
+}
+
+private fun FirAnnotation.targetArgumentExpressions(): List<FirExpression> =
+    when (val mapped = argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]) {
+        is FirVarargArgumentsExpression -> mapped.arguments
+        is FirArrayLiteral -> mapped.argumentList.arguments
+        else -> listOf(this)
+    }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
     session: FirSession, source: KtSourceElement?,
@@ -112,7 +179,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             val argumentTypeRef = expectedConeType?.let {
                 coneTypeOrNull = it
                 buildResolvedTypeRef {
-                    this.type = it.lowerBoundIfFlexible().arrayElementType()
+                    this.coneType = it.lowerBoundIfFlexible().arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
                 }
             }
@@ -134,7 +201,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val resolvedClassTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack, source)
             val resolvedTypeRef = buildResolvedTypeRef {
-                type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
+                coneType = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)
             }
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
@@ -168,7 +235,7 @@ private val JAVA_RETENTION_TO_KOTLIN: Map<String, AnnotationRetention> = mapOf(
     "SOURCE" to AnnotationRetention.SOURCE
 )
 
-private val JAVA_TARGETS_TO_KOTLIN = mapOf(
+private val JAVA_TARGETS_TO_KOTLIN: Map<String, EnumSet<AnnotationTarget>> = mapOf(
     "TYPE" to EnumSet.of(AnnotationTarget.CLASS, AnnotationTarget.FILE),
     "ANNOTATION_TYPE" to EnumSet.of(AnnotationTarget.ANNOTATION_CLASS),
     "TYPE_PARAMETER" to EnumSet.of(AnnotationTarget.TYPE_PARAMETER),
@@ -180,28 +247,21 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
 
+private val JAVA_DEFAULT_TARGET_SET: Set<KotlinTarget> = KotlinTarget.DEFAULT_TARGET_SET - KotlinTarget.PROPERTY
+
 private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(): FirExpression? {
-    return buildVarargArgumentsExpression {
+    return buildVarargArgumentsExpressionWithTargets {
         val resultSet = EnumSet.noneOf(AnnotationTarget::class.java)
         for (target in this@mapJavaTargetArguments) {
             if (target !is JavaEnumValueAnnotationArgument) return null
             resultSet.addAll(JAVA_TARGETS_TO_KOTLIN[target.entryName?.asString()] ?: continue)
         }
-        val classId = StandardClassIds.AnnotationTarget
         resultSet.mapTo(arguments) {
             buildEnumEntryDeserializedAccessExpression {
-                enumClassId = classId
+                enumClassId = StandardClassIds.AnnotationTarget
                 enumEntryName = Name.identifier(it.name)
             }
         }
-        val elementConeType = ConeClassLikeTypeImpl(
-            classId.toLookupTag(),
-            emptyArray(),
-            isNullable = false,
-            ConeAttributes.Empty
-        )
-        coneTypeOrNull = elementConeType
-        coneElementTypeOrNull = elementConeType.createOutArrayType()
     }
 }
 
@@ -223,9 +283,7 @@ private fun fillAnnotationArgumentMapping(
 ) {
     if (annotationArguments.isEmpty()) return
 
-    val annotationClassSymbol = lookupTag.toSymbol(session).also {
-        lookupTag.bindSymbolToLookupTag(session, it)
-    }
+    val annotationClassSymbol = lookupTag.toSymbol(session)
     val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
         ?.declarations
         ?.firstIsInstanceOrNull<FirConstructor>()
@@ -271,20 +329,16 @@ private fun buildFirAnnotation(
         JvmStandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
         else -> classId
     }?.toLookupTag()
-    val isJavaAnnotationMappedToKotlin = lookupTag != classId?.toLookupTag()
-    val sourceForTypeRef = source.butIf(isJavaAnnotationMappedToKotlin) {
-        it?.fakeElement(KtFakeSourceElementKind.JavaAnnotationMappedToKotlin)
-    }
     val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
-            this.source = sourceForTypeRef
+            coneType = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
+            this.source = source
         }
     } else {
         val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
         buildErrorTypeRef {
             diagnostic = ConeUnresolvedReferenceError(unresolvedName)
-            this.source = sourceForTypeRef
+            this.source = source
         }
     }
 

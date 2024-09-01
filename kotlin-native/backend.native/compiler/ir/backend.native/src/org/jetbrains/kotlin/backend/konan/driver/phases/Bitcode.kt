@@ -76,7 +76,6 @@ internal fun optimizationPipelinePass(name: String, description: String, pipelin
             }
         }
 
-
 internal val MandatoryBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
         name = "MandatoryBitcodeLLVMPostprocessingPhase",
         description = "Mandatory bitcode llvm postprocessing",
@@ -85,7 +84,7 @@ internal val MandatoryBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
 
 internal val ModuleBitcodeOptimizationPhase = optimizationPipelinePass(
         name = "ModuleBitcodeOptimization",
-        description = "Optimize bitcode",
+        description = "Optimize bitcode with new PM",
         pipeline = ::ModuleOptimizationPipeline,
 )
 
@@ -96,9 +95,9 @@ internal val LTOBitcodeOptimizationPhase = optimizationPipelinePass(
 )
 
 internal val ThreadSanitizerPhase = optimizationPipelinePass(
-        name = "ThreadSanitizer",
-        description = "Prepare to run with thread sanitizer",
-        pipeline = ::ThreadSanitizerPipeline,
+        name = "ThreadSanitizerPhase",
+        description = "Adds thread sanitizer instrumentation",
+        pipeline = ::ThreadSanitizerPipeline
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -164,9 +163,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             null -> {}
         }
     }
-    if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {
-        runPhase(RemoveRedundantSafepointsPhase)
-    }
+    runPhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
         runPhase(OptimizeTLSDataLoadsPhase)
     }

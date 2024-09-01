@@ -39,7 +39,7 @@ external public actual fun Char.isISOControl(): Boolean
  */
 @ExperimentalNativeApi
 // TODO: Consider removing from public API
-public fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
+public actual fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
         (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
 
 /**
@@ -50,7 +50,7 @@ public fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
  */
 @ExperimentalNativeApi
 // TODO: Consider removing from public API
-public fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
+public actual fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
         codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
 
 /**
@@ -58,7 +58,7 @@ public fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
  */
 @ExperimentalNativeApi
 // TODO: Consider removing from public API
-public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
+public actual fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
 
 /**
  * Converts the codepoint specified to a char array. If the codepoint is not supplementary, the method will
@@ -72,7 +72,7 @@ public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high
 @ExperimentalNativeApi
 // TODO: Consider removing from public API
 @Suppress("DEPRECATION")
-public fun Char.Companion.toChars(codePoint: Int): CharArray =
+public actual fun Char.Companion.toChars(codePoint: Int): CharArray =
         when {
             codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
             codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {

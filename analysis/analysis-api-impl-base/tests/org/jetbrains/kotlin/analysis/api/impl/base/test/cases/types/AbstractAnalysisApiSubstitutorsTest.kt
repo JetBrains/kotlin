@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -22,8 +22,8 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTes
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
-            val substitutor = SubstitutionParser.parseSubstitutor(analysisSession, mainFile, declaration)
-            val symbol = declaration.getSymbol() as KaCallableSymbol
+            val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, mainFile, declaration)
+            val symbol = declaration.symbol as KaCallableSymbol
             val type = symbol.returnType
             val substituted = substitutor.substitute(type)
             val substitutedOrNull = substitutor.substituteOrNull(type)

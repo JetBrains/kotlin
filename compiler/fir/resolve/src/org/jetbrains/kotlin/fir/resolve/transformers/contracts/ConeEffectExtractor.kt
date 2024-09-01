@@ -16,11 +16,10 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -111,13 +110,13 @@ class ConeEffectExtractor(
         }
     }
 
-    override fun visitBinaryLogicExpression(
-        binaryLogicExpression: FirBinaryLogicExpression,
+    override fun visitBooleanOperatorExpression(
+        booleanOperatorExpression: FirBooleanOperatorExpression,
         data: Nothing?
     ): ConeContractDescriptionElement {
-        val left = binaryLogicExpression.leftOperand.asContractBooleanExpression()
-        val right = binaryLogicExpression.rightOperand.asContractBooleanExpression()
-        return ConeBinaryLogicExpression(left, right, binaryLogicExpression.kind)
+        val left = booleanOperatorExpression.leftOperand.asContractBooleanExpression()
+        val right = booleanOperatorExpression.rightOperand.asContractBooleanExpression()
+        return ConeBinaryLogicExpression(left, right, booleanOperatorExpression.kind)
     }
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConeContractDescriptionElement {
@@ -175,7 +174,7 @@ class ConeEffectExtractor(
         index: Int,
         name: String
     ): ConeValueParameterReference {
-        return if (type == session.builtinTypes.booleanType.type) {
+        return if (type == session.builtinTypes.booleanType.coneType) {
             ConeBooleanValueParameterReference(index, name)
         } else {
             ConeValueParameterReference(index, name)
@@ -194,7 +193,7 @@ class ConeEffectExtractor(
             ?: return ConeContractDescriptionError.UnresolvedThis(thisReceiverExpression).asElement()
         val callableOwner = owner as? FirCallableDeclaration
         val ownerHasReceiver = callableOwner?.receiverParameter != null
-        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
+        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass() == declaration
         return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
             val type = thisReceiverExpression.resolvedType
             toValueParameterReference(type, -1, "this")
@@ -218,7 +217,7 @@ class ConeEffectExtractor(
         val arg = typeOperatorCall.argument.asContractValueExpression()
         val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(session)
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
-        val diagnostic = (type.toSymbol(session) as? FirTypeParameterSymbol)?.let { typeParameterSymbol ->
+        val diagnostic = type.toTypeParameterSymbol(session)?.let { typeParameterSymbol ->
             val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
             if (typeParametersOfOwner.none { it is FirTypeParameter && it.symbol == typeParameterSymbol }) {
                 return@let ConeContractDescriptionError.NotSelfTypeParameter(typeParameterSymbol)

@@ -1,5 +1,6 @@
-KtSimpleNameReference:
-  (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)
-
-KtSimpleNameReference:
-  (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)
+KtOperationReferenceExpression(182,184): '++'
+  KtSimpleNameReference:
+    (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)
+  
+  KtSimpleNameReference:
+    (in Foo) operator fun <K2, V2> MyMap<K2, V2>.set(k: K2, v: V2)

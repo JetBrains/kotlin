@@ -91,28 +91,6 @@ class CompilerArgumentsSerializationTest {
         doRandomArrayArgumentsTest<K2MetadataCompilerArguments>()
     }
 
-
-    @Test
-    fun testDummyJsDce() {
-        doSerializeDeserializeAndCompareTest<K2JSDceArguments>()
-    }
-
-    @Test
-    fun testRandomFlagArgumentsJSDce() {
-        doRandomFlagArgumentsTest<K2JSDceArguments>()
-    }
-
-    @Test
-    fun testRandomStringArgumentsJSDce() {
-        doRandomStringArgumentsTest<K2JSDceArguments>()
-    }
-
-    @Test
-    fun testRandomArrayArgumentsJSDce() {
-        doRandomArrayArgumentsTest<K2JSDceArguments>()
-    }
-
-
     private inline fun <reified T : CommonToolArguments> doSerializeDeserializeAndCompareTest(configure: T.() -> Unit = {}) {
         val oldInstance = T::class.java.getConstructor().newInstance().apply(configure)
         val serializer = CompilerArgumentsSerializerV5<T>(oldInstance)

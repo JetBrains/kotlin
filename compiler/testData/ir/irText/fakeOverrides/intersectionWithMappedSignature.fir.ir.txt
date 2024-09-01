@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Int>

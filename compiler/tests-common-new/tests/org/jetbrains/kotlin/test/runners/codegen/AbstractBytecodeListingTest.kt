@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -67,7 +67,7 @@ abstract class AbstractFirBytecodeListingTestBase(val parser: FirParser) :
         get() = ::FirFrontendFacade
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrJvmResultsConverter
+        get() = ::Fir2IrResultsConverter
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

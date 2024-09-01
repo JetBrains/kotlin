@@ -86,13 +86,12 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             // inline fun AtomicRef<T>.foo(arg) { ... } -> inline fun <T> foo(arg', atomicfu$getter: () -> T, atomicfu$setter: (T) -> Unit)
             if (this is IrFunction && isAtomicExtension()) {
                 val newDeclaration = deepCopyWithSymbols(parent)
-                val valueParametersCount = valueParameters.size
                 val type = newDeclaration.extensionReceiverParameter!!.type.atomicToValueType()
                 val getterType = context.buildGetterType(type)
                 val setterType = context.buildSetterType(type)
                 newDeclaration.valueParameters = newDeclaration.valueParameters + listOf(
-                    buildValueParameter(newDeclaration, GETTER, valueParametersCount, getterType),
-                    buildValueParameter(newDeclaration, SETTER, valueParametersCount + 1, setterType)
+                    buildValueParameter(newDeclaration, GETTER, getterType),
+                    buildValueParameter(newDeclaration, SETTER, setterType)
                 )
                 newDeclaration.extensionReceiverParameter = null
                 return newDeclaration

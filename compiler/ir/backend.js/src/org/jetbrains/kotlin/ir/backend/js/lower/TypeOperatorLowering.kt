@@ -390,7 +390,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val isNullable = expression.argument.type.isNullable()
                 val toType = expression.typeOperand
 
-                fun maskOp(arg: IrExpression, mask: IrExpression, shift: IrConst<*>) = calculator.run {
+                fun maskOp(arg: IrExpression, mask: IrExpression, shift: IrConst) = calculator.run {
                     shr(shl(and(arg, mask), shift), shift.shallowCopy())
                 }
 

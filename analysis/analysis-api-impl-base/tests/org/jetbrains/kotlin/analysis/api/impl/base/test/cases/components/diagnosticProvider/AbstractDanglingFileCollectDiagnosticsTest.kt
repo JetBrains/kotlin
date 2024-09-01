@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices

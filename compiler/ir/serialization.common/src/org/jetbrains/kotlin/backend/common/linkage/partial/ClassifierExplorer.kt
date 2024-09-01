@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrConstantObject
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable.*
@@ -33,7 +36,6 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLM
 internal class ClassifierExplorer(
     private val builtIns: IrBuiltIns,
     private val stubGenerator: MissingDeclarationStubGenerator,
-    private val allowErrorTypes: Boolean
 ) {
     private val exploredSymbols = ExploredClassifiers()
 
@@ -76,12 +78,7 @@ internal class ClassifierExplorer(
                 ?: arguments.firstUnusable { it.typeOrNull?.exploreType(visitedSymbols) }
                 ?: Usable
             is IrDynamicType -> Usable
-            else -> {
-                if (this is IrErrorType && allowErrorTypes)
-                    Usable
-                else
-                    throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
-            }
+            else -> throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
         }
     }
 

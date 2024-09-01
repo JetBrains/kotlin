@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in A) constructor(i: kotlin.Int)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(62,63): 'A'
+  KtSimpleNameReference:
+    (in A) constructor(i: kotlin.Int)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

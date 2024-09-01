@@ -1,0 +1,38 @@
+KaNamedFunctionSymbol:
+  annotations: [
+    kotlin/Deprecated(message = "Use 'bar() instead", replaceWith = kotlin/ReplaceWith(imports = [], , expression = "bar()", ))
+      psi: null
+  ]
+  callableId: lib/foo
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: lib.LibKt
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=Use 'bar() instead)

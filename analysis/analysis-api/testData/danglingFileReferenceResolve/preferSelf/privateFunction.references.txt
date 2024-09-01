@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo) private fun call() [fake.kt]
+KtNameReferenceExpression(73,77): 'call'
+  KtSimpleNameReference:
+    (in Foo) private fun call() [fake.kt]

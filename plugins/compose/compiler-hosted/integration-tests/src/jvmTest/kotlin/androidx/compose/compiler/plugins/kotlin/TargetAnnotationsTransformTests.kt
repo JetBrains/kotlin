@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Ignore
 import org.junit.Test
 
 @Suppress("SpellCheckingInspection") // Expected strings can have partial words
@@ -257,7 +256,11 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 content = { LocalBoxScopeInstance.content() }
             )
         }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiUnitJar(),
+        )
     )
 
     @Test
@@ -308,7 +311,13 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
         @Composable
         fun T(value: String) { }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiGraphicsJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationTextJar()
+        )
     )
 
     @Suppress("unused")

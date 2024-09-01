@@ -1,0 +1,16 @@
+/**
+ * package {
+ *
+ *   // signature: inlineReifiedFun(Ljava/lang/Object;)Lkotlin/reflect/KType;
+ *   public final inline fun <reified T#0 (* T *)> inlineReifiedFun(t: T#0): kotlin/reflect/KType
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InlineReifiedKt {
+
+    public InlineReifiedKt() {
+        super();
+    }
+}

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.MyClass) fun materialize(): test.MyClass
+KtNameReferenceExpression(140,151): 'materialize'
+  KtSimpleNameReference:
+    (in test.MyClass) fun materialize(): test.MyClass

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
@@ -13,8 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClassIdOrN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -379,7 +381,7 @@ internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, ta
 private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
     val targetModule = target.llFirModuleData.ktModule
 
-    if (targetModule is KtDanglingFileModule && targetModule.resolutionMode == DanglingFileResolutionMode.IGNORE_SELF) {
+    if (targetModule is KaDanglingFileModule && targetModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
         val targetPsiFile = targetModule.file
 
         val contextModule = targetModule.contextModule
@@ -392,8 +394,8 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
                 val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
                 val originalPathDeclaration = when (originalPathPsi) {
-                    is KtClassOrObject -> originalPathPsi.getOrBuildFirSafe<FirRegularClass>(contextResolveSession)
-                    is KtScript -> originalPathPsi.getOrBuildFirSafe<FirScript>(contextResolveSession)
+                    is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolveSession)?.fir
+                    is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolveSession)?.fir
                     is KtFile -> originalPathPsi.getOrBuildFirFile(contextResolveSession)
                     else -> null
                 } ?: return null

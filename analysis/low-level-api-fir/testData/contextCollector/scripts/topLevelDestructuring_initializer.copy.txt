@@ -20,10 +20,10 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
             Properties:
-                FirPropertySymbol public final val one: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-                FirPropertySymbol public final val two: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val one: <implicit>
+                    public get(): <implicit>
+                FirPropertySymbol public final val two: <implicit>
+                    public get(): <implicit>
     Element 9
         Scope: FirLocalScope
     Element 10
@@ -34,11 +34,11 @@ Tower Data Context:
             
                 public final data class TwoValues : R|kotlin/Any|
                 lval <destruct>: R|TwoValues|
-                public final val one: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                public final val one: <implicit>
+                    public get(): <implicit>
             
-                public final val two: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                public final val two: <implicit>
+                    public get(): <implicit>
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_initializer.kts

@@ -13,7 +13,7 @@ FILE: test.kt
         lval element: R|DE| = R|<local>/d|.R|/Diagnostic.element|
         R|/Fix.Fix|(R|<local>/element|)
     }
-    private final val DERIVED_FACTORY: R|DiagnosticFactory0<DerivedElement>| = R|/DiagnosticFactory0.DiagnosticFactory0|<R|DerivedElement|>()
+    private final val DERIVED_FACTORY: R|DiagnosticFactory0<DerivedElement>| = R|/DiagnosticFactory0.DiagnosticFactory0|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=DerivedElement) DerivedElement!|>()
         private get(): R|DiagnosticFactory0<DerivedElement>|
     public final fun createViaFactory(d: R|EmptyDiagnostic|): R|kotlin/Unit| {
         lval casted: R|Diagnostic<DerivedElement!>| = R|/DERIVED_FACTORY|.R|SubstitutionOverride</DiagnosticFactory0.cast: R|@EnhancedNullability Diagnostic<DerivedElement!>|>|(R|<local>/d|)

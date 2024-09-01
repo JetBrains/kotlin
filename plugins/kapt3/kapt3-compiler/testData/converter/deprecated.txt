@@ -38,7 +38,7 @@ package deprecated;
  *   // field: prop:I
  *   // getter: getProp()I
  *   // synthetic method for annotations: getProp$annotations()V
- *   public final val prop: kotlin/Int (* = ... *)
+ *   public final val prop: kotlin/Int
  *     public final get
  *
  *   // module name: main

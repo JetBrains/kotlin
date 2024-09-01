@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.klib
 
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.test.CompilerTestUtil
@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import java.io.File
 
+/**
+ * Note that `BuiltInsSerializerTest.K2BuiltInsSerializerTest` uses the same testdata
+ */
 class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     private val BASE_DIR = "compiler/testData/serialization"
 
@@ -55,7 +58,7 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
             add(ForTestCompileRuntime.stdlibCommonForTests().absolutePath)
         }
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2MetadataCompiler(), listOf(
+            KotlinMetadataCompiler(), listOf(
                 File(source).absolutePath,
                 "-d", klibFile.absolutePath,
                 "-module-name", klibName,

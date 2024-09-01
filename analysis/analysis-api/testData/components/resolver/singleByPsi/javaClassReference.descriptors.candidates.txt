@@ -1,2 +1,2 @@
-KtCallExpression:
-NO_CANDIDATES
+KtCallExpression(31,44): 'Array<String>'
+  NO_CANDIDATES

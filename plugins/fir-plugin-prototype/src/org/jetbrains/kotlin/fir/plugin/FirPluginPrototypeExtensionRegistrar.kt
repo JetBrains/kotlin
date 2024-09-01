@@ -23,6 +23,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::AllOpenPredicateMatcher
         +::AllPublicVisibilityTransformer
         +::SomeAdditionalSupertypeGenerator
+        +::AdditionalSuperclassGenerator
         +::SupertypeWithArgumentGenerator
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension

@@ -5,18 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask
 import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
+
+private val gson = GsonBuilder().setLenient().setPrettyPrinting().serializeNulls().create()
+
+data class TransformedMetadataLibraryRecord(
+    val moduleId: String,
+    val file: String,
+    val sourceSetName: String? = null
+)
 
 /**
  * Files used by the [MetadataDependencyTransformationTask] and [CInteropMetadataDependencyTransformationTask] to
  * store the resulting 'metadata path' in this index file.
  */
 internal class KotlinMetadataLibrariesIndexFile(private val file: File) {
-    fun read(): List<File> = file.readLines().map { File(it) }
+    private val typeToken = object : TypeToken<Collection<TransformedMetadataLibraryRecord>>() {}
 
-    fun write(files: Iterable<File>) {
-        val content = files.joinToString(System.lineSeparator()) { it.path }
-        file.writeText(content)
+    fun read(): List<TransformedMetadataLibraryRecord> = FileReader(file).use {
+        gson.fromJson<Collection<TransformedMetadataLibraryRecord>>(it, typeToken.type).toList()
+    }
+
+    fun write(records: List<TransformedMetadataLibraryRecord>) {
+        FileWriter(file).use {
+            gson.toJson(records, typeToken.type, it)
+        }
     }
 }
+
+internal fun KotlinMetadataLibrariesIndexFile.readFiles() = read().map { File(it.file) }

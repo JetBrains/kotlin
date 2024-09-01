@@ -36,7 +36,7 @@ fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
       }
       sourceInformationMarkerEnd(%composer)
     }
-    AnimatedContent(1.0f, rememberComposableLambda(<>, false, { it: @[ParameterName(name = 'targetState')] Float, %composer: Composer?, %changed: Int ->
+    AnimatedContent(1.0f, rememberComposableLambda(<>, false, { it: Float, %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<Foo()>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)

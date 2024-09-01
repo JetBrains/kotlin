@@ -16,10 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import org.junit.Assume.assumeFalse
 import org.junit.Test
+import kotlin.test.Ignore
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
 class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -623,25 +624,50 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     )
 
     @Test
-    fun testDefaultParametersInVirtualFunctions() = validateBytecode(
+    fun testDefaultParametersInAbstractFunctions() = validateBytecode(
         """
             import androidx.compose.runtime.*
 
             interface Test {
                 @Composable fun foo(param: Int = remember { 0 })
-                @Composable fun bar(param: Int = remember { 0 }): Int = param
             }
 
             class TestImpl : Test {
                 @Composable override fun foo(param: Int) {}
+            }
+
+            @Composable fun CallWithDefaults(test: Test) {
+                test.foo()
+                test.foo(0)
+            }
+        """,
+        validate = {
+            assertTrue(
+                it.contains(
+                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
+                ),
+                "default static functions should be generated in ComposeDefaultsImpl class"
+            )
+        }
+    )
+
+    @Ignore("b/357878245")
+    @Test
+    fun testDefaultParametersInOpenFunctions() = validateBytecode(
+        """
+            import androidx.compose.runtime.*
+
+            interface Test {
+                @Composable fun bar(param: Int = remember { 0 }): Int = param
+            }
+
+            class TestImpl : Test {
                 @Composable override fun bar(param: Int): Int {
                     return super.bar(param)
                 }
             }
 
             @Composable fun CallWithDefaults(test: Test) {
-                test.foo()
-                test.foo(0)
                 test.bar()
                 test.bar(0)
             }
@@ -654,5 +680,36 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 "default static functions should be generated in ComposeDefaultsImpl class"
             )
         }
+    )
+
+    @Test
+    fun testMemoizingFromDelegate() = testCompile(
+        """
+            import androidx.compose.runtime.*
+
+            class ClassWithData(
+                val action: Int = 0,
+            )
+
+            fun getData(): ClassWithData = TODO()
+
+            @Composable
+            fun StrongSkippingIssue(
+                data: ClassWithData
+            ) {
+                val state by remember { mutableStateOf("") }
+                val action by data::action
+                val action1 by getData()::action
+                { 
+                    action
+                }
+                {
+                    action1
+                }
+                {
+                    state
+                }
+            }
+        """
     )
 }

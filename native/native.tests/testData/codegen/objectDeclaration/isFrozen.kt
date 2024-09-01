@@ -14,16 +14,8 @@ object X {
 }
 
 fun box(): String {
-    if (Platform.memoryModel == MemoryModel.STRICT) {
-        assertTrue(X.isFrozen)
-        assertFailsWith<InvalidMutabilityException> {
-            X.value = 42
-        }
-        assertEquals(0, X.value)
-    } else {
-        assertFalse(X.isFrozen)
-        X.value = 42
-        assertEquals(42, X.value)
-    }
+    assertFalse(X.isFrozen)
+    X.value = 42
+    assertEquals(42, X.value)
     return "OK"
 }

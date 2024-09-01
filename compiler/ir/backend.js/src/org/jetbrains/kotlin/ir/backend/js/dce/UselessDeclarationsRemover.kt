@@ -64,7 +64,7 @@ class UselessDeclarationsRemover(
         // Remove default constructor if the class was never constructed
         val defaultConstructor = context.findDefaultConstructorFor(declaration)
         if (defaultConstructor != null && defaultConstructor !in usefulDeclarations) {
-            context.mapping.classToItsDefaultConstructor.remove(declaration)
+            context.mapping.classToItsDefaultConstructor[declaration] = null
         }
     }
 

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: main.kt
 interface A {
     suspend fun foo()

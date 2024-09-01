@@ -1,40 +1,57 @@
 KaSyntheticJavaPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /Derived.something
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /Derived.getSomething
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: false
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
-      type: KaUsualClassType:
-        annotationsList: []
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
         typeArguments: []
         type: Derived
+      visibility: LOCAL
       getContainingFileSymbol: null
+      getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
+
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/String
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescPropertyGetterSymbol
 
@@ -45,65 +62,91 @@ KaSyntheticJavaPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: null
+  isActual: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: true
   isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: false
-  javaGetterSymbol: KaFunctionSymbol(/Derived.getSomething)
-  javaSetterSymbol: KaFunctionSymbol(/Derived.setSomething)
+  javaGetterSymbol: KaNamedFunctionSymbol(/Derived.getSomething)
+  javaSetterSymbol: KaNamedFunctionSymbol(/Derived.setSomething)
+  location: CLASS
   modality: FINAL
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
-    type: KaUsualClassType:
-      annotationsList: []
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
       typeArguments: []
       type: Derived
+    visibility: LOCAL
     getContainingFileSymbol: null
+    getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
+
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /Derived.setSomething
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: false
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: null
       getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
@@ -111,44 +154,61 @@ KaSyntheticJavaPropertySymbol:
 
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
-      type: KaUsualClassType:
-        annotationsList: []
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
         typeArguments: []
         type: Derived
+      visibility: LOCAL
       getContainingFileSymbol: null
+      getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
+
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: LOCAL
         getContainingFileSymbol: null
         getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
@@ -156,16 +216,15 @@ KaSyntheticJavaPropertySymbol:
 
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescPropertySetterSymbol
 
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescPropertySetterSymbol
 
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSyntheticJavaPropertySymbol
 

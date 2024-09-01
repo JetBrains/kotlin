@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
@@ -179,36 +179,17 @@ fun IrInlinedFunctionBlock.putStatementsInFrontOfInlinedFunction(statements: Lis
     this.statements.addAll(if (insertAfter == -1) 0 else insertAfter + 1, statements)
 }
 
-
-fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
-    val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
-    for (block in this.filter { it.isFunctionInlining() }) {
-        block.inlineCall.getAllArgumentsWithIr().forEach {
-            // pretty messed up thing, this is needed to get the original expression that was inlined
-            // it was changed a couple of times after all lowerings, so we must get `attributeOwnerId` to ensure that this is original
-            val actualArg = if (it.second == null) {
-                val blockWithClass = it.first.defaultValue?.expression?.attributeOwnerId as? IrBlock
-                blockWithClass?.statements?.firstOrNull() as? IrClass
-            } else {
-                it.second
-            }
-
-            val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
-            val extractedAnonymousFunction = if (originalActualArg?.isAdaptedFunctionReference() == true) {
-                (originalActualArg as IrBlock).statements.last() as IrFunctionReference
-            } else {
-                originalActualArg
-            }
-
-            if (extractedAnonymousFunction?.attributeOwnerId == originalInlinedElement) {
-                return block.inlineDeclaration
-            }
-        }
-    }
-
-    return null
-}
-
 val IrVariable.isTmpForInline: Boolean
     get() = this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER ||
             this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+
+fun IrExpression.isInlineLambdaBlock(): Boolean {
+    if (!this.isLambdaBlock()) return false
+
+    val block = this as IrBlock
+    val reference = block.statements.last() as? IrFunctionReference
+    return reference?.origin == LoweredStatementOrigins.INLINE_LAMBDA
+}
+
+fun IrFunction.isReifiable(): Boolean =
+    typeParameters.any { it.isReified }

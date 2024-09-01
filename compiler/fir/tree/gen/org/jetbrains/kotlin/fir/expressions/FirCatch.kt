@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.catchClause]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.catchClause]
  */
 abstract class FirCatch : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?

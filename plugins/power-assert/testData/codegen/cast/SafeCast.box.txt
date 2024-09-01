@@ -1,0 +1,22 @@
+---
+assert((a as? String)?.length == 5)
+        | |            |      |
+        | |            |      false
+        | |            4
+        | test
+        test
+---
+---
+assert((a as? String)?.length == 5)
+        | |            |      |
+        | |            |      false
+        | |            null
+        | null
+        1
+---
+---
+requireNotNull(a as? String) { "" }
+               | |
+               | null
+               1
+---

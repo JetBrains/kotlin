@@ -23,13 +23,13 @@ class SwitchOptimizer(
     private val jsEqeqeq = context.staticContext.backendContext.intrinsics.jsEqeqeq
     private val jsEqeq = context.staticContext.backendContext.intrinsics.jsEqeq
 
-    private fun IrConst<*>.isTrueConstant(): Boolean {
+    private fun IrConst.isTrueConstant(): Boolean {
         if (kind !== IrConstKind.Boolean) return false
         return value as Boolean
     }
 
     private sealed class SwitchBranchData(val body: IrExpression) {
-        class SwitchCaseData(val cases: Collection<IrConst<*>>, body: IrExpression) : SwitchBranchData(body)
+        class SwitchCaseData(val cases: Collection<IrConst>, body: IrExpression) : SwitchBranchData(body)
         class SwitchDefaultData(body: IrExpression) : SwitchBranchData(body)
     }
 
@@ -47,14 +47,14 @@ class SwitchOptimizer(
 
         val cases = mutableListOf<SwitchBranchData>()
 
-        fun tryToExtractEqeqeqConst(irCall: IrCall): IrConst<*>? {
+        fun tryToExtractEqeqeqConst(irCall: IrCall): IrConst? {
             // check weather the irCall is `s === #CONST`
             if (irCall.symbol !== jsEqeqeq && irCall.symbol !== jsEqeq) return null
 
             val op1 = irCall.getValueArgument(0)!!
             val op2 = irCall.getValueArgument(1)!!
 
-            val constOp = op1 as? IrConst<*> ?: op2 as? IrConst<*> ?: return null
+            val constOp = op1 as? IrConst ?: op2 as? IrConst ?: return null
             val varOp = op1 as? IrGetValue ?: op2 as? IrGetValue ?: return null
 
             if (varSymbol == null) varSymbol = varOp.symbol
@@ -63,14 +63,14 @@ class SwitchOptimizer(
             return constOp
         }
 
-        fun checkForPrimitiveOrPattern(irWhen: IrWhen, constants: MutableList<IrConst<*>>): Boolean {
+        fun checkForPrimitiveOrPattern(irWhen: IrWhen, constants: MutableList<IrConst>): Boolean {
             if (irWhen.branches.size != 2) return false
 
             val thenBranch = irWhen.branches[0]
             val elseBranch = irWhen.branches[1]
 
             fun checkBranchIsOrPattern(constExpr: IrExpression, branchExpr: IrExpression): Boolean {
-                if (constExpr !is IrConst<*>) return false
+                if (constExpr !is IrConst) return false
                 if (!constExpr.isTrueConstant()) return false
 
                 return when (branchExpr) {
@@ -104,14 +104,14 @@ class SwitchOptimizer(
 
                 // check for a || b ... || z pattern
                 is IrWhen -> {
-                    val orConstants = mutableListOf<IrConst<*>>()
+                    val orConstants = mutableListOf<IrConst>()
                     if (checkForPrimitiveOrPattern(condition, orConstants)) {
                         caseCount += orConstants.size
                         cases += SwitchBranchData.SwitchCaseData(orConstants, branch.result)
                     } else return null
                 }
 
-                is IrConst<*> -> {
+                is IrConst -> {
                     if (condition.isTrueConstant()) {
                         caseCount++
                         cases += SwitchBranchData.SwitchDefaultData(branch.result)

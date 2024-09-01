@@ -15,6 +15,7 @@ sealed class ProjectVariant {
 
         val withAndroid get() = "android" in variants
         val withJvm get() = "jvm" in variants
+        val withNative get() = "native" in variants
 
         fun isCommonMainDependableOn(dependency: ProjectVariant): Boolean {
             if (dependency !is Kmp) return false

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -159,7 +160,7 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
             declaration.declarations += mappingState.mappingsClass.apply {
                 parent = declaration
                 if (mappingState.isPublicAbi) {
-                    context.publicAbiSymbols += symbol
+                    this.isPublicAbi = true
                 }
             }
         }

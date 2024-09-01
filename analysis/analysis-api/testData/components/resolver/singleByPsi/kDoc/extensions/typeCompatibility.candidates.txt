@@ -1,26 +1,35 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(130,140): 'Any.anyExt'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(146,157): 'Base.anyExt'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(163,175): 'Child.anyExt'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(184,195): 'Any.baseExt'
+    NO_CANDIDATES
 
-<caret_5>: KDocName:
-NO_CANDIDATES
+<caret_5>:
+  KDocName(201,213): 'Base.baseExt'
+    NO_CANDIDATES
 
-<caret_6>: KDocName:
-NO_CANDIDATES
+<caret_6>:
+  KDocName(219,232): 'Child.baseExt'
+    NO_CANDIDATES
 
-<caret_7>: KDocName:
-NO_CANDIDATES
+<caret_7>:
+  KDocName(241,253): 'Any.childExt'
+    NO_CANDIDATES
 
-<caret_8>: KDocName:
-NO_CANDIDATES
+<caret_8>:
+  KDocName(259,272): 'Base.childExt'
+    NO_CANDIDATES
 
-<caret_9>: KDocName:
-NO_CANDIDATES
+<caret_9>:
+  KDocName(278,292): 'Child.childExt'
+    NO_CANDIDATES

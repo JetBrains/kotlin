@@ -42,7 +42,7 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     if (!(value_1.case_1_1() || value_1.case_1_2() == null)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
     }
 }
 

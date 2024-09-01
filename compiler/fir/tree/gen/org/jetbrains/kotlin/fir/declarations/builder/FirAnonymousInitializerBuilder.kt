@@ -36,7 +36,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var body: FirBlock? = null
     var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
-    var containingDeclarationSymbol: FirBasedSymbol<*>? = null
+    lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -551,12 +552,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 "Static replacement must have no extension receiver but ${replacement.extensionReceiverParameter!!.render()} found"
             }
             val structure = buildList(implementationStructure.size) {
-                var valueParameterIndex = 0
                 add(RegularMapping(dispatchReceiverParameter!!))
                 val valueParametersAsMutableList = mutableListOf<IrValueParameter>()
                 for (expectedParameterStructure in implementationStructure.asSequence().drop(this.size)) {
                     fun IrValueParameter.copy() =
-                        copyTo(this@apply, type = type.substitute(substitutionMap), index = valueParameterIndex++)
+                        copyTo(this@apply, type = type.substitute(substitutionMap))
 
                     val parameterStructure = when (expectedParameterStructure) {
                         is RegularMapping -> RegularMapping(expectedParameterStructure.valueParameter.copy())
@@ -836,8 +836,8 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
             extensionReceiverParameter = (originalFunction.dispatchReceiverParameter ?: originalFunction.extensionReceiverParameter)
                 ?.let { it.copyTo(this, type = it.type.substitute(substitutionMap)) }
-            valueParameters = originalFunction.valueParameters.mapIndexed { index, param ->
-                param.copyTo(this, index = index, type = param.type.substitute(substitutionMap))
+            valueParameters = originalFunction.valueParameters.map { param ->
+                param.copyTo(this, type = param.type.substitute(substitutionMap))
             }
             withinScope(this) {
                 body = makeBody(this)
@@ -862,7 +862,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 putValueArgument(index, arg?.transform(this@JvmMultiFieldValueClassLowering, null))
             }
             copyAttributes(expression)
-            context.getLocalClassType(expression.attributeOwnerId)?.let { context.putLocalClassType(this, it) }
+            localClassType = expression.localClassType
         }
         return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock(origin = IrStatementOrigin.LAMBDA) {
             +wrapper

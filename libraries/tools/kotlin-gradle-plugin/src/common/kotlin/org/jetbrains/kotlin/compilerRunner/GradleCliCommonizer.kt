@@ -84,5 +84,5 @@ private fun ObjectFactory.kotlinNativeCommonizerToolSpec(
     daemonEntryPoint = property("main"),
     classpath = toolClasspath,
     jvmArgs = listProperty<String>().value(toolJvmArgs).also { it.add("-Xmx4g") },
-    shouldPassArgumentsViaArgFile = property<Boolean>().value(false),
+    shouldPassArgumentsViaArgFile = property<Boolean>().value(true),
 ).disableC2().enableAssertions()

@@ -44,16 +44,10 @@ object BackendKinds {
      */
     object IrBackendForK1AndK2 : BackendKind<IrBackendInputsFromK1AndK2>("TwoIrBackends")
 
-    /**
-     * The artifact kind representing IR deserialized from a klib.
-     */
-    object DeserializedIrBackend : BackendKind<IrBackendInput>("DeserializedIrBackend")
-
     fun fromString(string: String): BackendKind<*>? {
         return when (string) {
             "ClassicBackend" -> ClassicBackend
             "IrBackend" -> IrBackend
-            "DeserializedIrBackend" -> DeserializedIrBackend
             else -> null
         }
     }

@@ -103,6 +103,12 @@ public class FirIdeDependentAnalysisSourceModuleExitPointSnapshotTestGenerated e
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/defaultTryCatch2.kt");
     }
 
+    @Test
+    @TestMetadata("parenthesis.kt")
+    public void testParenthesis() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/parenthesis.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/controlFlow/conditionalJumps")
     @TestDataPath("$PROJECT_ROOT")

@@ -61,15 +61,16 @@ internal object TestScopeRenderer {
         renderScopeMembers(scope, printer, printPretty, additionalSymbolInfo)
     }
 
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun renderType(
         type: KaType,
         printPretty: Boolean
     ): String = prettyPrint {
         if (printPretty) {
-            prettyPrintTypeRenderer.renderType(analysisSession, type, this)
+            prettyPrintTypeRenderer.renderType(useSiteSession, type, this)
         } else {
-            append(debugRenderer.renderType(analysisSession, type))
+            append(debugRenderer.renderType(useSiteSession, type))
         }
     }
 
@@ -122,7 +123,7 @@ internal object TestScopeRenderer {
                         if (printPretty) {
                             this@KaSession.renderPrettySymbol(it)
                         } else {
-                            debugRenderer.render(analysisSession, it)
+                            debugRenderer.render(useSiteSession, it)
                         }
                     )
                     this@KaSession.additionalSymbolInfo(it)?.let {
@@ -136,9 +137,9 @@ internal object TestScopeRenderer {
             .toMutableList()
             .apply { sortBy { it.fqName.asString() } }
             .renderAll("packages") { prettyRenderPackage(it) }
-        scope.getClassifierSymbols().toList().renderAll("classifiers") { prettyRenderDeclaration(it) }
-        scope.getCallableSymbols().toList().renderAll("callables") { prettyRenderDeclaration(it) }
-        scope.getConstructors().toList().renderAll("constructors") { prettyRenderDeclaration(it) }
+        scope.classifiers.toList().renderAll("classifiers") { prettyRenderDeclaration(it) }
+        scope.callables.toList().renderAll("callables") { prettyRenderDeclaration(it) }
+        scope.constructors.toList().renderAll("constructors") { prettyRenderDeclaration(it) }
     }
 
     private fun prettyRenderPackage(symbol: KaPackageSymbol): String =

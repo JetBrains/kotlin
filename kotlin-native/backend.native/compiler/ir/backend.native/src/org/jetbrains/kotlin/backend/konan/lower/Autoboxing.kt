@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.objcinterop.isObjCForwardDeclaration
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 /**
  * Boxes and unboxes values of value types when necessary.
@@ -120,12 +122,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
 
-    private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
-        is IrCall -> this.callTarget
-        is IrDelegatingConstructorCall -> this.symbol.owner
-        is IrConstructorCall -> this.symbol.owner
-        else -> TODO(this.render())
-    }
+    private val IrFunctionAccessExpression.target: IrFunction
+        get() = when (this) {
+            is IrCall -> this.callTarget
+            is IrDelegatingConstructorCall -> this.symbol.owner
+            is IrConstructorCall -> this.symbol.owner
+            is IrEnumConstructorCall -> compilationException("IrEnumConstructorCall is not supported here", this)
+        }
 
     private val IrCall.callTarget: IrFunction
         get() = if (this.isVirtualCall) {
@@ -137,7 +140,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
         val target = expression.target
         return useAs(target.dispatchReceiverParameter!!.type,
-                forceSkipTypeCheck = currentFunction?.bridgeTarget == target) // A bridge cannot be called on an improper receiver.
+                // A bridge cannot be called on an improper receiver.
+                forceSkipTypeCheck = (currentFunction as? IrSimpleFunction)?.bridgeTarget == target)
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
@@ -187,7 +191,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             }
         } else {
             when (this) {
-                is IrConst<*> -> IrConstantPrimitiveImpl(this.startOffset, this.endOffset, this)
+                is IrConst -> IrConstantPrimitiveImpl(this.startOffset, this.endOffset, this)
                 is IrConstantPrimitive, is IrConstantObject -> this
                 is IrConstantValue -> TODO("Boxing/unboxing of ${this::class.qualifiedName} is not supported")
                 else -> null
@@ -542,7 +546,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
-private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = mapping.loweredInlineClassConstructors.getOrPut(irConstructor) {
+private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

@@ -38,7 +38,8 @@ val SirVariable.accessors: List<SirAccessor>
 
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
-val SirType.isVoid: Boolean get() = this is SirNominalType && this.type == SirSwiftModule.void
+val SirType.isVoid: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.void
+val SirType.isNever: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.never
 
 fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () -> T): T {
     val child = producer()
@@ -50,15 +51,18 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
 val SirType.swiftName
     get(): String = when (this) {
         is SirExistentialType -> "Any"
-        is SirNominalType -> type.swiftFqName
+        is SirNominalType -> typeDeclaration.swiftFqName
         is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
+        is SirUnsupportedType -> "Swift.Never"
     }
 
 private val SirDeclaration.swiftParentNamePrefix: String?
-    get() = (parent as? SirNamedDeclaration)?.swiftFqName
-        ?: ((parent as? SirNamed)?.name)
-        ?: ((parent as? SirExtension)?.extendedType?.swiftName)
+    get() = this.parent.swiftFqNameOrNull
+
+val SirDeclarationParent.swiftFqNameOrNull: String?
+    get() = (this as? SirNamedDeclaration)?.swiftFqName
+        ?: ((this as? SirNamed)?.name)
+        ?: ((this as? SirExtension)?.extendedType?.swiftName)
 
 val SirNamedDeclaration.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name

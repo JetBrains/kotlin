@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -15,7 +13,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 object TypeParser {
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     fun parseTypeFromString(
         stringType: String,
         contextElement: KtElement,
@@ -25,7 +24,8 @@ object TypeParser {
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
-    context (KaSession)
+    context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {
             is KtUserType -> {

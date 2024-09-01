@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
 
-class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, FieldWithDefault>(element, name) {
-
-    override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
-        FieldWithDefault(it)
-    }
+class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {
+    override val allFields = element.allFields.map { it.copy() }
 }

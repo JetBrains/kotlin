@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 import llvm.LLVMABIAlignmentOfType
 import llvm.LLVMABISizeOfType
 import llvm.LLVMStoreSizeOfType
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
@@ -289,12 +290,21 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
 
     private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): FieldInfo {
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
-        require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
+        require(!isConst || initializer?.expression is IrConst) { "A const val field ${render()} must have constant initializer" }
         return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
     }
 
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
-        require(!irClass.isInterface)
+        require(!irClass.isInterface) {
+            buildString {
+                appendLine("Expected a class, found interface:")
+                appendLine("  IR: " + irClass.render())
+                appendLine("  FQ name: " + irClass.fqNameForIrSerialization)
+                irClass.fileOrNull?.let { file ->
+                    appendLine("  Location: " + irClass.getCompilerMessageLocation(file))
+                }
+            }
+        }
 
         context.logMultiple {
             +""

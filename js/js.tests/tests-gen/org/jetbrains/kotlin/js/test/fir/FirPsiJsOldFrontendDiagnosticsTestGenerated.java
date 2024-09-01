@@ -86,6 +86,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
   }
 
   @Test
+  @TestMetadata("jsImplicitBoxing.kt")
+  public void testJsImplicitBoxing() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsImplicitBoxing.kt");
+  }
+
+  @Test
   @TestMetadata("jsStatic.kt")
   public void testJsStatic() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");
@@ -914,6 +920,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     @TestMetadata("propertyAndMethodInSubclass.kt")
     public void testPropertyAndMethodInSubclass() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/propertyAndMethodInSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFun.kt")
+    public void testSuspendFun() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/suspendFun.kt");
     }
 
     @Test

@@ -1,4 +1,4 @@
-// JVM_ABI_K1_K2_DIFF: KT-63828, KT-63855, KT-63871
+// JVM_ABI_K1_K2_DIFF: KT-63855
 
 interface I {
     val <T> T.id: T

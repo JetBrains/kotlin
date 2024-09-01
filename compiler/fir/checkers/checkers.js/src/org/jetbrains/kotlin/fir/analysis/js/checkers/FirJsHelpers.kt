@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
@@ -148,6 +148,9 @@ internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
     .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
 
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
 internal fun getRootClassLikeSymbolOrSelf(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
-    return symbol.getContainingClassSymbol(session)?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
+    return symbol.getContainingClassSymbol()?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
 }

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Tests for multiplatform testing")
 class MppTestsIT : KGPBaseTest() {
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6])
     @GradleTest
     fun testKt54634(gradleVersion: GradleVersion) {
         project(
@@ -85,6 +84,19 @@ class MppTestsIT : KGPBaseTest() {
 
             build(":assemble") {
             }
+        }
+    }
+
+    @DisplayName("KT-68638: Kotlin Native Link Task failed to serialize due to configuration resolution error")
+    @GradleTest
+    fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
+        project("kt-68638-native-link-self-dependency", gradleVersion) {
+            val buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                freeArgs = listOf("--dry-run")
+            )
+            // no build failure is expected
+            build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}
         }
     }
 }

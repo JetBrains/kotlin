@@ -1,0 +1,7 @@
+/whenWithGuardEnabled.fir.kt:(660,670): error: Guard statements are only allowed in 'when' with subject.
+
+/whenWithGuardEnabled.fir.kt:(742,757): error: Guard statements are only allowed in 'when' with subject.
+
+/whenWithGuardEnabled.fir.kt:(913,923): error: Use of comma in 'when' condition with guard statement is not allowed.
+
+/whenWithGuardEnabled.fir.kt:(1020,1024): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.

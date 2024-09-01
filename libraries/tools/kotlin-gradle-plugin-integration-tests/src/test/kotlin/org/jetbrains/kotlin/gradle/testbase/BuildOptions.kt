@@ -9,24 +9,27 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.absolutePathString
 
+val DEFAULT_LOG_LEVEL = LogLevel.INFO
+
 data class BuildOptions(
-    val logLevel: LogLevel = LogLevel.INFO,
+    val logLevel: LogLevel = DEFAULT_LOG_LEVEL,
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
-    val configurationCache: Boolean? = false, //null value is only for cases, when project isolation is used without configuration cache. Otherwise Gradle runner will throw exception "The configuration cache cannot be disabled when isolated projects is enabled."
+    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
     val projectIsolation: Boolean = false,
-    val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+    val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
     val useGradleClasspathSnapshot: Boolean? = null,
@@ -56,7 +59,17 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
+    val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
 ) {
+    enum class ConfigurationCacheValue {
+        DISABLED,
+        ENABLED,
+        // AUTO means disabled by default, but enabled on macOS with Gradle >= 8.0
+        AUTO,
+        // UNSPECIFIED value is only for cases, when project isolation is used without configuration cache. Otherwise Gradle runner will throw exception "The configuration cache cannot be disabled when isolated projects is enabled."
+        UNSPECIFIED
+    }
+
     val isK2ByDefault
         get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
 
@@ -89,6 +102,7 @@ data class BuildOptions(
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
         val cocoapodsArchs: String? = null,
+        val swiftExportEnabled: Boolean? = null,
         val distributionType: String? = null,
         val distributionDownloadFromMaven: Boolean? = true,
         val reinstall: Boolean? = null,
@@ -118,8 +132,14 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        if (configurationCache != null) {
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
+        val configurationCacheValue = when (configurationCache) {
+            ConfigurationCacheValue.DISABLED,
+            ConfigurationCacheValue.AUTO -> false
+            ConfigurationCacheValue.ENABLED -> true
+            ConfigurationCacheValue.UNSPECIFIED -> null
+        }
+        if (configurationCacheValue != null) {
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheValue")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
         }
 
@@ -235,6 +255,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.compiler.arguments.log.level=$compilerArgumentsLogLevel")
         }
 
+        if (kmpIsolatedProjectsSupport != null) {
+            arguments.add("-Pkotlin.kmp.isolated-projects.support=${kmpIsolatedProjectsSupport.name.toLowerCaseAsciiOnly()}")
+        }
+
         arguments.addAll(freeArgs)
 
         return arguments.toList()
@@ -260,7 +284,9 @@ data class BuildOptions(
         nativeOptions.cocoapodsConfiguration?.let {
             arguments.add("-Pkotlin.native.cocoapods.configuration=${it}")
         }
-
+        nativeOptions.swiftExportEnabled?.let {
+            arguments.add("-Pkotlin.experimental.swift-export.enabled=${it}")
+        }
         nativeOptions.distributionDownloadFromMaven?.let {
             arguments.add("-Pkotlin.native.distribution.downloadFromMaven=${it}")
         }
@@ -285,6 +311,10 @@ data class BuildOptions(
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
         }
+    }
+
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
     }
 }
 
@@ -318,3 +348,9 @@ fun BuildOptions.withBundledKotlinNative() = copy(
         version = null
     )
 )
+
+// TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
+fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
+fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
+fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)

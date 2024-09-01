@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -23,13 +21,7 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-tasks.withType<KotlinJvmCompile> {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-}
-
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+publish()
 
 runtimeJar()
 sourcesJar()

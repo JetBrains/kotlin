@@ -3,7 +3,8 @@
 
 import kotlin.test.assertEquals
 
-inline class Z(val x: Int)
+@JvmInline
+value class Z(val x: Int)
 
 class Outer(val z1: Z, val z2: Z?) {
     inner class Inner(val z3: Z, val z4: Z?) {
@@ -11,14 +12,16 @@ class Outer(val z1: Z, val z2: Z?) {
     }
 }
 
-inline class InlineNonNullOuter(val z1: Z) {
+@JvmInline
+value class InlineNonNullOuter(val z1: Z) {
     @Suppress("INNER_CLASS_INSIDE_VALUE_CLASS")
     inner class Inner(val z2: Z, val z3: Z?) {
         val test = "$z1 $z2 $z3"
     }
 }
 
-inline class InlineNullableOuter(val z1: Z?) {
+@JvmInline
+value class InlineNullableOuter(val z1: Z?) {
     @Suppress("INNER_CLASS_INSIDE_VALUE_CLASS")
     inner class Inner(val z2: Z, val z3: Z?) {
         val test = "$z1 $z2 $z3"

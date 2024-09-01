@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.process.ExecResult
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
@@ -28,9 +26,8 @@ open class TCServiceMessagesTestExecutionSpec(
     internal open fun createClient(
         testResultProcessor: TestResultProcessor,
         log: Logger,
-        testReporter: MppTestReportHelper,
     ): TCServiceMessagesClient =
-        TCServiceMessagesClient(testResultProcessor, clientSettings, log, testReporter)
+        TCServiceMessagesClient(testResultProcessor, clientSettings, log)
 
     internal open fun wrapExecute(body: () -> Unit) = body()
     internal open fun showSuppressedOutput() = Unit
@@ -40,11 +37,9 @@ private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.tes
 
 class TCServiceMessagesTestExecutor(
     val execHandleFactory: ExecHandleFactory,
-    val buildOperationExecutor: BuildOperationExecutor,
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean,
-    val testReporter: MppTestReportHelper,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
@@ -52,9 +47,7 @@ class TCServiceMessagesTestExecutor(
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val rootOperation = buildOperationExecutor.currentOperation.parentId!!
-
-            val client = spec.createClient(testResultProcessor, log, testReporter)
+            val client = spec.createClient(testResultProcessor, log)
 
             if (spec.dryRunArgs != null) {
                 val exec = execHandleFactory.newExec()
@@ -62,7 +55,7 @@ class TCServiceMessagesTestExecutor(
                 // get rid of redundant output during dry-run
                 exec.standardOutput = object : OutputStream() {
                     override fun write(b: Int) {
-                         // do nothing
+                        // do nothing
                     }
                 }
                 exec.args = spec.dryRunArgs
@@ -94,7 +87,7 @@ class TCServiceMessagesTestExecutor(
                 execHandle = exec.build()
 
                 lateinit var result: ExecResult
-                client.root(rootOperation) {
+                client.root {
                     execHandle.start()
                     result = execHandle.waitForFinish()
                 }
@@ -126,9 +119,5 @@ class TCServiceMessagesTestExecutor(
             execHandle.abort()
         }
         outputReaderThread?.join()
-    }
-
-    companion object {
-        const val TC_PROJECT_PROPERTY = "teamcity"
     }
 }

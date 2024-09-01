@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.junit.Ignore
+import androidx.compose.compiler.plugins.kotlin.Classpath
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -389,7 +389,13 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
            BasicText("Some text")
            <!COMPOSE_APPLIER_CALL_MISMATCH!>Invalid<!>()
         }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiGraphicsJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationTextJar()
+        )
     )
 
     @Test
@@ -463,4 +469,32 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
           }
         }
         """)
+
+    @Test
+    fun testIndirectRecursiveCall() = check(
+        """
+             import androidx.compose.runtime.*
+
+             @Composable @ComposableTarget("N") fun N() { }
+
+             @Composable
+             fun T() {
+               A(10) { N() }
+             }
+
+             @Composable
+             fun A(level: Int, content: @Composable () -> Unit) {
+                if (level > 0) B(level - 1) { content() }
+             }
+
+             @Composable
+             fun B(level: Int, content: @Composable () -> Unit) {
+               A(level) {
+                 content()
+                 B(level - 1) { content() }
+               }
+               N()
+             }
+        """
+    )
 }

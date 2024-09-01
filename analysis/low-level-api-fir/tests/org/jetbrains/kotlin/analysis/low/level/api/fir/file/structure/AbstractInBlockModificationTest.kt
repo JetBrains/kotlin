@@ -17,11 +17,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -148,11 +149,11 @@ private fun LLFirDeclarationModificationService.modifyElement(element: PsiElemen
     var isOutOfBlock = false
     try {
         project.analysisMessageBus.connect(disposable).subscribe(
-            KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
+            KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION,
             KotlinModuleOutOfBlockModificationListener { isOutOfBlock = true },
         )
 
-        elementModified(element)
+        elementModified(element, modificationType = KaElementModificationType.Unknown)
     } finally {
         Disposer.dispose(disposable)
     }

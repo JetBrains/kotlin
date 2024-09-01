@@ -1,7 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WASM_MUTE_REASON: CLASS_EXPORT
-// SKIP_MINIFICATION
-// Contains calls from external JS code
 
 @JsExport
 open class A {

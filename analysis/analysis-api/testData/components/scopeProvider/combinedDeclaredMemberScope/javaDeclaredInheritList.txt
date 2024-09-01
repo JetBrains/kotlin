@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /JavaClass.add
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -16,54 +17,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: add
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: s
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /JavaClass.removeAt
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -74,59 +81,65 @@ KaFunctionSymbol:
   isExternal: false
   isInfix: false
   isInline: false
-  isOperator: true
+  isOperator: false
   isOverride: false
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: removeAt
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: index
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: PackageVisibility
   containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
@@ -134,17 +147,18 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

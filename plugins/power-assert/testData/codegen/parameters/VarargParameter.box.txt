@@ -1,4 +1,4 @@
-Assertion failed
+---
 assert(listOf("a", "b", "c") == listOf(i++, i++, i++))
        |                     |  |      |    |    |
        |                     |  |      |    |    2
@@ -7,3 +7,4 @@ assert(listOf("a", "b", "c") == listOf(i++, i++, i++))
        |                     |  [0, 1, 2]
        |                     false
        [a, b, c]
+---

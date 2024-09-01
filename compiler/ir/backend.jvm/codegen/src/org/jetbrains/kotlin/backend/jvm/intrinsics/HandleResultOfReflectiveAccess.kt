@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
 /**
- * Handles `ReflectiveAccessLowering`-originated reflective access.
+ * Handles `SpecialAccessLowering`-originated reflective access.
  *
  * Those need special handling.
  * Without it, we would try to unbox the result of the reflective access as it has `java.lang.Object` type.

@@ -18,33 +18,34 @@ standardPublicJars()
 
 dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
+    compileOnly(project(":compiler:cli"))
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(gradleTestKit())
 }
 
-val functionalTest by sourceSets.creating
-
-configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
-
-val cleanFunctionalTest = tasks.register<Delete>("cleanFunctionalTest") {
-    setDelete(layout.buildDirectory.dir("functionalTest"))
-}
-
-tasks.register<Test>("functionalTest") {
-    testClassesDirs = functionalTest.output.classesDirs
-    classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
-    dependsOn(
-        tasks.named("publishAllPublicationsToBuildDirectoryRepository"),
-        cleanFunctionalTest,
-    )
-    dependsOnKotlinGradlePluginInstall()
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
-    useJUnitPlatform()
-}
-
 if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
+    val functionalTest by sourceSets.creating
+
+    configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
+
+    val cleanFunctionalTest = tasks.register<Delete>("cleanFunctionalTest") {
+        setDelete(layout.buildDirectory.dir("functionalTest"))
+    }
+
+    tasks.register<Test>("functionalTest") {
+        testClassesDirs = functionalTest.output.classesDirs
+        classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
+        dependsOn(
+            tasks.named("publishAllPublicationsToBuildDirectoryRepository"),
+            cleanFunctionalTest,
+        )
+        dependsOnKotlinGradlePluginInstall()
+        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+        useJUnitPlatform()
+    }
+
     gradlePlugin {
         website.set("https://kotlinlang.org/")
         vcsUrl.set("https://github.com/jetbrains/kotlin")

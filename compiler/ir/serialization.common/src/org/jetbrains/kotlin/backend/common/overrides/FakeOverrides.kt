@@ -246,7 +246,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 class IrLinkerFakeOverrideProvider(
     linker: FileLocalAwareLinker,
     symbolTable: SymbolTable,
-    mangler: KotlinMangler.IrMangler,
+    val mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
     friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,

@@ -1,4 +1,4 @@
-KtBinaryExpression:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<ASSIGNMENT_IN_EXPRESSION_CONTEXT: Assignments are not expressions, and only expressions are allowed in this context>
+KtBinaryExpression(76,82): 'x /= x'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<ASSIGNMENT_IN_EXPRESSION_CONTEXT: Assignments are not expressions, and only expressions are allowed in this context>

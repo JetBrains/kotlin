@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,21 +7,20 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashMapOf
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -61,7 +60,8 @@ internal class SymbolLightFieldForProperty private constructor(
         backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
     )
 
-    private inline fun <T> withPropertySymbol(crossinline action: context (KaSession) (KaPropertySymbol) -> T): T {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)
     }
 
@@ -69,7 +69,7 @@ internal class SymbolLightFieldForProperty private constructor(
         withPropertySymbol { propertySymbol ->
             val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegatedProperty == true
             val ktType = if (isDelegated)
-                (kotlinOrigin as? KtProperty)?.delegateExpression?.getKaType()
+                (kotlinOrigin as? KtProperty)?.delegateExpression?.expressionType
             else
                 propertySymbol.returnType
             // See [KotlinTypeMapper#writeFieldSignature]
@@ -82,13 +82,14 @@ internal class SymbolLightFieldForProperty private constructor(
                 allowErrorTypes = true,
                 typeMappingMode,
                 suppressWildcards = propertySymbol.suppressWildcardMode(),
+                allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
     }
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD.toOptionalFilter())
+            propertySymbol.hasDeprecatedAnnotation()
         }
     }
 
@@ -108,7 +109,7 @@ internal class SymbolLightFieldForProperty private constructor(
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             val visibility = withPropertySymbol { propertySymbol ->
                 when {
-                    propertySymbol.visibility.isPrivateOrPrivateToThis() -> PsiModifier.PRIVATE
+                    propertySymbol.visibility == KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
                     propertySymbol.canHaveNonPrivateField -> {
                         val declaration = propertySymbol.setter ?: propertySymbol
                         declaration.toPsiVisibilityForMember()
@@ -132,18 +133,16 @@ internal class SymbolLightFieldForProperty private constructor(
         }
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
                 VOLATILE_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             ) == true
 
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
                 TRANSIENT_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             ) == true
 
             mapOf(modifier to hasAnnotation)
@@ -160,11 +159,9 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = backingFieldSymbolPointer ?: propertySymbolPointer,
-                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
-                ),
+                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
+                    SymbolAnnotationsProvider(ktModule = ktModule, annotatedSymbolPointer = pointer)
+                } ?: EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
@@ -202,11 +199,11 @@ internal class SymbolLightFieldForProperty private constructor(
     private fun toPsiExpression(value: KaAnnotationValue): PsiExpression? =
         project.withElementFactorySafe {
             when (value) {
-                is KaConstantAnnotationValue ->
-                    value.constantValue.createPsiExpression(this@SymbolLightFieldForProperty)
-                is KaEnumEntryAnnotationValue ->
+                is KaAnnotationValue.ConstantValue ->
+                    value.value.createPsiExpression(this@SymbolLightFieldForProperty)
+                is KaAnnotationValue.EnumEntryValue ->
                     value.callableId?.let { createExpressionFromText(it.asSingleFqName().asString(), this@SymbolLightFieldForProperty) }
-                is KaArrayAnnotationValue ->
+                is KaAnnotationValue.ArrayValue ->
                     createExpressionFromText(
                         value.values
                             .map { toPsiExpression(it)?.text ?: return@withElementFactorySafe null }
@@ -227,7 +224,7 @@ internal class SymbolLightFieldForProperty private constructor(
                         // NB: not as?, since _initializerValue already checks that
                         (propertySymbol as KaKotlinPropertySymbol).isConst &&
                         // javac rejects all non-primitive and non String constants
-                        (propertySymbol.returnType.isPrimitiveBacked || propertySymbol.returnType.isString)
+                        (propertySymbol.returnType.isPrimitiveBacked || propertySymbol.returnType.isStringType)
             }
         }
     }

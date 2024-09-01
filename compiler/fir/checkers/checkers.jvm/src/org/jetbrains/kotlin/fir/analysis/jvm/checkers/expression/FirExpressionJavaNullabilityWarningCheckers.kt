@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitut
 import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
 import org.jetbrains.kotlin.fir.java.enhancement.isEnhancedTypeForWarningDeprecation
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -89,7 +89,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             }
         }
 
-        return ConeSubstitutorByMap.create(substitutionMap, session)
+        return substitutorByMap(substitutionMap, session)
     }
 }
 
@@ -115,8 +115,8 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
     }
 }
 
-object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirLogicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBinaryLogicExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirBooleanOperatorExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.leftOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
         expression.rightOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
     }
@@ -142,7 +142,7 @@ object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(
 
 private fun FirExpression.checkConditionForEnhancedTypeMismatch(context: CheckerContext, reporter: DiagnosticReporter) {
     checkExpressionForEnhancedTypeMismatch(
-        context.session.builtinTypes.booleanType.type,
+        context.session.builtinTypes.booleanType.coneType,
         reporter,
         context,
         FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS

@@ -1,53 +1,61 @@
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(message = "don't use i")
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/i)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /i
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -63,21 +71,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: i
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
   javaGetterName: getI
@@ -85,55 +93,63 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i)
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/i2)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /i2
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/Deprecated(message = "don't use getter of i2")
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -149,21 +165,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: i2
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i2)
   javaGetterName: getI2
@@ -171,52 +187,60 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/i3)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /i3
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -232,97 +256,109 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: TOP_LEVEL
   modality: FINAL
   name: i3
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/Deprecated(message = "don't use getter of i3")
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(deprecated.kt)
       getContainingJvmClassName: null
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(deprecated.kt)
         getContainingJvmClassName: null
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getI3
@@ -330,55 +366,63 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i3)
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/i4)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /i4
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/Deprecated(message = "don't use getter of i4")
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -394,109 +438,122 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: TOP_LEVEL
   modality: FINAL
   name: i4
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/Deprecated(message = "don't use setter of i4")
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(deprecated.kt)
       getContainingJvmClassName: null
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(deprecated.kt)
         getContainingJvmClassName: null
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use getter of i4)
   javaGetterName: getI4
   javaSetterName: setI4
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use setter of i4)
 
-KaFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/Deprecated(message = "don't use f")
       psi: KtAnnotationEntry
   ]
   callableId: /f
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -512,31 +569,32 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: f
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f)
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: [
+KaNamedClassSymbol:
+  annotations: [
     kotlin/Deprecated(message = "don't use MyClass")
       psi: KtAnnotationEntry
   ]
   classId: MyClass
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -545,77 +603,85 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: MyClass
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use MyClass)
 
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(message = "don't use i2")
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Foo.i2)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: Foo
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /Foo.i2
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Foo
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: Foo
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -631,37 +697,38 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: i2
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: Foo
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
   javaGetterName: getI2
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use i2)
 
-KaFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/Deprecated(message = "don't use f2")
       psi: KtAnnotationEntry
   ]
   callableId: /Foo.f2
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -677,32 +744,33 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: f2
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: Foo
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=don't use f2)
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -711,73 +779,81 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: Foo
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(level = kotlin.DeprecationLevel.ERROR, message = "don't use j")
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/j)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /j
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -793,21 +869,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: j
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
   javaGetterName: getJ
@@ -815,55 +891,63 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=ERROR, propagatesToOverrides=true, message=don't use j)
 
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(level = kotlin.DeprecationLevel.HIDDEN, message = "don't use j2")
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/j2)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /j2
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -879,21 +963,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: j2
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
   javaGetterName: getJ2
@@ -901,55 +985,63 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=don't use j2)
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: [
+    annotations: [
       java/lang/Deprecated()
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/j3)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /j3
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(deprecated.kt)
     getContainingJvmClassName: DeprecatedKt
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -965,21 +1057,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: j3
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(deprecated.kt)
   getContainingJvmClassName: DeprecatedKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   javaGetterName: getJ3

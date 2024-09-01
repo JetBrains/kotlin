@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.objcexport.StableCallableOrder
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
@@ -33,11 +33,11 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("bar", "abstractFun"),
-                fooSymbol.getCallableSymbolsForObjCMemberTranslation()
-                    .map { it as KtFunctionSymbol }
+                getCallableSymbolsForObjCMemberTranslation(fooSymbol)
+                    .map { it as KaNamedFunctionSymbol }
                     .map { it.name.asString() }
             )
         }
@@ -51,12 +51,12 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("component1", "copy", "equals", "hashCode", "toString", "a"),
-                foo.getCallableSymbolsForObjCMemberTranslation()
+                getCallableSymbolsForObjCMemberTranslation(foo)
                     .sortedWith(StableCallableOrder)
-                    .map { it as KtNamedSymbol }
+                    .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
         }
@@ -72,12 +72,12 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             assertEquals(
                 emptyList(),
-                foo.getCallableSymbolsForObjCMemberTranslation()
+                getCallableSymbolsForObjCMemberTranslation(foo)
                     .sortedWith(StableCallableOrder)
-                    .map { it as KtNamedSymbol }
+                    .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
         }

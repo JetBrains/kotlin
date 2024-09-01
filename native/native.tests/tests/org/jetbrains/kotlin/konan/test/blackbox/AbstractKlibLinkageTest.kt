@@ -154,10 +154,10 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
         val module: TestModule.Exclusive? = moduleSourceDir?.let {
             TestModule.Exclusive(
                 name = moduleName,
-                directDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
+                directRegularDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
                                                          Dependencies are already handled by the AbstractNativePartialLinkageTest class. */
-                directFriendSymbols = emptySet(),
-                directDependsOnSymbols = emptySet(),
+                directFriendDependencySymbols = emptySet(),
+                directDependsOnDependencySymbols = emptySet(),
             ).also { module ->
                 moduleSourceDir.walk()
                     .filter { file -> file.isFile && file.extension == "kt" }

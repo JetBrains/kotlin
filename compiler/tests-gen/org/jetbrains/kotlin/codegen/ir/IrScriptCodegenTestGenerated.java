@@ -32,7 +32,7 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
   }
 
   public void testAllFilesPresentInScript() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
   }
 
   @TestMetadata("classLiteralInsideFunction.kts")
@@ -103,6 +103,11 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
   @TestMetadata("localFunction.kts")
   public void testLocalFunction() {
     runTest("compiler/testData/codegen/script/localFunction.kts");
+  }
+
+  @TestMetadata("MultiDollarInterpolation.kts")
+  public void testMultiDollarInterpolation() {
+    runTest("compiler/testData/codegen/script/MultiDollarInterpolation.kts");
   }
 
   @TestMetadata("outerCapture.kts")
@@ -204,7 +209,7 @@ public class IrScriptCodegenTestGenerated extends AbstractIrScriptCodegenTest {
     }
 
     public void testAllFilesPresentInScriptInstanceCapturing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("anonymousObjectCapturesProperty.kts")

@@ -1,54 +1,62 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.property)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.property
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -64,25 +72,25 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: property
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getProperty
@@ -90,56 +98,64 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.constProperty)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.constProperty
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -155,25 +171,25 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: constProperty
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getConstProperty
@@ -181,59 +197,67 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.staticProperty)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.staticProperty
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -249,25 +273,25 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: staticProperty
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getStaticProperty
@@ -275,59 +299,67 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.fieldProperty)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldProperty
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -343,25 +375,25 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: fieldProperty
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: fieldProperty
@@ -369,56 +401,64 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.variable)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.variable
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -434,102 +474,114 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: FINAL
   name: variable
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
       getContainingJvmClassName: null
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
         getContainingJvmClassName: null
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getVariable
@@ -537,59 +589,67 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.staticVariable)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.staticVariable
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -605,102 +665,114 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: FINAL
   name: staticVariable
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
       getContainingJvmClassName: null
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
         getContainingJvmClassName: null
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getStaticVariable
@@ -708,59 +780,67 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: [
+    annotations: [
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/MyClass.Companion.fieldVariable)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /MyClass.Companion.fieldVariable
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -776,113 +856,126 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: FINAL
   name: fieldVariable
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: value
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
       getContainingJvmClassName: null
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: value
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: PUBLIC
         getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
         getContainingJvmClassName: null
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
     ]
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyClass.Companion
     getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
     getContainingJvmClassName: MyClass.Companion
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyClass.Companion
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
   getContainingJvmClassName: MyClass.Companion
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: fieldVariable
   javaSetterName: fieldVariable
   setterDeprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: MyClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -891,28 +984,29 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: FINAL
   name: Companion
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: MyClass
   classKind: CLASS
-  companionObject: KaNamedClassOrObjectSymbol(MyClass.Companion)
+  companionObject: KaNamedClassSymbol(MyClass.Companion)
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -921,19 +1015,19 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: MyClass
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertiesFromCompanion.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

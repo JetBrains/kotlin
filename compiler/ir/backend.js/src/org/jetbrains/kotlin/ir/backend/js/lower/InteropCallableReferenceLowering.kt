@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -92,9 +93,8 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 JsStatementOrigins.CALLABLE_REFERENCE_CREATE
             )
 
-            // TODO: If we generate arrow functions instead of anonymous functions, there's no need for jsBind
             // TODO: Do we need to set proper offsets?
-            if (capturedDispatchReceiver != null)
+            if (capturedDispatchReceiver != null && !context.es6mode)
                 return IrCallImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
@@ -303,7 +303,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         private fun IrDeclaration.asCallableReference(): IrClass? {
-            if (origin == CallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL || origin == CallableReferenceLowering.Companion.LAMBDA_IMPL)
+            if (origin == CallableReferenceLowering.FUNCTION_REFERENCE_IMPL || origin == CallableReferenceLowering.LAMBDA_IMPL)
                 return this as? IrClass
             return null
         }
@@ -317,7 +317,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         private fun replaceWithFactory(lambdaClass: IrClass): List<IrDeclaration> {
             val lambdaInfo = LambdaInfo(lambdaClass)
 
-            return if (lambdaClass.origin == CallableReferenceLowering.Companion.LAMBDA_IMPL && !lambdaInfo.isSuspendLambda) {
+            return if (lambdaClass.origin == CallableReferenceLowering.LAMBDA_IMPL && !lambdaInfo.isSuspendLambda) {
                 if (lambdaClass.fields.none()) {
                     // Optimization:
                     // If the lambda has no context, we lift it, i.e. instead of generating an anonymous function,
@@ -470,7 +470,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaConstructor: IrConstructor,
         remapVP: (IrValueParameterSymbol) -> T?
     ): Map<IrFieldSymbol, T> {
-        val statements = lambdaConstructor.body?.let { it.cast<IrBlockBody>().statements }
+        val statements = lambdaConstructor.body?.statements
             ?: compilationException(
                 "Expecting Body for function ref constructor",
                 lambdaConstructor
@@ -566,7 +566,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
-        val nameGetter = context.mapping.reflectedNameAccessor[lambdaInfo.lambdaClass]
+        val nameGetter = lambdaInfo.lambdaClass.reflectedNameAccessor
 
         if (nameGetter != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)

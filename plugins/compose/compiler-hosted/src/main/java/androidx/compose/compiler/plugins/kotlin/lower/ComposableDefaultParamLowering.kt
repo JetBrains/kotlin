@@ -23,6 +23,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -192,10 +196,10 @@ class ComposableDefaultParamLowering(
 
     private fun IrSimpleFunction.isVirtualFunctionWithDefaultParam() =
         hasComposableAnnotation() &&
-            !isExpect &&
-            (modality == Modality.OPEN || modality == Modality.ABSTRACT) && // virtual function
-            overriddenSymbols.isEmpty() && // first in the chain of overrides
-            valueParameters.any { it.defaultValue != null } // has a default parameter
+                !isExpect &&
+                modality == Modality.ABSTRACT && // virtual function
+                overriddenSymbols.isEmpty() && // first in the chain of overrides
+                valueParameters.any { it.defaultValue != null } // has a default parameter
 
     private fun makeDefaultParameterWrapper(
         source: IrSimpleFunction
@@ -218,20 +222,20 @@ class ComposableDefaultParamLowering(
         )
         wrapper.copyAnnotationsFrom(source)
         wrapper.copyParametersFrom(source)
+
         wrapper.valueParameters.forEach {
             it.defaultValue?.transformChildrenVoid()
         }
+
         // move receiver parameters to value parameters
         val dispatcherReceiver = wrapper.dispatchReceiverParameter
-        var index = wrapper.valueParameters.size
         if (dispatcherReceiver != null) {
-            dispatcherReceiver.index = index++
             wrapper.valueParameters += dispatcherReceiver
             wrapper.dispatchReceiverParameter = null
         }
+
         val extensionReceiver = wrapper.extensionReceiverParameter
         if (extensionReceiver != null) {
-            extensionReceiver.index = index
             wrapper.valueParameters += extensionReceiver
             wrapper.extensionReceiverParameter = null
         }

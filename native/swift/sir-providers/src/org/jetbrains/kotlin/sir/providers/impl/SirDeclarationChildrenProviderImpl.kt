@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
@@ -16,9 +15,9 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
 
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
-        getAllSymbols()
+        declarations
             .filter {
-                with(sirSession) { (it as? KaSymbolWithVisibility)?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
+                with(sirSession) { it.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC }
             }
             .map { with(sirSession) { it.sirDeclaration() } }
             .flatMap { with(sirSession) { listOf(it) + it.trampolineDeclarations() } }

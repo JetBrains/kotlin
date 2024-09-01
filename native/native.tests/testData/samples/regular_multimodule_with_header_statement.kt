@@ -49,7 +49,7 @@ val Number.Kilograms: Mass get() = Mass(toDouble())
 operator fun Volume.times(density: Density): Mass = Mass(cubicMeters * density.kilogramsPerCubicMeter)
 operator fun Density.times(volume: Volume): Mass = Mass(kilogramsPerCubicMeter * volume.cubicMeters)
 
-// MODULE: shapes(mass,default)
+// MODULE: shapes(mass,main)
 // FILE: default.kt
 class Ball(private val radius: Length) {
     val surfaceArea1: SurfaceArea get() = TRIVIAL_PI * radius * radius

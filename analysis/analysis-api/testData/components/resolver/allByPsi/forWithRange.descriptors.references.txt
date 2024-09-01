@@ -1,0 +1,13 @@
+KtNameReferenceExpression(8,9): 'f'
+  KtSimpleNameReference:
+    package f
+
+KtForExpression(29,54): 'for (i in 1..<5) {'
+  KtForLoopInReference:
+    0: (in kotlin.collections.IntIterator) override operator fun next(): kotlin.Int
+    1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+    2: (in kotlin.ranges.IntProgression) override operator fun iterator(): kotlin.collections.IntIterator
+
+KtOperationReferenceExpression(40,43): '..<'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange

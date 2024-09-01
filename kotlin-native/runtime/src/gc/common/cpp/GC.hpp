@@ -11,8 +11,10 @@
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
+#include "concurrent/Mutex.hpp"
 #include "ReferenceOps.hpp"
 #include "RunLoopFinalizerProcessor.hpp"
+#include "TypeLayout.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -82,20 +84,23 @@ public:
     void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
     bool mainThreadFinalizerProcessorAvailable() noexcept;
 
+    auto gcLock() noexcept {
+        return std::unique_lock{gcLock_};
+    }
+
 private:
     std::unique_ptr<Impl> impl_;
+    ThreadStateAware<std::mutex> gcLock_{};
 };
 
-void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
-OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept;
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 bool isMarked(ObjHeader* object) noexcept;
 
 // This will drop the mark bit if it was set and return `true`.
 // If the mark bit was unset, this will return `false`.
 bool tryResetMark(GC::ObjectData& objectData) noexcept;
-
-inline constexpr bool kSupportsMultipleMutators = true;
 
 } // namespace gc
 

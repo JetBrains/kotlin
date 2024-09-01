@@ -1,2 +1,0 @@
-Resolved to:
-PsiField:Dependency.VAL_FLAG: PsiType:Flag<?>

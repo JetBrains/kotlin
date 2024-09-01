@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -30,10 +30,10 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(mainFile)
         analyseForTest(expression) {
-            val type = expression.getKaType()
+            val type = expression.expressionType
                 ?: error("expression $expression is not typable")
-            val typeScope = type.getTypeScope()
-            val declaredScopeByTypeScope = typeScope?.getDeclarationScope()
+            val typeScope = type.scope
+            val declaredScopeByTypeScope = typeScope?.declarationScope
 
             val scopeStringRepresentation = prettyPrint {
                 appendLine("Expression: ${expression.text}")
@@ -93,16 +93,16 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
 
     @Suppress("unused")
     private fun KaSession.renderForTests(scope: KaScope): String {
-        val callables = scope.getCallableSymbols().toList()
+        val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(DebugSymbolRenderer().render(analysisSession, it))
+                appendLine(DebugSymbolRenderer().render(useSiteSession, it))
             }
         }
     }
 
     private fun KaSession.prettyPrintForTests(scope: KaScope): String {
-        val callables = scope.getCallableSymbols().toList()
+        val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
                 appendLine(it.render(renderer))

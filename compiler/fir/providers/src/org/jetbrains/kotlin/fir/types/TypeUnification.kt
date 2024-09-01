@@ -102,21 +102,21 @@ fun FirSession.doUnify(
     // Foo? ~ Foo || in Foo ~ Foo || Foo ~ Bar
     if (originalType?.nullability?.isNullable != typeWithParameters?.nullability?.isNullable) return true
     if (originalTypeProjection.kind != typeWithParametersProjection.kind) return true
-    if ((originalType as? ConeLookupTagBasedType)?.lookupTag != (typeWithParameters as? ConeLookupTagBasedType)?.lookupTag) return true
+    if (originalType?.lookupTagIfAny != typeWithParameters?.lookupTagIfAny) return true
     if (originalType == null || typeWithParameters == null) return true
 
     // Foo<A> ~ Foo<B, C>
-    if (originalType.typeArguments.size != typeWithParameters.typeArguments.size) {
+    if (originalType.typeArgumentsOfLowerBoundIfFlexible.size != typeWithParameters.typeArgumentsOfLowerBoundIfFlexible.size) {
         return true
     }
 
     // Foo ~ Foo
-    if (originalType.typeArguments.isEmpty()) {
+    if (originalType.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) {
         return true
     }
 
     // Foo<...> ~ Foo<...>
-    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
+    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArgumentsOfLowerBoundIfFlexible.zip(typeWithParameters.typeArgumentsOfLowerBoundIfFlexible)) {
         if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result)) return false
     }
 

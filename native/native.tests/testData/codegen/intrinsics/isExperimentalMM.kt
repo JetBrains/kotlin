@@ -9,10 +9,7 @@ import kotlin.native.Platform
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
 fun box(): String {
-    if (isExperimentalMM()) {
-        assertEquals(Platform.memoryModel, MemoryModel.EXPERIMENTAL)
-    } else {
-        assertNotEquals(Platform.memoryModel, MemoryModel.EXPERIMENTAL)
-    }
+    assertTrue(isExperimentalMM())
+    assertEquals(MemoryModel.EXPERIMENTAL, Platform.memoryModel)
     return "OK"
 }

@@ -7,14 +7,14 @@ package org.jetbrains.sir.lightclasses.extensions
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.SirCallableKind
 
 internal val KaCallableSymbol.sirCallableKind: SirCallableKind
-    get() = when (symbolKind) {
-        KaSymbolKind.TOP_LEVEL -> {
+    get() = when (location) {
+        KaSymbolLocation.TOP_LEVEL -> {
             val isRootPackage = callableId?.packageName?.isRoot
             if (isRootPackage == true) {
                 SirCallableKind.FUNCTION
@@ -22,11 +22,10 @@ internal val KaCallableSymbol.sirCallableKind: SirCallableKind
                 SirCallableKind.STATIC_METHOD
             }
         }
-        KaSymbolKind.CLASS_MEMBER, KaSymbolKind.ACCESSOR,
-        -> SirCallableKind.INSTANCE_METHOD
-        KaSymbolKind.LOCAL,
-        KaSymbolKind.SAM_CONSTRUCTOR,
-        -> TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
+        KaSymbolLocation.CLASS, KaSymbolLocation.PROPERTY,
+            -> SirCallableKind.INSTANCE_METHOD
+        KaSymbolLocation.LOCAL,
+            -> TODO("encountered callable location($location) that is not translatable currently. Fix this crash during KT-65980.")
     }
 
 internal fun KaSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text

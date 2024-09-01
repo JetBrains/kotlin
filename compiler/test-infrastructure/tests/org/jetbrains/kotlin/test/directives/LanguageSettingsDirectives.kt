@@ -15,7 +15,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
         description = """
             List of enabled and disabled language features.
-            Usage: // !LANGUAGE: +SomeFeature -OtherFeature warn:FeatureWithEarning
+            Usage: // LANGUAGE: +SomeFeature -OtherFeature warn:FeatureWithEarning
         """.trimIndent()
     )
 
@@ -38,7 +38,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
             which will become obsolete at some point and the test won't check things like feature
             intersection with newer releases.
 
-            For language feature testing, use `// !LANGUAGE: [+-]FeatureName` directive instead,
+            For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
             where FeatureName is an entry of the enum `LanguageFeature`
         """.trimIndent()
     )
@@ -68,13 +68,25 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
     )
 
-    val STDLIB_COMPILATION by directive(
-        description = "Enables corresponding analysis flag (AnalysisFlags.stdlibCompilation)"
+    val PREFER_IN_TEST_OVER_STDLIB by directive(
+        description = "Prefer in-test defined class over stdlib one if the names collide"
     )
 
     // It's inverted because otherwise we would have warnings in almost all KMP tests
     val ENABLE_EXPECT_ACTUAL_CLASSES_WARNING by stringDirective(
         description = "Disables -Xexpect-actual-classes key"
+    )
+
+    val SUPPRESS_WARNINGS by stringDirective(
+        description = """
+            List of globally suppressed annotations.
+            This directive is different from `DiagnosticsDirectives.DIAGNOSTICS`:
+            - this one uses the compiler mechanism with `-XsuppressWarning` flag
+            - later one suppresses diagnostics on test infra level
+            
+            In most cases it's preferred to use `DIAGNOSTICS`, as it allows to suppress any
+              diagnostic, not just warnings
+        """.trimIndent()
     )
 
     // --------------------- Jvm Analysis Flags ---------------------
@@ -99,7 +111,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val ENABLE_JVM_PREVIEW by directive("Enable JVM preview features")
     val EMIT_JVM_TYPE_ANNOTATIONS by directive("Enable emitting jvm type annotations")
-    val NO_OPTIMIZED_CALLABLE_REFERENCES by directive("Don't optimize callable references")
     val DISABLE_PARAM_ASSERTIONS by directive("Disable assertions on parameters")
     val DISABLE_CALL_ASSERTIONS by directive("Disable assertions on calls")
     val NO_UNIFIED_NULL_CHECKS by directive("No unified null checks")

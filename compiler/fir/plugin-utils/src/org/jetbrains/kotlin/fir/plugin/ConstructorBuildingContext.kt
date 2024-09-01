@@ -21,13 +21,15 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCal
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.callableIdForConstructor
 import org.jetbrains.kotlin.types.Variance
@@ -52,7 +54,7 @@ public class ConstructorBuildingContext(
             returnTypeRef = owner.defaultType().toFirResolvedTypeRef()
             status = generateStatus()
             if (owner.isInner) {
-                val parentSymbol = owner.getContainingClassLookupTag()?.toSymbol(session) as? FirClassSymbol<*>
+                val parentSymbol = owner.getContainingClassLookupTag()?.toClassSymbol(session)
                     ?: error("Symbol for parent of $owner not found")
                 dispatchReceiverType = parentSymbol.defaultType()
             }
@@ -151,12 +153,12 @@ public fun FirExtension.createDefaultPrivateConstructor(
 }
 
 private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSession) {
-    val owner = returnTypeRef.coneType.toSymbol(session) as? FirClassSymbol<*>
+    val owner = returnTypeRef.coneType.toClassSymbol(session)
     requireNotNull(owner)
     val delegatingConstructorCall = buildDelegatedConstructorCall {
         val superClasses = owner.resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
         val singleSupertype = when (superClasses.size) {
-            0 -> session.builtinTypes.anyType.type
+            0 -> session.builtinTypes.anyType.coneType
             1 -> superClasses.first()
             else -> error("Object $owner has more than one class supertypes: $superClasses")
         }

@@ -17,7 +17,6 @@ internal val ObjCExportStub.throwsAnnotationClassIds: List<ClassId>?
         return null
     }
 
-context(ObjCExportStubExtrasBuilderContext)
 internal var MutableExtras.throwsAnnotationClassIds: List<ClassId>?
     get() = this[throwsAnnotationClassIdsKey]
     set(value) {

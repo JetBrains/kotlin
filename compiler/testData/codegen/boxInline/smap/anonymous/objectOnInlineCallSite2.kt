@@ -1,8 +1,8 @@
+// IGNORE_INLINER: IR
 // IGNORE
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 // NO_SMAP_DUMP
-
 
 package builders
 

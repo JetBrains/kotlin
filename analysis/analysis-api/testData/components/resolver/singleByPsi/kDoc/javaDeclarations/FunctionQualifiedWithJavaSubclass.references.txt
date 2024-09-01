@@ -1,2 +1,3 @@
-KDocReference:
-  (in dependency.JavaBase) open fun myFun()
+KDocName(54,69): 'JavaChild.myFun'
+  KDocReference:
+    (in dependency.JavaBase) open fun myFun()

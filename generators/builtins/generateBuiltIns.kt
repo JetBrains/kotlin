@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
-import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
+import org.jetbrains.kotlin.generators.builtins.arrays.*
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
 import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
@@ -22,11 +22,11 @@ fun assertExists(file: File) {
     if (!file.exists()) error("Output dir does not exist: ${file.absolutePath}")
 }
 
-val BUILT_INS_NATIVE_DIR_JVM = File("core/builtins/native/")
+val BUILT_INS_COMMON_DIR = File("libraries/stdlib/src/kotlin")
+val BUILT_INS_NATIVE_DIR_JVM = File("libraries/stdlib/jvm/builtins/")
 val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
 val BUILT_INS_NATIVE_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/")
-val BUILT_INS_SRC_DIR = File("core/builtins/src/")
 val RUNTIME_JVM_DIR = File("libraries/stdlib/jvm/runtime/")
 val UNSIGNED_TYPES_DIR = File("libraries/stdlib/unsigned/src")
 val STDLIB_DIR = File("libraries/stdlib/src")
@@ -63,31 +63,44 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) : BuiltInsGenerator
 }
 
 fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Unit) {
+    assertExists(BUILT_INS_COMMON_DIR)
     assertExists(BUILT_INS_NATIVE_DIR_JVM)
     assertExists(BUILT_INS_NATIVE_DIR_JS)
     assertExists(BUILT_INS_NATIVE_DIR_WASM)
     assertExists(BUILT_INS_NATIVE_DIR_NATIVE)
-    assertExists(BUILT_INS_SRC_DIR)
     assertExists(RUNTIME_JVM_DIR)
     assertExists(UNSIGNED_TYPES_DIR)
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Primitives.kt")) { JvmPrimitivesGenerator(it) }
+    generate(File(BUILT_INS_COMMON_DIR, "Primitives.kt")) { CommonPrimitivesGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Primitives.kt")) { JvmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Primitives.kt")) { JsPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Primitives.kt")) { WasmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Primitives.kt")) { NativePrimitivesGenerator(it) }
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Boolean.kt")) { JvmBooleanGenerator(it) }
+    generate(File(BUILT_INS_COMMON_DIR, "Boolean.kt")) { CommonBooleanGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Boolean.kt")) { JvmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Boolean.kt")) { JsBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Boolean.kt")) { WasmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Boolean.kt")) { NativeBooleanGenerator(it) }
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Char.kt")) { JvmCharGenerator(it) }
+    generate(File(BUILT_INS_COMMON_DIR, "Char.kt")) { CommonCharGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Char.kt")) { JvmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Char.kt")) { JsCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Char.kt")) { WasmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Char.kt")) { NativeCharGenerator(it) }
 
+
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Arrays.kt")) { GenerateArrays(it) }
+    generate(File(BUILT_INS_COMMON_DIR, "Array.kt")) { GenerateCommonArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_COMMON_DIR, "Arrays.kt")) { GenerateCommonArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Array.kt")) { GenerateJvmArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Arrays.kt")) { GenerateJvmArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_JS, "Array.kt")) { GenerateJsArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_JS, "Arrays.kt")) { GenerateJsArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Array.kt")) { GenerateWasmArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Arrays.kt")) { GenerateWasmArrays(it, primitiveArrays = true) }
+    generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Array.kt")) { GenerateNativeArrays(it, primitiveArrays = false) }
+    generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Arrays.kt")) { GenerateNativeArrays(it, primitiveArrays = true) }
     generate(File(STDLIB_DIR, "kotlin/collections/PrimitiveIterators.kt")) { GenerateIterators(it) }
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
     generate(File(STDLIB_DIR, "kotlin/ranges/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }

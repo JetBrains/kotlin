@@ -106,7 +106,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
             parent = newParent
             correspondingPropertySymbol = oldProperty.symbol
             initializer = oldField.initializer?.run {
-                context.irFactory.createExpressionBody(startOffset, endOffset, (expression as IrConst<*>).shallowCopy())
+                context.irFactory.createExpressionBody(startOffset, endOffset, (expression as IrConst).shallowCopy())
             }
             annotations += oldField.annotations
             if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {

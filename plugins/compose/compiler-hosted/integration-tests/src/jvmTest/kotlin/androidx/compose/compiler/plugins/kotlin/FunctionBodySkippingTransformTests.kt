@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Ignore
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase(
@@ -44,7 +43,13 @@ abstract class FunctionBodySkippingTransformTestsBase(
             $unchecked
             fun used(x: Any?) {}
         """.trimIndent(),
-        dumpTree = dumpTree
+        dumpTree = dumpTree,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiUnitJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     )
 }
 
@@ -1306,6 +1311,7 @@ class FunctionBodySkippingTransformTests(
                 fun ReceiveValue(value: Int) { }
             """
         )
+
 }
 
 class FunctionBodySkippingTransformTestsNoSource(
@@ -1314,6 +1320,13 @@ class FunctionBodySkippingTransformTestsNoSource(
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
     }
 
     @Test
@@ -1455,6 +1468,57 @@ class FunctionBodySkippingTransformTestsNoSource(
 
             @Composable
             fun Text(value: String) {}
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
+    )
+
+    @Test
+    fun testIfStatementGroups() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(level: Int) {
+                Wrap {
+                    if (level > 0) {
+                        used(remember { "Before" })
+                        Wrap {
+                            used(remember { "Middle" })
+                        }
+                        used(remember { "End" })
+                    }
+                }
+            }
+        """,
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Wrap(content: @Composable () -> Unit) = content()
+
+            fun used(value: Any) { }
+        """
+    )
+
+    @Test
+    fun ensureNoGroupsAreAddedToAnExplicitGroupsComposable() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @ExplicitGroupsComposable
+            @Composable
+            inline fun Test(active: Boolean, content: @Composable () -> Unit) {
+                currentComposer.startReusableGroup(1, null)
+                if (active) {
+                    content()
+                } else {
+                    currentComposer.deactivateToEndGroup(false)
+                }
+                currentComposer.endReusableGroup()
+            }
         """
     )
 }

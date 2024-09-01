@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.isJsExportedDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 

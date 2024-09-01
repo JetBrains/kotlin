@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Implementation
 
-abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field, Field>() {
+abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field>() {
     override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 
     protected fun ImplementationContext.undefinedOffset(): String =

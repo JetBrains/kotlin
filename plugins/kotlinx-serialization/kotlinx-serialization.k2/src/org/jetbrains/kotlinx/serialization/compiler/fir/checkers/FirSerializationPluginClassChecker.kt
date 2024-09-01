@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -36,10 +37,7 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
@@ -99,7 +97,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         val declarations = classSymbol.declarationSymbols
 
-        val parametersCount = serializableKType.typeArguments.size
+        val parametersCount = serializableKType.typeArgumentsOfLowerBoundIfFlexible.size
         if (parametersCount > 0) {
             val hasSuitableConstructor = declarations.filterIsInstance<FirConstructorSymbol>().any { constructor ->
                 constructor.valueParameterSymbols.size == parametersCount
@@ -304,6 +302,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return false
 
+        checkCompanionOfSerializableClass(classSymbol, reporter)
+
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED, this)
             return false
@@ -360,60 +360,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
 
         return true
-    }
-
-    private fun CheckerContext.checkCompanionSerializerDependency(
-        classSymbol: FirClassSymbol<*>,
-        reporter: DiagnosticReporter,
-    ) {
-        if (classSymbol !is FirRegularClassSymbol) return
-        val companionObjectSymbol = classSymbol.companionObjectSymbol ?: return
-        val serializerForInCompanion = companionObjectSymbol.getSerializerForClass(session)?.toRegularClassSymbol(session) ?: return
-        val serializableWith: ConeKotlinType? = classSymbol.getSerializableWith(session)
-        val context = this@checkCompanionSerializerDependency
-        return if (classSymbol.hasSerializableOrMetaAnnotationWithoutArgs(session)) {
-            if (serializerForInCompanion.classId == classSymbol.classId) {
-                // @Serializable class Foo / @Serializer(Foo::class) companion object — prohibited due to problems with recursive resolve
-                reporter.reportOn(
-                    classSymbol.serializableOrMetaAnnotationSource(session),
-                    FirSerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED,
-                    classSymbol,
-                    context
-                )
-            } else {
-                // @Serializable class Foo / @Serializer(Bar::class) companion object — prohibited as vague and confusing
-                val source = companionObjectSymbol.getSerializerAnnotation(session)?.source
-                reporter.reportOn(
-                    source,
-                    FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
-                    classSymbol.defaultType(),
-                    serializerForInCompanion.defaultType(),
-                    context
-                )
-            }
-        } else if (serializableWith != null) {
-            if (serializableWith.classId == companionObjectSymbol.classId && serializerForInCompanion.classId == classSymbol.classId) {
-                // @Serializable(Foo.Companion) class Foo / @Serializer(Foo::class) companion object — the only case that is allowed
-            } else {
-                // @Serializable(anySer) class Foo / @Serializer(anyOtherClass) companion object — prohibited as vague and confusing
-                reporter.reportOn(
-                    companionObjectSymbol.getSerializerAnnotation(session)?.source,
-                    FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
-                    classSymbol.defaultType(),
-                    serializerForInCompanion.defaultType(),
-                    context
-                )
-            }
-        } else {
-            // (regular) class Foo / @Serializer(something) companion object - not recommended
-            reporter.reportOn(
-                companionObjectSymbol.getSerializerAnnotation(session)?.source,
-                FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS,
-                classSymbol.defaultType(),
-                serializerForInCompanion.defaultType(),
-                context
-            )
-        }
     }
 
     private fun CheckerContext.checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
@@ -548,7 +494,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
     }
 
     private fun CheckerContext.checkGenericArrayType(propertyType: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
-        if (propertyType.isNonPrimitiveArray && propertyType.typeArguments.first().type?.isTypeParameter == true) {
+        if (propertyType.isNonPrimitiveArray && propertyType.typeArgumentsOfLowerBoundIfFlexible.first().type?.isTypeParameter == true) {
             reporter.reportOn(
                 source,
                 FirSerializationErrors.GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED,
@@ -604,7 +550,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             }
             checkTypeArguments(typeRef, typeSource, reporter)
         } else {
-            if (type.toRegularClassSymbol(session)?.isEnumClass != true) {
+            if (type.classSymbolOrUpperBound(session)?.isEnumClass != true) {
                 // enums are always serializable
                 reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type, this)
             }
@@ -677,10 +623,10 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             // it is allowed that parameters are not passed in regular serializers at all
             && primaryConstructor.valueParameterSymbols.isNotEmpty()
             // if the parameters are still specified, then their number must match in the serializable class and constructor
-            && serializerForType.typeArguments.size != primaryConstructor.valueParameterSymbols.size
+            && serializerForType.typeArgumentsOfLowerBoundIfFlexible.size != primaryConstructor.valueParameterSymbols.size
         ) {
-            val message = if (serializerForType.typeArguments.isNotEmpty()) {
-                "expected no parameters or ${serializerForType.typeArguments.size}, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
+            val message = if (serializerForType.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty()) {
+                "expected no parameters or ${serializerForType.typeArgumentsOfLowerBoundIfFlexible.size}, but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             } else {
                 "expected no parameters but has ${primaryConstructor.valueParameterSymbols.size} parameters"
             }

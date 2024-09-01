@@ -39,6 +39,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportErrorOnNameCollisions by booleanOption()
 
+    val objcExportEntryPointsPath by stringOption()
+
     val gc by option<GC>(shortcut = { it.shortcut })
 
     val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })
@@ -53,7 +55,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val auxGCThreads by uintOption()
 
-    val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
+    val linkRuntime by option<RuntimeLinkageStrategy>()
 
     val bundleId by stringOption()
     val bundleShortVersionString by stringOption()
@@ -75,8 +77,6 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val disableMmap by booleanOption()
 
-    val disableAllocatorOverheadEstimate by booleanOption()
-
     val enableSafepointSignposts by booleanOption()
 
     val packFields by booleanOption()
@@ -88,6 +88,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val swiftExport by booleanOption()
 
     val genericSafeCasts by booleanOption()
+
+    val smallBinary by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

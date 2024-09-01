@@ -10,12 +10,10 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
@@ -90,6 +88,13 @@ internal class FileStructure private constructor(
         return structureElements.getOrPut(container) { createStructureElement(container) }
     }
 
+    private fun addStructureElementForTo(element: KtElement, result: MutableCollection<FileStructureElement>) {
+        checkCanceled()
+        LLFirDiagnosticVisitor.suppressAndLogExceptions {
+            result += getStructureElementFor(element)
+        }
+    }
+
     private fun getContainerKtElement(element: KtElement): KtElement {
         val declaration = getStructureKtElement(element)
         val container: KtElement
@@ -156,15 +161,16 @@ internal class FileStructure private constructor(
     }
 
     fun getAllStructureElements(): Collection<FileStructureElement> {
-        val structureElements = mutableSetOf(getStructureElementFor(ktFile))
+        val structureElements = mutableSetOf<FileStructureElement>()
+        addStructureElementForTo(ktFile, structureElements)
+
         ktFile.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }
 
             override fun visitDeclaration(dcl: KtDeclaration) {
-                val structureElement = getStructureElementFor(dcl)
-                structureElements += structureElement
+                addStructureElementForTo(dcl, structureElements)
 
                 // Go down only in the case of container declaration
                 val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript || dcl is KtDestructuringDeclaration
@@ -175,7 +181,7 @@ internal class FileStructure private constructor(
 
             override fun visitModifierList(list: KtModifierList) {
                 if (list.parent == ktFile) {
-                    structureElements += getStructureElementFor(list)
+                    addStructureElementForTo(list, structureElements)
                 }
             }
         })

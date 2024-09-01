@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlinx.pckg) fun bar()
+KtNameReferenceExpression(52,55): 'bar'
+  KtSimpleNameReference:
+    (in kotlinx.pckg) fun bar()

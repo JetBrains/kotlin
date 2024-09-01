@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  package java
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(22,26): 'java'
+  KtSimpleNameReference:
+    package java
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -84,13 +84,13 @@ abstract class AbstractModule(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         forceOutput: LogLevel?,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
-        assertions: context(Module) CompilationOutcome.() -> Unit,
+        assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel)
         try {
-            assertions(outcome)
+            assertions(outcome, this)
             assertEquals(outcome.expectedResult, result) {
                 "Compilation result is unexpected"
             }

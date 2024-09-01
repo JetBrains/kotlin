@@ -28,11 +28,12 @@ class Test {
         assertEquals(
             actual = error.message,
             expected = """
-                Assertion failed
+                
                 require(greeting == "Hello, World!")
                         |        |
                         |        false
                         Hello, Main!
+                
             """.trimIndent(),
         )
     }

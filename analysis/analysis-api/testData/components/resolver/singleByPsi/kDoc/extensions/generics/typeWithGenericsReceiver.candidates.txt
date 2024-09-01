@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(121,140): 'WithGenerics.intExt'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(146,168): 'WithGenerics.stringExt'
+    NO_CANDIDATES

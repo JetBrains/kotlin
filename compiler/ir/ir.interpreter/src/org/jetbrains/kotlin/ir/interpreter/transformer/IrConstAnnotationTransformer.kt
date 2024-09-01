@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
-import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isAnnotation
@@ -43,6 +42,7 @@ internal abstract class IrConstAnnotationTransformer(
     }
 
     private fun transformAnnotation(annotation: IrConstructorCall) {
+        if (annotation.type is IrErrorType) return
         for (i in 0 until annotation.valueArgumentsCount) {
             val arg = annotation.getValueArgument(i) ?: continue
             annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
@@ -50,7 +50,7 @@ internal abstract class IrConstAnnotationTransformer(
         annotation.saveInConstTracker()
     }
 
-    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression {
+    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
         return when (argument) {
             is IrVararg -> argument.transformVarArg()
             else -> argument.transformSingleArg(valueParameter.type)
@@ -63,15 +63,16 @@ internal abstract class IrConstAnnotationTransformer(
         for (element in this.elements) {
             when (val arg = (element as? IrSpreadElement)?.expression ?: element) {
                 is IrVararg -> arg.transformVarArg().elements.forEach { newIrVararg.addElement(it) }
-                is IrExpression -> newIrVararg.addElement(arg.transformSingleArg(this.varargElementType))
+                is IrExpression -> arg.transformSingleArg(this.varargElementType)?.let(newIrVararg::addElement)
                 else -> newIrVararg.addElement(arg)
             }
         }
         return newIrVararg
     }
 
-    private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
+    private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression? {
         return when {
+            this is IrGetClass && argument.type is IrErrorType -> null
             this is IrGetEnumValue || this is IrClassReference -> this
             this is IrConstructorCall && this.type.isAnnotation() -> {
                 transformAnnotation(this)
@@ -84,7 +85,7 @@ internal abstract class IrConstAnnotationTransformer(
 
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
         return when {
-            this !is IrConst<*> || type is IrErrorType -> this
+            this !is IrConst || type is IrErrorType -> this
             type.isArray() -> this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
             type.isPrimitiveArray() -> this.convertToConstIfPossible(this.type)
             else -> this.value.toIrConst(type, this.startOffset, this.endOffset)

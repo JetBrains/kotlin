@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:setOf(vararg p: PsiType:T...): PsiType:Set<T>

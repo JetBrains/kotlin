@@ -3279,7 +3279,7 @@ public final class kotlin/io/TextStreamsKt {
 
 public class kotlin/io/encoding/Base64 {
 	public static final field Default Lkotlin/io/encoding/Base64$Default;
-	public synthetic fun <init> (ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZZLkotlin/io/encoding/Base64$PaddingOption;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun decode (Ljava/lang/CharSequence;II)[B
 	public final fun decode ([BII)[B
 	public static synthetic fun decode$default (Lkotlin/io/encoding/Base64;Ljava/lang/CharSequence;IIILjava/lang/Object;)[B
@@ -3296,11 +3296,22 @@ public class kotlin/io/encoding/Base64 {
 	public static synthetic fun encodeToAppendable$default (Lkotlin/io/encoding/Base64;[BLjava/lang/Appendable;IIILjava/lang/Object;)Ljava/lang/Appendable;
 	public final fun encodeToByteArray ([BII)[B
 	public static synthetic fun encodeToByteArray$default (Lkotlin/io/encoding/Base64;[BIIILjava/lang/Object;)[B
+	public final fun withPadding (Lkotlin/io/encoding/Base64$PaddingOption;)Lkotlin/io/encoding/Base64;
 }
 
 public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64 {
 	public final fun getMime ()Lkotlin/io/encoding/Base64;
 	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
+}
+
+public final class kotlin/io/encoding/Base64$PaddingOption : java/lang/Enum {
+	public static final field ABSENT Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field ABSENT_OPTIONAL Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field PRESENT Lkotlin/io/encoding/Base64$PaddingOption;
+	public static final field PRESENT_OPTIONAL Lkotlin/io/encoding/Base64$PaddingOption;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/encoding/Base64$PaddingOption;
+	public static fun values ()[Lkotlin/io/encoding/Base64$PaddingOption;
 }
 
 public abstract interface annotation class kotlin/io/encoding/ExperimentalEncodingApi : java/lang/annotation/Annotation {
@@ -5092,6 +5103,7 @@ public abstract interface class kotlin/reflect/KTypeParameter : kotlin/reflect/K
 
 public final class kotlin/reflect/KTypeProjection {
 	public static final field Companion Lkotlin/reflect/KTypeProjection$Companion;
+	public static final field star Lkotlin/reflect/KTypeProjection;
 	public fun <init> (Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;)V
 	public final fun component1 ()Lkotlin/reflect/KVariance;
 	public final fun component2 ()Lkotlin/reflect/KType;
@@ -5541,6 +5553,7 @@ public final class kotlin/text/HexFormat$Companion {
 }
 
 public final class kotlin/text/HexFormat$NumberHexFormat {
+	public final fun getMinLength ()I
 	public final fun getPrefix ()Ljava/lang/String;
 	public final fun getRemoveLeadingZeros ()Z
 	public final fun getSuffix ()Ljava/lang/String;
@@ -5548,9 +5561,11 @@ public final class kotlin/text/HexFormat$NumberHexFormat {
 }
 
 public final class kotlin/text/HexFormat$NumberHexFormat$Builder {
+	public final fun getMinLength ()I
 	public final fun getPrefix ()Ljava/lang/String;
 	public final fun getRemoveLeadingZeros ()Z
 	public final fun getSuffix ()Ljava/lang/String;
+	public final fun setMinLength (I)V
 	public final fun setPrefix (Ljava/lang/String;)V
 	public final fun setRemoveLeadingZeros (Z)V
 	public final fun setSuffix (Ljava/lang/String;)V
@@ -6324,5 +6339,41 @@ public final class kotlin/time/TimedValue {
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/uuid/ExperimentalUuidApi : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/uuid/Uuid : java/io/Serializable {
+	public static final field Companion Lkotlin/uuid/Uuid$Companion;
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLeastSignificantBits ()J
+	public final fun getMostSignificantBits ()J
+	public fun hashCode ()I
+	public final fun toByteArray ()[B
+	public final fun toHexString ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/uuid/Uuid$Companion {
+	public final fun fromByteArray ([B)Lkotlin/uuid/Uuid;
+	public final fun fromLongs (JJ)Lkotlin/uuid/Uuid;
+	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/Uuid;
+	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
+	public final fun getNIL ()Lkotlin/uuid/Uuid;
+	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun random ()Lkotlin/uuid/Uuid;
+}
+
+public final class kotlin/uuid/UuidKt {
+	public static final fun getUuid (Ljava/nio/ByteBuffer;)Lkotlin/uuid/Uuid;
+	public static final fun getUuid (Ljava/nio/ByteBuffer;I)Lkotlin/uuid/Uuid;
+	public static final fun putUuid (Ljava/nio/ByteBuffer;ILkotlin/uuid/Uuid;)Ljava/nio/ByteBuffer;
+	public static final fun putUuid (Ljava/nio/ByteBuffer;Lkotlin/uuid/Uuid;)Ljava/nio/ByteBuffer;
+	public static final fun toJavaUuid (Lkotlin/uuid/Uuid;)Ljava/util/UUID;
+	public static final fun toKotlinUuid (Ljava/util/UUID;)Lkotlin/uuid/Uuid;
 }
 

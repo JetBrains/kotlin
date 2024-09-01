@@ -1960,6 +1960,24 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("javaInheritsPrivateJavaClass.kt")
+      public void testJavaInheritsPrivateJavaClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateJavaClass.kt");
+      }
+
+      @Test
+      @TestMetadata("javaInheritsPrivateKtClassDisabled.kt")
+      public void testJavaInheritsPrivateKtClassDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClassDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("javaInheritsPrivateKtClassEnabled.kt")
+      public void testJavaInheritsPrivateKtClassEnabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClassEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("localAnnotationClass.kt")
       public void testLocalAnnotationClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localAnnotationClass.kt");
@@ -2610,6 +2628,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+      public void testParenthesizedSafeCallsAndOperators() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/parenthesizedSafeCallsAndOperators.kt");
+      }
+
+      @Test
       @TestMetadata("plusWithAssignSmartCast.kt")
       public void testPlusWithAssignSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");
@@ -2818,6 +2842,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
         @TestMetadata("propertyWithExtensionType.kt")
         public void testPropertyWithExtensionType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/propertyWithExtensionType.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallsWithImplicitInvoke.kt")
+        public void testSafeCallsWithImplicitInvoke() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/safeCallsWithImplicitInvoke.kt");
         }
 
         @Test
@@ -3674,24 +3704,24 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/builderInference")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
-      public class BuilderInference {
+      public class Pcla {
         @Test
-        public void testAllFilesPresentInBuilderInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/builderInference"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+        public void testAllFilesPresentInPcla() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @Test
         @TestMetadata("doubleSquareBracketsInBuilderArgument.kt")
         public void testDoubleSquareBracketsInBuilderArgument() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/doubleSquareBracketsInBuilderArgument.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/doubleSquareBracketsInBuilderArgument.kt");
         }
 
         @Test
         @TestMetadata("ifInBuildMap.kt")
         public void testIfInBuildMap() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/ifInBuildMap.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/ifInBuildMap.kt");
         }
       }
     }
@@ -7522,6 +7552,28 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       public void testTryWithLambdaInside() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ResolveFreezesIDE {
+    @Test
+    public void testAllFilesPresentInResolveFreezesIDE() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveFreezesIDE"), Pattern.compile("^(.+)\\.(nkt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("kt69995.nkt")
+    public void testKt69995() {
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.nkt");
+    }
+
+    @Test
+    @TestMetadata("manyCapturedTypes.nkt")
+    public void testManyCapturedTypes() {
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
     }
   }
 }

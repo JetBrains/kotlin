@@ -7,7 +7,8 @@ import kotlin.reflect.full.callSuspend
 import kotlin.test.assertEquals
 import helpers.*
 
-inline class S(val value: String?)
+@JvmInline
+value class S(val value: String?)
 
 class C {
     private var value: S = S("")

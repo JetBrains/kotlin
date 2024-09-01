@@ -66,6 +66,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperTypeCall.kt");
     }
 
+    @TestMetadata("annotationOnTypeParameterInWhereClause.kt")
+    public void testAnnotationOnTypeParameterInWhereClause() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnTypeParameterInWhereClause.kt");
+    }
+
     @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
     public void testAnnotationsOnNullableParenthesizedTypes() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
@@ -679,9 +684,19 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/nullability.kt");
     }
 
+    @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+    public void testParenthesizedSafeCallsAndOperators() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/parenthesizedSafeCallsAndOperators.kt");
+    }
+
     @TestMetadata("qualifierWithTypeArguments.kt")
     public void testQualifierWithTypeArguments() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
+    }
+
+    @TestMetadata("safeCallsImplicitWithInvoke.kt")
+    public void testSafeCallsImplicitWithInvoke() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsImplicitWithInvoke.kt");
     }
 
     @TestMetadata("safeCallsWithAssignment.kt")

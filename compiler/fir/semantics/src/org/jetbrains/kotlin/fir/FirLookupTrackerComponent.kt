@@ -81,7 +81,7 @@ fun FirLookupTrackerComponent.recordNameLookup(name: Name, inScope: String, sour
 
 fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, source: KtSourceElement?, fileSource: KtSourceElement?) {
     if (typeRef !is FirResolvedTypeRef) return // TODO: check if this is the correct behavior
-    recordTypeResolveAsLookup(typeRef.type, source, fileSource)
+    recordTypeResolveAsLookup(typeRef.coneType, source, fileSource)
 }
 
 fun FirLookupTrackerComponent.recordUserTypeRefLookup(typeRef: FirUserTypeRef, inScopes: Iterable<String>, fileSource: KtSourceElement?) {
@@ -101,7 +101,7 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
     type.classId?.let { classId ->
         recordClassLikeLookup(classId, source, fileSource)
     }
-    type.typeArguments.forEach {
+    type.typeArgumentsOfLowerBoundIfFlexible.forEach {
         if (it is ConeKotlinType) recordTypeResolveAsLookup(it, source, fileSource)
     }
 }

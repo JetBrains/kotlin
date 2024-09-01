@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -19,19 +22,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
-    argument: FirAnonymousFunction,
+    argument: FirAnonymousFunctionExpression,
+    lambda: FirAnonymousFunction,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
     candidate: Candidate?,
     allowCoercionToExtensionReceiver: Boolean,
     sourceForFunctionExpression: KtSourceElement?,
-): ResolvedLambdaAtom? {
+): ConeResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
         return extractLambdaInfoFromFunctionType(
             expectedType.lowerBound,
             argument,
+            lambda,
             returnTypeVariable,
             components,
             candidate,
@@ -41,21 +46,21 @@ fun extractLambdaInfoFromFunctionType(
     }
     val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
 
-    val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(argument.symbol)
-        ?: runIf(!argument.isLambda) {
+    val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(lambda.symbol)
+        ?: runIf(!lambda.isLambda) {
             // There is no function -> suspend function conversions for non-lambda anonymous functions
             // If function is suspend then functionTypeService will return SuspendFunction kind
             FunctionTypeKind.Function
         }
 
-    val returnType = argument.returnType ?: expectedType.returnType(session)
+    val returnType = lambda.returnType ?: expectedType.returnType(session)
 
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
-    val receiverType = if (argument.isLambda) expectedType.receiverType(session) else argument.receiverType
+    val receiverType = if (lambda.isLambda) expectedType.receiverType(session) else lambda.receiverType
     val contextReceiversNumber =
-        if (argument.isLambda) expectedType.contextReceiversNumberForFunctionType else argument.contextReceivers.size
+        if (lambda.isLambda) expectedType.contextReceiversNumberForFunctionType else lambda.contextReceivers.size
 
     val valueParametersTypesIncludingReceiver = expectedType.valueParameterTypesIncludingReceiver(session)
     val isExtensionFunctionType = expectedType.isExtensionFunctionType(session)
@@ -64,15 +69,20 @@ fun extractLambdaInfoFromFunctionType(
         val toDrop = forExtension + contextReceiversNumber
 
         if (toDrop > 0) it.drop(toDrop) else it
+    }.map {
+        // @ParameterName is assumed to be used for Ctrl+P on the call site of a property with a function type.
+        // Propagating it further may affect further inference might work weirdly, and for sure,
+        // it's not expected to leak in implicitly typed declarations.
+        it.removeParameterNameAnnotation(session)
     }
 
     var coerceFirstParameterToExtensionReceiver = false
-    val argumentValueParameters = argument.valueParameters
-    val parameters = if (argument.isLambda && !argument.hasExplicitParameterList && expectedParameters.size < 2) {
+    val argumentValueParameters = lambda.valueParameters
+    val parameters = if (lambda.isLambda && !lambda.hasExplicitParameterList && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
         if (allowCoercionToExtensionReceiver &&
-            argument.isLambda &&
+            lambda.isLambda &&
             isExtensionFunctionType &&
             valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
         ) {
@@ -98,11 +108,11 @@ fun extractLambdaInfoFromFunctionType(
     val contextReceivers =
         when {
             contextReceiversNumber == 0 -> emptyList()
-            argument.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
-            else -> argument.contextReceivers.map { it.typeRef.coneType }
+            lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
+            else -> lambda.contextReceivers.map { it.typeRef.coneType }
         }
 
-    return ResolvedLambdaAtom(
+    return ConeResolvedLambdaAtom(
         argument,
         expectedType,
         actualFunctionKind ?: expectedFunctionKind,
@@ -113,7 +123,5 @@ fun extractLambdaInfoFromFunctionType(
         typeVariableForLambdaReturnType = returnTypeVariable,
         coerceFirstParameterToExtensionReceiver,
         sourceForFunctionExpression,
-    ).also {
-        candidate?.postponedAtoms?.add(it)
-    }
+    )
 }

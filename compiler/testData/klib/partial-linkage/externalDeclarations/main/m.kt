@@ -13,7 +13,6 @@ fun box() = abiTest {
         else -> "Calling abstract function AbstractExternalClass.addedAbstractFunction"
     }
     expectRuntimeFailure(expectedExceptionMessage) { ecifaec.addedAbstractFunction() }
-
     expectSuccess("AbstractExternalClass.function") { ecifaec.function() }
     expectFailure(linkage("Function 'removedFunction' can not be called: No function found for symbol '/ExternalClassInheritedFromAbstractExternalClass.removedFunction'")) { ecifaec.callRemovedFunction() }
     expectSuccess("AbstractExternalClass.addedFunction") { ecifaec.addedFunction() }

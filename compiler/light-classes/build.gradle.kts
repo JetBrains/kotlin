@@ -10,8 +10,9 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:frontend.java"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

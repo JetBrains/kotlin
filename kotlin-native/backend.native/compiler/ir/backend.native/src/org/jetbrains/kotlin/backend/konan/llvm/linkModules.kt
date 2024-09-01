@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 
 internal fun llvmLinkModules2(generationState: NativeGenerationState, dest: LLVMModuleRef, src: LLVMModuleRef): LLVMBool {
-    val diagnosticHandler = DefaultLlvmDiagnosticHandler(generationState, object : DefaultLlvmDiagnosticHandler.Policy {
+    val diagnosticHandler = DefaultLlvmDiagnosticHandler(generationState, generationState.messageCollector, object : DefaultLlvmDiagnosticHandler.Policy {
         override fun suppressWarning(diagnostic: LlvmDiagnostic): Boolean {
             if (super.suppressWarning(diagnostic)) return true
 

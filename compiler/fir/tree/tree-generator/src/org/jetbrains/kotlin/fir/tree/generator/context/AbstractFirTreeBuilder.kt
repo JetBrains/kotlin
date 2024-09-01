@@ -5,110 +5,126 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.generators.tree.ClassRef
-import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
-import org.jetbrains.kotlin.generators.tree.TypeKind
-import org.jetbrains.kotlin.generators.tree.toRef
-import org.jetbrains.kotlin.utils.DummyDelegate
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ElementOrRef
+import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
 
-abstract class AbstractFirTreeBuilder {
-    companion object {
-        val baseFirElement: Element = Element(
-            name = "Element",
-            propertyName = this::class.qualifiedName + "." + Companion::baseFirElement.name,
-            kind = Element.Kind.Other
+abstract class AbstractFirTreeBuilder() : AbstractElementConfigurator<Element, Field, Element.Kind>() {
+    override fun createElement(name: String, propertyName: String, category: Element.Kind): Element {
+        return Element(name, propertyName, category)
+    }
+
+    protected fun field(
+        name: String,
+        type: TypeRefWithNullability,
+        nullable: Boolean = false,
+        withReplace: Boolean = false,
+        withTransform: Boolean = false,
+        isChild: Boolean = true,
+        initializer: SimpleField.() -> Unit = {},
+    ): SimpleField {
+        val isMutable = type is ElementOrRef<*> || withReplace
+        return SimpleField(
+            name,
+            type.copy(nullable),
+            isChild = isChild,
+            isMutable = isMutable,
+            withReplace = withReplace,
+            withTransform = withTransform
+        ).apply(initializer)
+    }
+
+    protected fun field(
+        type: ClassOrElementRef,
+        nullable: Boolean = false,
+        withReplace: Boolean = false,
+        withTransform: Boolean = false,
+        isChild: Boolean = true,
+        initializer: SimpleField.() -> Unit = {},
+    ): SimpleField {
+        val name = when (type) {
+            is ClassRef<*> -> type.simpleName
+            is ElementOrRef<*> -> type.element.name
+        }.replaceFirstChar(Char::lowercaseChar)
+        return field(
+            name,
+            type = type,
+            nullable = nullable,
+            withReplace = withReplace,
+            withTransform = withTransform,
+            isChild = isChild,
+            initializer = initializer,
         )
     }
 
-    val elements = mutableListOf(baseFirElement)
-
-    protected fun element(kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
-        return ElementDelegateProvider(kind, dependencies, isSealed = false, predefinedName = null)
-    }
-
-    protected fun sealedElement(kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
-        return ElementDelegateProvider(kind, dependencies, isSealed = true, predefinedName = null)
-    }
-
-    protected fun element(name: String, kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
-        return ElementDelegateProvider(kind, dependencies, isSealed = false, predefinedName = name)
-    }
-
-    protected fun sealedElement(name: String, kind: Element.Kind, vararg dependencies: Element): ElementDelegateProvider {
-        return ElementDelegateProvider(kind, dependencies, isSealed = true, predefinedName = name)
-    }
-
-    private fun createElement(name: String, propertyName: String, kind: Element.Kind, vararg dependencies: Element): Element =
-        Element(name, propertyName, kind).also {
-            if (dependencies.isEmpty()) {
-                it.addParent(baseFirElement.toRef())
-            }
-            for (dependency in dependencies) {
-                it.addParent(dependency.toRef())
-            }
-            elements += it
-        }
-
-    private fun createSealedElement(
+    protected fun listField(
         name: String,
-        propertyName: String,
-        kind: Element.Kind,
-        vararg dependencies: Element,
-    ): Element {
-        return createElement(name, propertyName, kind, *dependencies).apply {
-            isSealed = true
-        }
+        baseType: TypeRef,
+        withReplace: Boolean = false,
+        withTransform: Boolean = false,
+        useMutableOrEmpty: Boolean = false,
+        isChild: Boolean = true,
+        initializer: ListField.() -> Unit = {},
+    ): Field {
+        return ListField(
+            name,
+            baseType,
+            withReplace = withReplace,
+            isChild = isChild,
+            isMutableOrEmptyList = useMutableOrEmpty,
+            withTransform = withTransform,
+        ).apply(initializer)
     }
 
-    val configurations: MutableMap<Element, () -> Unit> = mutableMapOf()
-
-    fun applyConfigurations() {
-        for (element in elements) {
-            configurations[element]?.invoke()
-        }
+    protected fun listField(
+        elementOrRef: ElementOrRef<*>,
+        withReplace: Boolean = false,
+        withTransform: Boolean = false,
+        useMutableOrEmpty: Boolean = false,
+        isChild: Boolean = true,
+        initializer: ListField.() -> Unit = {},
+    ): Field {
+        val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
+        return listField(
+            name,
+            elementOrRef,
+            withReplace = withReplace,
+            isChild = isChild,
+            useMutableOrEmpty = useMutableOrEmpty,
+            withTransform = withTransform,
+            initializer = initializer,
+        )
     }
 
-    inner class ElementDelegateProvider(
-        private val kind: Element.Kind,
-        private val dependencies: Array<out Element>,
-        private val isSealed: Boolean,
-        private val predefinedName: String?
-    ) {
-        operator fun provideDelegate(
-            thisRef: AbstractFirTreeBuilder,
-            prop: KProperty<*>
-        ): ReadOnlyProperty<Any?, Element> {
-            val path = thisRef::class.qualifiedName + "." + prop.name
-            val name = predefinedName ?: prop.name.replaceFirstChar { it.uppercaseChar() }
-            val element = if (isSealed) {
-                createSealedElement(name, path, kind, *dependencies)
-            } else {
-                createElement(name, path, kind, *dependencies)
+    protected fun declaredSymbol(name: String, symbolType: ClassRef<*>): Field =
+        field(name, symbolType)
+            .apply {
+                symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED
+                skippedInCopy = true
             }
-            return DummyDelegate(element)
+
+    protected fun declaredSymbol(symbolType: ClassRef<*>): Field = declaredSymbol("symbol", symbolType)
+
+    protected fun referencedSymbol(name: String, symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
+        field(name, symbolType, nullable, withReplace)
+            .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
+            .apply(initializer)
+
+    protected fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false, initializer: SimpleField.() -> Unit = {}): Field =
+        referencedSymbol("symbol", symbolType, nullable, withReplace, initializer)
+
+    protected fun Element.generateBooleanFields(vararg names: String) {
+        names.forEach {
+            +field(
+                if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}",
+                StandardTypes.boolean
+            )
         }
     }
+
+    protected fun Element.needTransformOtherChildren() {
+        _needTransformOtherChildren = true
+    }
 }
-
-fun generatedType(type: String, kind: TypeKind = TypeKind.Class): ClassRef<PositionTypeParameterRef> = generatedType("", type, kind)
-
-fun generatedType(packageName: String, type: String, kind: TypeKind = TypeKind.Class): ClassRef<PositionTypeParameterRef> {
-    val realPackage = BASE_PACKAGE + if (packageName.isNotBlank()) ".$packageName" else ""
-    return type(realPackage, type, exactPackage = true, kind = kind)
-}
-
-fun type(
-    packageName: String,
-    type: String,
-    exactPackage: Boolean = false,
-    kind: TypeKind = TypeKind.Interface,
-): ClassRef<PositionTypeParameterRef> {
-    val realPackage = if (exactPackage) packageName else packageName.let { "org.jetbrains.kotlin.$it" }
-    return org.jetbrains.kotlin.generators.tree.type(realPackage, type, kind)
-}
-
-inline fun <reified T : Any> type() = org.jetbrains.kotlin.generators.tree.type<T>()

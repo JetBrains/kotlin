@@ -1,4 +1,4 @@
-KtNameReferenceExpression:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Fake>
+KtNameReferenceExpression(33,37): 'Fake'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Fake>

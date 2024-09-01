@@ -58,6 +58,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
                     explicitReceiver?.canBeConsideredProperType() != false &&
                     calleeReference is FirNamedReference -> true
             this is FirResolvedQualifier -> true
+            this is FirSmartCastExpression -> originalExpression.canBeConsideredProperType()
             else -> false
         }
     }
@@ -124,8 +125,9 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
         val type = expression.resolvedType
 
-        if (expression is FirResolvedQualifier) {
-            val firClass = expression.expandedRegularClassIfAny() ?: return null
+        val expressionWithoutSmartCast = expression.unwrapSmartcastExpression()
+        if (expressionWithoutSmartCast is FirResolvedQualifier) {
+            val firClass = expressionWithoutSmartCast.expandedRegularClassIfAny() ?: return null
             if (firClass.classKind == ClassKind.OBJECT) {
                 return DoubleColonLHS.Expression(type, isObjectQualifier = true)
             }
@@ -138,7 +140,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun resolveTypeOnLHS(
         expression: FirExpression
     ): DoubleColonLHS.Type? {
-        val resolvedExpression = expression as? FirResolvedQualifier
+        val resolvedExpression = expression.unwrapSmartcastExpression() as? FirResolvedQualifier
             ?: return null
 
         val firClassLikeDeclaration = resolvedExpression.symbol?.fir
@@ -147,13 +149,15 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
         val type = ConeClassLikeTypeImpl(
             firClassLikeDeclaration.symbol.toLookupTag(),
             Array(firClassLikeDeclaration.typeParameters.size) { index ->
-                val typeArgument = expression.typeArguments.getOrNull(index)
+                val typeArgument = resolvedExpression.typeArguments.getOrNull(index)
                 if (typeArgument == null) {
                     // We currently only support local classes with captured type parameters from non-classes
                     // (i.e. local class in generic function).
                     // TODO(KT-66344) Support inner classes
                     val typeParameter = firClassLikeDeclaration.typeParameters[index]
-                    if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef && typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol) {
+                    if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef &&
+                        typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol
+                    ) {
                         typeParameter.symbol.defaultType
                     } else {
                         ConeStarProjection

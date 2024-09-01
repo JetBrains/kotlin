@@ -1,0 +1,2 @@
+KtOperationReferenceExpression(105,106): '='
+  NO_CANDIDATES

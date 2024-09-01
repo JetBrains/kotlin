@@ -31,7 +31,7 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
                     moduleComponents?.cache?.getCachedFirFile(it)
                 }
             } else {
-                containingDeclarationSymbol?.fir?.getContainingFile()
+                containingDeclarationSymbol.fir.getContainingFile()
             }
         }
         is FirDanglingModifierList, is FirCodeFragment -> {

@@ -16,11 +16,7 @@ class ConeTypeParameterTypeImpl(
     isNullable: Boolean,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeTypeParameterType() {
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
-
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

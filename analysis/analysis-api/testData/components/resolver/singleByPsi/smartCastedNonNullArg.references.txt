@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) private fun foo(s: kotlin.String)
+KtNameReferenceExpression(60,63): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) private fun foo(s: kotlin.String)

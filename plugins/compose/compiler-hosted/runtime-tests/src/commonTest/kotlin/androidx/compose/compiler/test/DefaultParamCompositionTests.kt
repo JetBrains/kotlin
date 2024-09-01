@@ -64,19 +64,19 @@ private interface DefaultParamInterface {
     @Composable fun Content(
         content: @Composable () -> Unit = @Composable { ComposedContent() }
     )
+
     @Composable fun ComposedContent(
         content: @Composable () -> Unit = @Composable { Text("default") }
-    ) {
-        content()
-    }
+    )
 }
 
 private class DefaultParamInterfaceImpl : DefaultParamInterface {
     @Composable override fun Content(content: @Composable () -> Unit) {
         content()
     }
+
     @Composable override fun ComposedContent(content: @Composable () -> Unit) {
-        super.ComposedContent(content)
+        content()
     }
 }
 
@@ -84,18 +84,18 @@ private abstract class DefaultParamAbstract {
     @Composable abstract fun Content(
         content: @Composable () -> Unit = @Composable { ComposedContent() }
     )
-    @Composable open fun ComposedContent(
+
+    @Composable abstract fun ComposedContent(
         content: @Composable () -> Unit = @Composable { Text("default") }
-    ) {
-        content()
-    }
+    )
 }
 
 private class DefaultParamAbstractImpl : DefaultParamAbstract() {
     @Composable override fun Content(content: @Composable () -> Unit) {
         content()
     }
+
     @Composable override fun ComposedContent(content: @Composable () -> Unit) {
-        super.ComposedContent(content)
+        content()
     }
 }

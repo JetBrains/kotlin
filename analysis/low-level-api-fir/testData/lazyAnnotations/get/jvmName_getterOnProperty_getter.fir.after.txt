@@ -1,0 +1,1 @@
+@PROPERTY_GETTER:R|kotlin/jvm/JvmName|[Types](name = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|

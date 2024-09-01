@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.enumEntry]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.enumEntry]
  */
 abstract class FirEnumEntry : FirVariable() {
     abstract override val source: KtSourceElement?

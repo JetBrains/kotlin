@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle.targets.jvm.tasks
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaToolchainService
@@ -15,12 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinJvmMainRunTaskConflict
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -103,10 +99,6 @@ private fun KotlinJvmTarget.registerKotlinJvmRun(taskName: String, compilation: 
     val mainClass = project.objects.property<String>()
     val taskProvider = project.tasks.register(taskName, KotlinJvmRun::class.java)
 
-    /* Convenience helper for telling older Gradle versions, that this provider is used at configuration time */
-    val configurationTimePropertiesAccessor = project.configurationTimePropertiesAccessor
-    fun <T> Provider<T>.usedAtConfigurationTime() = usedAtConfigurationTime(configurationTimePropertiesAccessor)
-
     taskProvider.configure { task ->
         task.group = "run"
         task.description = "Jvm Run task for target '${compilation.target.name}' and compilation '${compilation.name}'. " +
@@ -117,11 +109,11 @@ private fun KotlinJvmTarget.registerKotlinJvmRun(taskName: String, compilation: 
          * the DSL configuration
          */
         task.mainClass.value(
-            project.providers.gradleProperty("$taskName.mainClass").usedAtConfigurationTime()
-                .orElse(project.providers.gradleProperty("mainClass").usedAtConfigurationTime())
-                .orElse(project.providers.systemProperty("$taskName.mainClass").usedAtConfigurationTime())
-                .orElse(project.providers.systemProperty("mainClass").usedAtConfigurationTime())
-                .orElse(mainClass).usedAtConfigurationTime()
+            project.providers.gradleProperty("$taskName.mainClass")
+                .orElse(project.providers.gradleProperty("mainClass"))
+                .orElse(project.providers.systemProperty("$taskName.mainClass"))
+                .orElse(project.providers.systemProperty("mainClass"))
+                .orElse(mainClass)
         )
 
         project.extensions.findByType(JavaToolchainService::class.java)?.let { toolchainService ->

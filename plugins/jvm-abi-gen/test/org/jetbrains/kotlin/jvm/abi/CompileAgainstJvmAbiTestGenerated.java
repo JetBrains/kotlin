@@ -70,11 +70,6 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
     runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
   }
 
-  @TestMetadata("inlineClassWithPrivateConstructorK2")
-  public void testInlineClassWithPrivateConstructorK2() {
-    runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructorK2/");
-  }
-
   @TestMetadata("inlineNoRegeneration")
   public void testInlineNoRegeneration() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");

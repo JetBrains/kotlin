@@ -1,4 +1,4 @@
 expression: av
 expected type: KaIntersectionType:
-  annotationsList: []
+  annotations: []
   type: it(kotlin/Int & kotlin/String)

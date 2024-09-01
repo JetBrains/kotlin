@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  package foo.bar.baz
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(114,117): 'baz'
+  KtSimpleNameReference:
+    package foo.bar.baz
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -11,10 +11,9 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
-    implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:project-structure"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
@@ -43,8 +42,12 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction")
-}
 
+    compilerOptions.optIn.addAll(
+        "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+    )
+}
 
 testsJar()

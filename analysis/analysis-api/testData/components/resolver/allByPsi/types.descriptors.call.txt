@@ -1,0 +1,196 @@
+KtFile: 'types.kt'
+  null
+
+KtPackageDirective(0,15): 'package one.two'
+  null
+
+KtDotQualifiedExpression(8,15): 'one.two'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  null
+
+KtNameReferenceExpression(12,15): 'two'
+  null
+
+KtImportList(17,70): 'import one.two.TopLevelClass.InnerClass as InnerAlias'
+  null
+
+KtImportDirective(17,70): 'import one.two.TopLevelClass.InnerClass as InnerAlias'
+  null
+
+KtDotQualifiedExpression(24,56): 'one.two.TopLevelClass.InnerClass'
+  null
+
+KtDotQualifiedExpression(24,45): 'one.two.TopLevelClass'
+  null
+
+KtDotQualifiedExpression(24,31): 'one.two'
+  null
+
+KtNameReferenceExpression(24,27): 'one'
+  null
+
+KtNameReferenceExpression(28,31): 'two'
+  null
+
+KtNameReferenceExpression(32,45): 'TopLevelClass'
+  null
+
+KtNameReferenceExpression(46,56): 'InnerClass'
+  null
+
+KtImportAlias(57,70): 'as InnerAlias'
+  null
+
+KtClass(72,144): 'class TopLevelClass {'
+  null
+
+KtClassBody(92,144): '{'
+  null
+
+KtClass(98,115): 'class NestedClass'
+  null
+
+KtClass(120,142): 'inner class InnerClass'
+  null
+
+KtDeclarationModifierList(120,125): 'inner'
+  null
+
+KtNamedFunction(146,265): 'fun one.two.TopLevelClass.foo(nestedClass: TopLevelClass.NestedClass) {'
+  null
+
+KtTypeReference(150,171): 'one.two.TopLevelClass'
+  null
+
+KtUserType(150,171): 'one.two.TopLevelClass'
+  null
+
+KtUserType(150,157): 'one.two'
+  null
+
+KtUserType(150,153): 'one'
+  null
+
+KtNameReferenceExpression(150,153): 'one'
+  null
+
+KtNameReferenceExpression(154,157): 'two'
+  null
+
+KtNameReferenceExpression(158,171): 'TopLevelClass'
+  null
+
+KtParameterList(175,215): '(nestedClass: TopLevelClass.NestedClass)'
+  null
+
+KtParameter(176,214): 'nestedClass: TopLevelClass.NestedClass'
+  null
+
+KtTypeReference(189,214): 'TopLevelClass.NestedClass'
+  null
+
+KtUserType(189,214): 'TopLevelClass.NestedClass'
+  null
+
+KtUserType(189,202): 'TopLevelClass'
+  null
+
+KtNameReferenceExpression(189,202): 'TopLevelClass'
+  null
+
+KtNameReferenceExpression(203,214): 'NestedClass'
+  null
+
+KtBlockExpression(216,265): '{'
+  null
+
+KtProperty(222,263): 'val innerClass: InnerAlias = InnerClass()'
+  null
+
+KtTypeReference(238,248): 'InnerAlias'
+  null
+
+KtUserType(238,248): 'InnerAlias'
+  null
+
+KtNameReferenceExpression(238,248): 'InnerAlias'
+  null
+
+KtCallExpression(251,263): 'InnerClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: one/two/TopLevelClass
+            visibility: LOCAL
+          type = one.two.TopLevelClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = one.two.TopLevelClass.InnerClass
+          symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(251,261): 'InnerClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: one/two/TopLevelClass
+            visibility: LOCAL
+          type = one.two.TopLevelClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = one.two.TopLevelClass.InnerClass
+          symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(261,263): '()'
+  null

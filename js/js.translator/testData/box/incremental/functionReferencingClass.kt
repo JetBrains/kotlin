@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 // FILE: A.kt
 
 open class A {

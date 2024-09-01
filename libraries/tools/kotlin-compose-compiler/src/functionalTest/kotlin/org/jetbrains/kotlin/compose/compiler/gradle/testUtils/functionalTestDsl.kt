@@ -64,11 +64,6 @@ fun Project.applyKotlinComposePlugin() {
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
-    disableLegacyWarning(project)
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
-}
-
-internal fun disableLegacyWarning(project: Project) {
-    project.extraProperties.set("kotlin.js.compiler.nowarn", "true")
 }

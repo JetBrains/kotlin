@@ -1,6 +1,6 @@
 headers = llvm-c/Core.h llvm-c/Target.h llvm-c/Analysis.h llvm-c/BitWriter.h \
-    llvm-c/BitReader.h llvm-c/Transforms/PassManagerBuilder.h llvm-c/Transforms/IPO.h \
-    llvm-c/TargetMachine.h llvm-c/Target.h llvm-c/Linker.h llvm-c/Initialization.h \
+    llvm-c/BitReader.h llvm-c/Transforms/PassBuilder.h \
+    llvm-c/TargetMachine.h llvm-c/Target.h llvm-c/Linker.h \
     llvm-c/DebugInfo.h DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h
 
 headerFilter = llvm-c/* llvm-c/**/* DebugInfoC.h CAPIExtensions.h RemoveRedundantSafepoints.h OpaquePointerAPI.h
@@ -20,51 +20,57 @@ linkerOpts = -fvisibility-inlines-hidden \
     -DNDEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS \
     -ldebugInfo -lllvmext
 
+# -lLLVM* flags are produced by the following command:
 # ./llvm-config --libs analysis bitreader bitwriter core linker target analysis ipo instrumentation lto objcarcopts arm aarch64 webassembly x86 mips
 linkerOpts.osx = \
     -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
     -lpthread -lz -lm  -lcurses -Wl,-U,_futimens -Wl,-U,_LLVMDumpType \
     -Wl,-exported_symbols_list,llvm.list \
-    -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86Disassembler -lLLVMX86AsmParser \
-    -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc \
-    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyInfo -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc \
-    -lLLVMAArch64Utils -lLLVMAArch64Info -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG \
-    -lLLVMAsmPrinter -lLLVMDebugInfoDWARF -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO \
-    -lLLVMPasses -lLLVMCoroutines -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize \
-    -lLLVMScalarOpts -lLLVMIRReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMFrontendOpenMP -lLLVMAggressiveInstCombine \
-    -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMTextAPI -lLLVMMCParser \
-    -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader -lLLVMBinaryFormat \
-    -lLLVMSupport -lLLVMDemangle
+    -lLLVMMipsDisassembler -lLLVMMipsAsmParser -lLLVMMipsCodeGen -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86TargetMCA -lLLVMMCA \
+    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler \
+    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc -lLLVMWebAssemblyUtils -lLLVMWebAssemblyInfo \
+    -lLLVMAArch64Disassembler -lLLVMAArch64AsmParser -lLLVMAArch64CodeGen -lLLVMAArch64Desc -lLLVMAArch64Utils -lLLVMAArch64Info \
+    -lLLVMARMDisassembler -lLLVMARMAsmParser -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter \
+    -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO -lLLVMRemoteCachingService -lLLVMRemoteNullService \
+    -lLLVMPasses -lLLVMCoroutines -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen -lLLVMCAS -lLLVMipo -lLLVMInstrumentation \
+    -lLLVMVectorize -lLLVMFrontendOpenMP -lLLVMScalarOpts -lLLVMInstCombine -lLLVMAggressiveInstCombine -lLLVMTarget -lLLVMLinker \
+    -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoMSF \
+    -lLLVMDebugInfoDWARF -lLLVMObject -lLLVMTextAPI -lLLVMMCParser -lLLVMIRReader -lLLVMAsmParser -lLLVMMC -lLLVMDebugInfoCodeView \
+    -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle
 
 
 
 
+# -lLLVM* flags are produced by the following command:
 # ./llvm-config --libs analysis bitreader bitwriter core linker target analysis ipo instrumentation lto arm aarch64 webassembly x86 mips
 linkerOpts.linux = \
     -Wl,-z,noexecstack \
     -lrt -ldl -lpthread -lz -lm \
-    -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86Disassembler -lLLVMX86AsmParser \
-    -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc \
-    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyInfo -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc \
-    -lLLVMAArch64Utils -lLLVMAArch64Info -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG \
-    -lLLVMAsmPrinter -lLLVMDebugInfoDWARF -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO \
-    -lLLVMPasses -lLLVMCoroutines -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize \
-    -lLLVMScalarOpts -lLLVMIRReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMFrontendOpenMP -lLLVMAggressiveInstCombine \
-    -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMTextAPI -lLLVMMCParser \
-    -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader -lLLVMBinaryFormat \
-    -lLLVMSupport -lLLVMDemangle
+    -lLLVMMipsDisassembler -lLLVMMipsAsmParser -lLLVMMipsCodeGen -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMX86TargetMCA -lLLVMMCA \
+    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler \
+    -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc -lLLVMWebAssemblyUtils -lLLVMWebAssemblyInfo \
+    -lLLVMAArch64Disassembler -lLLVMAArch64AsmParser -lLLVMAArch64CodeGen -lLLVMAArch64Desc -lLLVMAArch64Utils -lLLVMAArch64Info \
+    -lLLVMARMDisassembler -lLLVMARMAsmParser -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter \
+    -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO -lLLVMPasses -lLLVMIRPrinter -lLLVMCoroutines \
+    -lLLVMExtensions -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMFrontendOpenMP -lLLVMScalarOpts \
+    -lLLVMInstCombine -lLLVMAggressiveInstCombine -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis \
+    -lLLVMProfileData -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoMSF -lLLVMDebugInfoDWARF -lLLVMObject -lLLVMTextAPI -lLLVMMCParser \
+    -lLLVMIRReader -lLLVMAsmParser -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMBitReader -lLLVMCore -lLLVMRemarks -lLLVMBitstreamReader \
+    -lLLVMBinaryFormat -lLLVMTargetParser -lLLVMSupport -lLLVMDemangle
 
+# -lLLVM* flags are produced by the following command:
 # ./llvm-config --libs analysis bitreader bitwriter core linker target analysis ipo instrumentation lto arm aarch64 webassembly x86
 linkerOpts.mingw = \
-    -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMWebAssemblyDisassembler \
-    -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyInfo -lLLVMAArch64Disassembler \
-    -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Utils -lLLVMAArch64Info -lLLVMARMDisassembler \
-    -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoDWARF -lLLVMARMAsmParser -lLLVMARMDesc \
-    -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO -lLLVMPasses -lLLVMCoroutines -lLLVMObjCARCOpts -lLLVMExtensions -lLLVMCodeGen \
-    -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMScalarOpts -lLLVMIRReader -lLLVMAsmParser -lLLVMInstCombine -lLLVMFrontendOpenMP \
-    -lLLVMAggressiveInstCombine -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData \
-    -lLLVMObject -lLLVMTextAPI -lLLVMMCParser -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMBitReader -lLLVMCore -lLLVMRemarks \
-    -lLLVMBitstreamReader -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle \
+    -lLLVMX86TargetMCA -lLLVMMCA -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info \
+    -lLLVMWebAssemblyDisassembler -lLLVMWebAssemblyAsmParser -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc -lLLVMWebAssemblyUtils \
+    -lLLVMWebAssemblyInfo -lLLVMAArch64Disassembler -lLLVMAArch64AsmParser -lLLVMAArch64CodeGen -lLLVMAArch64Desc -lLLVMAArch64Utils \
+    -lLLVMAArch64Info -lLLVMARMDisassembler -lLLVMARMAsmParser -lLLVMARMCodeGen -lLLVMCFGuard -lLLVMGlobalISel -lLLVMSelectionDAG \
+    -lLLVMAsmPrinter -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMUtils -lLLVMARMInfo -lLLVMLTO -lLLVMPasses -lLLVMIRPrinter \
+    -lLLVMCoroutines -lLLVMExtensions -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMipo -lLLVMInstrumentation -lLLVMVectorize -lLLVMFrontendOpenMP \
+    -lLLVMScalarOpts -lLLVMInstCombine -lLLVMAggressiveInstCombine -lLLVMTarget -lLLVMLinker -lLLVMTransformUtils -lLLVMBitWriter \
+    -lLLVMAnalysis -lLLVMProfileData -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoMSF -lLLVMDebugInfoDWARF -lLLVMObject -lLLVMTextAPI \
+    -lLLVMMCParser -lLLVMIRReader -lLLVMAsmParser -lLLVMMC -lLLVMDebugInfoCodeView -lLLVMBitReader -lLLVMCore -lLLVMRemarks \
+    -lLLVMBitstreamReader -lLLVMBinaryFormat -lLLVMTargetParser -lLLVMSupport -lLLVMDemangle \
     -lpsapi -lshell32 -lole32 -luuid -ladvapi32
 
 # It looks like mingw port compiled without LLVM_ENABLE_DUMP

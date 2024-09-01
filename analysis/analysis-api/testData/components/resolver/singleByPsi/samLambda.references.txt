@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Test) fun test(foo: Test.Foo)
+KtNameReferenceExpression(143,147): 'test'
+  KtSimpleNameReference:
+    (in Test) fun test(foo: Test.Foo)

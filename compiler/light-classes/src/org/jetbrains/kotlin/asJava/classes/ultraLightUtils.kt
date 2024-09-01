@@ -9,6 +9,7 @@ import com.google.common.collect.Lists
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -21,6 +22,7 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -542,3 +544,16 @@ internal fun List<KtAnnotationEntry>.toLightAnnotations(
             parent = parent
         )
     }
+
+internal fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
+    val trackerService = KotlinModificationTrackerService.getInstance(project)
+    return with(trackerService) {
+        when {
+            !isLocal -> listOf(outOfBlockModificationTracker)
+            else -> when (val file = containingFile) {
+                is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
+                else -> listOf(outOfBlockModificationTracker)
+            }
+        }
+    }
+}

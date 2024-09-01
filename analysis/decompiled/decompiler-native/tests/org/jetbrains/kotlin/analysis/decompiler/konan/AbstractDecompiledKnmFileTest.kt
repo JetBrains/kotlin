@@ -63,7 +63,7 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
         val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib")
         val additionalArgumentsFromLanguageDirectives = ktFiles.flatMap { path ->
             path.readText().let { fileText ->
-                InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ", "// LANGUAGE: ").map { "-XXLanguage:$it" }
+                InTextDirectivesUtils.findListWithPrefixes(fileText, "// LANGUAGE: ").map { "-XXLanguage:$it" }
             }
         }
 

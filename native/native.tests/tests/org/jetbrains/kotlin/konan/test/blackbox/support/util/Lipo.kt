@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
-import org.jetbrains.kotlin.native.executors.HostExecutor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.toolsExecutor
 import org.jetbrains.kotlin.native.executors.runProcess
 import java.io.File
 import java.io.FileInputStream
-import kotlin.time.measureTimedValue
 
 internal fun AbstractNativeSimpleTest.lipoCreate(
     inputFiles: List<File>,
@@ -29,7 +27,7 @@ internal fun AbstractNativeSimpleTest.lipoCreate(
         "-output",
         outputFile.canonicalPath,
     )
-    val result = testRunSettings.executor.runProcess(lipoPath, *arguments)
+    val result = toolsExecutor.runProcess(lipoPath, *arguments)
 
     val parameters = CommandParameters(
         commandName = "LIPO",

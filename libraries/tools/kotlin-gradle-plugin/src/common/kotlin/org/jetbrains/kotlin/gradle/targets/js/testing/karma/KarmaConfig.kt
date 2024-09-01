@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
-import java.io.File
-
 // https://karma-runner.github.io/4.0/config/configuration-file.html
 data class KarmaConfig(
     var singleRun: Boolean = true,
@@ -41,9 +39,3 @@ data class CustomLauncher(var base: String) {
     val flags = mutableListOf<String>()
     var debug: Boolean? = null
 }
-
-data class Reporter(
-    val type: String,
-    val subDir: String? = null,
-    val file: String? = null
-)

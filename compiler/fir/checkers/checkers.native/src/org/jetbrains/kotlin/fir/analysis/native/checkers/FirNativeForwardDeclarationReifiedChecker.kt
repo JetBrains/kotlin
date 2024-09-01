@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
 
 object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {

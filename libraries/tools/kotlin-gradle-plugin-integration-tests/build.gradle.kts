@@ -1,17 +1,24 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("android-sdk-provisioner")
 }
 
 testsJar()
 
-kotlin.sourceSets.all {
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+            "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+            "kotlin.io.path.ExperimentalPathApi",
+        )
+    }
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
@@ -106,7 +113,7 @@ dependencies {
 
     testRuntimeOnly(project(":compiler:tests-mutes"))
 
-    testCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testCompileOnly(libs.intellij.asm)
 }
 
 val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
@@ -114,39 +121,30 @@ val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
         .resolve(".kotlin")
         .resolve("konan-for-gradle-tests").absolutePath
 
-// Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
-val shortenTempRootName = project.providers.systemProperty("os.name").get().contains("Windows")
-
-val splitGradleIntegrationTestTasks =
-    project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
-        ?: project.kotlinBuildProperties.isTeamcityBuild
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.optIn.add("kotlin.io.path.ExperimentalPathApi")
-}
-
-val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
+tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
     description = "Deletes temporary Gradle TestKit cache"
 
     delete(layout.buildDirectory.dir("testKitCache"))
 }
 
-tasks.register<Delete>("cleanUserHomeKonanDir") {
-    description =
-        "Deletes ~/.konan dir before tests. This step is necessary to ensure that no test inadvertently creates this directory during execution."
+val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
+    description = "Only runs on CI. " +
+            "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
+
+    val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    onlyIf("Build is running on TeamCity") { isTeamCityBuild }
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
-
     delete(userHomeKonanDir)
 
     doLast {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
-tasks.register<Task>("prepareNativeBundleForGradleIT") {
 
-    description = "This task adds dependency on :kotlin-native:bundle"
+val prepareNativeBundleForGradleIT by tasks.registering {
+    description = "This task adds dependency on :kotlin-native:install"
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
         // Build full Kotlin Native bundle
@@ -154,17 +152,13 @@ tasks.register<Task>("prepareNativeBundleForGradleIT") {
     }
 }
 
-tasks.register<Task>("createProvisionedOkFiles") {
+val createProvisionedOkFiles by tasks.registering {
 
     description = "This task creates `provisioned.ok` file for each preconfigured k/n native bundle." +
             "Kotlin/Native bundle can be prepared in two ways:" +
             "`prepareNativeBundleForGradleIT` task for local environment and `Compiler Dist: full bundle` build for CI environment."
 
-    val prepareNativeBundleTaskName = ":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT"
-    val taskExists = project.tasks.findByPath(prepareNativeBundleTaskName) != null
-    if (taskExists) {
-        mustRunAfter(prepareNativeBundleTaskName)
-    }
+    mustRunAfter(prepareNativeBundleForGradleIT)
 
     val konanDistributions = File(konanDataDir)
 
@@ -178,15 +172,6 @@ tasks.register<Task>("createProvisionedOkFiles") {
                 File(it, "provisioned.ok").createNewFile()
             }
     }
-
-}
-
-fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
-}
-
-fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
 }
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
@@ -195,7 +180,7 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
 
     //add native bundle dependencies for local test run
     if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
+        dependsOn(prepareNativeBundleForGradleIT)
     }
 
     // Providing necessary properties for running tests with k/n built from master on the local environment
@@ -212,79 +197,24 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
         }
         systemProperty("konanDataDirForIntegrationTests", konanDataDir)
     }
-    dependsOn(":kotlin-gradle-plugin-integration-tests:createProvisionedOkFiles")
-}
-
-fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
-    if (splitGradleIntegrationTestTasks) {
-        val filter = if (include)
-            filter.includePatterns
-        else
-            filter.excludePatterns
-        filter.patterns()
-    }
-}
-
-fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.7"
-    systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
-}
-
-// additional configuration in tasks.withType<Test> below
-projectTest(
-    "test",
-    shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
-) {
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-projectTest(
-    "testAdvanceGradleVersion",
-    shortenTempRootName = shortenTempRootName,
-    jUnitMode = JUnitMode.JUnit5
-) {
-    advanceGradleVersion()
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-if (splitGradleIntegrationTestTasks) {
-
-    projectTest(
-        "testMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        includeMppAndAndroid(true)
-    }
-
-    projectTest(
-        "testAdvanceGradleVersionMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        advanceGradleVersion()
-        includeMppAndAndroid(true)
-    }
+    dependsOn(createProvisionedOkFiles)
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
+
+// Disabling test task as it does nothing
+tasks.test {
+    enabled = false
+    group = null
+    description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
+}
+
 val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
 
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
-    "6.8.3",
-    "6.9.4",
-    "7.0.2",
-    "7.1.1",
-    "7.2",
-    "7.3.3",
-    "7.4.2",
-    "7.5.1",
     "7.6.3",
     "8.0.2",
     "8.1.1",
@@ -293,7 +223,9 @@ val gradleVersions = listOf(
     "8.4",
     "8.5",
     "8.6",
-    "8.7"
+    "8.7",
+    "8.8",
+    "8.9",
 )
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
@@ -318,7 +250,6 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
                 useJUnitPlatform {
                     includeTags(junitTag)
                     excludeTags(*(junitTags - junitTag).toTypedArray())
-                    includeEngines("junit-jupiter")
                 }
             }
         }
@@ -330,7 +261,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
     }
 }
 
-val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
+tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
 
@@ -338,7 +269,6 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
 
     useJUnitPlatform {
         excludeTags("DaemonsKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -349,7 +279,6 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
     useJUnitPlatform {
         includeTags("JvmKGP")
         excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -360,7 +289,6 @@ val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
     useJUnitPlatform {
         includeTags("SwiftExportKGP")
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -372,7 +300,6 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     useJUnitPlatform {
         includeTags("JsKGP")
         excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -383,7 +310,6 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
     useJUnitPlatform {
         includeTags("NativeKGP")
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -397,7 +323,6 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
     useJUnitPlatform {
         includeTags("DaemonsKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -408,7 +333,6 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
     useJUnitPlatform {
         includeTags("OtherKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -420,7 +344,6 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
     useJUnitPlatform {
         includeTags("MppKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -432,20 +355,23 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
     useJUnitPlatform {
         includeTags("AndroidKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
 tasks.named<Task>("check") {
-    dependsOn("testAdvanceGradleVersion")
-    dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
-    if (splitGradleIntegrationTestTasks) {
-        dependsOn("testAdvanceGradleVersionMppAndAndroid")
-        dependsOn("testMppAndAndroid")
-    }
+    dependsOn(
+        jvmTestsTask,
+        jsTestsTask,
+        nativeTestsTask,
+        daemonsTestsTask,
+        otherPluginsTestTask,
+        mppTestsTask,
+        androidTestsTask,
+        swiftExportTestsTask,
+    )
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
@@ -458,15 +384,14 @@ tasks.withType<Test> {
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
-    dependsOn(":libraries:tools:gradle:fus-statistics-gradle-plugin:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
-    if (project.kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:cleanUserHomeKonanDir")
-    }
+    dependsOn(cleanUserHomeKonanDir)
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
+    systemProperty("composeSnapshotVersion", libs.versions.compose.snapshot.version.get())
+    systemProperty("composeSnapshotId", libs.versions.compose.snapshot.id.get())
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
@@ -478,6 +403,14 @@ tasks.withType<Test> {
     val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
+
+    val compileTestDestination = kotlin.target.compilations["test"].compileTaskProvider.flatMap { task ->
+        task as AbstractKotlinCompile<*>
+        task.destinationDirectory
+    }
+    doFirst {
+        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
+    }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
     // names should follow "jdk\\d+Home" regex where number is a major JDK version
@@ -491,24 +424,12 @@ tasks.withType<Test> {
         }
     }
 
-    useAndroidSdk()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
+    }
 
-    val shouldApplyJunitPlatform = name !in setOf(
-        allParallelTestsTask.name,
-        jvmTestsTask.name,
-        jsTestsTask.name,
-        swiftExportTestsTask.name,
-        nativeTestsTask.name,
-        daemonsTestsTask.name,
-        otherPluginsTestTask.name,
-        mppTestsTask.name,
-        androidTestsTask.name
-    )
-    if (shouldApplyJunitPlatform) {
-        maxHeapSize = "512m"
-        useJUnitPlatform {
-            includeEngines("junit-vintage")
-        }
+    useJUnitPlatform {
+        includeEngines("junit-jupiter")
     }
 
     testLogging {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.backend.native.interop.decodeObjCMethodAnnotatio
 import org.jetbrains.kotlin.fir.backend.native.interop.isObjCClass
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -44,7 +44,7 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
 
     private fun FirCallableSymbol<*>.isObjCClassPropertyOrAccessor(session: FirSession) =
         (this is FirPropertySymbol || this is FirPropertyAccessorSymbol)
-                && (containingClassLookupTag()?.toSymbol(session) as? FirClassSymbol<*>)?.isObjCClass(session) ?: false
+                && containingClassLookupTag()?.toClassSymbol(session)?.isObjCClass(session) ?: false
 
     /**
      * mimics ObjCOverridabilityCondition.isOverridable

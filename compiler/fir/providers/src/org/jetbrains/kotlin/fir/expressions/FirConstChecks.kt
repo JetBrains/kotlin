@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -228,13 +227,13 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): ConstantArgumentKind {
-        if (!binaryLogicExpression.leftOperand.resolvedType.isBoolean || !binaryLogicExpression.rightOperand.resolvedType.isBoolean) {
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): ConstantArgumentKind {
+        if (!booleanOperatorExpression.leftOperand.resolvedType.isBoolean || !booleanOperatorExpression.rightOperand.resolvedType.isBoolean) {
             return ConstantArgumentKind.NOT_CONST
         }
 
-        binaryLogicExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
-        binaryLogicExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
         return ConstantArgumentKind.VALID_CONST
     }
 
@@ -245,7 +244,7 @@ private class FirConstCheckVisitor(
             return ConstantArgumentKind.NOT_CONST
 
         while (coneType.classId == StandardClassIds.Array)
-            coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
+            coneType = (coneType.lowerBoundIfFlexible().typeArgumentsOfLowerBoundIfFlexible.first() as? ConeKotlinTypeProjection)?.type ?: break
 
         val argument = getClassCall.argument
         return when {
@@ -452,7 +451,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
-        val expClassId = getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
+        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session).classId
         // TODO, KT-59823: add annotation for allowed constant types
         return expClassId in StandardClassIds.constantAllowedTypes
     }
@@ -498,8 +497,5 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
-        this?.resolvedReturnTypeRef
-            ?.coneTypeSafe<ConeLookupTagBasedType>()
-            ?.lookupTag
-            ?.toSymbol(session)
+        this?.resolvedReturnTypeRef?.coneType?.toSymbol(session)
 }

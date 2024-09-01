@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IFoo {
     fun foo(i: Int): Int
     infix fun bar(i: Int): Int

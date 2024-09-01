@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin) inline fun TODO(reason: kotlin.String): kotlin.Nothing
+KtNameReferenceExpression(55,59): 'TODO'
+  KtSimpleNameReference:
+    (in kotlin) inline fun TODO(reason: kotlin.String): kotlin.Nothing

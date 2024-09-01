@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import kotlin.math.min
 
@@ -66,7 +65,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             val expectedType = typeParameterSubstitutor.substituteOrSelf(param.returnTypeRef.coneType)
 
             // optimization: if no arguments or flexibility, everything is OK
-            if (expectedType !is ConeFlexibleType || expectedType.typeArguments.isEmpty()) continue
+            if (expectedType !is ConeFlexibleType || expectedType.typeArgumentsOfLowerBoundIfFlexible.isEmpty()) continue
 
             // Anything is acceptable for raw types
             if (expectedType is ConeRawType) continue
@@ -109,11 +108,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             // actually created because of type projection from `get`. Hence, to workaround this problem, we simply remove all the out
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
-            val argTypeWithoutOutProjection = argType.removeOutProjection(isCovariant = true)
-            val lowerBoundWithoutCapturing = context.session.typeApproximator.approximateToSuperType(
-                lowerBound,
-                TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) ?: lowerBound
+            val argTypeWithoutOutProjection = argType.approximate(context).removeOutProjection(isCovariant = true)
+            val lowerBoundWithoutCapturing = lowerBound.approximate(context)
 
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeContext,
@@ -126,13 +122,27 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
         }
     }
 
+    private fun ConeKotlinType.approximate(context: CheckerContext): ConeKotlinType {
+        return context.session.typeApproximator.approximateToSuperType(
+            this,
+            TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        ) ?: this
+    }
+
     private fun ConeKotlinType.removeOutProjection(isCovariant: Boolean): ConeKotlinType {
         return when (this) {
             is ConeFlexibleType -> ConeFlexibleType(
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
             )
+            is ConeRigidType -> removeOutProjection(isCovariant)
+        }
+    }
+
+    private fun ConeRigidType.removeOutProjection(isCovariant: Boolean): ConeRigidType {
+        return when (this) {
             is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
+            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
         }
     }
 
@@ -148,11 +158,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
                     )
                 },
             )
-            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
-            is ConeIntersectionType -> ConeIntersectionType(
-                intersectedTypes.map { it.removeOutProjection(isCovariant) },
-                upperBoundForApproximation?.removeOutProjection(isCovariant)
-            )
+            is ConeIntersectionType -> mapTypes { it.removeOutProjection(isCovariant) }
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),
@@ -180,23 +186,11 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
         }
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeSimpleKotlinType): Boolean {
-        return isTypeConstructorEqualOrSubClassOf(subType.typeConstructor(), superType.typeConstructor())
+    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
+        subType: ConeKotlinType,
+        superType: ConeRigidType,
+    ): Boolean {
+        return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
-        subTypeConstructor: TypeConstructorMarker,
-        superTypeConstructor: TypeConstructorMarker
-    ): Boolean {
-        if (subTypeConstructor == superTypeConstructor) return true
-        for (immediateSuperType in subTypeConstructor.supertypes()) {
-            val immediateSuperTypeConstructor = immediateSuperType.typeConstructor()
-            if (superTypeConstructor == immediateSuperTypeConstructor) return true
-            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(
-                    immediateSuperTypeConstructor, superTypeConstructor
-                )
-            ) return true
-        }
-        return false
-    }
 }

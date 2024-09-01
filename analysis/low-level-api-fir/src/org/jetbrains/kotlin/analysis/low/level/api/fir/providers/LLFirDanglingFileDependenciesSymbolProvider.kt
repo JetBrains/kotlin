@@ -53,16 +53,14 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
     // Normally, K2 issues a 'resolution ambiguity' error on calls to such libraries. It is sort of acceptable for resolution, as
     // resolution errors are never shown in the library code. However, the backend, to which 'evaluate expression' needs to pass FIR
     // afterwards, is not designed for compiling ambiguous (and non-completed) calls.
-    // The code below scans for declaration duplicates, and chooses a number of them from a single class input (a JAR or a directory).
-    // The logic is not ideal, as, in theory, versions might differ non-trivially: each artifact may have unique declarations.
-    // However, such cases should be relatively rare, and to provide the candidate list more precisely, one would need to also compare
-    // signatures of each declaration.
+    // The code below scans for declaration duplicates, and chooses one from the first class input for each individual name and signature.
+    // Non-library declarations are returned as is.
     private fun <T : FirCallableSymbol<*>> filterSymbols(symbols: List<T>): List<T> {
         if (symbols.size < 2) {
             return symbols
         }
 
-        val binarySymbols = LinkedHashMap<CallableId, MutableMap<VirtualFile, MutableList<T>>>()
+        val binarySymbols = LinkedHashMap<CandidateSignature, MutableMap<VirtualFile, MutableList<T>>>()
         val otherSymbols = ArrayList<T>()
 
         for (symbol in symbols) {
@@ -74,8 +72,9 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
                 if (symbolFile is KtFile && symbolFile.isCompiled && symbolVirtualFile != null) {
                     val symbolRootVirtualFile = getSymbolRootFile(symbolVirtualFile, symbolFile.packageFqName)
                     if (symbolRootVirtualFile != null) {
+                        val key = CandidateSignature(callableId, FirCallableSignature.createSignature(symbol))
                         binarySymbols
-                            .getOrPut(callableId, ::LinkedHashMap)
+                            .getOrPut(key, ::LinkedHashMap)
                             .getOrPut(symbolRootVirtualFile, ::ArrayList)
                             .add(symbol)
                         continue
@@ -101,6 +100,8 @@ class LLFirDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbo
 
         return symbols
     }
+
+    private data class CandidateSignature(val callableId: CallableId, val signature: FirCallableSignature)
 
     private fun getSymbolRootFile(virtualFile: VirtualFile, packageFqName: FqName): VirtualFile? {
         val packageFqNameSegments = packageFqName.pathSegments().asReversed()

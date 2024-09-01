@@ -32,6 +32,14 @@ class FirebaseCloudXCTestExecutor(
 
     private val target by configurables::target
 
+    private enum class State {
+        NORMAL,
+        FAILED
+    }
+
+    @Volatile
+    private var state: State = State.NORMAL
+
     init {
         require(HostManager.host.family.isAppleFamily) {
             "$this executor isn't available for $configurables"
@@ -41,15 +49,30 @@ class FirebaseCloudXCTestExecutor(
         }
     }
 
+    @Synchronized
+    private fun checkState() {
+        check(state == State.NORMAL) {
+            "${this::class.java.simpleName} is in the ${state.name} state. Check the executor logs and configuration"
+        }
+    }
+
     override fun execute(request: ExecuteRequest): ExecuteResponse {
+        // Check the state to understand whether it is possible to build or some config/build failure happened already.
+        checkState()
+
         val workDir = request.workingDirectory?.toPath() ?: Paths.get(".")
         val projectDir = Files.createTempDirectory(workDir, "xctest-firebase-runner")
 
         val bundle = XCTestBundle.ProjectWrapped(Path(request.executableAbsolutePath), request.args)
 
         // Make a zip with the built application and xctestrun file
-        val testsZip = projectDir.resolve("KNTests.zip").apply {
-            createZip(bundle.prepareToRun(projectDir))
+        val testsZip = try {
+            projectDir.resolve("KNTests.zip").apply {
+                createZip(bundle.prepareToRun(projectDir))
+            }
+        } catch (throwable: Throwable) {
+            state = State.FAILED
+            throw IllegalStateException("Failed to prepare a XCTest bundle with Xcode. Check Xcode or project configuration", throwable)
         }
 
         // Execute tests in the Firebase

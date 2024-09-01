@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -45,6 +46,7 @@ open class FirAnnotationArgumentsTransformer(
     scopeSession,
     outerBodyResolveContext = outerBodyResolveContext,
     returnTypeCalculator = returnTypeCalculator,
+    expandTypeAliases = true,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionTransformerForAnnotationArguments(this)
 
@@ -122,7 +124,7 @@ private class FirExpressionTransformerForAnnotationArguments(
             source = originalAccess.source
             typeArguments.addAll(originalAccess.typeArguments)
 
-            val originalResolvedQualifier = originalAccess.explicitReceiver
+            val originalResolvedQualifier = originalAccess.explicitReceiver?.unwrapSmartcastExpression()
             if (originalResolvedQualifier is FirResolvedQualifier) {
                 val fqName = originalResolvedQualifier.classId
                     ?.let { if (originalResolvedQualifier.isFullyQualified) it.asSingleFqName() else it.relativeClassName }

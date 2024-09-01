@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
+import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.TypeParameterData
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -55,14 +59,14 @@ sealed class SymbolData {
 
     data class PackageData(val packageFqName: FqName) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val symbol = getPackageSymbolIfPackageExists(packageFqName) ?: error("Cannot find a symbol for the package `$packageFqName`.")
+            val symbol = findPackage(packageFqName) ?: error("Cannot find a symbol for the package `$packageFqName`.")
             return listOf(symbol)
         }
     }
 
     data class ClassData(val classId: ClassId) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val symbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
+            val symbol = findClass(classId) ?: error("Class $classId is not found")
             return listOf(symbol)
         }
     }
@@ -70,13 +74,13 @@ sealed class SymbolData {
     object ScriptData : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
             val script = ktFile.script ?: error("Script is not found")
-            return listOf(script.getScriptSymbol())
+            return listOf(script.symbol)
         }
     }
 
     data class TypeAliasData(val classId: ClassId) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val symbol = getTypeAliasByClassId(classId) ?: error("Type alias $classId is not found")
+            val symbol = findTypeAlias(classId) ?: error("Type alias $classId is not found")
             return listOf(symbol)
         }
     }
@@ -86,9 +90,9 @@ sealed class SymbolData {
             val classId = callableId.classId
 
             val symbols = if (classId == null) {
-                getTopLevelCallableSymbols(callableId.packageName, callableId.callableName).toList()
+                findTopLevelCallables(callableId.packageName, callableId.callableName).toList()
             } else {
-                val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
+                val classSymbol = findClass(classId) ?: error("Class $classId is not found")
                 findMatchingCallableSymbols(classSymbol)
             }
 
@@ -99,31 +103,32 @@ sealed class SymbolData {
             return symbols
         }
 
-        private fun KaSession.findMatchingCallableSymbols(classSymbol: KaClassOrObjectSymbol): List<KaCallableSymbol> {
-            val declaredSymbols = classSymbol.getCombinedDeclaredMemberScope()
-                .getCallableSymbols(callableId.callableName).toList()
+        private fun KaSession.findMatchingCallableSymbols(classSymbol: KaClassSymbol): List<KaCallableSymbol> {
+            val declaredSymbols = classSymbol.combinedDeclaredMemberScope
+                .callables(callableId.callableName).toList()
 
             if (declaredSymbols.isNotEmpty()) {
                 return declaredSymbols
             }
 
             // Fake overrides are absent in the declared member scope
-            return classSymbol.getCombinedMemberScope()
-                .getCallableSymbols(callableId.callableName)
-                .filter { it.getContainingSymbol() == classSymbol }
+            return classSymbol.combinedMemberScope
+                .callables(callableId.callableName)
+                .filter { it.containingDeclaration == classSymbol }
                 .toList()
         }
     }
 
     data class EnumEntryInitializerData(val enumEntryId: CallableId) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val classSymbol = enumEntryId.classId?.let { getClassOrObjectSymbolByClassId(it) }
+            val classSymbol = enumEntryId.classId?.let { findClass(it) }
                 ?: error("Cannot find enum class `${enumEntryId.classId}`.")
 
-            require(classSymbol is KaNamedClassOrObjectSymbol) { "`${enumEntryId.classId}` must be a named class." }
+            require(classSymbol is KaNamedClassSymbol) { "`${enumEntryId.classId}` must be a named class." }
             require(classSymbol.classKind == KaClassKind.ENUM_CLASS) { "`${enumEntryId.classId}` must be an enum class." }
 
-            val enumEntrySymbol = classSymbol.getEnumEntries().find { it.name == enumEntryId.callableName }
+            @Suppress("DEPRECATION")
+            val enumEntrySymbol = classSymbol.enumEntries.find { it.name == enumEntryId.callableName }
                 ?: error("Cannot find enum entry symbol `$enumEntryId`.")
 
             val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
@@ -133,12 +138,23 @@ sealed class SymbolData {
 
     data class SamConstructorData(val classId: ClassId) : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val symbol = getClassOrObjectSymbolByClassId(classId)
-                ?: getTypeAliasByClassId(classId)
+            val symbol = findClass(classId)
+                ?: findTypeAlias(classId)
                 ?: error("Class-like symbol is not found by '$classId'")
 
-            val samConstructor = symbol.getSamConstructor() ?: error("SAM constructor is not found for symbol '$symbol'")
+            val samConstructor = symbol.samConstructor ?: error("SAM constructor is not found for symbol '$symbol'")
             return listOf(samConstructor)
+        }
+    }
+
+    data class TypeParameterData(val name: Name, val ownerData: SymbolData): SymbolData() {
+        override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
+            val owner = with(ownerData) { toSymbols(ktFile) }.singleOrNull() ?: error("No owner found")
+            requireIsInstance<KaDeclarationSymbol>(owner)
+            val parameterSymbol = owner.typeParameters.find { it.name == name }
+                ?: error("Type parameter with '$name' name is not found in $ownerData")
+
+            return listOf(parameterSymbol)
         }
     }
 
@@ -150,7 +166,8 @@ sealed class SymbolData {
             "typealias:",
             "enum_entry_initializer:",
             "script",
-            "sam_constructor:"
+            "sam_constructor:",
+            "type_parameter:",
         )
 
         fun create(data: String): SymbolData {
@@ -164,10 +181,18 @@ sealed class SymbolData {
                 "callable" -> CallableData(extractCallableId(value))
                 "enum_entry_initializer" -> EnumEntryInitializerData(extractCallableId(value))
                 "sam_constructor" -> SamConstructorData(ClassId.fromString(value))
+                "type_parameter" -> extractTypeParameterData(value)
                 else -> error("Invalid symbol kind, expected one of: $identifiers")
             }
         }
     }
+}
+
+private fun extractTypeParameterData(data: String): TypeParameterData {
+    val typeParameterName = data.substringBefore(":")
+    val owner = data.substringAfter(":").trim()
+    val ownerData = SymbolData.create(owner)
+    return TypeParameterData(Name.identifier(typeParameterName), ownerData)
 }
 
 private fun extractPackageFqName(data: String): FqName = FqName.fromSegments(data.split('.'))

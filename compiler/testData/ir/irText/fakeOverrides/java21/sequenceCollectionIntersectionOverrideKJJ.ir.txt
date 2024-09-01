@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedList.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedList.toArray?>? declared in java.util.LinkedList
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedCollection.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedCollection.toArray?>? declared in java.util.SequencedCollection
@@ -601,7 +601,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
       annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = []), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = GET_ENUM 'ENUM_ENTRY name:WARNING' type=kotlin.DeprecationLevel)
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedList.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.LinkedList.toArray?>? declared in java.util.LinkedList
         public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedCollection.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedCollection.toArray?>? declared in java.util.SequencedCollection
@@ -657,9 +657,6 @@ FILE fqName:<root> fileName:/1.kt
       CALL 'public open fun addFirst (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         p0: CONST Int type=kotlin.Int value=3
-      CALL 'public open fun addLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        p0: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=null
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null

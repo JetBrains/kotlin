@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: testImplicitThis except=Unit_getInstance

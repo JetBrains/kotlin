@@ -1,2 +1,3 @@
-KDocReference:
-  (in Foo.Nested) fun foo()
+KDocName(77,91): 'Foo.Nested.foo'
+  KDocReference:
+    (in Foo.Nested) fun foo()

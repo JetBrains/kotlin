@@ -13,8 +13,6 @@ internal const val ENABLE_DCE = "-Xir-dce"
 
 internal const val GENERATE_D_TS = "-Xgenerate-dts"
 
-internal const val PRODUCE_UNZIPPED_KLIB = "-Xir-produce-klib-dir"
-
 internal const val MINIMIZED_MEMBER_NAMES = "-Xir-minimized-member-names"
 
 internal const val KLIB_MODULE_NAME = "-Xir-module-name"

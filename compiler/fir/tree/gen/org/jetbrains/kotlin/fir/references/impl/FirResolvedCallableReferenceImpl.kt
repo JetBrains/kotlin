@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -24,7 +25,7 @@ internal class FirResolvedCallableReferenceImpl(
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
-    override val mappedArguments: CallableReferenceMappedArguments,
+    override val mappedArguments: CallableReferenceMappedArguments<FirExpression>,
 ) : FirResolvedCallableReference() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

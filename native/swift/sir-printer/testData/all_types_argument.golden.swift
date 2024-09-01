@@ -5,7 +5,9 @@ public func foo(
     arg4: Swift.Int32,
     arg5: Swift.Int64,
     arg6: Swift.Double,
-    arg7: Swift.Float
+    arg7: Swift.Float,
+    arg8: Swift.Unicode.UTF16.CodeUnit,
+    arg9: Swift.Bool?
 ) -> Swift.Bool {
     stub()
 }

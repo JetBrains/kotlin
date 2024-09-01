@@ -101,20 +101,20 @@ function classify {
         return
     fi
     # DriverKit is C++. Drop it.
-    if [[ $(cat $JSON | jq '.metadata.platforms[] | .name' | grep DriverKit) ]]
+    if [[ $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep DriverKit) ]]
     then
         DRIVER_KIT+=($FRAMEWORK_NAME)
         return
     fi
     # Sometimes framework is present in SDK directory, but actually it isn't supported on
     # current OS.
-    if [[ ! $(cat $JSON | jq '.metadata.platforms[] | .name' | grep $OS_NAME) ]]
+    if [[ ! $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep $OS_NAME) ]]
     then
         OS_UNSUPPORTED+=($FRAMEWORK_NAME)
         return
     fi
-    LANG=$(cat $JSON | jq '.identifier.interfaceLanguage' | grep swift || true)
-    if [[ $LANG = \"swift\" ]]
+    # Filter out Swift-only frameworks
+    if [[ ! $(cat $JSON | jq '.variants[]? | .traits[]? | .interfaceLanguage' | grep \"occ\") ]]
     then
         SWIFT_ONLY+=($FRAMEWORK_NAME)
         return

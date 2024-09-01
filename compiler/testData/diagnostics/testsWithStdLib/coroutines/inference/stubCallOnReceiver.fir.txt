@@ -18,7 +18,7 @@ FILE: stubCallOnReceiver.fir.kt
     }
     public final fun foo(): R|kotlin/Unit| {
         R|/defineType|<R|kotlin/Int|>(<L> = defineType@fun R|TypeDefinition<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.parse: R|kotlin/Unit|>|(<L> = parse@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(serializedValue))  kotlin/String|): R|kotlin/Int?| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.parse: R|kotlin/Unit|>|(<L> = parse@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int?| <inline=NoInline>  {
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )
@@ -31,7 +31,7 @@ FILE: stubCallOnReceiver.fir.kt
     }
     public final fun bar(): R|kotlin/Unit| {
         R|/defineType|<R|kotlin/Int|>(<L> = defineType@fun R|TypeDefinition<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.parse: R|kotlin/Unit|>|(<L> = parse@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(serializedValue))  kotlin/String|): R|kotlin/Int?| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.parse: R|kotlin/Unit|>|(<L> = parse@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int?| <inline=NoInline>  {
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )

@@ -7,17 +7,11 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -28,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
 private val IS_APPLE_TARGET = "isAppleTarget"
+private val SUPPORTS_CORE_SYMBOLICATION = "targetSupportsCoreSymbolication"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
@@ -80,30 +75,28 @@ internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: Registere
 
 // Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
 internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND { valueDirective ->
-        directives.listValues(valueDirective.name)?.map { backendName ->
-            enumValues<TargetBackend>().first { it.name == backendName }
-        }
-    }
+    return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND(directives::get)
 }
 
 // Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
 internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND { registeredDirectives.get(it) }
+    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives::get)
 }
 
-// Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
-private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<TargetBackend>) -> List<TargetBackend>?): Boolean {
-    val containsNativeOrAny: (List<TargetBackend>) -> Boolean = { TargetBackend.NATIVE in it || TargetBackend.ANY in it }
+internal val List<TargetBackend>.containsNativeOrAny: Boolean
+    get() = TargetBackend.NATIVE in this || TargetBackend.ANY in this
 
-    if (listValues(CodegenTestDirectives.IGNORE_BACKEND)?.let(containsNativeOrAny) == true)
+// Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
+private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<TargetBackend>) -> List<TargetBackend>): Boolean {
+
+    if (listValues(CodegenTestDirectives.IGNORE_BACKEND).containsNativeOrAny)
         return true
     when (get<PipelineType>()) {
         PipelineType.K1 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K1)?.let(containsNativeOrAny) == true)
+            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K1).containsNativeOrAny)
                 return true
         PipelineType.K2 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2)?.let(containsNativeOrAny) == true)
+            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2).containsNativeOrAny)
                 return true
         else -> {}
     }
@@ -133,6 +126,7 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
                 TARGET_FAMILY -> get<KotlinNativeTargets>().testTarget.family.name to FAMILY_NAMES
                 TARGET_ARCHITECTURE -> get<KotlinNativeTargets>().testTarget.architecture.name to ARCHITECTURE_NAMES
                 IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES
+                SUPPORTS_CORE_SYMBOLICATION -> get<KotlinNativeTargets>().testTarget.supportsCoreSymbolication().toString() to BOOLEAN_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
             }
             val valueFromTestDirective = matchResult.groups[2]?.value!!

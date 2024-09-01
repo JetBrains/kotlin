@@ -2,18 +2,18 @@ Expression: a
 KaType: Outer<kotlin.String>.A<kotlin.Int>
 
 KaTypeScope:
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, kotlin.String>>
   symbol = /Outer.A.foo(<dispatch receiver>: Outer.A<X, O>, x: X, y: Y): kotlin.collections.Map<X, kotlin.collections.Map<Y, O>>
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = x
       receiverType = null
       returnType = kotlin.Int
       symbol = x: X
       callableId = null,
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = y
       receiverType = null
       returnType = Y
@@ -21,18 +21,18 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = /Outer.A.foo
-KaVariableLikeSignature:
+KaVariableSignature:
   name = map
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, O>
   callableId = /Outer.A.map
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
-    KaVariableLikeSignature:
+    KaVariableSignature:
       name = other
       receiverType = null
       returnType = kotlin.Any?
@@ -40,13 +40,13 @@ KaFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Any.equals
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
   callableId = kotlin/Any.hashCode
-KaFunctionLikeSignature:
+KaFunctionSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
@@ -55,9 +55,10 @@ KaFunctionLikeSignature:
 
 
 Declaration Scope:
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /Outer.A.foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -73,128 +74,146 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: X
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaTypeParameterType:
-            annotationsList: []
+            annotations: []
             type: Y
           KaTypeParameterType:
-            annotationsList: []
+            annotations: []
             type: O
         ]
         type: kotlin/collections/Map<Y, O>
     ]
     type: kotlin/collections/Map<X, kotlin/collections/Map<Y, O>>
-  symbolKind: CLASS_MEMBER
   typeParameters: [
     KaTypeParameterSymbol(Y)
   ]
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: x
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: X
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: y
       origin: SOURCE
       receiverParameter: null
       returnType: KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: Y
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
   ]
-  visibility: Public
+  visibility: PUBLIC
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/Outer.A.map)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaTypeParameterType:
-          annotationsList: []
+          annotations: []
           type: X
         KaTypeParameterType:
-          annotationsList: []
+          annotations: []
           type: O
       ]
       type: kotlin/collections/Map<X, O>
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
   callableId: /Outer.A.map
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaTypeParameterType:
-          annotationsList: []
+          annotations: []
           type: X
         KaTypeParameterType:
-          annotationsList: []
+          annotations: []
           type: O
       ]
       type: kotlin/collections/Map<X, O>
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -209,28 +228,29 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: map
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: X
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: O
     ]
     type: kotlin/collections/Map<X, O>
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
-KaFunctionSymbol:
-  annotationsList: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: kotlin/Any.equals
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -246,42 +266,48 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: other
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any?
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
   ]
-  visibility: Public
-KaFunctionSymbol:
-  annotationsList: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: kotlin/Any.hashCode
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -297,21 +323,22 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
-KaFunctionSymbol:
-  annotationsList: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: kotlin/Any.toString
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -327,16 +354,16 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
 

@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.name.ClassId
@@ -29,7 +30,7 @@ class GetSymbolsTest {
     @Test
     fun `test - getClassOrObjectSymbol - RootPkgClass`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses()
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val rootPkgClassAddress = addresses.filterIsInstance<KlibClassAddress>()
@@ -45,7 +46,7 @@ class GetSymbolsTest {
     @Test
     fun `test - getClassOrObjectSymbol - AObject`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses()
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val aObjectAddress = addresses.filterIsInstance<KlibClassAddress>()
@@ -55,14 +56,14 @@ class GetSymbolsTest {
             val aObjectSymbol = assertNotNull(aObjectAddress.getClassOrObjectSymbol())
 
             assertEquals("AObject", aObjectSymbol.nameOrAnonymous.asString())
-            assertEquals(KtClassKind.OBJECT, aObjectSymbol.classKind)
+            assertEquals(KaClassKind.OBJECT, aObjectSymbol.classKind)
         }
     }
 
     @Test
     fun `test - getSymbols - rootPkgProperty`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses()
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val rootPkgPropertyAddress = addresses.filterIsInstance<KlibPropertyAddress>()
@@ -78,7 +79,7 @@ class GetSymbolsTest {
                 "Expected 'getSymbols' and 'getPropertySymbols' to be equal"
             )
 
-            val symbol = rootPkgPropertySymbols.single() as KtPropertySymbol
+            val symbol = rootPkgPropertySymbols.single() as KaPropertySymbol
             assertEquals("rootPkgProperty", symbol.name.asString())
         }
     }
@@ -86,7 +87,7 @@ class GetSymbolsTest {
     @Test
     fun `test - getSymbols - aFunction`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses()
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses()
                 ?: error("Failed reading declaration addresses")
 
             val aFunctionAddress = addresses.filterIsInstance<KlibFunctionAddress>()
@@ -116,7 +117,7 @@ class GetSymbolsTest {
     @Test
     fun `test - getTypeAlias - TypeAliasA`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val typeAliasAAddress = addresses.filterIsInstance<KlibTypeAliasAddress>()
                 .find { it.classId == ClassId.fromString("org/jetbrains/sample/TypeAliasA") }
                 ?: fail("Could not find TypeAliasA")
@@ -128,9 +129,10 @@ class GetSymbolsTest {
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - function`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val clashingAddresses = addresses.filterIsInstance<KlibFunctionAddress>()
                 .filter { it.callableName == Name.identifier("foo") }
 
@@ -148,19 +150,20 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A") !in fooInASymbol.annotations)
                 fail("Missing annotation 'A' on 'fun foo()' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B") !in fooInBSymbol.annotations)
                 fail("Missing annotation 'B' on 'fun foo()' in B.kt")
         }
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - filePrivateSymbolsClash - property`() {
         withTestProjectLibraryAnalysisSession {
-            val addresses = (useSiteModule as KtLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
+            val addresses = (useSiteModule as KaLibraryModule).readKlibDeclarationAddresses() ?: fail("Failed reading addresses")
             val clashingAddresses = addresses.filterIsInstance<KlibPropertyAddress>()
                 .filter { it.callableName == Name.identifier("fooProperty") }
 
@@ -178,19 +181,20 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A") !in fooInASymbol.annotations)
                 fail("Missing annotation 'A' on 'val fooProperty' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B") !in fooInBSymbol.annotations)
                 fail("Missing annotation 'B' on 'val fooProperty' in B.kt")
         }
     }
 
     /**
-     * Runs the given [block] in an analysis session that will have the built library as [KtAnalysisSession.useSiteModule]
+     * Runs the given [block] in an analysis session that will have the built library as [KaSession.useSiteModule]
      */
-    private fun <T> withTestProjectLibraryAnalysisSession(block: context(KtAnalysisSession) () -> T): T {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private fun <T> withTestProjectLibraryAnalysisSession(block: context(KaSession) () -> T): T {
         val session = buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
             val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))

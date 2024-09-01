@@ -1,2 +1,2 @@
-KtSecondaryConstructor:
-NO_CANDIDATES
+KtSecondaryConstructor(14,64): '/**'
+  NO_CANDIDATES

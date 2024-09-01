@@ -35,17 +35,17 @@ std::atomic<size_t> allocatedBytesCounter;
 namespace kotlin::alloc {
 
 bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
-    auto* heapObjHeader = reinterpret_cast<HeapObjHeader*>(object);
-    auto size = CustomAllocator::GetAllocatedHeapSize(heapObjHeader->object());
-    if (gc::tryResetMark(heapObjHeader->objectData())) {
-        CustomAllocDebug("SweepObject(%p): still alive", heapObjHeader);
+    auto* heapObject = reinterpret_cast<CustomHeapObject*>(object);
+    auto size = CustomAllocator::GetAllocatedHeapSize(heapObject->object());
+    if (gc::tryResetMark(heapObject->heapHeader())) {
+        CustomAllocDebug("SweepObject(%p): still alive", heapObject);
         gcHandle.addKeptObject(size);
         return true;
     }
-    auto* extraObject = mm::ExtraObjectData::Get(heapObjHeader->object());
+    auto* extraObject = mm::ExtraObjectData::Get(heapObject->object());
     if (extraObject) {
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
-            CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", heapObjHeader, extraObject);
+            CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", heapObject, extraObject);
             extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
             extraObject->ClearRegularWeakReferenceImpl();
             CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
@@ -55,7 +55,7 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             } else {
                 finalizerQueue.regular.Push(cell);
             }
-            if (HasFinalizersDataInObject(heapObjHeader->object())) {
+            if (HasFinalizersDataInObject(heapObject->object())) {
                 // The object must survive until the finalizers for it are finished.
                 gcHandle.addMarkedObject();
                 gcHandle.addKeptObject(size);
@@ -63,12 +63,12 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             }
             // The object has a finalizer, but all the data for it resides in `ExtraObjectData`. So, detach the object from it, and free it.
             extraObject->UnlinkFromBaseObject();
-            CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
+            CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
             gcHandle.addSweptObject();
             return false;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
-            CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObjHeader);
+            CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObject);
             gcHandle.addMarkedObject();
             gcHandle.addKeptObject(size);
             return true;
@@ -76,7 +76,7 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
         extraObject->UnlinkFromBaseObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
-    CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
+    CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
     gcHandle.addSweptObject();
     return false;
 }

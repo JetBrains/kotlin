@@ -23,8 +23,8 @@ class AnalysisApiJvmEnvironmentConfigurator(testServices: TestServices) : JvmEnv
 
     override fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
-        testServices.compiledLibraryProvider.getCompiledLibrary(friendModule.name)?.artifact?.let {
-            return listOf(it.toFile())
+        testServices.compiledLibraryProvider.getCompiledLibrary(friendModule.name)?.roots?.let {
+            return it.map { it.toFile() }
         }
         return super.convertDependencyToFileList(dependency)
     }

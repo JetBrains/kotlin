@@ -1182,6 +1182,18 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("kt69457.kt")
+      public void testKt69457() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt69457.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69470.kt")
+      public void testKt69470() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt69470.kt");
+      }
+
+      @Test
       @TestMetadata("propertyIntrinsic.kt")
       public void testPropertyIntrinsic() {
         runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
@@ -2176,6 +2188,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
           }
 
           @Test
+          @TestMetadata("defaultThatCapturesPreviousParameter.kt")
+          public void testDefaultThatCapturesPreviousParameter() {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultThatCapturesPreviousParameter.kt");
+          }
+
+          @Test
           @TestMetadata("differentInvokeSignature.kt")
           public void testDifferentInvokeSignature() {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
@@ -3147,6 +3165,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
       public void testLocalFunInLambdaCapturesAnotherFun() {
         runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
+      }
+
+      @Test
+      @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
+      public void testLocalFunInLambdaCapturesOuterVariable() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
       }
     }
 
@@ -13502,6 +13526,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("annotationMixedTargeting.kt")
+      public void testAnnotationMixedTargeting() {
+        runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationMixedTargeting.kt");
+      }
+
+      @Test
       @TestMetadata("annotationsOnDelegatedMembers.kt")
       public void testAnnotationsOnDelegatedMembers() {
         runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationsOnDelegatedMembers.kt");
@@ -15909,7 +15939,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
     @Test
     public void testAllFilesPresentInScript() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -15994,6 +16024,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     @TestMetadata("localFunction.kts")
     public void testLocalFunction() {
       runTest("compiler/testData/codegen/script/localFunction.kts");
+    }
+
+    @Test
+    @TestMetadata("MultiDollarInterpolation.kts")
+    public void testMultiDollarInterpolation() {
+      runTest("compiler/testData/codegen/script/MultiDollarInterpolation.kts");
     }
 
     @Test
@@ -16110,7 +16146,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ScriptInstanceCapturing {
       @Test
       public void testAllFilesPresentInScriptInstanceCapturing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
       }
 
       @Test

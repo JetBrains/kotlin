@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeParameter]
  */
 abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
     abstract override val source: KtSourceElement?

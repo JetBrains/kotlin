@@ -25,6 +25,7 @@ module kotlin.stdlib {
     exports kotlin.system;
     exports kotlin.text;
     exports kotlin.time;
+    exports kotlin.uuid;
 
     exports kotlin.experimental;
 

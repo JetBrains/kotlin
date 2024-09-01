@@ -1,0 +1,16 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelSetterFromInternalInlineFun.kt */
+
+public var privateSetterVarA: Int
+    /* TARGET declaration */ private fun <set-privateSetterVarA>(<set-?>: Int)
+public var privateSetterVarB: Int
+    /* TARGET declaration */ private fun <set-privateSetterVarB>(value: Int)
+internal inline fun customSetVarA(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateSetterVarA>$tUsePrivateTopLevelSetterFromInternalInlineFunKt(<set-?> = value)
+internal inline fun customSetVarB(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateSetterVarB>$tUsePrivateTopLevelSetterFromInternalInlineFunKt(value = value)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarA>$tUsePrivateTopLevelSetterFromInternalInlineFunKt(<set-?>: Int)
+    /* TARGET use-site */ <set-privateSetterVarA>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarB>$tUsePrivateTopLevelSetterFromInternalInlineFunKt(value: Int)
+    /* TARGET use-site */ <set-privateSetterVarB>(value = value)

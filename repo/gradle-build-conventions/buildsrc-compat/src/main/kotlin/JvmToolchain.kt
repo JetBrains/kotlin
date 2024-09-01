@@ -17,7 +17,6 @@ enum class JdkMajorVersion(
 ) {
     JDK_1_8(8, targetName = "1.8"),
     JDK_9_0(9),
-    JDK_10_0(10),
     JDK_11_0(11),
     JDK_17_0(17),
     JDK_21_0(21);

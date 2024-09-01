@@ -32,22 +32,22 @@ internal interface State {
     fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
 }
 
-internal fun State.isNull() = this is Primitive<*> && this.value == null
+internal fun State.isNull() = this is Primitive && this.value == null
 internal fun State?.isUnit() = this is Common && this.irClassFqName() == "kotlin.Unit"
 
-internal fun State.asInt() = (this as Primitive<*>).value as Int
-internal fun State.asBoolean() = (this as Primitive<*>).value as Boolean
-internal fun State.asString() = (this as Primitive<*>).value.toString()
+internal fun State.asInt() = (this as Primitive).value as Int
+internal fun State.asBoolean() = (this as Primitive).value as Boolean
+internal fun State.asString() = (this as Primitive).value.toString()
 
-internal fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolean
-internal fun State.asStringOrNull() = (this as Primitive<*>).value as? String
+internal fun State.asBooleanOrNull() = (this as? Primitive)?.value as? Boolean
+internal fun State.asStringOrNull() = (this as Primitive).value as? String
 
 internal fun State.isSubtypeOf(other: IrType): Boolean {
     if (this.isNull() && other.isNullable()) return true
-    if (this is Primitive<*> && this.value == null) return other.isNullable()
+    if (this is Primitive && this.value == null) return other.isNullable()
     if (this is ExceptionState) return this.isSubtypeOf(other.classOrNull!!.owner)
 
-    if (this is Primitive<*> && (this.type.isArray() || this.type.isNullableArray()) && (other.isArray() || other.isNullableArray())) {
+    if (this is Primitive && (this.type.isArray() || this.type.isNullableArray()) && (other.isArray() || other.isNullableArray())) {
         fun IrType.arraySubtypeCheck(other: IrType): Boolean {
             if (other !is IrSimpleType || this !is IrSimpleType) return false
             val thisArgument = this.arguments.single().typeOrNull ?: return false
@@ -99,7 +99,7 @@ internal fun State.hasTheSameFieldsWith(other: State): Boolean {
     // TODO prove that this will always work or find better solution
     this.fields.values.zip(other.fields.values).forEach { (firstState, secondState) ->
         when {
-            firstState is Primitive<*> && secondState is Primitive<*> -> if (firstState.value != secondState.value) return false
+            firstState is Primitive && secondState is Primitive -> if (firstState.value != secondState.value) return false
             else -> if (firstState !== secondState) return false
         }
     }

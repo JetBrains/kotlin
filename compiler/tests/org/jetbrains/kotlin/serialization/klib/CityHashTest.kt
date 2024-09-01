@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.serialization.klib
 
-import org.jetbrains.kotlin.backend.common.serialization.cityHash64
+import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128WithSeed
-import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 class CityHashTest : KtUsefulTestCase() {

@@ -1,0 +1,6 @@
+packages: 0
+classifiers: 1
+  class AllOpenGenerated
+callables: 1
+  fun dummyTest(value: dependency.Test): kotlin.String
+constructors: 0

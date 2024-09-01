@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.resolvableMetadataConfigurationForEachSourSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDirectoryForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.read
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
-internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
+internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> =
         sourceSet.resolveMetadata<ChooseVisibleSourceSets>()
             .filter { resolution -> resolution.dependency.id !is ProjectComponentIdentifier }
@@ -52,5 +54,9 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                 )
             }
         }
+    }
+
+    override fun dependencies(project: Project): Iterable<Any> {
+        return resolvableMetadataConfigurationForEachSourSet(project)
     }
 }

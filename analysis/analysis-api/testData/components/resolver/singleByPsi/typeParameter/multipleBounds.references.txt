@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  T
+KtNameReferenceExpression(23,24): 'T'
+  KtSimpleNameReference:
+    (in <local>: function) T

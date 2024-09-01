@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.gradle.api.internal.tasks.testing.*
+import org.gradle.api.tasks.testing.TestFailure
 import org.gradle.api.tasks.testing.TestOutputEvent
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
-import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
-import org.jetbrains.kotlin.gradle.utils.LegacyTestDescriptorInternal
 import org.slf4j.Logger
 import java.text.ParseException
 
@@ -36,16 +34,12 @@ internal open class TCServiceMessagesClient(
     private val results: TestResultProcessor,
     val settings: TCServiceMessagesClientSettings,
     val log: Logger,
-    val testReporter: MppTestReportHelper,
 ) : ServiceMessageParserCallback {
-    lateinit var rootOperationId: OperationIdentifier
     var afterMessage = false
 
-    inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
-        rootOperationId = operation
-
+    inline fun root(actions: () -> Unit) {
         val tsStart = System.currentTimeMillis()
-        val root = RootNode(operation)
+        val root = RootNode()
         open(tsStart, root)
         actions()
         ensureNodesClosed(root)
@@ -181,7 +175,14 @@ internal open class TCServiceMessagesClient(
             message.expected,
             message.actual,
         )
-        testReporter.reportFailure(results, descriptor.id, rawFailure, isAssertionFailure)
+        results.failure(
+            descriptor.id,
+            if (isAssertionFailure) {
+                TestFailure.fromTestAssertionFailure(rawFailure, rawFailure.expected, rawFailure.actual)
+            } else {
+                TestFailure.fromTestFrameworkFailure(rawFailure)
+            }
+        )
     }
 
     private fun extractExceptionClassName(message: String): String =
@@ -212,11 +213,6 @@ internal open class TCServiceMessagesClient(
         } else {
             results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
         }
-    }
-
-    private inline fun <NodeType : Node> NodeType.open(contents: (NodeType) -> Unit) = open(System.currentTimeMillis()) {
-        contents(it)
-        System.currentTimeMillis()
     }
 
     private inline fun <NodeType : Node> NodeType.open(tsStart: Long, contents: (NodeType) -> Long) {
@@ -386,10 +382,9 @@ internal open class TCServiceMessagesClient(
         abstract fun requireReportingNode(): TestDescriptorInternal
     }
 
-    inner class RootNode(val ownerBuildOperationId: OperationIdentifier) : GroupNode(null, settings.rootNodeName) {
+    inner class RootNode : GroupNode(null, settings.rootNodeName) {
         override val descriptor: TestDescriptorInternal =
-            object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId), LegacyTestDescriptorInternal {
-                override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
+            object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
                 override fun getParent(): TestDescriptorInternal? = null
                 override fun toString(): String = name
             }
@@ -434,10 +429,9 @@ internal open class TCServiceMessagesClient(
             val reportingParent = parents.last() as RootNode
             this.reportingParent = reportingParent
 
-            descriptor = object : DefaultTestSuiteDescriptor(id, fullName), LegacyTestDescriptorInternal {
+            descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
                 override fun getDisplayName(): String = fullNameWithoutRoot
                 override fun getClassName(): String? = fullNameWithoutRoot
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
                 override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
                 override fun toString(): String = displayName
             }
@@ -480,8 +474,7 @@ internal open class TCServiceMessagesClient(
         private val parentDescriptor = (this@TestNode.parent as GroupNode).requireReportingNode()
 
         override val descriptor: TestDescriptorInternal =
-            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName), LegacyTestDescriptorInternal {
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
+            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName) {
                 override fun getParent(): TestDescriptorInternal = parentDescriptor
             }
 

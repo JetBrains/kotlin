@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.utils.property
 
 open class BinaryenRootExtension(
     @Transient val rootProject: Project
@@ -24,19 +25,21 @@ open class BinaryenRootExtension(
 
     override var installationDir by Property(gradleHome.resolve("binaryen"))
     override var downloadBaseUrl: String? by Property("https://github.com/WebAssembly/binaryen/releases/download")
-    override var version: String by Property("117")
+    override var version: String by Property("118")
     override var download: Boolean by Property(true)
     override var command: String by Property("wasm-opt")
 
     val setupTaskProvider: TaskProvider<BinaryenSetupTask>
         get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
 
+    internal val platform: org.gradle.api.provider.Property<BinaryenPlatform> = rootProject.objects.property<BinaryenPlatform>()
+
     override fun finalizeConfiguration(): BinaryenEnv {
-        val platform = BinaryenPlatform.platform
+        val platform = platform.get()
         val requiredVersionName = "binaryen-version_$version"
         val cleanableStore = CleanableStore[installationDir.absolutePath]
         val targetPath = cleanableStore[requiredVersionName].use()
-        val isWindows = BinaryenPlatform.name == BinaryenPlatform.WIN
+        val isWindows = platform.isWindows()
 
         fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
             val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
@@ -52,7 +55,7 @@ open class BinaryenRootExtension(
         return BinaryenEnv(
             download = download,
             downloadBaseUrl = downloadBaseUrl,
-            ivyDependency = "com.github.webassembly:binaryen:$version:$platform@tar.gz",
+            ivyDependency = "com.github.webassembly:binaryen:$version:${platform.platform}@tar.gz",
             executable = getExecutable("wasm-opt", command, "exe"),
             dir = targetPath,
             cleanableStore = cleanableStore,

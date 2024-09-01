@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
 abstract class FirAbstractProviderBasedScope(val session: FirSession, lookupInFir: Boolean = true) : FirScope() {
@@ -16,4 +18,7 @@ abstract class FirAbstractProviderBasedScope(val session: FirSession, lookupInFi
         lookupInFir -> session.symbolProvider
         else -> session.dependenciesSymbolProvider
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractProviderBasedScope?
 }

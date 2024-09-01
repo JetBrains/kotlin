@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -360,14 +360,14 @@ object ConeTypeCompatibilityChecker {
 
     private fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
         return when (this) {
-            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneTypeSafe())
-            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneTypeSafe() }
+            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneType as? ConeClassLikeType)
+            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneType as? ConeClassLikeType }
             else -> emptyList()
         }
     }
 
     private fun ConeClassLikeType.getClassLikeElement(ctx: ConeInferenceContext): FirClassLikeSymbol<*>? =
-        ctx.symbolProvider.getSymbolByLookupTag(lookupTag)
+        lookupTag.toSymbol(ctx.session)
 
     private fun FirClassLikeSymbol<*>.getTypeParameter(index: Int): FirTypeParameterSymbol? {
         return when (this) {
@@ -399,7 +399,7 @@ object ConeTypeCompatibilityChecker {
 
     private fun ConeClassLikeLookupTag.toFirClassWithSuperClasses(
         ctx: ConeInferenceContext
-    ): FirClassWithSuperClasses? = when (val klass = ctx.symbolProvider.getSymbolByLookupTag(this)) {
+    ): FirClassWithSuperClasses? = when (val klass = toSymbol(ctx.session)) {
         is FirTypeAliasSymbol -> klass.fullyExpandedClass(ctx.session)?.let { FirClassWithSuperClasses(it, ctx) }
         is FirClassSymbol<*> -> FirClassWithSuperClasses(klass, ctx)
         else -> null
@@ -409,7 +409,7 @@ object ConeTypeCompatibilityChecker {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
-            firClass.resolvedSuperTypes.mapNotNull { (it as? ConeClassLikeType)?.lookupTag?.toFirClassWithSuperClasses(ctx) }.toSet()
+            firClass.resolvedSuperTypes.mapNotNull { it.classLikeLookupTagIfAny?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
         val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy {

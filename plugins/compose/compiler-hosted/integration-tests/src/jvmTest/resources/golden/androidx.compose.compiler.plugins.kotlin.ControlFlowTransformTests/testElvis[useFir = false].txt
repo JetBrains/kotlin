@@ -29,18 +29,20 @@ fun Example(x: Int?, %composer: Composer?, %changed: Int) {
   }
   val y = <block>{
     val <elvis> = x
-    %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "<R()>")
-    val tmp0_group = when {
+    when {
       <elvis> == null -> {
-        R(%composer, 0)
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<R()>")
+        val tmp0_group = R(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp0_group
       }
       else -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
         <elvis>
       }
     }
-    %composer.endReplaceGroup()
-    tmp0_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()

@@ -2,7 +2,6 @@
 // This test can be removed as soon as the compiler stops supporting language version 1.5.
 // LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // SKIP_KT_DUMP
-// SKIP_KLIB_TEST
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 

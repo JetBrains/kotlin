@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.directives.model.*
 
 class RegisteredDirectivesParser(private val container: DirectivesContainer, private val assertions: Assertions) {
     companion object {
-        private val DIRECTIVE_PATTERN = Regex("""^//\s*[!]?([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
+        private val DIRECTIVE_PATTERN = Regex("""^//\s*([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
         private val SPACES_PATTERN = Regex("""[,]?[ \t]+""")
         private const val NAME_GROUP = 1
         private const val VALUES_GROUP = 3

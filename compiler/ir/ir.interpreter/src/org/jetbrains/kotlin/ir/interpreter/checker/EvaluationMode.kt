@@ -117,7 +117,7 @@ sealed class EvaluationMode {
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
             return when {
-                expression is IrConst<*> -> true
+                expression is IrConst -> true
                 expression is IrWhen -> expression.origin in allowedOriginsForWhen
                 expression !is IrCall -> false
                 expression.hasUnsignedArgs() -> expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"

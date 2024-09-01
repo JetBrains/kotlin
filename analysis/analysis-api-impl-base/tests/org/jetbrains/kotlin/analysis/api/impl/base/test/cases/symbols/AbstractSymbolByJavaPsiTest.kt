@@ -17,8 +17,8 @@ abstract class AbstractSymbolByJavaPsiTest : AbstractSymbolTest() {
         val symbolByReference = referenceExpression.mainReference.resolveToSymbol() ?: error("Failed to resolve reference")
 
         val symbolByJavaPsi = when (val javaPsi = symbolByReference.psi) {
-            is PsiClass -> javaPsi.getNamedClassSymbol()
-            is PsiMember -> javaPsi.getCallableSymbol()
+            is PsiClass -> javaPsi.namedClassSymbol
+            is PsiMember -> javaPsi.callableSymbol
             null -> error("Failed to find psi for symbol")
             else -> unexpectedElementError<PsiElement>(javaPsi)
         }

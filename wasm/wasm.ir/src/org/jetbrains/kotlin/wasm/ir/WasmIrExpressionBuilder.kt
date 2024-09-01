@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private fun WasmOp.isOutCfgNode() = when (this) {
-    WasmOp.UNREACHABLE, WasmOp.RETURN, WasmOp.THROW, WasmOp.RETHROW, WasmOp.BR, WasmOp.BR_TABLE -> true
+    WasmOp.UNREACHABLE, WasmOp.RETURN, WasmOp.THROW, WasmOp.THROW_REF, WasmOp.RETHROW, WasmOp.BR, WasmOp.BR_TABLE -> true
     else -> false
 }
 

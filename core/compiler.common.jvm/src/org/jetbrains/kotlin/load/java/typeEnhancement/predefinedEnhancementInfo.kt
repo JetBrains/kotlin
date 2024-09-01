@@ -131,6 +131,26 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
                 returns(JLObject, NOT_PLATFORM)
             }
         }
+        forClass(javaUtil("LinkedHashSet")) {
+            function("addFirst", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+            function("addLast", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+            function("removeFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("removeLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("getFirst", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+            function("getLast", errorsSinceLanguageVersion = "2.2") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
         forClass(javaUtil("Map")) {
             function("forEach") {
                 parameter(JFBiConsumer, NOT_PLATFORM, NOT_PLATFORM, NOT_PLATFORM)
@@ -176,6 +196,18 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
                 parameter(JLObject, NOT_PLATFORM)
                 parameter(JLObject, NOT_NULLABLE)
                 parameter(JFBiFunction, NOT_PLATFORM, NOT_NULLABLE, NOT_NULLABLE, NULLABLE)
+                returns(JLObject, NULLABLE)
+            }
+        }
+        forClass(javaUtil("LinkedHashMap")) {
+            function("putFirst", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
+                returns(JLObject, NULLABLE)
+            }
+            function("putLast", errorsSinceLanguageVersion = "2.2") {
+                parameter(JLObject, NOT_PLATFORM)
+                parameter(JLObject, NOT_PLATFORM)
                 returns(JLObject, NULLABLE)
             }
         }

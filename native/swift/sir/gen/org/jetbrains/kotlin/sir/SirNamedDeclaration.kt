@@ -16,5 +16,6 @@ sealed interface SirNamedDeclaration : SirDeclaration, SirNamed {
     override val visibility: SirVisibility
     override val documentation: String?
     override var parent: SirDeclarationParent
+    override val attributes: MutableList<SirAttribute>
     override val name: String
 }

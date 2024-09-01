@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineVariable
 public class SirTrampolineDeclarationsProviderImpl(
     private val sirSession: SirSession,
     private val targetPackageFqName: FqName?,
-    private val enumGenerator: SirEnumGenerator,
 ) : SirTrampolineDeclarationsProvider {
     private val generatedDeclarations: MutableMap<SirDeclaration, List<SirDeclaration>> = mutableMapOf()
 

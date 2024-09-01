@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -246,7 +244,7 @@ fun ConeKotlinType.serializerForType(session: FirSession): ConeKotlinType? {
         .toRegularClassSymbol(session)
         ?.getAllSubstitutedSupertypes(session)
         ?.find { it.isKSerializer }
-        ?.typeArguments
+        ?.typeArgumentsOfLowerBoundIfFlexible
         ?.firstOrNull()
         ?.type
 }
@@ -279,6 +277,14 @@ fun ConeKotlinType.isAbstractOrSealedOrInterface(session: FirSession): Boolean =
     toRegularClassSymbol(session)?.let { it.classKind.isInterface || it.rawStatus.modality == Modality.ABSTRACT || it.rawStatus.modality == Modality.SEALED }
         ?: false
 
+fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<*>? {
+    return when (this) {
+        is ConeSimpleKotlinType -> toClassSymbol(session)
+        is ConeFlexibleType -> upperBound.toClassSymbol(session)
+        is ConeDefinitelyNotNullType -> original.toClassSymbol(session)
+    }
+}
+
 fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs()) {
         return
@@ -290,7 +296,7 @@ fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     val jsExportIgnoreAnnotationCall = buildAnnotationCall {
         argumentList = FirEmptyArgumentList
         annotationTypeRef = buildResolvedTypeRef {
-            type = jsExportIgnoreAnnotation.defaultType()
+            coneType = jsExportIgnoreAnnotation.defaultType()
         }
         calleeReference = buildResolvedNamedReference {
             name = jsExportIgnoreAnnotation.name

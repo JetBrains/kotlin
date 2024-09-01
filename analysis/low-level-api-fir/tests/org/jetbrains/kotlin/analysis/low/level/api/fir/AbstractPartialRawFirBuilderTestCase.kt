@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.io.path.readText
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val fileText = testDataPath.readText()

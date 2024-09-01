@@ -1,0 +1,66 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test() {
+    ReceiveValue(if (when {
+      getConditionA() -> resultA()
+      getConditionB() -> resultB()
+      getConditionC() -> resultC()
+      state -> resultS()
+      else -> false
+    }) 1 else 0)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed != 0 || !%composer.skipping) {
+    ReceiveValue(if (%composer.startReplaceGroup(<>)
+    val tmp4_group = when {
+      getConditionA(%composer, 0) -> {
+        %composer.startReplaceGroup(<>)
+        val tmp0_group = resultA(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp0_group
+      }
+      getConditionB(%composer, 0) -> {
+        %composer.startReplaceGroup(<>)
+        val tmp1_group = resultB(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp1_group
+      }
+      getConditionC(%composer, 0) -> {
+        %composer.startReplaceGroup(<>)
+        val tmp2_group = resultC(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp2_group
+      }
+      state -> {
+        %composer.startReplaceGroup(<>)
+        val tmp3_group = resultS(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp3_group
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        false
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp4_group) 1 else 0)
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -10,10 +10,7 @@ import com.google.gson.JsonParser
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.exists
-import kotlin.io.path.isDirectory
-import kotlin.io.path.readLines
-import kotlin.io.path.readText
+import kotlin.io.path.*
 import kotlin.test.*
 
 /**
@@ -22,12 +19,29 @@ import kotlin.test.*
 fun assertFileExists(
     file: Path,
 ) {
-    assert(Files.exists(file)) {
-        "File '${file}' does not exist!"
+    assert(file.exists()) {
+        buildString {
+            appendLine("File '${file}' does not exist!")
+            if (file.parent.exists()) {
+                val parentDirEntries = file.parent.listDirectoryEntries()
+                appendLine("Parent directory has ${parentDirEntries.size} entries:")
+                appendLine(
+                    parentDirEntries.joinToString("\n") {
+                        if (it.isDirectory()) {
+                            " - ${it.name}/"
+                        } else {
+                            " - ${it.name}"
+                        }
+                    }
+                )
+            } else {
+                appendLine("Parent directory '${file.parent}' does not exist.")
+            }
+        }
     }
 
-    assert(Files.isRegularFile(file)) {
-        "'${file}' is not a regular file!"
+    assert(file.isRegularFile()) {
+        "File '${file}' exists, but it is not a regular file!"
     }
 }
 
@@ -119,6 +133,24 @@ fun TestProject.assertSymlinkInProjectExists(
     pathToFile: String,
 ) {
     assertSymlinkExists(projectPath.resolve(pathToFile))
+}
+
+/**
+ * Asserts symlink under [pathToFile] relative to the test project exists and points to [pathToPointee].
+ */
+fun TestProject.assertSymlinkInProjectPointsToProjectPath(
+    pathToSymlink: String,
+    pathToPointee: String,
+) {
+    val pointeePath = projectPath.resolve(pathToPointee).toFile().canonicalFile
+    val symlinkPath = projectPath.resolve(pathToSymlink).toFile()
+    val symlinkPointeePath = symlinkPath.canonicalFile
+    assertSymlinkExists(symlinkPath.toPath())
+    assertEquals(
+        pointeePath,
+        symlinkPointeePath,
+        "Symlink '${symlinkPointeePath}' points to '${symlinkPointeePath}', but was expected to point to '${pointeePath}'"
+    )
 }
 
 /**

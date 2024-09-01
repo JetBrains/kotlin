@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.const]
  */
-abstract class IrConst<T> : IrExpression() {
-    abstract var kind: IrConstKind<T>
+abstract class IrConst : IrExpression() {
+    abstract var kind: IrConstKind
 
-    abstract var value: T
+    abstract var value: Any?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)

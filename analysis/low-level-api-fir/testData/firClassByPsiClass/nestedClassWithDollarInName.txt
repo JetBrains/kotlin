@@ -1,0 +1,4 @@
+public/*package*/ open inner class NestedClassWith$InName : R|kotlin/Any| {
+    public/*package*/ pckg/With$InName.constructor(): R|pckg/With$InName.NestedClassWith$InName|
+
+}

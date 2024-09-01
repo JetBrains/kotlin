@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1303
-
 // This hack is used in org.w3c.* part of standard library to represent unions of Strings
 // Test that we are not actually trying to access nonexistent companion object
 

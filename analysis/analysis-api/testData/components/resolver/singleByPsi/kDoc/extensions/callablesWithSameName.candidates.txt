@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(80,88): 'test.ext'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(94,97): 'ext'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(106,113): 'Foo.ext'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(119,131): 'test.Foo.ext'
+    NO_CANDIDATES

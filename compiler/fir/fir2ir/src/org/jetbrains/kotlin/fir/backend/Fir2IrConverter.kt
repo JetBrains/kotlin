@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -93,7 +95,6 @@ class Fir2IrConverter(
 
         //   4. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
-        delegatedMemberGenerator.generateBodies()
         for (firFile in allFirFiles) {
             withFileAnalysisExceptionWrapping(firFile) {
                 firFile.accept(fir2irVisitor, null)
@@ -256,7 +257,7 @@ class Fir2IrConverter(
         declarationStorage.enterScope(irClass.symbol)
 
         IrConstructorSymbolImpl().let { irSymbol ->
-            irFactory.createConstructor(
+            IrFactoryImpl.createConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 Name.special("<init>"),
@@ -272,7 +273,7 @@ class Fir2IrConverter(
                 addDeclarationToParent(this, irClass)
                 val firAnyConstructor = session.builtinTypes.anyType.toRegularClassSymbol(session)!!.fir.primaryConstructorIfAny(session)!!
                 val irAnyConstructor = declarationStorage.getIrConstructorSymbol(firAnyConstructor)
-                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+                body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
                     statements += IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         builtins.unitType,
@@ -288,7 +289,7 @@ class Fir2IrConverter(
             val lastStatement = codeFragment.block.statements.lastOrNull()
             val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
 
-            irFactory.createSimpleFunction(
+            IrFactoryImpl.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 conversionData.methodName,
@@ -311,14 +312,13 @@ class Fir2IrConverter(
                 valueParameters = conversionData.injectedValues.mapIndexed { index, injectedValue ->
                     val isMutated = injectedValue.isMutated
 
-                    irFactory.createValueParameter(
+                    IrFactoryImpl.createValueParameter(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         if (isMutated) IrDeclarationOrigin.SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT else IrDeclarationOrigin.DEFINED,
                         Name.identifier("p$index"),
                         injectedValue.typeRef.toIrType(typeConverter),
                         isAssignable = isMutated,
                         injectedValue.irParameterSymbol,
-                        index,
                         varargElementType = null,
                         isCrossinline = false,
                         isNoinline = false,
@@ -501,12 +501,6 @@ class Fir2IrConverter(
                         val backingField = irProperty.backingField!!
                         for (delegateField in delegateFields) {
                             declarationStorage.recordSupertypeDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
-                            delegatedMemberGenerator.generateWithBodiesIfNeeded(
-                                firField = delegateField,
-                                irField = backingField,
-                                containingClass!!,
-                                parent as IrClass
-                            )
                         }
                     }
                 }
@@ -519,12 +513,17 @@ class Fir2IrConverter(
                 requireNotNull(delegateFieldToPropertyMap)
                 require(parent is IrClass)
                 val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
-                if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
-                    val irField = declarationStorage.createSupertypeDelegateIrField(declaration, parent)
-                    delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
+                val irFieldSymbol = if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
+                    declarationStorage.createSupertypeDelegateIrField(declaration, parent).symbol
                 } else {
                     delegateFieldToPropertyMap.putValue(correspondingClassProperty, declaration)
+                    val correspondingIrProperty = declarationStorage.getIrPropertySymbol(correspondingClassProperty.symbol)
+                    declarationStorage.findBackingFieldOfProperty(correspondingIrProperty as IrPropertySymbol)
+                        ?: error("Backing field not found for property ${correspondingClassProperty.returnTypeRef}")
                 }
+                val delegationTargetType = declaration.returnTypeRef.toIrType(c)
+                declarationStorage.recordSupertypeDelegationInformation(containingClass, parent, delegationTargetType, irFieldSymbol)
+
             }
             is FirConstructor -> if (!declaration.isPrimary) {
                 // the primary constructor was already created in `processClassMembers` function
@@ -607,8 +606,8 @@ class Fir2IrConverter(
                 property = this, fakeOverrideOwnerLookupTag = null
             )?.owner ?: return null
 
-            fun IrProperty.tryToGetConst(): IrConst<*>? = (backingField?.initializer?.expression as? IrConst<*>)
-            fun IrConst<*>.asString(): String {
+            fun IrProperty.tryToGetConst(): IrConst? = (backingField?.initializer?.expression as? IrConst)
+            fun IrConst.asString(): String {
                 return when (val constVal = value) {
                     is Char -> constVal.code.toString()
                     is String -> "\"$constVal\""

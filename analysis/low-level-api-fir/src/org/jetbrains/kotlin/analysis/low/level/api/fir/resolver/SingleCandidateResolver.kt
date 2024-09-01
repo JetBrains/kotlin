@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class SingleCandidateResolver(
     private val firSession: FirSession,
@@ -71,6 +72,7 @@ class SingleCandidateResolver(
             resolutionParameters.allowUnsafeCall && applicability == CandidateApplicability.UNSAFE_CALL ||
             resolutionParameters.allowUnstableSmartCast && applicability == CandidateApplicability.UNSTABLE_SMARTCAST
         ) {
+            resolutionStageRunner.fullyProcessCandidate(candidate, resolutionContext)
             buildCallForCandidateWithError(candidate, applicability, resolutionParameters)
         } else {
             return null

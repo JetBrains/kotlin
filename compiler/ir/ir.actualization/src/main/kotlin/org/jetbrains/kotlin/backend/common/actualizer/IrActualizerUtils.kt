@@ -21,38 +21,59 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 internal fun recordActualForExpectDeclaration(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     diagnosticsReporter: IrDiagnosticReporter,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = destination.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.regularSymbols.put(expectSymbol, actualSymbol)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
     if (expectDeclaration is IrTypeParametersContainer) {
-        recordTypeParametersMapping(destination, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
+        recordTypeParametersMapping(expectActualMap, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
     }
     if (expectDeclaration is IrProperty) {
-        val actualProperty = actualDeclaration as IrProperty
-        expectDeclaration.getter!!.let {
-            val getter = actualProperty.getter!!
-            destination[it.symbol] = getter.symbol
-            recordTypeParametersMapping(destination, it, getter)
+        require(actualDeclaration is IrProperty)
+
+        expectDeclaration.getter?.let { expectGetter ->
+            val actualGetter = actualDeclaration.getter
+            if (actualGetter != null) {
+                expectActualMap.regularSymbols[expectGetter.symbol] = actualGetter.symbol
+                recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter)
+            } else if (actualDeclaration.isPropertyForJavaField()) {
+                // In the case when expect property is actualized by a Java field, there is no getter.
+                // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
+                expectActualMap.propertyAccessorsActualizedByFields[expectGetter.symbol] = actualDeclaration.symbol
+            } else {
+                error("Actual property ${actualDeclaration.render()} has not getter while expect property ${expectDeclaration.render()} has it")
+            }
         }
-        expectDeclaration.setter?.symbol?.let { destination[it] = actualProperty.setter!!.symbol }
+
+        expectDeclaration.setter?.let { expectSetter ->
+            val actualSetter = actualDeclaration.setter
+            if (actualSetter != null) {
+                expectActualMap.regularSymbols[expectSetter.symbol] = actualSetter.symbol
+            } else if (actualDeclaration.isPropertyForJavaField()) {
+                // In the case when expect property is actualized by a Java field, there is no setter.
+                // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
+                expectActualMap.propertyAccessorsActualizedByFields[expectSetter.symbol] = actualDeclaration.symbol
+            } else {
+                error("Actual property ${actualDeclaration.render()} has not setter while expect property ${expectDeclaration.render()} has it")
+            }
+        }
     }
 }
 
 private fun recordTypeParametersMapping(
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     expectTypeParametersContainer: IrTypeParametersContainer,
     actualTypeParametersContainer: IrTypeParametersContainer
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            destination[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.regularSymbols[expectTypeParameter.symbol] = actualTypeParameter.symbol
         }
 }
 
@@ -137,4 +158,11 @@ internal fun IrElement.containsOptionalExpectation(): Boolean {
     return this is IrClass &&
             this.kind == ClassKind.ANNOTATION_CLASS &&
             this.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)
+}
+
+/**
+ * Properties created for Java fields have non-null backing field, but don't have accessors.
+ */
+internal fun IrProperty.isPropertyForJavaField(): Boolean {
+    return getter == null && setter == null && backingField != null
 }

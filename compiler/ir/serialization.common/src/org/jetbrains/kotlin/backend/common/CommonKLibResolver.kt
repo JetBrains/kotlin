@@ -51,7 +51,7 @@ object CommonKLibResolver {
             logger = logger,
             zipAccessor = zipAccessor,
             knownIrProviders = knownIrProviders,
-        ).libraryResolver()
+        ).libraryResolver(resolveManifestDependenciesLenient = true)
 
         return KLibResolution(
             libraryResolver,

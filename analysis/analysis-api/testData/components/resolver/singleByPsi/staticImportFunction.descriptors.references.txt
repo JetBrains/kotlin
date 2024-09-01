@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in one.two.TopLevelObject) fun foo()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(95,98): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

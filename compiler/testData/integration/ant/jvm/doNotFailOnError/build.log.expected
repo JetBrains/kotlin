@@ -13,7 +13,7 @@ build:
     [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting ')'
     [javac] 
     [javac] ^
-    [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: a type annotation is required on a value parameter.
+    [javac] [TestData]/incorrectKotlinCode.kt:4:1: error: an explicit type is required on a value parameter.
     [javac] 
     [javac] ^
     [javac] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.
@@ -29,7 +29,7 @@ build:
   [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: expecting ')'
   [kotlinc] 
   [kotlinc] ^
-  [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: a type annotation is required on a value parameter.
+  [kotlinc] [TestData]/incorrectKotlinCode.kt:4:1: error: an explicit type is required on a value parameter.
   [kotlinc] 
   [kotlinc] ^
   [kotlinc] [TestData]/incorrectKotlinCode.kt:3:1: error: function 'main' must have a body.

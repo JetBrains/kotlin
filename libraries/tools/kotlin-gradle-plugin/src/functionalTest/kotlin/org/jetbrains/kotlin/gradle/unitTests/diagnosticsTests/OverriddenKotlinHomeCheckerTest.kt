@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
@@ -24,7 +24,7 @@ class OverriddenKotlinHomeCheckerTest {
     fun `overridden kotlin home with wrong path failes build`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
-                project.extraProperties.set(PropertiesProvider.KOTLIN_NATIVE_HOME, "non_existed_path")
+                project.extraProperties.set(NativeProperties.NATIVE_HOME.name, "non_existed_path")
             }) {
             project.multiplatformExtension.applyDefaultHierarchyTemplate()
             project.multiplatformExtension.linuxX64()
@@ -54,7 +54,7 @@ class OverriddenKotlinHomeCheckerTest {
         val project = buildProjectWithMPP(
             preApplyCode = {
                 createKotlinNativeDistStub(project)
-                project.extraProperties.set(PropertiesProvider.KOTLIN_NATIVE_HOME, "./dist")
+                project.extraProperties.set(NativeProperties.NATIVE_HOME.name, "./dist")
             }) {
 
             project.multiplatformExtension.applyDefaultHierarchyTemplate()

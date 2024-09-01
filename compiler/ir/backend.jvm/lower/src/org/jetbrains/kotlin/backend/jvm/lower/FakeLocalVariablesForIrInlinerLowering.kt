@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.inlineDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.addScopeInfo
@@ -23,10 +25,10 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -74,11 +76,11 @@ internal class FakeLocalVariablesForIrInlinerLowering(
         }
     }
 
-    override fun visitBlock(expression: IrBlock) {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         when {
-            expression is IrInlinedFunctionBlock && expression.isFunctionInlining() -> handleInlineFunction(expression)
-            expression is IrInlinedFunctionBlock && expression.isLambdaInlining() -> handleInlineLambda(expression)
-            else -> super.visitBlock(expression)
+            inlinedBlock.isFunctionInlining() -> handleInlineFunction(inlinedBlock)
+            inlinedBlock.isLambdaInlining() -> handleInlineLambda(inlinedBlock)
+            else -> super.visitInlinedFunctionBlock(inlinedBlock)
         }
     }
 
@@ -129,20 +131,16 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
         super.visitClass(declaration, data)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Data) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression, data)
-        }
-
-        if (expression.isLambdaInlining()) {
-            val argument = expression.inlinedElement as IrAttributeContainer
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
+        if (inlinedBlock.isLambdaInlining()) {
+            val argument = inlinedBlock.inlinedElement as IrAttributeContainer
             val callee = inlinedStack.extractDeclarationWhereGivenElementWasInlined(argument)
             if (callee == null || callee != inlinedStack.lastOrNull()) return
         }
 
-        super.visitBlock(expression, data)
+        super.visitInlinedFunctionBlock(inlinedBlock, data)
 
-        expression.insertInStackAndProcess {
+        inlinedBlock.insertInStackAndProcess {
             getOriginalStatementsFromInlinedBlock().forEach {
                 it.accept(this@LocalVariablesProcessor, data.copy(processingOriginalDeclarations = true))
             }
@@ -175,14 +173,10 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
         element.acceptChildrenVoid(this)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression)
-        }
-
-        super.visitBlock(expression)
-        expression.getAdditionalStatementsFromInlinedBlock().forEach {
-            it.processFunctionParameter(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        super.visitInlinedFunctionBlock(inlinedBlock)
+        inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach {
+            it.processFunctionParameter(inlinedBlock)
         }
     }
 
@@ -214,13 +208,9 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
         declaration.acceptChildrenVoid(processor)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        if (expression !is IrInlinedFunctionBlock) {
-            return super.visitBlock(expression)
-        }
-
-        expression.insertInStackAndProcess {
-            super.visitBlock(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        inlinedBlock.insertInStackAndProcess {
+            super.visitInlinedFunctionBlock(inlinedBlock)
         }
     }
 
@@ -268,4 +258,39 @@ private fun addInlineScopeInfo(name: String, scopeNumber: Int): String {
 private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
     val functionName = (inlineDeclaration as? IrDeclarationWithName)?.name
     return functionName?.let { "this$$it" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
+}
+
+private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
+    fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
+        is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this
+        is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA } ?: this
+        else -> this
+    }
+
+    val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
+    for (block in this.filter { it.isFunctionInlining() }) {
+        block.inlineCall!!.getAllArgumentsWithIr().forEach {
+            // pretty messed up thing, this is needed to get the original expression that was inlined
+            // it was changed a couple of times after all lowerings, so we must get `attributeOwnerId` to ensure that this is original
+            val actualArg = if (it.second == null) {
+                val blockWithClass = it.first.defaultValue?.expression?.attributeOwnerId as? IrBlock
+                blockWithClass?.statements?.firstOrNull() as? IrClass
+            } else {
+                it.second?.unwrapInlineLambdaIfAny()
+            }
+
+            val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
+            val extractedAnonymousFunction = if (originalActualArg?.isAdaptedFunctionReference() == true) {
+                (originalActualArg as IrBlock).statements.last() as IrFunctionReference
+            } else {
+                originalActualArg
+            }
+
+            if (extractedAnonymousFunction?.attributeOwnerId == originalInlinedElement) {
+                return block.inlineDeclaration
+            }
+        }
+    }
+
+    return null
 }

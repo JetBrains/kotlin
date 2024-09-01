@@ -232,7 +232,8 @@ public final class Foo2 /* Foo2*/ {
 }
 
 public final class Modifiers /* Modifiers*/ {
-  private final int plainField = 1 /* initializer type: int */;
+  @kotlin.jvm.Transient()
+  private final transient int plainField = 1 /* initializer type: int */;
 
   public  Modifiers();//  .ctor()
 

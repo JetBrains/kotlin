@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.providers.mergeDeclarationProviders
-import org.jetbrains.kotlin.analysis.providers.mergePackageProviders
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders
+import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  *   once instead of for each subordinate symbol provider. Because Kotlin symbol providers are ordered first in
  *   [LLFirDependenciesSymbolProvider], this check is especially fruitful.
  * - For a given class or callable ID, indices can be accessed once to get relevant PSI elements. Then the correct symbol provider(s) to
- *   call can be found out via the PSI element's [KtModule]s. This avoids the need to call every single subordinate symbol provider.
+ *   call can be found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the
+ *   need to call every single subordinate symbol provider.
  * - A small Caffeine cache can avoid most index accesses for classes, because many names are requested multiple times, with a minor memory
  *   footprint.
  *

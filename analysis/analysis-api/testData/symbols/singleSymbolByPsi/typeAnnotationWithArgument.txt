@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,15 +17,16 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: [
+        annotations: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
@@ -32,11 +34,10 @@ KaFunctionSymbol:
         type: @R|Anno5|(s = String(1))  kotlin/Int
     ]
     type: kotlin/collections/List<@R|Anno5|(s = String(1))  kotlin/Int>?
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationWithArgument.kt)
   getContainingJvmClassName: TypeAnnotationWithArgumentKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,6 +1,8 @@
+import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Contains common configuration that should be applied to all projects
@@ -122,6 +124,9 @@ fun Project.configureKotlinCompilationOptions() {
             "-opt-in=kotlin.RequiresOptIn",
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
             "-Xdont-warn-on-error-suppression",
+            "-Xmulti-dollar-interpolation", // KT-2425
+            "-Xwhen-guards", // KT-13626
+            "-Xnon-local-break-continue", // KT-1436
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
@@ -158,7 +163,7 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":native:analysis-api-klib-reader")
             ) {
                 doFirst {
-                    if (!useAbsolutePathsInKlib) {
+                    if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {
                         @Suppress("DEPRECATION")
                         (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs +=
                             "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
@@ -167,16 +172,10 @@ fun Project.configureKotlinCompilationOptions() {
             }
         }
 
-        val jvmCompilerArgs = listOf(
-            "-Xno-optimized-callable-references",
-            "-Xno-kotlin-nothing-value-exception",
-        )
-
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
-                freeCompilerArgs.addAll(jvmCompilerArgs)
                 if (renderDiagnosticNames) {
                     freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
@@ -219,15 +218,68 @@ fun Project.configureArtifacts() {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
+    /**
+     * Bit mask: `rw-r--r--`
+     */
+    fun ConfigurableFilePermissions.configureDefaultFilePermissions() {
+        user {
+            read = true
+            write = true
+            execute = false
+        }
+        group {
+            read = true
+            write = false
+            execute = false
+        }
+        other {
+            read = true
+            write = false
+            execute = false
+        }
+    }
+
+    /**
+     * Bit mask: `rwxr-xr-x`
+     * Applies to both directories and executable files
+     */
+    fun ConfigurableFilePermissions.configureDefaultExecutableFilePermissions() {
+        user {
+            read = true
+            write = true
+            execute = true
+        }
+        group {
+            read = true
+            write = false
+            execute = true
+        }
+        other {
+            read = true
+            write = false
+            execute = true
+        }
+    }
+
     tasks.withType<AbstractArchiveTask>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
-        val `rw-r--r--` = 0b110100100
-        val `rwxr-xr-x` = 0b111101101
-        fileMode = `rw-r--r--`
-        dirMode = `rwxr-xr-x`
-        filesMatching("**/bin/*") { mode = `rwxr-xr-x` }
-        filesMatching("**/bin/*.bat") { mode = `rw-r--r--` }
+        filePermissions {
+            configureDefaultFilePermissions()
+        }
+        dirPermissions {
+            configureDefaultExecutableFilePermissions()
+        }
+        filesMatching("**/bin/*") {
+            permissions {
+                configureDefaultExecutableFilePermissions()
+            }
+        }
+        filesMatching("**/bin/*.bat") {
+            permissions {
+                configureDefaultFilePermissions()
+            }
+        }
     }
 
     normalization {
@@ -306,7 +358,11 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
 afterEvaluate {
     val versionString = version.toString()
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        val realFriendPaths = (friendPaths as DefaultConfigurableFileCollection).shallowCopy()
         val friendPathsWithoutVersion = friendPaths.filter { !it.name.contains(versionString) }
         friendPaths.setFrom(friendPathsWithoutVersion)
+        doFirst {
+            friendPaths.setFrom(realFriendPaths)
+        }
     }
 }

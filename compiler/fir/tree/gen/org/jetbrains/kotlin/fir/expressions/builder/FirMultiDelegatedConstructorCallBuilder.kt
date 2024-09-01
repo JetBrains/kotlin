@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirMultiDelegatedConstructorCallImpl
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
-class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
+class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
@@ -33,6 +34,13 @@ class FirMultiDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
 
     @Deprecated("Modification of 'annotations' has no impact for FirMultiDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
+
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirMultiDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
 
     @Deprecated("Modification of 'source' has no impact for FirMultiDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var source: KtSourceElement?

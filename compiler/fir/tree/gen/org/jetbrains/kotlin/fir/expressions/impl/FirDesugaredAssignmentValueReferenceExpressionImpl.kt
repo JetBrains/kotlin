@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirDesugaredAssignmentValueReferenceExpressionImpl(
     override val source: KtSourceElement?,
-    @property:UnresolvedExpressionTypeAccess
-    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val expressionRef: FirExpressionRef<FirExpression>,
 ) : FirDesugaredAssignmentValueReferenceExpression() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = expressionRef.value.coneTypeOrNull
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -47,7 +47,7 @@ internal class FirDesugaredAssignmentValueReferenceExpressionImpl(
     }
 
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
+        require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

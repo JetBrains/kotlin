@@ -67,7 +67,13 @@ public interface KmTypeParameterExtension : KmExtension
 
 public fun KmTypeParameter.getExtension(type: KmExtensionType): KmTypeParameterExtension = extensions.singleOfType(type)
 
-public interface KmTypeExtension : KmExtension
+public interface KmTypeExtension : KmExtension {
+    /**
+     * Has to be implemented for [KmType.equals] to work.
+     * Remember to implement `hashCode`, too (although it is not used in [KmType.hashCode]).
+     */
+    override fun equals(other: Any?): Boolean
+}
 
 public fun KmType.getExtension(type: KmExtensionType): KmTypeExtension = extensions.singleOfType(type)
 

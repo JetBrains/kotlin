@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <string>
+
 #include "KAssert.h"
 #include "TypeInfo.h"
 #include "Memory.h"
@@ -52,4 +54,18 @@ RUNTIME_NOTHROW OBJ_GETTER(Kotlin_internal_reflect_getObjectReferenceFieldByInde
     RETURN_OBJ(*reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]));
 }
 
+}
+
+std::string TypeInfo::fqName() const {
+    std::string fqName = "";
+    if (packageName_) {
+        fqName += kotlin::to_string(packageName_->array());
+        fqName += ".";
+    }
+    if (relativeName_) {
+        fqName += kotlin::to_string(relativeName_->array());
+    } else {
+        fqName += "<anonymous>";
+    }
+    return fqName;
 }

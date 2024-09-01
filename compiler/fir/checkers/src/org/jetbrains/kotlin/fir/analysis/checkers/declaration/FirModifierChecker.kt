@@ -28,10 +28,14 @@ import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirFile) return
+        val source = when (declaration) {
+            is FirFile -> declaration.packageDirective.source
+            else -> declaration.source
+        }
 
-        val source = declaration.source ?: return
-        if (source.kind is KtFakeSourceElementKind) return
+        if (source == null || source.kind is KtFakeSourceElementKind) {
+            return
+        }
 
         source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
     }
@@ -126,23 +130,12 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return false
         }
 
-        if (parent is FirRegularClass) {
-            if (modifierToken == KtTokens.EXPECT_KEYWORD || modifierToken == KtTokens.HEADER_KEYWORD) {
-                reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class", context)
-                return false
-            }
+        if (parent is FirRegularClass && modifierToken == KtTokens.EXPECT_KEYWORD) {
+            reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifierToken, "nested class", context)
+            return false
         }
 
-        val deprecatedModifierReplacement = deprecatedKmpModifierMap[modifierToken]
-        if (deprecatedModifierReplacement != null) {
-            reporter.reportOn(
-                modifierSource,
-                FirErrors.DEPRECATED_MODIFIER,
-                modifierToken,
-                deprecatedModifierReplacement,
-                context
-            )
-        } else if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
+        if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
             checkModifier(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET)
         }
 

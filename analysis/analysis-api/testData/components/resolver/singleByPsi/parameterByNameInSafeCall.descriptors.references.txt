@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  name: kotlin.Int
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(76,80): 'name'
+  KtSimpleNameReference:
+    name: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

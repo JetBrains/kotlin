@@ -10,15 +10,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneSessionServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryDecompiledTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryBinaryTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.DispatchingTestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
@@ -44,7 +44,7 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
 
             useAdditionalService<KtTestModuleFactory> { testModuleFactory }
-            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+            useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 
             this.defaultsProviderBuilder.dependencyKind = DependencyKind.Binary

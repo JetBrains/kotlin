@@ -1,6 +1,5 @@
 // MODULE_KIND: COMMON_JS
 // SKIP_DCE_DRIVEN
-// SKIP_MINIFICATION
 package api
 
 @JsExport

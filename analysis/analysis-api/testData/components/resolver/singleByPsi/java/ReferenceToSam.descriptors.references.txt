@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(83,94): 'setListener'
+  KtSimpleNameReference:
+    (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

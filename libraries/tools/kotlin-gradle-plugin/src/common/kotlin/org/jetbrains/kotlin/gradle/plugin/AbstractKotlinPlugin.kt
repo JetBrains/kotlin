@@ -22,8 +22,6 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -32,9 +30,10 @@ import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"
@@ -42,6 +41,8 @@ const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClasspath"
 internal const val BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME = "kotlinBuildToolsApiClasspath"
 internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
 internal const val KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME = "kotlinNativeBundleConfiguration"
+internal const val PSM_CONSUMABLE_CONFIGURATION_NAME = "projectStructureMetadataConsumableConfiguration"
+internal const val PSM_RESOLVABLE_CONFIGURATION_NAME = "projectStructureMetadataResolvableConfiguration"
 private const val JAVA_TEST_FIXTURES_PLUGIN_ID = "java-test-fixtures"
 
 internal abstract class AbstractKotlinPlugin(
@@ -107,9 +108,7 @@ internal abstract class AbstractKotlinPlugin(
             inspectTask.classesListFile.disallowChanges()
 
             val sourceSetClassesDir = project
-                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSetsIfAvailable
+                .javaSourceSetsIfAvailable
                 ?.findByName(SourceSet.MAIN_SOURCE_SET_NAME)
                 ?.output
                 ?.classesDirs
@@ -143,11 +142,6 @@ internal abstract class AbstractKotlinPlugin(
                 }
             }
         }
-
-        project
-            .variantImplementationFactory<MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory>()
-            .getInstance()
-            .applyConfiguration(project, target, shouldRewritePoms)
     }
 
     companion object {
@@ -167,10 +161,7 @@ internal abstract class AbstractKotlinPlugin(
             duplicateJavaSourceSetsAsKotlinSourceSets: Boolean = true
         ) {
             val project = kotlinTarget.project
-            val javaSourceSets = project
-                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSets
+            val javaSourceSets = project.javaSourceSets
 
             @Suppress("DEPRECATION") val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
                 KotlinPlatformType.js -> KOTLIN_JS_DSL_NAME
@@ -180,7 +171,12 @@ internal abstract class AbstractKotlinPlugin(
             javaSourceSets.all { javaSourceSet ->
                 val kotlinCompilation = kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
 
+
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
+                    project.configurations
+                        .findByName(javaSourceSet.apiElementsConfigurationName)
+                        ?.addSecondaryOutgoingJvmClassesVariant(project, kotlinCompilation)
+
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)
 

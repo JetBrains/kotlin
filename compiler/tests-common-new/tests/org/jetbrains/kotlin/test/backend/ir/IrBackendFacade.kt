@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BackendFacade
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class IrBackendFacade<A : ResultingArtifact.Binary<A>>(
+abstract class IrBackendFacade<BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact>>(
     testServices: TestServices,
-    binaryKind: BinaryKind<A>
-) : BackendFacade<IrBackendInput, A>(testServices, BackendKinds.IrBackend, binaryKind)
+    binaryKind: BinaryKind<BinaryOutputArtifact>
+) : BackendFacade<IrBackendInput, BinaryOutputArtifact>(testServices, BackendKinds.IrBackend, binaryKind)

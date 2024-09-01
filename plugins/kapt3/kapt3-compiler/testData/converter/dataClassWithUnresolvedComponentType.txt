@@ -1,0 +1,139 @@
+package test;
+
+/**
+ * public final data class test/C : kotlin/Any {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;Ljava/util/List;Lerror/NonExistentClass;)V
+ *   public constructor(x: error/NonExistentClass, y: kotlin/collections/List<error/NonExistentClass>, z: error/NonExistentClass)
+ *
+ *   // signature: component1()Lerror/NonExistentClass;
+ *   public final (* synthesized *) operator fun component1(): error/NonExistentClass
+ *
+ *   // signature: component2()Ljava/util/List;
+ *   public final (* synthesized *) operator fun component2(): kotlin/collections/List<error/NonExistentClass>
+ *
+ *   // signature: component3()Lerror/NonExistentClass;
+ *   public final (* synthesized *) operator fun component3(): error/NonExistentClass
+ *
+ *   // signature: copy(Lerror/NonExistentClass;Ljava/util/List;Lerror/NonExistentClass;)Ltest/C;
+ *   public final (* synthesized *) fun copy(x: error/NonExistentClass (* = ... *), y: kotlin/collections/List<error/NonExistentClass> (* = ... *), z: error/NonExistentClass (* = ... *)): test/C
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: x:Lerror/NonExistentClass;
+ *   // getter: getX()Lerror/NonExistentClass;
+ *   public final val x: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: y:Ljava/util/List;
+ *   // getter: getY()Ljava/util/List;
+ *   public final val y: kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *
+ *   // field: z:Lerror/NonExistentClass;
+ *   // getter: getZ()Lerror/NonExistentClass;
+ *   public final val z: error/NonExistentClass
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+    @org.jetbrains.annotations.NotNull()
+    private final U2 x = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<U3> y = null;
+    @org.jetbrains.annotations.NotNull()
+    private final U1<U4> z = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object component1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<error.NonExistentClass> component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object component3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.C copy(@org.jetbrains.annotations.NotNull()
+    java.lang.Object x, @org.jetbrains.annotations.NotNull()
+    java.util.List<error.NonExistentClass> y, @org.jetbrains.annotations.NotNull()
+    java.lang.Object z) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    public C(@org.jetbrains.annotations.NotNull()
+    U2 x, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends U3> y, @org.jetbrains.annotations.NotNull()
+    U1<U4> z) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final U2 getX() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<U3> getY() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final U1<U4> getZ() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   public typealias TA<T#0 (* W *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class DataClassWithUnresolvedComponentTypeKt {
+
+    public DataClassWithUnresolvedComponentTypeKt() {
+        super();
+    }
+}

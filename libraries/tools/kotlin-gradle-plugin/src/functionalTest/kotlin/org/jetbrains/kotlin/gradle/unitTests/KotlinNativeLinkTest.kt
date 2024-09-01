@@ -51,17 +51,17 @@ class KotlinNativeLinkTest {
         }
 
         // 1. Configure KotlinNativeLink's apiFiles before compilation's apiConfiguration is wired. Using apiFilesConfiguration directly here because apiFiles is filtered by File.exists check
-        val apiFiles = (exportingProject.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFilesConfiguration
+        val apiFiles = (exportingProject.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFiles
 
         // 2. Set up the compilations
         exportingProject.evaluate()
 
         assertEquals(
             hashSetOf(
-                apiInCommon.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInCommon.klib").get().asFile,
-                apiInLinux.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInLinux.klib").get().asFile,
+                apiInCommon.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInCommon").get().asFile,
+                apiInLinux.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/apiInLinux").get().asFile,
             ),
-            apiFiles.resolve(),
+            apiFiles.files,
         )
     }
 

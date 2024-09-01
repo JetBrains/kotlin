@@ -1,0 +1,6 @@
+KtNameReferenceExpression(53,54): 's'
+  KtSimpleNameReference:
+    s: kotlin.String
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

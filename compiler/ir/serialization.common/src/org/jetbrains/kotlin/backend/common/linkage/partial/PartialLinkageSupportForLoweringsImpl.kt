@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -15,15 +16,14 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.linkage.partial.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageLogger: IrMessageLogger
+    messageCollector: MessageCollector
 ): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageLogger, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLowerings.DISABLED
 

@@ -59,7 +59,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
             val function = buildJavaMethod {
                 moduleData = field.moduleData
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.defaultType()
+                    coneType = classSymbol.defaultType()
                 }
 
                 dispatchReceiverType = classSymbol.defaultType()

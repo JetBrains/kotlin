@@ -15,7 +15,7 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 }
 
 optInToUnsafeDuringIrConstructionAPI()

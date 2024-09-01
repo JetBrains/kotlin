@@ -19,6 +19,7 @@ class SirTypealiasBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     lateinit var type: SirType
 
@@ -27,6 +28,7 @@ class SirTypealiasBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             name,
             type,
         )
@@ -51,6 +53,7 @@ inline fun buildTypealiasCopy(original: SirTypealias, init: SirTypealiasBuilder.
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.type = original.type
     return copyBuilder.apply(init).build()

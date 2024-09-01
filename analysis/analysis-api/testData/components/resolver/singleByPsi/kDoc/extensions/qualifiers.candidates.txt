@@ -1,17 +1,23 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(54,57): 'one'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(71,78): 'one.two'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(91,94): 'Foo'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(104,115): 'one.two.Foo'
+    NO_CANDIDATES
 
-<caret_5>: KDocName:
-NO_CANDIDATES
+<caret_5>:
+  KDocName(128,131): 'one'
+    NO_CANDIDATES
 
-<caret_6>: KDocName:
-NO_CANDIDATES
+<caret_6>:
+  KDocName(149,156): 'one.two'
+    NO_CANDIDATES

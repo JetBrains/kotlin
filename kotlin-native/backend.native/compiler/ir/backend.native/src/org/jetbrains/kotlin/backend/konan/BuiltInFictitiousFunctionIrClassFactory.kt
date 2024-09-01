@@ -116,7 +116,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
             if (field != null)
                 error("Module has already been set")
             field = value
-            value.files += filesMap.values
+            filesMap.values.forEach(value::addFile)
 //            builtClasses.forEach { it.addFakeOverrides() }
         }
 
@@ -271,7 +271,6 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                                         type = functionClass.typeParameters[it.index].defaultType,
                                         isAssignable = false,
                                         symbol = IrValueParameterSymbolImpl(it),
-                                        index = it.index,
                                         varargElementType = null,
                                         isCrossinline = it.isCrossinline,
                                         isNoinline = it.isNoinline,
@@ -299,7 +298,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                     val packageFragmentDescriptor = descriptor.findPackage()
                     val file = filesMap.getOrPut(packageFragmentDescriptor) {
                         IrFileImpl(NaiveSourceBasedFileEntryImpl("[K][Suspend]Functions"), packageFragmentDescriptor).also {
-                            this@BuiltInFictitiousFunctionIrClassFactory.module?.files?.add(it)
+                            this@BuiltInFictitiousFunctionIrClassFactory.module?.addFile(it)
                         }
                     }
                     parent = file
@@ -330,7 +329,6 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 type = toIrType(descriptor.type),
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(descriptor),
-                index = descriptor.indexOrMinusOne,
                 varargElementType = varargType?.let { toIrType(it) },
                 isCrossinline = descriptor.isCrossinline,
                 isNoinline = descriptor.isNoinline,

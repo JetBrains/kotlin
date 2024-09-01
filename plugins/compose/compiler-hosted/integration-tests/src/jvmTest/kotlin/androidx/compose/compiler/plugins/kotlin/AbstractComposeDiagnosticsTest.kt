@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
+import java.io.File
 
 abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     protected fun check(
         expectedText: String,
         commonText: String? = null,
-        ignoreParseErrors: Boolean = false
+        ignoreParseErrors: Boolean = false,
+        additionalPaths: List<File> = emptyList()
     ) {
         val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, mutableListOf())
         val clearCommonText = commonText?.let {
@@ -37,6 +39,7 @@ abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompile
         val errors = analyze(
             listOf(SourceFile("test.kt", clearText, ignoreParseErrors)),
             listOfNotNull(clearCommonText?.let { SourceFile("common.kt", it, ignoreParseErrors) }),
+            additionalPaths
         ).diagnostics
 
         checkDiagnostics(expectedText, clearText, errors["test.kt"])

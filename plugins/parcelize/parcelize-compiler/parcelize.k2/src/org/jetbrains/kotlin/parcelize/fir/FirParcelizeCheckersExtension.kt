@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.*
 
 class FirParcelizeCheckersExtension(
     session: FirSession,
-    val parcelizeAnnotations: List<ClassId>
+    val parcelizeAnnotations: List<ClassId>,
+    val experimentalCodeGeneration: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val annotationCallCheckers: Set<FirAnnotationCallChecker>
@@ -33,6 +34,6 @@ class FirParcelizeCheckersExtension(
             get() = setOf(FirParcelizeFunctionChecker(parcelizeAnnotations))
 
         override val constructorCheckers: Set<FirConstructorChecker>
-            get() = setOf(FirParcelizeConstructorChecker(parcelizeAnnotations))
+            get() = setOf(FirParcelizeConstructorChecker(parcelizeAnnotations, experimentalCodeGeneration))
     }
 }

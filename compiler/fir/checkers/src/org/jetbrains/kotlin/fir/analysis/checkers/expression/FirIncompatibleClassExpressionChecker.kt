@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -30,7 +30,7 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         checkType(symbol.receiverParameter?.typeRef?.coneType, expression, context, reporter)
         if (symbol is FirFunctionSymbol) {
             for (parameter in symbol.valueParameterSymbols) {
-                checkType(parameter.resolvedReturnTypeRef.type, expression, context, reporter)
+                checkType(parameter.resolvedReturnTypeRef.coneType, expression, context, reporter)
             }
         }
 

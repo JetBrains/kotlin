@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -30,6 +30,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 
@@ -74,11 +75,10 @@ internal class SymbolLightParameterForReceiver private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = receiverPointer,
-                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.RECEIVER.toOptionalFilter(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
+                        receiver.returnType.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),
@@ -87,12 +87,14 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
-            val ktType = receiver.type
+            val ktType = receiver.returnType
             val psiType = ktType.asPsiType(
                 this,
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
+                forceValueClassResolution = method.canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             )
 
             if (method is SymbolLightAnnotationsMethod) {

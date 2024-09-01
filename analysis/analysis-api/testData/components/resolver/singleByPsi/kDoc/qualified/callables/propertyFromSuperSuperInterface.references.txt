@@ -1,2 +1,3 @@
-KDocReference:
-  (in Baz) val foo: kotlin.Int
+KDocName(98,105): 'Foo.foo'
+  KDocReference:
+    (in Baz) val foo: kotlin.Int

@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -30,12 +32,14 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.isFromInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -58,14 +62,14 @@ internal fun PsiToIrContext.psiToIr(
     val symbolTable = symbolTable!!
     val (moduleDescriptor, environment, isProducingLibrary) = input
     // Translate AST to high level IR.
-    val messageLogger = config.configuration.irMessageLogger
+    val messageCollector = config.configuration.messageCollector
 
     val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
             Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
-            messageLogger::checkNoUnboundSymbols
+            messageCollector::checkNoUnboundSymbols
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 
@@ -141,7 +145,7 @@ internal fun PsiToIrContext.psiToIr(
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 translationPluginContext = translationContext,
-                messageLogger = messageLogger,
+                messageCollector = messageCollector,
                 builtIns = generatorContext.irBuiltIns,
                 symbolTable = symbolTable,
                 friendModules = friendModulesMap,
@@ -151,9 +155,8 @@ internal fun PsiToIrContext.psiToIr(
                 exportedDependencies = exportedDependencies,
                 partialLinkageSupport = createPartialLinkageSupportForLinker(
                         partialLinkageConfig = partialLinkageConfig,
-                        allowErrorTypes = false, // Kotlin/Native does not support error types.
                         builtIns = generatorContext.irBuiltIns,
-                        messageLogger = messageLogger
+                        messageCollector = messageCollector
                 ),
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
@@ -194,7 +197,7 @@ internal fun PsiToIrContext.psiToIr(
 
             // We need to run `buildAllEnumsAndStructsFrom` before `generateModuleFragment` because it adds references to symbolTable
             // that should be bound.
-            if (libraryToCacheModule?.isFromInteropLibrary() == true)
+            if (libraryToCacheModule?.isFromCInteropLibrary() == true)
                 irProviderForCEnumsAndCStructs.referenceAllEnumsAndStructsFrom(libraryToCacheModule)
 
             translator.addPostprocessingStep {
@@ -212,7 +215,7 @@ internal fun PsiToIrContext.psiToIr(
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
                 linker = irDeserializer,
-                diagnosticReporter = messageLogger
+                diagnosticReporter = messageCollector
         )
         pluginExtensions.forEach { extension ->
             extension.generate(module, pluginContext)
@@ -231,7 +234,7 @@ internal fun PsiToIrContext.psiToIr(
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true
 
-    messageLogger.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    messageCollector.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     mainModule.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 

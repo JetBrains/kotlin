@@ -1,2 +1,3 @@
-KDocReference:
-  (in Foo.Nested) val foo: kotlin.Int
+KDocName(73,87): 'Foo.Nested.foo'
+  KDocReference:
+    (in Foo.Nested) val foo: kotlin.Int

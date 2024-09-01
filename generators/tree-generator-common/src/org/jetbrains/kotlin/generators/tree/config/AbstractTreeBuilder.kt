@@ -87,6 +87,12 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
     protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {
         return TypeVariable(name, bounds.toList(), variance)
     }
+
+    companion object {
+        val int = StandardTypes.int
+        val string = StandardTypes.string
+        val boolean = StandardTypes.boolean
+    }
 }
 
 fun <Element, Field> AbstractElementConfigurator<Element, Field, Nothing?>.element(

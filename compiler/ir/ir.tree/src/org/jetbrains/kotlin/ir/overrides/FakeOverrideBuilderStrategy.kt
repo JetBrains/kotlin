@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * This class is a customization point for IrFakeOverrideBuilder.
@@ -64,11 +65,10 @@ abstract class FakeOverrideBuilderStrategy(
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
-    fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return if (isVisibleForOverrideInClass(member, clazz))
+    open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
+        return runIf(isVisibleForOverrideInClass(member, clazz)) {
             buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
-        else
-            null
+        }
     }
 
     /**
@@ -156,9 +156,12 @@ abstract class FakeOverrideBuilderStrategy(
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 
-    abstract class BindToPrivateSymbols(friendModules: Map<String, Collection<String>>) : FakeOverrideBuilderStrategy(
+    abstract class BindToPrivateSymbols(
+        friendModules: Map<String, Collection<String>>,
+        unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+    ) : FakeOverrideBuilderStrategy(
         friendModules = friendModules,
-        unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+        unimplementedOverridesStrategy
     ) {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())

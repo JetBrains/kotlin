@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in t) class A
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(94,95): 'A'
+  KtSimpleNameReference:
+    (in t) class A
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

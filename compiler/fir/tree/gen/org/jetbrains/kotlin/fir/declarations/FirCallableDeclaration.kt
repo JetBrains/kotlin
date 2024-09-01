@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.callableDeclaration]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.callableDeclaration]
  */
 sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract override val source: KtSourceElement?

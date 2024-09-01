@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) fun kotlin.String.function(a: kotlin.Int)
+KtNameReferenceExpression(56,64): 'function'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.String.function(a: kotlin.Int)

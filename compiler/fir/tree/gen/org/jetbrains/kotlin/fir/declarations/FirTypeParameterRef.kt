@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRef]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeParameterRef]
  */
 interface FirTypeParameterRef : FirElement {
     override val source: KtSourceElement?

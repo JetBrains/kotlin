@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
@@ -97,7 +97,7 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         val memberWithBaseScope: MemberWithBaseScope<D>,
         returnTypeCalculator: ReturnTypeCalculator
     ) {
-        val returnType: ConeKotlinType? = returnTypeCalculator.tryCalculateReturnTypeOrNull(memberWithBaseScope.member.fir)?.type
+        val returnType: ConeKotlinType? = returnTypeCalculator.tryCalculateReturnTypeOrNull(memberWithBaseScope.member.fir)?.coneType
     }
 
     private fun MemberWithBaseScopeAndReturnType<*>.compareTo(other: MemberWithBaseScopeAndReturnType<*>): Int? {
@@ -141,8 +141,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
                 byVisibilityAndType
             }
 
-            is FirProperty -> {
-                require(bFir is FirProperty) { "b is " + bFir.javaClass }
+            is FirVariable -> {
+                require(bFir is FirVariable) { "b is " + bFir.javaClass }
                 // At least one of `subtypes` is true here, so `!xSubtypesY` implies `ySubtypesX`, meaning y's type
                 // is a *strict* subtype of x's. Vars are more specific than vals, so if one is a var and another
                 // has a strict subtype, then they are unorderable - one is a val with a more specific type than

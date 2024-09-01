@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1281
 // CALL_MAIN
 
 var o: String = "fail O"

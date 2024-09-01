@@ -1,0 +1,10 @@
+KT element: KtSecondaryConstructor
+KT element text:
+public constructor(a: kotlin.Int) { /* compiled code */ }
+FIR element: FirConstructorImpl
+FIR source kind: KtRealSourceElementKind
+FIR container source: null
+File name: 0_test.knm
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|test/MyClass|

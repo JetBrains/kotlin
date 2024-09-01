@@ -1,1 +1,3 @@
-KtSimpleNameReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(93,94): 'i'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR
+// ISSUE: KT-70117
 
 // FILE: a.kt
 @JsExport

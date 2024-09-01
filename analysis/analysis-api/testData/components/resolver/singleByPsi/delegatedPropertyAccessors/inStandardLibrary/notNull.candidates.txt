@@ -1,2 +1,2 @@
-KtProperty:
-NO_CANDIDATES
+KtProperty(51,84): 'var x: Int by Delegates.notNull()'
+  NO_CANDIDATES

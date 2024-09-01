@@ -42,8 +42,6 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
 open class DeepCopyIrTreeWithSymbols(
     private val symbolRemapper: SymbolRemapper,
     typeRemapper: TypeRemapper? = null,
-    // This parameter is not used meaningfully, but is left for compatibility with compose.
-    @Suppress("UNUSED_PARAMETER") symbolRenamer: SymbolRenamer? = null,
 ) : IrElementTransformerVoid() {
     private var transformedModule: IrModuleFragment? = null
     private val typeRemapper: TypeRemapper = typeRemapper ?: DeepCopyTypeRemapper(symbolRemapper)
@@ -376,7 +374,6 @@ open class DeepCopyIrTreeWithSymbols(
             type = declaration.type.remapType(),
             isAssignable = declaration.isAssignable,
             symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
-            index = declaration.index,
             varargElementType = declaration.varargElementType?.remapType(),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,
@@ -419,8 +416,10 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
 
-    override fun visitConst(expression: IrConst<*>): IrConst<*> =
-        expression.shallowCopy().processAttributes(expression)
+    override fun visitConst(expression: IrConst): IrConst =
+        expression.shallowCopyConst().processAttributes(expression)
+
+    private fun IrConst.shallowCopyConst() = IrConstImpl(startOffset, endOffset, type.remapType(), kind, value)
 
     override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =
         IrConstantObjectImpl(
@@ -470,7 +469,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrInlinedFunctionBlockImpl(
             inlinedBlock.startOffset, inlinedBlock.endOffset,
             inlinedBlock.type.remapType(),
-            inlinedBlock.inlineCall, inlinedBlock.inlinedElement,
+            inlinedBlock.inlineFunction,
             mapStatementOrigin(inlinedBlock.origin),
             statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
         ).processAttributes(inlinedBlock)
@@ -798,7 +797,8 @@ open class DeepCopyIrTreeWithSymbols(
         IrCatchImpl(
             aCatch.startOffset, aCatch.endOffset,
             aCatch.catchParameter.transform(),
-            aCatch.result.transform()
+            aCatch.result.transform(),
+            mapStatementOrigin(aCatch.origin),
         )
 
     override fun visitReturn(expression: IrReturn): IrReturn =

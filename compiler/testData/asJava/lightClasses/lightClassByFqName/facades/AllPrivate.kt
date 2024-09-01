@@ -1,5 +1,7 @@
 // p.AllPrivate
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AllPrivate")
 

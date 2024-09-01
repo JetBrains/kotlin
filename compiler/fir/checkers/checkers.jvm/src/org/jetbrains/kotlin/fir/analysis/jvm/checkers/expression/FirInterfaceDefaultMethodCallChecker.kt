@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.name.SpecialNames.ANONYMOUS_FQ_NAME
 
 object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowSuperCallToJavaInterface)) return
+
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return

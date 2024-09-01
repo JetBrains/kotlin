@@ -1,5 +1,4 @@
 import org.gradle.api.publish.internal.PublicationInternal
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 import plugins.signLibraryPublication
@@ -42,7 +41,7 @@ if (signLibraryPublication) {
     }
 }
 
-val targetName = "${gradleCompatPublication.name.capitalizeAsciiOnly()}Publication"
+val targetName = "${gradleCompatPublication.name.capitalize()}Publication"
 configureSbom(
     target = targetName,
     documentName = "kotlin-annotation-processing-gradle",

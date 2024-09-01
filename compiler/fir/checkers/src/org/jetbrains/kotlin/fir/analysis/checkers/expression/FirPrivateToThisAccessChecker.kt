@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeSetterVisibilityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,7 +37,6 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             // If there was a visibility diagnostic, no need to report another one about visibility
             when (reference.diagnostic) {
                 is ConeVisibilityError,
-                is ConeSetterVisibilityError
                 -> return
             }
         }
@@ -75,6 +73,9 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
         if (containingClassSymbol == null) return false
         if (symbol is FirConstructorSymbol) return false
         if (containingClassSymbol.typeParameterSymbols.all { it.variance == Variance.INVARIANT }) return false
+        // KT-68636 data class generated copy method can never have privateToThis visibility
+        // We have to explicitly exclude data class copy because a general case isn't yet supported KT-35396
+        if (symbol.isDataClassCopy(containingClassSymbol, session)) return false
 
         if (symbol.receiverParameter?.typeRef?.coneType?.contradictsWith(Variance.IN_VARIANCE, session) == true) {
             return true

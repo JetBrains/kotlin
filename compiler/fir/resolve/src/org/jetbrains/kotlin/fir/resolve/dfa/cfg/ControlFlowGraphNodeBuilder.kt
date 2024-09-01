@@ -73,20 +73,15 @@ fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction): FunctionEx
 fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction): LocalFunctionDeclarationNode =
     LocalFunctionDeclarationNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
-    BinaryOrEnterNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createBooleanOperatorExitNode(
+    fir: FirBooleanOperatorExpression,
+    leftOperandNode: CFGNode<*>,
+    rightOperandNode: CFGNode<*>,
+): BooleanOperatorExitNode =
+    BooleanOperatorExitNode(currentGraph, fir, leftOperandNode, rightOperandNode, levelCounter)
 
-fun ControlFlowGraphBuilder.createBinaryOrExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryOrExitLeftOperandNode =
-    BinaryOrExitLeftOperandNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createBinaryOrExitNode(fir: FirBinaryLogicExpression): BinaryOrExitNode =
-    BinaryOrExitNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createBinaryAndExitNode(fir: FirBinaryLogicExpression): BinaryAndExitNode =
-    BinaryAndExitNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createBinaryAndEnterNode(fir: FirBinaryLogicExpression): BinaryAndEnterNode =
-    BinaryAndEnterNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createBooleanOperatorEnterNode(fir: FirBooleanOperatorExpression): BooleanOperatorEnterNode =
+    BooleanOperatorEnterNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionEnterNode(fir: FirWhenBranch): WhenBranchConditionEnterNode =
     WhenBranchConditionEnterNode(currentGraph, fir, levelCounter)
@@ -127,8 +122,11 @@ fun ControlFlowGraphBuilder.createFunctionCallArgumentsExitNode(
 ): FunctionCallArgumentsExitNode =
     FunctionCallArgumentsExitNode(currentGraph, fir, explicitReceiverExitNode, levelCounter)
 
-fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
-    FunctionCallNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createFunctionCallEnterNode(fir: FirFunctionCall): FunctionCallEnterNode =
+    FunctionCallEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createFunctionCallExitNode(fir: FirFunctionCall): FunctionCallExitNode =
+    FunctionCallExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createCallableReferenceNode(fir: FirCallableReferenceAccess): CallableReferenceNode =
     CallableReferenceNode(currentGraph, fir, levelCounter)
@@ -193,14 +191,11 @@ fun ControlFlowGraphBuilder.createTryExpressionEnterNode(fir: FirTryExpression):
 fun ControlFlowGraphBuilder.createTryExpressionExitNode(fir: FirTryExpression): TryExpressionExitNode =
     TryExpressionExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBinaryAndExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode =
-    BinaryAndExitLeftOperandNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createBooleanOperatorExitLeftOperandNode(fir: FirBooleanOperatorExpression): BooleanOperatorExitLeftOperandNode =
+    BooleanOperatorExitLeftOperandNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBinaryAndEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryAndEnterRightOperandNode =
-    BinaryAndEnterRightOperandNode(currentGraph, fir, levelCounter)
-
-fun ControlFlowGraphBuilder.createBinaryOrEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryOrEnterRightOperandNode =
-    BinaryOrEnterRightOperandNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createBooleanOperatorEnterRightOperandNode(fir: FirBooleanOperatorExpression): BooleanOperatorEnterRightOperandNode =
+    BooleanOperatorEnterRightOperandNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirSafeCallExpression): ExitSafeCallNode =
     ExitSafeCallNode(currentGraph, fir, levelCounter)
@@ -219,6 +214,9 @@ fun ControlFlowGraphBuilder.createSplitPostponedLambdasNode(
 
 fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
     MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createAnonymousFunctionCaptureNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionCaptureNode =
+    AnonymousFunctionCaptureNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionExpressionNode =
     AnonymousFunctionExpressionNode(currentGraph, fir, levelCounter)

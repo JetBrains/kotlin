@@ -10,7 +10,8 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class KotlinSuperTypeListBuilder(
     private val parent: PsiClass,
@@ -49,8 +50,12 @@ class KotlinSuperTypeListBuilder(
     override fun getReferenceElements() = referenceElementsCache
 
     override fun add(element: PsiElement): PsiElement {
-
-        if (element !is KotlinSuperTypeReference) throw UnsupportedOperationException("Unexpected element: ${element.getElementTextWithContext()}")
+        requireWithAttachment(
+            element is KotlinSuperTypeReference,
+            { "Expected a ${KotlinSuperTypeReference::class.simpleName}, but got a ${element::class.simpleName}." },
+        ) {
+            withPsiEntry("element", element)
+        }
 
         val superTypeList = myKotlinOrigin ?: return element
         val entry = element.kotlinOrigin ?: return element

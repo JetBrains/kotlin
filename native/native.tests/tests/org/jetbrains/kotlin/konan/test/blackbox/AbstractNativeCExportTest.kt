@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -46,6 +47,17 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testDir: String) {
         checkTestPrerequisites()
+
+        // https://youtrack.jetbrains.com/issue/KT-69303
+        if (testDir == "native/native.tests/testData/CExport/InterfaceV1/concurrentTerminate/" && HostManager.hostIsMac) {
+            Assumptions.abort<Nothing>("concurrentTerminate flaks on Mac, see KT-69303")
+        }
+
+        // https://youtrack.jetbrains.com/issue/KT-69663
+        if (testDir == "native/native.tests/testData/CExport/InterfaceV1/unhandledExceptionThroughBridge/" && HostManager.hostIsMingw) {
+            Assumptions.abort<Nothing>("unhandledExceptionThroughBridge flaks on Windows, see KT-69663")
+        }
+
         val testPathFull = getAbsoluteFile(testDir)
         val ktSources = testPathFull.list()!!
             .filter { it.endsWith(".kt") }
@@ -99,7 +111,6 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
         val clangResult = compileWithClang(
-            clangDistribution = ClangDistribution.Llvm,
             clangMode = clangMode,
             sourceFiles = cSources,
             includeDirectories = includeDirectories,
@@ -120,7 +131,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
     private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null, regexes: File? = null, exitCode: String? = null): TestCase {
         val moduleName: String = testPathFull.name
-        val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
         return TestCase(

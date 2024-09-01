@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in Test) fun test(foo: Test.Foo)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(146,150): 'test'
+  KtSimpleNameReference:
+    (in Test) fun test(foo: Test.Foo)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

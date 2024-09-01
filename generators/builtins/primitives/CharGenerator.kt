@@ -22,6 +22,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
     private fun FileBuilder.generateClass() {
         klass {
             appendDoc("Represents a 16-bit Unicode character.")
+            expectActual = ExpectActualModifier.Actual
             name = PrimitiveType.CHAR.capitalized
             superType("Comparable<$name>")
 
@@ -334,9 +335,25 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
     internal open fun ClassBuilder.generateAdditionalMethods() {}
 }
 
+class CommonCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
+    override fun FileBuilder.modifyGeneratedFile() {
+        import("kotlin.internal.ActualizeByJvmBuiltinProvider")
+    }
+
+    override fun ClassBuilder.modifyGeneratedClass() {
+        expectActual = ExpectActualModifier.Expect
+        annotations += "ActualizeByJvmBuiltinProvider"
+    }
+
+    override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
+        annotations += """Suppress("EXPECTED_PROPERTY_INITIALIZER")"""
+    }
+}
+
 class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass() {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.")
+        expectActual = ExpectActualModifier.Unspecified
     }
 }
 
@@ -361,6 +378,7 @@ class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             annotations += "SinceKotlin(\"1.5\")"
             annotations += "WasExperimental(ExperimentalStdlibApi::class)"
             visibility = MethodVisibility.PUBLIC
+            expectActual = ExpectActualModifier.Unspecified
             parameter {
                 name = "code"
                 type = "UShort"
@@ -449,6 +467,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum value of a supplementary code point, `\\u0x10000`.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_SUPPLEMENTARY_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x10000"
@@ -457,6 +476,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x000000"
@@ -465,6 +485,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0X10FFFF"
@@ -473,6 +494,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The minimum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "2"
@@ -481,6 +503,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         property {
             appendDoc("The maximum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "36"
@@ -579,6 +602,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_SUPPLEMENTARY_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x10000"
@@ -594,6 +618,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0x000000"
@@ -609,6 +634,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 """.trimIndent()
             )
             annotations += "ExperimentalNativeApi"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_CODE_POINT"
             type = PrimitiveType.INT.capitalized
             value = "0X10FFFF"
@@ -618,6 +644,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             appendDoc("The minimum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `2`\", ReplaceWith(\"2\"))"
             annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MIN_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "2"
@@ -627,6 +654,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             appendDoc("The maximum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `36\", ReplaceWith(\"36\"))"
             annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\")"
+            expectActual = ExpectActualModifier.Unspecified
             name = "MAX_RADIX"
             type = PrimitiveType.INT.capitalized
             value = "36"
@@ -695,6 +723,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         method {
             annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
             annotations += intrinsicConstEvaluationAnnotation
+            expectActual = ExpectActualModifier.Unspecified
             signature {
                 methodName = "equals"
                 parameter {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,16 +35,34 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
 
-    put(
-        CommonConfigurationKeys.VERIFY_IR,
-        arguments.verifyIr?.let { verifyIrString ->
-            IrVerificationMode.resolveMode(verifyIrString).also {
-                if (it == null) {
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
-                }
+    val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
+        IrVerificationMode.resolveMode(verifyIrString).also {
+            if (it == null) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
             }
-        } ?: IrVerificationMode.NONE
-    )
+        }
+    } ?: IrVerificationMode.NONE
+    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+
+    if (arguments.verifyIrVisibility) {
+        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
+
+    if (arguments.verifyIrVisibilityAfterInlining) {
+        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING, true)
+        if (irVerificationMode == IrVerificationMode.NONE) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "'-Xverify-ir-visibility-after-inlining' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+            )
+        }
+    }
 
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
@@ -61,7 +79,7 @@ fun CompilerConfiguration.setupCommonArguments(
     switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
-    val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
+    val usesK2 = languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
@@ -73,24 +91,23 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
     }
 
     if (arguments !is K2JVMCompilerArguments) return
-    val isK2 =
-        arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+    //coordinated with org.jetbrains.kotlin.incremental.CompilerRunnerUtils.isK1ForcedByKapt
+    val isK2 = (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
     val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
     when {
-        isK2 && isKaptUsed && !arguments.useKapt4 -> {
-            warn("Kapt currently doesn't support language version 2.0+. Falling back to 1.9.")
+        isK2 && isKaptUsed && !arguments.useK2Kapt -> {
+            warn("Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9.")
             arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
             if (arguments.apiVersion?.startsWith("2") == true) {
                 arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
             }
-            arguments.useK2 = false
             arguments.skipMetadataVersionCheck = true
             arguments.skipPrereleaseCheck = true
             arguments.allowUnstableDependencies = true
         }
-        arguments.useKapt4 -> warn(
-            if (isK2) "K2 kapt is an experimental feature. Use with caution."
-            else "-Xuse-kapt4 flag can be only used with language version 2.0+."
+        arguments.useK2Kapt -> warn(
+            if (isK2) "K2 kapt is in Alpha. Use with caution."
+            else "-Xuse-k2-kapt flag can be only used with language version 2.0+."
         )
     }
 }

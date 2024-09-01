@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.resolvedDeclarationStatus]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedDeclarationStatus]
  */
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val source: KtSourceElement?

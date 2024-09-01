@@ -7,19 +7,26 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeCandidate
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
+import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.whileAnalysing
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 private operator fun <T> Pair<T, *>?.component1(): T? = this?.first
 private operator fun <T> Pair<*, T>?.component2(): T? = this?.second
@@ -35,18 +42,20 @@ private fun FirScope.processConstructorsByName(
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
     constructorFilter: ConstructorFilter,
-    processor: (FirCallableSymbol<*>) -> Unit
+    processor: (FirCallableSymbol<*>) -> Unit,
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents) ?: return
+    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents)
+        ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
     processConstructors(
         matchedClassSymbol,
-        substitutor,
+        substitutor!!,
         processor,
         session,
         bodyResolveComponents,
-        constructorFilter
+        constructorFilter,
+        callInfo.typeArguments,
     )
 
     processSyntheticConstructors(
@@ -72,100 +81,24 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     processFunctionsByName(callInfo.name, processor)
 }
 
-private data class SymbolWithSubstitutor(val symbol: FirClassifierSymbol<*>, val substitutor: ConeSubstitutor)
-
-fun FirScope.getSingleVisibleClassifier(
-    session: FirSession,
-    bodyResolveComponents: BodyResolveComponents,
-    name: Name
-): FirClassifierSymbol<*>? {
-    var result: FirClassifierSymbol<*>? = null
-    var isAmbiguousResult = false
-    processClassifiersByName(name) { classifierSymbol ->
-        if (!classifierSymbol.fir.isInvisibleOrHidden(session, bodyResolveComponents)) {
-            if (result == classifierSymbol) return@processClassifiersByName
-
-            if (result == null) {
-                result = classifierSymbol
-            } else {
-                val checkResult = checkUnambiguousClassifiers(result!!, classifierSymbol, session)
-                if (checkResult.shouldReplaceResult) {
-                    result = classifierSymbol
-                } else {
-                    isAmbiguousResult = checkResult.isAmbiguousResult
-                }
-            }
-        }
-    }
-    return result.takeUnless { isAmbiguousResult }
-}
-
-private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveComponents: BodyResolveComponents): Boolean {
-    if (this is FirMemberDeclaration) {
-        if (!session.visibilityChecker.isVisible(
-                this,
-                session,
-                bodyResolveComponents.file,
-                bodyResolveComponents.containingDeclarations,
-                dispatchReceiver = null,
-                isCallToPropertySetter = false
-            )
-        ) {
-            return true
-        }
-    }
-
-    return symbol.isDeprecationLevelHidden(session)
-}
-
 private fun FirScope.getFirstClassifierOrNull(
     callInfo: CallInfo,
     constructorFilter: ConstructorFilter,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents
-): SymbolWithSubstitutor? {
-    var isSuccessResult = false
-    var isAmbiguousResult = false
-    var result: SymbolWithSubstitutor? = null
+): TypeCandidate? {
+    val collector = FirTypeCandidateCollector(session, bodyResolveComponents.file, bodyResolveComponents.containingDeclarations)
 
     fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
         val classifierDeclaration = symbol.fir
-        var isSuccessCandidate = !classifierDeclaration.isInvisibleOrHidden(session, bodyResolveComponents)
         if (classifierDeclaration is FirClassLikeDeclaration) {
             val acceptedByFilter = when (classifierDeclaration.isInner) {
                 true -> constructorFilter.acceptInner
                 false -> constructorFilter.acceptNested
             }
-            isSuccessCandidate = isSuccessCandidate && acceptedByFilter
-        }
 
-        when {
-            isSuccessCandidate && !isSuccessResult -> {
-                // successful result is better than unsuccessful
-                isSuccessResult = true
-                isAmbiguousResult = false
-                result = SymbolWithSubstitutor(symbol, substitutor)
-            }
-            result?.symbol === symbol -> {
-                // skip identical results
-                return
-            }
-            result != null -> {
-                if (isSuccessResult == isSuccessCandidate) {
-                    val checkResult = checkUnambiguousClassifiers(result!!.symbol, symbol, session)
-                    if (checkResult.shouldReplaceResult) {
-                        result = SymbolWithSubstitutor(symbol, substitutor)
-                    } else {
-                        isAmbiguousResult = checkResult.isAmbiguousResult
-                    }
-                } else {
-                    // ignore unsuccessful result if we have successful one
-                }
-            }
-            else -> {
-                // result == null: any result is better than no result
-                isSuccessResult = isSuccessCandidate
-                result = SymbolWithSubstitutor(symbol, substitutor)
+            if (acceptedByFilter) {
+                collector.processCandidate(symbol, substitutor)
             }
         }
     }
@@ -173,48 +106,13 @@ private fun FirScope.getFirstClassifierOrNull(
     if (this is FirDefaultStarImportingScope) {
         processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(callInfo.name) { symbol, substitutor ->
             process(symbol, substitutor)
-            isSuccessResult
+            collector.applicability == CandidateApplicability.RESOLVED
         }
     } else {
         processClassifiersByNameWithSubstitution(callInfo.name, ::process)
     }
 
-    return result.takeUnless { isAmbiguousResult }
-}
-
-private data class CheckUnambiguousClassifiersResult(val shouldReplaceResult: Boolean, val isAmbiguousResult: Boolean)
-
-/**
- * Handle special cases when classifiers don't cause ambiguity (`Throws`)
- *
- * The following output options are possible:
- *   * `shouldReplaceResult = true, isAmbiguousResult = false` means successful disambiguation
- *     but the previous result should be replaced with the new one (typically class symbol wins typealias)
- *   * `shouldReplaceResult = false, isAmbiguousResult = false` means successful disambiguation
- *     but the new result should be discarded
- *   * `shouldReplaceResult = false, isAmbiguousResult = true` means unsuccessful disambiguation
- *     and both results become irrelevant
- */
-private fun checkUnambiguousClassifiers(
-    foundClassifierSymbol: FirClassifierSymbol<*>,
-    newClassifierSymbol: FirClassifierSymbol<*>,
-    session: FirSession,
-): CheckUnambiguousClassifiersResult {
-    val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
-
-    if (foundClassifierSymbol is FirTypeAliasSymbol && newClassifierSymbol is FirRegularClassSymbol &&
-        classTypealiasesThatDontCauseAmbiguity[newClassifierSymbol.classId] == foundClassifierSymbol.classId
-    ) {
-        return CheckUnambiguousClassifiersResult(shouldReplaceResult = true, isAmbiguousResult = false)
-    }
-
-    if (newClassifierSymbol is FirTypeAliasSymbol && foundClassifierSymbol is FirRegularClassSymbol &&
-        classTypealiasesThatDontCauseAmbiguity[foundClassifierSymbol.classId] == newClassifierSymbol.classId
-    ) {
-        return CheckUnambiguousClassifiersResult(shouldReplaceResult = false, isAmbiguousResult = false)
-    }
-
-    return CheckUnambiguousClassifiersResult(shouldReplaceResult = false, isAmbiguousResult = true)
+    return collector.getResult().resolvedCandidateOrNull()
 }
 
 private fun processSyntheticConstructors(
@@ -234,7 +132,8 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    constructorFilter: ConstructorFilter
+    constructorFilter: ConstructorFilter,
+    typeArguments: List<FirTypeProjection>,
 ) {
     whileAnalysing(session, matchedSymbol.fir) {
         val scope = when (matchedSymbol) {
@@ -253,7 +152,11 @@ private fun processConstructors(
                     TypeAliasConstructorsSubstitutingScope(
                         matchedSymbol,
                         basicScope,
-                        outerType
+                        outerType,
+                        abbreviation = matchedSymbol.constructType(
+                            Array(typeArguments.size) { typeArguments[it].toConeTypeProjection() },
+                            isNullable = false, ConeAttributes.Empty,
+                        ),
                     )
                 } else {
                     null

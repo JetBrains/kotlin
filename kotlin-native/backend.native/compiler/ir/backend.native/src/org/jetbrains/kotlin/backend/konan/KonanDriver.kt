@@ -126,7 +126,13 @@ class KonanDriver(
             konanConfig.cacheSupport.checkConsistency()
         }
 
-        DynamicCompilerDriver().run(konanConfig, environment)
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val sourcesFiles = environment.getSourceFiles()
+        performanceManager?.notifyCompilerInitialized(
+                sourcesFiles.size, environment.countLinesOfCode(sourcesFiles), "${konanConfig.moduleId}-${konanConfig.produce}"
+        )
+
+        DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {

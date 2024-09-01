@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.intersectionTypeRef]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.intersectionTypeRef]
  */
 abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
     abstract override val source: KtSourceElement?

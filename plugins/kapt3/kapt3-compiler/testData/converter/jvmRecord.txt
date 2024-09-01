@@ -83,28 +83,6 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     private final int x = 0;
     private final T y = null;
 
-    public R(@A()
-    int x, T y) {
-        super();
-    }
-
-    public final int x() {
-        return 0;
-    }
-
-    public final T y() {
-        return null;
-    }
-
-    public R(T y) {
-        super();
-    }
-
-    @java.lang.Override()
-    public int foo() {
-        return 0;
-    }
-
     public final int component1() {
         return 0;
     }
@@ -134,5 +112,27 @@ public final class R<T extends java.lang.Object> extends java.lang.Record implem
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
+    }
+
+    public R(@A()
+    int x, T y) {
+        super();
+    }
+
+    public final int x() {
+        return 0;
+    }
+
+    public final T y() {
+        return null;
+    }
+
+    public R(T y) {
+        super();
+    }
+
+    @java.lang.Override()
+    public int foo() {
+        return 0;
     }
 }

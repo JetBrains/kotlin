@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1288
 var log = ""
 
 fun bar(): A {

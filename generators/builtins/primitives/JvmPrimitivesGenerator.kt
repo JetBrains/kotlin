@@ -11,6 +11,7 @@ import java.io.PrintWriter
 class JvmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(writer) {
     override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `${thisKind.name.lowercase()}`.")
+        expectActual = ExpectActualModifier.Unspecified
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {

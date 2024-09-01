@@ -66,7 +66,7 @@ private val useLegacyCustomFunctionTypeSerializationUntil: String
     }
 
 object ComposableFunction : FunctionTypeKind(
-    FqName.topLevel(Name.identifier("androidx.compose.runtime.internal")),
+    FqName("androidx.compose.runtime.internal"),
     "ComposableFunction",
     ComposeClassIds.Composable,
     isReflectType = false
@@ -81,7 +81,7 @@ object ComposableFunction : FunctionTypeKind(
 }
 
 object KComposableFunction : FunctionTypeKind(
-    FqName.topLevel(Name.identifier("androidx.compose.runtime.internal")),
+    FqName("androidx.compose.runtime.internal"),
     "KComposableFunction",
     ComposeClassIds.Composable,
     isReflectType = true

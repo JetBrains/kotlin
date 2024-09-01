@@ -31,6 +31,8 @@
 #import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 #import "Natives.h"
+#import "TypeInfoObjCExportAddition.hpp"
+#import "WritableTypeInfo.hpp"
 
 using namespace kotlin;
 
@@ -43,9 +45,7 @@ inline T* konanAllocArray(size_t length) {
 
 }
 
-typedef id (*convertReferenceToRetainedObjC)(ObjHeader* obj);
 typedef OBJ_GETTER((*convertReferenceFromObjC), id obj);
-
 
 static char associatedTypeInfoKey;
 
@@ -92,14 +92,14 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 
 namespace {
 
-ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
+PERFORMANCE_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
   auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd)>(&objc_msgSend);
   msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector);
 }
 
 } // namespace
 
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
+extern "C" PERFORMANCE_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
   RuntimeAssert(associatedObject != nullptr, "Kotlin_ObjCExport_releaseAssociatedObject(nullptr)");
   // May already be in the native state if was scheduled on the main queue.
   NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
@@ -131,14 +131,9 @@ extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str
       length:numBytes
       encoding:NSUTF16LittleEndianStringEncoding];
 
-    if (!isShareable(str)) {
-      SetAssociatedObject(str, candidate);
-    } else {
-      id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
-      if (old != nullptr) {
-        objc_release(candidate);
-        return objc_retain(old);
-      }
+    if (id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate)) {
+      objc_release(candidate);
+      return objc_retain(old);
     }
 
     return objc_retain(candidate);
@@ -190,7 +185,7 @@ static const ObjCTypeAdapter* findProtocolAdapter(Protocol* prot) {
 }
 
 static const ObjCTypeAdapter* getTypeAdapter(const TypeInfo* typeInfo) {
-  return typeInfo->writableInfo_->objCExport.typeAdapter;
+  return objCExport(typeInfo).typeAdapter;
 }
 
 static void addProtocolForAdapter(Class clazz, const ObjCTypeAdapter* protocolAdapter) {
@@ -228,13 +223,27 @@ extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* p
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz);
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(clazz != nullptr, "Cannot be null");
+  return getOrCreateTypeInfo(*clazz);
+}
+
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
+  if (kotlin::mm::IsCurrentThreadRegistered()) {
+    // ObjC runtime might have taken a lock in Runnable context on the way here. Safe-points are unwelcome in the code below.
+    // We can't make it all the way in a Runnable state as well, because some of the operations below might take a while.
+    AssertThreadState(kotlin::ThreadState::kNative);
+  }
+
   const ObjCTypeAdapter* typeAdapter = findClassAdapter(clazz);
   if (typeAdapter == nullptr) {
     getOrCreateTypeInfo(clazz);
     return;
   }
 
+  // We aren't really sure we've checked all the cases when initialize is called, and guarded them with a switch to native.
+  // If panic asserts above are disabled, let's ensure the native state here,
+  // to avoid potentially more frequent deadlock cases.
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   const TypeInfo* typeInfo = typeAdapter->kotlinTypeInfo;
@@ -265,7 +274,7 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
 }
 
-extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
+extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
   const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
 }
@@ -281,11 +290,12 @@ static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
 static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
 
 static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
   for (int index = 0; index < count; ++index) {
     const ObjCTypeAdapter* adapter = adapters[index];
     const TypeInfo* typeInfo = adapter->kotlinTypeInfo;
     if (typeInfo != nullptr) {
-      typeInfo->writableInfo_->objCExport.typeAdapter = adapter;
+      objCExport(typeInfo).typeAdapter = adapter;
     }
   }
 }
@@ -440,7 +450,7 @@ extern "C" id objc_autorelease(id self);
 // but doesn't require any balancing release operation.
 // It might use autorelease though, which will be suboptimal.
 template <bool retain>
-static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
+static PERFORMANCE_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
   if (obj == nullptr) return nullptr;
@@ -452,7 +462,7 @@ static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
 
   // TODO: propagate [retainAutorelease] to the code below.
 
-  convertReferenceToRetainedObjC convertToRetained = (convertReferenceToRetainedObjC)obj->type_info()->writableInfo_->objCExport.convertToRetained;
+  convertReferenceToRetainedObjC convertToRetained = (convertReferenceToRetainedObjC)objCExport(obj->type_info()).convertToRetained;
 
   id retainedResult;
   if (convertToRetained != nullptr) {
@@ -478,12 +488,12 @@ extern "C" id Kotlin_ObjCExport_refToLocalObjC(ObjHeader* obj) {
 }
 
 // The function is marked with noexcept, so any exception reaching it will cause std::terminate.
-extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) noexcept {
+extern "C" PERFORMANCE_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) noexcept {
   return Kotlin_ObjCExport_refToObjCImpl<false>(obj);
 }
 
 // The function is marked with noexcept, so any exception reaching it will cause std::terminate.
-extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noexcept {
+extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noexcept {
   // TODO: consider removing this function.
   RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, obj);
 }
@@ -503,7 +513,7 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj) {
 }
 
 static id convertKotlinObjectToRetained(ObjHeader* obj) {
-  Class clazz = obj->type_info()->writableInfo_->objCExport.objCClass;
+  Class clazz = objCExport(obj->type_info()).objCClass;
   RuntimeAssert(clazz != nullptr, "");
   return [clazz createRetainedWrapper:obj];
 }
@@ -533,7 +543,7 @@ static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const 
       return nullptr;
     }
 
-    if (interfaceTypeInfo->writableInfo_->objCExport.convertToRetained != nullptr) {
+    if (objCExport(interfaceTypeInfo).convertToRetained != nullptr) {
       if (foundTypeInfo == nullptr || IsSubInterface(interfaceTypeInfo, foundTypeInfo)) {
         foundTypeInfo = interfaceTypeInfo;
       } else if (!IsSubInterface(foundTypeInfo, interfaceTypeInfo)) {
@@ -547,7 +557,7 @@ static convertReferenceToRetainedObjC findConvertToRetainedFromInterfaces(const 
 
   return foundTypeInfo == nullptr ?
     nullptr :
-    (convertReferenceToRetainedObjC)foundTypeInfo->writableInfo_->objCExport.convertToRetained;
+    (convertReferenceToRetainedObjC)objCExport(foundTypeInfo).convertToRetained;
 }
 
 static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
@@ -559,7 +569,7 @@ static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
     convertToRetained = (typeInfo == theUnitTypeInfo) ? &Kotlin_ObjCExport_convertUnitToRetained : &convertKotlinObjectToRetained;
   }
 
-  typeInfo->writableInfo_->objCExport.convertToRetained = (void*)convertToRetained;
+  objCExport(typeInfo).convertToRetained = (void*)convertToRetained;
 
   return convertToRetained(obj);
 }
@@ -635,7 +645,7 @@ static const TypeInfo* createTypeInfo(
   TypeInfo* result = (TypeInfo*)std::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
-  result->flags_ = TF_OBJC_DYNAMIC;
+  result->flags_ = TF_OBJC_DYNAMIC | TF_REFLECTION_SHOW_REL_NAME;
 
   result->superType_ = superType;
   if (fieldsInfo == nullptr) {
@@ -686,7 +696,7 @@ static const TypeInfo* createTypeInfo(
 
   result->packageName_ = nullptr;
   result->relativeName_ = CreatePermanentStringFromCString(className);
-  result->writableInfo_ = (WritableTypeInfo*)std::calloc(1, sizeof(WritableTypeInfo));
+  result->writableInfo_ = kotlin::allocateWritableTypeInfo();
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];
 
@@ -764,6 +774,12 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+
+  if (compiler::swiftExport() && compiler::runtimeAssertsEnabled()) {
+      auto kotlinBase = objc_getClass("KotlinBase");
+      RuntimeAssert(kotlinBase != nullptr, "Couldn't find KotlinBase when Swift Export is enabled");
+      RuntimeAssert(![clazz isSubclassOfClass:kotlinBase], "Trying to createTypeInfo for KotlinBase-descendant with Swift Export");
+  }
 
   std::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
@@ -900,11 +916,11 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
                                           superITable, superITableSize, itableEqualsSuper, fieldsInfo);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
-  result->writableInfo_->objCExport.objCClass = clazz;
+  objCExport(result).objCClass = clazz;
   return result;
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> typeInfoCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> typeInfoCreationMutex;
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz);
@@ -938,7 +954,7 @@ const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz
   return createTypeInfo(clazz, superType, fieldsInfo);
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> classCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {
@@ -952,6 +968,7 @@ static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) 
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
 
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
@@ -1002,27 +1019,41 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   return result;
 }
 
+static void setClassEnsureInitialized(const TypeInfo* typeInfo, Class cls) {
+  RuntimeAssert(cls != nullptr, "");
+
+  // ObjC runtime calls +initialize under a global lock on the first access to an object.
+  // `[result self]` below will ensure ahead of time initialization
+  // we only have to make it happen in the native state
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(true);
+  [cls self];
+
+  objCExport(typeInfo).objCClass = cls;
+}
+
 static Class getOrCreateClass(const TypeInfo* typeInfo) {
-  Class result = typeInfo->writableInfo_->objCExport.objCClass;
+  Class result = objCExport(typeInfo).objCClass;
   if (result != nullptr) {
     return result;
   }
 
+  RuntimeAssert(!compiler::swiftExport(), "Not available with Swift Export");
+
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
   if (typeAdapter != nullptr) {
     result = objc_getClass(typeAdapter->objCName);
-    RuntimeAssert(result != nullptr, "");
-    typeInfo->writableInfo_->objCExport.objCClass = result;
+    setClassEnsureInitialized(typeInfo, result);
   } else {
     Class superClass = getOrCreateClass(typeInfo->superType_);
 
     std::lock_guard lockGuard(classCreationMutex); // Note: non-recursive
 
-    result = typeInfo->writableInfo_->objCExport.objCClass; // double-checking.
+    result = objCExport(typeInfo).objCClass; // double-checking.
     if (result == nullptr) {
-      result = createClass(typeInfo, superClass);
-      RuntimeAssert(result != nullptr, "");
-      typeInfo->writableInfo_->objCExport.objCClass = result;
+        result = createClass(typeInfo, superClass);
+        // Don't have to be a release store –
+        // the operations above are synchronized and thus might not be reordered after this store.
+        setClassEnsureInitialized(typeInfo, result);
     }
   }
 
@@ -1057,6 +1088,11 @@ extern "C" ALWAYS_INLINE void* Kotlin_Interop_refToObjC(ObjHeader* obj) {
 extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
   RuntimeAssert(false, "Unavailable operation");
   RETURN_OBJ(nullptr);
+}
+
+extern "C" ALWAYS_INLINE const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
 }
 
 #endif // KONAN_OBJC_INTEROP

@@ -15,7 +15,6 @@ class ConeTypeVariableType(
     val typeConstructor: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType() {
-    override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeTypeVariableType) return false
@@ -64,9 +63,6 @@ data class ConeStubTypeConstructor(
 
 sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val nullability: ConeNullability) : StubTypeMarker,
     ConeSimpleKotlinType() {
-
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
 
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty

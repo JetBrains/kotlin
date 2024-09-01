@@ -7,26 +7,29 @@ package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.sir.SirImport
-import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
-import org.jetbrains.kotlin.sir.providers.SirTypeProvider
-import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
+import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
+import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
+import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
+import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
-import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
-import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
-import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.providers.utils.*
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.STABLE_DECLARATIONS_ORDER
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
-import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
-import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
+import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScopeProviderFromBinary
+import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
+import org.jetbrains.kotlin.swiftexport.standalone.writer.*
+import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -37,9 +40,11 @@ public data class SwiftExportConfig(
     val logger: SwiftExportLogger = createDummyLogger(),
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
-    val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
+    val multipleModulesHandlingStrategy: MultipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
-    ) {
+    val moduleForPackagesName: String = "ExportedKotlinPackages",
+) {
     public companion object {
         /**
          * How should the generated stubs refer to C bridging module?
@@ -58,6 +63,33 @@ public data class SwiftExportConfig(
 
         public const val ROOT_PACKAGE: String = "packageRoot"
     }
+
+    internal val stableDeclarationsOrder: Boolean = settings.containsKey(STABLE_DECLARATIONS_ORDER)
+    internal val renderDocComments: Boolean = settings[RENDER_DOC_COMMENTS] != "false"
+    internal val unsupportedDeclarationReporter: UnsupportedDeclarationReporter = unsupportedDeclarationReporterKind.toReporter()
+
+    internal val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
+    internal val bridgeModuleNamePrefix: String = settings.getOrElse(BRIDGE_MODULE_NAME) {
+        logger.report(
+            SwiftExportLogger.Severity.Warning,
+            "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead"
+        )
+        DEFAULT_BRIDGE_MODULE_NAME
+    }
+    internal val targetPackageFqName = settings[ROOT_PACKAGE]?.let { packageName ->
+        packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
+            ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
+            ?: null.also {
+                logger.report(
+                    SwiftExportLogger.Severity.Warning,
+                    "'$packageName' is not a valid name for ${ROOT_PACKAGE} and will be ignored"
+                )
+            }
+    }
+}
+
+public enum class MultipleModulesHandlingStrategy {
+    OneToOneModuleMapping, IntoSingleModule;
 }
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -79,21 +111,43 @@ public enum class ErrorTypeStrategy {
     }
 }
 
-public sealed interface InputModule {
-    public val name: String
-    public val path: Path
+public data class InputModule(
+    public val name: String,
+    public val path: Path,
+    public val config: SwiftExportConfig,
+)
 
-    public class Binary(
-        override val name: String,
-        override val path: Path,
-    ) : InputModule
+public sealed class SwiftExportModule(
+    public val name: String,
+    public val dependencies: List<Reference>
+) : Serializable {
+
+    public class Reference(
+        public val name: String
+    )
+
+    // used by packages module only
+    public class SwiftOnly(
+        public val swiftApi: Path,
+        name: String,
+    ) : SwiftExportModule(name, emptyList()) {
+        override fun equals(other: Any?): Boolean =
+            other is SwiftOnly && swiftApi == other.swiftApi && name == other.name
+
+        override fun hashCode(): Int {
+            var result = swiftApi.hashCode()
+            result = 31 * result + name.hashCode()
+            return result
+        }
+    }
+
+    public class BridgesToKotlin(
+        public val files: SwiftExportFiles,
+        public val bridgeName: String,
+        name: String,
+        dependencies: List<Reference>,
+    ) : SwiftExportModule(name, dependencies)
 }
-
-public data class SwiftExportModule(
-    val name: String,
-    val files: SwiftExportFiles,
-    val dependencies: List<SwiftExportModule>,
-) : Serializable
 
 public data class SwiftExportFiles(
     val swiftApi: Path,
@@ -124,77 +178,143 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
     }
 }
 
-@Deprecated(message = "This method will be removed in a future version")
-public fun runSwiftExport(
-    input: InputModule.Binary,
-    config: SwiftExportConfig,
-    output: SwiftExportFiles,
-) {
-    val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
-    val renderDocComments = config.settings[RENDER_DOC_COMMENTS] != "false"
-    val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
-        config.logger.report(
-            SwiftExportLogger.Severity.Warning,
-            "Bridging header is not set. Using $DEFAULT_BRIDGE_MODULE_NAME instead"
-        )
-        DEFAULT_BRIDGE_MODULE_NAME
-    }
-    val unsupportedDeclarationReporter = config.unsupportedDeclarationReporterKind.toReporter()
-    val buildResult = buildSwiftModule(input, config, unsupportedDeclarationReporter)
-    val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
-        override fun swiftFqName(type: SirType): String = type.swiftName
-        override fun kotlinFqName(type: SirType): String {
-            require(type is SirNominalType)
-            return ((type.type.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
-        }
-    })
-    val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.mainModule)
-    if (bridgeRequests.isNotEmpty()) {
-        buildResult.mainModule.updateImports(listOf(SirImport(bridgeModuleName)))
-    }
-    val additionalSwiftLinesProvider = if (unsupportedDeclarationReporter is SimpleUnsupportedDeclarationReporter) {
-        // Lazily call after SIR printer to make sure that all declarations are collected.
-        { unsupportedDeclarationReporter.messages.map { "// $it" } }
-    } else {
-        { emptyList() }
-    }
-    dumpResultToFiles(
-        sirModules = listOf(buildResult.mainModule, buildResult.moduleForPackageEnums),
-        bridgeGenerator = bridgeGenerator,
-        requests = bridgeRequests,
-        output = output,
-        stableDeclarationsOrder = stableDeclarationsOrder,
-        renderDocComments = renderDocComments,
-        additionalSwiftLinesProvider = additionalSwiftLinesProvider,
-    )
-}
-
 /**
  * A root function for running Swift Export from build tool
  */
-@Suppress("DEPRECATION")
 public fun runSwiftExport(
-    input: InputModule.Binary,
-    config: SwiftExportConfig,
-): Result<List<SwiftExportModule>> {
-    val output = SwiftExportFiles(
-        swiftApi = config.outputPath / "${input.name}.swift",
-        kotlinBridges = config.outputPath / "${input.name}.kt",
-        cHeaderBridges = config.outputPath / "${input.name}.h"
+    input: Set<InputModule>,
+): Result<Set<SwiftExportModule>> = runCatching {
+    val translatedModules = input
+        .map { rootModule ->
+            /**
+             * This value represents dependencies of current module.
+             * The actual dependency graph is unknown at this point - there is only an array of modules to translate. This particular value
+             * will be used to initialize Analysis API session. It is an error to pass module as a dependency to itself - therefor there is
+             * a need to remove the current translation module from the list of dependencies.
+             */
+            val dependencies = input - rootModule
+            translateModule(rootModule, dependencies)
+        }
+
+    val packagesModule = writeSwiftModule(
+        sirModule = translatedModules.createModuleForPackages(),
+        outputPath = input.first().config.let { // we don't have "general" config, so we have to calculate this from nearest module KT-70205
+            it.outputPath.parent / it.moduleForPackagesName / "${it.moduleForPackagesName}.swift"
+        }
     )
 
-    return runCatching {
-        runSwiftExport(
-            input,
-            config,
-            output
-        )
-        listOf(
-            SwiftExportModule(
-                name = input.name,
-                files = output,
-                dependencies = emptyList(),
+    return@runCatching setOf(packagesModule) + translatedModules.map(TranslationResult::writeModule)
+}
+
+private fun translateModule(module: InputModule, dependencies: Set<InputModule>): TranslationResult {
+    val moduleProvider: SirModuleProvider = when (module.config.multipleModulesHandlingStrategy) {
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider()
+        MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = module.name)
+    }
+    val buildResult = createModuleWithScopeProviderFromBinary(module, dependencies)
+        .initializeSirModule(module.config, moduleProvider)
+
+    // KT-68253: bridge generation could be better
+    val bridgeRequests = buildBridgeRequests(module.config.bridgeGenerator, buildResult.module)
+    if (bridgeRequests.isNotEmpty()) {
+        buildResult.module.updateImport(
+            SirImport(
+                moduleName = module.bridgesModuleName,
+                mode = org.jetbrains.kotlin.sir.SirImport.Mode.ImplementationOnly
             )
         )
+    }
+
+    val bridges = generateBridgeSources(module.config.bridgeGenerator, bridgeRequests, true)
+
+    return TranslationResult(
+        packages = buildResult.packages,
+        sirModule = buildResult.module,
+        bridgeSources = bridges,
+        config = module.config,
+        bridgesModuleName = module.bridgesModuleName,
+    )
+}
+
+internal val InputModule.bridgesModuleName: String
+    get() = "${config.bridgeModuleNamePrefix}_${name}"
+
+private class TranslationResult(
+    val sirModule: SirModule,
+    val packages: Set<FqName>,
+    val bridgeSources: BridgeSources,
+    val config: SwiftExportConfig,
+    val bridgesModuleName: String,
+)
+
+private fun Collection<TranslationResult>.createModuleForPackages(): SirModule = buildModule {
+    name = first().config.moduleForPackagesName
+}.apply {
+    val enumGenerator = SirEnumGeneratorImpl(this)
+    flatMap { it.packages }
+        .forEach { with(enumGenerator) { it.sirPackageEnum() } }
+}
+
+private fun writeSwiftModule(
+    sirModule: SirModule,
+    outputPath: Path,
+): SwiftExportModule.SwiftOnly {
+    val swiftSources = sequenceOf(
+        SirAsSwiftSourcesPrinter.print(
+            sirModule,
+            stableDeclarationsOrder = true,
+            renderDocComments = false,
+        )
+    )
+
+    dumpTextAtFile(swiftSources, outputPath.toFile())
+
+    return SwiftExportModule.SwiftOnly(
+        name = sirModule.name,
+        swiftApi = outputPath,
+    )
+}
+
+private fun TranslationResult.writeModule(): SwiftExportModule {
+    val swiftSources = sequenceOf(
+        SirAsSwiftSourcesPrinter.print(
+            sirModule,
+            config.stableDeclarationsOrder,
+            config.renderDocComments,
+        )
+    ) + config.unsupportedDeclarationReporter.messages.map { "// $it" }
+
+    val outputFiles = SwiftExportFiles(
+        swiftApi = (config.outputPath / sirModule.name / "${sirModule.name}.swift"),
+        kotlinBridges = (config.outputPath / sirModule.name / "${sirModule.name}.kt"),
+        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h")
+    )
+
+    dumpTextAtPath(
+        swiftSources,
+        bridgeSources,
+        outputFiles
+    )
+
+    return SwiftExportModule.BridgesToKotlin(
+        name = sirModule.name,
+        dependencies = sirModule.imports
+            .filter { it.moduleName !in setOf(KotlinRuntimeModule.name, bridgesModuleName) }
+            .map { SwiftExportModule.Reference(it.moduleName) },
+        bridgeName = bridgesModuleName,
+        files = outputFiles
+    )
+}
+
+private object StandaloneSirTypeNamer : SirTypeNamer {
+    override fun swiftFqName(type: SirType): String = type.swiftName
+    override fun kotlinFqName(type: SirType): String {
+        require(type is SirNominalType)
+
+        return when(val declaration = type.typeDeclaration) {
+            KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
+            SirSwiftModule.string -> "kotlin.String"
+            else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
+        }
     }
 }

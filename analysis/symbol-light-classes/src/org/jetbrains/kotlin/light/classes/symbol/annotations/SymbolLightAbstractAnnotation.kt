@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.calls.singleConstructorCallOrNull
-import org.jetbrains.kotlin.analysis.api.calls.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.singleConstructorCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -73,7 +73,7 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
         if (useDefault) {
             val callElement = kotlinOrigin ?: return null
             return analyzeForLightClasses(callElement) {
-                val valueParameter = callElement.resolveCallOld()
+                val valueParameter = callElement.resolveToCall()
                     ?.singleConstructorCallOrNull()
                     ?.symbol
                     ?.valueParameters

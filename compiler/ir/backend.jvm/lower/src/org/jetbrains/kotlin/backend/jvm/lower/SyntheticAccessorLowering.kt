@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,22 +11,24 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
+import org.jetbrains.kotlin.backend.jvm.ir.inlineDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
-import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -119,7 +121,7 @@ private class SyntheticAccessorTransformer(
     val irFile: IrFile,
     val pendingAccessorsToAdd: MutableSet<IrFunction>
 ) : IrElementTransformerVoidWithContext() {
-    private val accessorGenerator = context.cachedDeclarations.syntheticAccessorGenerator
+    private val accessorGenerator = JvmSyntheticAccessorGenerator(context)
     private val inlineScopeResolver: IrInlineScopeResolver = irFile.findInlineCallSites(context)
     private var processingIrInlinedFun = false
 
@@ -133,15 +135,15 @@ private class SyntheticAccessorTransformer(
         }
     }
 
-    private fun <T : IrFunctionSymbol> T.save(): T {
-        assert(owner.fileOrNull == irFile || processingIrInlinedFun) {
+    private fun <T : IrFunction> T.save(): T {
+        assert(fileOrNull == irFile || processingIrInlinedFun) {
             "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                     "While lowering this file: ${irFile.render()}\n" +
-                    "Trying to add this accessor: ${owner.render()}"
+                    "Trying to add this accessor: ${render()}"
         }
 
-        if (owner.fileOrNull == irFile) {
-            pendingAccessorsToAdd += this.owner
+        if (fileOrNull == irFile) {
+            pendingAccessorsToAdd += this
         }
         return this
     }
@@ -158,45 +160,50 @@ private class SyntheticAccessorTransformer(
 
         val callee = expression.symbol.owner
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
-        val generateReflectiveAccess = shouldGenerateReflectiveAccess(expression, withSuper)
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
+        val generateSpecialAccessWithoutSyntheticAccessor =
+            shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper, thisSymbol)
 
         if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
             return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
         }
 
         val accessor = when {
-            generateReflectiveAccess -> return super.visitFunctionAccess(expression)
+            generateSpecialAccessWithoutSyntheticAccessor -> return super.visitFunctionAccess(expression)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(callee) ->
-                accessorGenerator.getSyntheticConstructorOfSealedClass(callee).symbol
+                accessorGenerator.getSyntheticConstructorOfSealedClass(callee)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(callee) ->
-                accessorGenerator.getSyntheticConstructorWithMangledParams(callee).symbol
+                accessorGenerator.getSyntheticConstructorWithMangledParams(callee)
             !expression.symbol.isAccessible(withSuper, thisSymbol) ->
                 accessorGenerator.getSyntheticFunctionAccessor(expression, allScopes).save()
 
             else ->
                 return super.visitFunctionAccess(expression)
         }
-        return super.visitExpression(modifyFunctionAccessExpression(expression, accessor))
+        return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol))
     }
 
-    private fun shouldGenerateReflectiveAccess(expression: IrFunctionAccessExpression, withSuper: Boolean) =
+    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(
+        expression: IrFunctionAccessExpression,
+        withSuper: Boolean,
+        thisObjReference: IrClassSymbol?,
+    ): Boolean =
         when {
             context.evaluatorData == null -> false
             expression is IrCall -> {
                 val inJvmStaticWrapper = (currentFunction?.irElement as? IrFunction)?.origin == JVM_STATIC_WRAPPER
-                !inJvmStaticWrapper && !expression.symbol.isAccessibleWithoutReflection(withSuper)
+                !inJvmStaticWrapper && !expression.symbol.isDirectlyAccessible(withSuper, thisObjReference)
             }
-            expression is IrConstructorCall -> !expression.symbol.isAccessibleWithoutReflection(false)
+            expression is IrConstructorCall -> !expression.symbol.isDirectlyAccessible(withSuper = false, thisObjReference)
             else -> false
         }
 
-    private fun shouldGenerateReflectiveAccess(symbol: IrSymbol): Boolean {
-        return context.evaluatorData != null && !symbol.isAccessibleWithoutReflection(withSuper = false)
+    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(symbol: IrSymbol): Boolean {
+        return context.evaluatorData != null && !symbol.isDirectlyAccessible(withSuper = false, thisObjReference = null)
     }
 
-    private fun IrSymbol.isAccessibleWithoutReflection(withSuper: Boolean) =
-        isAccessible(context, currentScope, inlineScopeResolver, withSuper, null, fromOtherClassLoader = true)
+    private fun IrSymbol.isDirectlyAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean =
+        isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
         val implFunRef = call.getValueArgument(1) as? IrFunctionReference
@@ -206,14 +213,13 @@ private class SyntheticAccessorTransformer(
         if (implFunSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
             return call
 
-        val accessorSymbol = accessorGenerator.getSyntheticFunctionAccessor(implFunRef, allScopes).save()
-        val accessorFun = accessorSymbol.owner
+        val accessor = accessorGenerator.getSyntheticFunctionAccessor(implFunRef, allScopes).save()
         val accessorRef =
             IrFunctionReferenceImpl(
                 implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                accessorSymbol,
-                accessorFun.typeParameters.size,
-                accessorFun.valueParameters.size,
+                accessor.symbol,
+                accessor.typeParameters.size,
+                accessor.valueParameters.size,
                 implFunRef.reflectionTarget, implFunRef.origin
             )
 
@@ -230,8 +236,8 @@ private class SyntheticAccessorTransformer(
         for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
         }
-        if (accessorFun is IrConstructor) {
-            accessorRef.putValueArgument(accessorArgIndex, createAccessorMarkerArgument())
+        if (accessor is IrConstructor) {
+            accessorRef.putValueArgument(accessorArgIndex, accessorGenerator.createAccessorMarkerArgument())
         }
 
         call.putValueArgument(1, accessorRef)
@@ -261,13 +267,13 @@ private class SyntheticAccessorTransformer(
             return super.visitExpression(expression)
         }
 
-        if (shouldGenerateReflectiveAccess(expression.symbol)) {
+        if (shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression.symbol)) {
             return super.visitExpression(expression)
         }
 
         return super.visitExpression(
             modifyGetterExpression(
-                expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save()
+                expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save().symbol
             )
         )
     }
@@ -281,7 +287,7 @@ private class SyntheticAccessorTransformer(
             return super.visitExpression(expression)
         }
 
-        if (shouldGenerateReflectiveAccess(expression.symbol)) {
+        if (shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression.symbol)) {
             return super.visitExpression(expression)
         }
 
@@ -293,7 +299,7 @@ private class SyntheticAccessorTransformer(
 
         return super.visitExpression(
             modifySetterExpression(
-                expression, accessorGenerator.getSyntheticSetter(expression, allScopes).save()
+                expression, accessorGenerator.getSyntheticSetter(expression, allScopes).save().symbol
             )
         )
     }
@@ -301,11 +307,11 @@ private class SyntheticAccessorTransformer(
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {
-                accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).symbol.save()
+                accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).save()
                 declaration.visibility = DescriptorVisibilities.PRIVATE
             }
             accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(declaration) -> {
-                accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).symbol.save()
+                accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).save()
                 declaration.visibility = DescriptorVisibilities.PRIVATE
             }
         }
@@ -332,99 +338,20 @@ private class SyntheticAccessorTransformer(
         return super.visitFunctionReference(expression)
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
-            val callee = expression.inlineDeclaration
-            val parentClass = callee.parentClassOrNull ?: return super.visitBlock(expression)
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (inlinedBlock.isFunctionInlining()) {
+            val callee = inlinedBlock.inlineDeclaration
+            val parentClass = callee.parentClassOrNull ?: return super.visitInlinedFunctionBlock(inlinedBlock)
             return withinIrInlinedFun {
                 withinScope(parentClass) {
                     withinScope(callee) {
-                        super.visitBlock(expression)
+                        super.visitInlinedFunctionBlock(inlinedBlock)
                     }
                 }
             }
         }
-
-        return super.visitBlock(expression)
+        return super.visitInlinedFunctionBlock(inlinedBlock)
     }
-
-    /**
-     * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
-     *
-     * Before:
-     * ```kotlin
-     * class C protected constructor(val value: Int) {
-     *
-     *     protected fun protectedFun(a: Int): String = a.toString()
-     *
-     *     internal inline fun foo(x: Int) {
-     *         println(protectedFun(x))
-     *     }
-     *
-     *     internal inline fun copy(): C = C(value)
-     * }
-     * ```
-     *
-     * After:
-     * ```kotlin
-     * class C protected constructor(val value: Int) {
-     *
-     *     public constructor(
-     *         value: Int,
-     *         constructor_marker: kotlin.jvm.internal.DefaultConstructorMarker?
-     *     ) : this(value)
-     *
-     *     protected fun protectedFun(a: Int): String = a.toString()
-     *
-     *     public static fun access$protectedFun($this: C, a: Int): String =
-     *         $this.protectedFun(a)
-     *
-     *     internal inline fun foo(x: Int) {
-     *         println(C.access$protectedFun(this, x))
-     *     }
-     *
-     *     internal inline fun copy(): C = C(value, null)
-     * }
-     * ```
-     */
-    private fun modifyFunctionAccessExpression(
-        oldExpression: IrFunctionAccessExpression,
-        accessorSymbol: IrFunctionSymbol
-    ): IrFunctionAccessExpression {
-        val newExpression = when (oldExpression) {
-            is IrCall -> IrCallImpl.fromSymbolOwner(
-                oldExpression.startOffset, oldExpression.endOffset,
-                oldExpression.type,
-                accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
-                origin = oldExpression.origin
-            )
-            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                oldExpression.startOffset, oldExpression.endOffset,
-                context.irBuiltIns.unitType,
-                accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
-            )
-            is IrConstructorCall ->
-                IrConstructorCallImpl.fromSymbolOwner(
-                    oldExpression.startOffset, oldExpression.endOffset,
-                    oldExpression.type,
-                    accessorSymbol as IrConstructorSymbol
-                )
-            else ->
-                error("Unexpected IrFunctionAccessExpression: $oldExpression")
-        }
-        newExpression.copyTypeArgumentsFrom(oldExpression)
-        val receiverAndArgs = oldExpression.receiverAndArgs()
-        receiverAndArgs.forEachIndexed { i, irExpression ->
-            newExpression.putValueArgument(i, irExpression)
-        }
-        if (accessorSymbol is IrConstructorSymbol) {
-            newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
-        }
-        return newExpression
-    }
-
-    private fun createAccessorMarkerArgument() =
-        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import org.jetbrains.kotlin.analysis.providers.ForeignValueProviderService
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -41,7 +41,7 @@ val FirPropertySymbol.isForeignValue: Boolean
     get() = fir.foreignValueMarker == true
 
 class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionComponent {
-    private val foreignValueProvider = ForeignValueProviderService.getInstance()
+    private val foreignValueProvider = KotlinForeignValueProviderService.getInstance()
 
     private val typeCache = session.firCachesFactory.createCache<String, FirTypeRef, KtCodeFragment> { typeDescriptor, ktCodeFragment ->
         getPrimitiveType(typeDescriptor, session)?.let { return@createCache it }

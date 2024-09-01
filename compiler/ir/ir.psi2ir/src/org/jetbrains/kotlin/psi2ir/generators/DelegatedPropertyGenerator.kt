@@ -476,7 +476,7 @@ internal class DelegatedPropertyGenerator(
 
     private fun updateNullThisRefValue(conventionMethodCall: CallBuilder) {
         val arg0 = conventionMethodCall.irValueArgumentsByIndex[0]
-        if (arg0 is IrConstImpl<*> && arg0.kind == IrConstKind.Null) {
+        if (arg0 is IrConstImpl && arg0.kind == IrConstKind.Null) {
             conventionMethodCall.irValueArgumentsByIndex[0] =
                 IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType)
         }

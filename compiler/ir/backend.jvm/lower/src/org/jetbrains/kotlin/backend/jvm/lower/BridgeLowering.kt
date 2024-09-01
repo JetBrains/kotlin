@@ -1,19 +1,17 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.SpecialMethodWithDefaultInfo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
-import org.jetbrains.kotlin.backend.jvm.SpecialBridge
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -165,7 +163,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             if (parentAsClass.isJvmInterface) {
                 // If function requires a special bridge, we should record it for generic signatures generation.
                 if (specialBridgeOrNull != null) {
-                    context.functionsWithSpecialBridges.add(this)
+                    this.hasSpecialBridge = true
                 }
                 return false
             }
@@ -473,7 +471,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
-            context.functionsWithSpecialBridges.add(target)
+            target.hasSpecialBridge = true
 
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
@@ -531,8 +529,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                         when (val body = body) {
                             is IrExpressionBody -> +irReturn(body.expression)
                             is IrBlockBody -> body.statements.forEach { +it }
+                            is IrSyntheticBody -> syntheticBodyIsNotSupported(this@rewriteSpecialMethodBody)
                             null -> {}
-                            else -> error("Unsupported method body kind: ${body.render()}")
                         }
                     }
                 }

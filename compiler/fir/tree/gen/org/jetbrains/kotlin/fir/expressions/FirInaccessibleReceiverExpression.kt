@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.inaccessibleReceiverExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.inaccessibleReceiverExpression]
  */
 abstract class FirInaccessibleReceiverExpression : FirExpression(), FirResolvable {
     abstract override val source: KtSourceElement?

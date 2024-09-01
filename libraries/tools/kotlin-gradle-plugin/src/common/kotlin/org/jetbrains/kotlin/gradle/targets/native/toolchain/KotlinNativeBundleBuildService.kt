@@ -18,16 +18,19 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
-import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -58,6 +61,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
 
     internal interface Parameters : BuildServiceParameters {
         val kotlinNativeVersion: Property<String>
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+        val konanPropertiesBuildService: Property<KonanPropertiesBuildService>
+        val platformLibrariesGeneratorService: Property<PlatformLibrariesGenerator.GeneratedPlatformLibrariesService>
     }
 
     @get:Inject
@@ -69,14 +75,20 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
 
     companion object {
-        fun registerIfAbsent(project: Project): Provider<KotlinNativeBundleBuildService> =
-            project.gradle.sharedServices.registerIfAbsent(
+        fun registerIfAbsent(project: Project): Provider<KotlinNativeBundleBuildService> {
+            val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
+            val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
+            val platformLibrariesService = PlatformLibrariesGenerator.registerRequiredServiceIfAbsent(project)
+            return project.gradle.sharedServices.registerIfAbsent(
                 "kotlinNativeBundleBuildService",
                 KotlinNativeBundleBuildService::class.java
             ) {
                 it.parameters.kotlinNativeVersion
                     .value(project.nativeProperties.kotlinNativeVersion)
                     .disallowChanges()
+                it.parameters.classLoadersCachingService.value(classLoadersCachingService).disallowChanges()
+                it.parameters.konanPropertiesBuildService.value(konanPropertiesBuildService).disallowChanges()
+                it.parameters.platformLibrariesGeneratorService.value(platformLibrariesService).disallowChanges()
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKotlinNativeBundleBuildService::class.java.name) {
                     project.tasks.withType<UsesKotlinNativeBundleBuildService>().configureEach { task ->
@@ -85,6 +97,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     }
                 }
             }
+        }
     }
 
     /**
@@ -218,11 +231,15 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         if (distributionType.mustGeneratePlatformLibs) {
             konanTargets.forEach { konanTarget ->
                 PlatformLibrariesGenerator(
-                    project,
+                    project.objects,
                     konanTarget,
-                    project.konanHome,
                     project.kotlinPropertiesProvider,
-                    project.konanPropertiesBuildService,
+                    parameters.konanPropertiesBuildService,
+                    project.objects.property(GradleBuildMetricsReporter()),
+                    parameters.classLoadersCachingService,
+                    parameters.platformLibrariesGeneratorService,
+                    project.useXcodeMessageStyle,
+                    project.nativeProperties
                 ).generatePlatformLibsIfNeeded()
             }
         }

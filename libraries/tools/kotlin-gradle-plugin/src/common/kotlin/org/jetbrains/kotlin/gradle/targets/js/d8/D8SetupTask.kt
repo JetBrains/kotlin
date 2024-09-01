@@ -32,7 +32,6 @@ abstract class D8SetupTask : AbstractSetupTask<D8Env, D8RootExtension>() {
     override fun extract(archive: File) {
         fs.copy {
             it.from(archiveOperations.zipTree(archive))
-            //
             it.into(destination)
         }
 

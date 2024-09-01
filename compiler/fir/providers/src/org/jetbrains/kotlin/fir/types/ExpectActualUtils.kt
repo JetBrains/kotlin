@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 
 fun createExpectActualTypeParameterSubstitutor(
@@ -19,10 +19,7 @@ fun createExpectActualTypeParameterSubstitutor(
     val substitution = expectActualTypeParameters.associate { (expectedParameterSymbol, actualParameterSymbol) ->
         expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
     }
-    val substitutor = ConeSubstitutorByMap.create(
-        substitution,
-        useSiteSession
-    )
+    val substitutor = substitutorByMap(substitution, useSiteSession)
     if (parentSubstitutor == null) {
         return substitutor
     }

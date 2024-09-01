@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -331,7 +332,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
         require(upperBound is IrType && upperBound.isNullableAny())
-        return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+        return IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     }
 
     override fun createSimpleType(
@@ -413,15 +414,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return this.annotations
     }
 
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        return false
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is IrType)
-        return emptyList()
-    }
-
     override fun createErrorType(debugName: String, delegatedType: SimpleTypeMarker?): SimpleTypeMarker {
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
     }
@@ -457,7 +449,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
             annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
         }?.run {
-            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value else null
+            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst)?.value else null
         }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
@@ -599,6 +591,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         require(this is AbstractIrTypeSubstitutor)
         require(type is IrType)
         return substitute(type)
+    }
+
+    override fun supportsImprovedVarianceInCst(): Boolean {
+        return irBuiltIns.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedVarianceInCst)
     }
 }
 

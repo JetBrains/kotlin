@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 
@@ -28,8 +27,8 @@ internal fun test3(list: Array<String>): String {
     return concat(*list)
 }
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {
     assertEquals("", test1())
     assertEquals("abc", test2())

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
@@ -207,38 +208,41 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object IncompatibleAgpVersionTooHighWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
+    object IncompatibleGradleVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(
+            currentGradleVersion: GradleVersion,
+            minimallySupportedGradleVersion: GradleVersion,
+        ) = build(
             """
-                Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
-                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is higher 
-                than the maximum known to the Kotlin Gradle Plugin.
-                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue
+                Kotlin Gradle Plugin <-> Gradle compatibility issue:
+                The applied Kotlin Gradle is not compatible with the used Gradle version ($currentGradleVersion).
                 
-                Minimum supported Android Gradle Plugin version: $minSupported
-                Maximum tested Android Gradle Plugin version: $maxTested
-                
-                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN}=true' to your gradle.properties
+                Please update the Gradle version to at least $minimallySupportedGradleVersion.
             """.trimIndent()
         )
     }
 
-    object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
+    object IncompatibleAgpVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(
+            androidGradlePluginVersionString: String,
+            minSupported: String,
+        ) = build(
             """
-                Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
-                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is lower than the minimum supported
-                
-                Minimum supported Android Gradle Plugin version: $minSupported
-                Maximum tested Android Gradle Plugin version: $maxTested
-                
-                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN}=true' to your gradle.properties
+                Kotlin Gradle Plugin <-> Android Gradle Plugin compatibility issue:
+                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is lower than the minimum supported $minSupported.
+
+                Please update the Android Gradle Plugin version to at least $minSupported.
             """.trimIndent()
         )
     }
 
     object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke() = build("Failed to get AndroidGradlePluginVersion")
+        operator fun invoke(agpPluginId: String) = build(
+            """
+            Failed to get Android Gradle Plugin version (for '$agpPluginId' plugin).
+            Please report a new Kotlin issue via https://kotl.in/issue.
+            """.trimIndent()
+        )
     }
 
     object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR) {
@@ -933,6 +937,19 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(featureName: String, youtrackUrl: String) = build(
+            """
+                Experimental Feature Notice ⚠️
+                
+                $featureName is an experimental feature and subject to change in any future releases.
+                It may not function as you expect and you may encounter bugs. Use it at your own risk.
+                
+                Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack $youtrackUrl.
+            """.trimIndent()
+        )
+    }
+
     object DeprecatedGradleProperties : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(usedDeprecatedProperty: String): ToolingDiagnostic {
             return build(
@@ -942,14 +959,6 @@ object KotlinToolingDiagnostics {
                 """.trimMargin()
             )
         }
-    }
-
-    object WasmStabilityWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(): ToolingDiagnostic =
-            build(
-                "New 'wasm' target is Work-in-Progress and is subject to change without notice. " +
-                        "Please report encountered issues to https://kotl.in/issue"
-            )
     }
 
     object RedundantDependsOnEdgesFound : ToolingDiagnosticFactory(WARNING) {
@@ -977,6 +986,78 @@ object KotlinToolingDiagnostics {
                 "The Compose compiler plugin is now a part of Kotlin, please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin " +
                         "to enable it. Learn more about this at https://kotl.in/compose-plugin"
             )
+    }
+
+    object DeprecatedKotlinAbiSnapshotDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "'${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' property is deprecated and will be removed soon.\n" +
+                        "By default this type of incremental compilation will not be supported.\n" +
+                        "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' usages from 'gradle.properties' file.\n"
+            )
+    }
+
+    object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                "History based incremental compilation approach for JVM platform is deprecated and will be removed" +
+                        " soon in favor of approach based on ABI snapshots.\n" +
+                        "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT}=false' from 'gradle.properties' file."
+            )
+    }
+
+    object DeprecatedInKMPJavaPluginsDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(pluginId: String): ToolingDiagnostic {
+            val pluginString = when(pluginId) {
+                "application" -> "'$pluginId' (also applies 'java' plugin)"
+                "java-library" -> "'$pluginId' (also applies 'java' plugin)"
+                else -> "'$pluginId'"
+            }
+
+            return build(
+                """
+                |$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin.
+                |
+                |Consider adding a new subproject with '$pluginId' plugin where the KMP project is added as a dependency.
+                """.trimMargin()
+            )
+        }
+    }
+
+    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(userScriptSandboxingEnabled: Boolean) = build(
+            """
+            ${if (userScriptSandboxingEnabled) "You" else "BUILT_PRODUCTS_DIR is not accessible, probably you"} have sandboxing for user scripts enabled.
+            In your Xcode project, navigate to "Build Setting",
+            and under "Build Options" set "User script sandboxing" (ENABLE_USER_SCRIPT_SANDBOXING) to "NO".
+            Then, run "./gradlew --stop" to stop the Gradle daemon
+            For more information, see documentation: https://kotl.in/iq4uke
+            """.trimIndent()
+        )
+    }
+
+    object UnsupportedTargetShortcutError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(shortcutName: String, explicitTargets: String, trace: Throwable) = build(
+            """
+            The $shortcutName target shortcut is deprecated and no longer supported.
+            Please explicitly declare your targets using:
+            
+            """.trimIndent() + explicitTargets + """
+                
+            For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
+
+    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion: ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependency: String, includedProjectPath: String): ToolingDiagnostic = build(
+            """
+                Dependency '$dependency' resolved into included build project '$includedProjectPath'. 
+                However Kotlin Multiplatform can't process such dependency with enabled Project Isolation support.
+                Please consider upgrading Kotlin Version to the latest one in '$includedProjectPath' project.                               
+            """.trimIndent()
+        )
     }
 }
 

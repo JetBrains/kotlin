@@ -49,6 +49,11 @@ public actual val Throwable.suppressedExceptions: List<Throwable> get() {
     return this.suppressedExceptionsList ?: emptyList()
 }
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+internal expect var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+internal expect val Throwable.stack: String
+
 private class ExceptionTraceBuilder {
     private val target = StringBuilder()
     private val visited = mutableListOf<Throwable>()

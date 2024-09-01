@@ -46,16 +46,6 @@ fun PsiReferenceList.addSuperTypeEntry(
     }
 }
 
-fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
-    return with(KotlinModificationTrackerService.getInstance(project)) {
-        if (!this@getExternalDependencies.isLocal) return listOf(outOfBlockModificationTracker)
-        else when (val file = containingFile) {
-            is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
-            else -> listOf(outOfBlockModificationTracker)
-        }
-    }
-}
-
 // There is no other known way found to make PSI types annotated for now (without creating a new instance).
 // It seems we need for platform changes to do it more convenient way (KTIJ-141).
 private val setPsiTypeAnnotationProvider: (PsiType, TypeAnnotationProvider) -> Unit by lazyPub {

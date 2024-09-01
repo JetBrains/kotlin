@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) fun foo()
+KtNameReferenceExpression(32,35): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo()

@@ -9,7 +9,6 @@ val scriptingTestDefinition by configurations.creating
 
 dependencies {
     api(project(":compiler:psi"))
-    implementation(project(":analysis:project-structure"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.common"))
@@ -30,7 +29,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
-    implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
@@ -83,6 +82,11 @@ sourceSets {
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-receivers")
+
+        optIn.addAll(
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        )
     }
 }
 
@@ -103,7 +107,8 @@ allprojects {
             listOf(
                 "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
                 "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
-                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
             )
         )
     }

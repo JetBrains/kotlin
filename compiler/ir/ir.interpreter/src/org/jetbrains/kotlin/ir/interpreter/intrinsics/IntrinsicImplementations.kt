@@ -268,7 +268,7 @@ internal object ArrayConstructor : IntrinsicBase() {
                     // TODO may be use wrap
                     when (it) {
                         is Wrapper -> it.value
-                        is Primitive<*> -> if (it.type.isArray() || it.type.isPrimitiveArray()) it else it.value
+                        is Primitive -> if (it.type.isArray() || it.type.isPrimitiveArray()) it else it.value
                         else -> it
                     }
                 }
@@ -338,7 +338,7 @@ internal object DataClassArrayToString : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val array = environment.callStack.loadState(irFunction.valueParameters.single().symbol) as Primitive<*>
+        val array = environment.callStack.loadState(irFunction.valueParameters.single().symbol) as Primitive
         environment.callStack.pushState(environment.convertToState(arrayToString(array.value), irFunction.returnType))
     }
 }

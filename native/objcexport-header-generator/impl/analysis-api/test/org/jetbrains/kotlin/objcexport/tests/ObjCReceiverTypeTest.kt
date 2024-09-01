@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.objCReceiverType
+import org.jetbrains.kotlin.objcexport.getObjCReceiverType
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.jetbrains.kotlin.objcexport.testUtils.getFunctionOrFail
@@ -34,12 +33,12 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
-            val innerClass = outerClass.getMemberScope().getClassOrFail("Inner")
-            val innerClassConstructor = innerClass.getMemberScope().getConstructors().first()
+            val outerClass = getClassOrFail(file, "Outer")
+            val innerClass = outerClass.memberScope.getClassOrFail("Inner")
+            val innerClassConstructor = innerClass.memberScope.constructors.first()
 
             assertEquals(
-                innerClassConstructor.objCReceiverType?.expandedSymbol?.classId,
+                getObjCReceiverType(innerClassConstructor)?.expandedSymbol?.classId,
                 outerClass.classId
             )
         }
@@ -59,13 +58,13 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
-            val innerClass = outerClass.getMemberScope().getClassOrFail("Inner")
-            val foo = innerClass.getMemberScope().getFunctionOrFail("foo")
+            val outerClass = getClassOrFail(file, "Outer")
+            val innerClass = outerClass.memberScope.getClassOrFail("Inner")
+            val foo = innerClass.memberScope.getFunctionOrFail("foo")
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                foo.objCReceiverType?.expandedSymbol?.classId
+                getObjCReceiverType(foo)?.expandedSymbol?.classId
             )
         }
     }
@@ -85,13 +84,13 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
-            val innerClass = outerClass.getMemberScope().getClassOrFail("Inner")
-            val getter = innerClass.getMemberScope().getPropertyOrFail("prop").getter
+            val outerClass = getClassOrFail(file, "Outer")
+            val innerClass = outerClass.memberScope.getClassOrFail("Inner")
+            val getter = innerClass.memberScope.getPropertyOrFail("prop").getter
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                getter?.objCReceiverType?.expandedSymbol?.classId
+                getObjCReceiverType(getter)?.expandedSymbol?.classId
             )
         }
     }
@@ -112,13 +111,13 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val outerClass = file.getClassOrFail("Outer")
-            val innerClass = outerClass.getMemberScope().getClassOrFail("Inner")
-            val setter = innerClass.getMemberScope().getPropertyOrFail("prop").setter
+            val outerClass = getClassOrFail(file, "Outer")
+            val innerClass = outerClass.memberScope.getClassOrFail("Inner")
+            val setter = innerClass.memberScope.getPropertyOrFail("prop").setter
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                setter?.objCReceiverType?.expandedSymbol?.classId
+                getObjCReceiverType(setter)?.expandedSymbol?.classId
             )
         }
     }
@@ -140,14 +139,14 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val fooClass = file.getClassOrFail("Foo")
-            val foo = fooClass.getMemberScope().getFunctionOrFail("foo")
-            val setter = fooClass.getMemberScope().getPropertyOrFail("prop").setter
-            val getter = fooClass.getMemberScope().getPropertyOrFail("prop").getter
+            val fooClass = getClassOrFail(file, "Foo")
+            val foo = fooClass.memberScope.getFunctionOrFail("foo")
+            val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
+            val getter = fooClass.memberScope.getPropertyOrFail("prop").getter
 
-            assertEquals(buildClassType(StandardClassIds.Boolean), foo.objCReceiverType)
-            assertEquals(buildClassType(StandardClassIds.String), setter?.objCReceiverType)
-            assertEquals(buildClassType(StandardClassIds.String), getter?.objCReceiverType)
+            assertEquals(buildClassType(StandardClassIds.Boolean), getObjCReceiverType(foo))
+            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(setter))
+            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(getter))
         }
     }
 }

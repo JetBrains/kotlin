@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.name.Name
  * [LLFirCombinedJavaSymbolProvider] combines multiple [JavaSymbolProvider]s with the following advantages:
  *
  * - For a given class ID, indices can be accessed once to get relevant PSI classes. Then the correct symbol provider(s) to call can be
- *   found out via the PSI element's [KtModule]s. This avoids the need to call every single subordinate symbol provider.
+ *   found out via the PSI element's [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule]s. This avoids the need to call
+ *   every single subordinate symbol provider.
  * - A small Caffeine cache can avoid most index accesses, because many names are requested multiple times, with a minor memory footprint.
  *
  * [javaClassFinder] must have a scope which combines the scopes of the individual [providers].

@@ -116,7 +116,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker
         )
 
-    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
+    override val booleanOperatorExpressionCheckers: Set<FirBooleanOperatorExpressionChecker>
         get() = setOf(
             FirLogicExpressionTypeChecker,
         )
@@ -152,6 +152,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
         get() = setOf(
             FirUnnecessarySafeCallChecker,
+        )
+
+    override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker>
+        get() = setOf(
+            FirDeprecatedSmartCastChecker
         )
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
@@ -193,6 +198,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
         get() = setOf(
-            FirMultiDollarInterpolationChecker,
+            FirMultiDollarInterpolationCheckerConcatenation,
+        )
+
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = setOf(
+            FirMultiDollarInterpolationCheckerLiteral,
         )
 }

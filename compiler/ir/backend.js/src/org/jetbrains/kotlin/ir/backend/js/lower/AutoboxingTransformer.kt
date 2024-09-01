@@ -87,7 +87,7 @@ abstract class AbstractValueUsageLowering(
             is IrConstructorCall -> this.symbol.owner
             is IrDelegatingConstructorCall -> this.symbol.owner
             is IrCall -> this.callTarget
-            else -> TODO(this.render())
+            is IrEnumConstructorCall -> compilationException("IrEnumConstructorCall is not supported here", this)
         }
 
     private val IrCall.callTarget: IrFunction

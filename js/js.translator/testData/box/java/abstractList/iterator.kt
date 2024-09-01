@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1340
 package foo
 
 class MyList<T>(vararg val data: T) : AbstractList<T>() {

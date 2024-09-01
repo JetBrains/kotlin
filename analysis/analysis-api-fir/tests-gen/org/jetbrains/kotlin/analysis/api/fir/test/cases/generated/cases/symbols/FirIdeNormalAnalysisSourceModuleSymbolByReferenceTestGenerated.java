@@ -149,6 +149,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("javaNestedAnnotation.kt")
+  public void testJavaNestedAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaNestedAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("javaStaticField.kt")
   public void testJavaStaticField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticField.kt");
@@ -164,6 +170,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("javaSyntheticAccessor.kt")
   public void testJavaSyntheticAccessor() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaSyntheticAccessor.kt");
+  }
+
+  @Test
+  @TestMetadata("javaValueParameter.kt")
+  public void testJavaValueParameter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaValueParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaValueParameterLibraryBinary.kt")
+  public void testJavaValueParameterLibraryBinary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaValueParameterLibraryBinary.kt");
   }
 
   @Test
@@ -284,6 +302,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestMetadata("libraryVariableWithAnnotations.kt")
   public void testLibraryVariableWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryVariableWithAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedAnnotation.kt")
+  public void testNestedAnnotation() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/nestedAnnotation.kt");
   }
 
   @Test
@@ -423,6 +447,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
     @Test
+    @TestMetadata("actualEnum.kt")
+    public void testActualEnum() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/js/actualEnum.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -453,6 +483,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     @Test
     public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("composableFunctionInCommonModule.kt")
+    public void testComposableFunctionInCommonModule() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/composableFunctionInCommonModule.kt");
     }
 
     @Test

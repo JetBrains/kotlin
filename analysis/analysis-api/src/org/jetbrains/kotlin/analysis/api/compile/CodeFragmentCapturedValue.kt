@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.compile
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+@KaExperimentalApi
 public sealed class CodeFragmentCapturedValue(
     public val name: String,
     public val isMutated: Boolean,

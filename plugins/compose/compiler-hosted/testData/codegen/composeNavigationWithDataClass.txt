@@ -1,0 +1,18 @@
+final class home/MainKt$ReplyNavHost$1$1$1 {
+    // source: 'main.kt'
+    enclosing method home/MainKt.ReplyNavHost(Landroidx/navigation/NavHostController;Lcom/example/reply/ui/ReplyHomeUIState;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+    synthetic final field $replyHomeUIState: com.example.reply.ui.ReplyHomeUIState
+    inner (anonymous) class home/MainKt$ReplyNavHost$1$1$1
+    method <init>(p0: com.example.reply.ui.ReplyHomeUIState): void
+    public final method invoke(p0: androidx.compose.animation.AnimatedContentScope, p1: androidx.navigation.NavBackStackEntry, p2: androidx.compose.runtime.Composer, p3: int): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+}
+
+public final class home/MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class home/MainKt$ReplyNavHost$1$1$1
+    private final static method ReplyNavHost$lambda$1$lambda$0(p0: java.lang.String, p1: com.example.reply.ui.ReplyHomeUIState, p2: androidx.navigation.NavGraphBuilder): kotlin.Unit
+    private final static method ReplyNavHost$lambda$2(p0: androidx.navigation.NavHostController, p1: com.example.reply.ui.ReplyHomeUIState, p2: java.lang.String, p3: androidx.compose.ui.Modifier, p4: int, p5: int, p6: androidx.compose.runtime.Composer, p7: int): kotlin.Unit
+    private final static method ReplyNavHost(p0: androidx.navigation.NavHostController, p1: com.example.reply.ui.ReplyHomeUIState, p2: java.lang.String, p3: androidx.compose.ui.Modifier, p4: androidx.compose.runtime.Composer, p5: int, p6: int): void
+    public final inner class androidx/compose/ui/Modifier$Companion
+}

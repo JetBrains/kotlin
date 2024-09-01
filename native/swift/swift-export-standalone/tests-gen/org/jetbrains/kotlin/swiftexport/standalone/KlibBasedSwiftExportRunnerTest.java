@@ -30,15 +30,39 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("any")
+  public void testAny() {
+    runTest("native/swift/swift-export-standalone/testData/any/");
+  }
+
+  @Test
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone/testData/classes/");
   }
 
   @Test
+  @TestMetadata("consuming_dependencies")
+  public void testConsuming_dependencies() {
+    runTest("native/swift/swift-export-standalone/testData/consuming_dependencies/");
+  }
+
+  @Test
+  @TestMetadata("functionAndClassWithSameName")
+  public void testFunctionAndClassWithSameName() {
+    runTest("native/swift/swift-export-standalone/testData/functionAndClassWithSameName/");
+  }
+
+  @Test
   @TestMetadata("functions")
   public void testFunctions() {
     runTest("native/swift/swift-export-standalone/testData/functions/");
+  }
+
+  @Test
+  @TestMetadata("inheritance")
+  public void testInheritance() {
+    runTest("native/swift/swift-export-standalone/testData/inheritance/");
   }
 
   @Test
@@ -51,6 +75,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/no_package/");
+  }
+
+  @Test
+  @TestMetadata("nothing_type")
+  public void testNothing_type() {
+    runTest("native/swift/swift-export-standalone/testData/nothing_type/");
   }
 
   @Test
@@ -69,6 +99,18 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   @TestMetadata("package_flattening_missing_target")
   public void testPackage_flattening_missing_target() {
     runTest("native/swift/swift-export-standalone/testData/package_flattening_missing_target/");
+  }
+
+  @Test
+  @TestMetadata("single_module_production")
+  public void testSingle_module_production() {
+    runTest("native/swift/swift-export-standalone/testData/single_module_production/");
+  }
+
+  @Test
+  @TestMetadata("strings")
+  public void testStrings() {
+    runTest("native/swift/swift-export-standalone/testData/strings/");
   }
 
   @Test

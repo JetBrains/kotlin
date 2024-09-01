@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: main
 // TARGET_PLATFORM: JS

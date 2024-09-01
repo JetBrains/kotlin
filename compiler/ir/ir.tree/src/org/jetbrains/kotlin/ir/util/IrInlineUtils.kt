@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 
-val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
-    }
-private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner.takeIf { it.isInline }
-        else -> null
-    }
+/**
+ * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
+ * For example, in the JVM backend it is safe to check the original call of an inlined function, and on other backends it's not.
+ * To discourage usages of such APIs in non-JVM backends, this opt-in annotation was introduced.
+ */
+@RequiresOptIn(
+    message = "This API is supposed to be used only inside JVM backend.",
+)
+annotation class JvmIrInlineExperimental
 
+@JvmIrInlineExperimental
+var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(followAttributeOwner = true)
+@JvmIrInlineExperimental
+var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(followAttributeOwner = true)
+
+@OptIn(JvmIrInlineExperimental::class)
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedElement is IrFunction
 }
@@ -39,13 +39,12 @@ fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
 
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
-val IrReturnableBlock.inlineFunction: IrFunction?
-    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunction?.fileOrNull?.symbol
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
 fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+
+fun IrExpression.isLambdaBlock() =
+    this is IrBlock && this.origin == IrStatementOrigin.LAMBDA

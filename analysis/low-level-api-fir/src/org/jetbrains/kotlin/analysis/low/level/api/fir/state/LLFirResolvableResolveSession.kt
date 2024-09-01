@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,15 +20,14 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
@@ -70,13 +69,16 @@ internal class LLFirResolvableResolveSession(
         }
     }
 
-    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KtModule): FirBasedSymbol<*> {
-        require(ktDeclaration.containingKtFile.isCompiled) {
-            "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextWithContext()}"
+    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
+        requireWithAttachment(
+            ktDeclaration.containingKtFile.isCompiled,
+            { "`findFirCompiledSymbol` only works on compiled declarations, but the given declaration is not compiled." },
+        ) {
+            withPsiEntry("declaration", ktDeclaration, module)
         }
 
         val session = getSessionFor(module)
-        val searcher = FirDeclarationForCompiledElementSearcher(session.symbolProvider)
+        val searcher = FirDeclarationForCompiledElementSearcher(session)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
     }
@@ -87,7 +89,7 @@ internal class LLFirResolvableResolveSession(
         return findSourceFirDeclarationByDeclaration(targetDeclaration, targetModule)
     }
 
-    private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KtModule): FirBasedSymbol<*> {
+    private fun findSourceFirDeclarationByDeclaration(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
         require(getModuleResolutionStrategy(module) == LLModuleResolutionStrategy.LAZY) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
@@ -109,7 +111,7 @@ internal class LLFirResolvableResolveSession(
         return findDeclarationInSourceViaResolve(ktDeclaration)
     }
 
-    private fun getModuleResolutionStrategy(module: KtModule): LLModuleResolutionStrategy {
+    private fun getModuleResolutionStrategy(module: KaModule): LLModuleResolutionStrategy {
         return resolutionStrategyProvider.getKind(module)
     }
 

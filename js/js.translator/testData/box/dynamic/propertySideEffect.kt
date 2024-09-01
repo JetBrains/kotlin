@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
 external class C
 
 inline val C.foo: String

@@ -1,28 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1301
-
-// CHECK_FUNCTION_EXISTS: plus_za3lpa$ TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=plus_za3lpa$ scope=box TARGET_BACKENDS=JS
-
 // CHECK_FUNCTION_EXISTS: plus
 // CHECK_NOT_CALLED_IN_SCOPE: function=plus scope=box
-
-// CHECK_FUNCTION_EXISTS: invoke TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=invoke scope=box TARGET_BACKENDS=JS
-
-// CHECK_FUNCTION_EXISTS: get_za3lpa$ TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_za3lpa$ scope=box TARGET_BACKENDS=JS
-
-// CHECK_FUNCTION_EXISTS: set_vux9f0$ TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_vux9f0$ scope=box TARGET_BACKENDS=JS
-
-// CHECK_FUNCTION_EXISTS: dec TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=dec scope=box TARGET_BACKENDS=JS
-
-// CHECK_FUNCTION_EXISTS: minus_za3lpa$ TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=minus_za3lpa$ scope=box TARGET_BACKENDS=JS
-
-// CHECK_FUNCTION_EXISTS: invoke_dqglrj$ TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=invoke_dqglrj$ scope=test TARGET_BACKENDS=JS
 
 class A {
     inline operator fun plus(a: Int) = a + 10
@@ -58,8 +35,8 @@ class N(val value: Int) {
     inline operator fun dec() = N(value - 1)
 }
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {
     var result = A() + 1
     if (result != 11) return "fail: member operator: $result"

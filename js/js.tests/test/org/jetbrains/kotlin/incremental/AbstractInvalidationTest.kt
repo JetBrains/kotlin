@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.jsPhases
+import org.jetbrains.kotlin.ir.backend.js.getJsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
+import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
@@ -281,7 +281,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
-            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
+            writeText(wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
         }
 
         private fun prepareExternalJsFiles(): MutableList<String> {
@@ -334,7 +334,9 @@ abstract class AbstractInvalidationTest(
             }
         }
 
-        private fun getPhaseConfig(stepId: Int): PhaseConfig {
+        private fun getPhaseConfig(configuration: CompilerConfiguration, stepId: Int): PhaseConfig {
+            val jsPhases = getJsPhases(configuration)
+
             if (DebugMode.fromSystemProperty("kotlin.js.debugMode") < DebugMode.SUPER_DEBUG) {
                 return PhaseConfig(jsPhases)
             }
@@ -413,7 +415,7 @@ abstract class AbstractInvalidationTest(
                             mainArguments,
                             cfg,
                             granularity,
-                            getPhaseConfig(projStep.id),
+                            getPhaseConfig(configuration, projStep.id),
                             setOf(FqName(BOX_FUNCTION_NAME)),
                         )
                     }
@@ -494,7 +496,7 @@ abstract class AbstractInvalidationTest(
 
     protected fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
         val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem
 
         val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
 

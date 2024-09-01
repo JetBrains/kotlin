@@ -235,6 +235,11 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
+    fun addAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        replaceTowerDataContext(towerDataContext.addAnonymousInitializer(anonymousInitializer))
+    }
+
+    @PrivateForInline
     private inline fun updateLastScope(transform: FirLocalScope.() -> FirLocalScope) {
         val lastScope = towerDataContext.localScopes.lastOrNull() ?: return
         replaceTowerDataContext(towerDataContext.setLastLocalScope(lastScope.transform()))
@@ -593,6 +598,7 @@ class BodyResolveContext(
             .map { it.asTowerDataElement(isLocal = false) }
 
         val base = towerDataContext
+            // KT-69102: this line can lead to duplicate context receivers in the implicit receiver stack
             .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
             .addNonLocalTowerDataElements(fragmentImportTowerDataElements)
 
@@ -627,7 +633,7 @@ class BodyResolveContext(
 
         if (withContextSensitiveResolution) {
             val subjectClassSymbol = (subjectType as? ConeClassLikeType)
-                ?.lookupTag?.toFirRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
+                ?.lookupTag?.toRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
             val whenSubjectImportingScope = subjectClassSymbol?.let {
                 FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
             }
@@ -697,7 +703,7 @@ class BodyResolveContext(
                 }
                 val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName(holder.session)
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
             } else {
                 f()
@@ -814,6 +820,7 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             addLocalScope(FirLocalScope(session))
+            addAnonymousInitializer(anonymousInitializer)
             withContainer(anonymousInitializer, f)
         }
     }
@@ -866,7 +873,7 @@ class BodyResolveContext(
             }
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
-                val additionalLabelName = type?.labelName(holder.session)
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
                 withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
             }
         }
@@ -923,8 +930,8 @@ class BodyResolveContext(
                     }
                 } ?: f()
             } else {
-                addInaccessibleImplicitReceiverValue(owningClass, holder)
                 withTowerDataCleanup {
+                    addInaccessibleImplicitReceiverValue(owningClass, holder)
                     addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
                     constructor.valueParameters.forEach { storeVariable(it, holder.session) }
                     f()

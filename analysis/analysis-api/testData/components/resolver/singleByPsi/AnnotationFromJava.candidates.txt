@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-NO_CANDIDATES
+KtNameReferenceExpression(138,153): 'MyRestrictedApi'
+  NO_CANDIDATES

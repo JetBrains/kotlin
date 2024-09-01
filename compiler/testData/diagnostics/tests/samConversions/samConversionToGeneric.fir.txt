@@ -1,6 +1,6 @@
 FILE: samConversionToGeneric.kt
     public final fun test1(): R|J<kotlin/String>| {
-        ^test1 R|/J|<R|kotlin/String|>(<L> = J@fun <anonymous>(x: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {
+        ^test1 R|/J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>(<L> = J@fun <anonymous>(x: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|
         }
         )

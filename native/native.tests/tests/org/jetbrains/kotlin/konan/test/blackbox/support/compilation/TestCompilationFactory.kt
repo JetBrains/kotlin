@@ -5,34 +5,23 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.container.topologicalSort
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.muteCInteropTestIfNecessary
-import org.jetbrains.kotlin.konan.test.blackbox.support.CINTEROP_SOURCE_EXTENSIONS
-import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependencies
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriends
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriendDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.extension
-import kotlin.streams.asSequence
 
 internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
@@ -48,9 +37,9 @@ internal class TestCompilationFactory {
     private data class TestBundleCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
-    private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?, val headerCache: TestCompilation<KLIBStaticCache>?)
+    data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?, val headerCache: TestCompilation<KLIBStaticCache>?)
 
-    private data class CompilationDependencies(
+    data class CompilationDependencies(
         private val klibDependencies: List<CompiledDependency<KLIB>>,
         private val staticCacheDependencies: List<CompiledDependency<KLIBStaticCache>>,
         private val staticCacheHeaderDependencies: List<CompiledDependency<KLIBStaticCache>>
@@ -74,7 +63,7 @@ internal class TestCompilationFactory {
             (klibDependencies.asSequence() + staticCacheDependencies + listOfNotNull(includedKlib, includedKlibStaticCache)).asIterable()
     }
 
-    private sealed interface ProduceStaticCache {
+    sealed interface ProduceStaticCache {
         object No : ProduceStaticCache
 
         sealed class Yes(val options: StaticCacheCompilation.Options) : ProduceStaticCache {
@@ -175,7 +164,8 @@ internal class TestCompilationFactory {
         val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
         if (fileCheckStage != null)
             require(testCases.size == 1) { "FILECHECK-enabled test must be standalone" }
-        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage)
+        val hasSyntheticAccessorsDump = CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in settings.get<RegisteredDirectives>()
+        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage, hasSyntheticAccessorsDump)
 
         val (
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
@@ -216,9 +206,9 @@ internal class TestCompilationFactory {
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,
             sourceModulesToCompileExecutable: Set<TestModule.Exclusive>
         ) = getDependenciesAndSourceModules(settings, rootModules, freeCompilerArgs) {
-            // TODO: should also include caches but the test compilation architecture is not configurable enough
-            //  to de-duplicate code used for executable and other compiler outputs
-            ProduceStaticCache.No
+            // An adapter to the cache production that accepts only Executable
+            val executable = Executable(executableArtifact.bundleDir, executableArtifact.fileCheckStage)
+            ProduceStaticCache.decideForIncludedKlib(settings, executable, extras)
         }
 
         return cachedTestBundleCompilations.computeIfAbsent(cacheKey) {
@@ -263,7 +253,7 @@ internal class TestCompilationFactory {
             }
         }
 
-    private fun modulesToKlib(
+    fun modulesToKlib(
         sourceModules: Set<TestModule>,
         freeCompilerArgs: TestCompilerArgs,
         produceStaticCache: ProduceStaticCache,
@@ -314,8 +304,10 @@ internal class TestCompilationFactory {
                     ) to null
                     filesByExtension.contains("def") -> {
                         val defFile = filesByExtension["def"]!!.single()
-                        muteCInteropTestIfNecessary(defFile, settings.get<KotlinNativeTargets>().testTarget)
-
+                        val testTarget = settings.get<KotlinNativeTargets>().testTarget
+                        check(defFile.defFileIsSupportedOn(testTarget)) {
+                            "Unsupported $defFile for target $testTarget"
+                        }
                         val cSourceFiles = buildList {
                             for (ext in CINTEROP_SOURCE_EXTENSIONS) {
                                 filesByExtension[ext]?.let { addAll(it) }
@@ -371,7 +363,7 @@ internal class TestCompilationFactory {
         }
     }
 
-    private fun collectDependencies(
+    fun collectDependencies(
         sourceModules: Set<TestModule>,
         freeCompilerArgs: TestCompilerArgs,
         settings: Settings
@@ -387,25 +379,26 @@ internal class TestCompilationFactory {
                 val klibCompilations = modulesToKlib(setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
                 klibDependencies += klibCompilations.klib.asKlibDependency(type)
 
-                if (type == Library || type == IncludedLibrary) {
-                    staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
-                    staticCacheHeaderDependencies.addIfNotNull((klibCompilations.headerCache ?: klibCompilations.staticCache)?.asStaticCacheDependency())
-                }
+                staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
+                staticCacheHeaderDependencies.addIfNotNull((klibCompilations.headerCache ?: klibCompilations.staticCache)?.asStaticCacheDependency())
             }
 
-        sourceModules.allDependencies().collectDependencies(Library)
-        sourceModules.allFriends().collectDependencies(FriendLibrary)
+        sourceModules.allRegularDependencies().collectDependencies(Library)
+        sourceModules.allFriendDependencies().collectDependencies(FriendLibrary)
 
         return CompilationDependencies(klibDependencies, staticCacheDependencies, staticCacheHeaderDependencies)
     }
 
     private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOn }
+        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOnDependencies }
     }
 
     companion object {
-        private fun Set<TestModule>.allDependencies() = if (size == 1) first().allDependencies else flatMapToSet { it.allDependencies }
-        private fun Set<TestModule>.allFriends() = if (size == 1) first().allFriends else flatMapToSet { it.allFriends }
+        private fun Set<TestModule>.allRegularDependencies(): Set<TestModule> =
+            if (size == 1) first().allRegularDependencies else flatMapToSet { it.allRegularDependencies }
+
+        private fun Set<TestModule>.allFriendDependencies(): Set<TestModule> =
+            if (size == 1) first().allFriendDependencies else flatMapToSet { it.allFriendDependencies }
 
         private fun <T : TestCompilationDependencyType<KLIB>> TestCompilation<KLIB>.asKlibDependency(type: T): CompiledDependency<KLIB> =
             CompiledDependency(this, type)

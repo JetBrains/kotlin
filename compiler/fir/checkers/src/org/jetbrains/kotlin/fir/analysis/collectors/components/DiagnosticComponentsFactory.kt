@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
-import org.jetbrains.kotlin.fir.analysis.collectors.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.CliDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 object DiagnosticComponentsFactory {
-    fun createAllDiagnosticComponents(
+    private fun createAllDiagnosticComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
         mppKind: MppCheckerKind,
@@ -35,11 +35,9 @@ object DiagnosticComponentsFactory {
         session: FirSession,
         scopeSession: ScopeSession,
         mppKind: MppCheckerKind
-    ): SimpleDiagnosticsCollector {
-        return SimpleDiagnosticsCollector(session, scopeSession) { reporter ->
+    ): CliDiagnosticsCollector {
+        return CliDiagnosticsCollector(session, scopeSession) { reporter ->
             createAllDiagnosticComponents(session, reporter, mppKind)
         }
     }
-
-
 }

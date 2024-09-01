@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
-import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
@@ -19,40 +16,16 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.util.concurrent.ConcurrentHashMap
-
-internal class NativeMapping : DefaultMapping() {
-    data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
-    enum class AtomicFunctionType {
-        COMPARE_AND_EXCHANGE, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD,
-        ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
-    }
-    data class AtomicFunctionKey(val field: IrField, val type: AtomicFunctionType)
-
-    val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
-    val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
-    val bridges = ConcurrentHashMap<BridgeKey, IrSimpleFunction>()
-    val partiallyLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
-    val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
-    val objectInstanceGetter = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val boxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val unboxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val loweredInlineClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val volatileFieldToAtomicFunction = mutableMapOf<AtomicFunctionKey, IrSimpleFunction>()
-    val functionToVolatileField = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrSimpleFunction, IrField>()
-}
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
@@ -73,10 +46,9 @@ internal class Context(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    override val innerClassesSupport: InnerClassesSupport by lazy { NativeInnerClassesSupport(mapping, irFactory) }
-    val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
-    val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
-    val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
+    override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
+    val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
@@ -104,14 +76,12 @@ internal class Context(
 
     val targetAbiInfo = config.target.abiInfo
 
-    val memoryModel = config.memoryModel
-
     override fun dispose() {}
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
             config.partialLinkageConfig,
             irBuiltIns,
-            configuration.irMessageLogger
+            configuration.messageCollector
     )
 }
 

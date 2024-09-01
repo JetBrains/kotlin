@@ -11,6 +11,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -30,6 +31,7 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
         this.targets = targets.toSet()
     }
 
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     override var embedBitcode: BitcodeEmbeddingMode? = null
 
     override fun validate() {
@@ -56,7 +58,6 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
             toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             targets = targets,
-            embedBitcode = embedBitcode,
             extensions = extensions
         )
     }
@@ -74,7 +75,8 @@ class KotlinNativeFatFrameworkImpl(
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    override val embedBitcode: BitcodeEmbeddingMode?,
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    override val embedBitcode: BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
@@ -109,7 +111,6 @@ class KotlinNativeFatFrameworkImpl(
                     buildType = buildType,
                     librariesConfigurationName = librariesConfigurationName,
                     exportConfigurationName = exportConfigurationName,
-                    embedBitcode = embedBitcode,
                     outDirName = "${artifactName}FatFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )

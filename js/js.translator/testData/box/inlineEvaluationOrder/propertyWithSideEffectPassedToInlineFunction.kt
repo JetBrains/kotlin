@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1288
 // See KT-7043, KT-11711
 package foo
 

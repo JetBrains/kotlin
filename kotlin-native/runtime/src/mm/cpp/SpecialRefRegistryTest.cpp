@@ -58,7 +58,7 @@ public:
     std::vector<ObjHeader*> all(Invalidated&&... invalidated) noexcept {
         std::set<ObjHeader*> invalidatedSet({std::forward<Invalidated>(invalidated)...});
         std::vector<ObjHeader*> result;
-        for (auto& obj : mm::SpecialRefRegistry::instance().lockForIter()) {
+        for (auto obj : mm::SpecialRefRegistry::instance().lockForIter()) {
             if (invalidatedSet.find(obj) != invalidatedSet.end()) {
                 obj = nullptr;
             }

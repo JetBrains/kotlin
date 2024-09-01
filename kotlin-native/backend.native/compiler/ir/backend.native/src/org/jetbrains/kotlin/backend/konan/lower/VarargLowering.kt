@@ -106,7 +106,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 val arrayHandle = arrayType(expression.type)
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
                 val isConstantVararg = expression.elements.all {
-                    it is IrConst<*> || it is IrConstantValue
+                    it is IrConst || it is IrConstantValue
                 }
                 if (isConstantVararg) {
                     return irBuilder.irCall(
@@ -114,7 +114,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                     ).apply {
                         extensionReceiver = arrayHandle.createStatic(irBuilder, type, expression.elements.map {
                             when (it) {
-                                is IrConst<*> -> irBuilder.irConstantPrimitive(it)
+                                is IrConst -> irBuilder.irConstantPrimitive(it)
                                 is IrConstantValue -> it
                                 else -> throw IllegalStateException("Try to initialize vararg constantly, when it's impossible")
                             }
@@ -336,7 +336,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
 }
 
-private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> =
+private fun IrBuilderWithScope.irConstInt(value: Int): IrConst =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

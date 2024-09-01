@@ -1,0 +1,231 @@
+KtNameReferenceExpression(23,29): 'second'
+  KtSimpleNameReference:
+    package second
+
+KtNameReferenceExpression(32,38): 'Target'
+  KtSimpleNameReference:
+    (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+
+KtValueArgument(39,60): 'AnnotationTarget.TYPE'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(39,55): 'AnnotationTarget'
+  KtSimpleNameReference:
+    (in kotlin.annotation) enum class AnnotationTarget
+
+KtNameReferenceExpression(56,60): 'TYPE'
+  KtSimpleNameReference:
+    (in kotlin.annotation.AnnotationTarget) TYPE
+
+KtNameReferenceExpression(91,94): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(226,230): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(231,240): '0 + outer'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(233,234): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(235,240): 'outer'
+  KtSimpleNameReference:
+    (in second) const val outer: kotlin.Int
+
+KtNameReferenceExpression(242,246): 'Base'
+  KtSimpleNameReference:
+    (in second) interface Base<A>
+
+KtNameReferenceExpression(248,252): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(253,262): '1 + outer'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(255,256): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(257,262): 'outer'
+  KtSimpleNameReference:
+    (in second) const val outer: kotlin.Int
+
+KtNameReferenceExpression(264,268): 'Base'
+  KtSimpleNameReference:
+    (in second) interface Base<A>
+
+KtNameReferenceExpression(270,274): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(275,284): '2 + outer'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(277,278): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(279,284): 'outer'
+  KtSimpleNameReference:
+    (in second) const val outer: kotlin.Int
+
+KtNameReferenceExpression(286,289): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(295,304): 'Companion'
+  KtSimpleNameReference:
+    (in second.MyClass) companion object : @second.Anno(i = 6) second.Base<@second.Anno(i = 7) second.Base<@second.Anno(i = 8) kotlin.Int>>
+
+KtNameReferenceExpression(311,315): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(316,325): '4 + outer'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(318,319): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(320,325): 'outer'
+  KtSimpleNameReference:
+    (in second) const val outer: kotlin.Int
+
+KtNameReferenceExpression(327,333): 'Second'
+  KtSimpleNameReference:
+    (in second) interface Second<T>
+
+KtNameReferenceExpression(335,339): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(340,349): '5 + outer'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(342,343): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(344,349): 'outer'
+  KtSimpleNameReference:
+    (in second) const val outer: kotlin.Int
+
+KtNameReferenceExpression(351,357): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(362,374): 'NestedObject'
+  KtSimpleNameReference:
+    (in second.MyClass) object NestedObject : @second.Anno(i = 9) second.Second<@second.Anno(i = 10) kotlin.String>
+
+KtNameReferenceExpression(401,405): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(406,415): '6 + inner'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(408,409): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(410,415): 'inner'
+  KtSimpleNameReference:
+    (in second.MyClass.Companion) const val inner: kotlin.Int
+
+KtNameReferenceExpression(417,421): 'Base'
+  KtSimpleNameReference:
+    (in second) interface Base<A>
+
+KtNameReferenceExpression(423,427): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(428,437): '7 + inner'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(430,431): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(432,437): 'inner'
+  KtSimpleNameReference:
+    (in second.MyClass.Companion) const val inner: kotlin.Int
+
+KtNameReferenceExpression(439,443): 'Base'
+  KtSimpleNameReference:
+    (in second) interface Base<A>
+
+KtNameReferenceExpression(445,449): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(450,459): '8 + inner'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(452,453): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(454,459): 'inner'
+  KtSimpleNameReference:
+    (in second.MyClass.Companion) const val inner: kotlin.Int
+
+KtNameReferenceExpression(461,464): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(560,564): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(565,574): '9 + inner'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(567,568): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(569,574): 'inner'
+  KtSimpleNameReference:
+    (in second.MyClass.Companion) const val inner: kotlin.Int
+
+KtNameReferenceExpression(576,582): 'Second'
+  KtSimpleNameReference:
+    (in second) interface Second<T>
+
+KtNameReferenceExpression(584,588): 'Anno'
+  KtSimpleNameReference:
+    (in second.Anno) constructor(i: kotlin.Int)
+
+KtValueArgument(589,599): '10 + inner'
+  KtDefaultAnnotationArgumentReference:
+    i: kotlin.Int
+
+KtOperationReferenceExpression(592,593): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(594,599): 'inner'
+  KtSimpleNameReference:
+    (in second.MyClass.Companion) const val inner: kotlin.Int
+
+KtNameReferenceExpression(601,607): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

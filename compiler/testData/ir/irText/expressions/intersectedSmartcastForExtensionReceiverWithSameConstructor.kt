@@ -1,8 +1,6 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND_K1: ANY
 //   Reason: K1 can't resolve calls in test_2_1 and test_2_2 functions
-// SKIP_KLIB_TEST
-//  Reason: AbstractKlibIrTextTestCase doen't support IGNORE_BACKEND_K1 directive
 // ISSUE: KT-62863
 class Bar<T>
 

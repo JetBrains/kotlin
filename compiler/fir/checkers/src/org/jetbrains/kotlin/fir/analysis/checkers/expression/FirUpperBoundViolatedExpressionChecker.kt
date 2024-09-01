@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.isTypeAliasedConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -45,11 +45,11 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
             // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
             // seems like the type is already expended.
-            typeArguments = constructedType.typeArguments.map {
+            typeArguments = constructedType.typeArgumentsOfLowerBoundIfFlexible.map {
                 it.withSourceRecursive(expression)
             }
 
-            typeParameters = (constructedType.toSymbol(context.session) as? FirRegularClassSymbol)?.typeParameterSymbols ?: return
+            typeParameters = constructedType.toRegularClassSymbol(context.session)?.typeParameterSymbols ?: return
         } else {
             typeArguments = expression.typeArguments.toTypeArgumentsWithSourceInfo()
             typeParameters = calleeSymbol?.typeParameterSymbols ?: return

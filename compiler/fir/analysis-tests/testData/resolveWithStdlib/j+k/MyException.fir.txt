@@ -1,7 +1,7 @@
 FILE: test.kt
-    public final class MyException : R|kotlin/Exception| {
+    public final class MyException : R|{kotlin/Exception=} java/lang/Exception| {
         public constructor(): R|MyException| {
-            super<R|kotlin/Exception|>()
+            super<R|{kotlin/Exception=} java/lang/Exception|>()
         }
 
     }
@@ -15,7 +15,7 @@ FILE: test.kt
         R|<local>/e|.R|kotlin/Throwable.printStackTrace|(R|<local>/stream|)
         lval result: R|kotlin/String!| = R|<local>/e|.R|kotlin/Throwable.getLocalizedMessage|()
     }
-    public final fun test(e: R|kotlin/Exception|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
+    public final fun test(e: R|{kotlin/Exception=} java/lang/Exception|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
         R|<local>/e|.R|kotlin/Throwable.printStackTrace|()
         R|<local>/e|.R|kotlin/Throwable.printStackTrace|(R|<local>/stream|)
         lval result: R|kotlin/String!| = R|<local>/e|.R|kotlin/Throwable.getLocalizedMessage|()

@@ -22,6 +22,7 @@ class LLFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalCh
     override fun checkTestDataFile(testDataFile: File) {
         if (!testDataFile.isLLFirTestData) return
 
+        val helper = Helper()
         val originalFile = helper.getClassicFileToCompare(testDataFile)
         val baseFile = helper.getFirFileToCompare(originalFile).takeIf { it.exists() } ?: originalFile
 

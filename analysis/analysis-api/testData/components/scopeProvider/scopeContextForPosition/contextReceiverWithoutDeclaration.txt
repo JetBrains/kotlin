@@ -4,11 +4,12 @@ scopes:
   ExplicitSimpleImportingScope, index = 0
     packages: 0
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+      KaNamedClassSymbol:
+        annotations: []
         classId: pkg/A
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -17,18 +18,18 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: A
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 
@@ -36,31 +37,39 @@ scopes:
     packages: 7
       KaPackageSymbol:
         fqName: META-INF
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: java
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: javax
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: kotlin
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: org
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: pkg
+        location: TOP_LEVEL
         origin: SOURCE
       KaPackageSymbol:
         fqName: sun
+        location: TOP_LEVEL
         origin: SOURCE
     classifiers: 1
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+      KaNamedClassSymbol:
+        annotations: []
         classId: B
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -69,18 +78,18 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: B
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

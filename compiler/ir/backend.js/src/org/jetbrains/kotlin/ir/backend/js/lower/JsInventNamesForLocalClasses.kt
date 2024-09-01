@@ -16,10 +16,10 @@ class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : In
 
     override fun sanitizeNameIfNeeded(name: String): String = sanitizeName(name, withHash = false)
 
-    override fun customizeNameInventorData(clazz: IrClass, data: NameInventorData): NameInventorData {
+    override fun customizeNameInventorData(clazz: IrClass, data: NameBuilder): NameBuilder {
         if (!clazz.isAnonymousObject) return data
         val customEnclosingName = (clazz.parent as? IrFile)?.packagePartClassName?.let(::sanitizeNameIfNeeded) ?: return data
-        return data.copy(enclosingName = customEnclosingName, isLocal = true)
+        return NameBuilder(currentName = customEnclosingName, isLocal = true, processingInlinedFunction = data.processingInlinedFunction)
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {

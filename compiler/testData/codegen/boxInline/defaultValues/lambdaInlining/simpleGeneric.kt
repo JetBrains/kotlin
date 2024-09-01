@@ -11,8 +11,6 @@ inline fun <T : A> inlineFun(capturedParam: T, lambda: () -> T = { capturedParam
 }
 
 // FILE: 2.kt
-// CHECK_CONTAINS_NO_CALLS: box TARGET_BACKENDS=JS
-
 import test.*
 
 fun box(): String {

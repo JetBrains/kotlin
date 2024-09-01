@@ -1,4 +1,5 @@
-Message:
+---Message:
 assertTrue(1 != 1, message)
              |
              false
+---

@@ -1,32 +1,44 @@
 <caret_1>:
-  KDocReference:
-    (in test) fun kotlin.Any.anyExt()
+  KDocName(130,140): 'Any.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
 
 <caret_2>:
-  KDocReference:
-    (in test) fun kotlin.Any.anyExt()
+  KDocName(146,157): 'Base.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
 
 <caret_3>:
-  KDocReference:
-    (in test) fun kotlin.Any.anyExt()
+  KDocName(163,175): 'Child.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
 
 <caret_4>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(184,195): 'Any.baseExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_5>:
-  KDocReference:
-    (in test) fun test.Base.baseExt()
+  KDocName(201,213): 'Base.baseExt'
+    KDocReference:
+      (in test) fun test.Base.baseExt()
 
 <caret_6>:
-  KDocReference:
-    (in test) fun test.Base.baseExt()
+  KDocName(219,232): 'Child.baseExt'
+    KDocReference:
+      (in test) fun test.Base.baseExt()
 
 <caret_7>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(241,253): 'Any.childExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_8>:
-  KDocReference: Nothing (Unresolved reference)
+  KDocName(259,272): 'Base.childExt'
+    KDocReference:
+      Nothing (Unresolved reference)
 
 <caret_9>:
-  KDocReference:
-    (in test) fun test.Child.childExt()
+  KDocName(278,292): 'Child.childExt'
+    KDocReference:
+      (in test) fun test.Child.childExt()

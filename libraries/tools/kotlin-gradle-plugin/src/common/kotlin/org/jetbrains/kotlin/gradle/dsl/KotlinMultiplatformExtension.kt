@@ -357,4 +357,13 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
 
 internal val KotlinMultiplatformExtension.metadataTarget get() = metadata() as KotlinMetadataTarget
 
-internal val Collection<KotlinTarget>.platformTargets: List<KotlinTarget> get() = filter { it !is KotlinMetadataTarget }
+internal val Iterable<KotlinTarget>.platformTargets: List<KotlinTarget> get() = filter { it !is KotlinMetadataTarget }
+
+internal suspend fun KotlinMultiplatformExtension.awaitMetadataTarget(): KotlinMetadataTarget {
+    awaitTargets()
+    return metadataTarget
+}
+
+internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
+    .withType(KotlinNativeTarget::class.java)
+    .matching { it.konanTarget.family.isAppleFamily }

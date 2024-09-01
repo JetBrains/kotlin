@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbo
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -28,8 +28,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(mainFile) {
                 val symbol = getCallableSymbol(mainFile, testServices)
-                val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
-                val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }
+                val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
+                val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
                 buildString {
                     appendLine("ALL:")
                     allOverriddenSymbols.forEach { appendLine("  $it") }
@@ -44,14 +44,14 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     private fun KaSession.getCallableSymbol(mainFile: KtFile, testServices: TestServices): KaCallableSymbol {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
         if (declaration != null) {
-            return declaration.getSymbol() as KaCallableSymbol
+            return declaration.symbol as KaCallableSymbol
         }
         return getSingleTestTargetSymbolOfType<KaCallableSymbol>(mainFile, testDataPath)
     }
 
     private fun KaSession.renderSignature(symbol: KaCallableSymbol): String = buildString {
         append(renderDeclarationQualifiedName(symbol))
-        if (symbol is KaFunctionSymbol) {
+        if (symbol is KaNamedFunctionSymbol) {
             append("(")
             symbol.valueParameters.forEachIndexed { index, parameter ->
                 append(parameter.name.identifier)
@@ -68,7 +68,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     }
 
     private fun KaSession.renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
-        val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.getContainingSymbol() }
+        val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingDeclaration }
             .toList()
             .asReversed()
 
@@ -89,7 +89,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 }
             }
 
-            chunks += (parent as? KaNamedSymbol)?.name?.asString() ?: "<no name>"
+            chunks += parent.name?.asString() ?: "<no name>"
         }
 
         return chunks.joinToString(".")

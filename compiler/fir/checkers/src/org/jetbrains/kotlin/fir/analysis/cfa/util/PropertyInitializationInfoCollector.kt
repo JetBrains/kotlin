@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.cfa.isCapturedByValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
@@ -121,11 +122,11 @@ private class PropertyDeclarationCollector(
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: FirStatement?) {
-        visitRepeatable(whileLoop, whileLoop)
+        visitRepeatable(whileLoop, data)
     }
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: FirStatement?) {
-        visitRepeatable(doWhileLoop, doWhileLoop)
+        visitRepeatable(doWhileLoop, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: FirStatement?) {

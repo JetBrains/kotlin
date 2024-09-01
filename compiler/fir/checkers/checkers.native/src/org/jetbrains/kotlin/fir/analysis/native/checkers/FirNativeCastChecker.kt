@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
     override fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {

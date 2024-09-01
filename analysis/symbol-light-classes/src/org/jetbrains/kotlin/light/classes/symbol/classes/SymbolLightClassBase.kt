@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,39 +20,38 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
 
-abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule, manager: PsiManager) :
+internal abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
 
-    private val myInnersCache by lazyPub {
-        ClassInnerStuffCache(
-            /* aClass = */ this,
-            /* generateEnumMethods = */ false,
-            /* modificationTrackers = */ modificationTrackerForClassInnerStuff(),
+    private val contentFinderCache by lazyPub {
+        ClassContentFinderCache(
+            extensibleClass = this,
+            modificationTrackers = contentModificationTrackers(),
         )
     }
 
-    protected open fun modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
-        return listOf(project.createProjectWideOutOfBlockModificationTracker())
-    }
+    open fun contentModificationTrackers(): List<ModificationTracker> = listOf(project.createProjectWideOutOfBlockModificationTracker())
 
-    override fun getFields(): Array<PsiField> = myInnersCache.fields
+    override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
 
-    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
+    override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
 
-    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
+    override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
 
-    override fun getInnerClasses(): Array<out PsiClass> = myInnersCache.innerClasses
+    override fun getInnerClasses(): Array<out PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
 
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
@@ -60,11 +59,26 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClassImplUtil.getAllInnerClasses(this)
 
-    override fun findFieldByName(name: String, checkBases: Boolean) = myInnersCache.findFieldByName(name, checkBases)
+    override fun findFieldByName(
+        name: String,
+        checkBases: Boolean,
+    ) = contentFinderCache.findFieldByName(name, checkBases)
 
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
+    override fun findMethodsByName(
+        name: String,
+        checkBases: Boolean,
+    ): Array<PsiMethod> = contentFinderCache.findMethodsByName(name, checkBases)
 
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+    override fun findInnerClassByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
+
+    abstract override fun getOwnFields(): List<PsiField>
+    abstract override fun getOwnMethods(): List<PsiMethod>
+    abstract override fun getOwnInnerClasses(): List<PsiClass>
+
+    open val ownConstructors: Array<PsiMethod> get() = cachedValue { PsiImplUtil.getConstructors(this) }
 
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement

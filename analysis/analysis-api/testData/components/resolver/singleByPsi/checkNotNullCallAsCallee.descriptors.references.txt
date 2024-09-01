@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  a: (() -> kotlin.Unit)?
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(33,34): 'a'
+  KtSimpleNameReference:
+    a: (() -> kotlin.Unit)?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

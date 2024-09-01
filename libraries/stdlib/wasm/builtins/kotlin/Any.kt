@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import kotlin.random.*
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
-public open class Any @WasmPrimitiveConstructor constructor() {
+public actual open class Any @WasmPrimitiveConstructor actual constructor() {
     // Pointer to runtime type info
     // Initialized by a compiler
     @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
@@ -30,7 +30,7 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      *
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
-    public open operator fun equals(other: Any?): Boolean =
+    public actual open operator fun equals(other: Any?): Boolean =
         wasm_ref_eq(this, other)
 
     /**
@@ -40,14 +40,14 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
     internal var _hashCode: Int = 0
-    public open fun hashCode(): Int {
+    public actual open fun hashCode(): Int {
         return identityHashCode()
     }
 
     /**
      * Returns a string representation of the object.
      */
-    public open fun toString(): String {
+    public actual open fun toString(): String {
         val typeInfoPtr = this.typeInfo
         val packageName = getPackageName(typeInfoPtr)
         val simpleName = getSimpleName(typeInfoPtr)

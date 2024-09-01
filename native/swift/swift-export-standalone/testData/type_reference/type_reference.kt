@@ -27,6 +27,9 @@ var var_object: Object_without_package
     get() = TODO()
     set(value) = TODO()
 
+fun recieve_DATA_OBJECT(x: DATA_OBJECT): Unit = TODO()
+fun produce_DATA_OBJECT(): DATA_OBJECT = TODO()
+
 fun recieve_object_wp(arg: Object_with_package): Unit = TODO()
 fun produce_object_wp(): Object_with_package = TODO()
 val val_object_wp: Object_with_package
@@ -83,23 +86,38 @@ class Demo(
         set(value) = TODO()
 }
 
+// FILE: inheritance.kt
+
+open class OPEN_CLASS
+
+fun recieve_OPEN_CLASS(x: OPEN_CLASS): Unit = TODO()
+fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
 
 // FILE: ingored.kt
 package ignored
 
+import Class_without_package
+
 data class DATA_CLASS(val a: Int)
 value class VALUE_CLASS(val a: Int)
-open class OPEN_CLASS
 abstract class ABSTRACT_CLASS
 interface INTERFACE
-
-data object DATA_OBJECT {
-    val a: Int = 42
-}
 
 enum class ENUM {
     A,
 }
+
+fun nullable_input_ref(i: Class_without_package?): Unit = TODO()
+fun nullable_output_ref(): Class_without_package? = null
+
+fun nullable_input_prim(i: Int?): Unit = TODO()
+fun nullable_output_prim(): Int? = null
+
+var nullableRef: Class_without_package? = null
+var nullablePrim: Int? = null
+
+fun Int?.extensionOnNullabelPrimitive(): Unit = TODO()
+fun Class_without_package?.extensionOnNullabelRef(): Unit = TODO()
 
 fun recieve_DATA_CLASS(x: DATA_CLASS): Unit = TODO()
 fun produce_DATA_CLASS(): DATA_CLASS = TODO()
@@ -107,17 +125,11 @@ fun produce_DATA_CLASS(): DATA_CLASS = TODO()
 fun recieve_VALUE_CLASS(x: VALUE_CLASS): Unit = TODO()
 fun produce_VALUE_CLASS(): VALUE_CLASS = TODO()
 
-fun recieve_OPEN_CLASS(x: OPEN_CLASS): Unit = TODO()
-fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
-
 fun recieve_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
 fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()
 
 fun recieve_INTERFACE(x: INTERFACE): Unit = TODO()
 fun produce_INTERFACE(): INTERFACE = TODO()
-
-fun recieve_DATA_OBJECT(x: DATA_OBJECT): Unit = TODO()
-fun produce_DATA_OBJECT(): DATA_OBJECT = TODO()
 
 fun recieve_ENUM(x: ENUM): Unit = TODO()
 fun produce_ENUM(): ENUM = TODO()
@@ -132,6 +144,10 @@ class Class_with_package {
 object Object_with_package {
     class INNER_CLASS
     object INNER_OBJECT
+}
+
+data object DATA_OBJECT {
+    val a: Int = 42
 }
 
 // FILE: predefined_type_without_package.kt

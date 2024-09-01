@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.code
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import java.nio.file.Files
 import java.nio.file.Path
@@ -39,14 +38,12 @@ class ArtifactsTest {
     private val excludedProjects = setOf(
         "android-test-fixes",
         "annotation-processor-example",
-        "fus-statistics-gradle-plugin",
         "gradle-warnings-detector",
         "kotlin-compiler-args-properties",
         "kotlin-gradle-plugin-tcs-android",
         "kotlin-gradle-subplugin-example",
         "kotlin-java-example",
         "kotlin-maven-plugin-test",
-        "org.jetbrains.kotlin.fus-statistics-gradle-plugin.gradle.plugin",
         "org.jetbrains.kotlin.gradle-subplugin-example.gradle.plugin",
         "org.jetbrains.kotlin.test.fixes.android.gradle.plugin",
         "org.jetbrains.kotlin.test.gradle-warnings-detector.gradle.plugin",

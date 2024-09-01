@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1524
 package foo
 
 var global = ""

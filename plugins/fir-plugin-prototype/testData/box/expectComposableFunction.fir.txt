@@ -2,7 +2,7 @@ Module: common
 FILE: module_common_expectComposableFunction.kt
     @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final expect fun ExpectComposable(value: R|kotlin/String|, content: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(v))  kotlin/String, kotlin/String>|): R|kotlin/String|
     public final fun commonBox(): R|kotlin/String| {
-        ^commonBox R|/ExpectComposable|(String(O), <L> = ExpectComposable@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(v))  kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+        ^commonBox R|/ExpectComposable|(String(O), <L> = ExpectComposable@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/String.plus|(String(K))
         }
         )
@@ -18,7 +18,7 @@ Module: platform
 FILE: module_common_expectComposableFunction.kt
     @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final expect fun ExpectComposable(value: R|kotlin/String|, content: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction1<@R|kotlin/ParameterName|(name = String(v))  kotlin/String, kotlin/String>|): R|kotlin/String|
     public final fun commonBox(): R|kotlin/String| {
-        ^commonBox R|/ExpectComposable|(String(O), <L> = ExpectComposable@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(v))  kotlin/String|): R|kotlin/String| <inline=NoInline>  {
+        ^commonBox R|/ExpectComposable|(String(O), <L> = ExpectComposable@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/String.plus|(String(K))
         }
         )

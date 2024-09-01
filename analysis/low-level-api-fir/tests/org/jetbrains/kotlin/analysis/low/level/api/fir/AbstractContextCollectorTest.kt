@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
@@ -199,7 +200,7 @@ internal object ElementContextRenderer {
 
         appendBlock("Smart Casts:") {
             for ((realVariable, types) in smartCasts) {
-                appendSymbol(realVariable.identifier.symbol).appendLine()
+                appendSymbol(realVariable.symbol).appendLine()
 
                 appendBlock("Types:") {
                     for (type in types) {
@@ -262,6 +263,16 @@ abstract class AbstractContextCollectorSourceTest : AbstractContextCollectorTest
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 }
 
+abstract class AbstractDependentContextCollectorSourceTest : AbstractContextCollectorTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = true)
+}
+
 abstract class AbstractContextCollectorScriptTest : AbstractContextCollectorTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        AnalysisApiFirCustomScriptDefinitionTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractDependentContextCollectorScriptTest : AbstractContextCollectorTest() {
+    override val configurator: AnalysisApiTestConfigurator =
+        AnalysisApiFirCustomScriptDefinitionTestConfigurator(analyseInDependentSession = true)
 }

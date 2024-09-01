@@ -8,21 +8,15 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.withIndent
 
-private class ImplementationFieldPrinter(printer: ImportCollectingPrinter) : AbstractFieldPrinter<FieldWithDefault>(printer) {
+private class ImplementationFieldPrinter(printer: ImportCollectingPrinter) : AbstractFieldPrinter<Field>(printer) {
+    override fun forceMutable(field: Field): Boolean = field.isMutable && (field !is ListField || field.isMutableOrEmptyList)
 
-    private fun Field.isMutableOrEmptyIfList(): Boolean = when (this) {
-        is FieldList -> isMutableOrEmptyList
-        is FieldWithDefault -> origin.isMutableOrEmptyIfList()
-        else -> true
-    }
-
-    override fun forceMutable(field: FieldWithDefault): Boolean = field.isMutable && field.isMutableOrEmptyIfList()
-
-    override fun actualTypeOfField(field: FieldWithDefault) = field.getMutableType()
+    override fun actualTypeOfField(field: Field) = field.getMutableType()
 
     override val wrapOptInAnnotations
         get() = true
@@ -30,7 +24,7 @@ private class ImplementationFieldPrinter(printer: ImportCollectingPrinter) : Abs
 
 internal class ImplementationPrinter(
     printer: ImportCollectingPrinter
-) : AbstractImplementationPrinter<Implementation, Element, FieldWithDefault>(printer) {
+) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
 
     override val implementationOptInAnnotation: ClassRef<*>
         get() = firImplementationDetailType
@@ -39,17 +33,15 @@ internal class ImplementationPrinter(
     override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
         pureAbstractElementType
 
-    override fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<FieldWithDefault> = ImplementationFieldPrinter(printer)
+    override fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field> = ImplementationFieldPrinter(printer)
 
     override fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
         fun Field.transform() {
             when (this) {
-                is FieldWithDefault -> origin.transform()
-
                 is SimpleField ->
                     println("$name = ${name}${call()}transform(transformer, data)")
 
-                is FieldList -> {
+                is ListField -> {
                     addImport(transformInPlaceImport)
                     println("${name}.transformInplace(transformer, data)")
                 }
@@ -59,7 +51,7 @@ internal class ImplementationPrinter(
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
             val bindingCalls = element.allFields.filter {
-                it.withBindThis && it.hasSymbolType && it !is FieldList && it.name != "companionObjectSymbol"
+                it.withBindThis && it.hasSymbolType && it !is ListField && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
                         !element.typeName.contains("Reference")
@@ -129,12 +121,12 @@ internal class ImplementationPrinter(
                                             """.trimMargin(),
                                         )
                                     } else {
-                                        when (field.origin) {
+                                        when (field) {
                                             is SimpleField -> {
                                                 println(field.acceptString())
                                             }
 
-                                            is FieldList -> {
+                                            is ListField -> {
                                                 println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                             }
 
@@ -191,7 +183,7 @@ internal class ImplementationPrinter(
 
                                 field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
 
-                                field.needsSeparateTransform -> {
+                                field.withTransform -> {
                                     if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
                                         println("transform${field.name.replaceFirstChar(Char::uppercaseChar)}(transformer, data)")
                                     }
@@ -213,7 +205,7 @@ internal class ImplementationPrinter(
             }
 
             for (field in allFields) {
-                if (!field.needsSeparateTransform) continue
+                if (!field.withTransform) continue
                 println()
                 transformFunctionDeclaration(field, implementation, override = true, kind!!)
                 if (isInterface || isAbstract) {
@@ -251,7 +243,7 @@ internal class ImplementationPrinter(
                     printBlock {
                         for (field in allFields) {
                             if (!field.isMutable || !field.containsElement || field.name == "subjectVariable") continue
-                            if (!field.needsSeparateTransform) {
+                            if (!field.withTransform) {
                                 field.transform()
                             }
                             if (field.needTransformInOtherChildren) {
@@ -280,6 +272,12 @@ internal class ImplementationPrinter(
                 }
                 print(" {")
                 if (!field.isMutable) {
+                    if (field.name == "coneTypeOrNull") {
+                        println()
+                        withIndent {
+                            println("require(newConeTypeOrNull == coneTypeOrNull) { \"\${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '\${newConeTypeOrNull}'. Current type is '\$coneTypeOrNull'\" }")
+                        }
+                    }
                     println("}")
                     return
                 }
@@ -293,22 +291,22 @@ internal class ImplementationPrinter(
             for (field in allFields.filter { it.withReplace }) {
                 val capitalizedFieldName = field.name.replaceFirstChar(Char::uppercaseChar)
                 val newValue = "new$capitalizedFieldName"
-                generateReplace(field, forceNullable = field.useNullableForReplace) {
+                generateReplace(field, forceNullable = field.receiveNullableTypeInReplace) {
                     when {
                         field.implementationDefaultStrategy!!.withGetter -> {}
 
-                        field.origin is FieldList && !field.isMutableOrEmptyList -> {
+                        field is ListField && !field.isMutableOrEmptyList -> {
                             println("if (${field.name} === $newValue) return")
                             println("${field.name}.clear()")
                             println("${field.name}.addAll($newValue)")
                         }
 
                         else -> {
-                            if (field.useNullableForReplace) {
+                            if (field.receiveNullableTypeInReplace && !field.typeRef.nullable) {
                                 println("require($newValue != null)")
                             }
                             print("${field.name} = $newValue")
-                            if (field.origin is FieldList && field.isMutableOrEmptyList) {
+                            if (field is ListField && field.isMutableOrEmptyList) {
                                 addImport(toMutableOrEmptyImport)
                                 print(".toMutableOrEmpty()")
                             }
@@ -317,8 +315,10 @@ internal class ImplementationPrinter(
                     }
                 }
 
-                for (overridenType in field.overriddenTypes) {
-                    generateReplace(field, overridenType) {
+                val additionalOverriddenTypes =
+                    field.overriddenFields.map { it.typeRef.copy(nullable = false) }.toSet() - field.typeRef.copy(nullable = false)
+                for (overriddenType in additionalOverriddenTypes) {
+                    generateReplace(field, overriddenType) {
                         println("require($newValue is ${field.typeRef.render()})")
                         println("replace$capitalizedFieldName($newValue)")
                     }

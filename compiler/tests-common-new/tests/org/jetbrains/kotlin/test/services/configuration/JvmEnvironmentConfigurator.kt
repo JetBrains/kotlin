@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JV
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMIZED_CALLABLE_REFERENCES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
@@ -60,6 +59,7 @@ import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -67,6 +67,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val TEST_CONFIGURATION_KIND_KEY = CompilerConfigurationKey.create<ConfigurationKind>("ConfigurationKind")
 
         private val DEFAULT_JVM_TARGET_FROM_PROPERTY: String? = System.getProperty("kotlin.test.default.jvm.target")
+        const val DEFAULT_JVM_VERSION_PROPERTY: String = "kotlin.test.default.jvm.version"
+        val DEFAULT_JVM_VERSION_FROM_PROPERTY: String? = System.getProperty(DEFAULT_JVM_VERSION_PROPERTY)
 
         private const val JAVA_BINARIES_JAR_NAME = "java-binaries"
 
@@ -133,8 +135,21 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            TestJdkKind.FULL_JDK -> if (JavaVersion.current() >= JavaVersion.compose(9)) File(System.getProperty("java.home")) else null
+            TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
+                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+            }
             TestJdkKind.ANDROID_API -> null
+        }
+
+        inline fun getJdkHomeFromProperty(onNull: () -> File?): File? {
+            return when (val version = DEFAULT_JVM_VERSION_FROM_PROPERTY) {
+                "1.8" -> KtTestUtil.getJdk8Home()
+                "11" -> KtTestUtil.getJdk11Home()
+                "17" -> KtTestUtil.getJdk17Home()
+                "21" -> KtTestUtil.getJdk21Home()
+                null -> onNull()
+                else -> error("Unknown JDK version: \"$DEFAULT_JVM_VERSION_PROPERTY=$version\". Only following versions are allowed: [1.8, 11, 17, 21]")
+            }
         }
 
         fun getJdkClasspathRoot(jdkKind: TestJdkKind): File? = when (jdkKind) {
@@ -162,7 +177,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
         register(ENABLE_JVM_PREVIEW, JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
         register(EMIT_JVM_TYPE_ANNOTATIONS, JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
-        register(NO_OPTIMIZED_CALLABLE_REFERENCES, JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES)
         register(DISABLE_PARAM_ASSERTIONS, JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
         register(DISABLE_CALL_ASSERTIONS, JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
         register(NO_UNIFIED_NULL_CHECKS, JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
@@ -221,7 +235,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
 
-        configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
         configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
         configuration.configureJdkClasspathRoots()
 
@@ -343,8 +356,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        addJvmClasspathRoots(module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList())
-
         val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {

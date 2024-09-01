@@ -37,6 +37,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("annotationsOnFileExplicitArray.kt")
+  public void testAnnotationsOnFileExplicitArray() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFileExplicitArray.kt");
+  }
+
+  @Test
   @TestMetadata("caching.kt")
   public void testCaching() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
@@ -205,6 +211,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("localSerializable.kt")
+  public void testLocalSerializable() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/localSerializable.kt");
+  }
+
+  @Test
   @TestMetadata("metaSerializable.kt")
   public void testMetaSerializable() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
@@ -277,6 +289,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("serializableCompanion.kt")
+  public void testSerializableCompanion() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("serializableFromAnotherModule.kt")
   public void testSerializableFromAnotherModule() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule.kt");
@@ -313,6 +331,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   }
 
   @Test
+  @TestMetadata("typealiasesInContextualTest.kt")
+  public void testTypealiasesInContextualTest() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasesTest.kt")
   public void testTypealiasesTest() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
@@ -328,5 +352,11 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
   @TestMetadata("userDefinedSerializerInCompanion.kt")
   public void testUserDefinedSerializerInCompanion() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("uuidSerializer.kt")
+  public void testUuidSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/uuidSerializer.kt");
   }
 }

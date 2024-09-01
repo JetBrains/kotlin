@@ -25,10 +25,10 @@ fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(TestLambda):Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -48,10 +48,10 @@ fun Test(a: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<{>,<TestLa...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

@@ -23,8 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -88,9 +86,7 @@ class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
-    signatureBuilder: IdSignatureFactory?,
     stabilityInferencer: StabilityInferencer,
-    private val decoysEnabled: Boolean,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     context,
@@ -101,38 +97,14 @@ class WrapJsComposableLambdaLowering(
 ) {
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
-            context, symbolRemapper, stabilityInferencer, decoysEnabled, metrics, featureFlags
+            context, symbolRemapper, stabilityInferencer, metrics, featureFlags
         )
         symbolRemapper.getReferencedSimpleFunction(
             getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }.first {
                 it.valueParameters.size == 2 && !it.valueParameters.first().isVararg
             }.symbol
         ).owner.let {
-            if (!decoysEnabled || signatureBuilder == null) {
-                composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
-            } else {
-                // If a module didn't have any explicit remember calls,
-                // so `fun remember` wasn't transformed yet, then we have to transform it now.
-                val createDecoysTransformer = CreateDecoysTransformer(
-                    context,
-                    symbolRemapper,
-                    signatureBuilder,
-                    stabilityInferencer,
-                    metrics,
-                    featureFlags,
-                )
-                with(createDecoysTransformer) {
-                    if (!it.isDecoy()) {
-                        visitSimpleFunction(it) as IrSimpleFunction
-                        updateParents()
-                        composerParamTransformer.visitSimpleFunction(
-                            it.getComposableForDecoy().owner as IrSimpleFunction
-                        ) as IrSimpleFunction
-                    } else {
-                        it.getComposableForDecoy().owner as IrSimpleFunction
-                    }
-                }
-            }
+            composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
         }.symbol
     }
 
@@ -145,7 +117,20 @@ class WrapJsComposableLambdaLowering(
         val original = super.visitCall(expression) as IrCall
         return when (expression.symbol.owner.fqNameForIrSerialization) {
             ComposeCallableIds.composableLambda.asSingleFqName() -> {
-                transformComposableLambdaCall(original)
+                transformComposableLambdaCall(
+                    originalCall = original,
+                    currentComposer = original.getValueArgument(0),
+                    lambda = original.getValueArgument(
+                        original.valueArgumentsCount - 1
+                    ) as IrFunctionExpression
+                )
+            }
+            ComposeCallableIds.rememberComposableLambda.asSingleFqName() -> {
+                transformComposableLambdaCall(
+                    originalCall = original,
+                    currentComposer =  original.getValueArgument(3),
+                    lambda = original.getValueArgument(2) as IrFunctionExpression
+                )
             }
             ComposeCallableIds.composableLambdaInstance.asSingleFqName() -> {
                 transformComposableLambdaInstanceCall(original)
@@ -180,11 +165,11 @@ class WrapJsComposableLambdaLowering(
         }
     }
 
-    private fun transformComposableLambdaCall(originalCall: IrCall): IrExpression {
-        val currentComposer = originalCall.getValueArgument(0)
-        val lambda = originalCall.getValueArgument(originalCall.valueArgumentsCount - 1)
-            as IrFunctionExpression
-
+    private fun transformComposableLambdaCall(
+        originalCall: IrCall,
+        currentComposer: IrExpression?,
+        lambda: IrFunctionExpression
+    ): IrExpression {
         val composableLambdaVar = irTemporary(originalCall, "dispatchReceiver")
         // create dispatchReceiver::invoke function reference
         val funReference = functionReferenceForComposableLambda(

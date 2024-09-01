@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.js) inline fun kotlin.Any?.asDynamic(): dynamic
+KtNameReferenceExpression(100,109): 'asDynamic'
+  KtSimpleNameReference:
+    (in kotlin.js) inline fun kotlin.Any?.asDynamic(): dynamic

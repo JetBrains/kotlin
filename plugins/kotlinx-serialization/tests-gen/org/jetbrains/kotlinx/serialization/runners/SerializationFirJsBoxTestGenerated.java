@@ -31,6 +31,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   }
 
   @Test
+  @TestMetadata("annotationsOnFileExplicitArray.kt")
+  public void testAnnotationsOnFileExplicitArray() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFileExplicitArray.kt");
+  }
+
+  @Test
   @TestMetadata("caching.kt")
   public void testCaching() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
@@ -145,6 +151,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   }
 
   @Test
+  @TestMetadata("multimoduleInheritanceJsGeneric.kt")
+  public void testMultimoduleInheritanceJsGeneric() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
+  }
+
+  @Test
   @TestMetadata("multipleGenericsPolymorphic.kt")
   public void testMultipleGenericsPolymorphic() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
@@ -160,6 +172,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   @TestMetadata("sealedInterfaces.kt")
   public void testSealedInterfaces() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
+  }
+
+  @Test
+  @TestMetadata("serializableCompanion.kt")
+  public void testSerializableCompanion() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableCompanion.kt");
   }
 
   @Test
@@ -208,5 +226,11 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
   @TestMetadata("userDefinedSerializerInCompanion.kt")
   public void testUserDefinedSerializerInCompanion() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("uuidSerializer.kt")
+  public void testUuidSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/uuidSerializer.kt");
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,11 +24,11 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
-        val jsProgram = when (val artifact = info.unwrap()) {
-            is BinaryArtifacts.Js.OldJsArtifact -> (artifact.translationResult as TranslationResult.Success).program
-            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[TranslationMode.FULL_DEV]?.jsProgram ?: return
-            else -> return
-        }
+        val jsProgram = (info.unwrap() as? BinaryArtifacts.Js.JsIrArtifact)
+            ?.compilerResult
+            ?.outputs[TranslationMode.FULL_DEV]
+            ?.jsProgram
+            ?: return
         processJsProgram(jsProgram, ktFiles, module.targetBackend!!)
     }
 

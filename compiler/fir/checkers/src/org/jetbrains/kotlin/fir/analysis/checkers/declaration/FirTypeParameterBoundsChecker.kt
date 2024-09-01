@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -144,8 +145,6 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     }
 
     private fun checkConflictingBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.bounds.size < 2) return
-
         fun anyConflictingTypes(types: List<ConeKotlinType>): Boolean {
             types.forEach { type ->
                 if (!type.canHaveSubtypesAccordingToK1(context.session)) {
@@ -159,7 +158,10 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
             return false
         }
 
-        if (anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })) {
+        if (
+            declaration.bounds.singleOrNull()?.coneType?.isNothing == true ||
+            declaration.bounds.size >= 2 && anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })
+        ) {
             reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
         }
     }
@@ -186,18 +188,15 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         val firRegularClassesSet = mutableSetOf<FirRegularClassSymbol>()
 
         for (bound in declaration.symbol.resolvedBounds) {
-            val classSymbol = bound.toRegularClassSymbol(context.session)
-            if (firRegularClassesSet.contains(classSymbol)) {
-                // no need to throw INCONSISTENT_TYPE_PARAMETER_BOUNDS diagnostics here because REPEATED_BOUNDS diagnostic is already exist
+            val classSymbol = bound.toRegularClassSymbol(context.session) ?: continue
+            if (!firRegularClassesSet.add(classSymbol)) {
+                // no need to report INCONSISTENT_TYPE_PARAMETER_BOUNDS because REPEATED_BOUNDS has already been reported
                 return
             }
 
-            if (classSymbol != null) {
-                firRegularClassesSet.add(classSymbol)
-                firTypeRefClasses.add(Pair(bound, classSymbol))
-            }
+            firTypeRefClasses.add(bound to classSymbol)
         }
 
-        checkInconsistentTypeParameters(firTypeRefClasses, context, reporter, declaration.source, false)
+        checkInconsistentTypeParameters(firTypeRefClasses, context, reporter, declaration.source, isValues = false)
     }
 }

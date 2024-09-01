@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
-interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
+sealed interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     abstract override var source: KtSourceElement?
     abstract override var resolvePhase: FirResolvePhase
     abstract override val annotations: MutableList<FirAnnotation>

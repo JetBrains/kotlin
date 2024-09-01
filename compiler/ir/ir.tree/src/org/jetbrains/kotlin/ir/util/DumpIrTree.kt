@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -37,9 +38,9 @@ fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
-    if (shouldSkipDump()) return ""
+    val correctedLineNumber = if (shouldSkipDump()) UNDEFINED_OFFSET else lineNumber
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, options), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, correctedLineNumber, sb, options), null)
     return sb.toString()
 }
 
@@ -67,6 +68,7 @@ data class DumpIrTreeOptions(
     val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
+    val printExpectDeclarations: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 
@@ -155,6 +157,7 @@ class DumpIrTreeVisitor(
 
     override fun visitClass(declaration: IrClass, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
@@ -181,6 +184,7 @@ class DumpIrTreeVisitor(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
@@ -340,11 +344,10 @@ class DumpIrTreeVisitor(
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
         getTypeArgument(index)?.render() ?: "<none>"
 
-    override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
-        expression.dumpLabeledElementWith(data) {
-            expression.inlinedElement.dumpInternal("inlinedElement")
-            expression.acceptChildren(this, "")
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
+        inlinedBlock.dumpLabeledElementWith(data) {
+            inlinedBlock.inlineFunction.dumpInternal("inlineFunction")
+            inlinedBlock.acceptChildren(this, "")
         }
     }
 

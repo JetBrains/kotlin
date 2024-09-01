@@ -3,7 +3,7 @@ Symbol:
 val foo: kotlin.Int
 
 Signature:
-KaVariableLikeSignature:
+KaVariableSignature:
   name = foo
   receiverType = null
   returnType = kotlin.Int

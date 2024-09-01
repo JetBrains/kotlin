@@ -48,7 +48,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         this.moduleData = moduleData
         val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 StandardClassIds.Array.toLookupTag(),
                 arrayOf(
                     ConeClassLikeTypeImpl(
@@ -69,7 +69,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = this@generateValuesFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceConeTypeOrNull(returnTypeRef.type)
+            it.replaceConeTypeOrNull(returnTypeRef.coneType)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
@@ -90,7 +90,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         this.moduleData = moduleData
         val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 this@generateValueOfFunction.symbol.toLookupTag(),
                 emptyArray(),
                 isNullable = false
@@ -111,7 +111,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             this.moduleData = moduleData
             this.returnTypeRef = buildResolvedTypeRef {
                 source = sourceElement
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     StandardClassIds.String.toLookupTag(),
                     emptyArray(),
                     isNullable = false
@@ -126,7 +126,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         }
         resolvePhase = this@generateValueOfFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceConeTypeOrNull(returnTypeRef.type)
+            it.replaceConeTypeOrNull(returnTypeRef.coneType)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
@@ -149,7 +149,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
                     ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false)

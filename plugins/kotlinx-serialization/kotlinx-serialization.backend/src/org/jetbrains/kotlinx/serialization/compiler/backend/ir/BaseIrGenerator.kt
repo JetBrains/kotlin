@@ -464,13 +464,15 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         serializableProperties: List<IrSerializableProperty>
     ): List<IrExpression?> {
         return DeclarationIrBuilder(compilerContext, symbol).run {
-            serializableProperties.map { cacheableChildSerializerInstance(serializableClass, it) }
+            val hasKeepGeneratedSerializerAnnotation = serializableClass.hasKeepGeneratedSerializerAnnotation
+            serializableProperties.map { cacheableChildSerializerInstance(serializableClass, it, hasKeepGeneratedSerializerAnnotation) }
         }
     }
 
     private fun IrBuilderWithScope.cacheableChildSerializerInstance(
         serializableClass: IrClass,
-        property: IrSerializableProperty
+        property: IrSerializableProperty,
+        hasKeepGeneratedSerializerAnnotation: Boolean
     ): IrExpression? {
         // to avoid a cyclical dependency between the serializer cache and the cache of child serializers,
         // the class  should not cache its serializer as a child
@@ -486,7 +488,12 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val serializer = getIrSerialTypeInfo(property, compilerContext).serializer ?: return null
         if (serializer.owner.kind == ClassKind.OBJECT) return null
 
-        return serializerInstance(
+        // disable caching for sealed serializer because of initialization loop, see https://github.com/Kotlin/kotlinx.serialization/issues/2759
+        if (hasKeepGeneratedSerializerAnnotation && serializer.owner.classId == sealedSerializerId) {
+            return null
+        }
+
+        val serializerInstance = serializerInstance(
             serializer,
             compilerContext,
             property.type,
@@ -494,6 +501,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             serializableClass,
             null
         )
+
+        return serializerInstance
     }
 
     private fun IrSimpleType.checkTypeArgumentsHasSelf(itselfClass: IrClassSymbol): Boolean {

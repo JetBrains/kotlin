@@ -55,7 +55,7 @@ Some examples:
 You can use Docker to build LLVM for Linux:
 ```shell
 docker build -t kotlin-llvm-builder --file images/linux/Dockerfile .
-docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /output/llvm-11.1.0-linux-x64 --pack
+docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /output/llvm-<version>-x86_64-linux --pack
 ```
 
 #### Windows 
@@ -66,9 +66,8 @@ docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /o
 If your host machine is Windows, you can use Windows Docker container to build LLVM for Windows: 
 ```shell 
 docker build -t kotlin-llvm-builder --file images/windows/Dockerfile .
-docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /output/llvm-11-1.0-windows-x64 --pack
+docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /output/llvm-<version>-x86_64-windows --pack
 ```
 
 ### Known problems
-1. `libcxx` and `compiler-rt` are built as projects, not runtimes.
-2. No way to run LLVM tests out of the box.
+1. No way to run LLVM tests out of the box.

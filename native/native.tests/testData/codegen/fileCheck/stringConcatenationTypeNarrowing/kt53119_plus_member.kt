@@ -4,56 +4,56 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_plus_member
 import kotlin.test.*
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun manualPlusMemberAny(str: String, maybeAny: kotlin.Any?): kotlin.String =
     str + maybeAny
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberString
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun manualPlusMemberString(str1: String, str2: String): kotlin.String =
         str1 + str2
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusMemberAny(str: String, maybeAny: Any?): String {
     return "$str$maybeAny"
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberString
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call %struct.ObjHeader* @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 
 fun generatedPlusMemberString(str1: String, str2: String): String {
     return "$str1$str2"
@@ -61,29 +61,29 @@ fun generatedPlusMemberString(str1: String, str2: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT Foo#toString(){}kotlin.String
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 fun manualPlusMemberFoo(str1: String, foo: Foo): kotlin.String =
         str1 + foo
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
+// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call %struct.ObjHeader* @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call %struct.ObjHeader* @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
-// CHECK: ret %struct.ObjHeader*
+// CHECK: ret ptr
 fun manualPlusMemberMaybeFoo(str1: String, foo: Foo?): kotlin.String =
         str1 + foo
 

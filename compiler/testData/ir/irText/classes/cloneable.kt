@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// SKIP_KLIB_TEST
 // TARGET_BACKEND: JVM
 // STATUS: Cloneable is JVM-specific API
 

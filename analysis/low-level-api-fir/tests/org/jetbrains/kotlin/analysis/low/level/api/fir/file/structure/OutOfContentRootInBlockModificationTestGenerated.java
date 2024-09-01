@@ -240,6 +240,30 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   }
 
   @Test
+  @TestMetadata("memberSetterWithTypeWithBodyFakeField.kt")
+  public void testMemberSetterWithTypeWithBodyFakeField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyFakeField.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyFakeFieldDeclaration.kt")
+  public void testMemberSetterWithTypeWithBodyFakeFieldDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyFakeFieldDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyField.kt")
+  public void testMemberSetterWithTypeWithBodyField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyField.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyNearField.kt")
+  public void testMemberSetterWithTypeWithBodyNearField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyNearField.kt");
+  }
+
+  @Test
   @TestMetadata("memberSetterWithTypeWithBodyWithoutName.kt")
   public void testMemberSetterWithTypeWithBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyWithoutName.kt");
@@ -261,6 +285,30 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   @TestMetadata("memberSetterWithoutTypeWithBody.kt")
   public void testMemberSetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBody.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyFakeField.kt")
+  public void testMemberSetterWithoutTypeWithBodyFakeField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyFakeField.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyFakeFieldDeclaration.kt")
+  public void testMemberSetterWithoutTypeWithBodyFakeFieldDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyFakeFieldDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyField.kt")
+  public void testMemberSetterWithoutTypeWithBodyField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyField.kt");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyNearField.kt")
+  public void testMemberSetterWithoutTypeWithBodyNearField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyNearField.kt");
   }
 
   @Test
@@ -327,6 +375,30 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   @TestMetadata("topLevelGetterWithTypeWithBody.kt")
   public void testTopLevelGetterWithTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBody.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyFakeField.kt")
+  public void testTopLevelGetterWithTypeWithBodyFakeField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyFakeField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyFakeFieldDeclaration.kt")
+  public void testTopLevelGetterWithTypeWithBodyFakeFieldDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyFakeFieldDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyField.kt")
+  public void testTopLevelGetterWithTypeWithBodyField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearField.kt")
+  public void testTopLevelGetterWithTypeWithBodyNearField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyNearField.kt");
   }
 
   @Test
@@ -414,6 +486,30 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   }
 
   @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyFakeField.kt")
+  public void testTopLevelSetterWithTypeWithBodyFakeField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyFakeField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyFakeFieldDeclaration.kt")
+  public void testTopLevelSetterWithTypeWithBodyFakeFieldDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyFakeFieldDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyField.kt")
+  public void testTopLevelSetterWithTypeWithBodyField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyNearField.kt")
+  public void testTopLevelSetterWithTypeWithBodyNearField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyNearField.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelSetterWithTypeWithBodyWithoutName.kt")
   public void testTopLevelSetterWithTypeWithBodyWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyWithoutName.kt");
@@ -435,6 +531,30 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   @TestMetadata("topLevelSetterWithoutTypeWithBody.kt")
   public void testTopLevelSetterWithoutTypeWithBody() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBody.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyFakeField.kt")
+  public void testTopLevelSetterWithoutTypeWithBodyFakeField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyFakeField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyFakeFieldDeclaration.kt")
+  public void testTopLevelSetterWithoutTypeWithBodyFakeFieldDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyFakeFieldDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyField.kt")
+  public void testTopLevelSetterWithoutTypeWithBodyField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyField.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyNearField.kt")
+  public void testTopLevelSetterWithoutTypeWithBodyNearField() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyNearField.kt");
   }
 
   @Test

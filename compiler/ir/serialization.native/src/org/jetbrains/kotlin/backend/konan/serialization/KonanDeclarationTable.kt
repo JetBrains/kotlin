@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.DescToIrIdSig
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.module
 
 class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanManglerIr) {
     init {
@@ -28,7 +31,7 @@ class KonanDeclarationTable(
     // TODO: We should get rid of this extension point in favor of proper support in IR-based mangler.
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? =
-            if (declaration.isFromInteropLibraryByDescriptor()) {
+            if (declaration.isFromCInteropLibrary()) {
                 signatureIdComposer.computeSignature(declaration)
             } else null
 }

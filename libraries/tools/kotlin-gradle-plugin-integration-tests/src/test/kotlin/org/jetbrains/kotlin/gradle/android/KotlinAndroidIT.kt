@@ -29,8 +29,8 @@ class KotlinAndroidIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         fun BuildResult.assertKotlinGradleBuildServicesAreInitialized() {
-            assertOutputContainsExactTimes("Initialized KotlinGradleBuildServices", expectedRepetitionTimes = 1)
-            assertOutputContainsExactTimes("Disposed KotlinGradleBuildServices", expectedRepetitionTimes = 1)
+            assertOutputContainsExactlyTimes("Initialized KotlinGradleBuildServices", expectedCount = 1)
+            assertOutputContainsExactlyTimes("Disposed KotlinGradleBuildServices", expectedCount = 1)
         }
 
         project(

@@ -26,7 +26,7 @@ class ComposePluginAnnotationsProvider(testServices: TestServices) : Environment
         val platform = module.targetPlatform
         when {
             platform.isJvm() -> {
-                defaultClassPath.firstOrNull { it.absolutePath.contains("compose") && it.absolutePath.contains("runtime") }?.let {
+                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }.forEach {
                     configuration.addJvmClasspathRoot(it)
                 }
             }

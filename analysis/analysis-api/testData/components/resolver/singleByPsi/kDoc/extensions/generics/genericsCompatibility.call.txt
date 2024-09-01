@@ -1,26 +1,35 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(149,159): 'Any.anyExt'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(165,176): 'Base.anyExt'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(182,194): 'Child.anyExt'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(203,214): 'Any.baseExt'
+    null
 
-<caret_5>: KDocName:
-null
+<caret_5>:
+  KDocName(220,232): 'Base.baseExt'
+    null
 
-<caret_6>: KDocName:
-null
+<caret_6>:
+  KDocName(238,251): 'Child.baseExt'
+    null
 
-<caret_7>: KDocName:
-null
+<caret_7>:
+  KDocName(260,272): 'Any.childExt'
+    null
 
-<caret_8>: KDocName:
-null
+<caret_8>:
+  KDocName(278,291): 'Base.childExt'
+    null
 
-<caret_9>: KDocName:
-null
+<caret_9>:
+  KDocName(297,311): 'Child.childExt'
+    null

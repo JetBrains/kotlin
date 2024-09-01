@@ -1,0 +1,32 @@
+KtNameReferenceExpression(187,192): 'check'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+          symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = dependency4.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = dependency4/MyInterface.check(<dispatch receiver>: dependency4.MyInterface, list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = list
+              receiverType = null
+              returnType = {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+              symbol = list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>
+              callableId = null
+          ]
+          callableId = dependency4/MyInterface.check
+      typeArgumentsMapping = {}

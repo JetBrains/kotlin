@@ -10,16 +10,18 @@
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
     gitCommitSha = "7d1e5a3114e95a4e0d63a8c515e9e8e37d5c504c",
-    stableKotlinVersion = "1.9.20",
+    stableKotlinVersion = "2.0.20",
 )
 
 import java.io.File
 
 val repoPatch = {
-    "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-repo.patch")
-        .readText()
-        .run { replace("<kotlin_version>", currentKotlinVersion) }
-        .byteInputStream()
+    listOf(
+        "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-repo.patch")
+            .readText()
+            .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+    )
 }
 
 runBenchmarks(

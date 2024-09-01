@@ -1,9 +1,9 @@
 expression: consumer::accept
 expected type: KaUsualClassType:
-  annotationsList: []
+  annotations: []
   typeArguments: [
     in KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
   ]
   type: java/util/function/Consumer<in T>

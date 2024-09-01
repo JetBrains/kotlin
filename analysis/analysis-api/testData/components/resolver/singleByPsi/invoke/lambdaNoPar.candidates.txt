@@ -1,2 +1,2 @@
-KtFunctionLiteral:
-NO_CANDIDATES
+KtFunctionLiteral(71,73): '{}'
+  NO_CANDIDATES

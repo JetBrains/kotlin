@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.errorFunction]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.errorFunction]
  */
 abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?

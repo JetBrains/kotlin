@@ -21,7 +21,7 @@ fun f2() {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     try {
         f1()

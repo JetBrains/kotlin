@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -25,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -33,13 +29,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.Companion.abstractMutableListModCountCallableId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 class FirExpectActualMatchingContextImpl private constructor(
@@ -82,7 +81,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             .resolvedExpandedTypeRef
             .coneType
             .fullyExpandedType(actualSession)
-            .toSymbol(actualSession) as? FirRegularClassSymbol
+            .toRegularClassSymbol(actualSession)
     }
 
     override val RegularClassSymbolMarker.classKind: ClassKind
@@ -434,6 +433,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val CallableSymbolMarker.isJavaField: Boolean
         get() = this is FirFieldSymbol && this.fir.unwrapFakeOverrides().isJava
 
+    override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
+        get() = this is FirPropertySymbol && callableId == abstractMutableListModCountCallableId
+
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
 
@@ -562,7 +564,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker = FirSourceElement(asSymbol().source)
 
-    override fun TypeRefMarker.getClassId(): ClassId? = (this as FirResolvedTypeRef).type.fullyExpandedType(actualSession).classId
+    override fun TypeRefMarker.getClassId(): ClassId? = (this as FirResolvedTypeRef).coneType.fullyExpandedType(actualSession).classId
 
     override fun checkAnnotationsOnTypeRefAndArguments(
         expectContainingSymbol: DeclarationSymbolMarker,

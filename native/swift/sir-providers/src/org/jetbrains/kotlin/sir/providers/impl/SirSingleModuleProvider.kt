@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
@@ -23,7 +23,7 @@ public class SirSingleModuleProvider(
         }
     }
 
-    override fun KtModule.sirModule(): SirModule {
+    override fun KaModule.sirModule(): SirModule {
         return theModule
     }
 }

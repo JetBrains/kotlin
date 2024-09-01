@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)
+KtNameReferenceExpression(35,46): 'invokeLater'
+  KtSimpleNameReference:
+    (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 
 @MppGradlePluginTests
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_73)
 @DisplayName("Test consumption of dependencies with multiplatform resources in a regular project")
 class MultiplatformResourcesDependencyIT : KGPBaseTest() {
 

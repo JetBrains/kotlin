@@ -24,10 +24,7 @@ import kotlin.reflect.KProperty1;
 import kotlin.reflect.jvm.ReflectJvmMapping;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.Argument;
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
-import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
-import org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt;
+import org.jetbrains.kotlin.cli.common.arguments.*;
 
 import java.lang.reflect.Field;
 
@@ -39,12 +36,12 @@ public class Usage {
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
     @NotNull
-    public static <A extends CommonToolArguments> String render(@NotNull CLITool<A> tool, @NotNull A arguments) {
+    public static <A extends CommonCompilerArguments> String render(@NotNull CLICompiler<A> compiler, @NotNull A arguments) {
         boolean extraHelp = arguments.getExtraHelp();
         StringBuilder sb = new StringBuilder();
-        appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
+        appendln(sb, "Usage: " + compiler.executableScriptFileName() + " <options> <source files>");
         appendln(sb, "where " + (extraHelp ? "advanced" : "possible") + " options include:");
-        KClass<? extends CommonToolArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
+        KClass<? extends CommonCompilerArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
         for (KCallable<?> callable : kClass.getMembers()) {
             if (!(callable instanceof KProperty1)) continue;
             propertyUsage(sb, (KProperty1<?, ?>) callable, extraHelp);
@@ -64,7 +61,7 @@ public class Usage {
             appendln(sb, BAT_DELIMITER_CHARACTERS_NOTE);
         }
 
-        if (!extraHelp && tool instanceof CLICompiler<?>) {
+        if (!extraHelp) {
             appendln(sb, "");
             appendln(sb, "For details, see https://kotl.in/cli");
         }

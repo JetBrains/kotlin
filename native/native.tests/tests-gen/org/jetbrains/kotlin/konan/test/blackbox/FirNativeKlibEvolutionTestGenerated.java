@@ -220,6 +220,12 @@ public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolu
   }
 
   @Test
+  @TestMetadata("overrideByPrivateMembers.kt")
+  public void testOverrideByPrivateMembers() {
+    runTest("compiler/testData/klib/evolution/overrideByPrivateMembers.kt");
+  }
+
+  @Test
   @TestMetadata("removeAbstractFromClass.kt")
   public void testRemoveAbstractFromClass() {
     runTest("compiler/testData/klib/evolution/removeAbstractFromClass.kt");

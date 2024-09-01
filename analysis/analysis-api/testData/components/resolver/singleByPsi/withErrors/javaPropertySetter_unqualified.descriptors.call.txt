@@ -1,0 +1,36 @@
+KtNameReferenceExpression(44,47): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/call)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: LOCAL
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var foo: kotlin.Int
+          callableId = /JavaClass.foo
+      simpleAccess = Write:
+        value = 42
+      typeArgumentsMapping = {}

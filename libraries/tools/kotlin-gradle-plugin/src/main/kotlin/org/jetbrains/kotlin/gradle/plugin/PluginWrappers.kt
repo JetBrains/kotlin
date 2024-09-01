@@ -12,11 +12,9 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG6
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "main"
+private const val PLUGIN_VARIANT_NAME = "gradle76"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
@@ -137,30 +135,10 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class] =
-        MavenPluginConfiguratorG6.Gradle6MavenPluginConfiguratorVariantFactory()
-    factories[JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class] =
-        JavaSourceSetsAccessorG6.JavaSourceSetAccessorVariantFactoryG6()
-    factories[BasePluginConfiguration.BasePluginConfigurationVariantFactory::class] =
-        BasePluginConfigurationG6.BasePluginConfigurationVariantFactoryG6()
-    factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
-        IdeaSyncDetectorG6.IdeaSyncDetectorVariantFactoryG6()
-    factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
-        ConfigurationTimePropertiesAccessorG6.ConfigurationTimePropertiesAccessorVariantFactoryG6()
-    factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
-        MppTestReportHelperG6.MppTestReportHelperVariantFactoryG6()
-    factories[KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class] =
-        KotlinTestReportCompatibilityHelperG6.KotlinTestReportCompatibilityHelperVariantFactoryG6()
-    factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
-        ArtifactTypeAttributeAccessorG6.ArtifactTypeAttributeAccessorVariantFactoryG6()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
-        ProjectIsolationStartParameterAccessorG6.Factory()
+        ProjectIsolationStartParameterAccessorG76.Factory()
     factories[CompatibilityConventionRegistrar.Factory::class] =
-        CompatibilityConventionRegistrarG6.Factory()
-    factories[UnameExecutor.UnameExecutorVariantFactory::class] =
-        UnameExecutorG6.UnameExecutorVariantFactoryG6()
-    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG6.Factory()
-    factories[SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory::class] =
-        SourceSetCompatibilityHelperG6VariantFactory()
-    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] = AttributeConfigurationHelperVariantFactoryG6()
+        CompatibilityConventionRegistrarG76.Factory()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
+        ConfigurationCacheStartParameterAccessorG76.Factory()
 }

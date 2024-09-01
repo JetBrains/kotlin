@@ -79,9 +79,6 @@ fun main() {
     val hook = { throwable: Throwable ->
         print("${throwable::class.simpleName}. Runnable state: ${Debugging.isThreadStateRunnable}")
     }
-    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
-        hook.freeze()
-    }
 
     setUnhandledExceptionHook(hook)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.constant
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -57,18 +56,23 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsExpression {
         val irFunction = expression.function
-        return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
+        return irFunction.accept(IrFunctionToJsTransformer(), context).apply {
+            name = null
+            if (context.staticContext.backendContext.es6mode) {
+                isEs6Arrow = true
+            }
+        }
     }
 
-    override fun visitConst(expression: IrConst<*>, context: JsGenerationContext): JsExpression {
+    override fun visitConst(expression: IrConst, context: JsGenerationContext): JsExpression {
         val kind = expression.kind
         return when (kind) {
-            is IrConstKind.String -> JsStringLiteral(kind.valueOf(expression))
+            is IrConstKind.String -> JsStringLiteral(expression.value as String)
             is IrConstKind.Null -> JsNullLiteral()
-            is IrConstKind.Boolean -> JsBooleanLiteral(kind.valueOf(expression))
-            is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
-            is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
-            is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
+            is IrConstKind.Boolean -> JsBooleanLiteral(expression.value as Boolean)
+            is IrConstKind.Byte -> JsIntLiteral((expression.value as Byte).toInt())
+            is IrConstKind.Short -> JsIntLiteral((expression.value as Short).toInt())
+            is IrConstKind.Int -> JsIntLiteral(expression.value as Int)
             is IrConstKind.Long -> compilationException(
                 "Long const should have been lowered at this point",
                 expression
@@ -77,8 +81,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                 "Char const should have been lowered at this point",
                 expression
             )
-            is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(kind.valueOf(expression)))
-            is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
+            is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(expression.value as Float))
+            is IrConstKind.Double -> JsDoubleLiteral(expression.value as Double)
         }.withSource(expression, context)
     }
 
@@ -336,10 +340,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val name = when (val function = expression.symbol.owner) {
             is IrConstructor -> function.getConstructorRef(data.staticContext)
             is IrSimpleFunction -> data.getNameForStaticFunction(function).makeRef()
-            else -> compilationException(
-                "Unexpected function kind",
-                expression
-            )
         }
         return name.withSource(expression, data)
     }

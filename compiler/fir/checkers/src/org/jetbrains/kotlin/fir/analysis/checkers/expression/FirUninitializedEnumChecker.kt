@@ -79,7 +79,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         if (source.kind is KtFakeSourceElementKind) return
 
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol() ?: return
-        val enumClassSymbol = calleeSymbol.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
+        val enumClassSymbol = calleeSymbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return
         // We're looking for members/entries/companion object in an enum class or members in companion object of an enum class.
         if (!enumClassSymbol.isEnumClass) return
 
@@ -103,7 +103,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         // declaration, whereas the latter has an anonymous function instead. For both cases, we're looking for member properties as an
         // accessed context.
         val isInsideCorrespondingEnum = context.containingDeclarations.any {
-            it.getContainingClassSymbol(context.session) == enumClassSymbol
+            it.getContainingClassSymbol() == enumClassSymbol
         }
         if (!isInsideCorrespondingEnum) return
 
@@ -121,7 +121,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            it.getContainingClassSymbol(context.session) == enumClassSymbol || it.symbol in enumEntriesInitBlocks
+            it.getContainingClassSymbol() == enumClassSymbol || it.symbol in enumEntriesInitBlocks
         }?.symbol ?: return
 
         // When checking enum member properties, accesses to enum entries in lazy delegation is legitimate, e.g.,

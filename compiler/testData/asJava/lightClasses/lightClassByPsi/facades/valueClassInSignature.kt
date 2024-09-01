@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 @JvmInline
 value class Some(val value: String)
 

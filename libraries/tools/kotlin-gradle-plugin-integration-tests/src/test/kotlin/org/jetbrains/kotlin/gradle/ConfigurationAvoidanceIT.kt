@@ -26,9 +26,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_3],
-    )
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
     fun testJvmConfigurationAvoidance(gradleVersion: GradleVersion) {
@@ -49,9 +46,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     }
 
     @OtherGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_3]
-    )
     @DisplayName("KGP/Kapt does not eagerly configure any tasks")
     @GradleTest
     fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {

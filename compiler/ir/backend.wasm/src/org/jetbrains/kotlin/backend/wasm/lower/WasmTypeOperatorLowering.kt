@@ -178,7 +178,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         // A bit of a hack. Inliner tends to insert null casts from nothing to any. It's hard to express in wasm, so we simply replace
         // them with single const null.
-        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst<*> && value.kind == IrConstKind.Null) {
+        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst && value.kind == IrConstKind.Null) {
             return builder.irNull(builtIns.nothingNType)
         }
 
@@ -280,7 +280,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             val argument = cacheValue(expression.argument)
             val narrowArg = narrowType(fromType, expression.type, argument())
             val check = generateTypeCheck(argument, toType)
-            if (check is IrConst<*>) {
+            if (check is IrConst) {
                 val value = check.value as Boolean
                 if (value) {
                     +narrowArg

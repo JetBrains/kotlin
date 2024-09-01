@@ -9,11 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
-import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.annotations.toFilter
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -23,7 +19,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -81,6 +76,7 @@ internal class SymbolLightAccessorMethod private constructor(
     )
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
         get() = if (isGetter) getter!! else setter!!
 
@@ -95,17 +91,15 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { propertySymbol ->
             val accessorSymbol = propertySymbol.accessorSymbol
-            accessorSymbol.getJvmNameFromAnnotation(accessorSite.toOptionalFilter()) ?: run {
-                val outerClass = this@SymbolLightAccessorMethod.containingClass
-                val defaultName = propertySymbol.name.identifier.let {
-                    if (outerClass.isAnnotationType || outerClass.isRecord)
-                        it
-                    else
-                        it.abiName()
-                }
-
-                propertySymbol.computeJvmMethodName(defaultName, outerClass, accessorSite, accessorSymbol.visibility)
+            val outerClass = this@SymbolLightAccessorMethod.containingClass
+            val defaultName = propertySymbol.name.identifier.let {
+                if (outerClass.isAnnotationType || outerClass.isRecord)
+                    it
+                else
+                    it.abiName()
             }
+
+            computeJvmMethodName(accessorSymbol, defaultName)
         }
     }
 
@@ -133,9 +127,6 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override val kotlinOrigin: KtDeclaration? get() = containingPropertyDeclaration
 
-    private val accessorSite
-        get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
-
     //TODO Fix it when SymbolConstructorValueParameter be ready
     private val isParameter: Boolean get() = containingPropertyDeclaration == null || containingPropertyDeclaration is KtParameter
 
@@ -145,7 +136,6 @@ internal class SymbolLightAccessorMethod private constructor(
                 builder,
                 this@SymbolLightAccessorMethod,
                 containingClass,
-                accessorSite.toOptionalFilter(),
             )
         }
     }
@@ -186,8 +176,7 @@ internal class SymbolLightAccessorMethod private constructor(
             return@withPropertySymbol true
         }
 
-        val filter = accessorSite.toOptionalFilter()
-        propertySymbol.hasJvmStaticAnnotation(filter) || propertySymbol.accessorSymbol.hasJvmStaticAnnotation(filter)
+        propertySymbol.hasJvmStaticAnnotation() || propertySymbol.accessorSymbol.hasJvmStaticAnnotation()
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -195,17 +184,9 @@ internal class SymbolLightAccessorMethod private constructor(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = CompositeAnnotationsProvider(
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = propertyAccessorSymbolPointer,
-                        annotationUseSiteTargetFilter = accessorSite.toOptionalFilter(),
-                    ),
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = containingPropertySymbolPointer,
-                        annotationUseSiteTargetFilter = accessorSite.toFilter(),
-                    ),
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = propertyAccessorSymbolPointer,
                 ),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
@@ -237,8 +218,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            val filter = accessorSite.toOptionalFilter()
-            propertySymbol.hasDeprecatedAnnotation(filter) || propertySymbol.accessorSymbol.hasDeprecatedAnnotation(filter)
+            propertySymbol.hasDeprecatedAnnotation() || propertySymbol.accessorSymbol.hasDeprecatedAnnotation()
         }
     }
 
@@ -247,10 +227,11 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
     context(KaSession)
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
     private fun forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
-        return propertySymbol.returnType.isPrimitive &&
-                propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitive
+        return propertySymbol.returnType.isPrimitiveBacked &&
+                propertySymbol.allOverriddenSymbols.any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitiveBacked
                 }
     }
 
@@ -271,9 +252,16 @@ internal class SymbolLightAccessorMethod private constructor(
                 typeMappingMode,
                 containingClass.isAnnotationType,
                 suppressWildcards(),
+                forceValueClassResolution = canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
     }
+
+    /**
+     * @see org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
+     */
+    fun canHaveValueClassInSignature(): Boolean = isTopLevel || withAccessorSymbol { it.hasJvmNameAnnotation() }
 
     override fun getReturnType(): PsiType = _returnedType
 

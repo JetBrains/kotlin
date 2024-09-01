@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,14 +15,18 @@ import kotlin.wasm.internal.jsToKotlinStringAdapter
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public open class Throwable(public open val message: String?, public open val cause: kotlin.Throwable?) {
-    public constructor(message: String?) : this(message, null)
+public actual open class Throwable internal constructor(
+    public actual open val message: String?,
+    public actual open val cause: kotlin.Throwable?,
+    internal open val jsStack: ExternalInterfaceType
+) {
+    public actual constructor(message: String?, cause: kotlin.Throwable?) : this(message, cause, captureStackTrace())
 
-    public constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public actual constructor(message: String?) : this(message, null)
 
-    public constructor() : this(null, null)
+    public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    internal val jsStack: ExternalInterfaceType = captureStackTrace()
+    public actual constructor() : this(null, null)
 
     private var _stack: String? = null
     internal val stack: String
@@ -48,5 +52,13 @@ public open class Throwable(public open val message: String?, public open val ca
     }
 }
 
-private fun captureStackTrace(): ExternalInterfaceType =
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+    get() = this.suppressedExceptionsList
+    set(value) { this.suppressedExceptionsList = value }
+
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+internal actual val Throwable.stack: String get() = this.stack
+
+internal fun captureStackTrace(): ExternalInterfaceType =
     js("new Error().stack")

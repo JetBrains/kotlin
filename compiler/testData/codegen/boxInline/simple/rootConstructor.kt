@@ -1,5 +1,4 @@
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 
 package test

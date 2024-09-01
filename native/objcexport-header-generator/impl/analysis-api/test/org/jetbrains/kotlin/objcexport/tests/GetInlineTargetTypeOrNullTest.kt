@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNull
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
@@ -24,8 +24,8 @@ class GetInlineTargetTypeOrNullTest(
     fun `test - no inlined class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
-            assertNull(foo.getInlineTargetTypeOrNull())
+            val foo = getClassOrFail(file, "Foo")
+            assertNull(getInlineTargetTypeOrNull(foo))
         }
     }
 
@@ -38,8 +38,8 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
-            val inlineTargetType = assertNotNull(foo.getInlineTargetTypeOrNull())
+            val foo = getClassOrFail(file, "Foo")
+            val inlineTargetType = assertNotNull(getInlineTargetTypeOrNull(foo))
             assertEquals(DefaultTypeClassIds.INT, inlineTargetType.classIdOrFail())
         }
     }
@@ -56,8 +56,8 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getPropertyOrFail("foo")
-            assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
+            val foo = getPropertyOrFail(file, "foo")
+            assertEquals(DefaultTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
         }
     }
 
@@ -73,15 +73,15 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val foo = file.getPropertyOrFail("foo")
-            assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
-            assertTrue(foo.returnType.getInlineTargetTypeOrNull()?.isMarkedNullable ?: false)
+            val foo = getPropertyOrFail(file, "foo")
+            assertEquals(DefaultTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
+            assertTrue(getInlineTargetTypeOrNull(foo.returnType)?.isMarkedNullable ?: false)
         }
     }
 
-    private fun KtType?.classIdOrFail(): ClassId {
+    private fun KaType?.classIdOrFail(): ClassId {
         if (this == null) error("Type was null")
-        if (this !is KtNonErrorClassType) fail("Unexpected error type: '$this'")
+        if (this !is KaClassType) fail("Unexpected error type: '$this'")
         return classId
     }
 }

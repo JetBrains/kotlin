@@ -1,2 +1,3 @@
-KtConstructorDelegationReference:
-  (in Sub) constructor(p1: kotlin.Int)
+KtConstructorDelegationReferenceExpression(111,115): 'this'
+  KtConstructorDelegationReference:
+    (in Sub) constructor(p1: kotlin.Int)

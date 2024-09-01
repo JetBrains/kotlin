@@ -1,27 +1,29 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
 
-public abstract class Enum<E : Enum<E>>(
+public actual abstract class Enum<E : Enum<E>>
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual constructor(
     @kotlin.internal.IntrinsicConstEvaluation
-    public val name: String,
-    public val ordinal: Int
+    public actual val name: String,
+    public actual val ordinal: Int
 ) : Comparable<E> {
 
-    public final override fun compareTo(other: E): Int =
+    public actual final override fun compareTo(other: E): Int =
         ordinal.compareTo(other.ordinal)
 
-    public final override fun equals(other: Any?): Boolean =
+    public actual final override fun equals(other: Any?): Boolean =
         this === other
 
-    public final override fun hashCode(): Int =
+    public actual final override fun hashCode(): Int =
         super.hashCode()
 
-    public override fun toString(): String =
+    public actual override fun toString(): String =
         name
 
-    public companion object
+    public actual companion object
 }

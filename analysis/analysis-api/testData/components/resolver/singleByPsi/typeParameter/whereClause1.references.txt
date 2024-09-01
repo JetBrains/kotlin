@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  From
+KtNameReferenceExpression(65,69): 'From'
+  KtSimpleNameReference:
+    (in <local>: copyNotNull) From

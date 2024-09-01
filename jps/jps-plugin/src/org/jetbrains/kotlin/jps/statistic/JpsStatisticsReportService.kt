@@ -58,7 +58,8 @@ sealed class JpsStatisticsReportService {
             val httpReportPassword = System.getProperty("kotlin.build.report.http.password")
             val includeGitBranch = System.getProperty("kotlin.build.report.http.git_branch", "false").toBoolean()
             val verboseEnvironment = System.getProperty("kotlin.build.report.http.environment.verbose", "false").toBoolean()
-            return HttpReportSettings(httpReportUrl, httpReportUser, httpReportPassword, verboseEnvironment, includeGitBranch)
+            val useExecutorForHttpReports = System.getProperty("kotlin.internal.build.report.http.use.executor", "false").toBoolean()
+            return HttpReportSettings(httpReportUrl, httpReportUser, httpReportPassword, verboseEnvironment, includeGitBranch, useExecutorForHttpReports)
         }
     }
 
@@ -98,9 +99,11 @@ class JpsStatisticsReportServiceImpl(
 
     private val buildMetrics = ConcurrentHashMap<String, JpsBuilderMetricReporter>()
     private val finishedModuleBuildMetrics = ConcurrentLinkedQueue<JpsBuilderMetricReporter>()
+    private val finishedModuleStatisticData = ArrayList<JpsCompileStatisticsData>()
     private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderReportService")
     private val loggerAdapter = JpsKotlinLogger(log)
-    private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
+    private val httpReportParameters = httpReportSettings?.let { HttpReportParameters(it.url, it.user, it.password) }
+    private val httpReportService = HttpReportService()
 
     override fun moduleBuildStarted(chunk: ModuleChunk) {
         val moduleName = chunk.name
@@ -136,18 +139,19 @@ class JpsStatisticsReportServiceImpl(
         }
         log.debug("JpsStatisticsReportService: Build started for $moduleName module")
         metrics.buildFinish(chunk, context, exitCode.name)
-        finishedModuleBuildMetrics.add(metrics)
+        val statisticData = metrics.flush(context)
+        finishedModuleStatisticData.add(statisticData)
+        httpReportParameters?.also { httpReportService.sendData(it, loggerAdapter) { statisticData } }
     }
 
     override fun buildFinish(context: CompileContext) {
-        val compileStatisticsData = finishedModuleBuildMetrics.map { it.flush(context) }
-        httpService?.sendData(compileStatisticsData, loggerAdapter)
+        httpReportParameters?.also { httpReportService.close(it, loggerAdapter) }
         fileReportSettings?.also {
             JpsFileReportService(
                 it.buildReportDir, context.projectDescriptor.project.name, true, it.changedFileListPerLimit
             ).process(
                 ReadableFileReportData(
-                    compileStatisticsData,
+                    finishedModuleStatisticData,
                     BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList()
                 ),
                 loggerAdapter

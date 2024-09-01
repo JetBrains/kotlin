@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 enum class Event {
     ON_CREATE, ON_START, ON_STOP, ON_DESTROY;
     companion object {

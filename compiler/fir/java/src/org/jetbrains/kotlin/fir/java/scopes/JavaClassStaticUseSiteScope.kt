@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.withReplacedSessionOrNull
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
@@ -18,7 +21,7 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val superClassScope: FirContainingNamesAwareScope,
     private val superTypesScopes: List<FirContainingNamesAwareScope>,
-    javaTypeParameterStack: JavaTypeParameterStack,
+    private val javaTypeParameterStack: JavaTypeParameterStack,
 ) : FirContainingNamesAwareScope() {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
@@ -102,4 +105,15 @@ class JavaClassStaticUseSiteScope internal constructor(
 
     override val scopeOwnerLookupNames: List<String>
         get() = declaredMemberScope.scopeOwnerLookupNames
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JavaClassStaticUseSiteScope? {
+        return JavaClassStaticUseSiteScope(
+            newSession,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+            superClassScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: superClassScope,
+            superTypesScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypesScopes,
+            javaTypeParameterStack
+        )
+    }
 }

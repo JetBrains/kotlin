@@ -69,7 +69,7 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
         for (declaration in container.declarations) {
             val irField = (declaration as? IrField) ?: (declaration as? IrProperty)?.backingField
             if (irField == null || !irField.isStatic || !irField.needsInitializationAtRuntime || context.shouldBeInitializedEagerly(irField)) continue
-            if (irField.storageKind(context) != FieldStorageKind.THREAD_LOCAL) {
+            if (irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
                 requireGlobalInitializer = true
             } else {
                 requireThreadLocalInitializer = true // Either marked with thread local or only main thread visible.
@@ -124,6 +124,6 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
     }
 
     private val IrField.needsInitializationAtRuntime: Boolean
-        get() = hasNonConstInitializer || needsGCRegistration(context)
+        get() = hasNonConstInitializer || needsGCRegistration
 
 }

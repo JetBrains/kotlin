@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    lateinit var type: ConeKotlinType
+    lateinit var coneType: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
 
     @OptIn(FirImplementationDetail::class)
@@ -34,7 +34,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
         return FirResolvedTypeRefImpl(
             source,
             annotations.toMutableOrEmpty(),
-            type,
+            coneType,
             delegatedTypeRef,
         )
     }
@@ -57,7 +57,7 @@ inline fun buildResolvedTypeRefCopy(original: FirResolvedTypeRef, init: FirResol
     val copyBuilder = FirResolvedTypeRefBuilder()
     copyBuilder.source = original.source
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.type = original.type
+    copyBuilder.coneType = original.coneType
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     return copyBuilder.apply(init).build()
 }

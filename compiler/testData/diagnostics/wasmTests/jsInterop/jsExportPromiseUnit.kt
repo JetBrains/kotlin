@@ -1,6 +1,6 @@
 // ISSUE: KT-57192
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalJsExport
 // Promise<Unit> wrongly raised:
 // K1: NON_EXPORTABLE_TYPE
 // K1,K2: UPPER_BOUND_VIOLATED

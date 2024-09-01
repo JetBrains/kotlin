@@ -49,6 +49,7 @@ internal abstract class ClassLoadersCachingBuildService : BuildService<BuildServ
                 SingleActionPerProject.run(project, UsesClassLoadersCachingBuildService::class.java.name) {
                     project.tasks.withType<UsesClassLoadersCachingBuildService>().configureEach { task ->
                         task.usesService(serviceProvider)
+                        task.classLoadersCachingService.value(serviceProvider).disallowChanges()
                     }
                 }
             }
@@ -66,7 +67,7 @@ private data class ClassLoaderCacheKey(
  * An implementation must override `equals` and `hashCode`! It's used as a part of a [Map] key
  */
 internal fun interface ParentClassLoaderProvider {
-    fun getClassLoader(): ClassLoader
+    fun getClassLoader(): ClassLoader?
 }
 
 private class DefaultParentClassLoaderProvider : ParentClassLoaderProvider {

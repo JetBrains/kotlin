@@ -15,7 +15,7 @@ namespace kotlin {
 namespace mm {
 
 class GlobalsRegistry : Pinned {
-    using Mutex = SpinLock<MutexThreadStateHandling::kIgnore>;
+    using Mutex = SpinLock;
 
 public:
     class ThreadQueue : public MultiSourceQueue<ObjHeader**, Mutex>::Producer {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
+import org.jetbrains.kotlin.backend.jvm.multifileFacadePartMember
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -57,5 +58,5 @@ internal class ResolveInlineCalls(val context: JvmBackendContext) : IrElementVis
     }
 
     private fun IrFunction.resolveMultiFileFacadeMember(): IrSimpleFunction? =
-        if (isMultifileBridge()) context.multifileFacadeMemberToPartMember[this] else null
+        if (isMultifileBridge() && this is IrSimpleFunction) this.multifileFacadePartMember else null
 }

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.Suppress) constructor(vararg names: kotlin.String)
+KtNameReferenceExpression(7,8): 'S'
+  KtSimpleNameReference:
+    (in kotlin.Suppress) constructor(vararg names: kotlin.String)

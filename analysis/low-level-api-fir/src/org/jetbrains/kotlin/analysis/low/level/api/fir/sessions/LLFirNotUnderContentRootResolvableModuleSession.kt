@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 internal class LLFirNotUnderContentRootResolvableModuleSession @PrivateSessionConstructor constructor(
-    ktModule: KtNotUnderContentRootModule,
+    ktModule: KaNotUnderContentRootModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
 ) : LLFirResolvableModuleSession(ktModule, builtinTypes)

@@ -1,15 +1,19 @@
 <caret_1>:
-  KDocReference:
-    (in test) val test.Foo.extProp: kotlin.Int
+  KDocName(66,78): 'test.extProp'
+    KDocReference:
+      (in test) val test.Foo.extProp: kotlin.Int
 
 <caret_2>:
-  KDocReference:
-    (in test) val test.Foo.extProp: kotlin.Int
+  KDocName(84,91): 'extProp'
+    KDocReference:
+      (in test) val test.Foo.extProp: kotlin.Int
 
 <caret_3>:
-  KDocReference:
-    (in test) val test.Foo.extProp: kotlin.Int
+  KDocName(100,111): 'Foo.extProp'
+    KDocReference:
+      (in test) val test.Foo.extProp: kotlin.Int
 
 <caret_4>:
-  KDocReference:
-    (in test) val test.Foo.extProp: kotlin.Int
+  KDocName(117,133): 'test.Foo.extProp'
+    KDocReference:
+      (in test) val test.Foo.extProp: kotlin.Int

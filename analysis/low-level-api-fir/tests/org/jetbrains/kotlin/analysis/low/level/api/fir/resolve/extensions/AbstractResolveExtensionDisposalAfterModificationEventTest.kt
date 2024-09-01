@@ -10,13 +10,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.name.FqName
@@ -64,7 +64,7 @@ class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
 }
 
 class KaResolveExtensionWithDisposalTrackerProvider() : KaResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> = listOf(KaResolveExtensionWithDisposalTracker())
+    override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> = listOf(KaResolveExtensionWithDisposalTracker())
 }
 
 object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {

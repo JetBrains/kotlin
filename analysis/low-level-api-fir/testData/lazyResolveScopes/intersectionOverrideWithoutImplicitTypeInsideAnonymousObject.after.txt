@@ -25,8 +25,8 @@ public abstract override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOrigina
 
 
 public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
-
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] get(): R|T|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(BODY_RESOLVE)] var bar: R|T|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|T|

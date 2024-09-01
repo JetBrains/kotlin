@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjectionWithVariance]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeProjectionWithVariance]
  */
 abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
     abstract override val source: KtSourceElement?

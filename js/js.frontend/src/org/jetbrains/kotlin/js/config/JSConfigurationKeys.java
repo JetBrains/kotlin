@@ -26,6 +26,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
 
+    public static final CompilerConfigurationKey<Boolean> USE_DEBUGGER_CUSTOM_FORMATTERS =
+            CompilerConfigurationKey.create("add import of debugger custom formatters");
+
     public static final CompilerConfigurationKey<File> OUTPUT_DIR =
             CompilerConfigurationKey.create("output directory");
 
@@ -40,6 +43,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<SourceMapNamesPolicy> SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create(
             "a policy to generate a mapping from generated identifiers to their corresponding original names");
+
+    public static final CompilerConfigurationKey<Boolean> SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create(
+            "insert source mappings from libraries even if their sources are unavailable on the end-user machine");
 
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
@@ -105,9 +111,6 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> FAKE_OVERRIDE_VALIDATOR =
             CompilerConfigurationKey.create("IR fake override validator");
-
-    public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
-            CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");

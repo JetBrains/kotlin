@@ -7,6 +7,7 @@
 #define RUNTIME_MM_THREAD_DATA_H
 
 #include <atomic>
+#include <cstdint>
 #include <vector>
 
 #include "GlobalData.hpp"
@@ -27,7 +28,7 @@ namespace mm {
 // Pin it in memory to prevent accidental copying.
 class ThreadData final : private Pinned {
 public:
-    explicit ThreadData(int threadId) noexcept :
+    explicit ThreadData(uintptr_t threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         specialRefRegistry_(SpecialRefRegistry::instance()),
@@ -38,7 +39,7 @@ public:
 
     ~ThreadData() = default;
 
-    int threadId() const noexcept { return threadId_; }
+    uintptr_t threadId() const noexcept { return threadId_; }
 
     GlobalsRegistry::ThreadQueue& globalsThreadQueue() noexcept { return globalsThreadQueue_; }
 
@@ -75,7 +76,7 @@ public:
     }
 
 private:
-    const int threadId_;
+    const uintptr_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
     SpecialRefRegistry::ThreadQueue specialRefRegistry_;

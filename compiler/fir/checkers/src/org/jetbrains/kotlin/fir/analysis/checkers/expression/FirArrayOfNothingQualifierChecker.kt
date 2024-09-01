@@ -23,7 +23,7 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
 
     fun ConeKotlinType.isArrayOfNothing(): Boolean {
         if (!this.isArrayTypeOrNullableArrayType) return false
-        val typeParameterType = type.typeArguments.firstOrNull()?.type ?: return false
+        val typeParameterType = type.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.type ?: return false
         return typeParameterType.isNothingOrNullableNothing
     }
 
@@ -37,7 +37,7 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
         if (fullyExpandedType.isArrayOfNothing()) {
             reporter.reportOn(source, FirErrors.UNSUPPORTED, "Array<Nothing> is illegal", context)
         } else {
-            for (typeArg in fullyExpandedType.typeArguments) {
+            for (typeArg in fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible) {
                 val typeArgType = typeArg.type ?: continue
                 checkTypeAndTypeArguments(typeArgType, source, context, reporter)
             }

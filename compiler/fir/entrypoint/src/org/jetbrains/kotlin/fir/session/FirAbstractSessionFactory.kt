@@ -28,15 +28,17 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-abstract class FirAbstractSessionFactory {
+abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
+
+    // ==================================== Library session ====================================
+
     protected fun createLibrarySession(
         mainModuleName: Name,
+        context: LIBRARY_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        registerExtraComponents: ((FirSession) -> Unit),
-        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
@@ -47,9 +49,9 @@ abstract class FirAbstractSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerExtraComponents(this)
+            registerLibrarySessionComponents(context)
 
-            val kotlinScopeProvider = createKotlinScopeProvider.invoke()
+            val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
@@ -75,8 +77,14 @@ abstract class FirAbstractSessionFactory {
         }
     }
 
+    protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
+    protected abstract fun FirSession.registerLibrarySessionComponents(c: LIBRARY_CONTEXT)
+
+    // ==================================== Platform session ====================================
+
     protected fun createModuleBasedSession(
         moduleData: FirModuleData,
+        context: SOURCE_CONTEXT,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
@@ -84,9 +92,6 @@ abstract class FirAbstractSessionFactory {
         enumWhenTracker: EnumWhenTracker?,
         importTracker: ImportTracker?,
         init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit),
-        registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
-        createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
@@ -100,9 +105,9 @@ abstract class FirAbstractSessionFactory {
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
-            registerExtraComponents(this)
+            registerSourceSessionComponents(context)
 
-            val kotlinScopeProvider = createKotlinScopeProvider.invoke()
+            val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
@@ -110,7 +115,7 @@ abstract class FirAbstractSessionFactory {
 
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
-                registerExtraCheckers?.invoke(this)
+                registerPlatformCheckers(context)
 
                 for (extensionRegistrar in extensionRegistrars) {
                     registerExtensions(extensionRegistrar.configure())
@@ -142,6 +147,17 @@ abstract class FirAbstractSessionFactory {
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirCachingCompositeSymbolProvider(this, dependencyProviders))
         }
     }
+
+    protected abstract fun createKotlinScopeProviderForSourceSession(
+        moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
+    ): FirKotlinScopeProvider
+
+    protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: SOURCE_CONTEXT)
+    protected abstract fun FirSession.registerSourceSessionComponents(c: SOURCE_CONTEXT)
+
+    // ==================================== Common parts ====================================
+
+    // ==================================== Utilities ====================================
 
     private fun FirSession.computeDependencyProviderList(moduleData: FirModuleData): List<FirSymbolProvider> {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific

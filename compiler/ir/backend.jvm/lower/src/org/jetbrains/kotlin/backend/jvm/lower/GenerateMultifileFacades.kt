@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -63,7 +61,9 @@ internal class GenerateMultifileFacades(private val context: JvmBackendContext) 
 
         context.multifileFacadesToAdd.clear()
 
-        functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
+        for ((member, newMember) in functionDelegates) {
+            newMember.multifileFacadePartMember = member
+        }
     }
 }
 
@@ -134,8 +134,8 @@ private fun generateMultifileFacades(
         file.declarations.add(facadeClass)
 
         for (partClass in partClasses) {
-            context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
-            context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
+            partClass.multifileFacadeForPart = jvmClassName
+            partClass.multifileFacadeClassForPart = facadeClass
 
             val correspondingProperties = CorrespondingPropertyCache(context, facadeClass)
             for (member in partClass.declarations) {
@@ -346,7 +346,7 @@ private class UpdateConstantFacadePropertyReferences(
             else -> null
         } ?: return null
         val parent = declaration.parent as? IrClass ?: return null
-        val facadeClass = context.multifileFacadeClassForPart[parent.attributeOwnerId]
+        val facadeClass = parent.multifileFacadeClassForPart
 
         return if (shouldGeneratePartHierarchy ||
             (declaration is IrProperty && declaration.backingField?.shouldMoveToFacade() == true)

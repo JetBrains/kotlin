@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1274
 abstract class Foo1 {
     abstract fun ok(): String
 }

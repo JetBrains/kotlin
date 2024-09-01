@@ -5,11 +5,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
-import org.jetbrains.kotlin.analysis.api.KaInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
@@ -63,10 +59,9 @@ internal fun KaTypeNullability.toConeNullability() = when (this) {
 
 /**
  * @receiver A symbol that needs to be imported
- * @param useSiteSession A use-site fir session.
  * @return An [FqName] by which this symbol can be imported (if it is possible)
  */
-internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSession): FqName? {
+internal fun FirCallableSymbol<*>.computeImportableName(): FqName? {
     if (callableId.isLocal) return null
 
     // SAM constructors are synthetic, but can be imported
@@ -76,7 +71,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()
 
-    val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
+    val containingClass = getContainingClassSymbol() ?: return null
 
     if (this is FirConstructorSymbol) return if (!containingClass.isInner) containingClassId.asSingleFqName() else null
 
@@ -90,7 +85,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
 
 internal fun FirExpression.asKaInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
     val ktExpression = psi as? KtExpression
-    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this)
 
     return when (evaluated) {
         null -> if (forAnnotationDefaultValue) {
@@ -115,7 +110,7 @@ internal fun FirEqualityOperatorCall.processEqualsFunctions(
     val lhs = arguments.firstOrNull() ?: return
     val scope = lhs.resolvedType.scope(
         useSiteSession = session,
-        scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+        scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession),
         callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 data class DataClass(val x: Int)

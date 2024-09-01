@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteAction
 import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -31,7 +31,7 @@ internal inline fun <R> analyzeForLightClasses(context: KtElement, crossinline a
         analyze(context, action = action)
     }
 
-internal inline fun <R> analyzeForLightClasses(useSiteKtModule: KtModule, crossinline action: KaSession.() -> R): R =
+internal inline fun <R> analyzeForLightClasses(useSiteKtModule: KaModule, crossinline action: KaSession.() -> R): R =
     allowLightClassesOnEdt {
         analyze(useSiteKtModule, action = action)
     }

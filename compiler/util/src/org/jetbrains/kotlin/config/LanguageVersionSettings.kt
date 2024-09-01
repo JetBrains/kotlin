@@ -313,7 +313,6 @@ enum class LanguageFeature(
 
     // 2.1
 
-    ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
     ProhibitImplementingVarByInheritedVal(KOTLIN_2_1, kind = BUG_FIX), // KT-56779
     PrioritizedEnumEntries(KOTLIN_2_1, kind = UNSTABLE_FEATURE), // KT-58920
     ProhibitInlineModifierOnPrimaryConstructorParameters(KOTLIN_2_1, kind = BUG_FIX), // KT-59664
@@ -331,6 +330,28 @@ enum class LanguageFeature(
     CheckLambdaAgainstTypeVariableContradictionInResolution(KOTLIN_2_1, kind = OTHER), // KT-58310
     ProperUninitializedEnumEntryAccessAnalysis(KOTLIN_2_1, kind = BUG_FIX), // KT-68451
     ImprovedCapturedTypeApproximationInInference(KOTLIN_2_1, kind = OTHER), // KT-64515
+    ImprovedVarianceInCst(KOTLIN_2_1, kind = OTHER), // KT-68970
+    InferMoreImplicationsFromBooleanExpressions(KOTLIN_2_1, kind = OTHER), // KT-64193
+    ImprovedExhaustivenessChecksIn21(KOTLIN_2_1, kind = OTHER), // KT-21908
+    ProhibitSynchronizationByValueClassesAndPrimitives(KOTLIN_2_1, kind = OTHER), // KT-67791
+    AllowSuperCallToJavaInterface(KOTLIN_2_1, kind = OTHER), // KT-69729
+    ProhibitJavaClassInheritingPrivateKotlinClass(KOTLIN_2_1, kind = OTHER), // KT-66328
+    ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces(KOTLIN_2_1, kind = BUG_FIX), // KT-57014
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
+    // See the single usage at org.jetbrains.kotlin.fir.types.ConeTypeApproximator.fastPathSkipApproximation
+    AvoidApproximationOfRecursiveCapturedTypesWithNoReason(KOTLIN_2_1, kind = OTHER), // KT-69995
+
+    // 2.2
+
+    BreakContinueInInlineLambdas(KOTLIN_2_2), // KT-1436
+    UnstableSmartcastOnDelegatedProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-57417
+    ReferencesToSyntheticJavaProperties(KOTLIN_2_2), // KT-8575
+    ForbidUsingExpressionTypesWithInaccessibleContent(KOTLIN_2_2, kind = BUG_FIX), // KT-66691
+    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(KOTLIN_2_2, kind = BUG_FIX), // KT-66691, KT-66742
+    ReportExposedTypeForMoreCasesOfTypeParameterBounds(KOTLIN_2_2, kind = BUG_FIX), // KT-69653
+    ForbidReifiedTypeParametersOnTypeAliases(KOTLIN_2_2, kind = BUG_FIX), // KT-70163
+    ForbidProjectionsInAnnotationProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-70002
+    ForbidJvmAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-25861
 
     // End of 2.* language features --------------------------------------------------
 
@@ -366,22 +387,21 @@ enum class LanguageFeature(
 
     // Experimental features
 
-    BreakContinueInInlineLambdas(null), // KT-1436
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),
     PackagePrivateFileClassesWithAllPrivateMembers(null), // Disabled until the breaking change is approved by the committee, see KT-10884.
-    BooleanElvisBoundSmartCasts(null), // see KT-26357 for details
-    NewDataFlowForTryExpressions(null),
-    AllowResultInReturnType(null),
     MultiPlatformProjects(sinceVersion = null),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, kind = BUG_FIX),
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, kind = BUG_FIX),
-    ExplicitBackingFields(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    ExplicitBackingFields(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-14663
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null),
     JsAllowValueClassesInExternals(sinceVersion = null, kind = OTHER),
     ContextReceivers(sinceVersion = null),
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
+
+    // K1 support only. We keep it, as we may want to support it also in K2
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
+
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = OTHER),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
     InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
@@ -390,11 +410,13 @@ enum class LanguageFeature(
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null), // KT-56583
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221
     IntrinsicConstEvaluation(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-49303
+
+    // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, kind = OTHER), // KT-49276
+
     ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-52774
     ForbidSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, kind = OTHER), // KT-64358
     JavaTypeParameterDefaultRepresentationWithDNN(sinceVersion = null, kind = OTHER), // KT-59138
-    ForbidUsingExpressionTypesWithInaccessibleContent(sinceVersion = null, kind = BUG_FIX), // KT-66691
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
     WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
@@ -529,7 +551,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //            1.0..1.3        1.4..1.6           1.7..2.0    2.1..2.2
+        //            1.0..1.3        1.4..1.6           1.7..2.1    2.2
         // Language:  UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ------> STABLE ---> EXPERIMENTAL
 
@@ -543,7 +565,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
         val FIRST_NON_DEPRECATED = KOTLIN_1_7
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_2_0
+        val LATEST_STABLE = KOTLIN_2_1
     }
 }
 

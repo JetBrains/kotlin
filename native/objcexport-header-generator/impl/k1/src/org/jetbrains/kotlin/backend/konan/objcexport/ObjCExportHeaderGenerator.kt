@@ -39,8 +39,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     @InternalKotlinNativeApi
     fun buildHeader(): ObjCHeader = ObjCHeader(
         stubs = stubs,
-        classForwardDeclarations = classForwardDeclarations,
-        protocolForwardDeclarations = protocolForwardDeclarations,
+        classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
+        protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
         additionalImports = getAdditionalImports(),
     )
 
@@ -53,7 +53,11 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     }
 
     fun getExportStubs(): ObjCExportedStubs =
-        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, stubs)
+        ObjCExportedStubs(
+            classForwardDeclarations.sortedBy { it.className }.toSet(),
+            protocolForwardDeclarations.sortedBy { it }.toSet(),
+            stubs
+        )
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
@@ -117,15 +121,15 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 .filterIsInstance<CallableMemberDescriptor>()
                 .filter { mapper.shouldBeExposed(it) }
                 .forEach {
-                    val classDescriptor = mapper.getClassIfCategory(it)
-                    if (classDescriptor != null) {
+                    val classDescriptor = getClassIfCategory(it)
+                    if (classDescriptor == null) {
+                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
+                    } else {
                         // If a class is hidden from Objective-C API then it is meaningless
                         // to export its extensions.
                         if (!classDescriptor.isHiddenFromObjC()) {
                             extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
                         }
-                    } else {
-                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
                     }
                 }
         }

@@ -374,7 +374,7 @@ The following compiler phases control different parts of LLVM pipeline:
 2. Running different parts of LLVM optimization pipeline:
    1. `MandatoryBitcodeLLVMPostprocessingPhase`: important postprocessing. Disabling can break generated code.
    2. `ModuleBitcodeOptimization`: Basic optimization pipeline. Something close to clang -O3
-   3. `LTOBitcodeOptimization`: LTO pipeline. Slower, but better optimizations, assuming whole program knowlage.  
+   3. `LTOBitcodeOptimization`: LTO pipeline. Slower, but better optimizations, assuming whole program knowledge.  
 3. `ObjectFiles`. Compilation of bitcode with Clang.
 
 For example, pass `-Xdisable-phases=LTOBitcodeOptimization` to skip this part of optimization pipeline for faster compilation with slower code.

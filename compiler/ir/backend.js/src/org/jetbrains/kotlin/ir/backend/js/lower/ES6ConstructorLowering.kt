@@ -268,7 +268,10 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         })
 
         return generatedThisValueSymbol ?: runUnless<IrValueSymbol?>(gotLinkageErrorInsteadOfSuperCall) {
-            error("Expect to have either super call or partial linkage stub inside constructor")
+            irError("Expect to have either super call or partial linkage stub inside constructor") {
+                withIrEntry("currentConstructor", currentConstructor)
+                withIrEntry("constructorReplacement", constructorReplacement)
+            }
         }
     }
 

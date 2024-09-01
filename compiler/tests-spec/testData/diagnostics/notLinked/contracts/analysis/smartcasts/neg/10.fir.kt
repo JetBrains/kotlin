@@ -212,12 +212,12 @@ import contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
-    if (!contracts.case_1(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    if (!contracts.case_1(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
-    if (!contracts.case_2(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    if (!contracts.case_2(value_1)) println(value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -227,34 +227,34 @@ fun case_3(number: Int?) {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
-    if (!funWithReturnsTrue(value_1 !is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrue(value_1 !is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Any?) {
-    if (!funWithReturnsTrueAndInvertCondition(value_1 is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalse(value_1 !is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalseAndInvertCondition(value_1 is String)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNotNullAndInvertCondition(value_1 !is String) != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!(funWithReturnsNullAndInvertCondition(value_1 !is String) == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrueAndInvertCondition(value_1 is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalse(value_1 !is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalseAndInvertCondition(value_1 is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNotNullAndInvertCondition(value_1 !is String) != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!(funWithReturnsNullAndInvertCondition(value_1 !is String) == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Any?) {
-    if (!funWithReturnsTrue(value_1 == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrue(value_1 == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: Any?) {
-    if (!funWithReturnsTrueAndInvertCondition(value_1 != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalse(value_1 == null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalseAndInvertCondition(value_1 != null)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrueAndInvertCondition(value_1 != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalse(value_1 == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalseAndInvertCondition(value_1 != null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 8
 fun case_8(value_1: Any?) {
-    if (!funWithReturnsTrueAndInvertTypeCheck(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (funWithReturnsFalseAndInvertTypeCheck(value_1)) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!funWithReturnsTrueAndInvertTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (funWithReturnsFalseAndInvertTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 9
@@ -269,40 +269,40 @@ fun case_9(value_1: Number?) {
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Any?, value_2: Any?) {
     if (!funWithReturnsTrueAndInvertCondition(value_1 is String && value_2 is Number)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
 // TESTCASE NUMBER: 11
 fun case_11(value_1: Any?, value_2: Any?) {
     if (!funWithReturnsTrue(value_1 !is String || value_2 !is Number)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalse(value_1 !is String || value_2 !is Number)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
 // TESTCASE NUMBER: 12
 fun case_12(value_1: Any?, value_2: Any?) {
     if (!funWithReturnsTrue(value_1 !is String || value_2 != null)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalse(value_1 !is Float? || value_1 == null || value_2 == null)) {
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNull(value_1 !is String || value_2 !is Number) == null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNull(value_1 !is String || value_2 !is Number) != null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -310,39 +310,39 @@ fun case_12(value_1: Any?, value_2: Any?) {
 fun case_13(value_1: Any?, value_2: Any?) {
     if (!funWithReturnsTrueAndInvertCondition(value_1 is Float? && value_1 != null && value_2 != null)) {
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalseAndInvertCondition(value_1 is String && value_2 is Number)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalseAndInvertCondition(value_1 is String && value_2 == null)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNullAndInvertCondition(value_1 is String && value_2 is Number) == null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNullAndInvertCondition(value_1 is String && value_2 == null) == null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNull(value_1 is Float? && value_1 != null && value_2 != null) == null) {
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 is String && value_2 is Number) != null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 is String && value_2 == null) != null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNull(value_1 is Float? && value_1 != null && value_2 != null) != null) {
         println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -378,40 +378,40 @@ class case_14_class {
 // TESTCASE NUMBER: 15
 fun case_15(value_1: Any?, value_2: Any?) {
     if (!contracts.case_15_1(value_1, value_2)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_15_2(value_1, value_2)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!(contracts.case_15_3(value_1, value_2) != null)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!(contracts.case_15_4(value_1, value_2) == null)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
 // TESTCASE NUMBER: 16
 fun case_16(value_1: Any?, value_2: Any?) {
     if (!contracts.case_16_1(value_1, value_2)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_16_2(value_1, value_2)) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_16_3(value_1, value_2) == null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_16_4(value_1, value_2) != null) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -450,18 +450,18 @@ class case_17_class {
 
 // TESTCASE NUMBER: 18
 fun case_18(value_1: Any?) {
-    if (!value_1.case_18_1()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (value_1.case_18_2()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (value_1.case_18_3() == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (value_1.case_18_4() != null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!value_1.case_18_1()) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_18_2()) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_18_3() == null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_18_4() != null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 19
 fun case_19(value_1: Number) {
-    when { !value_1.case_19_1() -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { value_1.case_19_2() -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { value_1.case_19_3() == null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { value_1.case_19_4() != null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { !value_1.case_19_1() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_19_2() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_19_3() == null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_19_4() != null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
 }
 
 // TESTCASE NUMBER: 20
@@ -490,42 +490,42 @@ fun case_21(value_1: String?) {
 
 // TESTCASE NUMBER: 22
 fun case_22(value_1: Any?, value_2: Any?) {
-    when { value_1.case_22_1() -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>) }
-    when { value_2.case_22_2() == null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>length<!>) }
-    when { value_2.case_22_3() != null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>length<!>) }
+    when { value_1.case_22_1() -> println(value_1.<!UNRESOLVED_REFERENCE!>length<!>) }
+    when { value_2.case_22_2() == null -> println(value_2.<!UNRESOLVED_REFERENCE!>length<!>) }
+    when { value_2.case_22_3() != null -> println(value_2.<!UNRESOLVED_REFERENCE!>length<!>) }
 }
 
 // TESTCASE NUMBER: 23
 fun case_23(value_1: Number?, value_2: Number?) {
-    if (value_1.case_23_1()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_2.case_23_2() == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_2.case_23_3() != null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_1.case_23_1()) println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_2.case_23_2() == null) println(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_2.case_23_3() != null) println(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
 }
 
 // TESTCASE NUMBER: 24
 fun case_24(value_1: Any?, value_2: Any?) {
-    if (value_1.case_24_1()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_2.case_24_2() != null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_2.case_24_3() == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_1.case_24_1()) println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_2.case_24_2() != null) println(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_2.case_24_3() == null) println(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
 }
 
 // TESTCASE NUMBER: 25
 fun case_25(value_1: Any?, value_2: Int?, value_3: Any?, value_4: Int?) {
     when {
         value_1.case_25_1(value_2) -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+            println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
             println(value_2<!UNSAFE_CALL!>.<!>inv())
         }
     }
     when {
         value_3.case_25_2(value_4) == null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
+            println(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
             println(value_4<!UNSAFE_CALL!>.<!>inv())
         }
     }
     when {
         value_3.case_25_3(value_4) != null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
+            println(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
             println(value_4<!UNSAFE_CALL!>.<!>inv())
         }
     }

@@ -56,12 +56,6 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   }
 
   @Test
-  @TestMetadata("Multiline.kt")
-  public void testMultiline() {
-    runTest("plugins/power-assert/testData/codegen/Multiline.kt");
-  }
-
-  @Test
   @TestMetadata("RequireCustomMessage.kt")
   public void testRequireCustomMessage() {
     runTest("plugins/power-assert/testData/codegen/RequireCustomMessage.kt");
@@ -205,6 +199,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("SafeCast.kt")
+    public void testSafeCast() {
+      runTest("plugins/power-assert/testData/codegen/cast/SafeCast.kt");
+    }
+
+    @Test
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() {
       runTest("plugins/power-assert/testData/codegen/cast/SmartCast.kt");
@@ -254,6 +254,68 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("DebugFunctionMessage.kt")
     public void testDebugFunctionMessage() {
       runTest("plugins/power-assert/testData/codegen/dbg/DebugFunctionMessage.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("plugins/power-assert/testData/codegen/expressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Expressions {
+    @Test
+    public void testAllFilesPresentInExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ElvisOperator.kt")
+    public void testElvisOperator() {
+      runTest("plugins/power-assert/testData/codegen/expressions/ElvisOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("IfExpression.kt")
+    public void testIfExpression() {
+      runTest("plugins/power-assert/testData/codegen/expressions/IfExpression.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("plugins/power-assert/testData/codegen/format")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Format {
+    @Test
+    public void testAllFilesPresentInFormat() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/format"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ChainedMultiline.kt")
+    public void testChainedMultiline() {
+      runTest("plugins/power-assert/testData/codegen/format/ChainedMultiline.kt");
+    }
+
+    @Test
+    @TestMetadata("Multiline.kt")
+    public void testMultiline() {
+      runTest("plugins/power-assert/testData/codegen/format/Multiline.kt");
+    }
+
+    @Test
+    @TestMetadata("ReverseIndent.kt")
+    public void testReverseIndent() {
+      runTest("plugins/power-assert/testData/codegen/format/ReverseIndent.kt");
+    }
+
+    @Test
+    @TestMetadata("Tabs.kt")
+    public void testTabs() {
+      runTest("plugins/power-assert/testData/codegen/format/Tabs.kt");
+    }
+
+    @Test
+    @TestMetadata("Whitespace.kt")
+    public void testWhitespace() {
+      runTest("plugins/power-assert/testData/codegen/format/Whitespace.kt");
     }
   }
 
@@ -599,6 +661,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("GetOperator.kt")
+    public void testGetOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/GetOperator.kt");
+    }
+
+    @Test
     @TestMetadata("NegativeContainsFunction.kt")
     public void testNegativeContainsFunction() {
       runTest("plugins/power-assert/testData/codegen/operator/NegativeContainsFunction.kt");
@@ -618,6 +686,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @Test
     public void testAllFilesPresentInParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("implicitReceiver.kt")
+    public void testImplicitReceiver() {
+      runTest("plugins/power-assert/testData/codegen/parameters/implicitReceiver.kt");
     }
 
     @Test

@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.atMostOne
 
@@ -68,10 +68,10 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 internal fun IrExpression.isBoxOrUnboxCall() =
         (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
 
-internal val IrFunctionAccessExpression.actualCallee: IrFunction
+internal val IrCall.actualCallee: IrSimpleFunction
     get() {
         val callee = symbol.owner
-        return ((this as? IrCall)?.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
+        return (this.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
     }
 
 internal val IrFunctionAccessExpression.isVirtualCall: Boolean
@@ -83,7 +83,6 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {
         if (this is IrFile) {
@@ -105,5 +104,16 @@ val IrDeclaration.konanLibrary: KotlinLibrary?
         }
     }
 
-fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
-fun IrPackageFragment.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrDeclaration.isFromInteropLibrary() = isFromCInteropLibrary()
+
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("moduleDescriptor.isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrPackageFragment.isFromInteropLibrary() = moduleDescriptor.isFromCInteropLibrary()

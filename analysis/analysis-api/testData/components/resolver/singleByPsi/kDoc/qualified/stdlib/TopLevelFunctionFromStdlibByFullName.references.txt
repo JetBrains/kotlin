@@ -1,4 +1,5 @@
-KDocReference:
-  0: (in kotlin.collections) fun <T> listOf(element: T): kotlin.collections.List<T>
-  1: (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>
-  2: (in kotlin.collections) inline fun <T> listOf(): kotlin.collections.List<T>
+KDocName(8,33): 'kotlin.collections.listOf'
+  KDocReference:
+    0: (in kotlin.collections) fun <T> listOf(element: T): kotlin.collections.List<T>
+    1: (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>
+    2: (in kotlin.collections) inline fun <T> listOf(): kotlin.collections.List<T>

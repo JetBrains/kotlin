@@ -78,7 +78,6 @@ object JavaScopeProvider : FirScopeProvider() {
             useSiteSession.declaredMemberScopeWithLazyNestedScope(
                 regularClass,
                 existingNames = regularClass.existingNestedClassifierNames,
-                symbolProvider = useSiteSession.symbolProvider
             )
         } else {
             useSiteSession.declaredMemberScope(regularClass, memberRequiredPhase = null)
@@ -170,7 +169,7 @@ object JavaScopeProvider : FirScopeProvider() {
     private tailrec fun FirRegularClass.findJavaSuperClass(useSiteSession: FirSession): FirRegularClass? {
         val superClass = superConeTypes.firstNotNullOfOrNull {
             if (it.isAny) return@firstNotNullOfOrNull null
-            (it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass)?.takeIf { superClass ->
+            it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir?.takeIf { superClass ->
                 superClass.classKind == ClassKind.CLASS
             }
         } ?: return null
@@ -185,7 +184,7 @@ object JavaScopeProvider : FirScopeProvider() {
         DFS.dfs(listOf(this),
                 { regularClass ->
                     regularClass.superConeTypes.mapNotNull {
-                        it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass
+                        it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
                     }
                 },
                 object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {
@@ -213,9 +212,9 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
+            useSiteSession,
             klass.classId,
-            (klass as FirJavaClass).existingNestedClassifierNames,
-            useSiteSession.symbolProvider
+            (klass as FirJavaClass).existingNestedClassifierNames
         )
     }
 }

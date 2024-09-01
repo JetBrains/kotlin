@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.capturedFields
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -70,6 +71,7 @@ open class LocalDeclarationsLowering(
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
+    val remapTypesInExtractedLocalFunctions: Boolean = true,
 ) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -310,11 +312,16 @@ open class LocalDeclarationsLowering(
                     val original = localContext.declaration
 
                     this.body = original.body
-                    this.body?.let { localContext.remapTypes(it) }
 
-                    original.valueParameters.filter { v -> v.defaultValue != null }.forEach { argument ->
-                        val body = argument.defaultValue!!
-                        localContext.remapTypes(body)
+                    if (remapTypesInExtractedLocalFunctions) {
+                        this.body?.let { localContext.remapTypes(it) }
+                    }
+
+                    for (argument in original.valueParameters) {
+                        val body = argument.defaultValue ?: continue
+                        if (remapTypesInExtractedLocalFunctions) {
+                            localContext.remapTypes(body)
+                        }
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
@@ -572,8 +579,7 @@ open class LocalDeclarationsLowering(
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
             irClass.declarations += usedCaptureFields
 
-            context.mapping.capturedFields[irClass] =
-                (context.mapping.capturedFields[irClass] ?: emptyList()) + usedCaptureFields
+            irClass.capturedFields = (irClass.capturedFields ?: emptyList()) + usedCaptureFields
 
             for (constructorContext in constructorsCallingSuper) {
                 val blockBody = constructorContext.declaration.body as? IrBlockBody
@@ -772,7 +778,7 @@ open class LocalDeclarationsLowering(
             isExplicitLocalFunction: Boolean = false
         ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
             val generatedNames = mutableSetOf<String>()
-            capturedValues.mapIndexedTo(this) { i, capturedValue ->
+            capturedValues.mapTo(this) { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
                     startOffset = p.startOffset
@@ -781,7 +787,6 @@ open class LocalDeclarationsLowering(
                         if (p is IrValueParameter && p.index < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
                     name = suggestNameForCapturedValue(p, generatedNames, isExplicitLocalFunction = isExplicitLocalFunction)
-                    index = i
                     type = localFunctionContext.remapType(p.type)
                     isCrossInline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
@@ -793,7 +798,6 @@ open class LocalDeclarationsLowering(
             oldDeclaration.valueParameters.mapTo(this) { v ->
                 v.copyTo(
                     newDeclaration,
-                    index = v.index + capturedValues.size,
                     type = localFunctionContext.remapType(v.type),
                     varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) }
                 ).also {
@@ -1020,9 +1024,8 @@ open class LocalDeclarationsLowering(
                     element.acceptChildren(this, data)
                 }
 
-                override fun visitBlock(expression: IrBlock, data: Data) {
-                    if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
-                    super.visitBlock(expression, data.withInline(expression.isFunctionInlining()))
+                override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
+                    super.visitInlinedFunctionBlock(inlinedBlock, data.withInline(inlinedBlock.isFunctionInlining()))
                 }
 
                 override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {
@@ -1098,7 +1101,7 @@ open class LocalDeclarationsLowering(
 // Local inner classes capture anything through outer
 internal fun IrClass.isLocalNotInner(): Boolean = visibility == DescriptorVisibilities.LOCAL && !isInner
 
-// FIXME: This is used by Anvil compiler plugin, remove after Anvil update
+// TODO (KT-70160): This is used by Anvil compiler plugin, remove after Anvil update.
 @Deprecated("Moved to IR Utils", level = DeprecationLevel.HIDDEN)
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }

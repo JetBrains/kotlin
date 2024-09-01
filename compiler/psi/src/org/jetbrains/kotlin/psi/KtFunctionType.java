@@ -22,14 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class KtFunctionType extends KtElementImplStub<KotlinPlaceHolderStub<KtFunctionType>> implements KtTypeElement {
+public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> implements KtTypeElement {
 
     public static final KtToken RETURN_TYPE_SEPARATOR = KtTokens.ARROW;
 
@@ -37,7 +37,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinPlaceHolderStub<KtFu
         super(node);
     }
 
-    public KtFunctionType(@NotNull KotlinPlaceHolderStub<KtFunctionType> stub) {
+    public KtFunctionType(@NotNull KotlinFunctionTypeStub stub) {
         super(stub, KtStubElementTypes.FUNCTION_TYPE);
     }
 

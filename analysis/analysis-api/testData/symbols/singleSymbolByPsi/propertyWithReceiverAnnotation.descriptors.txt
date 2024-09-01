@@ -1,0 +1,148 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Private
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(/prop)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Boolean
+    visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
+    getContainingJvmClassName: PropertyWithReceiverAnnotationKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  callableId: /prop
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: true
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: [
+        ReceiverAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <receiver>
+      origin: SOURCE
+      owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: [
+          ReceiverTypeAnnotation()
+            psi: KtAnnotationEntry
+        ]
+        typeArguments: []
+        type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Boolean
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
+    getContainingJvmClassName: PropertyWithReceiverAnnotationKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: true
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: TOP_LEVEL
+  modality: FINAL
+  name: prop
+  origin: SOURCE
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
+    origin: SOURCE
+    owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
+        ReceiverTypeAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      typeArguments: []
+      type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    visibility: LOCAL
+    getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
+    getContainingJvmClassName: null
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(propertyWithReceiverAnnotation.kt)
+  getContainingJvmClassName: PropertyWithReceiverAnnotationKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getProp
+  javaSetterName: null
+  setterDeprecationStatus: null

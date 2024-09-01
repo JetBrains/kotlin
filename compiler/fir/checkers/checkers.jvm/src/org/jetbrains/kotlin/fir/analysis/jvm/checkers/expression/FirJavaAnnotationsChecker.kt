@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
@@ -37,10 +37,11 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
-        val callableSymbol = expression.annotationTypeRef.toClassLikeSymbol(context.session) as? FirClassSymbol<*> ?: return
-        if (callableSymbol.origin !is FirDeclarationOrigin.Java) return
+        val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
+        val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol(context.session) ?: return
+        if (classSymbol.origin !is FirDeclarationOrigin.Java) return
 
-        val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
+        val lookupTag = classSymbol.toLookupTag()
         javaToKotlinNameMap[lookupTag.classId]?.let { betterName ->
             reporter.reportOn(expression.source, FirJvmErrors.DEPRECATED_JAVA_ANNOTATION, betterName.asSingleFqName(), context)
         }

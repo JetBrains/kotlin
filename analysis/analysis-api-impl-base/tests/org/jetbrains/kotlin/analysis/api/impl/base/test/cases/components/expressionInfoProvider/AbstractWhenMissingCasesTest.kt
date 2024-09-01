@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -21,7 +21,7 @@ abstract class AbstractWhenMissingCasesTest : AbstractAnalysisApiBasedTest() {
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(whenExpression) {
                 buildString {
-                    for (missingCase in whenExpression.getMissingCases()) {
+                    for (missingCase in whenExpression.computeMissingCases()) {
                         appendLine(missingCase::class.simpleName + " - " + missingCase.branchConditionText)
                     }
                 }

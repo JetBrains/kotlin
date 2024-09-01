@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(113,126): 'test.function'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(132,140): 'function'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(150,163): 'Base.function'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(169,187): 'test.Base.function'
+    null

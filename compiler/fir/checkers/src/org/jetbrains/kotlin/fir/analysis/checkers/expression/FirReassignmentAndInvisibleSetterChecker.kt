@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
@@ -15,22 +16,73 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 
 object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+        checkInvisibleSetter(expression, context, reporter)
         checkValReassignmentViaBackingField(expression, context, reporter)
-        checkValReassignmentOnValueParameter(expression, context, reporter)
+        checkValReassignmentOnValueParameterOrEnumEntry(expression, context, reporter)
         checkVariableExpected(expression, context, reporter)
         checkValReassignment(expression, context, reporter)
     }
+
+    private fun checkInvisibleSetter(
+        expression: FirVariableAssignment,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        fun shouldInvisibleSetterBeReported(symbol: FirPropertySymbol): Boolean {
+            @OptIn(SymbolInternals::class)
+            val setterFir = symbol.unwrapFakeOverrides().setterSymbol?.fir
+            if (setterFir != null) {
+                return !context.session.visibilityChecker.isVisible(
+                    setterFir,
+                    context.session,
+                    context.findClosest()!!,
+                    context.containingDeclarations,
+                    expression.dispatchReceiver,
+                )
+            }
+
+            return false
+        }
+
+        if (expression.calleeReference?.isVisibilityError == true) {
+            return
+        }
+
+        val callableSymbol = expression.calleeReference?.toResolvedCallableSymbol()
+        if (callableSymbol is FirPropertySymbol && shouldInvisibleSetterBeReported(callableSymbol)) {
+            reporter.reportOn(
+                expression.lValue.source,
+                FirErrors.INVISIBLE_SETTER,
+                callableSymbol,
+                callableSymbol.setterSymbol?.visibility ?: Visibilities.Private,
+                callableSymbol.callableId,
+                context
+            )
+        }
+    }
+
+    private val FirReference.isVisibilityError: Boolean
+        get() = this is FirResolvedErrorReference && diagnostic is ConeVisibilityError
 
     private fun checkValReassignmentViaBackingField(
         expression: FirVariableAssignment,
@@ -46,13 +98,18 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
     }
 
-    private fun checkValReassignmentOnValueParameter(
+    private fun checkValReassignmentOnValueParameterOrEnumEntry(
         expression: FirVariableAssignment,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val valueParameter = expression.calleeReference?.toResolvedValueParameterSymbol() ?: return
-        reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
+        when (val symbol = expression.calleeReference?.toResolvedVariableSymbol()) {
+            is FirValueParameterSymbol,
+            is FirEnumEntrySymbol -> {
+                reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+            }
+            else -> {}
+        }
     }
 
     private fun checkVariableExpected(

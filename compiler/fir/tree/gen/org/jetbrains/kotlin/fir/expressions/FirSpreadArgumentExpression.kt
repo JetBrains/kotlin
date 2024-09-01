@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * [FirSpreadArgumentExpression]s should be treated uniformly since they always represent an array that was passed to a
  * `vararg` parameter and don't influence the resulting platform code.
  *
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.spreadArgumentExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.spreadArgumentExpression]
  */
 abstract class FirSpreadArgumentExpression : FirWrappedArgumentExpression() {
     abstract override val source: KtSourceElement?

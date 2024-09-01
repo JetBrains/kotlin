@@ -24,7 +24,7 @@ private inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Uni
 private fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%changed != 0 || !%composer.skipping) {
-    Bug(listOf(1, 2, 3), { it: @[ParameterName(name = 'item')] Int, %composer: Composer?, %changed: Int ->
+    Bug(listOf(1, 2, 3), { it: Int, %composer: Composer?, %changed: Int ->
       Text(it.toString(), %composer, 0)
     }, %composer, 0b0110)
   } else {

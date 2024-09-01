@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 object LightClassUtil {
@@ -298,17 +300,17 @@ object LightClassUtil {
         val backingField: PsiField?,
         additionalAccessors: List<PsiMethod>
     ) : Iterable<PsiMethod> {
-        private val allMethods: List<PsiMethod>
-        val allDeclarations: List<PsiNamedElement>
+        private val allMethods: List<PsiMethod> = SmartList<PsiMethod>().apply {
+            addIfNotNull(getter)
+            addIfNotNull(setter)
+            addAll(additionalAccessors)
+        }
 
-        init {
-            allMethods = arrayListOf()
-            arrayOf(getter, setter).filterNotNullTo(allMethods)
-            additionalAccessors.filterIsInstanceTo<PsiMethod, MutableList<PsiMethod>>(allMethods)
-
-            allDeclarations = arrayListOf()
-            arrayOf<PsiNamedElement?>(getter, setter, backingField).filterNotNullTo(allDeclarations)
-            allDeclarations.addAll(additionalAccessors)
+        val allDeclarations: List<PsiNamedElement> = SmartList<PsiNamedElement>().apply {
+            addIfNotNull(getter)
+            addIfNotNull(setter)
+            addIfNotNull(backingField)
+            addAll(additionalAccessors)
         }
 
         override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()

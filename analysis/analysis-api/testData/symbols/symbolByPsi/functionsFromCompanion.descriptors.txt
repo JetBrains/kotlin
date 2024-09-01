@@ -1,0 +1,174 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /MyClass.Companion.functionFromCompanion
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: functionFromCompanion
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: i
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
+      getContainingJvmClassName: MyClass.Companion
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: MyClass.Companion
+  getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
+  getContainingJvmClassName: MyClass.Companion
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: [
+    kotlin/jvm/JvmStatic()
+      psi: KtAnnotationEntry
+  ]
+  callableId: /MyClass.Companion.staticFunctionFromCompanion
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: staticFunctionFromCompanion
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: MyClass.Companion
+  getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
+  getContainingJvmClassName: MyClass.Companion
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: MyClass.Companion
+  classKind: COMPANION_OBJECT
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: Companion
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: MyClass
+  classKind: CLASS
+  companionObject: KaNamedClassSymbol(MyClass.Companion)
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: MyClass
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(functionsFromCompanion.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

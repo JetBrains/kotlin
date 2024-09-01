@@ -16,7 +16,7 @@ import kotlin.io.path.writeText
 @DisplayName("JVM API validation")
 class KotlinJvmApiTest : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
-        configurationCache = true
+        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
     )
 
     @DisplayName("Kotlin compilation can be set up using APIs")
@@ -45,6 +45,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
                                                 
                         apiPlugin.registerKotlinJvmCompileTask("foo").configure {
                             it.source("src/main")
+                            it.libraries.from(configurations.compileClasspath)
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
                             it.sourceSetName.set("main")
@@ -102,7 +103,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     internal fun kaptShouldRunIfSetUpWithApi(gradleVersion: GradleVersion) {
         project(

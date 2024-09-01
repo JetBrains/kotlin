@@ -55,7 +55,7 @@ fun invertMutedTestResultWithLog(f: () -> Unit, testKey: String) {
     var isTestGreen = true
     try {
         f()
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         println("MUTED TEST STILL FAILS: $testKey")
         isTestGreen = false
     }

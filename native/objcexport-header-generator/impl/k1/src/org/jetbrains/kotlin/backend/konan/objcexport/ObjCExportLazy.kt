@@ -53,6 +53,9 @@ interface ObjCExportLazy {
         val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
         val ignoreInterfaceMethodCollisions: Boolean
             get() = false
+
+        val entryPoints: ObjCEntryPoints
+            get() = ObjCEntryPoints.ALL
     }
 
     fun generateBase(): List<ObjCTopLevel>
@@ -97,7 +100,12 @@ class ObjCExportLazyImpl(
 
     private val nameTranslator: ObjCExportNameTranslator = ObjCExportNameTranslatorImpl(namerConfiguration)
 
-    private val mapper = ObjCExportMapper(deprecationResolver, local = true, configuration.unitSuspendFunctionExport)
+    private val mapper = ObjCExportMapper(
+        deprecationResolver,
+        local = true,
+        configuration.unitSuspendFunctionExport,
+        configuration.entryPoints,
+    )
 
     private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, problemCollector, local = true)
 

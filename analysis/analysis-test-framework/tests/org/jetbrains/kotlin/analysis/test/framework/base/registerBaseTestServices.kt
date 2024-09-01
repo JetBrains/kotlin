@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.directives.ModificationEventDirectives
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleStructureProvider
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiKtTestModuleStructureProviderImpl
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.AnalysisApiTestCodeFragmentDirectives
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.AnalysisApiKtTestModuleStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.AnalysisApiKtTestModuleStructureProviderImpl
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.AnalysisApiTestCodeFragmentDirectives
 import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider

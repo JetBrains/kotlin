@@ -31,14 +31,14 @@ abstract class AbstractIrSymbolTreeBuilder : AbstractElementConfigurator<Symbol,
     protected fun ownerField(type: TypeRefWithNullability, initializer: SymbolField.() -> Unit = {}) =
         field("owner", type) {
             optInAnnotation = unsafeDuringIrConstructionApiAnnotation
-            fromParent = true
+            isOverride = true
             initializer()
         }
 
     private fun descriptorField(type: TypeRefWithNullability, initializer: SymbolField.() -> Unit = {}) =
         field("descriptor", type) {
             optInAnnotation = obsoleteDescriptorBasedApiAnnotation
-            fromParent = true
+            isOverride = true
             initializer()
         }
 

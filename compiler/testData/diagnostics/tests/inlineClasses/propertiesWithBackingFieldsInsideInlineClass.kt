@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

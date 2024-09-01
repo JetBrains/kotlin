@@ -7,15 +7,18 @@ interface ITest {
     fun test(a: Int, b: Z, c: Z?): String
 }
 
-inline class Z(val x: Int) : ITest {
+@JvmInline
+value class Z(val x: Int) : ITest {
     override fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 
-inline class S(val x: String) : ITest {
+@JvmInline
+value class S(val x: String) : ITest {
     override fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 
-inline class A(val x: Any) : ITest {
+@JvmInline
+value class A(val x: Any) : ITest {
     override fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 

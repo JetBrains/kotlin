@@ -13,26 +13,18 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
-import org.jetbrains.kotlin.light.classes.symbol.classes.modificationTrackerForClassInnerStuff
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
@@ -43,8 +35,9 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KaDeclarationSymbol> =
-    generateSequence(this) { it.getContainingSymbol() }
+    generateSequence(this) { it.containingDeclaration }
 
 internal fun KaSession.mapType(
     type: KaType,
@@ -55,25 +48,28 @@ internal fun KaSession.mapType(
         useSitePosition = psiContext,
         allowErrorTypes = true,
         mode = mode,
+        forceValueClassResolution = false,
+        allowNonJvmPlatforms = true,
     )
 
     return psiType as? PsiClassType
 }
 
-internal fun KaSymbolWithModality.computeSimpleModality(): String? = when (modality) {
-    Modality.SEALED -> PsiModifier.ABSTRACT
-    Modality.FINAL -> PsiModifier.FINAL
-    Modality.ABSTRACT -> PsiModifier.ABSTRACT
-    Modality.OPEN -> null
+internal fun KaDeclarationSymbol.computeSimpleModality(): String? = when (modality) {
+    KaSymbolModality.SEALED -> PsiModifier.ABSTRACT
+    KaSymbolModality.FINAL -> PsiModifier.FINAL
+    KaSymbolModality.ABSTRACT -> PsiModifier.ABSTRACT
+    KaSymbolModality.OPEN -> null
 }
 
 context(KaSession)
-internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
-    if (getMemberScope().getCallableSymbols().any { (it as? KaSymbolWithModality)?.modality == Modality.ABSTRACT }) {
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaClassSymbol.enumClassModality(): String? {
+    if (memberScope.callables.any { it.modality == KaSymbolModality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
 
-    if (getStaticDeclaredMemberScope().getCallableSymbols().none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
+    if (staticDeclaredMemberScope.callables.none { it is KaEnumEntrySymbol && it.requiresSubClass() }) {
         return PsiModifier.FINAL
     }
 
@@ -81,35 +77,37 @@ internal fun KaClassOrObjectSymbol.enumClassModality(): String? {
 }
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaEnumEntrySymbol.requiresSubClass(): Boolean {
     val initializer = enumEntryInitializer ?: return false
-    return initializer.getCombinedDeclaredMemberScope().getAllSymbols().any { it !is KaConstructorSymbol }
+    return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 
-internal fun KaSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
+internal fun KaDeclarationSymbol.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
 
-internal fun KaSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
+internal fun KaDeclarationSymbol.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
 
-private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
-    Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE
-    Visibilities.Protected -> PsiModifier.PROTECTED
+internal fun KaSymbolVisibility.toPsiVisibilityForMember(): String = when (this) {
+    KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
+    KaSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }
 
-private fun Visibility.toPsiVisibilityForClass(isNested: Boolean): String = when (isNested) {
+private fun KaSymbolVisibility.toPsiVisibilityForClass(isNested: Boolean): String = when (isNested) {
     false -> when (this) {
-        Visibilities.Public,
-        Visibilities.Protected,
-        Visibilities.Local,
-        Visibilities.Internal -> PsiModifier.PUBLIC
+        KaSymbolVisibility.PUBLIC,
+        KaSymbolVisibility.PROTECTED,
+        KaSymbolVisibility.LOCAL,
+        KaSymbolVisibility.INTERNAL,
+            -> PsiModifier.PUBLIC
 
         else -> PsiModifier.PACKAGE_LOCAL
     }
 
     true -> when (this) {
-        Visibilities.Public, Visibilities.Internal, Visibilities.Local -> PsiModifier.PUBLIC
-        Visibilities.Protected -> PsiModifier.PROTECTED
-        Visibilities.Private -> PsiModifier.PRIVATE
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.INTERNAL, KaSymbolVisibility.LOCAL -> PsiModifier.PUBLIC
+        KaSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+        KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
         else -> PsiModifier.PACKAGE_LOCAL
     }
 }
@@ -139,7 +137,7 @@ internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
     val ktType = type.fullyExpandedType
     if (ktType.nullability != KaTypeNullability.NON_NULLABLE) return ktType.nullability
 
-    if (ktType.isUnit) return KaTypeNullability.NON_NULLABLE
+    if (ktType.isUnitType) return KaTypeNullability.NON_NULLABLE
 
     if (ktType.isPrimitiveBacked) return KaTypeNullability.UNKNOWN
 
@@ -149,7 +147,7 @@ internal fun KaSession.getTypeNullability(type: KaType): KaTypeNullability {
         return if (!subtypeOfNullableSuperType) KaTypeNullability.NON_NULLABLE else KaTypeNullability.UNKNOWN
     }
 
-    if (ktType !is KaNonErrorClassType) return KaTypeNullability.NON_NULLABLE
+    if (ktType !is KaClassType) return KaTypeNullability.NON_NULLABLE
     if (ktType.typeArguments.any { it.type is KaClassErrorType }) return KaTypeNullability.NON_NULLABLE
     if (ktType.classId.shortClassName.asString() == SpecialNames.ANONYMOUS_STRING) return KaTypeNullability.NON_NULLABLE
 
@@ -284,6 +282,7 @@ internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiEl
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
 context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed(): T =
     restoreSymbol()
         ?: errorWithAttachment("${this::class} pointer already disposed") {
@@ -291,9 +290,9 @@ internal fun <T : KaSymbol> KaSymbolPointer<T>.restoreSymbolOrThrowIfDisposed():
         }
 
 internal fun hasTypeParameters(
-    ktModule: KtModule,
+    ktModule: KaModule,
     declaration: KtTypeParameterListOwner?,
-    declarationPointer: KaSymbolPointer<KaSymbolWithTypeParameters>,
+    declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
 ): Boolean = declaration?.typeParameters?.isNotEmpty() ?: declarationPointer.withSymbol(ktModule) {
     it.typeParameters.isNotEmpty()
 }
@@ -304,7 +303,7 @@ internal val SymbolLightClassBase.interfaceIfDefaultImpls: SymbolLightClassForIn
 internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: Boolean
     get() = interfaceIfDefaultImpls?.hasTypeParameters() ?: false
 
-internal fun KaSymbolPointer<*>.isValid(ktModule: KtModule): Boolean = analyzeForLightClasses(ktModule) {
+internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
 }
 
@@ -315,7 +314,7 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 ): Boolean = left === right || left.pointsToTheSameSymbolAs(right)
 
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
-    ktModule: KtModule,
+    ktModule: KaModule,
     crossinline action: KaSession.(T) -> R,
 ): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed()) }
 
@@ -333,9 +332,9 @@ internal inline fun <R : PsiElement, T> R.cachedValue(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
     val value = computer()
-    val specialClassTrackers = (this as? SymbolLightClassForClassLike<*>)?.classOrObjectDeclaration?.modificationTrackerForClassInnerStuff()
-    if (specialClassTrackers != null) {
-        CachedValueProvider.Result.create(value, specialClassTrackers)
+    val specialTrackers = (this as? SymbolLightClassBase)?.contentModificationTrackers()
+    if (specialTrackers != null) {
+        CachedValueProvider.Result.create(value, specialTrackers)
     } else {
         CachedValueProvider.Result.createSingleDependency(value, project.createProjectWideOutOfBlockModificationTracker())
     }

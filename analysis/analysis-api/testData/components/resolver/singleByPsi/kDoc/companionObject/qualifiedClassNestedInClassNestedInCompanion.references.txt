@@ -1,2 +1,3 @@
-KDocReference:
-  (in C.X.Companion.YY) class ZZ
+KDocName(150,157): 'X.YY.ZZ'
+  KDocReference:
+    (in C.X.Companion.YY) class ZZ

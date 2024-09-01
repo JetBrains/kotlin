@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  From
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(65,69): 'From'
+  KtSimpleNameReference:
+    (in <local>: copyNotNull) From
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

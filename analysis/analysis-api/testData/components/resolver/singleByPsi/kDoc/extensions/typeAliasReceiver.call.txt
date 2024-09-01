@@ -1,14 +1,19 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(167,182): 'FooAlias.fooExt'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(191,206): 'Foo.fooAliasExt'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(212,232): 'FooAlias.fooAliasExt'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(241,256): 'FooAlias.anyExt'
+    null
 
-<caret_5>: KDocName:
-null
+<caret_5>:
+  KDocName(262,279): 'FooAlias.otherExt'
+    null

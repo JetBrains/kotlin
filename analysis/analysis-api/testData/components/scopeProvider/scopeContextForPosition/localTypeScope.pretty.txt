@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: Y
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0

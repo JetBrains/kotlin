@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.objcexport.testUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
-import org.jetbrains.kotlin.objcexport.KtObjCExportSession
+import org.jetbrains.kotlin.objcexport.ObjCExportContext
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.jetbrains.kotlin.psi.KtElement
 
 inline fun <T> analyzeWithObjCExport(
     useSiteKtElement: KtElement,
     configuration: KtObjCExportConfiguration = KtObjCExportConfiguration(),
-    action: context(KtAnalysisSession, KtObjCExportSession) () -> T,
+    action: ObjCExportContext.() -> T,
 ): T = analyze(useSiteKtElement) {
+    val kaSession: KaSession = this
     withKtObjCExportSession(configuration) {
-        action(this@analyze, this)
+        val exportSession = this
+        with(ObjCExportContext(kaSession, exportSession)) {
+            action.invoke(this)
+        }
     }
 }

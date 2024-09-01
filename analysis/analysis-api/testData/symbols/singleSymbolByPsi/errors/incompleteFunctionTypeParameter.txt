@@ -1,11 +1,16 @@
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
+  compilerVisibility: Local
+  isActual: false
+  isExpect: false
   isReified: false
+  location: LOCAL
+  modality: FINAL
   name: TYPE
   origin: SOURCE
-  typeParameters: []
   upperBounds: []
   variance: INVARIANT
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(incompleteFunctionTypeParameter.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

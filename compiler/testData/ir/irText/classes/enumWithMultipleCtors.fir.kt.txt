@@ -49,15 +49,15 @@ open enum class A : Enum<A> {
     <this>.<set-prop3>(<set-?> = "int")
   }
 
-  fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
 
   open fun f(): String {
     return <this>.<get-prop1>() + "#" + <this>.<get-prop2>() + "#" + <this>.<get-prop3>()
   }
 
-  val entries: EnumEntries<A>
+  /* static */ val entries: EnumEntries<A>
     get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
 
 }

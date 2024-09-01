@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.StandardClassIds

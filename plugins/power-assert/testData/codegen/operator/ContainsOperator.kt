@@ -1,9 +1,9 @@
 fun box() = expectThrowableMessage {
     assert("Name" in listOf("Hello", "World"))
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test that we don't just search for `in` in the expression.
     assert(" in " in listOf("Hello", "World"))
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test multiline case
     assert(
         " in "
@@ -12,10 +12,10 @@ fun box() = expectThrowableMessage {
 
                    listOf("Hello", "World")
     )
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test that we don't assume whitespaces around the infix operator
     assert("Name"/*in*/in/*in*/listOf("Hello", "World"))
-} + "\n\n" + expectThrowableMessage {
+} + expectThrowableMessage {
     // Test nested `in`
     assert(("Name" in listOf("Hello", "World")) in listOf(true))
 }

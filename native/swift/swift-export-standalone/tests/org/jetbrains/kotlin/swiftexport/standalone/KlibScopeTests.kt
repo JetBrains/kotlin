@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KaExperimentalApi::class)
+
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
@@ -41,8 +44,8 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
                 fun foo() {}
             """.trimIndent()
         ) {
-            val symbol = getAllSymbols().single()
-            assertTrue(symbol is KaFunctionSymbol)
+            val symbol = declarations.single()
+            assertTrue(symbol is KaNamedFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
     }
@@ -50,7 +53,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `smoke empty file`() {
         withKlibScope(source = "") {
-            val symbols = getAllSymbols()
+            val symbols = declarations
             val classifiersNames = getPossibleClassifierNames()
             val callableNames = getPossibleCallableNames()
             assertTrue(symbols.toList().isEmpty())
@@ -72,8 +75,8 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `callable name filter`() {
         withKlibScope(source = simpleContentWithCollisions) {
-            val symbol = getCallableSymbols { it.asString() == "foo" }.single()
-            assertTrue(symbol is KaFunctionSymbol)
+            val symbol = callables { it.asString() == "foo" }.single()
+            assertTrue(symbol is KaNamedFunctionSymbol)
             assertEquals("foo", symbol.name.asString())
         }
     }
@@ -81,7 +84,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
     @Test
     fun `classifier name filter`() {
         withKlibScope(source = simpleContentWithCollisions) {
-            val symbol = getClassifierSymbols { it.asString() == "foo" }.single()
+            val symbol = classifiers { it.asString() == "foo" }.single()
             assertTrue(symbol is KaNamedSymbol)
             assertEquals("foo", symbol.name.asString())
         }
@@ -112,7 +115,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
 
     private fun <T> withKlibScope(sources: Path, block: KlibScope.() -> T): T {
         val klib = compileToNativeKLib(sources)
-        lateinit var module: KtLibraryModule
+        lateinit var module: KaLibraryModule
         val session = buildStandaloneAnalysisAPISession {
             val nativePlatform = NativePlatforms.unspecifiedNativePlatform
             buildKtModuleProvider {
@@ -126,7 +129,7 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
         }
 
         return analyze(session.getAllLibraryModules().single()) {
-            KlibScope(module, this.analysisSession).block()
+            KlibScope(module, useSiteSession).block()
         }
     }
 }

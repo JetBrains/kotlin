@@ -111,6 +111,13 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler("CHECK_CLASS_EXISTS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) {
+            AstSearchUtil.getClass(ast, arguments.getFirst());
+        }
+    };
+
     private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler("CHECK_FUNCTION_EXISTS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -235,9 +242,10 @@ public class DirectiveTestUtils {
             String functionName = arguments.getNamedArgument("function");
             String countStr = arguments.findNamedArgument("count");
             String maxCountStr = arguments.findNamedArgument("max");
+            String includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations");
 
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            List<T> nodes = collectInstances(klass, function.getBody());
+            List<T> nodes = collectInstances(klass, function.getBody(), includeNestedDeclarations != null && includeNestedDeclarations.equals("true"));
             int actualCount = 0;
 
             for (T node : nodes) {
@@ -306,6 +314,8 @@ public class DirectiveTestUtils {
             return node.getOperator().getSymbol().equals(symbol) ? 1 : 0;
         }
     };
+
+    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>("CHECK_SUPER_COUNT", JsSuperRef.class);
 
     private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
@@ -504,6 +514,7 @@ public class DirectiveTestUtils {
             PROPERTY_NOT_WRITTEN_TO,
             PROPERTY_READ_COUNT,
             PROPERTY_WRITE_COUNT,
+            CLASS_EXISTS,
             FUNCTION_EXISTS,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
@@ -519,6 +530,7 @@ public class DirectiveTestUtils {
             COUNT_IF,
             COUNT_TERNARY_OPERATOR,
             COUNT_BINOPS,
+            COUNT_SUPER,
             COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,

@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 @PhaseDescription(
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = [JvmExpectDeclarationRemover::class]
+    prerequisite = [JvmExpectDeclarationRemover::class, JvmInlineCallableReferenceToLambdaWithDefaultsPhase::class]
 )
 class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
     context,
     inlineFunctionResolver = JvmInlineFunctionResolver(context),
-    innerClassesSupport = context.innerClassesSupport,
     regenerateInlinedAnonymousObjects = true,
 ) {
     private val enabled = context.config.enableIrInliner

@@ -133,7 +133,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#valueOf#static(kotlin.String){}
   //   Public signature: /X.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): X
+  /* static */ fun valueOf(value: String): X
 
   // CHECK JVM_IR:
   //   Mangled name: X#values#static(){}kotlin.Array<X>
@@ -143,7 +143,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#values#static(){}
   //   Public signature: /X.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<X>
+  /* static */ fun values(): Array<X>
 
   // CHECK JVM_IR:
   //   Mangled name: X#compareTo(X){}kotlin.Int
@@ -189,7 +189,7 @@ abstract enum class X : Enum<X> {
   //   Mangled name: X#static{}entries
   //   Public signature: /X.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<X>
+  /* static */ val entries: EnumEntries<X>
     // CHECK JVM_IR:
     //   Mangled name: X#<get-entries>#static(){}kotlin.enums.EnumEntries<X>
     //   Public signature: /X.entries.<get-entries>|6681560497291336349[0]

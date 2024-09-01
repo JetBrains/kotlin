@@ -470,12 +470,6 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
       }
 
       @Test
-      @TestMetadata("nonStaticStateMachine.kt")
-      public void testNonStaticStateMachine() {
-        runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticStateMachine.kt");
-      }
-
-      @Test
       @TestMetadata("staticSimple.kt")
       public void testStaticSimple() {
         runTest("compiler/testData/debug/localVariables/suspend/completion/staticSimple.kt");

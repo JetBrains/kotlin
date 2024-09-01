@@ -10,13 +10,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkModifiersCompatibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 
-object FirInOutProjectionModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef) return
-
+object FirInOutProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val delegatedTypeRef = typeRef.delegatedTypeRef as? FirUserTypeRef ?: return
         for (part in delegatedTypeRef.qualifier) {
             for (typeArgument in part.typeArgumentList.typeArguments) {

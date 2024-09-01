@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -31,7 +33,10 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
@@ -287,22 +292,22 @@ class KotlinGradleIT : KGPBaseTest() {
 
             // check the arguments are not passed by default (they are inferred by the compiler)
             build("clean", "compileKotlin") {
-                assertOutputDoesNotContain("-language-version")
-                assertOutputDoesNotContain("-api-version")
+                assertOutputDoesNotContain(CommonCompilerArguments::languageVersion.cliArgument)
+                assertOutputDoesNotContain(CommonCompilerArguments::apiVersion.cliArgument)
                 assertNoBuildWarnings()
             }
 
             // check the arguments are always passed if specified explicitly
             updateBuildGradle("1.6", "1.6")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.6")
-                assertOutputContains("-api-version 1.6")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.6")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.6")
             }
 
             updateBuildGradle("1.7", "1.7")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.7")
-                assertOutputContains("-api-version 1.7")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.7")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.7")
             }
         }
     }
@@ -555,7 +560,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
-            buildGradle.appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.32' }")
+            buildScriptInjection { dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-reflect:1.5.32") }
             testResolveAllConfigurations { unresolvedConfigurations, buildResult ->
                 assertTrue("Unresolved configurations: $unresolvedConfigurations") { unresolvedConfigurations.isEmpty() }
                 buildResult.assertOutputContains(">> :compileClasspath --> kotlin-reflect-1.5.32.jar")
@@ -611,8 +616,8 @@ class KotlinGradleIT : KGPBaseTest() {
                 val publishedPom = moduleDir.resolve("new-model-1.0.pom")
                 val kotlinVersion = buildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
-                assertTrue { "kotlin-gradle-plugin-api</artifactId><version>$kotlinVersion</version><scope>compile</scope>" in pomText }
-                assertTrue { "kotlin-stdlib-jdk8</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+                assertTrue { "kotlin-gradle-plugin-api</artifactId><scope>compile</scope>" in pomText }
+                assertTrue { "kotlin-stdlib-jdk8</artifactId><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("new-model-1.0-sources.jar"))
             }
@@ -648,14 +653,26 @@ class KotlinGradleIT : KGPBaseTest() {
             subProject("projB").buildGradle.appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, " +
-                                    "and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'foo', " +
-                                    "attribute 'com.example.target' with value 'bar' but:"
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
+                        // Attributes may change order in the build output message
+                        val expectedLine = output.lines().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, " +
+                                        "and its dependencies declared externally, " +
+                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
+                            )
+                        }
+
+                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.compilation' with value 'foo'"),
+                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'foo'"
+                        )
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.target' with value 'bar'"),
+                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'bar'"
                         )
                     }
                     else -> {
@@ -686,13 +703,26 @@ class KotlinGradleIT : KGPBaseTest() {
             )
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'bar', " +
-                                    "attribute 'com.example.target' with value 'foo' but:"
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
+                        // Attributes may change order in the build output message
+                        val expectedLine = output.lines().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, " +
+                                        "and its dependencies declared externally, " +
+                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
+                            )
+                        }
+
+                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.compilation' with value 'bar'"),
+                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'bar'"
+                        )
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.target' with value 'foo'"),
+                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'foo'"
                         )
                     }
                     else -> {

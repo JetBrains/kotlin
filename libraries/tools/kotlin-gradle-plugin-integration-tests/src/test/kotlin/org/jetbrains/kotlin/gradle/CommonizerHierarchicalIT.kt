@@ -16,6 +16,11 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 open class CommonizerHierarchicalIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions
+            .disableConfigurationCache_KT70416()
+            .enableKmpIsolatedProjectSupport()
+
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
     fun testCommonizeHierarchicallyMetadataCompilations(gradleVersion: GradleVersion) {
@@ -60,22 +65,22 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         nativeProject("commonizeHierarchically", gradleVersion) {
             if (HostManager.hostIsMac) {
                 build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
-                    assertFileInProjectExists("p1/build/classes/kotlin/iosArm64/main/klib/p1.klib")
-                    assertFileInProjectExists("p1/build/classes/kotlin/iosX64/main/klib/p1.klib")
-                    assertFileInProjectExists("p1/build/classes/kotlin/macosX64/main/klib/p1.klib")
-                    assertFileInProjectExists("p1/build/classes/kotlin/macosArm64/main/klib/p1.klib")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/iosArm64/main/klib/p1")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/iosX64/main/klib/p1")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/macosX64/main/klib/p1")
+                    assertDirectoryInProjectExists("p1/build/classes/kotlin/macosArm64/main/klib/p1")
                     assertNoDuplicateLibraryWarning()
                 }
             }
 
             build(":p1:linuxX64MainKlibrary", ":p1:linuxArm64MainKlibrary") {
-                assertFileInProjectExists("p1/build/classes/kotlin/linuxX64/main/klib/p1.klib")
-                assertFileInProjectExists("p1/build/classes/kotlin/linuxArm64/main/klib/p1.klib")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/linuxX64/main/klib/p1")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/linuxArm64/main/klib/p1")
                 assertNoDuplicateLibraryWarning()
             }
 
             build(":p1:mingwX64MainKlibrary") {
-                assertFileInProjectExists("p1/build/classes/kotlin/mingwX64/main/klib/p1.klib")
+                assertDirectoryInProjectExists("p1/build/classes/kotlin/mingwX64/main/klib/p1")
                 assertNoDuplicateLibraryWarning()
             }
         }
@@ -116,12 +121,14 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-50592 - isolated jvm subproject - should not fail commonization")
+
+    @DisplayName("jvm subproject should not have commonization task")
     @GradleTest
-    fun testIsolatedJvmSubprojectShouldNotFailCommonization(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-50592-withIsolatedJvmSubproject", gradleVersion = gradleVersion) {
+    fun testJvmSubprojectShouldNotHaveCommonizationTask(gradleVersion: GradleVersion) {
+        nativeProject("commonize-withJvmSubproject", gradleVersion = gradleVersion) {
             build("commonize") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":multiplatform:commonizeNativeDistribution")
+                assertTasksAreNotInTaskGraph(":jvm:commonizeNativeDistribution")
             }
         }
     }

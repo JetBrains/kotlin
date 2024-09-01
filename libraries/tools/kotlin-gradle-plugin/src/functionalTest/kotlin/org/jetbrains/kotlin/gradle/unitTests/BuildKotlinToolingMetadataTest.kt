@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
-import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
@@ -73,8 +72,6 @@ class BuildKotlinToolingMetadataTest {
     fun `multiplatform JS JVM Android linuxX64 setup`() {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
-
-        disableLegacyWarning(project)
 
         val android = project.extensions.getByType(BaseExtension::class.java)
         val kotlin = multiplatformExtension
@@ -169,7 +166,6 @@ class BuildKotlinToolingMetadataTest {
     @Test
     fun js() {
         project.plugins.apply("org.jetbrains.kotlin.js")
-        disableLegacyWarning(project)
         val kotlin = jsExtension
         kotlin.js { nodejs() }
 

@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.overridableDeclaration]
  */
-interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
+sealed interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
+    override var startOffset: Int
+
+    override var endOffset: Int
+
     override val symbol: S
 
     var isFakeOverride: Boolean

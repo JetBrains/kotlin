@@ -17,7 +17,7 @@ fun f(): Any {
 
 fun g() = f()
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#h(kotlin.Boolean){}kotlin.Any"
+// CHECK-LABEL: define ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
 @Retain
 fun h(cond: Boolean): Any {
     // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}
@@ -36,7 +36,7 @@ fun h(cond: Boolean): Any {
 // CHECK-LABEL: ret
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define {{(nonnull )?}}ptr @"kfun:#box(){}kotlin.String"
 @Retain
 fun box(): String {
     // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue}}

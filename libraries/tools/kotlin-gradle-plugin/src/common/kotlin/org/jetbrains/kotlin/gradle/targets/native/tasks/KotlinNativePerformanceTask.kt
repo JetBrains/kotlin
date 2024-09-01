@@ -73,7 +73,7 @@ open class NativePerformanceReport : DefaultTask() {
     }
 
     private fun getPerformanceCompilerOptions() =
-        (compilerFlagsFromBinary() + binary.linkTask.toolOptions.freeCompilerArgs.get())
+        (compilerFlagsFromBinary() + binary.linkTaskProvider.get().toolOptions.freeCompilerArgs.get())
             .filter { it in listOf("-g", "-opt", "-Xg0") }.map { "\"$it\"" }
 
     @TaskAction
@@ -82,7 +82,7 @@ open class NativePerformanceReport : DefaultTask() {
             getAllExecutedTasks(binary.compilation)
         else
             listOf(binary.compilation.compileTaskProvider.get())
-        val allExecutedTasks = listOf(binary.linkTask) + compileTasks
+        val allExecutedTasks = listOf(binary.linkTaskProvider.get()) + compileTasks
         val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }
         if (upToDateTasks.isNotEmpty()) {
             if (outputFile.exists()) {

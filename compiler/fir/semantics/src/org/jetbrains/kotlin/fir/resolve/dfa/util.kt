@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 
-fun TypeStatement?.smartCastedType(context: ConeTypeContext, originalType: ConeKotlinType): ConeKotlinType =
-    if (this != null && exactType.isNotEmpty()) {
-        context.intersectTypes(exactType.toMutableList().also { it += originalType })
+fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
+    if (exactType.isNotEmpty()) {
+        context.intersectTypes(exactType.toMutableList().also { it += variable.originalType })
     } else {
-        originalType
+        variable.originalType
     }
 
 @DfaInternals
@@ -24,15 +23,4 @@ fun FirOperation.isEq(): Boolean {
         FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> false
         else -> throw IllegalArgumentException("$this should not be there")
     }
-}
-
-@DfaInternals
-fun FirElement.unwrapElement(): FirElement = when (this) {
-    is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
-    is FirSmartCastExpression -> originalExpression.unwrapElement()
-    is FirSafeCallExpression -> selector.unwrapElement()
-    is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
-    is FirCheckNotNullCall -> argument.unwrapElement()
-    is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
-    else -> this
 }

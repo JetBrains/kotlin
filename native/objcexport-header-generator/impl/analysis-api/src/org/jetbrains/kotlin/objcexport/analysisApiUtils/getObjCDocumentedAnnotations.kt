@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.annotations.annotationClassIds
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -20,22 +19,20 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * However, some annotations e.g. [kotlin.native.ObjCName], whilst annotated with `@MustBeDocumented` shall not be exported for ObjC
  * documentation.
  */
-context(KtAnalysisSession)
-internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotationsList.getObjCDocumentedAnnotations()
+internal fun KaSession.getObjCDocumentedAnnotations(symbol: KaAnnotatedSymbol): List<KaAnnotation> {
+    return getObjCDocumentedAnnotations(symbol.annotations)
 }
 
 /**
  * See [getObjCDocumentedAnnotations]
  */
-context(KtAnalysisSession)
-internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotations
+internal fun KaSession.getObjCDocumentedAnnotations(list: KaAnnotationList): List<KaAnnotation> {
+    return list
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false
             if (annotationClassId.asSingleFqName() in mustBeDocumentedAnnotationsStopList) return@filter false
-            val annotationClassSymbol = getClassOrObjectSymbolByClassId(annotationClassId) ?: return@filter false
-            StandardClassIds.Annotations.MustBeDocumented in annotationClassSymbol.annotationClassIds
+            val annotationClassSymbol = findClass(annotationClassId) ?: return@filter false
+            StandardClassIds.Annotations.MustBeDocumented in annotationClassSymbol.annotations.classIds
         }
 }
 

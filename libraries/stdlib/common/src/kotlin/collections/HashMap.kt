@@ -51,7 +51,7 @@ public expect class HashMap<K, V> : MutableMap<K, V> {
     override val size: Int
     override fun isEmpty(): Boolean
     override fun containsKey(key: K): Boolean
-    override fun containsValue(value: @UnsafeVariance V): Boolean
+    override fun containsValue(value: V): Boolean
     override operator fun get(key: K): V?
 
     // From MutableMap

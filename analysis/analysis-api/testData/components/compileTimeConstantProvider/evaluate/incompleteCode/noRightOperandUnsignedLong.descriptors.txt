@@ -1,9 +1,3 @@
 expression: 4294967296u
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: error("Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath")
 constantValueKind: Error
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: error("Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath")
-constantLikeValueKind: Error

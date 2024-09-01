@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.firTransformerType
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.FieldList
-import org.jetbrains.kotlin.fir.tree.generator.model.FieldWithDefault
+import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
@@ -79,11 +78,11 @@ fun ImportCollectingPrinter.replaceFunctionDeclaration(
 }
 
 fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = when (this) {
-    is FieldList -> when {
-        isMutableOrEmptyList && !forBuilder -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
-        isMutable -> StandardTypes.mutableList
-        else -> StandardTypes.list
+    is ListField -> when {
+        forBuilder -> StandardTypes.mutableList
+        !isMutable -> StandardTypes.list
+        isMutableOrEmptyList -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
+        else -> StandardTypes.mutableList
     }.withArgs(baseType).copy(nullable)
-    is FieldWithDefault -> if (isMutable) origin.getMutableType() else typeRef
     else -> typeRef
 }

@@ -96,38 +96,39 @@ digraph functionCallBound_kt {
                         29 [label="Function call arguments enter"];
                         30 [label="Function call arguments exit"];
                     }
-                    31 [label="Function call: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
-                    32 [label="Exit safe call"];
-                    33 [label="Const: Boolean(true)"];
-                    34 [label="Equality operator =="];
-                    35 [label="Exit when branch condition"];
+                    31 [label="Function call enter: $subj$.R|/isOk|()"];
+                    32 [label="Function call exit: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
+                    33 [label="Exit safe call"];
+                    34 [label="Const: Boolean(true)"];
+                    35 [label="Equality operator =="];
+                    36 [label="Exit when branch condition"];
                 }
                 subgraph cluster_13 {
                     color=blue
-                    36 [label="Enter when branch condition else"];
-                    37 [label="Exit when branch condition"];
+                    37 [label="Enter when branch condition else"];
+                    38 [label="Exit when branch condition"];
                 }
-                38 [label="Enter when branch result"];
+                39 [label="Enter when branch result"];
                 subgraph cluster_14 {
                     color=blue
-                    39 [label="Enter block"];
-                    40 [label="Access variable R|<local>/base|"];
-                    41 [label="Exit block"];
+                    40 [label="Enter block"];
+                    41 [label="Access variable R|<local>/base|"];
+                    42 [label="Exit block"];
                 }
-                42 [label="Exit when branch result"];
-                43 [label="Enter when branch result"];
+                43 [label="Exit when branch result"];
+                44 [label="Enter when branch result"];
                 subgraph cluster_15 {
                     color=blue
-                    44 [label="Enter block"];
-                    45 [label="Access variable R|<local>/base|"];
-                    46 [label="Smart cast: R|<local>/base|"];
-                    47 [label="Access variable R|/Sub.data|"];
-                    48 [label="Exit block"];
+                    45 [label="Enter block"];
+                    46 [label="Access variable R|<local>/base|"];
+                    47 [label="Smart cast: R|<local>/base|"];
+                    48 [label="Access variable R|/Sub.data|"];
+                    49 [label="Exit block"];
                 }
-                49 [label="Exit when branch result"];
-                50 [label="Exit when"];
+                50 [label="Exit when branch result"];
+                51 [label="Exit when"];
             }
-            51 [label="Jump: ^check when () {
+            52 [label="Jump: ^check when () {
     ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
         R|<local>/base|.R|/Sub.data|
     }
@@ -136,17 +137,17 @@ digraph functionCallBound_kt {
     }
 }
 "];
-            52 [label="Stub" style="filled" fillcolor=gray];
-            53 [label="Exit block" style="filled" fillcolor=gray];
+            53 [label="Stub" style="filled" fillcolor=gray];
+            54 [label="Exit block" style="filled" fillcolor=gray];
         }
-        54 [label="Exit function check" style="filled" fillcolor=red];
+        55 [label="Exit function check" style="filled" fillcolor=red];
     }
     22 -> {23};
     23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {28 32};
+    27 -> {28 33};
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -154,15 +155,15 @@ digraph functionCallBound_kt {
     32 -> {33};
     33 -> {34};
     34 -> {35};
-    35 -> {36 43};
-    36 -> {37};
+    35 -> {36};
+    36 -> {37 44};
     37 -> {38};
     38 -> {39};
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {50};
-    43 -> {44};
+    42 -> {43};
+    43 -> {51};
     44 -> {45};
     45 -> {46};
     46 -> {47};
@@ -170,9 +171,10 @@ digraph functionCallBound_kt {
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    51 -> {54};
-    51 -> {52} [style=dotted];
+    51 -> {52};
+    52 -> {55};
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
+    54 -> {55} [style=dotted];
 
 }

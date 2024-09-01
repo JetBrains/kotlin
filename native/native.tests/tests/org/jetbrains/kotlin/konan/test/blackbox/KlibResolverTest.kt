@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDENCY_VERSION
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.utils.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
@@ -72,6 +72,104 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("Test resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifest() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertTrue(compilationToolCall.exitCode == ExitCode.OK)
+                    assertTrue(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("-nowarn cmdline param suppresses warning when resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithNowarn() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true, extraCmdLineParams = listOf("-nowarn")) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertTrue(compilationToolCall.exitCode == ExitCode.OK)
+                    assertFalse(compilationToolCall.toolOutput.contains("warning: KLIB resolver: Could not find \"a\""))
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("-Werror cmdline param causes error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerror() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = false,
+                useLibraryNamesInCliArguments = true,
+                extraCmdLineParams = listOf("-Werror"),
+            ) { module, successKlib ->
+                when (module.name) {
+                    "a" -> aKlib = successKlib.resultingArtifact
+                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                    "c" -> fail ("Normally should not get here")
+                }
+            }
+        } catch (cte: CompilationToolException) {
+            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
+            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
+        }
+    }
+
+    @Test
+    @DisplayName("-Werror and -nowarn cmdline params cause error resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifestWithWerrorNowarn() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = false,
+                useLibraryNamesInCliArguments = true,
+                extraCmdLineParams = listOf("-Werror", "-nowarn"),
+            ) { module, successKlib ->
+                when (module.name) {
+                    "a" -> aKlib = successKlib.resultingArtifact
+                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                    "c" -> fail ("Normally should not get here")
+                }
+            }
+        } catch (cte: CompilationToolException) {
+            assertTrue(cte.reason.contains("warning: KLIB resolver: Could not find \"a\" in "))
+            assertTrue(cte.reason.contains("error: warnings found and -Werror specified"))
+        }
+    }
+
+    @Test
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
         val modules = createModules(
             Module("lib1"),
@@ -89,9 +187,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             modules.compileModules(
                 produceUnpackedKlibs = true,
                 useLibraryNamesInCliArguments = false
-            ) { module, klib ->
+            ) { module, successKlib ->
                 if (module.name == "lib1") {
-                    patchManifestToBumpAbiVersion(JUnit5Assertions, klib.klibFile)
+                    patchManifestToBumpAbiVersion(JUnit5Assertions, successKlib.resultingArtifact.klibFile)
                 }
             }
 
@@ -146,18 +244,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         modules.compileModules(
             produceUnpackedKlibs = true,
             useLibraryNamesInCliArguments = false,
-        ) { module, klib ->
+        ) { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }
                 "libb" -> {
                     // pretend it depends on liba v2.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         // first, check:
                         val dependencyVersionPropertyNames: Set<String> =
                             properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
@@ -192,18 +290,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         modules.compileModules(
             produceUnpackedKlibs = true,
             useLibraryNamesInCliArguments = false,
-        ) { module, klib ->
+        ) { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }
                 "libb" -> {
                     // check that dependency version is set
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         val dependencyVersionPropertyNames: Set<String> =
                             properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
 
@@ -276,7 +374,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     private fun List<Module>.compileModules(
         produceUnpackedKlibs: Boolean,
         useLibraryNamesInCliArguments: Boolean,
-        transform: ((module: Module, klib: KLIB) -> Unit)? = null
+        extraCmdLineParams: List<String> = emptyList(),
+        transform: ((module: Module, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
     ) {
         val klibFilesDir = buildDir.resolve(
             listOf(
@@ -305,6 +404,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                                 add("-l")
                                 add(dependency.computeArtifactPath())
                             }
+                            addAll(extraCmdLineParams)
                         }
                     )
                 )
@@ -317,7 +417,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
                 )
 
-                val klib = compilation.result.assertSuccess().resultingArtifact
+                val klib = compilation.result.assertSuccess()
                 transform?.invoke(module, klib)
             }
         }

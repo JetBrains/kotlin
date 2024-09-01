@@ -40,7 +40,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
         val jsCodeExpr = expression.getValueArgument(0)
         // K2 frontend checker FirJsCodeConstantArgumentChecker checks that the passing argument is a constant.
         // IrConstOnlyNecessaryTransformer must evaluate an argument expression and fold it into a string constant.
-        if (jsCodeExpr !is IrConst<*> || jsCodeExpr.kind != IrConstKind.String) {
+        if (jsCodeExpr !is IrConst || jsCodeExpr.kind != IrConstKind.String) {
             // Do not ignore the error if the argument does not fit the expectations.
             // The IR can be generated in the plugin, avoiding FE checks and IrConstOnlyNecessaryTransformer.
             // Bugs are also possible in IrConstOnlyNecessaryTransformer.
@@ -48,7 +48,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
             return
         }
 
-        val jsCodeStr = IrConstKind.String.valueOf(jsCodeExpr)
+        val jsCodeStr = jsCodeExpr.value as String
 
         try {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")

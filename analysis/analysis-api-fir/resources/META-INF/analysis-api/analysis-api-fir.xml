@@ -3,8 +3,6 @@
   <xi:include href="/META-INF/analysis-api/low-level-api-fir.xml"/>
   <xi:include href="/META-INF/analysis-api/symbol-light-classes.xml"/>
 
-  <xi:include href="/META-INF/extensions/compiler.xml"/>
-
   <extensions defaultExtensionNs="com.intellij">
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
@@ -12,8 +10,13 @@
     />
 
     <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.modification.KaFirSourceModificationService"
+    />
+
+    <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
-        serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirReferenceContributor"
     />
 
     <projectService

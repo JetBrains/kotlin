@@ -1,6 +1,6 @@
 STATUS:
 TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 CONTRACTS:
 TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/Int}, baseSymbol=FirPropertySymbol /AbstractClass.property), SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: <implicit>
-
+    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 CONSTANT_EVALUATION:
 TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 ANNOTATION_ARGUMENTS:
 TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
 
 BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {

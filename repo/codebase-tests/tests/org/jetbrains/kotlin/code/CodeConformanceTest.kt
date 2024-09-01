@@ -57,9 +57,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "libraries/tools/kotlin-source-map-loader/.gradle",
-                "libraries/tools/kotlin-test-js-runner/.gradle",
-                "libraries/tools/kotlin-test-js-runner/lib",
-                "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlinp/src",
@@ -68,7 +65,9 @@ class CodeConformanceTest : TestCase() {
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "kotlin-native/build",
                 "kotlin-native/performance",
-                "kotlin-native/samples"
+                "kotlin-native/samples",
+                "wasm/wasm.debug.browsers/node_modules",
+                "wasm/wasm.debug.browsers/.gradle",
             )
         )
 
@@ -115,7 +114,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/gradle/android-test-fixes/build",
                 "libraries/tools/gradle/gradle-warnings-detector/build",
                 "libraries/tools/gradle/kotlin-compiler-args-properties/build",
-                "libraries/tools/gradle/fus-statistics-gradle-plugin/build",
                 "libraries/tools/kotlin-allopen/build",
                 "libraries/tools/kotlin-assignment/build",
                 "libraries/tools/kotlin-gradle-build-metrics/build",
@@ -129,9 +127,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-lombok/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-noarg/build",
-                "libraries/tools/kotlin-test-js-runner/.gradle",
-                "libraries/tools/kotlin-test-js-runner/lib",
-                "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlin-sam-with-receiver/build",
@@ -140,12 +135,16 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "repo/gradle-settings-conventions/build-cache/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
-                "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
+                "repo/gradle-settings-conventions/develocity/build/generated-sources",
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
+                "repo/gradle-build-conventions/generators/build/generated-sources",
                 "repo/gradle-build-conventions/compiler-tests-convention/build/generated-sources",
+                "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
+                "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
+                "wasm/wasm.debug.browsers/node_modules",
+                "wasm/wasm.debug.browsers/.gradle",
                 ".gradle/expanded",
             )
         )
@@ -224,7 +223,7 @@ class CodeConformanceTest : TestCase() {
             FileTestCase(
                 message = """
                 |KT-60644: Using Gradle 'AttributeContainer.attribute(key, value)' method leads to eager tasks creation in Kotlin
-                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute' 
+                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute'
                 |(for simple values) extension methods and for other code 'AttributeContainer.attributeProvider(key, provider { value })'.
                 |
                 |%d files are affected. Please update these files or exclude them in this test:
@@ -232,13 +231,8 @@ class CodeConformanceTest : TestCase() {
                 """.trimMargin(),
                 allowedFiles = listOf(
                     "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/gradleAttributesContainerUtils.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG6.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/gradle71/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG71.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/gradle70/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG70.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/gradle74/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG74.kt",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/mpp/AndroidAndJavaConsumeMppLibIT.kt",
                     "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",
                 )
             ) { _, source ->

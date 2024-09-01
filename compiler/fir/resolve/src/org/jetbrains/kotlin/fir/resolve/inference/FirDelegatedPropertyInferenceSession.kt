@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.processPostponedAtoms
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -58,7 +58,7 @@ class FirDelegatedPropertyInferenceSession(
 
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
-    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
+    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.coneType
 
     private var wasCompletionRun = false
 
@@ -76,7 +76,7 @@ class FirDelegatedPropertyInferenceSession(
         call: T,
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode,
-    ) where T : FirResolvable, T : FirStatement {
+    ) where T : FirResolvable, T : FirExpression {
         if (wasCompletionRun || !call.isAnyOfDelegateOperators()) return
 
         requireCallIsDelegateOperator(call)
@@ -110,6 +110,7 @@ class FirDelegatedPropertyInferenceSession(
 
         (nonTrivialParentSession as? FirPCLAInferenceSession)?.apply {
             if (delegateCandidate != null) {
+                require(delegateExpression is FirResolvable)
                 callCompleter.runCompletionForCall(
                     delegateCandidate,
                     ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL,
@@ -120,8 +121,10 @@ class FirDelegatedPropertyInferenceSession(
 
             integrateChildSession(
                 buildList {
-                    addIfNotNull(delegateExpression)
-                    partiallyResolvedCalls.mapTo(this) { it.first as FirStatement }
+                    addIfNotNull(ConeResolutionAtom.createRawAtom(delegateExpression))
+                    partiallyResolvedCalls.mapTo(this) { (expression, candidate) ->
+                        ConeAtomWithCandidate(expression as FirExpression, candidate)
+                    }
                 },
                 parentConstraintSystem.currentStorage(),
                 onCompletionResultsWriting,
@@ -149,31 +152,31 @@ class FirDelegatedPropertyInferenceSession(
     private fun completeCandidatesForRootSession(): List<FirResolvable> {
         val parentSystem = parentConstraintSystem.apply { prepareForGlobalCompletion() }
 
-        val notCompletedCalls =
-            buildList {
-                addIfNotNull(delegateExpression as? FirResolvable)
-                partiallyResolvedCalls.mapNotNullTo(this) { partiallyResolvedCall ->
-                    partiallyResolvedCall.first.takeIf { resolvable ->
-                        resolvable.candidate() != null
-                    }
+        val notCompletedCalls = buildList {
+            if (delegateExpression is FirResolvable) {
+                val delegateCandidate = delegateExpression.candidate()
+                if (delegateCandidate != null) {
+                    add(ConeAtomWithCandidate(delegateExpression, delegateCandidate))
                 }
             }
+            partiallyResolvedCalls.mapNotNullTo(this) { (partiallyResolvedCall, _) ->
+                val candidate = partiallyResolvedCall.candidate() ?: return@mapNotNullTo null
+                ConeAtomWithCandidate(partiallyResolvedCall as FirExpression, candidate)
+            }
+        }
 
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
-            @Suppress("UNCHECKED_CAST")
             components.callCompleter.completer.complete(
                 parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
-                notCompletedCalls as List<FirStatement>,
+                notCompletedCalls,
                 unitType, resolutionContext
             ) { lambdaAtom, withPCLASession ->
                 // Reversed here bc we want top-most call to avoid exponential visit
                 val containingCandidateForLambda = notCompletedCalls.asReversed().first {
                     var found = false
-                    it.processAllContainingCallCandidates { subCandidate ->
-                        if (subCandidate.postponedAtoms.contains(lambdaAtom)) {
-                            found = true
-                        }
+                    it.processPostponedAtoms { postponedAtom ->
+                        found = found || postponedAtom == lambdaAtom
                     }
                     found
                 }.candidate
@@ -186,13 +189,13 @@ class FirDelegatedPropertyInferenceSession(
             }
         }
 
-        for (candidate in notCompletedCalls.mapNotNull { it.candidate() }) {
+        for (candidate in notCompletedCalls.mapNotNull { (it.expression as FirResolvable).candidate() }) {
             for (error in parentSystem.errors) {
                 candidate.addDiagnostic(InferenceError(error))
             }
         }
 
-        return notCompletedCalls
+        return notCompletedCalls.map { it.expression as FirResolvable }
     }
 }
 

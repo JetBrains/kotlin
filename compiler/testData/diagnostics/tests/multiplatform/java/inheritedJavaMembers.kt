@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 // MODULE: m1-common
@@ -13,7 +12,7 @@ interface MutableListEx<E> : MutableList<E> {
     fun removeToSize(size: Int) {}
 }
 
-expect class FastArrayList<E> : MutableListEx<E>, RandomAccess {
+expect class FastArrayList<E> : MutableListEx<E>, <!UNRESOLVED_REFERENCE!>RandomAccess<!> {
     constructor()
     constructor(initialCapacity: Int)
     constructor(elements: Collection<E>)

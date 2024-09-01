@@ -83,7 +83,7 @@ class WasmIrToText(
             debugInformationGenerator?.addSourceLocation(
                 SourceLocationMappingToText(
                     it,
-                    SourceLocation.Location("", stringBuilder.lineNumber, stringBuilder.columnNumber),
+                    SourceLocation.Location("", "", stringBuilder.lineNumber, stringBuilder.columnNumber),
                 )
             )
         }

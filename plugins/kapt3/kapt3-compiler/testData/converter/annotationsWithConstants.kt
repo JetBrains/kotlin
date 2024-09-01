@@ -90,7 +90,10 @@ annotation class Anno(
         val a8: Double,
         val a9: String)
 
-class MyActivity {
+class MyActivity(
+    val param1: Int = B.id.textView,
+    var param2: Int = B.a3,
+) {
     @Bind(LibR.id.textView)
     @BindField(LibR.id.textView)
     val a = 0

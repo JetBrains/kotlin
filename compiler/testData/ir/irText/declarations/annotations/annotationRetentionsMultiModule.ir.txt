@@ -1,0 +1,104 @@
+Module: lib
+FILE fqName:<root> fileName:/lib.kt
+  CLASS ANNOTATION_CLASS name:Binary modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY name:BINARY' type=kotlin.annotation.AnnotationRetention)
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Binary
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Binary [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Binary modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:Runtime modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY name:RUNTIME' type=kotlin.annotation.AnnotationRetention)
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Runtime
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Runtime [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Runtime modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:Source modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Source
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Source [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Source modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:binary visibility:public modality:FINAL <> (x:@[Binary] kotlin.Short) returnType:@[Binary] kotlin.Short
+    VALUE_PARAMETER name:x index:0 type:@[Binary] kotlin.Short
+      annotations:
+        Binary
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun binary (x: @[Binary] kotlin.Short): @[Binary] kotlin.Short declared in <root>'
+        GET_VAR 'x: @[Binary] kotlin.Short declared in <root>.binary' type=@[Binary] kotlin.Short origin=null
+  FUN name:runtime visibility:public modality:FINAL <> (x:@[Runtime] kotlin.Short) returnType:@[Runtime] kotlin.Short
+    VALUE_PARAMETER name:x index:0 type:@[Runtime] kotlin.Short
+      annotations:
+        Runtime
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun runtime (x: @[Runtime] kotlin.Short): @[Runtime] kotlin.Short declared in <root>'
+        GET_VAR 'x: @[Runtime] kotlin.Short declared in <root>.runtime' type=@[Runtime] kotlin.Short origin=null
+  FUN name:source visibility:public modality:FINAL <> (x:@[Source] kotlin.Short) returnType:@[Source] kotlin.Short
+    VALUE_PARAMETER name:x index:0 type:@[Source] kotlin.Short
+      annotations:
+        Source
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun source (x: @[Source] kotlin.Short): @[Source] kotlin.Short declared in <root>'
+        GET_VAR 'x: @[Source] kotlin.Short declared in <root>.source' type=@[Source] kotlin.Short origin=null
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun source (x: @[Source] kotlin.Short): @[Source] kotlin.Short declared in <root>' type=@[Source] kotlin.Short origin=null
+          x: CONST Short type=kotlin.Short value=0
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun binary (x: @[Binary] kotlin.Short): @[Binary] kotlin.Short declared in <root>' type=@[Binary] kotlin.Short origin=null
+          x: CONST Short type=kotlin.Short value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun runtime (x: @[Runtime] kotlin.Short): @[Runtime] kotlin.Short declared in <root>' type=@[Runtime] kotlin.Short origin=null
+          x: CONST Short type=kotlin.Short value=2
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

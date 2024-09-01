@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -370,7 +370,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -392,7 +392,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -410,7 +410,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -432,7 +432,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -450,7 +450,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public final [ResolvedTo(TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
+    public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
     public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
@@ -490,7 +490,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|CompletionHandler| {
+    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }

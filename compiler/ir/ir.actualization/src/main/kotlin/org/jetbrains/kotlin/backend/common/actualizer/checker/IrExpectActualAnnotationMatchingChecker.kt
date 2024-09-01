@@ -24,7 +24,7 @@ internal object IrExpectActualAnnotationMatchingChecker : IrExpectActualChecker 
             return
         }
 
-        for ((expectSymbol, actualSymbol) in matchedExpectToActual.entries) {
+        for ((expectSymbol, actualSymbol) in expectActualMap.regularSymbols) {
             if (expectSymbol is IrTypeParameterSymbol) {
                 continue
             }

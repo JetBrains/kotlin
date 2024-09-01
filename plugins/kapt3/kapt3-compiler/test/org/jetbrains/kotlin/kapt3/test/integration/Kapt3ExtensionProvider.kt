@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
+import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
@@ -125,7 +125,7 @@ class Kapt3ExtensionForTests(
 
     override fun saveStubs(
         kaptContext: KaptContextForStubGeneration,
-        stubs: List<ClassFileToSourceStubConverter.KaptStub>,
+        stubs: List<KaptStubConverter.KaptStub>,
         messageCollector: MessageCollector,
     ) {
         if (this.savedStubs != null) {
@@ -143,7 +143,7 @@ class Kapt3ExtensionForTests(
     override fun saveIncrementalData(
         kaptContext: KaptContextForStubGeneration,
         messageCollector: MessageCollector,
-        converter: ClassFileToSourceStubConverter
+        converter: KaptStubConverter
     ) {
         if (this.savedBindings != null) {
             error("Bindings are already saved")

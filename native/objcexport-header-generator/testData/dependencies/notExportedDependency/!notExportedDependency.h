@@ -29,19 +29,12 @@ __attribute__((swift_name("KotlinBase")))
 + (void)initialize __attribute__((objc_requires_super));
 @end
 
-@interface MyAppBase (MyAppBaseCopying) <NSCopying>
-@end
-
 __attribute__((swift_name("KotlinMutableSet")))
 @interface MyAppMutableSet<ObjectType> : NSMutableSet<ObjectType>
 @end
 
 __attribute__((swift_name("KotlinMutableDictionary")))
 @interface MyAppMutableDictionary<KeyType, ObjectType> : NSMutableDictionary<KeyType, ObjectType>
-@end
-
-@interface NSError (NSErrorMyAppKotlinException)
-@property (readonly) id _Nullable kotlinException;
 @end
 
 __attribute__((swift_name("KotlinNumber")))
@@ -165,6 +158,13 @@ __attribute__((swift_name("KotlinIterator")))
 @required
 - (BOOL)hasNext __attribute__((swift_name("hasNext()")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
+@end
+
+@interface MyAppBase (MyAppBaseCopying) <NSCopying>
+@end
+
+@interface NSError (NSErrorMyAppKotlinException)
+@property (readonly) id _Nullable kotlinException;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -465,7 +465,8 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
     ) = when {
-        annotations.isNotEmpty() || newVisibility != baseProperty.visibility -> buildCopy(
+        annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
+                origin == FirDeclarationOrigin.Delegated || origin is FirDeclarationOrigin.SubstitutionOverride -> buildCopy(
             moduleData,
             origin,
             propertyReturnTypeRef,
@@ -500,6 +501,8 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
+            isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -513,7 +516,9 @@ object FirFakeOverrideGenerator {
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
-            parameterSource = valueParameters.first().source
+            parameterSource = valueParameters.first().source,
+            isOverride = true,
+            attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
         }
@@ -527,6 +532,7 @@ object FirFakeOverrideGenerator {
             this.body = null
             resolvePhase = origin.resolvePhaseForCopy
             this.status = status.copy(visibility = newVisibility)
+            this.attributes = this@buildCopy.attributes.copy()
         }.also {
             if (it.isSetter) {
                 val originalParameter = it.valueParameters.first()
@@ -769,7 +775,7 @@ object FirFakeOverrideGenerator {
                 newTypeParameter.bounds +=
                     buildResolvedTypeRef {
                         source = boundTypeRef.source
-                        type = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
+                        coneType = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
                     }
             }
         }

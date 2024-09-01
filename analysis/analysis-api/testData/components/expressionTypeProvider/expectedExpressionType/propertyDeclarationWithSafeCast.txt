@@ -1,5 +1,5 @@
 expression: p0
 expected type: KaUsualClassType:
-  annotationsList: []
+  annotations: []
   typeArguments: []
   type: kotlin/String?

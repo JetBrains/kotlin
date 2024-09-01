@@ -82,13 +82,14 @@ final List<File> enumsToComment = [
         "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/PathWalkOption.kt",
         "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/CopyActionResult.kt",
         "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/OnErrorResult.kt",
+        "$kotlinRootDir/libraries/stdlib/src/kotlin/io/encoding/Base64.kt",
 ].collect { new File(it) }
 
 project.extensions.commentOutSinceKotlinForNewEnums = {
   for (file in enumsToComment) {
     final List<String> lines = file.readLines()
-    for (def i = 0; i < lines.size(); i++) {
-      if (lines[i].startsWith("@SinceKotlin")) {
+    for (def i = 0; i < lines.size() - 1; i++) {
+      if (lines[i].trim().startsWith("@SinceKotlin") && lines[i + 1].contains("enum")) {
         lines[i] = "//" + lines[i]
       }
     }
@@ -100,7 +101,7 @@ project.extensions.uncommentSinceKotlinForNewEnums = {
   for (file in enumsToComment) {
     final List<String> lines = file.readLines()
     for (def i = 0; i < lines.size(); i++) {
-      if (lines[i].startsWith("//@SinceKotlin")) {
+      if (lines[i].startsWith("//") && lines[i].contains("@SinceKotlin")) {
         lines[i] = lines[i].substring(2)
       }
     }

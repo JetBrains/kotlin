@@ -32,7 +32,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
         val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 
-        if (name.resolvedType != context.session.builtinTypes.stringType.type) {
+        if (name.resolvedType != context.session.builtinTypes.stringType.coneType) {
             return
         }
 
@@ -45,7 +45,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (declaration is FirFunction && !context.isRenamableFunction(declaration)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME, context)
         } else if (declaration is FirCallableDeclaration) {
-            val containingClass = declaration.getContainingClass(context.session)
+            val containingClass = declaration.getContainingClass()
 
             if (
                 declaration.isOverride ||
@@ -58,7 +58,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     }
 
     private fun CheckerContext.isRenamableFunction(function: FirFunction): Boolean {
-        val containingClass = function.getContainingClassSymbol(session)
+        val containingClass = function.getContainingClassSymbol()
         return containingClass != null || !function.symbol.callableId.isLocal
     }
 

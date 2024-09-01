@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
@@ -92,7 +91,6 @@ internal class KotlinBridgeBuilder(
                 type = type,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,

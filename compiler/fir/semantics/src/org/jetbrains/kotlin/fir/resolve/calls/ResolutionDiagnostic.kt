@@ -81,15 +81,13 @@ class NameForAmbiguousParameter(
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
-object UnsuccessfulCallableReferenceAtom : ResolutionDiagnostic(INAPPLICABLE)
+object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE)
 
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
-
-object SetterVisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
 
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 

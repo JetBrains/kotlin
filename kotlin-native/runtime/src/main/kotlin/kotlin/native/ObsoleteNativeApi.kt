@@ -5,8 +5,6 @@
 
 package kotlin.native
 
-import kotlin.annotation.AnnotationTarget.*
-
 /**
  * This annotation marks the Kotlin/Native standard library API that is considered obsolete and is being phased out.
  *
@@ -33,4 +31,5 @@ import kotlin.annotation.AnnotationTarget.*
 )
 @MustBeDocumented
 @SinceKotlin("1.9")
-public annotation class ObsoleteNativeApi
+@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
+public actual annotation class ObsoleteNativeApi

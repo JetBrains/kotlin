@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinIllegalStateException, KotlinThrowable, KotlinArray<T>, KotlinException, KotlinRuntimeException;
+@class KotlinArray<T>, KotlinException, KotlinIllegalStateException, KotlinRuntimeException, KotlinThrowable;
 
 @protocol KotlinIterator;
 

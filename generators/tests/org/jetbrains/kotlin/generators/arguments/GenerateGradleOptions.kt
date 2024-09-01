@@ -123,20 +123,6 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
         withPrinterToFile
     )
 
-    val jsDceOptions = generateJsDceOptions(
-        apiSrcDir,
-        commonToolOptions,
-        withPrinterToFile
-    )
-    generateJsDceOptionsImpl(
-        srcDir,
-        jsDceOptions.optionsName,
-        commonToolImplOptions.baseImplName,
-        commonToolImplOptions.helperName,
-        jsDceOptions.properties,
-        withPrinterToFile
-    )
-
     val multiplatformCommonOptions = generateMultiplatformCommonOptions(
         apiSrcDir,
         commonCompilerOptions,
@@ -472,73 +458,6 @@ private fun generateKotlinNativeOptionsImpl(
             commonCompilerHelper,
             k2NativeCompilerArgumentsFqName,
             nativeOptions
-        )
-    }
-}
-
-
-private fun generateJsDceOptions(
-    apiSrcDir: File,
-    commonToolOptions: GeneratedOptions,
-    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
-): GeneratedOptions {
-    val jsDceInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJsDceCompilerToolOptions")
-    val jsDceOptions = gradleOptions<K2JSDceArguments>()
-    withPrinterToFile(fileFromFqName(apiSrcDir, jsDceInterfaceFqName)) {
-        generateInterface(
-            jsDceInterfaceFqName,
-            jsDceOptions,
-            parentType = commonToolOptions.optionsName,
-            interfaceKDoc = JS_DCE_TOOL_OPTIONS_KDOC,
-        )
-    }
-
-    val deprecatedJsDceInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJsDceOptions")
-    withPrinterToFile(fileFromFqName(apiSrcDir, deprecatedJsDceInterfaceFqName)) {
-        generateDeprecatedInterface(
-            deprecatedJsDceInterfaceFqName,
-            jsDceInterfaceFqName,
-            jsDceOptions,
-            parentType = commonToolOptions.deprecatedOptionsName,
-            interfaceKDoc = JS_DCE_TOOL_OPTIONS_KDOC,
-        )
-    }
-
-    println("\n### Attributes specific for JS/DCE\n")
-    generateMarkdown(jsDceOptions)
-
-    return GeneratedOptions(jsDceInterfaceFqName, deprecatedJsDceInterfaceFqName, jsDceOptions)
-}
-
-private fun generateJsDceOptionsImpl(
-    srcDir: File,
-    jsDceInterfaceFqName: FqName,
-    commonToolImpl: FqName,
-    commonToolHelper: FqName,
-    jsDceOptions: List<KProperty1<*, *>>,
-    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
-) {
-    val jsDceImplFqName = FqName("${jsDceInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
-    withPrinterToFile(fileFromFqName(srcDir, jsDceImplFqName)) {
-        generateImpl(
-            jsDceImplFqName,
-            commonToolImpl,
-            jsDceInterfaceFqName,
-            jsDceOptions
-        )
-    }
-
-    val k2JsDceArgumentsFqName = FqName(K2JSDceArguments::class.qualifiedName!!)
-    val jsDceCompilerHelperFqName = FqName(
-        "${jsDceInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
-    )
-    withPrinterToFile(fileFromFqName(srcDir, jsDceCompilerHelperFqName)) {
-        generateCompilerOptionsHelper(
-            jsDceInterfaceFqName,
-            jsDceCompilerHelperFqName,
-            commonToolHelper,
-            k2JsDceArgumentsFqName,
-            jsDceOptions
         )
     }
 }

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in one.two.TopLevelObject.Nested) val bar: kotlin.Int
+KtNameReferenceExpression(103,106): 'bar'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.Nested) val bar: kotlin.Int

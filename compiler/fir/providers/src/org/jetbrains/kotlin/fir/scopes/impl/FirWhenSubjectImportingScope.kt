@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.name.Name
 // Note: at this moment we create this scope for enum classes only,
 // and only enum entry symbols are allowed to be processed
 class FirWhenSubjectImportingScope(
-    classId: ClassId, session: FirSession, scopeSession: ScopeSession
+    private val classId: ClassId,
+    session: FirSession,
+    scopeSession: ScopeSession,
 ) : FirExplicitStarImportingScope(
     listOf(buildResolvedImportByClassId(classId)),
     session, scopeSession,
@@ -38,6 +41,14 @@ class FirWhenSubjectImportingScope(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession,
+    ): FirExplicitStarImportingScope {
+        return FirWhenSubjectImportingScope(classId, newSession, newScopeSession)
     }
 
     companion object {

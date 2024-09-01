@@ -195,12 +195,6 @@ By default caches will be placed into the kotlin-native system cache directory."
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones.")
     var checkDependencies: Boolean = false
 
-    @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data.")
-    var embedBitcode: Boolean = false
-
-    @Argument(value = EMBED_BITCODE_MARKER_FLAG, description = "Embed placeholder LLVM IR data as a marker.")
-    var embedBitcodeMarker: Boolean = false
-
     @Argument(value = "-Xemit-lazy-objc-header", description = "")
     var emitLazyObjCHeader: String? = null
 
@@ -452,11 +446,38 @@ The default value is 1."""
     @Argument(value = "-Xkonan-data-dir", description = "Custom path to the location of konan distributions.")
     var konanDataDir: String? = null
 
+    @Argument(value = "-Xllvm-module-passes", description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.")
+    var llvmModulePasses: String? = null
+
+    @Argument(value = "-Xllvm-lto-passes", description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.")
+    var llvmLTOPasses: String? = null
+
     @Argument(
         value = "-Xmanifest-native-targets",
         description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded."
     )
     var manifestNativeTargets: Array<String>? = null
+
+    @Argument(
+        value = "-Xdump-synthetic-accessors-to",
+        description = "Path to a directory to dump synthetic accessors and their use sites."
+    )
+    var dumpSyntheticAccessorsTo: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xsynthetic-accessors-with-narrowed-visibility",
+        description = "Narrow the visibility of generated synthetic accessors to _internal_" +
+                " if such accessors are only used in inline functions that are not a part of public ABI"
+    )
+    var narrowedSyntheticAccessorsVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
@@ -483,8 +504,6 @@ The default value is 1."""
     override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
 
     companion object {
-        const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
-        const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"
         const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
         const val INCLUDE_ARG = "-Xinclude"
         const val CACHED_LIBRARY = "-Xcached-library"

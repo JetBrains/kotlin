@@ -22,6 +22,11 @@ object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(M
             is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
             is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
             is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirFile -> {
+                declaration.packageDirective.packageFqName.pathSegments().forEach {
+                    FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source, context, reporter)
+                }
+            }
             else -> return
         }
     }

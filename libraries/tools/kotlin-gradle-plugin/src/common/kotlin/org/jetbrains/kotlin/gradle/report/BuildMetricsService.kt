@@ -23,7 +23,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.HttpReportService
+import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -52,7 +54,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     interface Parameters : BuildServiceParameters {
         val startParameters: Property<BuildStartParameters>
         val reportingSettings: Property<ReportingSettings>
-        val httpService: Property<HttpReportService>
+        val httpParameters: Property<HttpReportParameters>
 
         val projectDir: DirectoryProperty
         val label: Property<String?>
@@ -61,7 +63,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val buildConfigurationTags: ListProperty<StatTag>
     }
 
-    private val log = Logging.getLogger(this.javaClass)
     private val buildReportService = BuildReportsService()
 
     // Tasks and transforms' records
@@ -72,7 +73,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
-    open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
+    open fun addTask(
+        taskPath: String,
+        taskClass: Class<*>,
+        metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    ) {
         taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
             if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
@@ -88,7 +93,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         startTimeMs: Long,
         totalTimeMs: Long,
         buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
-        failureMessage: String?
+        failureMessage: String?,
     ) {
         buildOperationRecords.add(
             TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
@@ -147,16 +152,17 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     companion object {
         private val serviceClass = BuildMetricsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
+        private val log = Logging.getLogger(BuildMetricsService::class.java)
 
         private fun Parameters.toBuildReportParameters() = BuildReportParameters(
             startParameters = startParameters.get(),
             reportingSettings = reportingSettings.get(),
-            httpService = httpService.orNull,
+            httpReportParameters = httpParameters.orNull,
             projectDir = projectDir.asFile.get(),
             label = label.orNull,
             projectName = projectName.get(),
             kotlinVersion = kotlinVersion.get(),
-            additionalTags = HashSet(buildConfigurationTags.get())
+            additionalTags = HashSet(buildConfigurationTags.get()),
         )
 
         private fun registerIfAbsentImpl(
@@ -183,14 +189,21 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
                 reportingSettings.httpReportSettings?.let { httpSettings ->
-                    it.parameters.httpService.set(
-                        HttpReportService(
+                    if (!httpSettings.useExecutorForHttpReport) {
+                        log.warn("`kotlin.internal.build.report.http.use.executor` property is for test purposes only")
+                    }
+
+                    it.parameters.httpParameters.set(
+                        HttpReportParameters(
                             httpSettings.url,
                             httpSettings.user,
-                            httpSettings.password
+                            httpSettings.password,
+                            //for tests only
+                            httpSettings.useExecutorForHttpReport,
                         )
                     )
-                }
+                    log.debug("Http report is enabled for ${httpSettings.url}")
+                } ?: log.debug("Http report is disabled")
                 it.parameters.projectDir.set(project.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
                 it.parameters.buildConfigurationTags.value(setupTags(project))
@@ -201,7 +214,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
 
         private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
-            val buildScanHolder = initBuildScanExtensionHolder(project, buildMetricServiceProvider)
+            val buildScanHolder = initBuildScanHolder(project, buildMetricServiceProvider)
             if (buildScanHolder != null) {
                 subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanHolder)
             }
@@ -214,27 +227,44 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        private fun initBuildScanExtensionHolder(
+        private fun initBuildScanHolder(
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
-        ): BuildScanExtensionHolder? {
-            val buildScanReportSettings = buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings
-            if (buildScanReportSettings != null) {
-                // BuildScanExtension cant be parameter nor BuildService's field
-                val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
-                return buildScanExtension?.let { BuildScanExtensionHolder(it) }
+        ): BuildScanApi? {
+            buildMetricServiceProvider.get().parameters.reportingSettings.orNull?.buildScanReportSettings ?: return null
+
+            val rootProject = if (project.isProjectIsolationEnabled) {
+                project
+            } else {
+                project.rootProject
             }
-            return null
+
+            val buildScan =
+                rootProject.extensions.findByName("develocity")?.let { DevelocityPluginBuildScanWrapper(it) }
+                ?: rootProject.extensions.findByName("buildScan")?.let { BuildScanExtensionHolder(it) }
+
+            when {
+                buildScan == null && project.isProjectIsolationEnabled ->
+                    log.warn(
+                        "Build report creation in the build scan format is not yet supported when the isolated projects feature is enabled." +
+                                " Follow https://youtrack.jetbrains.com/issue/KT-68847 for the updates." +
+                                " Build report for build scan won't be created."
+                    )
+                buildScan == null -> log.debug("Build scan is not enabled. Build report for build scan won't be created.")
+                else -> log.debug("Build report for build scan is configured.")
+            }
+
+            return buildScan
         }
 
         private fun subscribeForTaskEventsForBuildScan(
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
-            buildScanHolder: BuildScanExtensionHolder
+            buildScanHolder: BuildScanApi,
         ) {
             when {
                 GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                    buildScanHolder.buildScan.buildFinished {
+                    buildScanHolder.buildFinished {
                         buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder) }.get()
                     }
                 }
@@ -287,12 +317,13 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    internal fun addBuildScanReport(buildScan: BuildScanExtensionHolder?) {
+    internal fun addBuildScanReport(buildScan: BuildScanApi?) {
         if (buildScan == null) return
         buildReportService.initBuildScanTags(buildScan, parameters.label.orNull)
         buildReportService.addBuildScanReport(buildOperationRecords, parameters.toBuildReportParameters(), buildScan)
-        parameters.buildConfigurationTags.orNull?.forEach { buildScan.buildScan.tag(it.readableString) }
+        parameters.buildConfigurationTags.orNull?.forEach { buildScan.tag(it.readableString) }
         buildReportService.addCollectedTags(buildScan)
+        log.debug("Build metrics are stored into build scan for '${buildReportService.buildUuid}' build")
     }
 }
 
@@ -319,7 +350,7 @@ private class TransformRecord(
     override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
+    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
 ) : BuildOperationRecord {
     override val didWork: Boolean = true
     override val skipMessage: String? = null

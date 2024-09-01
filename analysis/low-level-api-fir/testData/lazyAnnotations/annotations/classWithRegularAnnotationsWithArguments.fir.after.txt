@@ -1,0 +1,1 @@
+@R|MyAnno|[Types](v = String(1).R|kotlin/String.plus|(String(2))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any|

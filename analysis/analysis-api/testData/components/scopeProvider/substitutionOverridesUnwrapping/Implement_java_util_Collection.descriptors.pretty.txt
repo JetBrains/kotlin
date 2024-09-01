@@ -12,9 +12,9 @@ fun isEmpty(): kotlin.Boolean
 
 operator fun contains(p0: kotlin.Any!): kotlin.Boolean
 
-fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+fun toArray(): (kotlin.Array<kotlin.Any!>..kotlin.Array<out kotlin.Any!>?)
 
-fun <T : kotlin.Any!> toArray(p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+fun <T : kotlin.Any!> toArray(p0: (kotlin.Array<T!>..kotlin.Array<out T!>?)): (kotlin.Array<T!>..kotlin.Array<out T!>?)
 
 fun add(p0: E!): kotlin.Boolean
 
@@ -22,10 +22,12 @@ fun remove(p0: kotlin.Any!): kotlin.Boolean
 
 fun containsAll(p0: kotlin.collections.(Mutable)Collection<*>!): kotlin.Boolean
 
-fun addAll(p0: (kotlin.collections.MutableCollection<out E!>..kotlin.collections.Collection<E!>?)): kotlin.Boolean
+fun addAll(p0: kotlin.collections.(Mutable)Collection<out E!>!): kotlin.Boolean
 
 fun removeAll(p0: kotlin.collections.(Mutable)Collection<*>!): kotlin.Boolean
 
 fun retainAll(p0: kotlin.collections.(Mutable)Collection<*>!): kotlin.Boolean
 
 fun clear()
+
+constructor()

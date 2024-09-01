@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1312
 package foo
 
 open class X(private val x: String) {

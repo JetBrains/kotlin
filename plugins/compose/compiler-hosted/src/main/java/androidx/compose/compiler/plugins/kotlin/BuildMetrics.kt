@@ -191,6 +191,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
 
 class ModuleMetricsImpl(
     var name: String,
+    val featureFlags: FeatureFlags,
     val stabilityOf: (IrType) -> Stability
 ) : ModuleMetrics {
     private var skippableComposables = 0
@@ -366,6 +367,11 @@ class ModuleMetricsImpl(
         entry("singletonComposableLambdas", singletonComposableLambdas)
         entry("composableLambdas", composableLambdas)
         entry("totalLambdas", totalLambdas)
+        entry("featureFlags") {
+            FeatureFlag.entries.forEach { flag ->
+                entry(flag.featureName, featureFlags.isEnabled(flag))
+            }
+        }
     }
 
     override fun Appendable.appendComposablesCsv() = appendCsv {

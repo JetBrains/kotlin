@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,6 +29,12 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
+)
+
+private val validateIrAfterInliningPhase = makeIrModulePhase(
+    ::IrValidationAfterInliningAllFunctionsPhase,
+    name = "IrValidationAfterInliningAllFunctionsPhase",
+    description = "Validate IR after all functions have been inlined",
 )
 
 private val validateIrAfterLowering = makeIrModulePhase(
@@ -79,17 +85,17 @@ private val rangeContainsLoweringPhase = makeIrModulePhase(
     description = "[Optimization] Optimizes calls to contains() for ClosedRanges"
 )
 
-private val arrayConstructorReferencePhase = makeIrModulePhase(
-    ::WasmArrayConstructorReferenceLowering,
-    name = "ArrayConstructorReference",
-    description = "Transform `::Array` into a ::create#Array"
+private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
+    ::WasmInlineCallableReferenceToLambdaPhase,
+    name = "WasmInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
 private val arrayConstructorPhase = makeIrModulePhase(
-    ::WasmArrayConstructorLowering,
+    ::ArrayConstructorLowering,
     name = "ArrayConstructor",
-    description = "Transform `Array(size) { index -> value }` into create#Array { index -> value } call",
-    prerequisite = setOf(arrayConstructorReferencePhase)
+    description = "Transform `Array(size) { index -> value }` into a loop",
+    prerequisite = setOf(inlineCallableReferenceToLambdaPhase)
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
@@ -136,7 +142,6 @@ private val functionInliningPhase = makeIrModulePhase(
         expectDeclarationsRemovingPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersPhase,
         localClassesInInlineLambdasPhase,
-        localClassesInInlineFunctionsPhase,
     )
 )
 
@@ -417,18 +422,17 @@ private val excludeDeclarationsFromCodegenPhase = makeIrModulePhase(
     description = "Move excluded declarations to separate place"
 )
 
-private val jsExceptionReveal = makeIrModulePhase(
-    ::JsExceptionRevealLowering,
-    name = "JsExceptionRevealLowering",
-    description = "Wraps try statement into try with revealed JS exception",
-    prerequisite = setOf(functionInliningPhase)
+private val unhandledExceptionLowering = makeIrModulePhase(
+    ::UnhandledExceptionLowering,
+    name = "UnhandledExceptionLowering",
+    description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
 )
 
 private val tryCatchCanonicalization = makeIrModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
     description = "Transforms try/catch statements into canonical form supported by the wasm codegen",
-    prerequisite = setOf(functionInliningPhase, jsExceptionReveal)
+    prerequisite = setOf(functionInliningPhase, unhandledExceptionLowering)
 )
 
 private val bridgesConstructionPhase = makeIrModulePhase(
@@ -561,13 +565,6 @@ private val removeInitializersForLazyProperties = makeIrModulePhase(
     description = "Remove property initializers if they was initialized lazily"
 )
 
-private val unhandledExceptionLowering = makeIrModulePhase(
-    ::UnhandledExceptionLowering,
-    name = "UnhandledExceptionLowering",
-    description = "Wrap JsExport functions with try-catch to convert unhandled Wasm exception into Js exception",
-    prerequisite = setOf(jsExceptionReveal)
-)
-
 private val propertyAccessorInlinerLoweringPhase = makeIrModulePhase(
     ::PropertyAccessorInlineLowering,
     name = "PropertyAccessorInlineLowering",
@@ -643,16 +640,18 @@ val loweringList = listOf(
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     rangeContainsLoweringPhase,
-    arrayConstructorReferencePhase,
-    arrayConstructorPhase,
+
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
 
+    inlineCallableReferenceToLambdaPhase,
+    arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
     functionInliningPhase,
+    validateIrAfterInliningPhase,
     constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
@@ -705,7 +704,6 @@ val loweringList = listOf(
 
     invokeOnExportedFunctionExitLowering,
 
-    jsExceptionReveal,
     unhandledExceptionLowering,
     tryCatchCanonicalization,
 

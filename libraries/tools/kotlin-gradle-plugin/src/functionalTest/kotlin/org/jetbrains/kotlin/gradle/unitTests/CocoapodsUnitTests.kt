@@ -7,10 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CFLAGS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.FRAMEWORK_PATHS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.HEADER_PATHS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -103,4 +106,24 @@ class CocoapodsUnitTests {
         )
     }
 
+
+    @Test
+    fun `KT-67666 regression -- don't crash with eagerly created link tasks`() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+
+        buildProjectWithCocoapods {
+            kotlin {
+                targets.withType<KotlinNativeTarget>().all { target ->
+                    target.binaries.withType<TestExecutable>().all { it.linkTaskProvider.get() }
+                }
+
+                cocoapods {
+                    pod("AmazingPod")
+                }
+
+                iosArm64()
+            }
+
+        }
+    }
 }

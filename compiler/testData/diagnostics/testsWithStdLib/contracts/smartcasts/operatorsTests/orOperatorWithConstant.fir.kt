@@ -30,7 +30,7 @@ fun annotatedTrueOrTrue(x: Any?) {
 
 fun annotatedTrueOrFalse(x: Any?) {
     if (trueWhenString(x) || false) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

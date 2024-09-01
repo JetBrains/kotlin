@@ -19,10 +19,10 @@ public enum Color /* Color*/ {
   public static @org.jetbrains.annotations.NotNull() Color @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() Color valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() Color valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<Color> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Color> getEntries();//  getEntries()
 
   private  Color(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String)
 
@@ -41,10 +41,10 @@ public enum Direction /* Direction*/ {
   public static @org.jetbrains.annotations.NotNull() Direction @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() Direction valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() Direction valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<Direction> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() Direction> getEntries();//  getEntries()
 
   private  Direction();//  .ctor()
 }
@@ -67,10 +67,10 @@ public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.fun
   public static @org.jetbrains.annotations.NotNull() IntArithmetics @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() IntArithmetics valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<IntArithmetics> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() IntArithmetics> getEntries();//  getEntries()
 
   private  IntArithmetics();//  .ctor()
 
@@ -109,10 +109,10 @@ public abstract enum ProtocolState /* ProtocolState*/ {
   public static @org.jetbrains.annotations.NotNull() ProtocolState @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() ProtocolState valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() ProtocolState valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<ProtocolState> getEntries();//  getEntries()
+  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() ProtocolState> getEntries();//  getEntries()
 
   private  ProtocolState();//  .ctor()
 

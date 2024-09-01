@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNonNullReferenceType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrProtocolName
@@ -18,20 +17,31 @@ internal data class KtObjCSuperClassTranslation(
     val superClassGenerics: List<ObjCNonNullReferenceType>,
 )
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTranslation {
-    val superClassType = getSuperClassTypeNotAny()
-    val superClassName = superClassType?.getSuperClassName() ?: getDefaultSuperClassOrProtocolName()
+internal fun ObjCExportContext.translateSuperClass(symbol: KaClassSymbol): KtObjCSuperClassTranslation {
+    val superClassType = analysisSession.getSuperClassTypeNotAny(symbol)
+    val defaultName = exportSession.getDefaultSuperClassOrProtocolName()
+    val superClassName = if (superClassType == null) {
+        defaultName
+    } else {
+        getSuperClassName(superClassType) ?: defaultName
+    }
 
-    val superClassGenerics: List<ObjCNonNullReferenceType> = superTypes
-        .filterIsInstance<KtNonErrorClassType>()
+    val superClassGenerics: List<ObjCNonNullReferenceType> = symbol.superTypes
+        .filterIsInstance<KaClassType>()
         .find { type ->
-            val classSymbol = type.symbol as? KtClassOrObjectSymbol ?: return@find false
+            val classSymbol = type.symbol as? KaClassSymbol ?: return@find false
             classSymbol.classKind.isClass
         }
         ?.typeArguments
         .orEmpty()
-        .mapNotNull { typeProjection -> typeProjection.type?.mapToReferenceTypeIgnoringNullability() }
+        .mapNotNull { typeProjection ->
+            val type = typeProjection.type
+            if (type == null) {
+                null
+            } else {
+                mapToReferenceTypeIgnoringNullability(type)
+            }
+        }
 
     return KtObjCSuperClassTranslation(superClassName, superClassGenerics)
 }

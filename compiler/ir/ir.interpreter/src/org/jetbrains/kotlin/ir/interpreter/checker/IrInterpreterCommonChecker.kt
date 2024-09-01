@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isToString
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 
 class IrInterpreterCommonChecker : IrInterpreterChecker {
     private val visitedStack = mutableListOf<IrElement>()
@@ -97,13 +94,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitBlock(expression: IrBlock, data: IrInterpreterCheckerData): Boolean {
         if (!data.mode.canEvaluateBlock(expression)) return false
-
-        // `IrReturnableBlock` will be created from IrCall after inline. We should do basically the same check as for IrCall.
-        if (expression is IrReturnableBlock) {
-            val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
-            if (inlinedBlock != null) return inlinedBlock.inlineCall.accept(this, data)
-        }
-
         return visitStatements(expression.statements, data)
     }
 
@@ -117,7 +107,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return body.kind == IrSyntheticBodyKind.ENUM_VALUES || body.kind == IrSyntheticBodyKind.ENUM_VALUEOF
     }
 
-    override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
+    override fun visitConst(expression: IrConst, data: IrInterpreterCheckerData): Boolean {
         return data.mode.canEvaluateExpression(expression)
     }
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.anonymousInitializer]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.anonymousInitializer]
  */
 abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?
@@ -31,7 +31,7 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
-    abstract val containingDeclarationSymbol: FirBasedSymbol<*>?
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousInitializer(this, data)

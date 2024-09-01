@@ -262,7 +262,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         result.updateWithCompilerPlugins()
     }
 
-    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.cast<KtObjectDeclaration>().isCompanion()
+    private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 

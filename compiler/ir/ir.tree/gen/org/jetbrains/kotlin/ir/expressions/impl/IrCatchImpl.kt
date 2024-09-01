@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrCatchImpl internal constructor(
@@ -20,6 +21,7 @@ class IrCatchImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var catchParameter: IrVariable,
+    override var origin: IrStatementOrigin?,
 ) : IrCatch() {
     override lateinit var result: IrExpression
 }

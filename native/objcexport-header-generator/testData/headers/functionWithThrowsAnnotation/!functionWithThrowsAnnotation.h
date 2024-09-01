@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinThrowable, KotlinArray<T>;
+@class KotlinArray<T>, KotlinThrowable;
 
 @protocol KotlinIterator;
 

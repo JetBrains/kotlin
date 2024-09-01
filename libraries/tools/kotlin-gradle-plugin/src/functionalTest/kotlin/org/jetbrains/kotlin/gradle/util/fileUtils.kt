@@ -14,3 +14,9 @@ fun Set<File>.relativeTo(project: Project): Set<File> = map { it.relativeTo(proj
 
 val resourcesRoot: Path
     get() = Paths.get("src", "functionalTest", "resources")
+
+val String.osVariantSeparatorsPathString: String
+    get() {
+        val separator = File.separator
+        return if (separator != "/") toString().replace("/", separator) else toString()
+    }

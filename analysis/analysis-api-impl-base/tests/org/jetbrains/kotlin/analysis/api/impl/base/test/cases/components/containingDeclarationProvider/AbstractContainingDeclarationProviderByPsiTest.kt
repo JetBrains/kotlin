@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.checkConta
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -21,7 +21,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
         val currentPath = mutableListOf<KtDeclaration>()
         val ktClasses = mutableListOf<KtClassOrObject>()
         analyseForTest(mainFile) {
-            val expectedFileSymbol = mainFile.getFileSymbol()
+            val expectedFileSymbol = mainFile.symbol
             mainFile.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
                     element.acceptChildren(this)
@@ -29,9 +29,9 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
 
                 override fun visitDeclaration(dcl: KtDeclaration) {
                     val parentDeclaration = currentPath.lastOrNull()
-                    val currentDeclarationSymbol = dcl.getSymbol()
-                    val expectedParentDeclarationSymbol = parentDeclaration?.getSymbol()
-                    val actualParentDeclarationSymbol = currentDeclarationSymbol.getContainingSymbol()
+                    val currentDeclarationSymbol = dcl.symbol
+                    val expectedParentDeclarationSymbol = parentDeclaration?.symbol
+                    val actualParentDeclarationSymbol = currentDeclarationSymbol.containingDeclaration
 
                     if (dcl is KtScriptInitializer) {
                         testServices.assertions.assertTrue(currentDeclarationSymbol is KaScriptSymbol)

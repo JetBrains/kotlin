@@ -55,6 +55,12 @@ object JvmStandardClassIds {
     val SYNCHRONIZED_ANNOTATION_CLASS_ID = ClassId.topLevel(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
     @JvmField
+    val THROWS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Throws")
+
+    @JvmField
+    val THROWS_ANNOTATION_CLASS_ID = ClassId.topLevel(THROWS_ANNOTATION_FQ_NAME)
+
+    @JvmField
     val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
 
     @JvmField

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
@@ -21,7 +21,7 @@ abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiBasedTes
 
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                expressionAtCaret.getReceiverKtType()?.render(position = Variance.INVARIANT)
+                expressionAtCaret.receiverType?.render(position = Variance.INVARIANT)
             }
         }
 

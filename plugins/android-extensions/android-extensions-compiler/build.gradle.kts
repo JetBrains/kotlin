@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 description = "Kotlin Android Extensions Compiler"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("android-sdk-provisioner")
 }
 
 val robolectricClasspath by configurations.creating
@@ -27,7 +29,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))
@@ -82,7 +84,9 @@ projectTest {
     dependsOn(":dist")
 
     workingDir = rootDir
-    useAndroidJar()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
+    }
 
     val androidExtensionsRuntimeProvider = project.provider {
         androidExtensionsRuntimeForTests.asPath

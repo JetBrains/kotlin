@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(66,78): 'test.extProp'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(84,91): 'extProp'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(100,111): 'Foo.extProp'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(117,133): 'test.Foo.extProp'
+    null

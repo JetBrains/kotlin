@@ -1,9 +1,0 @@
-MODULE main
-	CLASS Test13Kt.class
-		PACKAGE METADATA
-			PROPERTY getSb()Ljava/lang/StringBuilder;
-				Property: class.metadata.property.returnType
-					K1
-						java/lang/StringBuilder /* = kotlin/text/StringBuilder^ */
-					K2
-						java/lang/StringBuilder

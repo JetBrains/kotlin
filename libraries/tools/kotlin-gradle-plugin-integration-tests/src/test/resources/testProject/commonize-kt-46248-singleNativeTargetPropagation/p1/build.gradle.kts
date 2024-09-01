@@ -18,14 +18,16 @@ fun registerListDependenciesTask(sourceSet: KotlinSourceSet) {
     tasks.register("list${sourceSet.name.capitalize()}Dependencies") {
         val dependencyConfiguration = project.configurations.getByName(
             "${sourceSet.name}IntransitiveDependenciesMetadata"
-        )
+        ).incoming.artifacts.artifactFiles
+
+        val sourceSetName = sourceSet.name
 
         dependsOn("commonize")
         dependsOn(dependencyConfiguration)
 
         doLast {
             val dependencies = dependencyConfiguration.files.orEmpty()
-            logger.quiet("${sourceSet.name} Dependencies | Count: ${dependencies.size}")
+            logger.quiet("$sourceSetName Dependencies | Count: ${dependencies.size}")
             dependencies.forEach { dependencyFile ->
                 logger.quiet("Dependency: ${dependencyFile.path}")
             }

@@ -24,7 +24,7 @@ public abstract @interface Anno {
  *   // field: a:Ljava/lang/String;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
- *   public final val a: kotlin/String (* = ... *)
+ *   public final val a: kotlin/String
  *     public final get
  *
  *   // module name: main
@@ -63,7 +63,7 @@ public final class Bar {
  *
  *   // field: a:Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
- *   public final val a: kotlin/String (* = ... *)
+ *   public final val a: kotlin/String
  *     public final get
  *
  *   // module name: main

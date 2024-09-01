@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtReadActionConfinementLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinDefaultAnalysisPermissionOptions
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinDefaultAnalysisPermissionOptions
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 object AnalysisApiIdeModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
-            registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)
+            registerService(KotlinLifetimeTokenFactory::class.java, KotlinReadActionConfinementLifetimeTokenFactory::class.java)
         }
     }
 

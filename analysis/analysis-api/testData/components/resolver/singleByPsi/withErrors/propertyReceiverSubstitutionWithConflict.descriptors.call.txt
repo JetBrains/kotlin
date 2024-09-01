@@ -1,0 +1,37 @@
+KtDotQualifiedExpression(118,123): 'f.foo'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = f
+            isSafeNavigation = false
+            type = Foo<kotlin.String>
+          signature = KaVariableSignature:
+            name = foo
+            receiverType = Foo<TypeVariable(A)>
+            returnType = kotlin.Int
+            symbol = val foo: kotlin.Int
+            callableId = /foo
+        simpleAccess = Read
+        typeArgumentsMapping = {},
+      KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = f
+            isSafeNavigation = false
+            type = Foo<kotlin.String>
+          signature = KaVariableSignature:
+            name = foo
+            receiverType = Foo<TypeVariable(B)>
+            returnType = kotlin.String
+            symbol = val foo: kotlin.String
+            callableId = /foo
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    public val <A> Foo<TypeVariable(A)>.foo: Int defined in root package
+    public val <B> Foo<TypeVariable(B)>.foo: String defined in root package>

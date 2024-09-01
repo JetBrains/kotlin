@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -220,24 +221,9 @@ class WasmSymbols(
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
 
-    val primitiveTypeToCreateTypedArray = mapOf(
-        context.irBuiltIns.arrayClass to getFunction("createAnyArray", kotlinTopLevelPackage),
-        context.irBuiltIns.booleanArray to getFunction("createBooleanArray", kotlinTopLevelPackage),
-        context.irBuiltIns.byteArray to getFunction("createByteArray", kotlinTopLevelPackage),
-        context.irBuiltIns.shortArray to getFunction("createShortArray", kotlinTopLevelPackage),
-        context.irBuiltIns.charArray to getFunction("createCharArray", kotlinTopLevelPackage),
-        context.irBuiltIns.intArray to getFunction("createIntArray", kotlinTopLevelPackage),
-        context.irBuiltIns.longArray to getFunction("createLongArray", kotlinTopLevelPackage),
-        context.irBuiltIns.floatArray to getFunction("createFloatArray", kotlinTopLevelPackage),
-        context.irBuiltIns.doubleArray to getFunction("createDoubleArray", kotlinTopLevelPackage),
-    )
-
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 
     val rangeCheck = getInternalFunction("rangeCheck")
-    val assertFuncs = findFunctions(kotlinTopLevelPackage.memberScope, Name.identifier("assert")).map {
-        symbolTable.descriptorExtension.referenceSimpleFunction(it)
-    }
 
     val getBoxedBoolean: IrSimpleFunctionSymbol = getInternalFunction("getBoxedBoolean")
     val boxBoolean: IrSimpleFunctionSymbol = getInternalFunction("boxBoolean")
@@ -409,7 +395,10 @@ class WasmSymbols(
         val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
 
         val jsException = getIrClass(FqName("kotlin.js.JsException"))
-        val throwJsException = getInternalFunction("throwJsException")
+        val jsExceptionThrownValue
+            get() = jsException.fields.single { it.owner.name == Name.identifier("thrownValue") }.owner
+
+        val createJsException = getInternalFunction("createJsException")
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))

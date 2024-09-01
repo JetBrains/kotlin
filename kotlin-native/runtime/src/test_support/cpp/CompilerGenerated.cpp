@@ -47,8 +47,6 @@ kotlin::test_support::TypeInfoHolder theStringTypeInfoHolder{
         kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>().addFlag(TF_IMMUTABLE)};
 kotlin::test_support::TypeInfoHolder theThrowableTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theUnitTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
-kotlin::test_support::TypeInfoHolder theWorkerBoundReferenceTypeInfoHolder{
-        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theCleanerImplTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theRegularWeakReferenceImplTypeInfoHolder{
         kotlin::test_support::TypeInfoHolder::ObjectBuilder<kotlin::test_support::RegularWeakReferenceImplPayload>().addFlag(
@@ -73,7 +71,6 @@ extern const int32_t Kotlin_disableMmap = 1;
 #else
 extern const int32_t Kotlin_disableMmap = 0;
 #endif
-extern const int32_t Kotlin_disableAllocatorOverheadEstimate = 0;
 extern const int32_t Kotlin_runtimeLogs[static_cast<size_t>(kotlin::logging::Tag::kEnumSize)] = {0};
 extern const int32_t Kotlin_concurrentWeakSweep = 1;
 #if KONAN_WINDOWS
@@ -82,8 +79,6 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
 #else
 extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 #endif
-extern const int32_t Kotlin_freezingChecksEnabled = 1;
-extern const int32_t Kotlin_freezingEnabled = 1;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
@@ -103,7 +98,6 @@ extern const TypeInfo* theShortArrayTypeInfo = theShortArrayTypeInfoHolder.typeI
 extern const TypeInfo* theStringTypeInfo = theStringTypeInfoHolder.typeInfo();
 extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoHolder.typeInfo();
 extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoHolder.typeInfo();
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo = theWorkerBoundReferenceTypeInfoHolder.typeInfo();
 extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoHolder.typeInfo();
 extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakReferenceImplTypeInfoHolder.typeInfo();
 
@@ -114,10 +108,6 @@ OBJ_GETTER0(TheEmptyString) {
 }
 
 RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, void*) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-RUNTIME_NORETURN OBJ_GETTER(makeWeakReferenceCounterLegacyMM, void*) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -149,10 +139,6 @@ void RUNTIME_NORETURN ThrowWorkerAlreadyTerminated() {
 }
 
 void RUNTIME_NORETURN ThrowWrongWorkerOrAlreadyTerminated() {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowCannotTransferOwnership() {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -200,23 +186,11 @@ void RUNTIME_NORETURN ThrowIllegalStateException() {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowIncorrectDereferenceException() {
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message) {
     throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowFileFailedToInitializeException() {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -234,10 +208,6 @@ void Kotlin_runUnhandledExceptionHook(KRef throwable) {
     if (!Kotlin_runUnhandledExceptionHookMock) throw std::runtime_error("Not implemented for tests");
 
     return Kotlin_runUnhandledExceptionHookMock->Call(throwable);
-}
-
-void Kotlin_WorkerBoundReference_freezeHook(KRef thiz) {
-    throw std::runtime_error("Not implemented for tests");
 }
 
 void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value) {

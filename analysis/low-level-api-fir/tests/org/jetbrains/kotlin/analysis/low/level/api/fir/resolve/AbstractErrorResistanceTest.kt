@@ -16,13 +16,13 @@ import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightPsiClassBase
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals

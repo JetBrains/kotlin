@@ -123,7 +123,6 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                     }
                     is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
-                    else -> error("Unknown function declaration")
                 }
             }.statements
         }
@@ -511,7 +510,7 @@ class DefaultParameterPatchOverridenSymbolsLowering(
         if (declaration is IrSimpleFunction) {
             (context.mapping.defaultArgumentsOriginalFunction[declaration] as? IrSimpleFunction)?.run {
                 declaration.overriddenSymbols = declaration.overriddenSymbols memoryOptimizedPlus overriddenSymbols.mapNotNull {
-                    (context.mapping.defaultArgumentsDispatchFunction[it.owner] as? IrSimpleFunction)?.symbol
+                    (it.owner.defaultArgumentsDispatchFunction as? IrSimpleFunction)?.symbol
                 }
             }
         }

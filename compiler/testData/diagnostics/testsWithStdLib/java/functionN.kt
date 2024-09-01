@@ -27,7 +27,7 @@ public class A implements KI {
 
     }
 
-    public void manyParams(FunctionN<Unit> x) {
+    public void manyParams(FunctionN<kotlin.Unit> x) {
 
     }
 }
@@ -47,7 +47,7 @@ fun main() {
     a.<!DEPRECATION_ERROR!>baz<!>(listOf())
 
     a.<!DEPRECATION_ERROR!>manyParams<!>(null)
-    a.<!NONE_APPLICABLE!>manyParams<!>(any<kotlin.jvm.functions.FunctionN<Unit>>())
+    a.<!DEPRECATION_ERROR!>manyParams<!>(any<kotlin.jvm.functions.FunctionN<Unit>>())
 
     // Potentially, this would have better to forbid calling manyParams, too.
     // But it might be complicated because we need to match that it is an override

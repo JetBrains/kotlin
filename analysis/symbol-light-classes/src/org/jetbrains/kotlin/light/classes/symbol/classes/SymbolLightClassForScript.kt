@@ -1,19 +1,17 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScriptDefaultConstructor
@@ -26,19 +24,18 @@ import org.jetbrains.kotlin.psi.KtScript
 internal class SymbolLightClassForScript private constructor(
     override val script: KtScript,
     private val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
-    ktModule: KtModule,
+    ktModule: KaModule,
 ) : KtLightClassForScript, SymbolLightClassBase(ktModule, script.manager) {
-
     internal constructor(
         script: KtScript,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         script,
         script.symbolPointerOfType(),
         ktModule,
     )
 
-    private fun MutableList<KtLightMethod>.addScriptDefaultMethods() {
+    private fun MutableList<PsiMethod>.addScriptDefaultMethods() {
         val defaultConstructor = SymbolLightMethodForScriptDefaultConstructor(
             script,
             this@SymbolLightClassForScript,
@@ -54,21 +51,21 @@ internal class SymbolLightClassForScript private constructor(
         add(mainMethod)
     }
 
-    override fun getOwnMethods(): List<KtLightMethod> = cachedValue {
-        val result = mutableListOf<KtLightMethod>()
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
+        val result = mutableListOf<PsiMethod>()
 
         result.addScriptDefaultMethods()
 
         symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-            createMethods(scriptSymbol.getDeclaredMemberScope().getCallableSymbols(), result)
+            createMethods(scriptSymbol.declaredMemberScope.callables, result)
         }
         result
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
-        buildList {
-            symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-                addPropertyBackingFields(this@buildList, scriptSymbol, SymbolLightField.FieldNameGenerator())
+    override fun getOwnFields(): List<PsiField> = cachedValue {
+        symbolPointer.withSymbol(ktModule) { scriptSymbol ->
+            buildList {
+                addPropertyBackingFields(this, scriptSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }

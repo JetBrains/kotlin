@@ -268,8 +268,8 @@ package app;
 /**
  * public final class app/MyActivity : kotlin/Any {
  *
- *   // signature: <init>()V
- *   public constructor()
+ *   // signature: <init>(II)V
+ *   public constructor(param1: kotlin/Int (* = ... *), param2: kotlin/Int (* = ... *))
  *
  *   // signature: foo()V
  *   public final fun foo(): kotlin/Unit
@@ -316,42 +316,54 @@ package app;
  *   // field: a:I
  *   // getter: getA()I
  *   // synthetic method for annotations: getA$annotations()V
- *   public final val a: kotlin/Int (* = ... *)
+ *   public final val a: kotlin/Int
  *     public final get
  *
  *   // field: b:I
  *   // getter: getB()I
  *   // synthetic method for annotations: getB$annotations()V
- *   public final val b: kotlin/Int (* = ... *)
+ *   public final val b: kotlin/Int
  *     public final get
  *
  *   // field: c:I
  *   // getter: getC()I
  *   // synthetic method for annotations: getC$annotations()V
- *   public final val c: kotlin/Int (* = ... *)
+ *   public final val c: kotlin/Int
  *     public final get
  *
  *   // field: d:I
  *   // getter: getD()I
  *   // synthetic method for annotations: getD$annotations()V
- *   public final val d: kotlin/Int (* = ... *)
+ *   public final val d: kotlin/Int
  *     public final get
  *
  *   // field: e:I
  *   // getter: getE()I
  *   // synthetic method for annotations: getE$annotations()V
- *   public final val e: kotlin/Int (* = ... *)
+ *   public final val e: kotlin/Int
  *     public final get
  *
  *   // field: f:I
  *   // getter: getF()I
  *   // synthetic method for annotations: getF$annotations()V
- *   public final val f: kotlin/Int (* = ... *)
+ *   public final val f: kotlin/Int
  *     public final get
+ *
+ *   // field: param1:I
+ *   // getter: getParam1()I
+ *   public final val param1: kotlin/Int
+ *     public final get
+ *
+ *   // field: param2:I
+ *   // getter: getParam2()I
+ *   // setter: setParam2(I)V
+ *   public final var param2: kotlin/Int
+ *     public final get
+ *     public final set
  *
  *   // field: propB:I
  *   // getter: getPropB()I
- *   public final val propB: kotlin/Int (* = ... *)
+ *   public final val propB: kotlin/Int
  *     public final get
  *
  *   // field: propC:I
@@ -371,7 +383,7 @@ package app;
  *     public final get
  *
  *   // field: propD:I
- *   public final val propD: kotlin/Int (* = ... *)
+ *   public final val propD: kotlin/Int
  *     public final get
  *
  *   // field: propE:I
@@ -384,6 +396,8 @@ package app;
  */
 @kotlin.Metadata()
 public final class MyActivity {
+    private final int param1 = 0;
+    private int param2;
     @BindField(id = lib.R.id.textView)
     private final int a = 0;
     @BindField(id = lib.R.id.textView)
@@ -405,8 +419,19 @@ public final class MyActivity {
     public int propE = app.B.id.textView;
     private final int propF = 0;
 
-    public MyActivity() {
+    public MyActivity(int param1, int param2) {
         super();
+    }
+
+    public final int getParam1() {
+        return 0;
+    }
+
+    public final int getParam2() {
+        return 0;
+    }
+
+    public final void setParam2(int p0) {
     }
 
     public final int getA() {
@@ -534,6 +559,10 @@ public final class MyActivity {
 
     public final int getPropF() {
         return 0;
+    }
+
+    public MyActivity() {
+        super();
     }
 }
 

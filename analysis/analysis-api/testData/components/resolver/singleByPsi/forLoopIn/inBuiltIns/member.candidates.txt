@@ -1,2 +1,2 @@
-KtForExpression:
-NO_CANDIDATES
+KtForExpression(15,33): 'for (i in 1..2) {}'
+  NO_CANDIDATES

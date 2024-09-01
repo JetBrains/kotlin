@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.SetterParameterAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -44,17 +42,9 @@ internal class SymbolLightSetterParameter(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = CompositeAnnotationsProvider(
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = parameterSymbolPointer,
-                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.SETTER_PARAMETER.toOptionalFilter(),
-                    ),
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = containingPropertySymbolPointer,
-                        annotationUseSiteTargetFilter = SetterParameterAnnotationUseSiteTargetFilter,
-                    ),
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = parameterSymbolPointer,
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),

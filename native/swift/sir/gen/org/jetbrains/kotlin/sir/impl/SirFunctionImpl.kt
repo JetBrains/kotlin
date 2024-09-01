@@ -16,6 +16,7 @@ internal class SirFunctionImpl(
     override val origin: SirOrigin,
     override val visibility: SirVisibility,
     override val documentation: String?,
+    override val attributes: MutableList<SirAttribute>,
     override val kind: SirCallableKind,
     override var body: SirFunctionBody?,
     override val name: String,

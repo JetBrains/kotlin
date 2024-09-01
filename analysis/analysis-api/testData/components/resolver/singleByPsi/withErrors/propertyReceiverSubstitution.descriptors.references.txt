@@ -1,0 +1,6 @@
+KtNameReferenceExpression(77,78): 'f'
+  KtSimpleNameReference:
+    f: Foo<kotlin.String>
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

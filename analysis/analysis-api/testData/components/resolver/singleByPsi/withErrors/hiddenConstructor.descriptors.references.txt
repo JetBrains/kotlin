@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in ROOT) object Obj
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(17,20): 'Obj'
+  KtSimpleNameReference:
+    (in ROOT) object Obj
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

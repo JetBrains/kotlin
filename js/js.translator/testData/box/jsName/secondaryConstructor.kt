@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// EXPECTED_REACHABLE_NODES: 1288
 
 class A(val x: String) {
     @JsName("A_int") constructor(x: Int) : this("int $x")

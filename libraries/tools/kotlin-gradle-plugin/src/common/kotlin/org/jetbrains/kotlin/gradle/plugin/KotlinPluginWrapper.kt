@@ -24,15 +24,19 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
+import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
@@ -43,8 +47,6 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.DefaultUnameExecutorVariantFactory
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
@@ -69,7 +71,12 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
-        BuildFusService.registerIfAbsent(project, pluginVersion)
+        project.runGradleCompatibilityCheck()
+        project.runAgpCompatibilityCheckIfAgpIsApplied()
+
+        if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
+            BuildFusService.registerIfAbsent(project, pluginVersion)
+        }
         PropertiesBuildService.registerIfAbsent(project)
 
         project.gradle.projectsEvaluated {
@@ -78,7 +85,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         addKotlinCompilerConfiguration(project)
 
-        if (project.kotlinNativeToolchainEnabled) {
+        if (project.nativeProperties.isToolchainEnabled.get()) {
             addKotlinNativeBundleConfiguration(project)
         }
 
@@ -138,45 +145,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     private fun Project.registerDefaultVariantImplementations() {
         val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
-        factories.putIfAbsent(
-            MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
-            MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class,
-            DefaultJavaSourceSetsAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            BasePluginConfiguration.BasePluginConfigurationVariantFactory::class,
-            DefaultBasePluginConfigurationVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
-            DefaultIdeaSyncDetectorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
-            DefaultConfigurationTimePropertiesAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            MppTestReportHelper.MppTestReportHelperVariantFactory::class,
-            DefaultMppTestReportHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class,
-            DefaultKotlinTestReportCompatibilityHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class,
-            DefaultArtifactTypeAttributeAccessorVariantFactory()
-        )
 
         factories.putIfAbsent(
             ProjectIsolationStartParameterAccessor.Factory::class,
@@ -189,23 +157,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            UnameExecutor.UnameExecutorVariantFactory::class,
-            DefaultUnameExecutorVariantFactory()
-        )
-
-        factories.putIfAbsent(
             ConfigurationCacheStartParameterAccessor.Factory::class,
             DefaultConfigurationCacheStartParameterAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory::class,
-            DefaultSourceSetCompatibilityHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class,
-            DefaultAttributeConfigurationHelperVariantFactory()
         )
     }
 
@@ -224,6 +177,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.whenJsOrMppEnabled {
             KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
             KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
+            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+                KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
+            }
         }
 
         project.whenMppEnabled {
@@ -232,7 +188,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
         }
 
-        if (project.kotlinNativeToolchainEnabled) {
+        if (project.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(this)
             KotlinNativeBundleArtifactFormat.setupTransform(project)
         }
@@ -255,7 +211,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     override fun apply(project: Project) {
         super.apply(project)
         project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
-        checkGradleCompatibility()
 
         project.configurations.maybeCreateResolvable(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false

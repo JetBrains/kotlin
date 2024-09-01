@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.canBeEvaluatedAtCompileTime
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
+import org.jetbrains.kotlin.types.Variance
 
 object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -73,11 +74,10 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                     }
 
                     val typeRef = parameter.returnTypeRef
-                    val coneType = typeRef.coneTypeSafe<ConeLookupTagBasedType>()
-                        ?.fullyExpandedType(context.session) as? ConeLookupTagBasedType
-                    val classId = coneType?.classId
+                    val coneType = typeRef.coneType.fullyExpandedType(context.session)
+                    val classId = coneType.classId
 
-                    if (coneType != null) when {
+                    when {
                         coneType is ConeErrorType -> {
                             // DO NOTHING: error types already have diagnostics which are reported elsewhere.
                         }
@@ -103,8 +103,11 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                             // DO NOTHING: arrays of unsigned types are allowed
                         }
                         classId == StandardClassIds.Array -> {
-                            if (!isAllowedArray(coneType, context.session))
+                            if (!isAllowedArray(coneType, context.session)) {
                                 reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
+                            } else if (!parameter.isVararg && coneType.typeArgumentsOfLowerBoundIfFlexible.firstOrNull()?.variance != Variance.INVARIANT) {
+                                reporter.reportOn(typeRef.source, FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER, context)
+                            }
                         }
                         isAllowedClassKind(coneType, context.session) -> {
                             // DO NOTHING: annotation or enum classes are allowed
@@ -130,8 +133,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         }
     }
 
-    private fun isAllowedClassKind(cone: ConeLookupTagBasedType, session: FirSession): Boolean {
-        val typeRefClassKind = (cone.lookupTag.toSymbol(session) as? FirRegularClassSymbol)
+    private fun isAllowedClassKind(cone: ConeKotlinType, session: FirSession): Boolean {
+        val typeRefClassKind = cone.toRegularClassSymbol(session)
             ?.classKind
             ?: return false
 
@@ -139,7 +142,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
     }
 
     private fun isAllowedArray(type: ConeKotlinType, session: FirSession): Boolean {
-        val typeArguments = type.typeArguments
+        val typeArguments = type.typeArgumentsOfLowerBoundIfFlexible
 
         if (typeArguments.size != 1) return false
 
@@ -194,9 +197,9 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             val returnType = parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session)
             return when {
                 parameter.isVararg || returnType.isNonPrimitiveArray -> false
-                returnType.typeArguments.isNotEmpty() -> {
+                returnType.typeArgumentsOfLowerBoundIfFlexible.isNotEmpty() -> {
                     if (returnType.classId == StandardClassIds.KClass) return false
-                    for (argument in returnType.typeArguments) {
+                    for (argument in returnType.typeArgumentsOfLowerBoundIfFlexible) {
                         if (typeHasCycle(ownedAnnotation, argument.type ?: continue)) return true
                     }
                     false

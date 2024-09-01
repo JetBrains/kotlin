@@ -1,35 +1,44 @@
 <caret_1>:
-  KDocReference:
-    package one
+  KDocName(31,34): 'one'
+    KDocReference:
+      package one
 
 <caret_2>:
-  KDocReference:
-    package one
+  KDocName(43,46): 'one'
+    KDocReference:
+      package one
 
 <caret_3>:
-  KDocReference:
-    package one.two
+  KDocName(56,63): 'one.two'
+    KDocReference:
+      package one.two
 
 <caret_4>:
-  KDocReference:
-    package one
+  KDocName(72,75): 'one'
+    KDocReference:
+      package one
 
 <caret_5>:
-  KDocReference:
-    package one.two
+  KDocName(91,98): 'one.two'
+    KDocReference:
+      package one.two
 
 <caret_6>:
-  KDocReference:
-    package one.two.three
+  KDocName(110,123): 'one.two.three'
+    KDocReference:
+      package one.two.three
 
 <caret_7>:
-  KDocReference:
-    package one
+  KDocName(132,135): 'one'
+    KDocReference:
+      package one
 
 <caret_8>:
-  KDocReference:
-    package one.two
+  KDocName(161,168): 'one.two'
+    KDocReference:
+      package one.two
 
 <caret_9>:
-  KDocReference:
-    package one.two.three
+  KDocName(190,203): 'one.two.three'
+    KDocReference:
+      package one.two.three

@@ -52,9 +52,9 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
 
             val module = TestModule.Exclusive(
                 name = testCaseId.uniqueName,
-                directDependencySymbols = emptySet(),
-                directFriendSymbols = emptySet(),
-                directDependsOnSymbols = emptySet(),
+                directRegularDependencySymbols = emptySet(),
+                directFriendDependencySymbols = emptySet(),
+                directDependsOnDependencySymbols = emptySet(),
             )
 
             val ignoredFiles = predefinedTestCase.ignoredFiles.map { it.absoluteNormalizedFile() }

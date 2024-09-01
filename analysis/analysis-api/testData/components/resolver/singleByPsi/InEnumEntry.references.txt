@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test) val TOP_LEVEL: kotlin.Int
+KtNameReferenceExpression(100,109): 'TOP_LEVEL'
+  KtSimpleNameReference:
+    (in test) val TOP_LEVEL: kotlin.Int

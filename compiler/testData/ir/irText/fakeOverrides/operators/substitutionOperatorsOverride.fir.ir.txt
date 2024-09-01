@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Any?): <root>.Java1<kotlin.Any> declared in <root>.B'
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1' type=<root>.Java1<kotlin.Any> origin=null
-            <class: T>: kotlin.Any
+            <class: T>: @[FlexibleNullability] kotlin.Any?
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B

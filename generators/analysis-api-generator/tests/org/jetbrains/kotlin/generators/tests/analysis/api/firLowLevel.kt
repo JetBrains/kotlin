@@ -58,6 +58,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/low-level-api-fir/testData") {
+        testClass<AbstractSourceLazyAnnotationsResolveTest> {
+            model("lazyAnnotations", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptLazyAnnotationsResolveTest> {
+            model("lazyAnnotations", pattern = TestGeneratorUtil.KTS)
+        }
+
         testClass<AbstractFirSourceLazyDeclarationResolveTest> {
             model("lazyResolve", pattern = TestGeneratorUtil.KT)
         }
@@ -100,6 +108,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractStdLibSourcesLazyDeclarationResolveTest> {
             model("lazyResolveStdlibSources")
+        }
+
+        testClass<AbstractBuiltinsBinaryLazyDeclarationResolveTest> {
+            model("lazyResolveBuiltinsBinary")
         }
 
         testClass<AbstractSourceLazyDeclarationResolveScopeBasedTest> {
@@ -291,13 +303,26 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("contextCollector", pattern = TestGeneratorUtil.KT)
         }
 
+        testClass<AbstractDependentContextCollectorSourceTest> {
+            model("contextCollector", pattern = TestGeneratorUtil.KT)
+        }
+
         testClass<AbstractContextCollectorScriptTest> {
+            model("contextCollector", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractDependentContextCollectorScriptTest> {
             model("contextCollector", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
         }
+
+        testClass<AbstractFirClassByPsiClassProviderTest> {
+            model("firClassByPsiClass")
+        }
+
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {

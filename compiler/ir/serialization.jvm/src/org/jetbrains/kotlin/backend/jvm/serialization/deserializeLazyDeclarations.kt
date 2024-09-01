@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -71,12 +70,11 @@ fun deserializeFromByteArray(
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
     }
 
-    val lazyIrFactory = LazyIrFactory(irBuiltIns.irFactory)
-
     // We have to supply topLevelParent here, but this results in wrong values for parent fields in deeply embedded declarations.
     // Patching will be needed.
     val deserializer = IrDeclarationDeserializer(
-        irBuiltIns, symbolTable, lazyIrFactory, irLibraryFile, toplevelParent,
+        irBuiltIns, symbolTable, irBuiltIns.irFactory, irLibraryFile, toplevelParent,
+        allowAlreadyBoundSymbols = true,
         allowErrorNodes = false,
         deserializeInlineFunctions = true,
         deserializeBodies = true,

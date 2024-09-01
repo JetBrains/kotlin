@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -42,8 +43,8 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
 }
 
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
-    val lookupTag = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return null
-    val annotationClassSymbol = lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: return null
+    val lookupTag = annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return null
+    val annotationClassSymbol = lookupTag.toRegularClassSymbol(session) ?: return null
     if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
         return null
     }
@@ -92,7 +93,7 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
             argument.symbol?.fullyExpandedClass(session)
         is FirClassReferenceExpression -> {
             val classTypeRef = argument.classTypeRef
-            val coneType = classTypeRef.coneType.unwrapFlexibleAndDefinitelyNotNull()
+            val coneType = classTypeRef.coneType.unwrapToSimpleTypeUsingLowerBound()
             coneType.fullyExpandedType(session).toRegularClassSymbol(session)
         }
         else -> null

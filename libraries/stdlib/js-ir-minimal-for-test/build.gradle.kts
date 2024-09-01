@@ -16,7 +16,6 @@ val commonMainFullSources by task<Sync> {
         "libraries/stdlib/common/src/",
         "libraries/stdlib/src/kotlin/",
         "libraries/stdlib/unsigned/",
-        "core/builtins/src/kotlin/internal/",
     )
 
     sources.forEach { path ->
@@ -66,6 +65,7 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/src/kotlin/time/**",
                 "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
                 "libraries/stdlib/src/kotlin/util/Tuples.kt",
+                "libraries/stdlib/src/kotlin/uuid/**",
                 "libraries/stdlib/src/kotlin/enums/**"
             )
         )
@@ -118,6 +118,7 @@ val jsMainSources by task<Sync> {
             "kotlinx/dom/**",
             "kotlinx/browser/**",
             "kotlin/enums/**",
+            "kotlin/uuid/UuidJs.kt",
         )
     }
     from {
@@ -142,27 +143,26 @@ kotlin {
         named("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
+            kotlin.srcDir("common-src")
         }
         named("jsMain") {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
-            kotlin.srcDir("src")
+            kotlin.srcDir("js-src")
         }
     }
 }
 
 @Suppress("DEPRECATION")
 tasks.withType<KotlinCompile<*>>().configureEach {
-    kotlinOptions.languageVersion = "1.9"
+    kotlinOptions.languageVersion = "2.0"
     kotlinOptions.apiVersion = "2.0"
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xexpect-actual-classes",
+        "-Xstdlib-compilation",
+        "-Xdont-warn-on-error-suppression",
         "-opt-in=kotlin.ExperimentalMultiplatform",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-opt-in=kotlin.RequiresOptIn",
-        "-opt-in=kotlin.ExperimentalUnsignedTypes",
-        "-opt-in=kotlin.ExperimentalStdlibApi",
-        "-Xsuppress-api-version-greater-than-language-version-error",
     )
 }
 

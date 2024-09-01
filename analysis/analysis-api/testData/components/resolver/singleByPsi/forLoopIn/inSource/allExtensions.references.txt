@@ -1,4 +1,5 @@
-KtForLoopInReference:
-  0: (in ROOT) operator fun Foo.iterator(): Iterator
-  1: (in ROOT) operator fun Iterator.hasNext(): kotlin.Boolean
-  2: (in ROOT) operator fun Iterator.next(): kotlin.Any
+KtForExpression(23,37): 'for(i in f) {}'
+  KtForLoopInReference:
+    0: (in ROOT) operator fun Foo.iterator(): Iterator
+    1: (in ROOT) operator fun Iterator.hasNext(): kotlin.Boolean
+    2: (in ROOT) operator fun Iterator.next(): kotlin.Any

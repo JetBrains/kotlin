@@ -30,9 +30,8 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext?, val 
             .find { it.fqName == annotationFqName }
             ?: return emptyList()
 
-        @Suppress("UNCHECKED_CAST")
-        val typeList: List<KClassValue> = annotation.firstArgument()?.value as? List<KClassValue> ?: return emptyList()
-        return typeList.map { it.getArgumentType(declarationInFile.module) }
+        val typeList = annotation.firstArgument()?.value as? List<*> ?: return emptyList()
+        return typeList.filterIsInstance<KClassValue>().map { it.getArgumentType(declarationInFile.module) }
     }
 
     val contextualKClassListInCurrentFile: Set<KotlinType> by lazy {

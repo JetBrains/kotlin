@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile) {
-            val type = getType(analysisSession, mainFile, mainModule, testServices)
+            val type = getType(useSiteSession, mainFile, mainModule, testServices)
 
             buildString {
-                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(analysisSession, type))
+                appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, type))
 
                 appendLine()
                 appendLine("Rendered type:")

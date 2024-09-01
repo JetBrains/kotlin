@@ -1,0 +1,13 @@
+KaDestructuringDeclarationSymbol:
+  annotations: []
+  compilerVisibility: Local
+  entries: []
+  isActual: false
+  isExpect: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclaration.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

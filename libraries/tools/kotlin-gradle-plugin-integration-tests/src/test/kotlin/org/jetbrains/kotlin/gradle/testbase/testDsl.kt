@@ -11,10 +11,10 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -27,6 +27,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /**
  * Create a new test project.
@@ -50,7 +51,7 @@ fun KGPBaseTest.project(
     enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
-    localRepoDir: Path? = null,
+    localRepoDir: Path? = defaultLocalRepo(gradleVersion),
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     test: TestProject.() -> Unit = {},
@@ -61,7 +62,7 @@ fun KGPBaseTest.project(
         workingDir,
         projectPathAdditionalSuffix,
     )
-    projectPath.addDefaultSettingsToSettingsGradle(gradleVersion, dependencyManagement, localRepoDir)
+    projectPath.addDefaultSettingsToSettingsGradle(gradleVersion, dependencyManagement, localRepoDir, buildOptions.projectIsolation)
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
     if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
@@ -78,7 +79,12 @@ fun KGPBaseTest.project(
         gradleRunner,
         projectName,
         projectPath,
-        buildOptions,
+        buildOptions.copy(
+            configurationCache = overrideConfigurationCacheValueIfNeeded(
+                buildOptions,
+                gradleVersion,
+            ),
+        ),
         gradleVersion,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
@@ -100,6 +106,32 @@ fun KGPBaseTest.project(
     result.getOrThrow()
     return testProject
 }
+
+private fun overrideConfigurationCacheValueIfNeeded(
+    buildOptions: BuildOptions,
+    gradleVersion: GradleVersion,
+) = when (buildOptions.configurationCache) {
+    BuildOptions.ConfigurationCacheValue.AUTO -> if (
+        shouldTestWithConfigurationCacheByDefault(
+            hostIsMac = HostManager.hostIsMac,
+            gradleVersion = gradleVersion
+        )
+    ) {
+        BuildOptions.ConfigurationCacheValue.ENABLED
+    } else {
+        BuildOptions.ConfigurationCacheValue.AUTO
+    }
+    else -> buildOptions.configurationCache
+}
+
+private fun shouldTestWithConfigurationCacheByDefault(
+    hostIsMac: Boolean,
+    gradleVersion: GradleVersion,
+): Boolean =
+    // For now test with CC by default only on macOS
+    hostIsMac
+            // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
+            && gradleVersion >= GradleVersion.version("8.0")
 
 /**
  * Create a new test project with configuring single native target.
@@ -168,6 +200,10 @@ fun TestProject.build(
 ) {
     if (enableBuildScan) agreeToBuildScanService()
     ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
+
+    if (enableGradleDebug && isTeamCityRun) {
+        fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
+    }
 
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
@@ -362,7 +398,7 @@ open class GradleProject(
 }
 
 /**
- * You need at least [TestVersions.Gradle.G_7_0] for supporting environment variables with gradle runner
+ * You need at least Gradle "7.0" for supporting environment variables with Gradle runner
  */
 @JvmInline
 value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap()) {
@@ -427,7 +463,7 @@ class TestProject(
 
         gradleSettingToUpdate.append(
             """
-                
+
             include(":$newSubmoduleName")
             """.trimIndent()
         )
@@ -448,14 +484,14 @@ class TestProject(
         if (settingsGradle.exists()) {
             settingsGradle.append(
                 """
-                
+
                     includeBuild '$newProjectName'
                 """.trimIndent()
             )
         } else {
             settingsGradleKts.append(
                 """
-                    
+
                     includeBuild("$newProjectName")
                 """.trimIndent()
             )
@@ -478,11 +514,15 @@ private fun commonBuildSetup(
     val jdkLocations = System.getProperties()
         .filterKeys { it.toString().matches(jdkPropNameRegex) }
         .values
+        .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
         "-Porg.gradle.java.installations.auto-download=false",
         "-Porg.gradle.java.installations.paths=$jdkLocations",
+        // Disable automatic download of android SDK.
+        // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
+        "-Pandroid.builder.sdkDownload=false",
         // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
         // This should help with OOM on CI when agents do not have enough free memory available.
         "-Dorg.gradle.daemon.idletimeout=60000",
@@ -568,12 +608,13 @@ internal fun Path.addDefaultSettingsToSettingsGradle(
     gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
+    projectIsolationEnabled: Boolean = false
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
         is DependencyManagement.DefaultDependencyManagement -> {
             // we cannot switch to dependencyManagement before Gradle 8.1 because of KT-65708
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1)) {
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1) && !projectIsolationEnabled) {
                 addDependencyRepositoriesToBuildScript(
                     additionalDependencyRepositories = dependencyManagement.additionalRepos,
                     localRepo = localRepo
@@ -636,14 +677,14 @@ private fun Path.addDependencyRepositoriesToBuildScript(
 
 private fun String.wrapWithAllProjectBlock(): String =
     """
-    |    
+    |
     |allprojects {
     |    $this
     |}
     |
     """.trimMargin()
 
-private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
+internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
     val pluginsBlockPattern = Regex("plugins\\s*\\{[^}]*}", RegexOption.DOT_MATCHES_ALL)
 
@@ -653,6 +694,13 @@ private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert:
     val insertionIndex = listOfNotNull(lastImportIndex, pluginBlockEndIndex).maxOrNull() ?: return blockToInsert + this
 
     return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
+}
+
+internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String): String {
+    val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
+
+    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull() ?: return blockToInsert + this
+    return StringBuilder(this).insert(lastImportIndex + 1, "\n$blockToInsert\n").toString()
 }
 
 
@@ -666,7 +714,7 @@ internal fun Path.addPluginManagementToSettings() {
             if (!it.contains("pluginManagement {")) {
                 """
                 |$DEFAULT_GROOVY_SETTINGS_FILE
-                |                  
+                |
                 |$it
                 |""".trimMargin()
             } else {
@@ -738,7 +786,7 @@ internal fun Path.addDependencyManagementToSettings(
                         additionalDependencyRepositories,
                         localRepo
                     )
-                } 
+                }
                 """.trimMargin()
             } else {
                 it
@@ -782,7 +830,7 @@ private fun TestProject.agreeToBuildScanService() {
                 termsOfServiceAgree = "yes"
             }
         }
-            
+
         """.trimIndent()
     )
 }
@@ -806,7 +854,7 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         """
         |org.gradle.java.home=${pathToJdk.absolutePath.normalizePath()}
         |
-        |$it        
+        |$it
         """.trimMargin()
     }
 }
@@ -956,3 +1004,47 @@ sealed interface DependencyManagement {
  * Resolves the temporary local repository path for the test with specified Gradle version.
  */
 fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
+
+fun enableConfigurationCacheSinceGradle(
+    sinceGradleVersion: String,
+    currentGradleVersion: GradleVersion
+): BuildOptions.ConfigurationCacheValue =
+    if (currentGradleVersion >= GradleVersion.version(sinceGradleVersion)) BuildOptions.ConfigurationCacheValue.ENABLED else BuildOptions.ConfigurationCacheValue.AUTO
+
+// https://developer.android.com/studio/intro/update.html#download-with-gradle
+private fun acceptAndroidSdkLicenses(androidHome: File) {
+    val sdkLicensesDir = androidHome.resolve("licenses")
+    if (!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
+
+    val sdkLicenses = listOf(
+        "8933bad161af4178b1185d1a37fbf41ea5269c55",
+        "d56f5187479451eabf01fb78af6dfcb131a6481e",
+        "24333f8a63b6825ea9c5514f83c2829b004d1fee",
+    )
+    val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
+
+    val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
+    if (!sdkLicenseFile.exists()) {
+        sdkLicenseFile.createNewFile()
+        sdkLicenseFile.writeText(
+            sdkLicenses.joinToString(separator = "\n")
+        )
+    } else {
+        sdkLicenses
+            .subtract(
+                sdkLicenseFile.readText().lines()
+            )
+            .forEach {
+                sdkLicenseFile.appendText("$it\n")
+            }
+    }
+
+    val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
+    if (!sdkPreviewLicenseFile.exists()) {
+        sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+    } else {
+        if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
+            sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+        }
+    }
+}

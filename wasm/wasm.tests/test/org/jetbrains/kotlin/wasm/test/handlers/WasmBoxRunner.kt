@@ -69,7 +69,7 @@ class WasmBoxRunner(
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, baseFileName)
+            writeCompilationResult(res, dir, baseFileName, false)
 
             File(dir, "test.mjs").writeText(testJs)
 
@@ -124,7 +124,7 @@ class WasmBoxRunner(
                         debugMode = debugMode,
                         useNewExceptionHandling = useNewExceptionProposal,
                         failsIn = failsIn,
-                        entryMjs = collectedJsArtifacts.entryPath,
+                        entryFile = collectedJsArtifacts.entryPath,
                         jsFilePaths = jsFilePaths,
                         workingDirectory = dir,
                     )
@@ -148,22 +148,24 @@ internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
     failsIn: List<String>,
-    entryMjs: String?,
+    entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
 ): Throwable? {
+    val vmName = javaClass.simpleName
+
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in ${name}" + if (shortName in failsIn) " (expected to fail)" else "")
+            println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
         }
         run(
-            "./${entryMjs}",
+            "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
         )
         if (shortName in failsIn) {
-            return AssertionError("The test expected to fail in ${name}. Please update the testdata.")
+            return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
         }
     } catch (e: Throwable) {
         if (shortName !in failsIn) {

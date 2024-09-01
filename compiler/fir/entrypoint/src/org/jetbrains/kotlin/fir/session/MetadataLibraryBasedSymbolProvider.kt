@@ -48,7 +48,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
     protected abstract val knownPackagesInLibraries: Set<FqName>
 
     private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
-    private val constDeserializer = FirConstDeserializer(session, KlibMetadataSerializerProtocol)
+    private val constDeserializer = FirConstDeserializer(KlibMetadataSerializerProtocol)
     protected val deserializationConfiguration: CompilerDeserializationConfiguration =
         CompilerDeserializationConfiguration(session.languageVersionSettings)
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()

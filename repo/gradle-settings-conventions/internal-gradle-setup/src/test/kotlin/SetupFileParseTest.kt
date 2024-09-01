@@ -49,4 +49,13 @@ class SetupFileParseTest {
         assertSampleSetupFileIsParsedCorrectly(setupFile)
         assertEquals(setupFile.consentDetailsLink, "https://example.org")
     }
+
+    @Test
+    fun testParsingWithObfuscationSalt() {
+        val setupFile = openPropertiesJsonStream("properties-with-obfuscation-salt").use {
+            parseSetupFile(it)
+        }
+        assertSampleSetupFileIsParsedCorrectly(setupFile)
+        assertEquals("very-random-salt", setupFile.obfuscationSalt)
+    }
 }

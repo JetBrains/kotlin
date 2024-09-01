@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.linkage.partial
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -15,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.PARTIAL_LINKAGE_RUNTIME_ERROR
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.Name
 
@@ -137,8 +138,8 @@ object PartialLinkageUtils {
     }
 }
 
-// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with IrMessageLogger.
-class PartialLinkageLogger(val irLogger: IrMessageLogger, val logLevel: PartialLinkageLogLevel) {
+// A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with MessageCollector.
+class PartialLinkageLogger(val messageCollector: MessageCollector, val logLevel: PartialLinkageLogLevel) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
         fun render(): StringBuilder = StringBuilder().apply {
             append(moduleName)
@@ -154,13 +155,13 @@ class PartialLinkageLogger(val irLogger: IrMessageLogger, val logLevel: PartialL
     }
 
     private val irLoggerSeverity = when (logLevel) {
-        PartialLinkageLogLevel.INFO -> IrMessageLogger.Severity.INFO
-        PartialLinkageLogLevel.WARNING -> IrMessageLogger.Severity.WARNING
-        PartialLinkageLogLevel.ERROR -> IrMessageLogger.Severity.ERROR
+        PartialLinkageLogLevel.INFO -> CompilerMessageSeverity.INFO
+        PartialLinkageLogLevel.WARNING -> CompilerMessageSeverity.WARNING
+        PartialLinkageLogLevel.ERROR -> CompilerMessageSeverity.ERROR
     }
 
     fun log(message: String, location: Location) {
-        irLogger.report(
+        messageCollector.report(
             severity = irLoggerSeverity,
             message = location.render().append(": ").append(message).toString(),
             location = null

@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.sourcesDir
 import org.jetbrains.kotlin.commonizer.stdlib
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
@@ -19,14 +17,15 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
+import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val konanDistribution = KonanDistribution(sourceSet.project.konanHome)
-        val stdlibFile = KonanDistribution(sourceSet.project.konanHome).stdlib
+        val konanDistribution = sourceSet.project.konanDistribution
+        val stdlibFile = konanDistribution.stdlib
 
         val klibExtra = try {
             val kotlinLibrary = resolveSingleFileKlib(

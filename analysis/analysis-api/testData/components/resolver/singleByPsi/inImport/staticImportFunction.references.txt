@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in one.two.TopLevelObject) fun foo()
+KtNameReferenceExpression(71,74): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) fun foo()

@@ -39,20 +39,6 @@ class SingleTargetAndroidSourceSetLayoutTest {
     }
 
     @Test
-    @Suppress("deprecation")
-    fun `test - default configuration - AndroidSourceSet has KotlinSourceSet as convention`() {
-        android.sourceSets.all { androidSourceSet ->
-            assertSame(
-                project.getKotlinSourceSetOrFail(androidSourceSet),
-                (androidSourceSet as org.gradle.api.internal.HasConvention).convention.plugins["kotlin"] as? KotlinSourceSet,
-                "Expected Convention 'kotlin' on AndroidSourceSet: ${androidSourceSet.name}"
-            )
-        }
-        project.evaluate()
-    }
-
-
-    @Test
     fun `test - with flavors - AndroidSourceSet has associated KotlinSourceSet`() {
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")

@@ -10,9 +10,11 @@ var bar: Int = 20
 fun foobar(param: Int): Int = foo + bar + param
 
 // FILE: lateinit.kt
-class Foo()
 
-lateinit var foo: Foo
+private class Foo
+
+var foo: Any = Foo()
+lateinit var lateinit_foo: Any
 
 // FILE: constants.kt
 const val BOOLEAN_CONST: Boolean = true
@@ -28,9 +30,9 @@ const val USHORT_CONST: UShort = 2u
 const val UINT_CONST: UInt = 3u
 const val ULONG_CONST: ULong = 4uL
 
+const val CHAR_CONST: Char = 'A'
 // FILE: no_package.kt
 val baz: Int = 30
 
 // FILE: unsupported.kt
-const val CHAR_CONST: Char = 'A'
 const val STRING_CONST: String = "Hello, World!"

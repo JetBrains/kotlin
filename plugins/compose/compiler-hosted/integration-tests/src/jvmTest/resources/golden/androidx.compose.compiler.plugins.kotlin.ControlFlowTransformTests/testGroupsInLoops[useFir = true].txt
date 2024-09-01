@@ -47,9 +47,9 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     items.forEach { item: Int ->
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "")
       if (item > -1) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "")
         %composer.startMovableGroup(<>, item)
         sourceInformation(%composer, "<rememb...>")
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
@@ -58,8 +58,11 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
         }
         sourceInformationMarkerEnd(%composer)
         %composer.endMovableGroup()
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -86,9 +89,9 @@ private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
     val <iterator> = items.iterator()
     while (<iterator>.hasNext()) {
       val item = <iterator>.next()
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "")
       if (item > -1) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "")
         %composer.startMovableGroup(<>, item)
         sourceInformation(%composer, "<rememb...>")
         val tmp0 = <block>{
@@ -101,8 +104,11 @@ private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
         }
         %composer.endMovableGroup()
         tmp0
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()

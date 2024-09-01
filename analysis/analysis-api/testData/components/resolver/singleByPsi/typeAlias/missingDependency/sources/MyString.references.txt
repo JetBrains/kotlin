@@ -1,0 +1,3 @@
+KtNameReferenceExpression(147,152): 'check'
+  KtSimpleNameReference:
+    (in dependency2.MyInterface) fun check(string: kotlin.String)

@@ -14,7 +14,7 @@ class FirValueParameterRendererForReadability : FirValueParameterRenderer() {
         val returnTypeRef = valueParameter.returnTypeRef
 
         if (valueParameter.isVararg && returnTypeRef is FirResolvedTypeRef) {
-            val arrayElementType = returnTypeRef.type.arrayElementType()
+            val arrayElementType = returnTypeRef.coneType.arrayElementType()
             if (arrayElementType != null) {
                 typeRenderer.render(arrayElementType)
                 return

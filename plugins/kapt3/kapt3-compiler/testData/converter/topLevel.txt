@@ -96,16 +96,16 @@ public final class TopLevelKt {
     java.lang.String b) {
     }
 
-    @Anno(value = "extpr")
-    @java.lang.Deprecated()
-    public static void getExtensionProperty$annotations(java.lang.Object p0) {
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
     @org.jetbrains.annotations.NotNull()
     T $this$extensionProperty) {
         return null;
+    }
+
+    @Anno(value = "extpr")
+    @java.lang.Deprecated()
+    public static void getExtensionProperty$annotations(java.lang.Object p0) {
     }
 
     public static final <T extends java.lang.Object>void setExtensionProperty(@Anno(value = "propRec")

@@ -7,8 +7,7 @@ dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-providers"))
-    api(project(":analysis:project-structure"))
+    api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:analysis-api-fir"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:symbol-light-classes"))
@@ -30,6 +29,10 @@ dependencies {
 
 kotlin {
     explicitApi()
+
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
 }
 
 sourceSets {
@@ -47,4 +50,3 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()
-

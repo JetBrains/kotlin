@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): kotlin.Boolean declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>, p0:kotlin.Int) returnType:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A? [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>, p0:kotlin.Int) returnType:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A? [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>
@@ -305,7 +305,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<T of <root>.KotlinClass>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] T of <root>.KotlinClass>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<T of <root>.KotlinClass>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.KotlinClass [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.ArrayList<T of <root>.KotlinClass>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.KotlinClass [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<T of <root>.KotlinClass>

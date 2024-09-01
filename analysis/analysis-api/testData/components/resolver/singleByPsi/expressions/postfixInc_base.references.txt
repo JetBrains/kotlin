@@ -1,0 +1,6 @@
+KtNameReferenceExpression(138,146): 'variable'
+  KtSimpleNameReference:
+    (in ROOT) var variable: MyClass
+
+  KtSimpleNameReference:
+    (in ROOT) var variable: MyClass

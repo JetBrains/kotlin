@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,17 +33,17 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = analyseForTest(mainFile) {
-            val declarationSymbol = getSingleTestTargetSymbolOfType<KaSymbolWithVisibility>(mainFile, testDataPath)
+            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(mainFile, testDataPath)
 
             val useSiteElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
                 ?: findFirstUseSiteElement(mainFile)
                 ?: error("Cannot find use-site element to check visibility at.")
 
-            val useSiteFileSymbol = mainFile.getFileSymbol()
+            val useSiteFileSymbol = mainFile.symbol
 
             val visible = isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
             """
-                Declaration: ${(declarationSymbol as KaDeclarationSymbol).render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
+                Declaration: ${declarationSymbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
                 At usage site: ${useSiteElement.text}
                 Is visible: $visible
             """.trimIndent()

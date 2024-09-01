@@ -61,7 +61,8 @@ package org.jetbrains.kotlin.fir.declarations
  *
  * - [COMPILER_REQUIRED_ANNOTATIONS] – The compiler can jump from the use site of an annotation to the annotation class
  *   and resolve its annotations as well.
- * - [SUPER_TYPES] – The compiler resolves super types recursively for all classes from the bottom class to the top one.
+ * - [SUPER_TYPES] – The compiler resolves super types (expands typealiases in them) recursively for all classes from
+ *   the bottom class to the top one.
  * - [STATUS] – The compiler resolves the status for super declarations first.
  * - [IMPLICIT_TYPES_BODY_RESOLVE] – The compiler can jump from one declaration to another during this phase as one
  *   declaration with an implicit type can depend on the implicit type of another declaration,

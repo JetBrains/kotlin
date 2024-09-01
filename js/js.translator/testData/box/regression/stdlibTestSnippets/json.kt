@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1274
 // KJS_WITH_FULL_RUNTIME
 
 import kotlin.js.json

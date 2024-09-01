@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.errorTypeRef]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.errorTypeRef]
  */
 abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
-    abstract override val type: ConeKotlinType
+    abstract override val coneType: ConeKotlinType
     abstract override val delegatedTypeRef: FirTypeRef?
     abstract override val diagnostic: ConeDiagnostic
     abstract val partiallyResolvedTypeRef: FirTypeRef?

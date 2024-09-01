@@ -1,2 +1,2 @@
-/main.kt:21:18: error: This function accidentally overrides both 'public open operator fun /A.get(index: kotlin/Int): kotlin/Char' and a renamed function 'public open fun /A.charAt(index: kotlin/Int): kotlin/Char' from JVM point of view because of mixed Java/Kotlin hierarchy.
+/main.kt:21:18: error: This function accidentally overrides both 'fun get(index: Int): Char' defined in '/A' and a renamed function 'fun charAt(index: Int): Char' defined in '/A' from JVM point of view because of mixed Java/Kotlin hierarchy.
 This situation provokes a JVM clash and thus is forbidden. To fix it, you have to delete either this function or one of overridden functions.

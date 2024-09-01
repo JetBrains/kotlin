@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -39,7 +41,7 @@ fun FirVisibilityChecker.isVisible(
                 declaration.isStatic &&
                 isExplicitReceiverExpression(dispatchReceiver)
     ) {
-        when (val classLikeSymbol = (dispatchReceiver as? FirResolvedQualifier)?.symbol) {
+        when (val classLikeSymbol = (dispatchReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.symbol) {
             is FirRegularClassSymbol -> classLikeSymbol.fir
             is FirTypeAliasSymbol -> classLikeSymbol.fullyExpandedClass(callInfo.session)?.fir
             is FirAnonymousObjectSymbol,
@@ -65,7 +67,7 @@ fun FirVisibilityChecker.isVisible(
 ): Boolean {
     val callInfo = candidate.callInfo
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)) {
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility)) {
         // There are some examples when applying smart cast makes a callable invisible
         // open class A {
         //     private fun foo() {}
@@ -82,7 +84,7 @@ fun FirVisibilityChecker.isVisible(
         // }
         // In both these examples (see !!! above) we should try to drop smart cast to B and repeat a visibility check
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver?.expression, candidate.callInfo.session) ?: return false
 
         if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
 
@@ -100,14 +102,19 @@ fun FirVisibilityChecker.isVisible(
         //    if (param is Info) param.status
         // }
         // Here smart cast is still necessary, because without it 'status' cannot be resolved at all
-        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility = true)) {
-            candidate.dispatchReceiver = dispatchReceiverWithoutSmartCastType
+        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility = true)) {
+            candidate.dispatchReceiver = ConeResolutionAtom.createRawAtom(dispatchReceiverWithoutSmartCastType)
         }
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiver, skipCheckForContainingClassVisibility)
+        candidate.hasVisibleBackingField = isVisible(
+            backingField,
+            callInfo,
+            candidate.dispatchReceiver?.expression,
+            skipCheckForContainingClassVisibility
+        )
     }
 
     return true
@@ -136,7 +143,7 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
                     this.originalExpression = originalExpression
                     smartcastType = buildResolvedTypeRef {
                         source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-                        type = originalTypeNotNullable
+                        coneType = originalTypeNotNullable
                     }
                     typesFromSmartCast = listOf(originalTypeNotNullable)
                     smartcastStability = expressionWithSmartcastIfStable.smartcastStability

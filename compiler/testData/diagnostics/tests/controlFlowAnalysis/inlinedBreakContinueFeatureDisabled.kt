@@ -1,7 +1,6 @@
 // FIR_IDENTICAL
 // LANGUAGE: -BreakContinueInInlineLambdas
-// TARGET_BACKEND: JVM_IR
-// IGNORE_ERRORS
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // WITH_STDLIB
 
 inline fun foo(block: () -> Unit) { block() }

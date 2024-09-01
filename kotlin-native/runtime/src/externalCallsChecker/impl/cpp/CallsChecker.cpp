@@ -157,6 +157,8 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "dispatch_async_f",
         "dispatch_once",
         "pthread_equal",
+        "pthread_key_create",
+        "pthread_once",
         "pthread_main_np",
         "pthread_self",
 
@@ -166,6 +168,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "+[NSObject class]",
         "+[NSObject conformsToProtocol:]",
         "+[NSObject isKindOfClass:]",
+        "+[NSObject isSubclassOfClass:]",
         "+[NSObject new]",
         "+[NSString stringWithFormat:]",
         "+[NSString stringWithUTF8String:]",
@@ -383,9 +386,9 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
-CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
+ALWAYS_INLINE CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
     ++ignoreGuardsCount;
 }
-CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
+ALWAYS_INLINE CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
     --ignoreGuardsCount;
 }

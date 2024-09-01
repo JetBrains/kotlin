@@ -38,7 +38,20 @@ internal class LocalPropertiesModifier(private val localProperties: File) {
         }.joinToString("\n")
     }
 
-    fun applySetup(setupFile: SetupFile) {
+    private fun generateSyntheticProperties(syntheticPropertiesGenerators: List<SyntheticPropertiesGenerator>, setupFile: SetupFile): Map<String, String> {
+        val duplicatedKeys = mutableSetOf<String>()
+        val result = syntheticPropertiesGenerators.fold(mapOf<String, String>()) { acc, generator ->
+            val newProperties = generator.generate(setupFile)
+            duplicatedKeys.addAll(acc.keys.intersect(newProperties.keys))
+            acc + newProperties
+        }
+        require(duplicatedKeys.isEmpty()) {
+            "These keys were defined previously: ${duplicatedKeys.joinToString()}"
+        }
+        return result
+    }
+
+    fun applySetup(setupFile: SetupFile, syntheticPropertiesGenerators: List<SyntheticPropertiesGenerator> = emptyList()) {
         localProperties.parentFile.apply {
             if (!exists()) {
                 mkdirs()
@@ -53,7 +66,9 @@ internal class LocalPropertiesModifier(private val localProperties: File) {
                 load(it)
             }
         }
-        val propertiesToSetup = setupFile.properties.mapValues {
+        val setupFileProperties = setupFile.properties
+        val syntheticProperties = generateSyntheticProperties(syntheticPropertiesGenerators, setupFile)
+        val propertiesToSetup = (setupFileProperties + syntheticProperties).mapValues {
             val overridingValue = manuallyConfiguredProperties[it.key]
             if (overridingValue != null) {
                 PropertyValue.Overridden(it.value, overridingValue.toString())

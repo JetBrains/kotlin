@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in ALE) constructor()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(64,67): 'ALE'
+  KtSimpleNameReference:
+    (in ALE) constructor()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

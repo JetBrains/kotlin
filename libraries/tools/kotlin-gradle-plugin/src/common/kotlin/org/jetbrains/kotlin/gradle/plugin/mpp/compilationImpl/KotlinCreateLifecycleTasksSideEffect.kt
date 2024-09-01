@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.gradle.api.DefaultTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.util.concurrent.Callable
 
@@ -24,10 +23,11 @@ internal val KotlinCreateLifecycleTasksSideEffect = KotlinCompilationSideEffect 
             compilation.compileKotlinTaskProvider.map { it.outputs.files }
         })
 
-        if (compilation is KotlinJvmCompilation && (compilation.target as? KotlinJvmTarget)?.withJavaEnabled == true) {
+        if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled == true) {
             it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
         }
 
+        @Suppress("DEPRECATION")
         it.inputs.files(compilation.output.resourcesDirProvider)
     }
     compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))

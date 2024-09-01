@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
+internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
 
     override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol) = symbol
@@ -84,13 +84,16 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
 
     private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S {
-        val actualSymbol = expectActualMap[this] ?: return this
+        val actualSymbol = expectActualMap.regularSymbols[this] ?: return this
         return actualSymbol as? S
             ?: error("Unexpected type of actual symbol. Expected: ${S::class.java.simpleName}, got ${actualSymbol.javaClass.simpleName}")
     }
 }
 
 internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
+    // All callables inside an expect declaration marked with `@OptionalExpectation` annotation should be actualized anyway.
+    private var insideDeclarationWithOptionalExpectation = false
+
     // We shouldn't touch attributes, because Fir2Ir wouldn't set them to anything meaningful anyway.
     // So it would be better to have them as is, i.e. referring to `this`, not some random node removed from the tree
     override fun <D : IrAttributeContainer> D.processAttributes(other: IrAttributeContainer?): D = this
@@ -115,17 +118,21 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitClass(declaration: IrClass) =
         declaration.also {
-            if (declaration.isExpect) return@also
+            val oldInsideDeclarationWithOptionalExpectation = insideDeclarationWithOptionalExpectation
+            insideDeclarationWithOptionalExpectation =
+                oldInsideDeclarationWithOptionalExpectation || declaration.containsOptionalExpectation()
+            if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
             it.transformAnnotations(declaration)
             it.valueClassRepresentation = it.valueClassRepresentation?.mapUnderlyingType { type ->
                 type.remapType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${it.render()}")
             }
+            insideDeclarationWithOptionalExpectation = oldInsideDeclarationWithOptionalExpectation
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) = (visitFunction(declaration) as IrSimpleFunction).also {
-        if (declaration.isExpect) return@also
+        if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
         it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
             symbolRemapper.getReferencedFunction(symbol) as IrSimpleFunctionSymbol
         }
@@ -135,7 +142,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitFunction(declaration: IrFunction) =
         declaration.also {
-            if (declaration.isExpect) return@also
+            if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.returnType = it.returnType.remapType()
             it.transformChildren(this, null)
             it.transformAnnotations(declaration)
@@ -143,7 +150,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
 
     override fun visitProperty(declaration: IrProperty) =
         declaration.also {
-            if (declaration.isExpect) return@also
+            if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.transformChildren(this, null)
             it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
                 symbolRemapper.getReferencedProperty(symbol)

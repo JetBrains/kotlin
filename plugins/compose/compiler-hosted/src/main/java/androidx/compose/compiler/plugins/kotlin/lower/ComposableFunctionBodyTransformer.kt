@@ -18,26 +18,9 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
-import androidx.compose.compiler.plugins.kotlin.ComposeNames
-import androidx.compose.compiler.plugins.kotlin.FeatureFlag
-import androidx.compose.compiler.plugins.kotlin.FeatureFlags
-import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.compiler.plugins.kotlin.analysis.Stability
-import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.analysis.isUncertain
-import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
-import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
-import androidx.compose.compiler.plugins.kotlin.irTrace
+import androidx.compose.compiler.plugins.kotlin.*
+import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer.ComposeDefaultValueStubOrigin
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
-import kotlin.math.abs
-import kotlin.math.absoluteValue
-import kotlin.math.ceil
-import kotlin.math.min
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -55,93 +38,16 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.name
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrContinue
-import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
-import org.jetbrains.kotlin.ir.expressions.IrElseBranch
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
-import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isClassWithFqName
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.util.isOverridableOrOverrides
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -151,6 +57,10 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * An enum of the different "states" a parameter of a composable function can have relating to
@@ -2005,7 +1915,7 @@ class ComposableFunctionBodyTransformer(
 
         when (this) {
             // Disambiguate ?. clauses which become a "null" constant expression
-            is IrConst<*> -> {
+            is IrConst -> {
                 hash = 31 * hash + (this.value?.hashCode() ?: 1)
             }
             // Disambiguate the key for blocks and composite containers in case block offsets are
@@ -2022,15 +1932,17 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun functionSourceKey(): Int {
-        val fn = currentFunctionScope.function
-        if (fn is IrSimpleFunction) {
-            return fn.sourceKey()
-        } else {
-            error("expected simple function: ${fn::class}")
+        when (val fn = currentFunctionScope.function) {
+            is IrSimpleFunction -> {
+                return fn.sourceKey()
+            }
+            is IrConstructor -> {
+                error("expected simple function, got constructor")
+            }
         }
     }
 
-    private fun IrElement.irSourceKey(): IrConst<Int> =
+    private fun IrElement.irSourceKey(): IrConst =
         IrConstImpl.int(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -2038,7 +1950,7 @@ class ComposableFunctionBodyTransformer(
             sourceKey()
         )
 
-    private fun irFunctionSourceKey(): IrConst<Int> =
+    private fun irFunctionSourceKey(): IrConst =
         IrConstImpl.int(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -2640,16 +2552,12 @@ class ComposableFunctionBodyTransformer(
                         } else {
                             val functionScope = scope
                             val targetScope = currentScope as? Scope.BlockScope ?: functionScope
+                            val marker = irGet(functionScope.allocateMarker())
+                            extraEndLocation(irEndToMarker(marker, targetScope))
                             if (functionScope.isInlinedLambda) {
-                                val marker = irGet(functionScope.allocateMarker())
-                                extraEndLocation(irEndToMarker(marker, targetScope))
                                 scope.hasInlineEarlyReturn = true
                             } else {
-                                val marker = functionScope.allocateMarker()
-                                functionScope.markReturn {
-                                    extraEndLocation(irEndToMarker(irGet(marker), targetScope))
-                                    extraEndLocation(it)
-                                }
+                                functionScope.markReturn(extraEndLocation)
                             }
                         }
                         break@loop
@@ -2827,7 +2735,7 @@ class ComposableFunctionBodyTransformer(
                         return null
                     } else {
                         // If the capture is outside inline lambda, we don't allow meta propagation
-                        if (!inlineLambdaInfo.isInlineLambda(scope.function)) {
+                        if (!inlineLambdaInfo.isInlineLambda(scope.function) || inlineLambdaInfo.isCrossinlineLambda(scope.function)) {
                             return null
                         }
                     }
@@ -2962,8 +2870,7 @@ class ComposableFunctionBodyTransformer(
                     visitNormalComposableCall(expression)
                 }
             }
-            ComposeFqNames.key,
-            DecoyFqNames.key -> visitKeyCall(expression)
+            ComposeFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }
     }
@@ -3045,7 +2952,7 @@ class ComposableFunctionBodyTransformer(
 
         val defaultMasks = defaultArgs.map {
             when (it) {
-                !is IrConst<*> -> error("Expected default mask to be a const")
+                !is IrConst -> error("Expected default mask to be a const")
                 else -> it.value as? Int ?: error("Expected default mask to be an Int")
             }
         }
@@ -3219,7 +3126,7 @@ class ComposableFunctionBodyTransformer(
             val meta = inputArgMetas[index]
 
             // Only create variables when reads introduce side effects
-            val trivialExpression = meta.isCertain || expr is IrGetValue || expr is IrConst<*>
+            val trivialExpression = meta.isCertain || expr is IrGetValue || expr is IrConst
             if (!trivialExpression) {
                 irTemporary(expr, nameHint = "remember\$arg\$$index")
             } else {
@@ -3256,25 +3163,33 @@ class ComposableFunctionBodyTransformer(
         val blockScope = intrinsicRememberScope(expression)
         return inScope(blockScope) {
             val nonNullInputValues = inputVals.filterNotNull()
-            if (useNonSkippingGroupOptimization)
-                irWithSourceInformationMarker(
+            if (useNonSkippingGroupOptimization) {
+                val body = irWithSourceInformationMarker(
                     before = nonNullInputValues,
                     expression = cacheCall,
                     scope = blockScope,
                 )
-            else
+                // Ensure that the body of intrinsic remember is always represented as a block,
+                // so that intrinsic remember propagates isStatic if needed.
+                if (body !is IrBlock) {
+                    body.wrap(type = body.type)
+                } else {
+                    body
+                }
+            } else {
                 cacheCall.wrap(
                     before = inputVals.filterNotNull() + listOf(
                         irStartReplaceGroup(expression, blockScope)
                     ),
                     after = listOf(irEndReplaceGroup(scope = blockScope))
                 )
-        }.also { block ->
+            }
+        }.also { expr ->
             if (
-                stabilityInferencer.stabilityOf(block.type).knownStable() &&
-                    inputArgMetas.all { it.isStatic }
+                stabilityInferencer.stabilityOf(expr.type).knownStable() &&
+                inputArgMetas.all { it.isStatic }
             ) {
-                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, block, true)
+                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, expr, true)
             }
         }
     }
@@ -3783,6 +3698,8 @@ class ComposableFunctionBodyTransformer(
     override fun visitWhen(expression: IrWhen): IrExpression {
         if (!isInComposableScope) return super.visitWhen(expression)
 
+        val optimizeGroups = FeatureFlag.OptimizeNonSkippingGroups.enabled && !currentFunctionScope.function.hasExplicitGroups
+
         // Composable calls in conditions are more expensive than composable calls in the different
         // result branches of the when clause. This is because if we have N branches of a when
         // clause, we will always execute exactly 1 result branch, but we will execute 0-N of the
@@ -3837,10 +3754,11 @@ class ComposableFunctionBodyTransformer(
                     resultScopes.add(resultScope)
 
                     // the first condition is always executed so if it has a composable call in it,
-                    // it doesn't necessitate a group
-                    needsWrappingGroup =
-                        needsWrappingGroup || (index != 0 && condScope.hasComposableCalls)
-                    if (resultScope.hasComposableCalls)
+                    // it doesn't necessitate a group. However, non-skipping group optimization is
+                    // enabled, we need a wrapping group if any conditions have a composable call.
+                    needsWrappingGroup = needsWrappingGroup || ((index != 0) && condScope.hasComposableCalls)
+
+                    if (resultScope.hasComposableCalls && !it.result.isGroupBalanced())
                         resultsWithCalls++
 
                     transformed.branches.add(
@@ -3855,13 +3773,23 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        // If we are optimizing the non-skipping functions we always need the
+        // same number of groups if any of the results have composable functions
+        // and it needs to be the same number even if only one branch requires a
+        // group.
+        val needsResultGroups = if (optimizeGroups) {
+            resultsWithCalls > 0
+        } else {
+            resultsWithCalls > 1 && !needsWrappingGroup
+        }
+
         // If we are putting groups around the result branches, we need to guarantee that exactly
         // one result branch is executed. We do this by adding an else branch if it there is not
         // one already. Note that we only need to do this if we aren't going to wrap the if
         // statement in a group entirely, which we will do if the conditions have calls in them.
         // NOTE: we might also be able to assume that the when is exhaustive if it has a non-unit
         // resulting type, since the type system should enforce that.
-        if (!hasElseBranch && resultsWithCalls > 1 && !needsWrappingGroup) {
+        if (!hasElseBranch && needsResultGroups) {
             condScopes.add(Scope.BranchScope())
             resultScopes.add(Scope.BranchScope())
             transformed.branches.add(
@@ -3888,7 +3816,7 @@ class ComposableFunctionBodyTransformer(
 
         forEachWith(transformed.branches, condScopes, resultScopes) { it, condScope, resultScope ->
             if (condScope.hasComposableCalls) {
-                if (needsWrappingGroup) {
+                if (needsWrappingGroup && !optimizeGroups) {
                     // Generate a group around the conditional block when it has a composable call
                     // in it and we are generating a group around when block.
                     it.condition = it.condition.asReplaceGroup(condScope)
@@ -3900,13 +3828,15 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
+            // if no wrapping group but more than we need branch groups, we have to have every
+            // result be a group so that we have a consistent number of groups during execution
             if (
-                // if no wrapping group but more than one result have calls, we have to have every
-                // result be a group so that we have a consistent number of groups during execution
-                (resultsWithCalls > 1 && !needsWrappingGroup) ||
+                needsResultGroups ||
                 // if we are wrapping the if with a group, then we only need to add a group when
-                // the block has composable calls
-                (needsWrappingGroup && resultScope.hasComposableCalls)
+                // the block has composable calls. The check of the feature flag check here is redundant
+                // as needsBranchGroups will be true if any result scope has composable calls but it
+                // is here redundantly so when this flag is removed this code will be updated.
+                !optimizeGroups && (needsWrappingGroup && resultScope.hasComposableCalls)
             ) {
                 it.result = it.result.asReplaceGroup(resultScope)
             }
@@ -3918,10 +3848,30 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        if (
+            optimizeGroups && needsResultGroups && (
+                    transformed.origin == IrStatementOrigin.ANDAND || transformed.origin == IrStatementOrigin.OROR
+                    )
+        ) {
+            // When a IrWhen has a ANDAND or OROR origin it is required they also have a specific shape such as for ANDAND requires a
+            // `true -> false` clause at the end.  As we violate this by adding a wrapping group around all results, this origin is removed
+            // down-stream lowerings will no longer special case this IrWhen.
+            transformed.origin = IrStatementOrigin.WHEN
+        }
+
         return when {
-            resultsWithCalls == 1 || needsWrappingGroup -> transformed.asCoalescableGroup(whenScope)
+            ((!optimizeGroups && resultsWithCalls == 1) || needsWrappingGroup) ->
+                transformed.asCoalescableGroup(whenScope)
             else -> transformed
         }
+    }
+
+    // Returns true if the number of groups added are required to be fix and a group is inserted  to balance the groups if they are not.
+    // Currently this is only guaranteed for IrWhen nodes when the group non-skipping group optimization is enabled. This avoids
+    // inserting a redundant group to balance an already balanced set of groups.
+    private fun IrExpression.isGroupBalanced(): Boolean = when(this) {
+        is IrWhen -> FeatureFlag.OptimizeNonSkippingGroups.enabled
+        else -> false
     }
 
     sealed class Scope(val name: String) {

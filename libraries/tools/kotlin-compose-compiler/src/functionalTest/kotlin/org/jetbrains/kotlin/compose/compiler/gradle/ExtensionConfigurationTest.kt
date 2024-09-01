@@ -24,10 +24,7 @@ class ExtensionConfigurationTest {
                 listOf(
                     "generateFunctionKeyMetaClasses" to "false",
                     "sourceInformation" to "false",
-                    "intrinsicRemember" to "true",
-                    "nonSkippingGroupOptimization" to "false",
-                    "strongSkipping" to "false",
-                    "traceMarkersEnabled" to "false",
+                    "traceMarkersEnabled" to "true",
                 ),
                 options
             )
@@ -68,6 +65,7 @@ class ExtensionConfigurationTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun testStabilityConfigurationFile() {
         testComposeOptions(
@@ -86,6 +84,29 @@ class ExtensionConfigurationTest {
     }
 
     @Test
+    fun testStabilityConfigurationFiles() {
+        testComposeOptions(
+            { extension, project ->
+                extension.stabilityConfigurationFiles.value(
+                    listOf(
+                        project.layout.projectDirectory.file("compose.conf"),
+                        project.layout.projectDirectory.file("compose2.conf")
+                    )
+                )
+            }
+        ) { options, project ->
+            assertTrue(
+                options.contains(
+                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose.conf").asFile.path
+                ) &&
+                options.contains(
+                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose2.conf").asFile.path
+                )
+            )
+        }
+    }
+
+    @Test
     fun notIncludeSourceInformationOnAgpPresence() {
         testComposeOptions(
             { _, project ->
@@ -95,6 +116,157 @@ class ExtensionConfigurationTest {
             assertFalse(
                 options.map { it.first }.contains("sourceInformation")
             )
+        }
+    }
+
+    @Test
+    fun disableIntrinsicRemember() {
+        testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.IntrinsicRemember.disabled()))
+        }
+    }
+
+    @Test
+    fun disableStrongSkipping() {
+        testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.StrongSkipping.disabled()))
+        }
+    }
+
+    @Test
+    fun enableNonSkippingGroupOptimization() {
+        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups))
+        }
+    }
+
+    @Test
+    fun disableIntrinsicRememberCompatibility() {
+        testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
+            @Suppress("DEPRECATION")
+            extension.enableIntrinsicRemember.value(false)
+        }
+    }
+
+    @Test
+    fun disableStrongSkippingCompatibility() {
+        testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
+            @Suppress("DEPRECATION")
+            extension.enableStrongSkippingMode.value(false)
+        }
+    }
+
+    @Test
+    fun enableNonSkippingGroupOptimizationCompatibility() {
+        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
+            @Suppress("DEPRECATION")
+            extension.enableNonSkippingGroupOptimization.value(true)
+        }
+    }
+
+    @Test
+    fun enableMultipleFlags() {
+        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
+            extension.featureFlags.set(
+                setOf(
+                    ComposeFeatureFlag.StrongSkipping.disabled(),
+                    ComposeFeatureFlag.IntrinsicRemember.disabled(),
+                    ComposeFeatureFlag.OptimizeNonSkippingGroups
+                )
+            )
+        }
+    }
+
+    @Test
+    fun enableMultipleFlagsCompatibility() {
+        @Suppress("DEPRECATION")
+        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
+            extension.enableStrongSkippingMode.value(false)
+            extension.enableNonSkippingGroupOptimization.value(true)
+            extension.enableIntrinsicRemember.value(false)
+        }
+    }
+
+    @Test
+    fun enableMultipleFlagsCompatibilityDefaults() {
+        @Suppress("DEPRECATION")
+        testComposeFeatureFlags(emptyList()) { extension ->
+            extension.enableStrongSkippingMode.value(true)
+            extension.enableNonSkippingGroupOptimization.value(false)
+            extension.enableIntrinsicRemember.value(true)
+        }
+    }
+
+    @Test
+    fun combineDeprecatedPropertiesWithFeatureFlags() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableNonSkippingGroupOptimization.set(true)
+            composeExtension.enableIntrinsicRemember.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "OptimizeNonSkippingGroups",
+            "StrongSkipping",
+            "-IntrinsicRemember"
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
+    @Test
+    fun contradictInConfiguredFlags() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableStrongSkippingMode.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "StrongSkipping",
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
+    @Test
+    fun combineDeprecatedPropertiesWithFeatureFlags_StrongSkipping() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableStrongSkippingMode.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.IntrinsicRemember.disabled())
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "-StrongSkipping",
+            "-IntrinsicRemember"
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
+    private fun testComposeFeatureFlags(flags: List<String>, configure: (ComposeCompilerGradlePluginExtension) -> Unit) {
+        testComposeOptions({ extension, _ -> configure(extension) }) { options, _ ->
+            for (flag in flags) options.assertFeature(flag)
         }
     }
 
@@ -117,3 +289,8 @@ class ExtensionConfigurationTest {
 
     private fun Project.simulateAgpPresence() = configurations.resolvable("kotlin-extension")
 }
+
+fun List<Pair<String, String>>.assertFeature(featureName: String) =
+    assertTrue(
+        firstOrNull { it.first == "featureFlag" && it.second == featureName } != null,
+        "Expected a feature flag $featureName to be set in $this")

@@ -1,6 +1,6 @@
 STATUS:
 TARGET: public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 CONTRACTS:
 TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 CONSTANT_EVALUATION:
 TARGET: public abstract override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 ANNOTATION_ARGUMENTS:
 TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
 BODY_RESOLVE:
 TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
-
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
     public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {

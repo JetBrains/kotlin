@@ -20,8 +20,13 @@
 package org.jetbrains.kotlin.powerassert.diagram
 
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun IrBuilderWithScope.buildDiagramNesting(
     sourceFile: SourceFile,
@@ -29,8 +34,10 @@ fun IrBuilderWithScope.buildDiagramNesting(
     variables: List<IrTemporaryVariable> = emptyList(),
     call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-    return buildExpression(sourceFile, root, variables) { argument, subStack ->
-        call(argument, subStack)
+    return irBlock {
+        +buildExpression(sourceFile, root, variables) { argument, subStack ->
+            call(argument, subStack)
+        }
     }
 }
 
@@ -43,80 +50,192 @@ fun IrBuilderWithScope.buildDiagramNestingNullable(
     return if (root != null) buildDiagramNesting(sourceFile, root, variables, call) else call(null, variables)
 }
 
-private fun IrBuilderWithScope.buildExpression(
+private fun IrBlockBuilder.buildExpression(
     sourceFile: SourceFile,
     node: Node,
     variables: List<IrTemporaryVariable>,
-    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression = when (node) {
+    is ConstantNode -> add(node, variables, call)
     is ExpressionNode -> add(sourceFile, node, variables, call)
-    is AndNode -> nest(sourceFile, node, 0, variables, call)
-    is OrNode -> nest(sourceFile, node, 0, variables, call)
+    is ChainNode -> nest(sourceFile, node, 0, variables, call)
+    is WhenNode -> nest(sourceFile, node, 0, variables, call)
+    is ElvisNode -> nest(sourceFile, node, 0, variables, call)
     else -> TODO("Unknown node type=$node")
 }
 
 /**
  * ```
- * val result = call(1 + 2 + 3)
+ * val result = call(a)
  * ```
- * Transforms to
+ *
+ * Should be transformed into:
+ *
  * ```
- * val result = run {
- *   val tmp0 = 1 + 2
- *   val tmp1 = tmp0 + 3
- *   call(tmp1, <diagram>)
- * }
+ * val result = call(a)
  * ```
  */
-private fun IrBuilderWithScope.add(
+private fun IrBlockBuilder.add(
+    node: ConstantNode,
+    variables: List<IrTemporaryVariable>,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+): IrExpression {
+    val expression = node.expression
+    val transformer = IrTemporaryExtractionTransformer(this@add, variables)
+    val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
+    return call(copy, variables)
+}
+
+/**
+ * ```
+ * val result = call(a)
+ * ```
+ *
+ * Should be transformed into:
+ *
+ * ```
+ * val tmp0 = a
+ * val result = call(tmp0, <diagram of tmp0>)
+ * ```
+ */
+private fun IrBlockBuilder.add(
     sourceFile: SourceFile,
     node: ExpressionNode,
     variables: List<IrTemporaryVariable>,
-    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-    return irBlock {
-        val head = node.expressions.first().deepCopyWithSymbols(scope.getLocalDeclarationParent())
-        val expressions = (buildTree(head) as ExpressionNode).expressions
-        val transformer = IrTemporaryExtractionTransformer(this@irBlock, expressions.toSet(), sourceFile)
-        val transformed = expressions.first().transform(transformer, null)
-        +call(transformed, variables + transformer.variables)
+    val expression = node.expression
+    val sourceRangeInfo = sourceFile.getSourceRangeInfo(expression)
+    val text = sourceFile.getText(sourceRangeInfo)
+
+    val transformer = IrTemporaryExtractionTransformer(this@add, variables)
+    val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
+
+    val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
+    val newVariables = variables + IrTemporaryVariable(variable, expression, sourceRangeInfo, text)
+    return call(irGet(variable), newVariables)
+}
+
+/**
+ * ```
+ * val result = call(a.b.c)
+ * ```
+ *
+ * Should be transformed into:
+ *
+ * ```
+ * val result = run {
+ *   val tmp0 = a
+ *   val tmp1 = tmp0.b
+ *   val tmp2 = tmp1.c
+ *   call(tmp2, <diagram of tmp0 + tmp1 + tmp2>)
+ * }
+ * ```
+ */
+private fun IrBlockBuilder.nest(
+    sourceFile: SourceFile,
+    node: ChainNode,
+    index: Int,
+    variables: List<IrTemporaryVariable>,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+): IrExpression {
+    val children = node.children
+    val child = children[index]
+    return buildExpression(sourceFile, child, variables) { argument, argumentVariables ->
+        if (index + 1 == children.size) {
+            call(argument, argumentVariables)
+        } else {
+            nest(sourceFile, node, index + 1, argumentVariables, call)
+        }
     }
 }
 
 /**
  * ```
- * val result = call(1 == 1 && 2 == 2)
+ * val result = call(if (condition1) result1 else if (condition2) result2 else result3)
  * ```
- * Transforms to
+ *
+ * Should be transformed into:
+ *
  * ```
  * val result = run {
- *   val tmp0 = 1 == 1
+ *   val tmp0 = condition1
  *   if (tmp0) {
- *     val tmp1 = 2 == 2
- *     call(tmp1, <diagram>)
+ *     val tmp1 = result1
+ *     call(tmp1, <diagram of tmp0 + tmp1>)
+ *   } else {
+ *     val tmp2 = condition2
+ *     if (tmp2) {
+ *       val tmp3 = result2
+ *       call(tmp3, <diagram of tmp0 + tmp2 + tmp3>)
+ *     } else {
+ *       val tmp4 = result3
+ *       call(tmp4, <diagram of tmp0 + tmp2 + tmp4>)
+ *     }
  *   }
- *   else call(false, <diagram>)
  * }
  * ```
  */
-private fun IrBuilderWithScope.nest(
+private fun IrBlockBuilder.nest(
     sourceFile: SourceFile,
-    node: AndNode,
+    node: WhenNode,
     index: Int,
     variables: List<IrTemporaryVariable>,
-    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
+    class BranchOptimizer(private val branchIndex: Int) : IrElementTransformerVoid() {
+        override fun visitWhen(expression: IrWhen): IrExpression {
+            if (expression.attributeOwnerId == node.expression) {
+                val branches = expression.branches
+                if (branches.size <= branchIndex) return expression
+
+                /**
+                 * Transforming a call with a nested when-expression into a when-expression with nested calls will leave copies of the
+                 * original nested when-expression which have a known result based on the surrounding when-expression. These copies can be
+                 * optimized by replacing them with the result of the known branch.
+                 *
+                 * ```
+                 * val tmp1: Boolean = ...
+                 * when {
+                 *   tmp1 -> { // BLOCK
+                 *     val tmp2: Int = value1
+                 *
+                 *     // Replace this when with just 'tmp2'
+                 *     when {
+                 *       tmp1 -> tmp2
+                 *       else -> ...
+                 *     }
+                 *
+                 *     ...
+                 * ```
+                 */
+
+                return branches[branchIndex].result
+            }
+            return super.visitWhen(expression)
+        }
+    }
+
     val children = node.children
-    val child = children[index]
-    return buildExpression(sourceFile, child, variables) { argument, newVariables ->
-        if (index + 1 == children.size) {
-            call(argument, newVariables) // last expression, result is false
+    val conditionNode = children[index]
+    val resultNode = children[index + 1]
+    return buildExpression(sourceFile, conditionNode, variables) { condition, conditionVariables ->
+        if (index + 2 == children.size) {
+            buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+                call(result, resultVariables)
+            }
         } else {
             irIfThenElse(
                 context.irBuiltIns.anyType,
-                argument,
-                nest(sourceFile, node, index + 1, newVariables, call), // more expressions, continue nesting
-                call(irFalse(), newVariables), // short-circuit result to false
+                condition,
+                irBlock {
+                    +buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+                        call(result, resultVariables)
+                    }
+                }.transform(BranchOptimizer(index / 2), null),
+                irBlock {
+                    +nest(sourceFile, node, index + 2, conditionVariables, call)
+                }.transform(BranchOptimizer(index / 2 + 1), null),
             )
         }
     }
@@ -124,39 +243,96 @@ private fun IrBuilderWithScope.nest(
 
 /**
  * ```
- * val result = call(1 == 1 || 2 == 2)
+ * val result = call(a?.b ?: c)
  * ```
- * Transforms to
+ *
+ * Should be transformed into:
+ *
  * ```
  * val result = run {
- *   val tmp0 = 1 == 1
- *   if (tmp0) call(true, <diagram>)
- *   else {
- *     val tmp1 = 2 == 2
- *     call(tmp1, <diagram>)
+ *   val tmp0 = a
+ *   val tmp1 = tmp0?.b
+ *   if (tmp1 == null) {
+ *     val tmp2 = c
+ *     call(tmp2, <diagram of tmp0 + tmp1 + tmp2>)
+ *   } else {
+ *     call(tmp1, <diagram of tmp0 + tmp1>)
  *   }
  * }
  * ```
  */
-private fun IrBuilderWithScope.nest(
+private fun IrBlockBuilder.nest(
     sourceFile: SourceFile,
-    node: OrNode,
+    node: ElvisNode,
     index: Int,
     variables: List<IrTemporaryVariable>,
-    call: IrBuilderWithScope.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
+    call: IrBlockBuilder.(IrExpression, List<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-    val children = node.children
-    val child = children[index]
-    return buildExpression(sourceFile, child, variables) { argument, newVariables ->
-        if (index + 1 == children.size) {
-            call(argument, newVariables) // last expression, result is false
-        } else {
-            irIfThenElse(
-                context.irBuiltIns.anyType,
-                argument,
-                call(irTrue(), newVariables), // short-circuit result to true
-                nest(sourceFile, node, index + 1, newVariables, call), // more expressions, continue nesting
-            )
+    class ElvisOptimizer : IrElementTransformerVoid() {
+        private val transformer = IrTemporaryExtractionTransformer(this@nest, variables)
+        private val initializer = node.variable.initializer?.transform(transformer, null)
+
+        override fun visitGetValue(expression: IrGetValue): IrExpression {
+            if (initializer != null && expression.symbol == node.variable.symbol) {
+                /**
+                 * When the when-expression of an elvis-expression is converted, the branch condition will still reference the temporary
+                 * variable of the original elvis-expression. This must be replaced with the temporary variable generated by power-assert
+                 * from the initializer of the elvis-expression.
+                 */
+                return initializer.deepCopyWithSymbols(scope.getLocalDeclarationParent())
+            }
+
+            return super.visitGetValue(expression)
+        }
+
+        override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+            if (expression.attributeOwnerId == node.expression) {
+                val statements = expression.statements
+                if (statements.size != 2) return expression
+                val variable = statements[0] as? IrVariable ?: return expression
+                val conditional = statements[1] as? IrGetValue ?: return expression
+
+                return if (conditional.symbol == variable.symbol) {
+                    /**
+                     * Elvis-expressions which look like the following, can be replaced by the variable initializer.
+                     * ```
+                     * { // BLOCK
+                     *   val tmp = value1
+                     *   return@BLOCK tmp
+                     * }
+                     * ```
+                     */
+                    variable.initializer!!
+                } else {
+                    /**
+                     * Elvis-expressions which look like the following, can be replaced by the get value expression.
+                     * ```
+                     * { // BLOCK
+                     *   val tmp = value1
+                     *   return@BLOCK value2
+                     * }
+                     * ```
+                     */
+                    conditional
+                }
+            }
+            return super.visitContainerExpression(expression)
         }
     }
+
+    val children = node.children
+    val child = children[index]
+    val result = buildExpression(sourceFile, child, variables) { argument, argumentVariables ->
+        if (index + 1 == children.size) {
+            call(argument, argumentVariables)
+        } else {
+            nest(sourceFile, node, index + 1, argumentVariables, call)
+        }
+    }
+
+    if (index == 0) {
+        result.transform(ElvisOptimizer(), null)
+    }
+
+    return result
 }

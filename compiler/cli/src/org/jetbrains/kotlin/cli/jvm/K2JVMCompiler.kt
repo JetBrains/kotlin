@@ -252,7 +252,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            CLITool.doMain(K2JVMCompiler(), args)
+            doMain(K2JVMCompiler(), args)
         }
 
     }

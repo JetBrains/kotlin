@@ -5,8 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
@@ -19,10 +19,10 @@ import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirFunctionFromKtSymbol(
-    override val ktSymbol: KaFunctionLikeSymbol,
-    override val ktModule: KtModule,
+    override val ktSymbol: KaFunctionSymbol,
+    override val ktModule: KaModule,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol<KaFunctionLikeSymbol> {
+) : SirFunction(), SirFromKtSymbol<KaFunctionSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
@@ -46,9 +46,11 @@ internal class SirFunctionFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
+
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
 
     override var body: SirFunctionBody? = null
 }

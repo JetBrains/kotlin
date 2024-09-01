@@ -26,11 +26,11 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
             // this is not the scenario DSL, so the modules are not built at this moment
 
             // you should handle the right order of compilation between modules yourself
-            module1.compile {
-                assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
+            module1.compile { module ->
+                assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile {
-                assertOutputs("AKt.class", "BKt.class")
+            module2.compile { module ->
+                assertOutputs(module, "AKt.class", "BKt.class")
             }
         }
     }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringR
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -23,9 +23,9 @@ abstract class AbstractAnalysisApiSignatureSubstitutionTest : AbstractAnalysisAp
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtCallableDeclaration>(mainFile)
         val actual = analyseForTest(declaration) {
-            val symbol = declaration.getSymbol() as KaCallableSymbol
+            val symbol = declaration.symbol as KaCallableSymbol
 
-            val substitutor = SubstitutionParser.parseSubstitutor(analysisSession, mainFile, declaration)
+            val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, mainFile, declaration)
 
             val signatureBeforeSubstitution = symbol.asSignature()
             val signatureAfterSubstitution = signatureBeforeSubstitution.substitute(substitutor)

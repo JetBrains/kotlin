@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -155,12 +156,14 @@ internal object CompilationServiceImpl : CompilationService {
                     icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir),
                     buildMetricsReporter = DoNothingBuildMetricsReporter
                 )
+                val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
+
                 val incrementalCompiler = IncrementalJvmCompilerRunner(
                     aggregatedIcConfiguration.workingDir,
                     buildReporter,
                     buildHistoryFile = null,
                     modulesApiHistory = EmptyModulesApiHistory,
-                    usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
                     outputDirs = options.outputDirs,
                     kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                     classpathChanges = classpathChanges,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,26 +10,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.calls.KaSuccessCallInfo
-import org.jetbrains.kotlin.analysis.api.calls.successfulFunctionCallOrNull
-import org.jetbrains.kotlin.analysis.api.calls.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.extension
-import kotlin.streams.asSequence
 import org.junit.jupiter.api.Assertions
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.extension
+import kotlin.streams.asSequence
 
 internal fun testDataPath(path: String): Path {
     return Paths.get("analysis/analysis-api-standalone/testData/sessionBuilder").resolve(path)
@@ -37,10 +37,10 @@ internal fun testDataPath(path: String): Path {
 
 fun KtCallExpression.assertIsCallOf(callableId: CallableId) {
     analyze(this) {
-        val ktCallInfo = resolveCallOld()
+        val ktCallInfo = resolveToCall()
         Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
         val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
-        Assertions.assertInstanceOf(KaFunctionSymbol::class.java, symbol); symbol as KaFunctionSymbol
+        Assertions.assertInstanceOf(KaNamedFunctionSymbol::class.java, symbol); symbol as KaNamedFunctionSymbol
         Assertions.assertEquals(callableId, symbol.callableId)
     }
 }
@@ -57,6 +57,20 @@ internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
     MockLibraryUtil.runMetadataCompiler(arguments)
 
     return testKlib
+}
+
+internal fun compileToJar(sourceRoot: Path): Path {
+    val ktFiles = Files.walk(sourceRoot).asSequence().filter { it.extension == "kt" }.toList()
+    val testJar = KtTestUtil.tmpDir("testLibrary").resolve("library.jar").toPath()
+
+    val arguments = buildList {
+        ktFiles.mapTo(this) { it.absolutePathString() }
+        add("-d")
+        add(testJar.absolutePathString())
+    }
+    MockLibraryUtil.runJvmCompiler(arguments)
+
+    return testJar
 }
 
 internal fun createDumbVirtualFile(

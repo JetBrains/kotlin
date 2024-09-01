@@ -69,7 +69,7 @@ fun checkSubTypes(types: List<ConeKotlinType>, context: CheckerContext): Boolean
 
     val replacedTypeParameters = types.flatMap { r ->
         when (r) {
-            is ConeTypeParameterType -> r.lookupTag.typeParameterSymbol.resolvedBounds.map { it.type }
+            is ConeTypeParameterType -> r.lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
             is ConeClassLikeType -> listOf(replaceTypeParametersByStarProjections(r))
             else -> listOf(r)
         }

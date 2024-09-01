@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: Test.java
 public interface Test {
     default String test() {

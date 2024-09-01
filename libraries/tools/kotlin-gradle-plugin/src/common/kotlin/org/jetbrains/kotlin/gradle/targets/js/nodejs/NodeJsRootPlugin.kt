@@ -12,10 +12,8 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
@@ -257,16 +255,12 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
     // from https://github.com/node-gradle/gradle-node-plugin
     private fun addPlatform(project: Project, extension: NodeJsRootExtension) {
-        val uname = project.variantImplementationFactory<UnameExecutor.UnameExecutorVariantFactory>()
-            .getInstance(project)
-            .unameExecResult
+        val uname = project.providers.unameExecResult
 
         extension.platform.value(
             project.providers.systemProperty("os.name")
-                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 .zip(
                     project.providers.systemProperty("os.arch")
-                        .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 ) { name, arch ->
                     parsePlatform(name, arch, uname)
                 }

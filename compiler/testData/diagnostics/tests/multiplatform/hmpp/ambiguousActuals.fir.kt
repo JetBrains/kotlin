@@ -4,7 +4,7 @@
 
 // MODULE: intermediate()()(common)
 // TARGET_PLATFORM: Common
-<!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
+actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 
 // MODULE: main()()(common, intermediate)
 actual fun foo() {}

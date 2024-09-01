@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in <local>: Foo.foo.Local) constructor() [fake.kt]
+KtNameReferenceExpression(103,108): 'Local'
+  KtSimpleNameReference:
+    (in <local>: Foo.foo.Local) constructor() [fake.kt]

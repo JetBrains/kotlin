@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
@@ -59,7 +62,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
         val bodyType = when (body) {
             is IrExpressionBody -> body.expression.type
             is IrBlockBody -> context.irBuiltIns.unitType
-            else -> TODO(this::class.qualifiedName!!)
+            is IrSyntheticBody -> syntheticBodyIsNotSupported(irFunction)
         }
 
         with(context.createIrBuilder(irFunction.symbol)) {
@@ -83,12 +86,12 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
                 irGet(irBooleanType, null, isNotFirstWasmExportCallGetter)
 
             val tryBody = irComposite {
-                +irSet(irBooleanType, null, isNotFirstWasmExportCallSetter, true.toIrConst(irBooleanType))
-                when (body) {
-                    is IrBlockBody -> body.statements.forEach { +it }
-                    is IrExpressionBody -> +body.expression
-                    else -> TODO(this::class.qualifiedName!!)
-                }
+                +irSet(
+                    isNotFirstWasmExportCallSetter.owner.returnType,
+                    null, isNotFirstWasmExportCallSetter,
+                    true.toIrConst(irBooleanType)
+                )
+                +body.statements
             }
 
             val catch = irCatch(
@@ -103,7 +106,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
 
 
             val finally = irSet(
-                type = irBooleanType,
+                type = isNotFirstWasmExportCallSetter.owner.returnType,
                 receiver = null,
                 setterSymbol = isNotFirstWasmExportCallSetter,
                 value = irGet(currentIsNotFirstWasmExportCall, irBooleanType)
@@ -116,6 +119,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
                 finallyExpression = finally
             )
 
+            @Suppress("KotlinConstantConditions")
             when (body) {
                 is IrExpressionBody -> body.expression = irComposite {
                     +currentIsNotFirstWasmExportCall
@@ -126,7 +130,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
                     add(currentIsNotFirstWasmExportCall)
                     add(tryWrap)
                 }
-                else -> TODO(this::class.qualifiedName!!)
+                is IrSyntheticBody -> syntheticBodyIsNotSupported(irFunction)
             }
         }
     }
@@ -134,7 +138,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
     override fun lower(irFile: IrFile) {
         if (!context.isWasmJsTarget) return
         for (declaration in irFile.declarations) {
-            if (declaration is IrFunction && declaration.isExported()) {
+            if (declaration is IrFunction && declaration.isJsExport()) {
                 processExportFunction(declaration)
             }
         }

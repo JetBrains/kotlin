@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(191,192): '-'
+  KtSimpleNameReference:
+    (in MyClass) operator fun unaryMinus(): MyClass

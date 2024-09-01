@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -97,7 +97,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirAbstractBodyResolveTransformerDispatcher,
-        val context: BodyResolveContext
+        val context: BodyResolveContext,
+        expandTypeAliases: Boolean,
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
@@ -120,7 +121,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             this,
         )
         val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
-            session
+            session,
+            expandTypeAliases = expandTypeAliases,
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         override val dataFlowAnalyzer: FirDataFlowAnalyzer =

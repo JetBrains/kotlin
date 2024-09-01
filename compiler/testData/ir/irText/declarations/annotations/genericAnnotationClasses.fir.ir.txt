@@ -83,6 +83,10 @@ FILE fqName:ann fileName:/genericAnnotationClasses.kt
               receiver: GET_VAR '<this>: ann.Test3<T1 of ann.Test3, T2 of ann.Test3> declared in ann.Test3.<get-x>' type=ann.Test3<T1 of ann.Test3, T2 of ann.Test3> origin=null
     CONSTRUCTOR visibility:public <> (x:ann.Test1<ann.I<T2 of ann.Test3>>) returnType:ann.Test3<T1 of ann.Test3, T2 of ann.Test3> [primary]
       VALUE_PARAMETER name:x index:0 type:ann.Test1<ann.I<T2 of ann.Test3>>
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in ann.Test1' type=ann.Test1<ann.I<T2 of ann.Test3>> origin=null
+            <class: T>: ann.I<T2 of ann.Test3>
+            x: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test3 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
@@ -206,8 +210,8 @@ FILE fqName:ann fileName:/genericAnnotationClasses.kt
       Test1<ann.ARG>(x = 42)
       Test2<kotlin.String, kotlin.String>(x = 38)
       Test3<kotlin.String, ann.C<kotlin.String>>(x = Test1<ann.I<ann.C<kotlin.String>>>(x = 39))
-      Test4(x = [Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 40)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 50)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 60))])
-      Test5<ann.ARG>(xs = [Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 70)), Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 80))])
+      Test4(x = [Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 40)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 50)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 60))] type=kotlin.Array<ann.Test3<kotlin.Int, ann.C<kotlin.Int>>> varargElementType=ann.Test3<kotlin.Int, ann.C<kotlin.Int>>)
+      Test5<ann.ARG>(xs = [Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 70)), Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 80))] type=kotlin.Array<out ann.Test3<ann.ARG, ann.C<ann.ARG>>> varargElementType=ann.Test3<ann.ARG, ann.C<ann.ARG>>)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.CC
     CONSTRUCTOR visibility:public <> () returnType:ann.CC [primary]
       BLOCK_BODY

@@ -1,3 +1,4 @@
+@file:Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 package test
 
 context(Int) val p get() = 42

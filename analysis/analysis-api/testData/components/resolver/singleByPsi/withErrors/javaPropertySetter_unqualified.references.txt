@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in JavaClass) open var foo: kotlin.Int
+KtNameReferenceExpression(44,47): 'foo'
+  KtSimpleNameReference:
+    (in JavaClass) open var foo: kotlin.Int

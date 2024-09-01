@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATOR
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
 import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
 
-// TODO: rewrite
-fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)
+val FirBlock.lastExpression: FirExpression?
+    get() = statements.lastOrNull() as? FirExpression
 
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): R {
     if (source == null) return this
@@ -377,13 +377,13 @@ fun ConeKotlinType.toFirResolvedTypeRef(
         buildErrorTypeRef {
             this.source = source
             diagnostic = this@toFirResolvedTypeRef.diagnostic
-            type = this@toFirResolvedTypeRef
+            coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     } else {
         buildResolvedTypeRef {
             this.source = source
-            type = this@toFirResolvedTypeRef
+            coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     }

@@ -14,15 +14,15 @@ alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(
 
 alloc::Allocator::ThreadData::~ThreadData() = default;
 
-ALWAYS_INLINE ObjHeader* alloc::Allocator::ThreadData::allocateObject(const TypeInfo* typeInfo) noexcept {
+PERFORMANCE_INLINE ObjHeader* alloc::Allocator::ThreadData::allocateObject(const TypeInfo* typeInfo) noexcept {
     return impl_->alloc().CreateObject(typeInfo);
 }
 
-ALWAYS_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+PERFORMANCE_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
     return impl_->alloc().CreateArray(typeInfo, elements);
 }
 
-ALWAYS_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
+PERFORMANCE_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
         ObjHeader* object, const TypeInfo* typeInfo) noexcept {
     return impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
 }
@@ -51,16 +51,24 @@ void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
 }
 
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedObjects(fn);
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedExtraObjects(fn);
+}
+
 void alloc::initObjectPool() noexcept {}
 
 void alloc::compactObjectPoolInCurrentThread() noexcept {}
 
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
-    return HeapObjHeader::from(object).objectData();
+    return CustomHeapObject::from(object).heapHeader();
 }
 
 ObjHeader* alloc::objectForObjectData(gc::GC::ObjectData& objectData) noexcept {
-    return HeapObjHeader::from(objectData).object();
+    return CustomHeapObject::from(objectData).object();
 }
 
 size_t alloc::allocatedHeapSize(ObjHeader* object) noexcept {

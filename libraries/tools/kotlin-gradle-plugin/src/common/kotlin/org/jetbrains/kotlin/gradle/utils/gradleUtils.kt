@@ -53,6 +53,13 @@ internal val BuildIdentifier.buildPathCompat: String
     get() = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath
     else @Suppress("DEPRECATION") if (name.startsWith(":")) name else ":$name"
 
+/**
+ * Will return [ProjectComponentIdentifier.getBuildTreePath] for Gradle versions higher than 8.3
+ * For the lower version will calculate from [buildPathCompat] and [ProjectComponentIdentifier.getProjectPath]
+ */
+internal val ProjectComponentIdentifier.buildTreePathCompat: String
+    get() = if (GradleVersion.current() >= GradleVersion.version("8.3")) buildTreePath
+    else build.buildPathCompat + ":" + projectPath
 
 /**
  * Will return the [ProjectComponentIdentifier.getBuild] if the component

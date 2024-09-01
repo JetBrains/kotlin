@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  K
+KtNameReferenceExpression(47,48): 'K'
+  KtSimpleNameReference:
+    (in <local>: prop.<no name>.foo) K

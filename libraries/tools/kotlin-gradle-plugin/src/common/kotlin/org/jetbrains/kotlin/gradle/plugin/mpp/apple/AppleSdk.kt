@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -83,33 +84,47 @@ internal object AppleSdk {
 
         return targets.toList()
     }
+
+    val xcodeEnvironmentDebugDylibVars = setOf(
+        "ENABLE_DEBUG_DYLIB",
+        "EXECUTABLE_BLANK_INJECTION_DYLIB_PATH",
+        "EXECUTABLE_DEBUG_DYLIB_INSTALL_NAME",
+        "EXECUTABLE_DEBUG_DYLIB_PATH"
+    )
 }
 
-internal fun KonanTarget.appleArchitecture(): String = when (this) {
-    KonanTarget.IOS_ARM64,
-    KonanTarget.IOS_SIMULATOR_ARM64,
-    KonanTarget.MACOS_ARM64,
-    KonanTarget.TVOS_ARM64,
-    KonanTarget.TVOS_SIMULATOR_ARM64,
-    KonanTarget.WATCHOS_DEVICE_ARM64,
-    KonanTarget.WATCHOS_SIMULATOR_ARM64
-    -> "arm64"
+internal val KonanTarget.appleArchitecture: String
+    get() = when (this) {
+        KonanTarget.IOS_ARM64,
+        KonanTarget.IOS_SIMULATOR_ARM64,
+        KonanTarget.MACOS_ARM64,
+        KonanTarget.TVOS_ARM64,
+        KonanTarget.TVOS_SIMULATOR_ARM64,
+        KonanTarget.WATCHOS_DEVICE_ARM64,
+        KonanTarget.WATCHOS_SIMULATOR_ARM64,
+            -> "arm64"
 
-    KonanTarget.IOS_X64,
-    KonanTarget.MACOS_X64,
-    KonanTarget.TVOS_X64,
-    KonanTarget.WATCHOS_X64
-    -> "x86_64"
+        KonanTarget.IOS_X64,
+        KonanTarget.MACOS_X64,
+        KonanTarget.TVOS_X64,
+        KonanTarget.WATCHOS_X64,
+            -> "x86_64"
 
-    KonanTarget.WATCHOS_ARM32 -> "armv7k"
-    KonanTarget.WATCHOS_ARM64 -> "arm64_32"
+        KonanTarget.WATCHOS_ARM32 -> "armv7k"
+        KonanTarget.WATCHOS_ARM64 -> "arm64_32"
 
-    else -> throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
-}
+        else -> throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
+    }
 
-internal fun KonanTarget.applePlatform(): String {
-    val appleTarget = AppleTarget.values().first { it.targets.contains(this) }
-    return when (appleTarget) {
+internal val KotlinNativeTarget.appleTarget: AppleTarget
+    get() = konanTarget.appleTarget
+
+internal val KonanTarget.appleTarget: AppleTarget
+    get() = AppleTarget.values().singleOrNull { it.targets.contains(this) }
+        ?: throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
+
+internal val AppleTarget.applePlatform: String
+    get() = when (this) {
         AppleTarget.MACOS_DEVICE -> "macOS"
         AppleTarget.IPHONE_DEVICE -> "iOS"
         AppleTarget.IPHONE_SIMULATOR -> "iOS Simulator"
@@ -118,9 +133,27 @@ internal fun KonanTarget.applePlatform(): String {
         AppleTarget.TVOS_DEVICE -> "tvOS"
         AppleTarget.TVOS_SIMULATOR -> "tvOS Simulator"
     }
-}
 
-internal fun NativeBuildType.configuration(): String = when (this) {
-    NativeBuildType.RELEASE -> "Release"
-    NativeBuildType.DEBUG -> "Debug"
-}
+internal val AppleTarget.sdk: String
+    get() = when (this) {
+        AppleTarget.MACOS_DEVICE -> "macosx"
+        AppleTarget.IPHONE_DEVICE -> "iphoneos"
+        AppleTarget.IPHONE_SIMULATOR -> "iphonesimulator"
+        AppleTarget.WATCHOS_DEVICE -> "watchos"
+        AppleTarget.WATCHOS_SIMULATOR -> "watchsimulator"
+        AppleTarget.TVOS_DEVICE -> "appletvos"
+        AppleTarget.TVOS_SIMULATOR -> "appletvsimulator"
+    }
+
+internal val KonanTarget.applePlatform: String
+    get() = appleTarget.applePlatform
+
+
+internal val NativeBuildType.configuration: String
+    get() = when (this) {
+        NativeBuildType.RELEASE -> "Release"
+        NativeBuildType.DEBUG -> "Debug"
+    }
+
+internal val AppleTarget.genericPlatformDestination: String
+    get() = "generic/platform=${applePlatform}"

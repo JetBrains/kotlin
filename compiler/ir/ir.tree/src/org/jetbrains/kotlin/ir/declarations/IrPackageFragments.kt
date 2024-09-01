@@ -32,7 +32,7 @@ val IrExternalPackageFragment.containerSource: DeserializedContainerSource?
  * are not located in any IR module, but still have a module descriptor.
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrPackageFragment.moduleDescriptor
+val IrPackageFragment.moduleDescriptor: ModuleDescriptor
     get() = if (this is IrFileImpl && isInsideModule) {
         module.descriptor
     } else {

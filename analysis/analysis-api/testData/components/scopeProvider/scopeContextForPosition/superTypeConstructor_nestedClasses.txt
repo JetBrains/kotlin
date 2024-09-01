@@ -10,11 +10,12 @@ scopes:
   StaticMemberScope, index = 1
     packages: 0
     classifiers: 2
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Base.NestedFromClass
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -23,23 +24,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: CLASS
         modality: FINAL
         name: NestedFromClass
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: CLASS_MEMBER
         typeParameters: []
-        visibility: Public
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Base.InnerFromClass
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -48,18 +50,18 @@ scopes:
         isFun: false
         isInline: false
         isInner: true
+        location: CLASS
         modality: FINAL
         name: InnerFromClass
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: CLASS_MEMBER
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 
@@ -72,11 +74,12 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 3
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/BaseInterface
         classKind: INTERFACE
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -85,23 +88,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: ABSTRACT
         name: BaseInterface
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Base
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -110,23 +114,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: OPEN
         name: Base
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: test/BaseInterface
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Child
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -135,18 +140,18 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Child
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: test/Base
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
@@ -47,6 +48,7 @@ import java.io.File
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "",
     "kt",

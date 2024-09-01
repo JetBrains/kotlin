@@ -1,0 +1,16 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var x: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int| {
+        ^ Int(1)
+    }
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        this@R|/A|.F|/A.x| = R|<local>/value|
+        R|<local>/value|
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsReferredViaField=true] var x: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int| {
+        ^ Int(1)
+    }
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

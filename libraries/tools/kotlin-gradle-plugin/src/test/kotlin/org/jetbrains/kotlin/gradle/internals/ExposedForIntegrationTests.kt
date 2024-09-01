@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING
@@ -39,3 +40,5 @@ val KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE = KOTLIN_INTERNAL_DIAGNOSTICS_SH
 val KOTLIN_DIAGNOSTIC_STACKTRACE_START = DIAGNOSTIC_STACKTRACE_START
 val KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR = DIAGNOSTIC_STACKTRACE_END_SEPARATOR
 val KOTLIN_BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME = BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
+
+const val MINIMALLY_SUPPORTED_GRADLE_VERSION = GradleCompatibilityCheck.minSupportedGradleVersionString

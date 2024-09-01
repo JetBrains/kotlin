@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  s1: SealedClass
+KtNameReferenceExpression(199,201): 's1'
+  KtSimpleNameReference:
+    s1: SealedClass

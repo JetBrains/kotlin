@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 abstract class A {
     <!EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT!>abstract<!> val x : Int
         external get

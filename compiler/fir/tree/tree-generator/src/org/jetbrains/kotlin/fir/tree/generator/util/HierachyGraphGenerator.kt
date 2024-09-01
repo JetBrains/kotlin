@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.util
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.Model
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import java.io.File
 
 // It's used to generate a graph in dot format (it's useful for debugging)
 @Suppress("unused")
-fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
+fun printHierarchyGraph(model: Model) {
     fun ImplementationKind.toColor(): String = when (this) {
         ImplementationKind.Interface -> "green"
         else -> "red"
     }
 
-    val elements = builder.elements
+    val elements = model.elements
 
     data class Edge(val from: String, val to: String) {
         override fun toString(): String {

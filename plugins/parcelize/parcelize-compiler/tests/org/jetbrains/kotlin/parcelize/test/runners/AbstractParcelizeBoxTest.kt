@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -112,7 +112,7 @@ abstract class AbstractParcelizeFirBoxTestBase(val parser: FirParser) : Abstract
         get() = ::FirFrontendFacade
 
     override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrJvmResultsConverter
+        get() = ::Fir2IrResultsConverter
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
 

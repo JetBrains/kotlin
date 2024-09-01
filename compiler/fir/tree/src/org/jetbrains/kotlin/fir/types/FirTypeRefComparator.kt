@@ -62,7 +62,7 @@ object FirTypeRefComparator : Comparator<FirTypeRef> {
                 require(b is FirResolvedTypeRef) {
                     "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
                 }
-                return ConeKotlinTypeComparator.compare(a.type, b.type)
+                return ConeKotlinTypeComparator.compare(a.coneType, b.coneType)
             }
             else ->
                 error("Unsupported type reference comparison: ${a.render()} v.s. ${b.render()}")

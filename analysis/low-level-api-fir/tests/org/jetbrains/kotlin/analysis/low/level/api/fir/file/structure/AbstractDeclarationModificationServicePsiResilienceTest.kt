@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiModifiablePsiTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -29,7 +30,8 @@ abstract class AbstractDeclarationModificationServicePsiResilienceTest : Abstrac
         modifySelectedElement(selectedElement)
 
         // The test passes when `LLFirDeclarationModificationService` throws no exceptions.
-        LLFirDeclarationModificationService.getInstance(ktFile.project).elementModified(selectedElement)
+        LLFirDeclarationModificationService.getInstance(ktFile.project)
+            .elementModified(selectedElement, modificationType = KaElementModificationType.Unknown)
     }
 }
 

@@ -1,5 +1,7 @@
-KtSimpleNameReference:
-  (in Annotation) constructor(vararg strings: kotlin.String)
+KtNameReferenceExpression(131,141): 'Annotation'
+  KtSimpleNameReference:
+    (in Annotation) constructor(vararg strings: kotlin.String)
 
-KtDefaultAnnotationArgumentReference:
-  value: Annotation
+KtValueArgument(131,143): 'Annotation()'
+  KtDefaultAnnotationArgumentReference:
+    value: Annotation

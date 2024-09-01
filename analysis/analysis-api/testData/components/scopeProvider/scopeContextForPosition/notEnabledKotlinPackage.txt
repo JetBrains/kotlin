@@ -1,9 +1,9 @@
 element: param
 implicit receivers:
   type: KaClassErrorType:
-    annotationsList: []
+    annotations: []
     type: ERROR_TYPE
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0
@@ -17,25 +17,30 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
+        isActual: false
         isCrossinline: false
+        isExpect: false
         isExtension: false
         isImplicitLambdaParameter: false
         isNoinline: false
+        isVal: true
         isVararg: false
+        location: LOCAL
+        modality: FINAL
         name: param
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: LOCAL
-        typeParameters: []
+        visibility: PUBLIC
     constructors: 0
 
   TypeScope, index = 2

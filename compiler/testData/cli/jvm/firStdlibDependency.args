@@ -1,6 +1,4 @@
 $TESTDATA_DIR$/firStdlibDependency.kt
--language-version
-2.0
 -cp
 .
 -d

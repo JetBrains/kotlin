@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java.deserialization
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.buildFirConstant
 import org.jetbrains.kotlin.fir.deserialization.replaceName
@@ -19,10 +18,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 class FirJvmConstDeserializer(
-    session: FirSession,
     private val binaryClass: KotlinJvmBinaryClass,
     protocol: SerializerExtensionProtocol,
-) : FirConstDeserializer(session, protocol) {
+) : FirConstDeserializer(protocol) {
     override fun loadConstant(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
     ): FirExpression? {

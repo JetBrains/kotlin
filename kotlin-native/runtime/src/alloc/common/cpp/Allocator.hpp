@@ -10,6 +10,7 @@
 
 #include "GC.hpp"
 #include "Utils.hpp"
+#include "Memory.h"
 
 namespace kotlin::alloc {
 
@@ -50,6 +51,10 @@ public:
 
     // TODO: Move into AllocatorTestSupport.hpp
     void clearForTests() noexcept;
+
+    void TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept;
+
+    void TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept;
 
 private:
     std::unique_ptr<Impl> impl_;

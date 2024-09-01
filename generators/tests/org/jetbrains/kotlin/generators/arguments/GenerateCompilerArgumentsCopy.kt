@@ -20,7 +20,6 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     CompilerSettings::class,
     K2MetadataCompilerArguments::class,
     K2NativeCompilerArguments::class,
-    K2JSDceArguments::class,
     K2JSCompilerArguments::class,
     K2JVMCompilerArguments::class,
 )

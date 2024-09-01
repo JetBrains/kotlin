@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeAlias]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeAlias]
  */
 abstract class FirTypeAlias : FirClassLikeDeclaration(), FirTypeParametersOwner {
     abstract override val source: KtSourceElement?

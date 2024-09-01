@@ -127,12 +127,18 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworksStatic() {
+        // https://youtrack.jetbrains.com/issue/KT-67572
+        Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
+
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         testMultipleFrameworksImpl("multiple", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
     }
 
     @Test
     fun testMultipleFrameworksStaticFailsWithStaticCaches() {
+        // https://youtrack.jetbrains.com/issue/KT-67572
+        Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
+
         val defaultChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         val checks = if (testRunSettings.get<CacheMode>() != CacheMode.WithoutCache) {
             // KT-34261: two asserts in testIsolation4() fail with static caches.
@@ -156,7 +162,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 framework1Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
             ),
-            freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleNameFirst"),
+            freeCompilerArgs = TestCompilerArgs(
+                freeCompilerArgs + "-module-name" + moduleNameFirst + "-Xbinary=bundleId=$moduleNameFirst"
+            ),
             checks = checks,
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase1, testRunSettings).result.assertSuccess()
@@ -169,7 +177,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 framework2Dir.resolve("second.kt"),
                 framework2Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
-            ), freeCompilerArgs = TestCompilerArgs(freeCompilerArgs + "-Xbinary=bundleId=$moduleNameSecond")
+            ), freeCompilerArgs = TestCompilerArgs(
+                freeCompilerArgs + "-module-name" + moduleNameSecond + "-Xbinary=bundleId=$moduleNameSecond"
+            )
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase2, testRunSettings).result.assertSuccess()
 
@@ -351,6 +361,13 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testReflection() {
+        val testName = "reflection"
+        val testCase = generateObjCFramework(testName)
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false, true)
     }
@@ -434,7 +451,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile), TestModule.Given(noEnumEntries.klibFile)),
-            checks = TestRunChecks.Default(Duration.parse("5m")), // 1 minute is not enough running testsuite locally in parallel.
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5), // objcexport is a test suite on its own, increase the default timeout
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings, listOf(noEnumEntries)).result.assertSuccess()
 
@@ -495,7 +512,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
             extras,
             moduleName,
             listOf(testSuiteDir.resolve(name).resolve("$name.kt")),
-            TestCompilerArgs(testCompilerArgs + listOf("-Xbinary=bundleId=$name")),
+            TestCompilerArgs(
+                testCompilerArgs + listOf("-module-name", moduleName, "-Xbinary=bundleId=$name")
+            ),
             givenDependencies,
             checks = checks,
         )

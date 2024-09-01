@@ -16,6 +16,7 @@ abstract class SirExtension : SirMutableDeclarationContainer(), SirDeclaration {
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
+    abstract override val attributes: MutableList<SirAttribute>
     abstract override val declarations: MutableList<SirDeclaration>
     abstract val extendedType: SirType
 }

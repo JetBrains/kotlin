@@ -1,39 +1,39 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/InterfaceWithFun.noGenerics_InterfaceWithFun
   name: noGenerics_InterfaceWithFun
   origin: SOURCE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/ClassWithInterfaceWithFun.withOuterGeneric_InterfaceWithFun
   name: withOuterGeneric_InterfaceWithFun
   origin: SUBSTITUTION_OVERRIDE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/InterfaceWithFunBase.noGenerics_InterfaceWithFunBase
   name: noGenerics_InterfaceWithFunBase
   origin: SOURCE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/InterfaceWithFun.withOuterGenericT1_InterfaceWithFunBase
   name: withOuterGenericT1_InterfaceWithFunBase
   origin: SUBSTITUTION_OVERRIDE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/ClassWithInterfaceWithFun.withOuterGenericT2_InterfaceWithFunBase
   name: withOuterGenericT2_InterfaceWithFunBase
   origin: SUBSTITUTION_OVERRIDE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY

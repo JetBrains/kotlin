@@ -51,9 +51,10 @@ class FirRenderer(
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
+    override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
     private val lineBreakAfterContextReceivers: Boolean = true,
     private val renderFieldAnnotationSeparately: Boolean = true,
-    override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
+    private val renderVarargTypes: Boolean = false,
 ) : FirRendererComponents {
 
     override val visitor: Visitor = Visitor()
@@ -351,11 +352,7 @@ class FirRenderer(
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-            visitCallableDeclaration(enumEntry)
-            enumEntry.initializer?.let {
-                print(" = ")
-                it.accept(this)
-            }
+            visitVariable(enumEntry)
         }
 
         override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
@@ -396,14 +393,7 @@ class FirRenderer(
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
-            modifierRenderer?.renderModifiers(backingField)
-            print("<explicit backing field>: ")
-            backingField.returnTypeRef.accept(this)
-
-            backingField.initializer?.let {
-                print(" = ")
-                it.accept(this)
-            }
+            visitVariable(backingField)
         }
 
         override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
@@ -534,8 +524,8 @@ class FirRenderer(
 
             val meaningfulBounds = typeParameter.bounds.filter {
                 if (it !is FirResolvedTypeRef) return@filter true
-                if (!it.type.isNullable) return@filter true
-                val type = it.type as? ConeLookupTagBasedType ?: return@filter true
+                if (!it.coneType.isNullable) return@filter true
+                val type = it.coneType as? ConeLookupTagBasedType ?: return@filter true
                 (type.lookupTag as? ConeClassLikeLookupTag)?.classId != StandardClassIds.Any
             }
 
@@ -754,6 +744,17 @@ class FirRenderer(
         override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
             print("vararg(")
             renderSeparated(varargArgumentsExpression.arguments, visitor)
+
+            if (renderVarargTypes) {
+                if (varargArgumentsExpression.arguments.isNotEmpty()) {
+                    print("; ")
+                }
+                print("type = ")
+                typeRenderer.render(varargArgumentsExpression.resolvedType)
+                print(", elementType = ")
+                typeRenderer.render(varargArgumentsExpression.coneElementTypeOrNull!!)
+            }
+
             print(")")
         }
 
@@ -889,7 +890,7 @@ class FirRenderer(
         @OptIn(AllowedToUsedOnlyInK1::class)
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
             typeRenderer.renderAsPossibleFunctionType(
-                resolvedTypeRef.type,
+                resolvedTypeRef.coneType,
                 l@{
                     val classId = it.classId ?: return@l null
                     FunctionTypeKindExtractor.Default.getFunctionalClassKind(classId.packageFqName, classId.shortClassName.asString())
@@ -1174,10 +1175,10 @@ class FirRenderer(
             visitResolvedQualifier(errorResolvedQualifier)
         }
 
-        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-            binaryLogicExpression.leftOperand.accept(this)
-            print(" ${binaryLogicExpression.kind.token} ")
-            binaryLogicExpression.rightOperand.accept(this)
+        override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+            booleanOperatorExpression.leftOperand.accept(this)
+            print(" ${booleanOperatorExpression.kind.token} ")
+            booleanOperatorExpression.rightOperand.accept(this)
         }
 
         override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {

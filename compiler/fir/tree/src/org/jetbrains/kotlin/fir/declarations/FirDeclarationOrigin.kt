@@ -19,10 +19,13 @@ sealed class FirDeclarationOrigin(
     object Library : FirDeclarationOrigin()
     object Precompiled : FirDeclarationOrigin() // currently used for incremental compilation
     object BuiltIns : FirDeclarationOrigin()
+    object BuiltInsFallback : FirDeclarationOrigin()
     sealed class Java(displayName: String, fromSource: Boolean = false) : FirDeclarationOrigin(displayName, fromSource = fromSource) {
         object Source : Java("Java(Source)", fromSource = true)
         object Library : Java("Java(Library)")
     }
+
+    val isBuiltIns: Boolean get() = this == BuiltIns || this == BuiltInsFallback
 
     sealed class Synthetic(generatedAnyMethod: Boolean = false) : FirDeclarationOrigin(generatedAnyMethod = generatedAnyMethod) {
         object DataClassMember : Synthetic(generatedAnyMethod = true)
@@ -38,6 +41,7 @@ sealed class FirDeclarationOrigin(
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
     }
+
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
@@ -57,6 +61,7 @@ sealed class FirDeclarationOrigin(
         object Parameter : ScriptCustomization(FirScriptCustomizationKind.PARAMETER)
         object ParameterFromBaseClass : ScriptCustomization(FirScriptCustomizationKind.PARAMETER_FROM_BASE_CLASS)
     }
+
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 
     override fun toString(): String {

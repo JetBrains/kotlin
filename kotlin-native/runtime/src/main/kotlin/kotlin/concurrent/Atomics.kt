@@ -143,7 +143,8 @@ public class AtomicLong(@Volatile public var value: Long)  {
  * An object reference that is always updated atomically.
  */
 @SinceKotlin("1.9")
-public class AtomicReference<T>(public @Volatile var value: T) {
+@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
+public actual class AtomicReference<T> actual constructor(public @Volatile actual var value: T) {
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -158,7 +159,7 @@ public class AtomicReference<T>(public @Volatile var value: T) {
      *
      * Comparison of values is done by reference.
      */
-    public fun compareAndSet(expected: T, newValue: T): Boolean = this::value.compareAndSetField(expected, newValue)
+    public actual fun compareAndSet(expected: T, newValue: T): Boolean = this::value.compareAndSetField(expected, newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
@@ -168,7 +169,7 @@ public class AtomicReference<T>(public @Volatile var value: T) {
      *
      * Comparison of values is done by reference.
      */
-    public fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
+    public actual fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Returns the string representation of the current [value].

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in one.two.BaseClass) val bar: kotlin.Int
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(96,99): 'bar'
+  KtSimpleNameReference:
+    (in one.two.BaseClass) val bar: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

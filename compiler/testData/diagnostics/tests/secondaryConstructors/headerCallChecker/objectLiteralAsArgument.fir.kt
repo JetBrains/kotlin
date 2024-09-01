@@ -6,7 +6,7 @@ class A {
     fun foo() = 1
     constructor(x: Any?)
     constructor() : this(object {
-        fun bar() = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo<!>() <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.foo() +
+        fun bar() = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo<!>() + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.foo() +
                     <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>() + super<!UNRESOLVED_LABEL!>@A<!>.hashCode()
     })
 }

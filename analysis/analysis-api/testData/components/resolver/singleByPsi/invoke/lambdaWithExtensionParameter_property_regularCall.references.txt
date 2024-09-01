@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.Foo) val action: () -> kotlin.Unit
+KtNameReferenceExpression(91,97): 'action'
+  KtSimpleNameReference:
+    (in test.Foo) val action: () -> kotlin.Unit

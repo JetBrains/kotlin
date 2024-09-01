@@ -7,6 +7,9 @@
 
 void errorHandler(const char* str) {
   printf("Error handler: %s\n", str);
+
+  // Make sure all printf output is flushed. The caller is going to call exit(0).
+  fflush(NULL);
 }
 
 void testVector128() {

@@ -107,9 +107,9 @@ class StdlibAlignmentIT : KGPBaseTest() {
             build("dependencies", "--configuration", "compileClasspath") {
                 assertOutputContains(
                     """
-                    |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
-                    |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${constrainedAlignmentVersion}
+                    |+--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
+                    ||    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
+                    ||         +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> $constrainedAlignmentVersion
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -232,7 +232,6 @@ class StdlibAlignmentIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("KT-54703: JPMS projects with dependency on kotlin.stdlib.jdk8 work as expected")
     @JdkVersions(versions = [JavaVersion.VERSION_11])
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleWithJdkTest
     fun alignmentWorksCorrectlyForJPMS(
         gradleVersion: GradleVersion,

@@ -28,7 +28,10 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
         testDataPath: String
     ) {
         val declarationNames = DescriptorUtils.getAllDescriptors(moduleDescriptor.getPackage(packageFqName).memberScope)
-            .mapTo(sortedSetOf()) { it.name }
+            .mapNotNullTo(sortedSetOf()) { declarations ->
+                // When using FastJarFS we might have redundant empty-named subpackages in K1 (see KT-69867)
+                declarations.name.takeIf { it.identifier.isNotEmpty() }
+            }
 
         val provider = session.symbolProvider
 

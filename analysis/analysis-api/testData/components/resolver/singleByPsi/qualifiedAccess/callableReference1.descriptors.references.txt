@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in foo.bar.baz) class AA
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(69,71): 'AA'
+  KtSimpleNameReference:
+    (in foo.bar.baz) class AA
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

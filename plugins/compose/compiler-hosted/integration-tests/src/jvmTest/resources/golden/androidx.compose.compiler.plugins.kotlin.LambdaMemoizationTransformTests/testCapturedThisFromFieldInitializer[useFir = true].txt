@@ -20,7 +20,7 @@ class A {
   val b: String = ""
   val c: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
-    if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

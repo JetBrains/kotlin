@@ -5,26 +5,20 @@
 
 #include "CustomAllocator.hpp"
 
-#include <atomic>
 #include <cstdint>
-#include <cstdlib>
 #include <cinttypes>
 #include <cstring>
 #include <new>
 
-#include "CustomAllocConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
-#include "GC.hpp"
-#include "GCScheduler.hpp"
 #include "KAssert.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
-#include "TypeInfo.h"
 
 namespace kotlin::alloc {
 
@@ -39,9 +33,10 @@ CustomAllocator::~CustomAllocator() {
 
 ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    auto descriptor = HeapObject::make_descriptor(typeInfo);
-    auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
-    ObjHeader* object = heapObject.header(descriptor).object();
+    auto descriptor = CustomHeapObject::descriptorFrom(typeInfo);
+    auto size = AllocationSize::bytesAtLeast(descriptor.size());
+    auto& heapObject = *descriptor.construct(Allocate(size));
+    ObjHeader* object = heapObject.object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
         auto* extraObject = CreateExtraObject();
         object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(new (extraObject) mm::ExtraObjectData(object, typeInfo));
@@ -56,9 +51,10 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
 ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-    auto descriptor = HeapArray::make_descriptor(typeInfo, count);
-    auto& heapArray = *descriptor.construct(Allocate(descriptor.size()));
-    ArrayHeader* array = heapArray.header(descriptor).array();
+    auto descriptor = CustomHeapArray::descriptorFrom(typeInfo, count);
+    auto size = AllocationSize::bytesAtLeast(descriptor.size());
+    auto& heapArray = *descriptor.construct(Allocate(size));
+    ArrayHeader* array = heapArray.array();
     array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     array->count_ = count;
     return array;
@@ -105,22 +101,16 @@ void CustomAllocator::PrepareForGC() noexcept {
 
 // static
 size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-    RuntimeAssert(object->heap(), "Object must be a heap object");
-    const auto* typeInfo = object->type_info();
-    if (typeInfo->IsArray()) {
-        return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
-    } else {
-        return HeapObject::make_descriptor(typeInfo).size();
-    }
+    return CustomHeapObject::from(object).size();
 }
 
-uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
-    RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
-    CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
-    uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
-    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
+    RuntimeAssert(size > AllocationSize::cells(0), "CustomAllocator::Allocate cannot allocate 0 bytes");
+    CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size.inBytes());
+    uint64_t cellCount = size.inCells();
+    if (cellCount <= FixedBlockPage::MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);
-    } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
+    } else if (cellCount > NextFitPage::maxBlockSize()) {
         return AllocateInSingleObjectPage(cellCount);
     } else {
         return AllocateInNextFitPage(cellCount);
@@ -129,7 +119,7 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
 
 uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
-    uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->TryAllocate();
+    uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->Allocate();
     return block;
 }
 

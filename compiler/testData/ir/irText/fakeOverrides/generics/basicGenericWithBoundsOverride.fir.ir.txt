@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.F
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar <U> (): U of <root>.F.bar declared in <root>.F'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=U of <root>.F.bar origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={U of <root>.F.bar & Any} origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN <U> ($this:<root>.F, a:U of <root>.F.foo) returnType:kotlin.Unit

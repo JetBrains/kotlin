@@ -109,7 +109,7 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     val packageFragmentProvider = (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
 
     fun getSubPackages(fqName: FqName) {
-        result.add(fqName)
+        if (!result.add(fqName)) return
         val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
             ?: module.getSubPackagesOf(fqName) { true }
         subPackages.forEach { getSubPackages(it) }

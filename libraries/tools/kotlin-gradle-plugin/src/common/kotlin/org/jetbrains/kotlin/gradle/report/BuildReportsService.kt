@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.metrics.ValueType
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportData
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.internal.report.BuildScanApi
 import org.jetbrains.kotlin.gradle.plugin.statistics.GradleFileReportService
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
@@ -22,8 +23,6 @@ import java.io.File
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
@@ -35,8 +34,9 @@ class BuildReportsService {
     private val loggerAdapter = GradleLoggerAdapter(log)
 
     private val startTime = System.nanoTime()
-    private val buildUuid = UUID.randomUUID().toString()
-    private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
+    internal val buildUuid = UUID.randomUUID().toString()
+
+    private val httpReportService = HttpReportService()
 
     private val tags = LinkedHashSet<StatTag>()
     private var customValues = 0 // doesn't need to be thread-safe
@@ -58,8 +58,10 @@ class BuildReportsService {
 
         val reportingSettings = parameters.reportingSettings
 
-        reportingSettings.httpReportSettings?.also {
-            executorService.submit { reportBuildFinish(parameters) }
+        parameters.httpReportParameters?.also {
+            httpReportService.sendData(it, loggerAdapter) {
+                reportBuildFinish(parameters)
+            }
         }
         reportingSettings.fileReportSettings?.also {
             GradleFileReportService(
@@ -89,7 +91,9 @@ class BuildReportsService {
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project
-        executorService.shutdown()
+        parameters.httpReportParameters?.also {
+            httpReportService.close(it, loggerAdapter)
+        }
     }
 
     private fun transformOperationRecordsToCompileStatisticsData(
@@ -121,8 +125,9 @@ class BuildReportsService {
         addHttpReport(event, buildOperation, parameters)
     }
 
-    private fun reportBuildFinish(parameters: BuildReportParameters) {
-        val httpReportSettings = parameters.reportingSettings.httpReportSettings ?: return
+    private fun reportBuildFinish(parameters: BuildReportParameters): BuildFinishStatisticsData? {
+        val httpReportSettings = parameters.reportingSettings.httpReportSettings
+            ?: return log.debug("Unable to send build finish event, httpReportSettings is null ").let { null }
 
         val branchName = if (httpReportSettings.includeGitBranchName) {
             val process = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD")
@@ -133,7 +138,7 @@ class BuildReportsService {
             process.inputStream.reader().readText()
         } else "is not set"
 
-        val buildFinishData = BuildFinishStatisticsData(
+        return BuildFinishStatisticsData(
             projectName = parameters.projectName,
             startParameters = parameters.startParameters
                 .includeVerboseEnvironment(parameters.reportingSettings.httpReportSettings.verboseEnvironment),
@@ -145,8 +150,6 @@ class BuildReportsService {
             tags = tags,
             gitBranch = branchName
         )
-
-        parameters.httpService?.sendData(buildFinishData, loggerAdapter)
     }
 
     private fun BuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): BuildStartParameters {
@@ -168,8 +171,8 @@ class BuildReportsService {
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
     ) {
-        parameters.httpService?.also { httpService ->
-            val data =
+        parameters.httpReportParameters?.also { httpService ->
+            httpReportService.sendData(httpService, loggerAdapter) {
                 prepareData(
                     event,
                     parameters.projectName,
@@ -180,11 +183,8 @@ class BuildReportsService {
                     onlyKotlinTask = true,
                     parameters.additionalTags
                 )
-            data?.also {
-                executorService.submit {
-                    httpService.sendData(data, loggerAdapter)
-                }
             }
+
         }
 
     }
@@ -193,7 +193,7 @@ class BuildReportsService {
         event: TaskFinishEvent,
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -209,14 +209,14 @@ class BuildReportsService {
         log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
         compileStatData?.also {
-            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScanExtension)
+            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScan)
         }
     }
 
     internal fun addBuildScanReport(
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
-        buildScanExtension: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -231,11 +231,11 @@ class BuildReportsService {
         log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
         compileStatData.forEach {
-            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScanExtension)
+            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScan)
         }
     }
 
-    private fun addBuildScanReport(data: GradleCompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
+    private fun addBuildScanReport(data: GradleCompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanApi) {
         val elapsedTime = measureTimeMillis {
             tags.addAll(data.getTags())
             if (customValues < customValuesLimit) {
@@ -258,11 +258,11 @@ class BuildReportsService {
     }
 
     private fun addBuildScanValue(
-        buildScan: BuildScanExtensionHolder,
+        buildScan: BuildScanApi,
         data: GradleCompileStatisticsData,
         customValue: String,
     ) {
-        buildScan.buildScan.value(data.getTaskName(), customValue)
+        buildScan.value(data.getTaskName(), customValue)
         customValues++
     }
 
@@ -347,14 +347,14 @@ class BuildReportsService {
         return splattedString
     }
 
-    internal fun initBuildScanTags(buildScan: BuildScanExtensionHolder, label: String?) {
-        buildScan.buildScan.tag(buildUuid)
+    internal fun initBuildScanTags(buildScan: BuildScanApi, label: String?) {
+        buildScan.tag(buildUuid)
         label?.also {
-            buildScan.buildScan.tag(it)
+            buildScan.tag(it)
         }
     }
 
-    internal fun addCollectedTags(buildScan: BuildScanExtensionHolder) {
+    internal fun addCollectedTags(buildScan: BuildScanApi) {
         replaceWithCombinedTag(
             StatTag.KOTLIN_1,
             StatTag.KOTLIN_2,
@@ -367,7 +367,7 @@ class BuildReportsService {
             StatTag.INCREMENTAL_AND_NON_INCREMENTAL
         )
 
-        tags.forEach { buildScan.buildScan.tag(it.readableString) }
+        tags.forEach { buildScan.tag(it.readableString) }
     }
 
     private fun replaceWithCombinedTag(firstTag: StatTag, secondTag: StatTag, combinedTag: StatTag) {
@@ -418,7 +418,7 @@ enum class TaskExecutionState {
 data class BuildReportParameters(
     val startParameters: BuildStartParameters,
     val reportingSettings: ReportingSettings,
-    val httpService: HttpReportService?,
+    val httpReportParameters: HttpReportParameters?,
 
     val projectDir: File,
     val label: String?,

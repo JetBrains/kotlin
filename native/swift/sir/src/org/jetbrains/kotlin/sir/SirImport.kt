@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.sir
 
-class SirImport(val moduleName: String) {
+class SirImport(
+    val moduleName: String,
+    val mode: Mode? = null,
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -17,5 +20,9 @@ class SirImport(val moduleName: String) {
 
     override fun hashCode(): Int {
         return moduleName.hashCode()
+    }
+
+    enum class Mode {
+        Exported, ImplementationOnly,
     }
 }

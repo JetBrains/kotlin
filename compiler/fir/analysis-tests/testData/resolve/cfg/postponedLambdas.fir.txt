@@ -2,7 +2,7 @@ FILE: postponedLambdas.kt
     public final inline fun foo(vararg x: R|kotlin/Array<out kotlin/Any>|): R|kotlin/Unit| {
     }
     public final fun test(a: R|kotlin/Any|, b: R|kotlin/Any|, c: R|kotlin/Any|): R|kotlin/Unit| {
-        R|/foo|(vararg(R|<local>/a|, foo@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+        R|/foo|(vararg(R|<local>/a|, foo@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String()
         }
         , R|<local>/b|))

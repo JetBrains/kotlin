@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,12 +13,13 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
@@ -31,29 +32,28 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
+import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
+import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.stubs.MemberData
+import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
 import org.jetbrains.kotlin.kapt3.stubs.extractComment
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
-import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.kapt3.base.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 internal fun generateStubs(
-    module: KtSourceModule,
+    module: KaSourceModule,
     files: List<PsiFile>,
     options: KaptOptions,
     logger: KaptLogger,
@@ -88,7 +88,7 @@ private class StubGenerator(
     private val metadataRenderer: (Printer.(Metadata) -> Unit)? = null,
     private val metadataVersion: IntArray,
     private val jvmDefaultMode: JvmDefaultMode,
-    private val analysisSession: KtAnalysisSession
+    private val analysisSession: KaSession
 ) {
     private val strictMode = options[KaptFlag.STRICT]
     private val stripMetadata = options[KaptFlag.STRIP_METADATA]
@@ -187,9 +187,9 @@ private class StubGenerator(
                     ?.references
                     ?.firstOrNull() as? KtReference
                 val importedSymbols = with(analysisSession) { importedReference?.resolveToSymbols().orEmpty() }
-                val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KtClassOrObjectSymbol }
-                val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KtCallableSymbol }
-                val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KtEnumEntrySymbol }
+                val isAllUnderClassifierImport = importDirective.isAllUnder && importedSymbols.any { it is KaClassSymbol }
+                val isCallableImport = !importDirective.isAllUnder && importedSymbols.any { it is KaCallableSymbol }
+                val isEnumEntryImport = !importDirective.isAllUnder && importedSymbols.any { it is KaEnumEntrySymbol }
 
                 if (isAllUnderClassifierImport || isCallableImport || isEnumEntryImport) continue
 
@@ -632,9 +632,10 @@ private class StubGenerator(
                 printWithNoIndent(name, " = ", value)
             }
 
+            @OptIn(KaNonPublicApi::class)
             private fun calculateMetadata(lightClass: PsiClass): Metadata? =
                 if (stripMetadata) null
-                else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && (psiClass as? SymbolLightClassForNamedClassLike)?.containingClass?.isInterface == true) {
+                else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && psiClass.containingClass?.isInterface == true) {
                     Metadata(
                         kind = KotlinClassHeader.Kind.SYNTHETIC_CLASS.id,
                         metadataVersion = metadataVersion,
@@ -647,7 +648,7 @@ private class StubGenerator(
                                 lightClass.qualifiedName?.let { createMultifileClassMetadata(lightClass, it) }
                             else
                                 lightClass.files.singleOrNull()?.calculateMetadata(elementMapping(lightClass))
-                        is SymbolLightClassForNamedClassLike ->
+                        is KtLightClass ->
                             lightClass.kotlinOrigin?.calculateMetadata(elementMapping(lightClass))
                         else -> null
                     }

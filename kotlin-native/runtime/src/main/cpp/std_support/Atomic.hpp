@@ -6,10 +6,24 @@
 #pragma once
 
 #include <atomic>
+#include <type_traits>
 
 #include "Common.h"
+#include "ManuallyScoped.hpp"
 
 namespace kotlin::std_support {
+
+namespace internal {
+
+// TODO current implementation supports only pointer or integral T
+template <typename T>
+inline constexpr bool supports_atomic_ref_v =
+#ifdef KONAN_NO_64BIT_ATOMIC
+    sizeof(T) <= 4 &&
+#endif
+    (std::is_pointer_v<T> || std::is_integral_v<T>);
+
+}
 
 #pragma clang diagnostic push
 // On 32-bit android arm clang warns of significant performance penalty because of large atomic operations.
@@ -19,10 +33,7 @@ namespace kotlin::std_support {
 
 template<typename T>
 class atomic_ref {
-#ifdef KONAN_NO_64BIT_ATOMIC
-    static_assert(sizeof(T) <= 4);
-#endif
-    // TODO current implementation supports only pointer or integral T
+    static_assert(internal::supports_atomic_ref_v<T>, "T does not support atomic_ref");
 public:
     explicit atomic_ref(T& ref) : ref_(ref) {}
     atomic_ref(const atomic_ref& other) noexcept : ref_(other.ref_) {}
@@ -42,11 +53,13 @@ public:
     static constexpr bool is_always_lock_free = __atomic_always_lock_free(sizeof(T), nullptr);
 
     ALWAYS_INLINE void store(T desired, std::memory_order order = std::memory_order_seq_cst) const noexcept {
-        __atomic_store_n(&ref_, desired, builtinOrder(order));
+        __atomic_store(&ref_, &desired, builtinOrder(order));
     }
 
     ALWAYS_INLINE T load(std::memory_order order = std::memory_order_seq_cst) const noexcept {
-        return __atomic_load_n(&ref_, builtinOrder(order));
+        kotlin::ManuallyScoped<std::remove_const_t<T>> ret; // the intrinsic below strips const.
+        __atomic_load(&ref_, &*ret, builtinOrder(order));
+        return *ret;
     }
 
     ALWAYS_INLINE operator T() const noexcept {
@@ -54,17 +67,17 @@ public:
     }
 
     ALWAYS_INLINE T exchange(T desired, std::memory_order order = std::memory_order_seq_cst) const noexcept {
-        static_assert(std::has_unique_object_representations_v<T>); // TODO support types with padding if needed
-        return __atomic_exchange_n(&ref_, desired, builtinOrder(order));
+        kotlin::ManuallyScoped<std::remove_const_t<T>> ret; // the intrinsic below strips const.
+        __atomic_exchange(&ref_, &desired, &*ret, builtinOrder(order));
+        return *ret;
     }
 
     ALWAYS_INLINE bool compare_exchange_weak(T& expected, T desired,
                                std::memory_order success,
                                std::memory_order failure) const noexcept {
-        static_assert(std::has_unique_object_representations_v<T>); // TODO support types with padding if needed
-        return __atomic_compare_exchange_n(&ref_,
+        return __atomic_compare_exchange(&ref_,
                                            &expected,
-                                           desired,
+                                           &desired,
                                            true,
                                            builtinOrder(success),
                                            builtinOrder(failure));
@@ -79,10 +92,9 @@ public:
     ALWAYS_INLINE bool compare_exchange_strong(T& expected, T desired,
                                  std::memory_order success,
                                  std::memory_order failure) const noexcept {
-        static_assert(std::has_unique_object_representations_v<T>); // TODO support types with padding if needed
-        return __atomic_compare_exchange_n(&ref_,
+        return __atomic_compare_exchange(&ref_,
                                            &expected,
-                                           desired,
+                                           &desired,
                                            false,
                                            builtinOrder(success),
                                            builtinOrder(failure));

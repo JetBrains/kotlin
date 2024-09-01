@@ -15,7 +15,8 @@ import kotlin.native.internal.GCUnsafeCall
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 @PublishedApi
-internal inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
     require(size >= 0) { "capacity must be non-negative." }
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
@@ -29,7 +30,7 @@ internal inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
  * Attempts to read _uninitialized_ value work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <E> Array<E>.resetAt(index: Int) {
+internal actual fun <E> Array<E>.resetAt(index: Int) {
     (@Suppress("UNCHECKED_CAST")(this as Array<Any?>))[index] = null
 }
 
@@ -78,7 +79,7 @@ internal fun checkRangeIndexes(fromIndex: Int, toIndex: Int, size: Int) {
  * Attempts to read _uninitialized_ values work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
+internal actual fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     arrayFill(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex, toIndex, null)
 }
 

@@ -131,6 +131,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
   }
 
   @Test
+  @TestMetadata("unusedTypeAliasAsTypeArgument.kt")
+  public void testUnusedTypeAliasAsTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAliasAsTypeArgument.kt");
+  }
+
+  @Test
   @TestMetadata("unusedTypeAsVarargType.kt")
   public void testUnusedTypeAsVarargType() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAsVarargType.kt");
@@ -266,6 +272,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
   @TestMetadata("usedStaticFunctionImportFromJavaChildClass.kt")
   public void testUsedStaticFunctionImportFromJavaChildClass() {
     runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedStaticFunctionImportFromJavaChildClass.kt");
+  }
+
+  @Test
+  @TestMetadata("usedTypeAliasAsTypeArgument.kt")
+  public void testUsedTypeAliasAsTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAliasAsTypeArgument.kt");
   }
 
   @Test

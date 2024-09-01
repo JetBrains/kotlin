@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * If no element is passed to a `vararg` parameter, no [FirVarargArgumentsExpression] is created regardless of whether the
  * parameter has a default value.
  *
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.varargArgumentsExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.varargArgumentsExpression]
  */
 abstract class FirVarargArgumentsExpression : FirExpression() {
     abstract override val source: KtSourceElement?

@@ -49,10 +49,8 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.moduleName = from.moduleName
     to.noCallAssertions = from.noCallAssertions
     to.noJdk = from.noJdk
-    to.noKotlinNothingValueException = from.noKotlinNothingValueException
     to.noNewJavaAnnotationTargets = from.noNewJavaAnnotationTargets
     to.noOptimize = from.noOptimize
-    to.noOptimizedCallableReferences = from.noOptimizedCallableReferences
     to.noParamAssertions = from.noParamAssertions
     to.noReceiverAssertions = from.noReceiverAssertions
     to.noReflect = from.noReflect
@@ -77,7 +75,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
     to.useJavac = from.useJavac
-    to.useKapt4 = from.useKapt4
+    to.useK2Kapt = from.useK2Kapt
     to.useOldBackend = from.useOldBackend
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme

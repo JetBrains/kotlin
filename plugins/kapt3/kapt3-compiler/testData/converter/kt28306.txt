@@ -6,11 +6,13 @@ package foo;
  *   // signature: foo()V
  *   public open fun foo(): kotlin/Unit
  *
+ *   // nested class: Nested
+ *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
+public abstract interface InterfaceWithDefaults<T extends java.lang.Object> extends Error1, Error2 {
 
     public abstract void foo();
 
@@ -20,12 +22,34 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public DefaultImpls() {
-            super();
-        }
-
         public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
         foo.InterfaceWithDefaults<T> $this) {
+        }
+    }
+
+    /**
+     * public abstract interface foo/InterfaceWithDefaults.Nested<T#1 (* S *)> : kotlin/Any {
+     *
+     *   // signature: bar()V
+     *   public open fun bar(): kotlin/Unit
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static abstract interface Nested<S extends java.lang.Object> extends Error1, Error2 {
+
+        public abstract void bar();
+
+        /**
+         * synthetic class
+         */
+        @kotlin.Metadata()
+        public static final class DefaultImpls {
+
+            public static <S extends java.lang.Object>void bar(@org.jetbrains.annotations.NotNull()
+            foo.InterfaceWithDefaults.Nested<S> $this) {
+            }
         }
     }
 }
@@ -48,10 +72,6 @@ public abstract interface SubInterface<T extends java.lang.Object> extends foo.I
      */
     @kotlin.Metadata()
     public static final class DefaultImpls {
-
-        public DefaultImpls() {
-            super();
-        }
 
         public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
         foo.SubInterface<T> $this) {

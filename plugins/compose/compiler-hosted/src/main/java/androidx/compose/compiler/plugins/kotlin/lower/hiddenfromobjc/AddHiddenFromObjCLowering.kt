@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructors
@@ -39,6 +40,8 @@ import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.konan.isNative
+
+val hiddenFromObjCClassId = ClassId.fromString("kotlin/native/HiddenFromObjC")
 
 /**
  *  AddHiddenFromObjCLowering looks for functions and properties with @Composable types and
@@ -61,7 +64,7 @@ class AddHiddenFromObjCLowering(
 ) {
 
     private val hiddenFromObjCAnnotation: IrClassSymbol by lazy {
-        getTopLevelClass(ClassId.fromString("kotlin/native/HiddenFromObjC"))
+        getTopLevelClass(hiddenFromObjCClassId)
     }
 
     private var currentShouldAnnotateClass = false

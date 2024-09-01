@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ### INVALID
 
 // FILE: invalid_noargs.kt

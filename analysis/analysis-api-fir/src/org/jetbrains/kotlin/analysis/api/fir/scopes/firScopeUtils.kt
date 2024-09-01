@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ internal fun FirScope.getCallableSymbols(
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol))
+                add(builder.functionBuilder.buildNamedFunctionSymbol(firSymbol))
             }
         }
         yieldList {
@@ -40,12 +40,12 @@ internal fun FirScope.getCallableSignatures(
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionLikeBuilder.buildFunctionLikeSignature(firSymbol))
+                add(builder.functionBuilder.buildFunctionSignature(firSymbol))
             }
         }
         yieldList {
             processPropertiesByName(name) { firSymbol ->
-                add(builder.variableLikeBuilder.buildVariableLikeSignature(firSymbol))
+                add(builder.variableBuilder.buildVariableLikeSignature(firSymbol))
             }
         }
     }
@@ -66,7 +66,7 @@ internal fun FirScope.getConstructors(builder: KaSymbolByFirBuilder): Sequence<K
     sequence {
         yieldList {
             processDeclaredConstructors { firSymbol ->
-                add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol))
+                add(builder.functionBuilder.buildConstructorSymbol(firSymbol))
             }
         }
     }

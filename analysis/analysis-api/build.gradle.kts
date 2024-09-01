@@ -19,10 +19,9 @@ dependencies {
     compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
-    api(project(":analysis:project-structure"))
 
     api(intellijCore())
-    api(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    api(libs.intellij.asm)
     api(libs.guava)
 }
 

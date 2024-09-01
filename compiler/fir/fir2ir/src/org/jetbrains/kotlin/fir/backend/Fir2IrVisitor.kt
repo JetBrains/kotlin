@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_RECEIVER_NAME_PREFIX
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -32,9 +35,9 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -46,6 +49,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -127,6 +131,8 @@ class Fir2IrVisitor(
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val irEnumEntry = classifierStorage.getIrEnumEntrySymbol(enumEntry).owner
         annotationGenerator.generate(irEnumEntry, enumEntry)
+        if (configuration.skipBodies) return irEnumEntry
+
         val correspondingClass = irEnumEntry.correspondingClass
         val initializer = enumEntry.initializer
         val irType = enumEntry.returnTypeRef.toIrType(c)
@@ -144,7 +150,7 @@ class Fir2IrVisitor(
                 // `correspondingClass` definitely is not a lazy class
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
                 val constructor = correspondingClass.constructors.first()
-                irEnumEntry.initializerExpression = irFactory.createExpressionBody(
+                irEnumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
                     IrEnumConstructorCallImpl(
                         startOffset, endOffset, irType,
                         constructor.symbol,
@@ -160,7 +166,7 @@ class Fir2IrVisitor(
             val delegatedConstructor = initializer.anonymousObject.primaryConstructorIfAny(session)?.fir?.delegatedConstructor
             if (delegatedConstructor != null) {
                 with(memberGenerator) {
-                    irEnumEntry.initializerExpression = irFactory.createExpressionBody(
+                    irEnumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
                         delegatedConstructor.toIrDelegatingConstructorCall()
                     )
                 }
@@ -172,7 +178,7 @@ class Fir2IrVisitor(
             val constructor = irParentEnumClass.defaultConstructor
                 ?: error("Assuming that default constructor should exist and be converted at this point")
             enumEntry.convertWithOffsets { startOffset, endOffset ->
-                irEnumEntry.initializerExpression = irFactory.createExpressionBody(
+                irEnumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
                     IrEnumConstructorCallImpl(
                         startOffset, endOffset, irType, constructor.symbol,
                         valueArgumentsCount = constructor.valueParameters.size,
@@ -231,13 +237,16 @@ class Fir2IrVisitor(
                 val origin = if (isSelf) IrDeclarationOrigin.INSTANCE_RECEIVER else IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
                 val irReceiver =
                     receiver.convertWithOffsets { startOffset, endOffset ->
-                        irFactory.createValueParameter(
+                        IrFactoryImpl.createValueParameter(
                             startOffset, endOffset, origin, name, receiver.typeRef.toIrType(c), isAssignable = false,
                             IrValueParameterSymbolImpl(),
-                            if (isSelf) UNDEFINED_PARAMETER_INDEX else index,
                             varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false
                         ).also {
                             it.parent = irScript
+                            if (!isSelf) {
+                                @OptIn(DelicateIrParameterIndexSetter::class)
+                                it.index = index
+                            }
                         }
                     }
                 if (isSelf) {
@@ -329,8 +338,12 @@ class Fir2IrVisitor(
 
         declarationStorage.enterScope(irFunction.symbol)
         conversionScope.withParent(irFunction) {
-            val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
-            irFunction.body = irFactory.createExpressionBody(irBlock)
+            irFunction.body = if (configuration.skipBodies) {
+                IrFactoryImpl.createExpressionBody(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType))
+            } else {
+                val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
+                IrFactoryImpl.createExpressionBody(irBlock)
+            }
         }
         declarationStorage.leaveScope(irFunction.symbol)
 
@@ -390,7 +403,9 @@ class Fir2IrVisitor(
         val irAnonymousInitializer = declarationStorage.getIrAnonymousInitializer(anonymousInitializer)
         declarationStorage.enterScope(irAnonymousInitializer.symbol)
         conversionScope.withInitBlock(irAnonymousInitializer) {
-            irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
+            irAnonymousInitializer.body =
+                if (configuration.skipBodies) IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                else convertToIrBlockBody(anonymousInitializer.body!!)
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
         return irAnonymousInitializer
@@ -540,7 +555,10 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.resolvedType.toIrType(c),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType(c)
                     ?: error("Vararg expression has incorrect type"),
-                varargArgumentsExpression.arguments.map { it.convertToIrVarargElement() }
+                varargArgumentsExpression.arguments.mapNotNull {
+                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
+                    else it.convertToIrVarargElement()
+                }
             )
         }
     }
@@ -868,7 +886,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Any?): IrElement {
-        return literalExpression.toIrConst<Any?>(literalExpression.resolvedType.toIrType(c))
+        return literalExpression.toIrConst(literalExpression.resolvedType.toIrType(c))
     }
 
     // ==================================================================================
@@ -997,7 +1015,7 @@ class Fir2IrVisitor(
     internal fun convertToIrBlockBody(block: FirBlock): IrBlockBody {
         return block.convertWithOffsets { startOffset, endOffset ->
             val irStatements = block.statements.mapToIrStatements()
-            irFactory.createBlockBody(
+            IrFactoryImpl.createBlockBody(
                 startOffset, endOffset,
                 if (irStatements.isNotEmpty()) {
                     irStatements.filterNotNull().takeIf { it.isNotEmpty() }
@@ -1241,7 +1259,7 @@ class Fir2IrVisitor(
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (isProperlyExhaustive) whenExpression.resolvedType else session.builtinTypes.unitType.type
+                    if (isProperlyExhaustive) whenExpression.resolvedType else session.builtinTypes.unitType.coneType
                 val irBranches = whenExpression.convertWhenBranchesTo(
                     mutableListOf(),
                     whenExpressionType,
@@ -1487,7 +1505,12 @@ class Fir2IrVisitor(
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: Any?): IrElement {
         return throwExpression.convertWithOffsets { startOffset, endOffset ->
-            IrThrowImpl(startOffset, endOffset, builtins.nothingType, convertToIrExpression(throwExpression.exception))
+            val expression = convertToIrExpression(throwExpression.exception)
+            val expressionWithCast = expression.applyIf(!expression.type.isSubtypeOfClass(builtins.throwableClass)) {
+                Fir2IrImplicitCastInserter.implicitCastOrExpression(this, builtins.throwableType)
+            }
+
+            IrThrowImpl(startOffset, endOffset, builtins.nothingType, expressionWithCast)
         }
     }
 
@@ -1530,7 +1553,7 @@ class Fir2IrVisitor(
             var endArgumentOffset = -1
             for (firArgument in stringConcatenationCall.arguments) {
                 val argument = convertToIrExpression(firArgument)
-                if (argument is IrConst<*>) {
+                if (argument is IrConst && argument.kind == IrConstKind.String) {
                     if (sb.isEmpty()) {
                         startArgumentOffset = argument.startOffset
                     }
@@ -1641,10 +1664,11 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? =
-        (this?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
+    private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? {
+        return this?.lookupTag?.toClassSymbol(session)?.let {
             classifierStorage.getIrClassSymbol(it)
         }
+    }
 
     private fun convertToArrayLiteral(
         arrayLiteral: FirArrayLiteral,
@@ -1689,29 +1713,29 @@ class Fir2IrVisitor(
         LogicOperationKind.OR -> IrDynamicOperator.OROR
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Any?): IrElement {
-        return binaryLogicExpression.convertWithOffsets<IrElement> { startOffset, endOffset ->
-            val leftOperand = binaryLogicExpression.leftOperand.accept(this, data) as IrExpression
-            val rightOperand = binaryLogicExpression.rightOperand.accept(this, data) as IrExpression
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Any?): IrElement {
+        return booleanOperatorExpression.convertWithOffsets<IrElement> { startOffset, endOffset ->
+            val leftOperand = booleanOperatorExpression.leftOperand.accept(this, data) as IrExpression
+            val rightOperand = booleanOperatorExpression.rightOperand.accept(this, data) as IrExpression
             if (leftOperand.type is IrDynamicType) {
                 IrDynamicOperatorExpressionImpl(
                     startOffset,
                     endOffset,
                     builtins.booleanType,
-                    binaryLogicExpression.kind.toIrDynamicOperator(),
+                    booleanOperatorExpression.kind.toIrDynamicOperator(),
                 ).apply {
                     receiver = leftOperand
                     arguments.add(rightOperand)
                 }
-            } else when (binaryLogicExpression.kind) {
+            } else when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> {
-                    IrIfThenElseImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
+                    IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
                         branches.add(IrBranchImpl(leftOperand, rightOperand))
                         branches.add(elseBranch(constFalse(rightOperand.startOffset, rightOperand.endOffset)))
                     }
                 }
                 LogicOperationKind.OR -> {
-                    IrIfThenElseImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.OROR).apply {
+                    IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.OROR).apply {
                         branches.add(IrBranchImpl(leftOperand, constTrue(leftOperand.startOffset, leftOperand.endOffset)))
                         branches.add(elseBranch(rightOperand))
                     }
@@ -1719,6 +1743,12 @@ class Fir2IrVisitor(
             }
         }
     }
+
+    internal fun isGetClassOfUnresolvedTypeInAnnotation(expression: FirExpression): Boolean =
+    // In kapt mode, skip `Unresolved::class` in annotation arguments, because it cannot be handled by IrInterpreter,
+        // and because this replicates K1 behavior (see `ConstantExpressionEvaluatorVisitor.visitClassLiteralExpression`).
+        configuration.skipBodies && annotationMode &&
+                expression is FirGetClassCall && expression.argument.resolvedType is ConeErrorType
 }
 
 val KtSourceElement.isChildOfForLoop: Boolean

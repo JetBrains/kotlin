@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Rule
+import java.io.File
 
 abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     private fun OutputFile.printApi(): String {
@@ -31,7 +32,8 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
 
     protected fun checkApi(
         @Language("kotlin") src: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        additionalPaths: List<File> = emptyList()
     ) {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
@@ -42,7 +44,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
 
            $src
         """,
-            fileName, dumpClasses
+            fileName, dumpClasses, additionalPaths
         )
 
         val apiString = loader
@@ -61,7 +63,8 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
 
     protected fun codegen(
         @Language("kotlin") text: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        additionalPaths: List<File> = emptyList()
     ) {
         codegenNoImports(
             """
@@ -71,17 +74,19 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
 
             fun used(x: Any?) {}
         """,
-            dumpClasses
+            dumpClasses,
+            additionalPaths
         )
     }
 
     private fun codegenNoImports(
         @Language("kotlin") text: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        additionalPaths: List<File> = emptyList()
     ) {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
-        classLoader(text, fileName, dumpClasses)
+        classLoader(text, fileName, dumpClasses, additionalPaths)
     }
 }

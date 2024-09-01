@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.androidsdkprovisioner.AndroidSdkProvisionerExtension
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 @Suppress("unused")
 class JpsCompatiblePlugin : Plugin<Project> {
@@ -19,12 +21,18 @@ class JpsCompatiblePlugin : Plugin<Project> {
         project.configurations.create("jpsTest")
 
         if (project == project.rootProject) {
+            val androidSdkRequired = System.getProperty("pill.android.tests", "false") == "true"
+            if (androidSdkRequired) {
+                project.plugins.apply("android-sdk-provisioner")
+            }
             project.tasks.register("pill") {
                 dependsOn(":pill:pill-importer:pill")
 
-                if (System.getProperty("pill.android.tests", "false") == "true") {
-                    TaskUtils.useAndroidSdk(this)
-                    TaskUtils.useAndroidJar(this)
+                if (androidSdkRequired) {
+                    project.extensions.configure(AndroidSdkProvisionerExtension::class.java) {
+                        requireAsTaskInput(ProvisioningType.SDK)
+                        requireAsTaskInput(ProvisioningType.PLATFORM_JAR)
+                    }
                 }
             }
 

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -31,17 +31,21 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
         val classIdString = mainModule.testModule.directives.singleValue(Directives.CLASS_ID)
 
         val actual = analyseForTest(ktDeclaration) {
-            val declarationSymbol = ktDeclaration.getSymbol() as KaAnnotatedSymbol
-            val annotationList = declarationSymbol.annotationsList
+            val declarationSymbol = ktDeclaration.symbol as KaAnnotatedSymbol
+            val annotationList = declarationSymbol.annotations
             val classId = ClassId.fromString(classIdString)
             val renderer = DebugSymbolRenderer()
-            fun renderAnnotation(application: KaAnnotationApplication): String = buildString {
+            fun renderAnnotation(application: KaAnnotation): String = buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
-                append(renderer.renderAnnotationApplication(analysisSession, application))
+                append(renderer.renderAnnotationApplication(useSiteSession, application))
             }
 
-            val rawList = renderAnnotation(annotationList.annotationsByClassId(classId).single())
-            val resolvedList = renderAnnotation(annotationList.annotations.single { it.classId == classId })
+            testServices.assertions.assertTrue(classId in annotationList) {
+                "ClassId $classId is not found in the annotation list"
+            }
+
+            val rawList = renderAnnotation(annotationList[classId].single())
+            val resolvedList = renderAnnotation(annotationList.single { it.classId == classId })
             testServices.assertions.assertEquals(resolvedList, rawList) {
                 "Result before and after resolve are different"
             }

@@ -1,21 +1,13 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] LinkedHashMap.kt
     public final? expect [ResolvedTo(RAW_FIR)] class LinkedHashMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : MutableMap<K, V> {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -50,21 +42,13 @@ FILE: [ResolvedTo(RAW_FIR)] LinkedHashMap.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final? expect [ResolvedTo(RAW_FIR)] class LinkedHashMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : MutableMap<K, V> {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -99,21 +83,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class LinkedHashMap<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V> : MutableMap<K, V> {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -148,21 +124,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final? expect [ResolvedTo(COMPANION_GENERATION)] class LinkedHashMap<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V> : MutableMap<K, V> {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -197,21 +165,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final? expect [ResolvedTo(SUPER_TYPES)] class LinkedHashMap<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -246,21 +206,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final? expect [ResolvedTo(TYPES)] class LinkedHashMap<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -295,21 +247,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(STATUS)] class LinkedHashMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -344,21 +288,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class LinkedHashMap<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -393,21 +329,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(CONTRACTS)] class LinkedHashMap<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -442,21 +370,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -491,21 +411,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(CONSTANT_EVALUATION)] class LinkedHashMap<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -540,21 +452,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class LinkedHashMap<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
-            LAZY_super<<implicit>>
-        }
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
@@ -589,21 +493,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
     public final expect [ResolvedTo(BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public open expect override [ResolvedTo(STATUS)] val size: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/Int|
@@ -638,21 +534,13 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] LinkedHashMap.kt
     public final expect [ResolvedTo(BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>|
 
-        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>| {
-            super<R|kotlin/Any|>()
-        }
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>|
 
         public open expect override [ResolvedTo(BODY_RESOLVE)] val size: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/Int|

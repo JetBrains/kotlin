@@ -10,6 +10,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -198,15 +201,21 @@ class ScriptingCompilerPluginTest : TestCase() {
                     "Failed to compile scripts:\n$messageCollector"
                 }
 
-                val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
-                        System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+                val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("${CommonCompilerArguments::languageVersion.cliArgument} 1.9") != true &&
+                        System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("${CommonCompilerArguments::languageVersion.cliArgument} 1.9") != true
 
                 val cp = (runtimeClasspath + scriptingClasspath + defsOut).joinToString(File.pathSeparator)
                 val exitCode = K2JVMCompiler().exec(
                     System.err,
-                    "-cp", cp, *(scriptFiles.toTypedArray()), "-d", scriptsOut2.canonicalPath, "-Xallow-any-scripts-in-source-roots",
-                    "-Xuse-fir-lt=false",
-                    "-language-version", if (isK2) "2.0" else "1.9"
+                    K2JVMCompilerArguments::classpath.cliArgument,
+                    cp,
+                    *(scriptFiles.toTypedArray()),
+                    K2JVMCompilerArguments::destination.cliArgument,
+                    scriptsOut2.canonicalPath,
+                    K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                    K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                    CommonCompilerArguments::languageVersion.cliArgument,
+                    if (isK2) "2.0" else "1.9"
                 )
 
                 Assert.assertEquals(ExitCode.OK, exitCode)

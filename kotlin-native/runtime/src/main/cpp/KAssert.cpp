@@ -6,6 +6,7 @@
 #include "KAssert.h"
 
 #include <array>
+#include <cinttypes>
 #include <cstdarg>
 #include <cstdlib>
 
@@ -40,7 +41,7 @@ void PrintAssert(bool allowStacktrace, const char* location, const char* format,
     std::array<char, 1024> bufferStorage;
     std_support::span<char> buffer(bufferStorage);
 
-    buffer = FormatToSpan(buffer, "[tid#%d] ", konan::currentThreadId());
+    buffer = FormatToSpan(buffer, "[tid#%" PRIuPTR "] ", konan::currentThreadId());
 
     // Write the title with a source location.
     if (location != nullptr) {

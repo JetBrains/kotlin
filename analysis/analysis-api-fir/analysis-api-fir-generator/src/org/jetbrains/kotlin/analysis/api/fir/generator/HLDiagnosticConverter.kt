@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -226,11 +227,11 @@ internal object FirToKtConversionCreator {
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
         // ------------------ symbols ------------------
         FirRegularClass::class to HLFunctionCallConversion(
-            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KtNamedClassOrObjectSymbol",
-            KaNamedClassOrObjectSymbol::class.createType(),
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KaNamedClassSymbol",
+            KaNamedClassSymbol::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
-                "org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol"
+                "org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol"
             )
         ),
         FirValueParameterSymbol::class to HLFunctionCallConversion(
@@ -247,20 +248,20 @@ internal object FirToKtConversionCreator {
             KaClassLikeSymbol::class.createType()
         ),
         FirNamedFunctionSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0})",
-            KaFunctionLikeSymbol::class.createType()
+            "firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol({0})",
+            KaFunctionSymbol::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0})",
+            "firSymbolBuilder.variableBuilder.buildVariableSymbol({0})",
             KaVariableSymbol::class.createType()
         ),
         FirBackingFieldSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir.propertySymbol)",
+            "firSymbolBuilder.variableBuilder.buildVariableSymbol({0}.fir.propertySymbol)",
             KaVariableSymbol::class.createType()
         ),
         FirVariableSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol({0})",
-            KaVariableLikeSymbol::class.createType()
+            "firSymbolBuilder.variableBuilder.buildVariableSymbol({0})",
+            KaVariableSymbol::class.createType()
         ),
         FirTypeParameterSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol({0})",
@@ -381,6 +382,7 @@ internal object FirToKtConversionCreator {
         FunctionTypeKind::class,
         VersionRequirement.Version::class,
         IncompatibleVersionErrorData::class,
+        RelationToType::class,
     )
 
     private val KType.kClass: KClass<*>

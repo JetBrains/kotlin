@@ -18,7 +18,7 @@ import org.gradle.api.Project
  *
  * e.g. if a developer set's
  *
- * `defaultSnapshotVersion.kotlin_build.expected_value=1.6.255-SNAPSHOT` and the value gets bumped to `2.0.255-SNAPSHOT` after pulling from master,
+ * `defaultSnapshotVersion.kotlin_build.expected_value=1.6.255-SNAPSHOT` and the value gets bumped to `2.1.255-SNAPSHOT` after pulling from master,
  * the developer will notice this during project configuration phase.
  */
 fun Project.checkExpectedGradlePropertyValues() {

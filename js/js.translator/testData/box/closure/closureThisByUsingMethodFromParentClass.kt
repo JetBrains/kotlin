@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1299
 package foo
 
 open class A {

@@ -16,7 +16,7 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3],
     )
     fun testCompatibilityBuildSrcWithKotlinDsl(gradleVersion: GradleVersion) {
         project(
@@ -31,47 +31,47 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                     // so the service was unregistered after the finish of the buildSrc build
                     // and then registered again in the root build
                     gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0) -> {
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the  service for buildSrc
                             1
                         )
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService: new instance", // the legacy service for compatibility
                             1
                         )
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService_v2: new instance", // the current default version of the service
                             1
                         )
                     }
                     gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_3) -> {
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the legacy service for compatibility
                             1
                         )
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService_v2: new instance", // the current default version of the service
                             1
                         )
                     }
                     //for gradle 8.3 kotlin 1.9.0 is used, log message is changed
                     gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5) -> {
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Register JMX service for backward compatibility", // the legacy service for compatibility
                             1
                         )
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService_v2: new instance", // the current default version of the service
                             1
                         )
                     }
                     //for other versions KGP from buildSrc registered both services
                     else -> {
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the legacy service for compatibility
                             1
                         )
-                        assertOutputContainsExactTimes(
+                        assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService_v2: new instance", // the current default version of the service
                             1
                         )
@@ -92,18 +92,14 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
-                ${applyFusStatisticPlugin(it)}
+                ${applyFusPluginAndCreateTestFusTask(it)}
                 
-                ${createTestFusTaskClass()}
-                
-                tasks.register("test-fus", TestFusTask.class).get().doLast {
-                  fusStatisticsBuildService.get().reportMetric("$metricName", $metricValue, null)
-                }
+                ${registerTaskAndReportMetric("test-fus", metricName, metricValue)}
                 """.trimIndent()
             }
 
             val reportRelativePath = "reports"
-            build("test-fus", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
+            build("test-fus", "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}") {
                 val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
                 assertFileContains(
                     fusReport,
@@ -114,23 +110,40 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
-    private fun applyFusStatisticPlugin(it: String) = it.replace(
-        "plugins {",
-        """
-                                   plugins {
-                                      id "org.jetbrains.kotlin.fus-statistics-gradle-plugin" version "${'$'}kotlin_version"
-                               """.trimIndent()
-    )
+    private fun applyFusPluginAndCreateTestFusTask(buildScript: String) = """${addBuildScriptDependency()}    
+                        
+                    $buildScript
+                    
+                    ${applyFusStatisticPlugin()}
+                    
+                    ${createTestFusTaskClass()}"""
 
-    private fun createTestFusTaskClass() = """import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
-                    class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService {
-                      private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
-    
-                      org.gradle.api.provider.Property getFusStatisticsBuildService(){
-                        return fusStatisticsBuildService
-                      }
-    
-                    }"""
+    private fun addBuildScriptDependency() = """
+        buildscript {
+            dependencies {
+                classpath "org.jetbrains.kotlin:fus-statistics-gradle-plugin:${'$'}kotlin_version"
+            }
+        }
+    """.trimIndent()
+
+    private fun applyFusStatisticPlugin() = """
+        plugins.apply("org.jetbrains.kotlin.fus-statistics-gradle-plugin")
+    """.trimIndent()
+
+    private fun createTestFusTaskClass() = """
+        import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
+        import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
+
+        class TestFusTask extends DefaultTask implements UsesGradleBuildFusStatisticsService {
+
+            private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
+
+            Property getFusStatisticsBuildService(){
+                return fusStatisticsBuildService
+            }
+
+        }
+    """.trimIndent()
 
     @DisplayName("test override metrics for fus-statistics-gradle-plugin")
     @GradleTest
@@ -140,29 +153,56 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
-                ${applyFusStatisticPlugin(it)}
+                ${applyFusPluginAndCreateTestFusTask(it)}
                 
-                ${createTestFusTaskClass()}
+                ${registerTaskAndReportMetric("test-fus", metricName, metricValue)}
                 
-                tasks.register("test-fus", TestFusTask.class).get().doLast {
-                  fusStatisticsBuildService.get().reportMetric("$metricName", $metricValue, null)
-                }
-                
-                tasks.register("test-fus-second", TestFusTask.class).get().doLast {
-                  fusStatisticsBuildService.get().reportMetric("$metricName", 2, null)
-                }
+                ${registerTaskAndReportMetric("test-fus-second", metricName, "2")}
+            
                 """.trimIndent()
             }
 
             val reportRelativePath = "reports"
-            build("test-fus", "test-fus-second", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
-                assertOutputContains("Try to override $metricName metric: current value is \"1\", new value is \"2\"")
+            build("test-fus", "test-fus-second", "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}") {
+                //for Gradle 8.9 the task execution order can be changed
+                assertOutputContainsAny(
+                    "Try to override $metricName metric: current value is \"1\", new value is \"2\"",
+                    "Try to override $metricName metric: current value is \"2\", new value is \"1\""
+                )
                 val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
                 assertFileContains(
                     fusReport,
                     "METRIC_NAME=1",
                     "BUILD FINISHED"
                 )
+            }
+        }
+    }
+
+    private fun registerTaskAndReportMetric(taskName: String, metricName: String, metricValue: Any) =
+        """
+            tasks.register("$taskName", TestFusTask.class) {
+                doLast {
+                      fusStatisticsBuildService.get().reportMetric("$metricName", "$metricValue", null)
+                }
+           }
+           """
+
+    @DisplayName("test invalid fus report directory")
+    @GradleTest
+    fun testInvalidFusReportDir(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                ${applyFusPluginAndCreateTestFusTask(it)}
+                
+                ${registerTaskAndReportMetric("test-fus", "metricName", "metricValue")}
+                
+                """.trimIndent()
+            }
+
+            build("test-fus", "-Pkotlin.session.logger.root.path=") {
+                assertOutputContains("Fus metrics wont be collected")
             }
         }
     }

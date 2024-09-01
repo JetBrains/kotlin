@@ -1,2 +1,3 @@
-KtInvokeFunctionReference:
-  (in Foo) operator fun invoke(a: kotlin.Any)
+KtCallExpression(69,75): 'f() {}'
+  KtInvokeFunctionReference:
+    (in Foo) operator fun invoke(a: kotlin.Any)

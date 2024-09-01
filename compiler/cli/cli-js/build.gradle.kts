@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("share-kotlin-wasm-custom-formatters")
 }
 
 dependencies {
@@ -23,9 +24,19 @@ dependencies {
     api(project(":wasm:wasm.frontend"))
     api(project(":wasm:wasm.config"))
 
+    wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
+
     compileOnly(intellijCore())
 }
 
+val updateWasmResources by tasks.registering(Sync::class) {
+    from(configurations.wasmCustomFormattersResolver)
+    into(temporaryDir)
+}
+
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        resources.srcDir(updateWasmResources)
+    }
 }

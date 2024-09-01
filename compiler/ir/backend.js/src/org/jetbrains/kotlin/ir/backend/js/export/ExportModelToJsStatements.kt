@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -143,7 +144,9 @@ class ExportModelToJsStatements(
                             declaration.name,
                             staticContext.getNameForStaticDeclaration(
                                 declaration.irGetter
-                                    ?: error("Expect to have an object getter in its export model, but ${declaration.ir.fqNameWhenAvailable ?: declaration.name} doesn't have it")
+                                    ?: irError("Expect to have an object getter in its export model") {
+                                        withIrEntry("declaration.ir", declaration.ir)
+                                    }
                             ).makeRef(),
                             null,
                             staticContext

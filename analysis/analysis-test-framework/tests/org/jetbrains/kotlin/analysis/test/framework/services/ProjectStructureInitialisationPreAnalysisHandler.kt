@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructureProvider
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure

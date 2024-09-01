@@ -14,12 +14,13 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCore())
     compileOnly(toolsJarApi())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testImplementation(intellijCore())
     testRuntimeOnly(intellijResources()) { isTransitive = false }

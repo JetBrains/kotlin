@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.outerType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -426,28 +423,8 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
     }
 }
 
-private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? {
-    return when (this) {
-        is FirRegularClassSymbol -> this to unsubstitutedScope(context)
-        is FirTypeAliasSymbol -> {
-            val expandedType = resolvedExpandedTypeRef.coneType as? ConeClassLikeType
-            val expandedClass = expandedType?.toRegularClassSymbol(context.session)
-            val expandedTypeScope = expandedType?.scope(
-                context.session, context.scopeSession,
-                CallableCopyTypeCalculator.DoNothing,
-                requiredMembersPhase = FirResolvePhase.STATUS,
-            )
-
-            if (expandedType != null && expandedClass != null && expandedTypeScope != null) {
-                val outerType = outerType(expandedType, context.session) { it.outerClassSymbol(context) }
-                expandedClass to TypeAliasConstructorsSubstitutingScope(this, expandedTypeScope, outerType)
-            } else {
-                null
-            }
-        }
-        else -> null
-    }
-}
+private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? =
+    expandedClassWithConstructorsScope(context.session, context.scopeSession, FirResolvePhase.STATUS)
 
 private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean {
     if (dependency.moduleData !in dependent.moduleData.allDependsOnDependencies) return false
@@ -497,10 +474,12 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
     if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
     if (receiverParameter != null || typeParameterSymbols.isNotEmpty()) return false
+    val returnType = resolvedReturnType.fullyExpandedType(session)
+    if (!returnType.isUnit) return false
     if (valueParameterSymbols.isEmpty()) return true
     val paramType = valueParameterSymbols.singleOrNull()?.resolvedReturnTypeRef?.coneType?.fullyExpandedType(session) ?: return false
     if (!paramType.isNonPrimitiveArray) return false
-    val typeArgument = paramType.typeArguments.singleOrNull() as? ConeKotlinTypeProjection ?: return false
+    val typeArgument = paramType.typeArgumentsOfLowerBoundIfFlexible.singleOrNull() as? ConeKotlinTypeProjection ?: return false
     // only Array<String> and Array<out String> are accepted
     if (typeArgument !is ConeKotlinType && typeArgument !is ConeKotlinTypeProjectionOut) return false
     return typeArgument.type.fullyExpandedType(session).isString
@@ -528,8 +507,8 @@ private fun FirDeclarationCollector<*>.areNonConflictingCallables(
 
     if (declaration !is FirCallableSymbol<*> || conflicting !is FirCallableSymbol<*>) return false
 
-    val declarationIsFinal = declaration.isEffectivelyFinal(session)
-    val conflictingIsFinal = conflicting.isEffectivelyFinal(session)
+    val declarationIsFinal = declaration.isEffectivelyFinal()
+    val conflictingIsFinal = conflicting.isEffectivelyFinal()
 
     if (declarationIsFinal && conflictingIsFinal) {
         val declarationIsHidden = declaration.isDeprecationLevelHidden(session)

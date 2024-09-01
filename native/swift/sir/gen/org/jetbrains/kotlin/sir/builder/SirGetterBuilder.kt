@@ -19,6 +19,7 @@ class SirGetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
 
@@ -27,6 +28,7 @@ class SirGetterBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             kind,
             body,
         )
@@ -51,6 +53,7 @@ inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Uni
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     return copyBuilder.apply(init).build()

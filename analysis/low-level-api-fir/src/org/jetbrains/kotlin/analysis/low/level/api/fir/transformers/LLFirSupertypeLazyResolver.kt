@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationStatus
@@ -115,11 +116,12 @@ private class LLFirSuperTypeTargetResolver(
                 },
                 resolver = {
                     supertypeResolver.withClass(target) {
-                        supertypeResolver.resolveSpecificClassLikeSupertypes(target, it)
+                        supertypeResolver.resolveSpecificClassLikeSupertypes(target, it, resolveRecursively = false)
                     }
                 },
-                superTypeUpdater = {
-                    target.replaceSuperTypeRefs(it)
+                superTypeUpdater = { superTypeRefs ->
+                    val expandedTypeRefs = superTypeRefs.map { supertypeComputationSession.expandTypealiasInPlace(it, target.llFirSession) }
+                    target.replaceSuperTypeRefs(expandedTypeRefs)
                     resolveTargetSession.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, resolveTargetScopeSession)
                 },
             )
@@ -127,7 +129,10 @@ private class LLFirSuperTypeTargetResolver(
                 declaration = target,
                 superTypeRefsForTransformation = { target.expandedTypeRef },
                 resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
-                superTypeUpdater = { target.replaceExpandedTypeRef(it.single()) },
+                superTypeUpdater = { superTypeRefs ->
+                    val expandedTypeRef = supertypeComputationSession.expandTypealiasInPlace(superTypeRefs.single(), target.llFirSession)
+                    target.replaceExpandedTypeRef(expandedTypeRef)
+                },
             )
             else -> {
                 performCustomResolveUnderLock(target) {
@@ -170,7 +175,7 @@ private class LLFirSuperTypeTargetResolver(
         if (status is SupertypeComputationStatus.Computed) {
             supertypeComputationSession.withDeclarationSession(declaration) {
                 for (computedType in status.supertypeRefs) {
-                    crawlSupertype(computedType.type)
+                    crawlSupertype(computedType.coneType)
                 }
             }
         }

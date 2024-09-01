@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// SKIP_KLIB_TEST
 // IGNORE_BACKEND_K1: JS_IR
 // IGNORE_BACKEND_K2: JS_IR
 //   Ignore reason: there is a js name clash between function `a()` and property `a`

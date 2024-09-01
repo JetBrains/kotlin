@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.model.*
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemBuilder {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
@@ -36,7 +36,7 @@ class ResultTypeResolver(
 
     private fun Context.getDefaultTypeForSelfType(
         constraints: List<Constraint>,
-        typeVariable: TypeVariableMarker
+        typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker? {
         val typeVariableConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
@@ -51,7 +51,7 @@ class ResultTypeResolver(
     private fun Context.getDefaultType(
         direction: ResolveDirection,
         constraints: List<Constraint>,
-        typeVariable: TypeVariableMarker
+        typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker {
         if (isTypeInferenceForSelfTypesSupported) {
             getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
@@ -94,18 +94,8 @@ class ResultTypeResolver(
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
     ): KotlinTypeMarker? {
-        val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
-        if (resultTypeFromEqualConstraint != null) {
-            with(c) {
-                if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
-                        type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
-                    }
-                ) {
-                    // In K2, we don't return here ILT-based types immediately
-                    return resultTypeFromEqualConstraint
-                }
-            }
-        }
+        val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints, isStrictMode = false)
+        if (resultTypeFromEqualConstraint?.isAppropriateResultTypeFromEqualityConstraints(c) == true) return resultTypeFromEqualConstraint
 
         val subType = c.findSubType(variableWithConstraints)
         val superType = c.findSuperType(variableWithConstraints)
@@ -134,6 +124,17 @@ class ResultTypeResolver(
             with(c) { !resultTypeFromDirection.typeConstructor().isNothingConstructor() } &&
                     AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
+        }
+    }
+
+    private fun KotlinTypeMarker.isAppropriateResultTypeFromEqualityConstraints(
+        c: Context,
+    ): Boolean = with(c) {
+        if (!isK2) return true
+
+        // In K2, we don't allow fixing to a result type from EQ constraints if they contain ILTs
+        !contains { type ->
+            type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
         }
     }
 
@@ -283,7 +284,7 @@ class ResultTypeResolver(
     private fun Context.resultType(
         firstCandidate: KotlinTypeMarker?,
         secondCandidate: KotlinTypeMarker?,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
     ): KotlinTypeMarker? {
         if (firstCandidate == null || secondCandidate == null) return firstCandidate ?: secondCandidate
 
@@ -487,23 +488,40 @@ class ResultTypeResolver(
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
 
-    private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
-        with(c) {
-            val properEqualityConstraints = variableWithConstraints.constraints.filter {
-                it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
-            }
-
-            return c.representativeFromEqualityConstraints(properEqualityConstraints)
+    fun findResultIfThereIsEqualsConstraint(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        isStrictMode: Boolean,
+    ): KotlinTypeMarker? {
+        val properEqualityConstraints = variableWithConstraints.constraints.filter {
+            it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
         }
 
+        return c.representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)
+    }
+
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
-    private fun Context.representativeFromEqualityConstraints(constraints: List<Constraint>): KotlinTypeMarker? {
+    private fun Context.representativeFromEqualityConstraints(
+        constraints: List<Constraint>,
+        // Allow only types not-containing ILT and which might work as a representative of other ones from EQ constraints
+        // TODO: Consider making it always `true` (see KT-70062)
+        isStrictMode: Boolean
+    ): KotlinTypeMarker? {
         if (constraints.isEmpty()) return null
 
         val constraintTypes = constraints.map { it.type }
-        val nonLiteralTypes = constraintTypes.filter { !it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        return nonLiteralTypes.singleBestRepresentative()
-            ?: constraintTypes.singleBestRepresentative()
+        val nonLiteralTypes = constraintTypes.filter { constraintType ->
+            if (isStrictMode)
+                !constraintType.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
+            else
+                !constraintType.typeConstructor().isIntegerLiteralTypeConstructor()
+        }
+
+        nonLiteralTypes.singleBestRepresentative()?.let { return it }
+
+        if (isStrictMode) return null
+
+        return constraintTypes.singleBestRepresentative()
             ?: constraintTypes.first() // seems like constraint system has contradiction
     }
 }

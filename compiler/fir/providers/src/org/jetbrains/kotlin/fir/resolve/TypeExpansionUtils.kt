@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -30,14 +29,12 @@ import org.jetbrains.kotlin.util.component2
  * See `/docs/fir/k2_kmp.md`
  *
  * @param useSiteSession Session to be used for classifier lookups, see [toSymbol]
- * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession]
+ * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession] or the same instance
+ * if top-level constructor is not expandable type alias
  */
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = { alias ->
-        alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        alias.expandedConeType
-    },
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeClassLikeType {
     if (this is ConeClassLikeTypeImpl) {
         val (cachedSession, cachedExpandedType) = cachedExpandedType
@@ -53,27 +50,58 @@ fun ConeClassLikeType.fullyExpandedType(
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
 }
 
+fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
+    lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    return expandedConeType
+}
+
 /**
- * @see fullyExpandedType
+ * @see fullyExpandedType (the first function in the file)
+ * @return the expanded type or the same instance if top-level constructor is not expandable type alias
  */
 fun ConeKotlinType.fullyExpandedType(
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
-    is ConeFlexibleType ->
-        ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession))
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession)
+    is ConeFlexibleType -> {
+        val expandedLower = lowerBound.fullyExpandedType(useSiteSession, expandedConeType)
+        val expandedUpper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
+        when {
+            expandedLower === lowerBound && expandedUpper === upperBound -> this
+            this is ConeRawType -> ConeRawType.create(expandedLower, expandedUpper)
+            else -> ConeFlexibleType(expandedLower, expandedUpper)
+        }
+    }
+    is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
     else -> this
 }
 
 /**
- * @see fullyExpandedType
+ * @see fullyExpandedType (the first function in the file)
  */
 fun ConeSimpleKotlinType.fullyExpandedType(
-    useSiteSession: FirSession
-): ConeSimpleKotlinType = when (this) {
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession)
-    else -> this
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
+        else -> this
+    }
+}
+
+/**
+ * @see fullyExpandedType (the first function in the file)
+ */
+fun ConeRigidType.fullyExpandedType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+): ConeRigidType {
+    return when (this) {
+        is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
+        // Expanding DNN type makes no sense, as its original type cannot be class-like type
+        is ConeDefinitelyNotNullType -> this
+    }
 }
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(
@@ -81,7 +109,8 @@ private fun ConeClassLikeType.fullyExpandedTypeNoCache(
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType?,
 ): ConeClassLikeType {
     val directExpansionType = directExpansionType(useSiteSession, expandedConeType) ?: return this
-    return directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
+    val expansion = directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
+    return expansion.withAbbreviation(AbbreviatedTypeAttribute(this))
 }
 
 fun ConeClassLikeType.directExpansionType(
@@ -92,7 +121,7 @@ fun ConeClassLikeType.directExpansionType(
     },
 ): ConeClassLikeType? {
     if (this is ConeErrorType) return null
-    val typeAliasSymbol = lookupTag.toSymbol(useSiteSession) as? FirTypeAliasSymbol ?: return null
+    val typeAliasSymbol = lookupTag.toTypeAliasSymbol(useSiteSession) ?: return null
     val typeAlias = typeAliasSymbol.fir
 
     val resultType = expandedConeType(typeAlias)
@@ -120,7 +149,7 @@ private fun ConeClassLikeType.applyAttributesFrom(
 }
 
 fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeKotlinType): List<Pair<FirTypeParameterSymbol, ConeTypeProjection>> =
-    typeParameters.map { it.symbol }.zip(type.typeArguments)
+    typeParameters.map { it.symbol }.zip(type.typeArgumentsOfLowerBoundIfFlexible)
 
 fun createParametersSubstitutor(
     useSiteSession: FirSession,
@@ -134,7 +163,7 @@ fun createParametersSubstitutor(
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
         val symbol =
-            (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.symbol
+            (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.symbol
                 ?: return super.substituteArgument(projection, index)
         val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, index)
 

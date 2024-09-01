@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
@@ -290,4 +291,7 @@ abstract class AbstractFirUseSiteMemberScope(
     protected open fun FirNamedFunctionSymbol.replaceWithWrapperSymbolIfNeeded(): FirNamedFunctionSymbol {
         return this
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): AbstractFirUseSiteMemberScope
 }

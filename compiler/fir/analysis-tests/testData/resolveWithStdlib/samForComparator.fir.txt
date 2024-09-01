@@ -1,5 +1,5 @@
 FILE: samForComparator.kt
-    public final fun foo(x: R|kotlin/Comparator<in kotlin/CharSequence>|): R|kotlin/Unit| {
+    public final fun foo(x: R|{kotlin/Comparator<in kotlin/CharSequence>=} java/util/Comparator<in kotlin/CharSequence>|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(<L> = SAM(foo@fun <anonymous>(x: R|kotlin/CharSequence!|, y: R|kotlin/CharSequence!|): R|kotlin/Int| <inline=NoInline>  {

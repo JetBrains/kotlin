@@ -33,10 +33,12 @@ fun Test(foo: Foo, bar: Bar, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    val lambda = %composer.cache(%composer.changedInstance(foo) or %dirty and 0b01110000 == 0b00100000) {
-      {
-        foo
-        bar
+    val lambda = <block>{
+      %composer.cache(%composer.changedInstance(foo) or %dirty and 0b01110000 == 0b00100000) {
+        {
+          foo
+          bar
+        }
       }
     }
     if (isTraceInProgress()) {

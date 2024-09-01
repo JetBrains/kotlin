@@ -210,6 +210,17 @@ class FirDelegatedMemberScope(
 
     override fun getCallableNames(): Set<Name> = callableNamesLazy
     override fun getClassifierNames(): Set<Name> = classifierNamesLazy
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDelegatedMemberScope {
+        return FirDelegatedMemberScope(
+            newSession,
+            newScopeSession,
+            containingClass,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+            delegateFields
+        )
+    }
 }
 
 private object MultipleDelegatesWithTheSameSignatureKey : FirDeclarationDataKey()

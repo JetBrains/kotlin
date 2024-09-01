@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -26,7 +26,7 @@ abstract class AbstractIsUsedAsExpressionTest : AbstractAnalysisApiBasedTest() {
         analyseForTest(expression) {
             actual.appendLine("expression: $expression")
             actual.appendLine("text: ${expression.text}")
-            actual.appendLine("isUsedAsExpression: ${expression.isUsedAsExpression()}")
+            actual.appendLine("isUsedAsExpression: ${expression.isUsedAsExpression}")
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual.toString())

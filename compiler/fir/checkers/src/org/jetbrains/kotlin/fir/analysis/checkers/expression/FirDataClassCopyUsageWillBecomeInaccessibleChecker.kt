@@ -13,18 +13,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -32,8 +33,8 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall && expression !is FirCallableReferenceAccess) return
-        val copyFunction = (expression.calleeReference.symbol as? FirCallableSymbol)?.unwrapSubstitutionOverrides() ?: return
-        val dataClass = copyFunction.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
+        val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
+        val dataClass = copyFunction.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 
@@ -66,16 +67,20 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     }
 }
 
-private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
-    if (!DataClassResolver.isCopy(name)) return false
-    val constructor = dataClass.primaryConstructorSymbol(session)
-    return this is FirNamedFunctionSymbol &&
-            dataClass.isData &&
-            dataClass.classKind.isClass &&
-            resolvedReturnType.classId == dataClass.classId &&
-            constructor != null &&
-            resolvedContextReceivers.isEmpty() &&
-            typeParameterSymbols.isEmpty() &&
-            receiverParameter == null &&
-            valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbol<*>?, session: FirSession): Boolean {
+    with(unwrapSubstitutionOverrides()) { // Shadow "non-normalized" this
+        val constructor = containingClass?.primaryConstructorSymbol(session)
+        return this is FirNamedFunctionSymbol &&
+                DataClassResolver.isCopy(name) &&
+                containingClass != null &&
+                containingClass.isData &&
+                containingClass.classKind.isClass &&
+                dispatchReceiverType?.classId == containingClass.classId &&
+                resolvedReturnType.classId == containingClass.classId &&
+                constructor != null &&
+                resolvedContextReceivers.isEmpty() &&
+                typeParameterSymbols.isEmpty() &&
+                receiverParameter == null &&
+                valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
+    }
 }

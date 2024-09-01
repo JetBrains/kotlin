@@ -1,14 +1,14 @@
-Assertion failed
+---
 assert(1 != 1)
          |
          false
-
-Assertion failed
+---
+---
 assert(" != " != " != ")
               |
               false
-
-Assertion failed
+---
+---
 assert(
     " != "
 
@@ -18,14 +18,15 @@ assert(
 
             " != "
 )
-
-Assertion failed
+---
+---
 assert(1/*!=*/!=/*!=*/1)
               |
               false
-
-Assertion failed
+---
+---
 assert((1 != 1) != false)
           |     |
           |     false
           false
+---

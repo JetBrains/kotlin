@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.classIdOrFail
 
 data class IrActualizedResult(
     val actualizedExpectDeclarations: List<IrDeclaration>,
-    val expectActualMap: Map<IrSymbol, IrSymbol>
+    val expectActualMap: IrExpectActualMap
 )
 
 /**
@@ -45,7 +45,7 @@ class IrActualizer(
         extraActualClassExtractor,
     )
 
-    private val classActualizationInfo = collector.collectClassActualizationInfo()
+    val classActualizationInfo: ClassActualizationInfo = collector.collectClassActualizationInfo()
 
     fun actualizeClassifiers() {
         val classSymbolRemapper = object : SymbolRemapper.Empty() {
@@ -64,7 +64,7 @@ class IrActualizer(
         dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper), null) }
     }
 
-    fun actualizeCallablesAndMergeModules(): Map<IrSymbol, IrSymbol> {
+    fun actualizeCallablesAndMergeModules(): IrExpectActualMap {
         // 1. Collect expect-actual links for members of classes found on step 1.
         val expectActualMap = collector.matchAllExpectDeclarations(classActualizationInfo)
 
@@ -81,7 +81,7 @@ class IrActualizer(
         return expectActualMap
     }
 
-    fun runChecksAndFinalize(expectActualMap: Map<IrSymbol, IrSymbol>) : IrActualizedResult {
+    fun runChecksAndFinalize(expectActualMap: IrExpectActualMap): IrActualizedResult {
         //   Remove top-only expect declarations since they are not needed anymore and should not be presented in the final IrFragment
         //   Also, it doesn't remove unactualized expect declarations marked with @OptionalExpectation
         val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
@@ -90,7 +90,10 @@ class IrActualizer(
         return IrActualizedResult(removedExpectDeclarations, expectActualMap)
     }
 
-    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {
+    private fun removeExpectDeclarations(
+        dependentFragments: List<IrModuleFragment>,
+        expectActualMap: IrExpectActualMap,
+    ): List<IrDeclaration> {
         val removedExpectDeclarations = mutableListOf<IrDeclaration>()
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
@@ -107,9 +110,9 @@ class IrActualizer(
         return removedExpectDeclarations
     }
 
-    private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: Map<IrSymbol, IrSymbol>): Boolean {
+    private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: IrExpectActualMap): Boolean {
         return when (irDeclaration) {
-            is IrClass -> irDeclaration.isExpect && (!irDeclaration.containsOptionalExpectation() || expectActualMap.containsKey(irDeclaration.symbol))
+            is IrClass -> irDeclaration.isExpect && (!irDeclaration.containsOptionalExpectation() || expectActualMap.regularSymbols.containsKey(irDeclaration.symbol))
             is IrProperty -> irDeclaration.isExpect
             is IrFunction -> irDeclaration.isExpect
             else -> false

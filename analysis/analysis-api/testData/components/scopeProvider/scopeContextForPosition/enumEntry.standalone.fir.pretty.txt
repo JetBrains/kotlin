@@ -4,7 +4,7 @@ implicit receivers:
   owner symbol: KaFirEnumEntryInitializerSymbol
 
   type: kotlin.Enum.Companion
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0

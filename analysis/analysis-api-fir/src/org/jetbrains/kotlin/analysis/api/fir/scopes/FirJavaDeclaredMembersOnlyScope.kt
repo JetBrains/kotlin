@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -54,4 +56,9 @@ internal class FirJavaDeclaredMembersOnlyScope(
     }
 
     override fun toString(): String = "Declared member scope for $delegate with owning class `${owner.classId}`"
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirJavaDeclaredMembersOnlyScope? {
+        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirJavaDeclaredMembersOnlyScope(it, owner) }
+    }
 }

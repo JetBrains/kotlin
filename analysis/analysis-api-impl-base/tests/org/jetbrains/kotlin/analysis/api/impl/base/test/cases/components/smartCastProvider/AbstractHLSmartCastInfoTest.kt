@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtExpression
@@ -20,13 +20,13 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiBasedTest() {
         val expression = testServices.expressionMarkerProvider.getSelectedElement(mainFile) as KtExpression
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                val smartCastInfo = expression.getSmartCastInfo()
+                val smartCastInfo = expression.smartCastInfo
                 buildString {
                     appendLine("expression: ${expression.text}")
                     appendLine("isStable: ${smartCastInfo?.isStable}")
                     appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render(position = Variance.INVARIANT)}")
 
-                    val receiverSmartCasts = expression.getImplicitReceiverSmartCast()
+                    val receiverSmartCasts = expression.implicitReceiverSmartCasts
                     for (receiverSmartCast in receiverSmartCasts) {
                         appendLine("receiver: ${receiverSmartCast.kind}")
                         appendLine("    smartCastType: ${receiverSmartCast.type.render(position = Variance.INVARIANT)}")

@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
+class Monitor
+
 fun box(): String {
-    val obj = "" as java.lang.Object
-    val obj2 = "1" as java.lang.Object
+    val obj = Monitor() as java.lang.Object
+    val obj2 = Monitor() as java.lang.Object
 
     synchronized (obj) {
         synchronized (obj2) {

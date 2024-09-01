@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclaratio
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -32,10 +32,24 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
 
     protected open val outputExtension: String get() = ".txt"
 
+    /**
+     * Represent how much of files from the testdata we want to see in our test output, additionally to the target declaration.
+     *
+     * Modes:
+     * - [ALL_FILES_FROM_ALL_MODULES]: Render all files from all modules
+     * - [USE_SITE_AND_DESIGNATION_FILES]: Render only a use-site kt file and a file from designation
+     * - [ONLY_TARGET_DECLARATION]: Do not render any files, render only target declaration
+     */
+    enum class OutputRenderingMode {
+        ALL_FILES_FROM_ALL_MODULES,
+        USE_SITE_AND_DESIGNATION_FILES,
+        ONLY_TARGET_DECLARATION,
+    }
+
     protected fun doLazyResolveTest(
         ktFile: KtFile,
         testServices: TestServices,
-        renderAllFiles: Boolean,
+        outputRenderingMode: OutputRenderingMode,
         resolverProvider: (LLFirResolveSession) -> Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)>,
     ) {
         val resultBuilder = StringBuilder()
@@ -60,12 +74,16 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             }
 
             val (elementToResolve, resolver) = resolverProvider(firResolveSession)
-            val filesToRender = if (renderAllFiles) {
-                allKtFiles.map(firResolveSession::getOrBuildFirFile)
-            } else {
-                val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-                val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
-                listOfNotNull(firFile, designation?.firFile).distinct()
+            val filesToRender = when (outputRenderingMode) {
+                OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES -> {
+                    allKtFiles.map(firResolveSession::getOrBuildFirFile)
+                }
+                OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES -> {
+                    val firFile = firResolveSession.getOrBuildFirFile(ktFile)
+                    val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
+                    listOfNotNull(firFile, designation?.firFile).distinct()
+                }
+                OutputRenderingMode.ONLY_TARGET_DECLARATION -> emptyList()
             }
 
             val basePhase = elementToResolve.resolvePhase

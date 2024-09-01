@@ -13,8 +13,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
-import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -55,7 +56,7 @@ typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>
 typealias FirWhenExpressionChecker = FirExpressionChecker<FirWhenExpression>
 typealias FirLoopExpressionChecker = FirExpressionChecker<FirLoop>
 typealias FirLoopJumpChecker = FirExpressionChecker<FirLoopJump>
-typealias FirLogicExpressionChecker = FirExpressionChecker<FirBinaryLogicExpression>
+typealias FirBooleanOperatorExpressionChecker = FirExpressionChecker<FirBooleanOperatorExpression>
 typealias FirReturnExpressionChecker = FirExpressionChecker<FirReturnExpression>
 typealias FirBlockChecker = FirExpressionChecker<FirBlock>
 typealias FirAnnotationChecker = FirExpressionChecker<FirAnnotation>
@@ -64,6 +65,7 @@ typealias FirCheckNotNullCallChecker = FirExpressionChecker<FirCheckNotNullCall>
 typealias FirElvisExpressionChecker = FirExpressionChecker<FirElvisExpression>
 typealias FirGetClassCallChecker = FirExpressionChecker<FirGetClassCall>
 typealias FirSafeCallExpressionChecker = FirExpressionChecker<FirSafeCallExpression>
+typealias FirSmartCastExpressionChecker = FirExpressionChecker<FirSmartCastExpression>
 typealias FirEqualityOperatorCallChecker = FirExpressionChecker<FirEqualityOperatorCall>
 typealias FirStringConcatenationCallChecker = FirExpressionChecker<FirStringConcatenationCall>
 typealias FirTypeOperatorCallChecker = FirExpressionChecker<FirTypeOperatorCall>

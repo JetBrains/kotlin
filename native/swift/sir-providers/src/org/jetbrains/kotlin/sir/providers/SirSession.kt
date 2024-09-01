@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 
@@ -34,6 +33,8 @@ public interface SirSession :
 {
     public val sirSession: SirSession
         get() = this
+
+    public val enumGenerator: SirEnumGenerator
 
     public val declarationNamer: SirDeclarationNamer
     public val declarationProvider: SirDeclarationProvider
@@ -60,7 +61,7 @@ public interface SirSession :
         this@trampolineDeclarations.trampolineDeclarations()
     }
 
-    override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
+    override fun KaModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
@@ -70,7 +71,7 @@ public interface SirSession :
     ): SirType =
         with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType, processTypeImports) }
 
-    override fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
+    override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
 
     override fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
@@ -82,6 +83,7 @@ public interface SirSession :
  */
 public interface SirEnumGenerator {
     public fun FqName.sirPackageEnum(): SirEnum
+    public val collectedPackages: Set<FqName>
 }
 
 /**
@@ -118,12 +120,12 @@ public interface SirTrampolineDeclarationsProvider {
 }
 
 /**
- * Translates the given [KtModule] to the corresponding [SirModule].
+ * Translates the given [KaModule] to the corresponding [SirModule].
  * Note that it is not always a 1-1 mapping.
  */
 public interface SirModuleProvider {
 
-    public fun KtModule.sirModule(): SirModule
+    public fun KaModule.sirModule(): SirModule
 }
 
 public interface SirChildrenProvider {
@@ -156,8 +158,8 @@ public interface SirTypeProvider {
 
 public interface SirVisibilityChecker {
     /**
-     * Determines visibility of the given [KaSymbolWithVisibility].
+     * Determines visibility of the given [KaDeclarationSymbol].
      * @return null if symbol should not be exposed to SIR completely.
      */
-    public fun KaSymbolWithVisibility.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
+    public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility?
 }

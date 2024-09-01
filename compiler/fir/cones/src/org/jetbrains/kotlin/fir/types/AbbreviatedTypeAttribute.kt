@@ -36,3 +36,9 @@ val ConeAttributes.abbreviatedType: AbbreviatedTypeAttribute? by ConeAttributes.
 
 val ConeKotlinType.abbreviatedType: ConeKotlinType?
     get() = attributes.abbreviatedType?.coneType
+
+val ConeKotlinType.abbreviatedTypeOrSelf: ConeKotlinType
+    get() = abbreviatedType ?: this
+
+val ConeKotlinType.isTypealiasExpansion: Boolean
+    get() = this != abbreviatedTypeOrSelf

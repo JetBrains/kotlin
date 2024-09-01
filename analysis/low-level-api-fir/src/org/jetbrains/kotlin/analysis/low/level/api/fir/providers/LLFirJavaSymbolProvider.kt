@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider

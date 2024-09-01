@@ -103,7 +103,7 @@ class MavenDependenciesResolver(
     ): ResultWithDiagnostics<Boolean> {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
-        val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
+        val repoId = options.mavenRepoId ?: repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
 
         val usernameRaw = options.username
         val passwordRaw = options.password

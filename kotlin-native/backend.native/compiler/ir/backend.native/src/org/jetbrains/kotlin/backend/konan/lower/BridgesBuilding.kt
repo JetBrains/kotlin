@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.BridgeDirection
@@ -32,6 +31,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -43,20 +44,23 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
 
-internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
-    private val bridges = mapping.bridges
-
+internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
     fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
         val irFunction = overriddenFunction.function
+        val directions = overriddenFunction.bridgeDirections
         assert(overriddenFunction.needBridge) {
             "Function ${irFunction.render()} doesn't need a bridge to call overridden function ${overriddenFunction.overriddenFunction.render()}"
         }
-        val key = NativeMapping.BridgeKey(irFunction, overriddenFunction.bridgeDirections)
-        return bridges.getOrPut(key) { createBridge(key) }
+
+        val functionBridges = irFunction::bridges.getOrSetIfNull { mutableMapOf() }
+        return functionBridges.getOrPut(directions) { createBridge(irFunction, directions) }
     }
 
     private fun BridgeDirection.type() =
@@ -64,8 +68,7 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
                 null
             else this.erasedType ?: irBuiltIns.anyNType
 
-    private fun createBridge(key: NativeMapping.BridgeKey): IrSimpleFunction {
-        val (function, bridgeDirections) = key
+    private fun createBridge(function: IrSimpleFunction, bridgeDirections: BridgeDirections): IrSimpleFunction {
         val target = function.target
 
         // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),
@@ -163,7 +166,6 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 type = context.irBuiltIns.anyNType,
                                 isAssignable = arg.isAssignable,
                                 symbol = IrValueParameterSymbolImpl(),
-                                index = arg.index,
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,
@@ -248,7 +250,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     }
 }
 
-internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {
+internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrSimpleFunction) : IrDeclarationOrigin {
     override val name: String
         get() = "BRIDGE_METHOD"
 
@@ -257,8 +259,8 @@ internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : 
     }
 }
 
-internal val IrFunction.bridgeTarget: IrFunction?
-        get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
+internal val IrSimpleFunction.bridgeTarget: IrSimpleFunction?
+    get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
 
 private fun IrBuilderWithScope.returnIfBadType(value: IrExpression,
                                                type: IrType,

@@ -214,7 +214,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                         "\$enum\$ordinal", context.irBuiltIns.intType, JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
                     )
                     valueParameters += declaration.valueParameters.map { param ->
-                        param.copyTo(this, index = param.index + 2).also { newParam ->
+                        param.copyTo(this).also { newParam ->
                             loweredEnumConstructorParameters[param.symbol] = newParam
                         }
                     }

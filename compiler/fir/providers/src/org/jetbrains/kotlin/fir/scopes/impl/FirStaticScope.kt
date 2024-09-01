@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -48,4 +51,9 @@ class FirStaticScope(private val delegateScope: FirContainingNamesAwareScope) : 
 
     override val scopeOwnerLookupNames: List<String>
         get() = delegateScope.scopeOwnerLookupNames
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirStaticScope? {
+        return delegateScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirStaticScope(it) }
+    }
 }

@@ -27,7 +27,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import java.nio.charset.StandardCharsets
@@ -109,9 +107,9 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
                 put(JVMConfigurationKeys.IR, true)
                 put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
+                put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
                 messageCollector = TestMessageCollector
-                put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(TestMessageCollector))
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
             }
@@ -120,7 +118,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
 
-            ComposePluginRegistrar.checkCompilerVersion(configuration)
+            ComposePluginRegistrar.checkCompilerConfiguration(configuration)
 
             environment.project.registerExtensions(configuration)
 

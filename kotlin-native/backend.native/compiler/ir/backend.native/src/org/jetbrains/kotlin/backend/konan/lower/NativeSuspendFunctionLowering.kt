@@ -172,7 +172,9 @@ internal class NativeSuspendFunctionsLowering(
 
                 val newChildren = arrayOfNulls<IrExpression?>(numberOfChildren)
                 val tempStatements = mutableListOf<IrStatement>()
-                var first = true
+                // No constructor argument is first since the call will be lowered to (val inst = alloc(); call(inst, *args); inst)
+                // and therefore an actual first argument will be the just allocated instance.
+                var first = expression !is IrConstructorCall
                 for ((index, child) in children.withIndex()) {
                     if (child == null) continue
                     val transformedChild =
@@ -352,7 +354,7 @@ internal class NativeSuspendFunctionsLowering(
 
     private fun IrExpression.isPure(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrCall -> false // TODO: skip builtin operators.
             is IrTypeOperatorCall -> this.argument.isPure() && this.operator != IrTypeOperator.CAST
             is IrGetValue -> !this.symbol.owner.let { it is IrVariable && it.isVar }

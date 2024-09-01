@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_FQN
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.KotlinType
@@ -32,7 +34,10 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) : DeclarationChecker {
+open class ParcelizeDeclarationChecker(
+    val parcelizeAnnotations: List<FqName>,
+    private val experimentalCodeGeneration: Boolean = false,
+) : DeclarationChecker {
     private companion object {
         private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
             FqName("kotlinx.parcelize.IgnoredOnParcel"),
@@ -163,7 +168,7 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
             }
         }
 
-        val abstractModifier = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) }
+        val abstractModifier = declaration.modifierList?.getModifier(KtTokens.ABSTRACT_KEYWORD)
         if (abstractModifier != null) {
             diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(abstractModifier))
         }
@@ -198,7 +203,6 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         if (descriptor.hasCustomParceler()) {
             return
         }
-
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
             val reportElement = declaration.nameIdentifier ?: declaration
@@ -217,75 +221,117 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty<KtParameter>()) {
-            checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)
+            checkParcelableClassProperty(parameter, descriptor, declaration.body, diagnosticHolder, typeMapper, languageVersionSettings)
         }
     }
 
     private fun checkParcelableClassProperty(
         parameter: KtParameter,
         containerClass: ClassDescriptor,
+        containerClassBody: KtClassBody?,
         diagnosticHolder: DiagnosticSink,
-        typeMapper: KotlinTypeMapper
+        typeMapper: KotlinTypeMapper,
+        languageVersionSettings: LanguageVersionSettings
     ) {
         if (!parameter.hasValOrVar()) {
-            val reportElement = parameter.nameIdentifier ?: parameter
-            diagnosticHolder.report(ErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR.on(reportElement))
-        }
+            if (containerClass.allowBareValueArguments()) {
+                if (containerClassBody != null) {
+                    FindParameterReferences(setOf(parameter), typeMapper.bindingContext, diagnosticHolder).visitElement(containerClassBody)
+                }
+            } else {
+                val reportElement = parameter.nameIdentifier ?: parameter
+                diagnosticHolder.report(ErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR.on(reportElement))
+            }
+        } else {
 
-        val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
+            val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
 
-        // Don't check parameters which won't be serialized
-        if (descriptor.annotations.any { it.fqName in IGNORED_ON_PARCEL_FQ_NAMES }) {
-            return
-        }
+            // Don't check parameters which won't be serialized
+            if (descriptor.annotations.any { it.fqName in IGNORED_ON_PARCEL_FQ_NAMES }) {
+                return
+            }
 
-        val type = descriptor.type
-        if (!type.isError) {
-            val customParcelerTypes =
-                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { (mappedType, _) ->
-                    mappedType
-                }.toSet()
+            val type = descriptor.type
+            if (!type.isError) {
+                val customParcelerTypes =
+                    (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { (mappedType, _) ->
+                        mappedType
+                    }.toSet()
 
-            if (!checkParcelableType(type, customParcelerTypes)) {
+                val unsupported = checkParcelableType(type, customParcelerTypes, containerClass, languageVersionSettings)
                 val reportElement = parameter.typeReference ?: parameter.nameIdentifier ?: parameter
-                diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement))
+                if (type in unsupported) {
+                    diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement))
+                } else {
+                    unsupported.forEach {
+                        diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED.on(reportElement, it))
+                    }
+                }
             }
         }
     }
 
-    private fun checkParcelableType(type: KotlinType, customParcelerTypes: Set<KotlinType>): Boolean {
+    // Returns the set of types that are *not* supported. This set can include types other than `type`
+    // if it is a generally supported container type that contains unsupported elements in this instantiation.
+    private fun checkParcelableType(
+        type: KotlinType,
+        customParcelerTypes: Set<KotlinType>,
+        containerClass: ClassDescriptor,
+        languageVersionSettings: LanguageVersionSettings,
+        inDataClass: Boolean = false,
+    ): Set<KotlinType> {
         if (type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES)
             || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
-            || type in customParcelerTypes) {
-            return true
-        }
+            || type in customParcelerTypes
+            || type.isBuiltinFunctionalTypeOrSubtype
+        ) return emptySet()
 
         val upperBound = type.getErasedUpperBound()
         val descriptor = upperBound.constructor.declarationDescriptor as? ClassDescriptor
-            ?: return false
+            ?: return setOf(type)
 
         if (descriptor.kind.isSingleton || descriptor.kind.isEnumClass) {
-            return true
+            return emptySet()
         }
 
         val fqName = descriptor.fqNameSafe.asString()
         if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
-            return true
+            return emptySet()
         }
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
-            return upperBound.arguments.all {
-                checkParcelableType(it.type, customParcelerTypes)
+            return upperBound.arguments.fold(emptySet()) { acc, arg ->
+                acc union checkParcelableType(arg.type, customParcelerTypes, containerClass, languageVersionSettings)
             }
         }
 
-        for (superFqName in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES) {
-            if (type.matchesFqNameWithSupertypes(superFqName)) {
-                return true
+        if (BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
+            return emptySet()
+        }
+
+        if (descriptor.isData && (inDataClass || type.annotations.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME))) {
+            val scope = descriptor.getMemberScope(type.arguments)
+            val primaryConstructor = descriptor.constructors.find { it.isPrimary } ?: return setOf(type)
+            val properties = primaryConstructor.valueParameters.map {
+                scope.getContributedVariables(it.name, NoLookupLocation.FOR_ALREADY_TRACKED).first()
+            }
+            // Serialization uses the property getters, deserialization uses the constructor.
+            if (!DescriptorVisibilityUtils.isVisible(null, primaryConstructor, containerClass, languageVersionSettings) ||
+                properties.any { !DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
+            ) return setOf(type)
+
+            return properties.fold(emptySet()) { acc, property ->
+                acc union checkParcelableType(
+                    property.type, customParcelerTypes, containerClass, languageVersionSettings, inDataClass = true
+                )
             }
         }
 
-        return type.isBuiltinFunctionalTypeOrSubtype
+        if (BuiltinParcelableTypes.EXTERNAL_SERIALIZABLE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
+            return emptySet()
+        }
+
+        return setOf(type)
     }
 
     private fun KotlinType.getErasedUpperBound(): KotlinType =
@@ -295,5 +341,33 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
     private fun ClassDescriptor.hasCustomParceler(): Boolean {
         val companionObjectSuperTypes = companionObjectDescriptor?.let { TypeUtils.getAllSupertypes(it.defaultType) } ?: return false
         return companionObjectSuperTypes.any { it.isParceler }
+    }
+
+    private fun ClassDescriptor.allowBareValueArguments(): Boolean {
+        val inheritsFromParcelize = isParcelize(parcelizeAnnotations) && (getSuperClassNotAny()?.isParcelize(parcelizeAnnotations) == true)
+        return experimentalCodeGeneration && inheritsFromParcelize && !hasCustomParcelerInChain()
+    }
+
+    private fun ClassDescriptor.hasCustomParcelerInChain(): Boolean =
+        hasCustomParceler() || getSuperClassNotAny()?.hasCustomParcelerInChain() == true
+
+}
+
+class FindParameterReferences(
+    lookingFor: Set<KtParameter>,
+    private val bindingContext: BindingContext,
+    private val diagnosticHolder: DiagnosticSink,
+) : KtTreeVisitorVoid() {
+
+    private val lookingForDescriptors = lookingFor.map {
+        bindingContext[BindingContext.VALUE_PARAMETER, it]
+    }
+
+    override fun visitReferenceExpression(expression: KtReferenceExpression) {
+        super.visitReferenceExpression(expression)
+        val parameter = bindingContext[BindingContext.REFERENCE_TARGET, expression] as? ValueParameterDescriptor ?: return
+        if (parameter in lookingForDescriptors) {
+            diagnosticHolder.report(ErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY.on(expression))
+        }
     }
 }

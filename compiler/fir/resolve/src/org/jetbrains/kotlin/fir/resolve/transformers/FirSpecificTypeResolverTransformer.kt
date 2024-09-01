@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -16,15 +18,13 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
-import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -36,7 +36,8 @@ class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
     private val errorTypeAsResolved: Boolean = true,
     private val resolveDeprecations: Boolean = true,
-    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+    private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+    private val expandTypeAliases: Boolean,
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
@@ -88,8 +89,7 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic) = resolveType(typeRef, data)
-
+        val (resolvedType, diagnostic) = resolveType(typeRef, data, expandTypeAliases)
         return transformType(typeRef, resolvedType, diagnostic, data)
     }
 
@@ -105,7 +105,7 @@ class FirSpecificTypeResolverTransformer(
         return if (resolvedType != null && resolvedType !is ConeErrorType && diagnostic == null) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
-                type = resolvedType
+                coneType = resolvedType
                 annotations += functionTypeRef.annotations
                 delegatedTypeRef = functionTypeRef
             }
@@ -113,7 +113,7 @@ class FirSpecificTypeResolverTransformer(
             buildErrorTypeRef {
                 source = functionTypeRef.source
                 if (resolvedType != null) {
-                    type = resolvedType
+                    coneType = resolvedType
                 }
                 annotations += functionTypeRef.annotations
                 this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
@@ -126,6 +126,7 @@ class FirSpecificTypeResolverTransformer(
     private fun FirSpecificTypeResolverTransformer.resolveType(
         typeRef: FirTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
+        expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult {
         return typeResolver.resolveType(
             typeRef,
@@ -134,7 +135,8 @@ class FirSpecificTypeResolverTransformer(
             isOperandOfIsOperator,
             resolveDeprecations,
             currentFile,
-            supertypeSupplier
+            supertypeSupplier,
+            expandTypeAliases,
         )
     }
 
@@ -154,7 +156,7 @@ class FirSpecificTypeResolverTransformer(
             else -> {
                 buildResolvedTypeRef {
                     source = typeRef.source
-                    type = resolvedType
+                    coneType = resolvedType
                     annotations += typeRef.annotations
                     delegatedTypeRef = typeRef
                 }
@@ -180,10 +182,10 @@ class FirSpecificTypeResolverTransformer(
                 }
             } else {
                 typeRef.source
-            }
+            }?.fakeIfAbbreviated(resolvedType)
 
             delegatedTypeRef = typeRef
-            type = resolvedType
+            coneType = resolvedType
             annotations += typeRef.annotations
 
             val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
@@ -200,6 +202,18 @@ class FirSpecificTypeResolverTransformer(
             }
         }
     }
+
+    /**
+     * We don't want to report errors from typealiases' expanded type refs once again
+     * per every use site, but we should remember that some errors on types with abbreviations
+     * are caused by the use site (e.g. `INVISIBLE_REFERENCE`), so those must not be ignored.
+     */
+    private fun KtSourceElement.fakeIfAbbreviated(type: ConeKotlinType): KtSourceElement =
+        takeUnless { kind is KtRealSourceElementKind && type.abbreviatedType?.isTypealiasWithErrorInExpansion == true }
+            ?: fakeElement(KtFakeSourceElementKind.ErroneousTypealiasExpansion)
+
+    private val ConeKotlinType.isTypealiasWithErrorInExpansion: Boolean
+        get() = toTypeAliasSymbol(session)?.resolvedExpandedTypeRef is FirErrorTypeRef
 
     /**
      * Returns the smallest non-resolvable prefix of the given [qualifiers].
@@ -257,7 +271,7 @@ class FirSpecificTypeResolverTransformer(
             if (resolvedType is ConeErrorType || diagnostic != null) continue
             return buildResolvedTypeRef {
                 source = qualifiersToTry.last().source
-                type = resolvedType
+                coneType = resolvedType
                 delegatedTypeRef = typeRefToTry
             }
         }

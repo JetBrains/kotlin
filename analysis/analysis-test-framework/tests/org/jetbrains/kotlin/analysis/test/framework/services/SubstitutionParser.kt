@@ -25,7 +25,6 @@ object SubstitutionParser {
         return parseSubstitutor(analysisSession, comment, declaration)
     }
 
-
     fun parseSubstitutor(analysisSession: KaSession, comment: PsiComment, scopeForTypeParameters: KtElement): KaSubstitutor {
         val directivesAsString = comment.text.trim()
         check(directivesAsString.startsWith(SUBSTITUTOR_PREFIX))

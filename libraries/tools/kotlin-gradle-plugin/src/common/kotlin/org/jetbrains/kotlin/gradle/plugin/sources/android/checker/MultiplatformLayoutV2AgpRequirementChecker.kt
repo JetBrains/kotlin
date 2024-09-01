@@ -9,6 +9,7 @@ import com.android.Version
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
 import org.jetbrains.kotlin.gradle.plugin.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout

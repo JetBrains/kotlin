@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -41,6 +43,12 @@ abstract class FirTypeScope : FirContainingNamesAwareScope() {
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction
 
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): FirTypeScope?
+
     // ------------------------------------------------------------------------------------
 
     object Empty : FirTypeScope() {
@@ -60,6 +68,11 @@ abstract class FirTypeScope : FirContainingNamesAwareScope() {
 
         override fun toString(): String {
             return "Empty scope"
+        }
+
+        @DelicateScopeAPI
+        override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirTypeScope? {
+            return null
         }
     }
 }

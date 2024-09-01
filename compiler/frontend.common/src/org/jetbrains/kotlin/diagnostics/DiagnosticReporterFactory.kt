@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector.RawReporter
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
 
 object DiagnosticReporterFactory {
-    fun createReporter(rawReport: (Boolean, String) -> Unit = { _, _ -> }, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
+    fun createReporter(rawReporter: RawReporter = RawReporter.DO_NOTHING, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
         return if (disableSuppress) {
-            SimpleDiagnosticsCollector(rawReport)
+            SimpleDiagnosticsCollector(rawReporter)
         } else {
-            SimpleDiagnosticsCollectorWithSuppress(rawReport)
+            SimpleDiagnosticsCollectorWithSuppress(rawReporter)
         }
     }
 
-    fun createPendingReporter(rawReport: (Boolean, String) -> Unit = { _, _ -> }): PendingDiagnosticsCollectorWithSuppress =
-        PendingDiagnosticsCollectorWithSuppress(rawReport)
+    fun createPendingReporter(rawReporter: RawReporter = RawReporter.DO_NOTHING): PendingDiagnosticsCollectorWithSuppress {
+        return PendingDiagnosticsCollectorWithSuppress(rawReporter)
+    }
 }

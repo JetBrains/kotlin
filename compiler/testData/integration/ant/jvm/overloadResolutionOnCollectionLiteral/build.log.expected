@@ -10,14 +10,14 @@ build:
     [javac] fun intArrayOf(vararg elements: Int): IntArray
     [javac] @AnnInt(intArrayOf(1, 2))
     [javac]         ^^^^^^^^^^
-    [javac] [TestData]/myArrayOf.kt:3:1: error: conflicting overloads:
+    [javac] [TestData]/myArrayOf.kt:3:8: error: conflicting overloads:
     [javac] fun intArrayOf(vararg elements: Int): IntArray
     [javac] public fun intArrayOf(vararg elements: Int): IntArray = TODO()
-    [javac] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    [javac] [TestData]/myArrayOf.kt:4:1: error: conflicting overloads:
+    [javac]        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    [javac] [TestData]/myArrayOf.kt:4:8: error: conflicting overloads:
     [javac] fun intArrayOf(vararg elements: Int): IntArray
     [javac] public fun intArrayOf(vararg elements: Int): IntArray = TODO()
-    [javac] ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    [javac]        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ERR:
 

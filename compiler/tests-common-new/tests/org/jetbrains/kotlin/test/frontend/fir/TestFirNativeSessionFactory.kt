@@ -29,7 +29,6 @@ object TestFirNativeSessionFactory {
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: (FirSession) -> Unit = {},
     ): FirSession {
         val resolvedLibraries = CommonKLibResolver.resolve(
             getAllNativeDependenciesPaths(module, testServices),
@@ -44,7 +43,6 @@ object TestFirNativeSessionFactory {
             moduleDataProvider,
             extensionRegistrars,
             languageVersionSettings,
-            registerExtraComponents,
         )
     }
 }

@@ -81,9 +81,7 @@ internal class DataClassMembersGenerator(
     ) : DataClassMethodGenerator(ktClassOrObject, declarationGenerator.context.bindingContext) {
 
         private val irDataClassMembersGenerator = object : DescriptorBasedDataClassMembersGenerator(
-            context, context.symbolTable, irClass, ktClassOrObject.fqName, origin,
-            forbidDirectFieldAccess = false,
-            generateBodies = generateBodies
+            context, context.symbolTable, irClass, ktClassOrObject.fqName, origin, forbidDirectFieldAccess = false, generateBodies,
         ) {
             override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction =
                 declareSimpleFunction(startOffset, endOffset, origin, functionDescriptor)
@@ -204,12 +202,10 @@ private abstract class DescriptorBasedDataClassMembersGenerator(
 
     fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
         buildMember(function) {
-            if (generateBodies) {
-                function.valueParameters.forEach { parameter ->
-                    putDefault(parameter, irGetProperty(irThis(), getProperty(parameter)))
-                }
-                generateCopyFunction(constructorSymbol)
+            function.valueParameters.forEach { parameter ->
+                putDefault(parameter, irGetProperty(irThis(), getProperty(parameter)))
             }
+            generateCopyFunction(constructorSymbol)
         }
     }
 
@@ -248,7 +244,9 @@ private abstract class DescriptorBasedDataClassMembersGenerator(
             irFunction.buildWithScope {
                 irFunction.parent = irClass
                 generateSyntheticFunctionParameterDeclarations(irFunction)
-                body(irFunction)
+                if (generateBodies) {
+                    body(irFunction)
+                }
             }
         }
     }

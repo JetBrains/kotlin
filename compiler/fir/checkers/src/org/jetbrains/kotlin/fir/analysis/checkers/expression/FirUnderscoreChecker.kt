@@ -33,6 +33,9 @@ object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
                     }
                 }
             }
+            is FirSmartCastExpression -> {
+                check(expression.originalExpression, context, reporter)
+            }
         }
     }
 

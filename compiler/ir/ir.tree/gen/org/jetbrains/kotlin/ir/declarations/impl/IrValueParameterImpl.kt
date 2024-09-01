@@ -31,7 +31,6 @@ class IrValueParameterImpl @IrImplementationDetail constructor(
     override var type: IrType,
     override val isAssignable: Boolean,
     override val symbol: IrValueParameterSymbol,
-    override var index: Int,
     override var varargElementType: IrType?,
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,

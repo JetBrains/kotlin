@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.file.File
+import kotlin.random.Random
 
 internal class CacheStorage(private val generationState: NativeGenerationState) {
     private val outputFiles = generationState.outputFiles
@@ -16,11 +17,13 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     companion object {
         fun renameOutput(outputFiles: OutputFiles, overwrite: Boolean) {
             if (outputFiles.mainFile.exists) {
-                if (!overwrite)
+                if (!overwrite) {
+                    outputFiles.tempCacheDirectory!!.deleteRecursively()
                     return
+                }
                 // For caches the output file is a directory. It might be already created,
                 // we have to delete it in order for the next renaming operation to succeed.
-                val tempDirectoryForRemoval = File(outputFiles.mainFileName + "-to-remove")
+                val tempDirectoryForRemoval = File(outputFiles.mainFileName + "-to-remove" + Random.nextLong())
                 if (!outputFiles.mainFile.renameTo(tempDirectoryForRemoval))
                     return
                 tempDirectoryForRemoval.deleteRecursively()

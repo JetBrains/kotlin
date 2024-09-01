@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -44,11 +47,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 @OptIn(Fir2IrBuiltInsInternals::class)
 class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
-    private val moduleDescriptor: FirModuleDescriptor,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
 ) : IrBuiltIns() {
 
     // ------------------------------------- basic stuff -------------------------------------
+
+    private val moduleDescriptor: FirModuleDescriptor = run {
+        val session = c.session
+        val moduleData = when (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            false -> session.moduleData.dependencies.first()
+            true -> session.moduleData
+        }
+        c.declarationStorage.getDependenciesModuleDescriptor(moduleData)
+    }
 
     private val session: FirSession
         get() = c.session
@@ -59,7 +70,7 @@ class IrBuiltInsOverFir(
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
 
-    override val irFactory: IrFactory = c.irFactory
+    override val irFactory: IrFactory = IrFactoryImpl
 
     private val kotlinPackage: FqName = StandardClassIds.BASE_KOTLIN_PACKAGE
 
@@ -142,8 +153,8 @@ class IrBuiltInsOverFir(
     override val mutableIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableIterator) }
     override val mutableListIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableListIterator) }
     override val comparableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Comparable) }
-    override val throwableType: IrType by lazy { throwableClass.defaultTypeWithoutArguments }
-    override val throwableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Throwable) }
+    override val throwableType: IrType get() = fir2irBuiltins.throwableType
+    override val throwableClass: IrClassSymbol get() = fir2irBuiltins.throwableClass
 
     override val kCallableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KCallable) }
     override val kPropertyClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty) }
@@ -341,7 +352,7 @@ class IrBuiltInsOverFir(
          * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
          *   for it after Fir2IrComponentsStorage is fully initialized
          */
-        val firClassSymbol = session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
+        val firClassSymbol = session.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
 
         val classSymbol = if (firClassSymbol == null) {
             val irClass = createIntrinsicConstEvaluationClass()

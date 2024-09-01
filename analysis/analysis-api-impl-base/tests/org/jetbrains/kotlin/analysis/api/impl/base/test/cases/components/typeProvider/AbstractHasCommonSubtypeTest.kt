@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePr
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -52,20 +52,20 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
                     }
 
                     val a = valueArguments[0]
-                    val aType = a.getArgumentExpression()?.getKaType()
+                    val aType = a.getArgumentExpression()?.expressionType
                     if (aType == null) {
                         errors.add("'${a.text}' has no type at ${a.positionString}")
                         super.visitCallExpression(expression)
                         return
                     }
                     val b = valueArguments[1]
-                    val bType = b.getArgumentExpression()?.getKaType()
+                    val bType = b.getArgumentExpression()?.expressionType
                     if (bType == null) {
                         errors.add("'${b.text}' has no type at ${b.positionString}")
                         super.visitCallExpression(expression)
                         return
                     }
-                    if (haveCommonSubtype != aType.hasCommonSubTypeWith(bType)) {
+                    if (haveCommonSubtype != aType.hasCommonSubtypeWith(bType)) {
                         if (haveCommonSubtype) {
                             actualTextBuilder.append("typesHaveNoCommonSubtype")
                         } else {

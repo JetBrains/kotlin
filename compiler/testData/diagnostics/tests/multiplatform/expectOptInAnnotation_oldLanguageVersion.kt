@@ -1,9 +1,8 @@
-// FIR_IDENTICAL
 // LANGUAGE: -MultiplatformRestrictions
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
-@file:OptIn(ExperimentalMultiplatform::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
 
 expect annotation class ActualOnly
 

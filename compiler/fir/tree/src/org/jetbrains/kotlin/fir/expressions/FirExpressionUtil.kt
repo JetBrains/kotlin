@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
-    get() = ((annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)
+    get() = ((annotationTypeRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)
 
 inline val FirAnnotation.unexpandedClassId: ClassId?
     get() = unexpandedConeClassLikeType?.lookupTag?.classId

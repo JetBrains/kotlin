@@ -3,14 +3,19 @@ plugins {
 }
 
 kotlin {
-    ios()
+    iosX64()
+    iosArm64()
 
     // Check that we can reenter the configuration method.
-    ios {
+    iosX64 {
         binaries.framework(listOf(DEBUG))
     }
 
-    sourceSets["iosMain"].dependencies {
+    iosArm64 {
+        binaries.framework(listOf(DEBUG))
+    }
+
+    sourceSets.iosMain.dependencies {
         implementation("common.ios:lib:1.0")
     }
 }

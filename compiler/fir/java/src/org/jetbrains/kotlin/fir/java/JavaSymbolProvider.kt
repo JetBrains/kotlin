@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 //Also used in IDE for loading java classes separately from stub based kotlin classes
 open class JavaSymbolProvider(
     session: FirSession,
-    private val javaFacade: FirJavaFacade,
-) : FirSymbolProvider(session) {
+    override val javaFacade: FirJavaFacade,
+) : FirSymbolProvider(session), FirJavaAwareSymbolProvider {
     private class ClassCacheContext(
         val parentClassSymbol: FirRegularClassSymbol? = null,
         val foundJavaClass: JavaClass? = null,

@@ -14,7 +14,9 @@ kotlin {
     jvm("jvm2") {}
     linuxX64 {}
     linuxArm64 {}
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting
@@ -22,12 +24,32 @@ kotlin {
         val jvm2Main by getting
         val linuxX64Main by getting
         val linuxArm64Main by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
 
         val commonTest by getting
         val jvmTest by getting
         val jvm2Test by getting
         val linuxX64Test by getting
         val linuxArm64Test by getting
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        val iosSimulatorArm64Test by getting
+
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+
+        val iosTest by creating {
+            dependsOn(commonMain)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
+            iosSimulatorArm64Test.dependsOn(this)
+        }
 
         val linuxMain by creating {
             dependsOn(commonMain)

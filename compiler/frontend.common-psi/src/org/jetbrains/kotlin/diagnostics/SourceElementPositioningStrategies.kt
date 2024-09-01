@@ -36,6 +36,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_RETURN_TYPE
     )
 
+    val CONTEXT_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONTEXT_KEYWORD,
+        PositioningStrategies.CONTEXT_KEYWORD
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
@@ -49,6 +54,11 @@ object SourceElementPositioningStrategies {
     val DECLARATION_SIGNATURE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_SIGNATURE,
         PositioningStrategies.DECLARATION_SIGNATURE
+    )
+
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS,
+        PositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS
     )
 
     val DECLARATION_SIGNATURE_OR_DEFAULT = SourceElementPositioningStrategy(

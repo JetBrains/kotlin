@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-62814
 
 class K2DuplicatesOkayBug {

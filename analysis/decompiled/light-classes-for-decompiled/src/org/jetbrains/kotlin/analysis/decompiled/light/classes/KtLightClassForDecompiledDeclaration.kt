@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMember
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
+import org.jetbrains.kotlin.asJava.classes.ClassContentFinderCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
+import org.jetbrains.kotlin.asJava.classes.getEnumValueOfPsiMethod
+import org.jetbrains.kotlin.asJava.classes.getEnumValuesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
@@ -37,27 +39,43 @@ internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     )
 }
 
+private inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
+    return if (isNotEmpty()) toTypedArray() else default
+}
+
 open class KtLightClassForDecompiledDeclaration(
     clsDelegate: PsiClass,
     clsParent: PsiElement,
     protected val file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
 ) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
-    private val myInnersCache by lazyPub {
-        ClassInnerStuffCache(
-            /* aClass = */ this,
-            /* generateEnumMethods = */ true,
-            /* modificationTrackers = */ listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
+    private val contentFinderCache by lazyPub {
+        ClassContentFinderCache(
+            extensibleClass = this,
+            modificationTrackers = listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
     }
 
-    override fun getFields(): Array<PsiField> = myInnersCache.fields
-    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
-    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
-    override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
-    override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+    override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
+    override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
+    override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
+    override fun getInnerClasses(): Array<PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
+
+    override fun findFieldByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiField? = contentFinderCache.findFieldByName(name, checkBases)
+
+    override fun findMethodsByName(
+        name: String,
+        checkBases: Boolean,
+    ): Array<PsiMethod> = contentFinderCache.findMethodsByName(name, checkBases)
+
+    override fun findInnerClassByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
+
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
     override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
@@ -129,12 +147,26 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getAllMethods(): Array<PsiMethod> = PsiClassImplUtil.getAllMethods(this)
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
+    private val ownConstructors: Array<PsiMethod>
+        get() = cachedValueWithLibraryTracker {
+            PsiImplUtil.getConstructors(this)
+        }
+
     override fun getOwnMethods(): List<PsiMethod> = cachedValueWithLibraryTracker {
         val isEnum = isEnum
         this.clsDelegate.methods.mapNotNull { psiMethod ->
-            if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
-            if (isEnum && isGetEntriesMethod(psiMethod)) {
-                return@mapNotNull getEnumEntriesPsiMethod(this)
+            // We replace cls method with generated ones to provide nullability annotations
+            when {
+                !isEnum -> {}
+                isSyntheticValuesOrValueOfMethod(psiMethod) -> {
+                    return@mapNotNull if (psiMethod.name == "valueOf") {
+                        getEnumValueOfPsiMethod(this)
+                    } else {
+                        getEnumValuesPsiMethod(this)
+                    }
+                }
+
+                isGetEntriesMethod(psiMethod) -> return@mapNotNull getEnumEntriesPsiMethod(this)
             }
 
             KtLightMethodForDecompiledDeclaration(

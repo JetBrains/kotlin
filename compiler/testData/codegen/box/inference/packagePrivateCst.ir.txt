@@ -1,0 +1,61 @@
+FILE fqName:foo fileName:/box.kt
+  PROPERTY name:temp visibility:public modality:FINAL [var]
+    FIELD PROPERTY_BACKING_FIELD name:temp type:other.PublicSuper? visibility:private [static]
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-temp> visibility:public modality:FINAL <> () returnType:other.PublicSuper?
+      correspondingProperty: PROPERTY name:temp visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-temp> (): other.PublicSuper? declared in foo'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:temp type:other.PublicSuper? visibility:private [static]' type=other.PublicSuper? origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-temp> visibility:public modality:FINAL <> (<set-?>:other.PublicSuper?) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:temp visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:other.PublicSuper?
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:temp type:other.PublicSuper? visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: other.PublicSuper? declared in foo.<set-temp>' type=other.PublicSuper? origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+        <set-?>: WHEN type=other.PublicSuper? origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CONST String type=kotlin.String value="true"
+              arg1: CONST String type=kotlin.String value="false"
+            then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.AClass' type=other.AClass origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
+      CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+        <set-?>: WHEN type=other.PublicSuper? origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: CONST String type=kotlin.String value="true"
+              arg1: CONST String type=kotlin.String value="false"
+            then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.AClass' type=other.AClass origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
+      TRY type=kotlin.Unit
+        try: BLOCK type=kotlin.Unit origin=null
+          CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+            <set-?>: CALL 'public final fun select <T> (vararg t: T of foo.select): T of foo.select declared in foo' type=other.PrivateSuper origin=null
+              <T>: other.PrivateSuper
+              t: VARARG type=kotlin.Array<out other.PrivateSuper> varargElementType=other.PrivateSuper
+                CONSTRUCTOR_CALL 'public constructor <init> () declared in other.AClass' type=other.AClass origin=null
+                CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
+          RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'
+            CONST String type=kotlin.String value="FAIL"
+        CATCH parameter=val e: java.lang.IllegalAccessError declared in foo.box
+          VAR CATCH_PARAMETER name:e type:java.lang.IllegalAccessError [val]
+          BLOCK type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'
+        CONST String type=kotlin.String value="OK"
+  FUN name:select visibility:public modality:FINAL <T> (t:kotlin.Array<out T of foo.select>) returnType:T of foo.select
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:t index:0 type:kotlin.Array<out T of foo.select> varargElementType:T of foo.select [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun select <T> (vararg t: T of foo.select): T of foo.select declared in foo'
+        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of foo.select origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 't: kotlin.Array<out T of foo.select> declared in foo.select' type=kotlin.Array<out T of foo.select> origin=null
+          index: CONST Int type=kotlin.Int value=0

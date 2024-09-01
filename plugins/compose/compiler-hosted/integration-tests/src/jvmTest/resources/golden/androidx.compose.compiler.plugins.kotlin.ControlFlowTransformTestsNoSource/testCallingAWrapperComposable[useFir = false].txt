@@ -33,7 +33,7 @@ fun Test(%composer: Composer?, %changed: Int) {
 }
 internal object ComposableSingletons%TestKt {
   val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       A(%composer, 0)
     } else {
       %composer.skipToGroupEnd()

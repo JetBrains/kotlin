@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -125,7 +124,6 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 when (declaration) {
                     is IrSimpleFunction -> append("fun ")
                     is IrConstructor -> append("constructor ")
-                    else -> append("{${declaration.javaClass.simpleName}}")
                 }
 
                 append(declaration.name.asString())
@@ -368,7 +366,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
-    override fun visitConst(expression: IrConst<*>, data: Nothing?): String =
+    override fun visitConst(expression: IrConst, data: Nothing?): String =
         "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
 
     private fun Any.escapeIfRequired() =
@@ -896,13 +894,15 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
     when (irElement) {
         null -> append("<null>")
         is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
-        is IrConst<*> -> {
+        is IrConst -> {
             renderIrConstAsAnnotationArgument(irElement)
         }
         is IrVararg -> {
             appendIterableWith(irElement.elements, prefix = "[", postfix = "]", separator = ", ") {
                 renderAsAnnotationArgument(it, renderer, options)
             }
+            append(" type=${irElement.type.render()}")
+            append(" varargElementType=${irElement.varargElementType.render()}")
         }
         else -> if (renderer != null) {
             append(irElement.accept(renderer, null))
@@ -912,7 +912,7 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
     }
 }
 
-private fun StringBuilder.renderIrConstAsAnnotationArgument(const: IrConst<*>) {
+private fun StringBuilder.renderIrConstAsAnnotationArgument(const: IrConst) {
     val quotes = when (const.kind) {
         IrConstKind.String -> "\""
         IrConstKind.Char -> "'"

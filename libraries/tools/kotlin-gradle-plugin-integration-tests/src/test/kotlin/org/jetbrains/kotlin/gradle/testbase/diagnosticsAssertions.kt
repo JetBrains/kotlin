@@ -6,20 +6,11 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-
-fun BaseGradleIT.CompiledProject.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    output.assertHasDiagnostic(diagnosticFactory, withSubstring)
-}
-
-fun BaseGradleIT.CompiledProject.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    output.assertNoDiagnostic(diagnosticFactory, withSubstring)
-}
 
 fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertHasDiagnostic(diagnosticFactory, withSubstring)

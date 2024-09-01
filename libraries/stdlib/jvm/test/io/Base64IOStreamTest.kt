@@ -308,16 +308,42 @@ class Base64IOStreamTest {
     @Test
     fun withoutPadding() {
         for (base64 in listOf(Base64, Base64.Mime)) {
-            val inputStream = "Zm9vYg".byteInputStream()
+            for (paddingOption in Base64.PaddingOption.entries) {
+                val configuredBase64 = base64.withPadding(paddingOption)
+
+                val inputStream = "Zm9vYg".byteInputStream()
+                val wrapper = inputStream.decodingWith(configuredBase64)
+
+                wrapper.use {
+                    assertEquals('f'.code, it.read())
+                    assertEquals('o'.code, it.read())
+                    assertEquals('o'.code, it.read())
+
+                    if (paddingOption == Base64.PaddingOption.PRESENT) {
+                        assertFailsWith<IllegalArgumentException> { it.read() }
+                    } else {
+                        assertEquals('b'.code, it.read())
+                        assertEquals(-1, it.read())
+                        assertEquals(-1, it.read())
+                    }
+                }
+
+                // closed
+                assertFailsWith<IOException> {
+                    wrapper.read()
+                }
+            }
+        }
+    }
+
+    @Test
+    fun nonZeroPadBits() {
+        for (base64 in listOf(Base64, Base64.Mime)) {
+            val inputStream = "Zm9=".byteInputStream()
             val wrapper = inputStream.decodingWith(base64)
 
             wrapper.use {
-                assertEquals('f'.code, it.read())
-                assertEquals('o'.code, it.read())
-                assertEquals('o'.code, it.read())
-                assertEquals('b'.code, it.read())
-                assertEquals(-1, it.read())
-                assertEquals(-1, it.read())
+                assertFailsWith<IllegalArgumentException> { it.read() }
             }
 
             // closed

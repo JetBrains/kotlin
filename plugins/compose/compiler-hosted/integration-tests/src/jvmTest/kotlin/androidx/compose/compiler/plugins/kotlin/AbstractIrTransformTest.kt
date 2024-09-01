@@ -33,9 +33,10 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(ComposeConfiguration.FEATURE_FLAGS, listOf(
-            FeatureFlag.StrongSkipping.featureName,
-            FeatureFlag.OptimizeNonSkippingGroups.featureName,
-        ))
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
     }
 
     @JvmField

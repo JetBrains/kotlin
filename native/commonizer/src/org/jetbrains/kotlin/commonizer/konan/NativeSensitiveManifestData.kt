@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.toSpaceSeparatedString
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
 /**
  * The set of properties in manifest of Kotlin/Native library that should be
@@ -19,7 +21,7 @@ data class NativeSensitiveManifestData(
     val uniqueName: UniqueLibraryName,
     val versions: KotlinLibraryVersioning,
     val dependencies: List<String>,
-    val isInterop: Boolean,
+    val isCInterop: Boolean,
     val packageFqName: String?,
     val exportForwardDeclarations: List<String>,
     val includedForwardDeclarations: List<String>,
@@ -33,7 +35,7 @@ data class NativeSensitiveManifestData(
             uniqueName = library.uniqueName,
             versions = library.versions,
             dependencies = library.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true),
-            isInterop = library.isInterop,
+            isCInterop = library.isCInteropLibrary() || library.isCommonizedCInteropLibrary(),
             packageFqName = library.packageFqName,
             exportForwardDeclarations = library.exportForwardDeclarations,
             includedForwardDeclarations = library.includedForwardDeclarations,
@@ -58,13 +60,19 @@ fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
     addOptionalProperty(KLIB_PROPERTY_DEPENDS, manifest.dependencies.isNotEmpty()) {
         manifest.dependencies.sorted().toSpaceSeparatedString()
     }
-    addOptionalProperty(KLIB_PROPERTY_INTEROP, manifest.isInterop) { "true" }
+
+    /*
+     * Note: The `ir_provider` property is not written to manifest because:
+     *  1. Commonized libraries were never supposed to provide any IR.
+     *  2. It has not been tested, we don't know if it works at all.
+     */
+    addOptionalProperty(KLIB_PROPERTY_INTEROP, manifest.isCInterop) { "true" }
     addOptionalProperty(KLIB_PROPERTY_PACKAGE, manifest.packageFqName != null) { manifest.packageFqName!! }
-    addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, manifest.exportForwardDeclarations.isNotEmpty() || manifest.isInterop) {
+    addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, manifest.exportForwardDeclarations.isNotEmpty() || manifest.isCInterop) {
         manifest.exportForwardDeclarations.sorted().joinToString(" ")
     }
 
-    addOptionalProperty(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, manifest.includedForwardDeclarations.isNotEmpty() || manifest.isInterop) {
+    addOptionalProperty(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, manifest.includedForwardDeclarations.isNotEmpty() || manifest.isCInterop) {
         manifest.includedForwardDeclarations.sorted().joinToString(" ")
     }
 

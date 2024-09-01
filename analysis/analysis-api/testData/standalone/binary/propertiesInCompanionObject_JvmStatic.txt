@@ -1,2 +1,0 @@
-Resolved to:
-PsiField:Dependency.JVM_STATIC_FLAG: PsiType:Flag<?>

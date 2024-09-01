@@ -20,6 +20,11 @@ android {
     }
     namespace = "org.jetbrains.kotlin.sample"
 
+    flavorDimensions("myFlavor")
+    productFlavors {
+        create("flavor1") { dimension = "myFlavor" }
+    }
+
     publishing {
         multipleVariants {
             allVariants()
@@ -56,6 +61,7 @@ fun Project.resolveDependencies(name: String) {
 
 tasks.register("resolveDependencies") {
     doFirst {
-        project.resolveDependencies("releaseCompileClasspath")
+        project.resolveDependencies("flavor1ReleaseCompileClasspath")
+        project.resolveDependencies("flavor1DebugCompileClasspath")
     }
 }

@@ -388,3 +388,7 @@ class Bar<K> : Foo<K> {
     @Throws(IllegalArgumentException::class)
     override fun f(data: K) {}
 }
+
+annotation class A(
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Throws(Exception::class)<!> val w: Int,
+)

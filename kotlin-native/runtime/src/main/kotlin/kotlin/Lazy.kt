@@ -6,8 +6,6 @@
 package kotlin
 
 import kotlin.native.concurrent.*
-import kotlin.reflect.KProperty
-import kotlin.native.isExperimentalMM
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -18,7 +16,7 @@ import kotlin.native.isExperimentalMM
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 
@@ -32,7 +30,7 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl
  * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
             LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)

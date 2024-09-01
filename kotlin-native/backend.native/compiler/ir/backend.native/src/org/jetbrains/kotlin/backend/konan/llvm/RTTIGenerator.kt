@@ -9,7 +9,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
-import org.jetbrains.kotlin.backend.konan.ir.isFrozen
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.*
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
-        private val referencedFunctions: Set<IrFunction>?,
+        private val referencedFunctions: Set<IrSimpleFunction>?,
 ) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
@@ -54,16 +53,11 @@ internal class RTTIGenerator(
 
     private fun flagsFromClass(irClass: IrClass): Int {
         var result = 0
-        if (irClass.isFrozen(context))
-            result = result or TF_IMMUTABLE
         // TODO: maybe perform deeper analysis to find surely acyclic types.
         if (!irClass.isInterface && !irClass.isAbstract() && !irClass.isAnnotationClass) {
             if (checkAcyclicClass(irClass)) {
                 result = result or TF_ACYCLIC
             }
-        }
-        if (irClass.hasAnnotation(KonanFqNames.leakDetectorCandidate)) {
-            result = result or TF_LEAK_DETECTOR_CANDIDATE
         }
         if (irClass.isInterface)
             result = result or TF_INTERFACE
@@ -74,10 +68,6 @@ internal class RTTIGenerator(
 
         if (irClass.hasAnnotation(KonanFqNames.hasFinalizer)) {
             result = result or TF_HAS_FINALIZER
-        }
-
-        if (irClass.hasAnnotation(KonanFqNames.hasFreezeHook)) {
-            result = result or TF_HAS_FREEZE_HOOK
         }
 
         return result
@@ -396,7 +386,7 @@ internal class RTTIGenerator(
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
         context.config.runtimeNativeLibraries.singleOrNull { it.endsWith("debug.bc")}?.let {
-            parseBitcodeFile(llvm.llvmContext, it)
+            parseBitcodeFile(context, context.messageCollector, llvm.llvmContext, it)
         }
     }
 
@@ -473,9 +463,8 @@ internal class RTTIGenerator(
 
         val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
             val function = context.getObjectClassInstanceFunction(value)
-            val llvmFunction = generationState.llvmDeclarations.forFunction(function)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
         }
 
         return staticData.placeGlobalConstArray(
@@ -502,7 +491,7 @@ internal class RTTIGenerator(
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
-            methodImpls: Map<IrFunction, ConstPointer>,
+            methodImpls: Map<IrSimpleFunction, ConstPointer>,
             bodyType: ObjectBodyType,
             immutable: Boolean = false
     ): ConstPointer {

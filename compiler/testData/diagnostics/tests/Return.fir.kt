@@ -9,9 +9,9 @@ class A {
             <!RETURN_NOT_ALLOWED!>return@outer<!>
         }
         if (1 < 2)
-            <!RETURN_NOT_ALLOWED!>return@A<!>
+            return<!UNRESOLVED_LABEL!>@A<!>
         else if (2 < 3)
-            <!RETURN_NOT_ALLOWED!>return@inner<!>
+            return<!UNRESOLVED_LABEL!>@inner<!>
         return@outer
     }
 }

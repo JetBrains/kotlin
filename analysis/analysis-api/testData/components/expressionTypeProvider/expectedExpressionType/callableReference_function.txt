@@ -1,12 +1,12 @@
 expression: function::apply
-expected type: KaFunctionalType:
-  annotationsList: []
+expected type: KaFunctionType:
+  annotations: []
   typeArguments: [
     KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
     KaFlexibleType:
-      annotationsList: []
+      annotations: []
       type: ft<U & Any, U>
   ]
   type: kotlin/Function1<T, ft<U & Any, U>>

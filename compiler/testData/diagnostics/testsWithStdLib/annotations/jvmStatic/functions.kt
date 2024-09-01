@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -JvmStaticInInterface
 // DIAGNOSTICS: -UNUSED_VARIABLE
 class A {

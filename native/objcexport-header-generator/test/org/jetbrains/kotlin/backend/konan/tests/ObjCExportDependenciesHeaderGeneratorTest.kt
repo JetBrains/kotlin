@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.reflect.KCallable
 import kotlin.test.fail
 
 /**
@@ -52,17 +53,43 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(dependenciesDir.resolve("implementIterator"))
     }
 
+    /**
+     * See KT-68478
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxSerializationJson`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxSerializationJson"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
 
     /**
      * See KT-68478
      */
     @Test
     @TodoAnalysisApi
-    fun `test - kotlinxSerialization`() {
+    fun `test - kotlinxSerializationCore`() {
         doTest(
-            dependenciesDir.resolve("kotlinxSerialization"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
-                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+            dependenciesDir.resolve("kotlinxSerializationCore"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - serializersModule`() {
+        doTest(
+            dependenciesDir.resolve("serializersModule"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore)
             )
         )
     }
@@ -89,7 +116,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - kotlinxCoroutines`() {
         doTest(
             dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxCoroutines),
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines, testLibraryAtomicFu),
                 exportedDependencies = setOf(testLibraryKotlinxCoroutines)
             )
         )
@@ -99,6 +126,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - propertyAnnotation`() {
         doTest(
             dependenciesDir.resolve("propertyAnnotation"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
+            )
+        )
+    }
+
+    @Test
+    fun `test - jsonNamingStrategy`() {
+        doTest(
+            dependenciesDir.resolve("jsonNamingStrategy"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
             )
         )
@@ -115,6 +151,11 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test - property with companion type from dependency`() {
+        doTest(dependenciesDir.resolve("propertyWithCompanionTypeFromDependency"))
+    }
+
     /**
      * https://youtrack.jetbrains.com/issue/KT-65327/Support-reading-klib-contents-in-Analysis-API
      * Requires being able to use AA to iterate over symbols to 'export' the dependency
@@ -127,6 +168,98 @@ class ObjCExportDependenciesHeaderGeneratorTest(
                 withObjCBaseDeclarationStubs = true,
                 dependencies = listOf(testLibraryAKlibFile, testLibraryBKlibFile),
                 exportedDependencies = setOf(testLibraryAKlibFile)
+            )
+        )
+    }
+
+    @Test
+    fun `test - completionCoroutinesHandlerException`() {
+        doTest(
+            dependenciesDir.resolve("completionCoroutinesHandlerException"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines)
+            )
+        )
+    }
+
+    @Test
+    fun `test - testInternalLibrary`() {
+        doTest(
+            dependenciesDir.resolve("testInternalLibrary"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testInternalKlibFile),
+                exportedDependencies = setOf(testInternalKlibFile)
+            )
+        )
+    }
+
+    @Test
+    fun `test - extensions library`() {
+        doTest(
+            dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile),
+                exportedDependencies = setOf(testExtensionsKlibFile)
+            )
+        )
+    }
+
+    /**
+     * Disabled because of:
+     * - KT-70319 annotation doc translation
+     * - KT-69742 mangling
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - DateTimeUnit`() {
+        doTest(
+            dependenciesDir.resolve("dateTimeUnit"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxDatetime, testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - MapLikeSerializer`() {
+        doTest(
+            dependenciesDir.resolve("mapLikeSerializer"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    @Test
+    fun `test - top level function and extension with the same dependency doesn't generate duplicate`() {
+        doTest(
+            dependenciesDir.resolve("topLevelFunctionAndExtensionWithDependency"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile)
+            )
+        )
+    }
+
+    @Test
+    fun `test - one type extensions from multiple files merged into the same category`() {
+        doTest(
+            dependenciesDir.resolve("oneTypeExtensionsFromMultipleFilesMergedIntoTheSameCategory"),
+            configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile),
+                exportedDependencies = setOf(testExtensionsKlibFile)
+            )
+        )
+    }
+
+    /**
+     * Disabled because of
+     * - KT-66510 init order
+     * - KT-67823 deprecation message
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - CoroutineDispatcherKey`() {
+        doTest(
+            dependenciesDir.resolve("coroutineDispatcherKey"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines)
             )
         )
     }

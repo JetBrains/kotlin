@@ -1,4 +1,4 @@
-@class KotlinLongIterator, KotlinDoubleIterator, KotlinIntIterator;
+@class KotlinDoubleIterator, KotlinIntIterator, KotlinLongIterator;
 
 @protocol KotlinIterator;
 

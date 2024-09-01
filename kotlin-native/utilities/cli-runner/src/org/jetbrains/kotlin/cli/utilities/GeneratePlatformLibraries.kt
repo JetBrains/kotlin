@@ -179,7 +179,7 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
     generatePlatformLibraries(
             target, cinteropOptions,
             DirectoriesInfo(inputDirectory, outputDirectory, stdlibFile), cacheInfo,
-            rebuild, saveTemps, logger
+            rebuild, saveTemps, logger, konanDataDir
     )
 }
 
@@ -307,7 +307,8 @@ private fun buildCache(
         outputDirectory: File,
         cacheInfo: CacheInfo,
         rebuild: Boolean,
-        logger: Logger
+        logger: Logger,
+        konanDataDir: String?,
 ) = with(cacheInfo) {
     val libraryCacheDir = getLibraryCacheDir(def.name, target, cacheDirectory, cacheKind)
     if (libraryCacheDir.listFilesOrEmpty.isNotEmpty() && !rebuild) {
@@ -319,15 +320,16 @@ private fun buildCache(
         libraryCacheDir.deleteRecursively()
     }
 
-    val compilerArgs = arrayOf(
+    val compilerArgs = listOfNotNull(
             "-p", cacheKind,
             "-target", target.visibleName,
             "-Xadd-cache=${outputDirectory.absolutePath}/${def.libraryName}",
             "-Xcache-directory=${cacheDirectory.absolutePath}",
-            *cacheArgs.toTypedArray()
-    )
+            konanDataDir?.let { "-Xkonan-data-dir=${it}" },
+    ) + cacheArgs
+
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
-    K2Native.mainNoExit(compilerArgs)
+    K2Native.mainNoExit(compilerArgs.toTypedArray())
 }
 
 private fun buildStdlibCache(
@@ -354,9 +356,16 @@ private fun buildStdlibCache(
     K2Native.mainNoExit(compilerArgs)
 }
 
-private fun generatePlatformLibraries(target: KonanTarget, cinteropOptions: CInteropOptions,
-                                      directories: DirectoriesInfo, cacheInfo: CacheInfo?,
-                                      rebuild: Boolean, saveTemps: Boolean, logger: Logger) = with(directories) {
+private fun generatePlatformLibraries(
+        target: KonanTarget,
+        cinteropOptions: CInteropOptions,
+        directories: DirectoriesInfo,
+        cacheInfo: CacheInfo?,
+        rebuild: Boolean,
+        saveTemps: Boolean,
+        logger: Logger,
+        konanDataDir: String?,
+) = with(directories) {
     if (cacheInfo != null) {
         buildStdlibCache(target, stdlib, cacheInfo, logger)
     }
@@ -423,7 +432,7 @@ private fun generatePlatformLibraries(target: KonanTarget, cinteropOptions: CInt
                     logger.log("Processing ${def.name} (${countProcessed.incrementAndGet()}/$countTotal)...")
                     generateLibrary(target, cinteropOptions, def, directories, tmpDirectory, rebuild, logger)
                     if (cacheInfo != null) {
-                        buildCache(target, def, outputDirectory, cacheInfo, rebuild, logger)
+                        buildCache(target, def, outputDirectory, cacheInfo, rebuild, logger, konanDataDir)
                     }
 
                     built[def] = ProcessingStatus.SUCCESS

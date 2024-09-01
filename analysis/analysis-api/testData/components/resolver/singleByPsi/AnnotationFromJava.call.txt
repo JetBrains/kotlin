@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-null
+KtNameReferenceExpression(138,153): 'MyRestrictedApi'
+  null

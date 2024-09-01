@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 
-object FirDynamicUnsupportedChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirDynamicUnsupportedChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         // It's assumed this checker is only called
         // by a platform that disallows dynamics
-        if (typeRef.source != null && typeRef.coneTypeSafe<ConeDynamicType>() != null) {
+        if (typeRef.source != null && typeRef.coneType is ConeDynamicType) {
             reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "dynamic type", context)
         }
     }

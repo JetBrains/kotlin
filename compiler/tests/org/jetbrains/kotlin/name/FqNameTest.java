@@ -28,7 +28,7 @@ public class FqNameTest {
     public void pathSegments() {
         Assert.assertEquals(new ArrayList<Name>(), new FqName("").pathSegments());
 
-        for (String name : new String[] { "org", "org.jetbrains", "org.jetbrains.kotlin" }) {
+        for (String name : new String[] {"org", "org.jetbrains", "org.jetbrains.kotlin"}) {
             List<Name> segments = new FqName(name).pathSegments();
             List<String> segmentsStrings = new ArrayList<>();
             for (Name segment : segments) {

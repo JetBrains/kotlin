@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
@@ -90,18 +89,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("js composite build works")
     @GradleTest
-    @GradleTestVersions(minVersion = G_7_6)
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-            subProject("lib").apply {
-                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            }
-
-            subProject("base").apply {
-                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            }
 
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()
@@ -170,7 +159,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             gradleProperties.appendText(
                 """
                 |
@@ -185,10 +173,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Only changed files synced during JS IR build")
     @GradleTest
-    @GradleTestVersions(minVersion = G_7_6)
     fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             val filesModified: MutableMap<String, Long> = mutableMapOf()
 
@@ -434,7 +420,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackConsiderChangesInDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             projectPath.resolve("app/src/main/kotlin/App.kt").modify {
                 it.replace("require(\"css/main.css\")", "")
@@ -458,7 +443,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("assemble")
 
@@ -474,7 +458,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.append(
                 """
                     rootProject.subprojects.forEach {
@@ -499,8 +482,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
         project("kotlin-js-coroutines", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             build("assemble")
             build("compileDevelopmentExecutableKotlinJs")
         }
@@ -512,12 +493,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         project("kotlin-js-with-friend-paths", gradleVersion) {
             build("assemble")
 
-            val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"))"
+            val oldFriendPaths = "friendPaths.from(project(\":lib\").buildDir.resolve(\"classes/kotlin/main\"))"
             val appModuleGradleBuildKts = subProject("app").buildGradleKts
             assertFileInProjectContains(appModuleGradleBuildKts.absolutePathString(), oldFriendPaths)
             appModuleGradleBuildKts.replaceText(
                 oldFriendPaths,
-                "friendPaths.from(project(\":lib\").buildDir.resolve(\"libs/lib.klib\"), project(\":lib\").buildDir.resolve(\"libs/not_existed_lib.klib\"))"
+                "friendPaths.from(project(\":lib\").buildDir.resolve(\"classes/kotlin/main\"), project(\":lib\").buildDir.resolve(\"libs/not_existed_lib.klib\"))"
             )
 
             build("assemble") {
@@ -572,8 +553,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackWorksWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             subProject("app").buildGradleKts.modify { originalScript ->
                 buildString {
                     append(originalScript)
@@ -635,7 +614,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPublicPackageJsonWithEsModules(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             subProject("app").buildGradleKts.modify {
                 it + """
                     |
@@ -662,8 +640,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testMultipleJsTargets(gradleVersion: GradleVersion) {
         project("kotlin-js-multiple-targets", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             build("assemble") {
                 assertTasksExecuted(":compileProductionExecutableKotlinServerSide")
                 assertTasksExecuted(":compileProductionExecutableKotlinClientSide")
@@ -675,7 +651,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testWebpackConfigWorksAfterTaskConfigured(gradleVersion: GradleVersion) {
         project("js-library-with-executable", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             buildGradleKts.modify { originalScript ->
                 buildString {
@@ -939,10 +914,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
 
                 val publishedPom = moduleDir.resolve("kotlin-js-plugin-1.0.pom")
-                val kotlinVersion = defaultBuildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
                 assertTrue { "kotlinx-html-js</artifactId><version>0.7.5</version><scope>compile</scope>" in pomText }
-                assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+                assertTrue { "kotlin-stdlib-js</artifactId><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("kotlin-js-plugin-1.0-sources.jar"))
 
@@ -977,6 +951,26 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     ":yarnConcreteVersionFolderChecker"
                 )
             }
+        }
+    }
+
+    @DisplayName("yarn is set up from local archive")
+    @GradleTest
+    fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
+        project("yarn-setup", gradleVersion) {
+            build("yarnFolderRemove")
+
+            buildGradleKts.appendText(
+                """
+                |
+                |project.rootProject.extensions.findByType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>()?.apply {
+                |    downloadBaseUrl = projectDir.toURI().toString()
+                |    version = "1.22.22"
+                |}
+                """.trimMargin()
+            )
+
+            build("kotlinYarnSetup")
         }
     }
 
@@ -1098,7 +1092,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testBrowserDistribution(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("compileProductionExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
@@ -1133,7 +1126,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPackageJsonCustomField(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("rootPackageJson") {
                 assertTasksExecuted(":app:packageJson")
@@ -1171,7 +1163,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testNoUnintendedDevDependencies(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("browserProductionWebpack") {
                 val appPackageJson = getSubprojectPackageJson(projectName = "kotlin-js-browser", subProject = "app")
@@ -1257,7 +1248,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testBrowserNoTasksConfigurationOnHelp(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.appendText(
                 """
                 |
@@ -1484,7 +1474,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testJsIrWholeProgram(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             gradleProperties.appendText(
                 """
                 |

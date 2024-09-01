@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptTestModuleFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtScriptTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 open class AnalysisApiFirScriptTestConfigurator(analyseInDependentSession: Boolean) :

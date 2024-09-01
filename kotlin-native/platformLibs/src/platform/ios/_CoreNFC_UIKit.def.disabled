@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._CoreNFC_UIKit
+
+modules = _CoreNFC_UIKit
+compilerOpts = -framework _CoreNFC_UIKit
+linkerOpts = -framework _CoreNFC_UIKit
+#Disabled: Unavailable

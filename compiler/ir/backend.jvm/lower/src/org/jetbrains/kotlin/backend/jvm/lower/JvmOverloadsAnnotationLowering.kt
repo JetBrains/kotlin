@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
@@ -58,8 +59,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 )
             is IrSimpleFunction ->
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-            else ->
-                error("unknown function kind: ${target.render()}")
         }
         for (arg in wrapperIrFunction.allTypeParameters) {
             call.putTypeArgument(arg.index, arg.defaultType)
@@ -105,12 +104,15 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
 
         }
 
-        wrapperIrFunction.body = if (target is IrConstructor) {
-            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
-        } else {
-            context.irFactory.createExpressionBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
-            )
+        wrapperIrFunction.body = when (target) {
+            is IrConstructor -> {
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+            }
+            is IrSimpleFunction -> {
+                context.irFactory.createExpressionBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
+                )
+            }
         }
 
         return wrapperIrFunction
@@ -140,7 +142,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 isInline = oldFunction.isInline
                 isSuspend = oldFunction.isSuspend
             }
-            else -> error("Unknown kind of IrFunction: $oldFunction")
         }
 
         res.parent = oldFunction.parent
@@ -156,7 +157,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
         oldFunction: IrFunction,
         numDefaultParametersToExpect: Int
     ): List<IrValueParameter> {
-        var parametersCopied = 0
         var defaultParametersCopied = 0
         val result = mutableListOf<IrValueParameter>()
         for (oldValueParameter in oldFunction.valueParameters) {
@@ -167,14 +167,13 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 result.add(
                     oldValueParameter.copyTo(
                         this,
-                        index = parametersCopied++,
                         defaultValue = null,
                         isCrossinline = oldValueParameter.isCrossinline,
                         isNoinline = oldValueParameter.isNoinline
                     )
                 )
             } else if (oldValueParameter.defaultValue == null) {
-                result.add(oldValueParameter.copyTo(this, index = parametersCopied++))
+                result.add(oldValueParameter.copyTo(this))
             }
         }
         return result

@@ -25,9 +25,11 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val foo = Foo(0)
-    val lambda = %composer.cache(%composer.changedInstance(foo)) {
-      {
-        foo
+    val lambda = <block>{
+      %composer.cache(%composer.changedInstance(foo)) {
+        {
+          foo
+        }
       }
     }
     if (isTraceInProgress()) {

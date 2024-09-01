@@ -14,10 +14,6 @@ sourceSets {
     }
 }
 
-dependencies {
-    compileOnly RepoDependencies.kotlinBuiltins(project)
-}
-
 RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 

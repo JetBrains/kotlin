@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -82,7 +82,6 @@ fun <F> prepareJvmSessions(
                 projectEnvironment.getPackagePartProvider(librariesScope),
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
-                registerExtraComponents = {},
             )
         },
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
@@ -114,7 +113,6 @@ fun <F> prepareJvmSessions(
             configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
             predefinedJavaComponents = predefinedJavaComponents,
             needRegisterJavaElementFinder = true,
-            registerExtraComponents = {},
             sessionConfigurator,
         )
     }
@@ -151,7 +149,6 @@ fun <F> prepareJsSessions(
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration,
-                registerExtraComponents = {},
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -162,7 +159,6 @@ fun <F> prepareJsSessions(
             configuration,
             lookupTracker,
             icData = icData,
-            registerExtraComponents = {},
             init = sessionConfigurator,
         )
     }
@@ -185,7 +181,6 @@ fun <F> prepareNativeSessions(
     metadataCompilationMode: Boolean,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform,
@@ -198,7 +193,6 @@ fun <F> prepareNativeSessions(
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration.languageVersionSettings,
-                registerExtraComponents,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -208,7 +202,6 @@ fun <F> prepareNativeSessions(
             extensionRegistrars,
             configuration.languageVersionSettings,
             sessionConfigurator,
-            registerExtraComponents,
         )
     }
 }
@@ -248,7 +241,6 @@ fun <F> prepareWasmSessions(
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration.languageVersionSettings,
-                registerExtraComponents = {},
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -260,7 +252,6 @@ fun <F> prepareWasmSessions(
             configuration.wasmTarget,
             lookupTracker,
             icData = icData,
-            registerExtraComponents = {},
             init = sessionConfigurator,
         )
     }
@@ -298,7 +289,6 @@ fun <F> prepareCommonSessions(
                 resolvedLibraries,
                 projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,
                 configuration.languageVersionSettings,
-                registerExtraComponents = {},
             )
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
@@ -312,7 +302,6 @@ fun <F> prepareCommonSessions(
             lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
             importTracker = configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
-            registerExtraComponents = {},
             init = sessionConfigurator
         )
     }
@@ -420,7 +409,7 @@ private inline fun <F> createSingleSession(
 
     val session = createFirSession(files, platformModuleData, sessionProvider) {
         sessionConfigurator()
-        useCheckers(OptInLanguageVersionSettingsCheckers)
+        useCheckers(CliOnlyLanguageVersionSettingsCheckers)
     }
     return SessionWithSources(session, files)
 }
@@ -464,7 +453,7 @@ private inline fun <F> createSessionsForLegacyMppProject(
         sessionConfigurator()
         // The CLI session might contain an opt-in for an annotation that's defined in the platform module.
         // Therefore, only run the opt-in LV checker on the platform module.
-        useCheckers(OptInLanguageVersionSettingsCheckers)
+        useCheckers(CliOnlyLanguageVersionSettingsCheckers)
     }
 
     return listOf(
@@ -509,7 +498,7 @@ private inline fun <F> createSessionsForHmppProject(
             // The CLI session might contain an opt-in for an annotation that's defined in one of the modules.
             // The only module that's guaranteed to have a dependency on this module is the last one.
             if (i == hmppModuleStructure.modules.lastIndex) {
-                useCheckers(OptInLanguageVersionSettingsCheckers)
+                useCheckers(CliOnlyLanguageVersionSettingsCheckers)
             }
         }
         SessionWithSources(session, sources)

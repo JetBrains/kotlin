@@ -69,22 +69,26 @@ data class Edge(
 ) {
     companion object {
         val Normal_Forward: Edge = Edge(NormalPath, EdgeKind.Forward)
-        private val Normal_DeadForward: Edge = Edge(NormalPath, EdgeKind.DeadForward)
         private val Normal_DfgForward: Edge = Edge(NormalPath, EdgeKind.DfgForward)
         private val Normal_CfgForward: Edge = Edge(NormalPath, EdgeKind.CfgForward)
+        private val Normal_DeadForward: Edge = Edge(NormalPath, EdgeKind.DeadForward)
+        private val Normal_DeadDfgForward: Edge = Edge(NormalPath, EdgeKind.DeadDfgForward)
+        private val Normal_DeadCfgForward: Edge = Edge(NormalPath, EdgeKind.DeadCfgForward)
         private val Normal_CfgBackward: Edge = Edge(NormalPath, EdgeKind.CfgBackward)
-        private val Normal_DeadBackward: Edge = Edge(NormalPath, EdgeKind.DeadBackward)
+        private val Normal_DeadCfgBackward: Edge = Edge(NormalPath, EdgeKind.DeadCfgBackward)
 
         fun create(label: EdgeLabel, kind: EdgeKind): Edge =
             when (label) {
                 NormalPath -> {
                     when (kind) {
                         EdgeKind.Forward -> Normal_Forward
-                        EdgeKind.DeadForward -> Normal_DeadForward
                         EdgeKind.DfgForward -> Normal_DfgForward
                         EdgeKind.CfgForward -> Normal_CfgForward
+                        EdgeKind.DeadForward -> Normal_DeadForward
+                        EdgeKind.DeadDfgForward -> Normal_DeadDfgForward
+                        EdgeKind.DeadCfgForward -> Normal_DeadCfgForward
                         EdgeKind.CfgBackward -> Normal_CfgBackward
-                        EdgeKind.DeadBackward -> Normal_DeadBackward
+                        EdgeKind.DeadCfgBackward -> Normal_DeadCfgBackward
                     }
                 }
                 else -> {
@@ -110,6 +114,10 @@ object PostponedPath : EdgeLabel {
     override val label: String get() = "Postponed"
 }
 
+data object CapturedByValue : EdgeLabel {
+    override val label: String get() = "CapturedByValue"
+}
+
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
     val usedInDeadDfa: Boolean, // propagate flow to dead nodes
@@ -118,12 +126,27 @@ enum class EdgeKind(
     val isDead: Boolean
 ) {
     Forward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = false),
-    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
     DfgForward(usedInDfa = true, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = false),
     CfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = false),
+
+    DeadForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = true, isBack = false, isDead = true),
+    DeadDfgForward(usedInDfa = false, usedInDeadDfa = true, usedInCfa = false, isBack = false, isDead = true),
+    DeadCfgForward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = false, isDead = true),
+
     CfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true),
+    DeadCfgBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true),
     ;
+
+    fun toDead(): EdgeKind = when (this) {
+        Forward -> DeadForward
+        DfgForward -> DeadDfgForward
+        CfgForward -> DeadCfgForward
+        DeadForward -> DeadForward
+        DeadDfgForward -> DeadDfgForward
+        DeadCfgForward -> DeadCfgForward
+        CfgBackward -> DeadCfgBackward
+        DeadCfgBackward -> DeadCfgBackward
+    }
 
     companion object {
         fun forward(usedInCfa: Boolean = false, usedInDfa: Boolean = false): EdgeKind? {

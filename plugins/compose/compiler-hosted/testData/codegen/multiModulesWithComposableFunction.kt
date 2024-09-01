@@ -23,11 +23,14 @@ package util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import compose.ui.Color
 
 @Composable
 fun rememberDominantColorState(defaultOnColor: Color = Color(0, 0, 0)): DominantColorState = remember {
-    DominantColorState(defaultColor)
+    DominantColorState(defaultOnColor)
 }
 
 @Composable
@@ -39,7 +42,7 @@ fun DynamicThemePrimaryColorsFromImage(
 
 @Stable
 class DominantColorState(private val defaultOnColor: Color) {
-    var color = mutableStateOf(defaultColor)
+    var color = mutableStateOf(defaultOnColor)
 }
 
 // FILE: main.kt

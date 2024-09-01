@@ -19,6 +19,7 @@ class SirEnumBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     val cases: MutableList<SirEnumCase> = mutableListOf()
@@ -28,6 +29,7 @@ class SirEnumBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             name,
             declarations,
             cases,
@@ -53,6 +55,7 @@ inline fun buildEnumCopy(original: SirEnum, init: SirEnumBuilder.() -> Unit): Si
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.cases.addAll(original.cases)

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localDelegatedProperties
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
@@ -47,7 +48,7 @@ fun makeFirMetadataSerializerForIrClass(
     actualizedExpectDeclarations: Set<FirDeclaration>?
 ): FirMetadataSerializer {
     val approximator = TypeApproximatorForMetadataSerializer(session)
-    val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]?.mapNotNull {
+    val localDelegatedProperties = irClass.localDelegatedProperties?.mapNotNull {
         (it.owner.metadata as? FirMetadataSource.Property)?.fir?.copyToFreeProperty(approximator)
     } ?: emptyList()
     val firSerializerExtension = FirJvmSerializerExtension(
@@ -86,7 +87,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
         override fun getLocalClassIdReplacement(firClass: FirClass): ClassId =
-            ((firClass as? FirRegularClass)?.containingClassForLocal()?.toFirRegularClass(session) ?: firClass)
+            ((firClass as? FirRegularClass)?.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: firClass)
                 .symbol.classId
     }
 
@@ -325,7 +326,7 @@ private fun ConeKotlinType.collectTypeParameters(c: MutableCollection<FirTypePar
             upperBound.collectTypeParameters(c)
         }
         is ConeClassLikeType ->
-            for (projection in type.typeArguments) {
+            for (projection in typeArguments) {
                 if (projection is ConeKotlinTypeProjection) {
                     projection.type.collectTypeParameters(c)
                 }

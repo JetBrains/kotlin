@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(54,57): 'set'
+  KtSimpleNameReference:
+    (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

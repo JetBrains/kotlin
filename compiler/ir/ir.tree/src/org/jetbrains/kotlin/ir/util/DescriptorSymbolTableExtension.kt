@@ -369,7 +369,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
-        index: Int? = null,
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
@@ -380,7 +379,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
                 type = type,
                 isAssignable = isAssignable,
                 symbol = it,
-                index = index ?: descriptor.indexOrMinusOne,
                 varargElementType = varargElementType,
                 isCrossinline = descriptor.isCrossinline,
                 isNoinline = descriptor.isNoinline,

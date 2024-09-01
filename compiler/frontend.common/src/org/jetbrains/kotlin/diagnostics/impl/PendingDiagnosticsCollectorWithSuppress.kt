@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 
-class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, String) -> Unit) : BaseDiagnosticsCollector() {
+class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawReporter) : BaseDiagnosticsCollector() {
     private val pendingDiagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>

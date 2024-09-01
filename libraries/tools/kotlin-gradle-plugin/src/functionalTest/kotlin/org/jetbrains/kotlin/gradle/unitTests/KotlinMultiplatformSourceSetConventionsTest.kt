@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.assertContainsDependencies
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
@@ -335,5 +336,30 @@ class KotlinMultiplatformSourceSetConventionsTest {
         }
 
         project.evaluate()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @Test
+    fun `test - check all web targets do not throw warning`() {
+        val project = buildProjectWithMPP()
+        project.multiplatformExtension.apply {
+            sourceSets.jsMain.get()
+            sourceSets.wasmJsMain.get()
+            sourceSets.wasmWasiMain.get()
+
+            js {
+                nodejs()
+            }
+            wasmJs {
+                nodejs()
+            }
+            wasmWasi {
+                nodejs()
+            }
+        }
+
+        project.evaluate()
+
+        project.assertNoDiagnostics()
     }
 }

@@ -3,6 +3,7 @@ description = "Kotlin Build Common"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
@@ -17,7 +18,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testCompileOnly(project(":compiler:cli-common"))

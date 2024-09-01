@@ -6,63 +6,75 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
  * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
  * expression that uses a `super` qualifier in its body.
- *
- * TODO: Right now this class is only used in the JVM backend. There is an ongoing effort to also generate synthetic
- *    accessors on KLIB-based backends ([KT-64865](https://youtrack.jetbrains.com/issue/KT-64865)).
- *    Please consider this fact when you want to change its implementation.
  */
-open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
-    private data class FieldKey(val fieldSymbol: IrFieldSymbol, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
+abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
+    protected val context: Context,
+) {
+    private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
-    private data class FunctionKey(
-        val functionSymbol: IrFunctionSymbol,
-        val parent: IrDeclarationParent,
-        val superQualifierSymbol: IrClassSymbol?
-    )
+    protected class AccessorNameBuilder {
+        private val nameParts = mutableListOf(ACCESSOR_PREFIX)
 
-    private val functionMap = ConcurrentHashMap<FunctionKey, IrFunctionSymbol>()
-    private val getterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
-    private val setterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
+        fun contribute(namePart: String) {
+            nameParts += namePart
+        }
 
-    fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol {
-        return if (expression is IrCall)
-            createAccessor(expression.symbol, scopes, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
-        else
-            createAccessor(expression.symbol, scopes, null, null)
+        fun build(): Name = Name.identifier(nameParts.joinToString(ACCESSOR_NAME_PARTS_SEPARATOR))
     }
 
-    fun getSyntheticFunctionAccessor(reference: IrFunctionReference, scopes: List<ScopeWithIr>): IrFunctionSymbol {
-        return createAccessor(reference.symbol, scopes, reference.dispatchReceiver?.type, null)
+    companion object {
+        protected const val ACCESSOR_PREFIX = "access"
+        protected const val ACCESSOR_NAME_PARTS_SEPARATOR = "\$"
+
+        protected const val RECEIVER_VALUE_PARAMETER_NAME = "\$this"
+        protected const val SETTER_VALUE_PARAMETER_NAME = "<set-?>"
+
+        const val PROPERTY_MARKER = "p"
+
+        private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(followAttributeOwner = false)
+        private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+        private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+    }
+
+    fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopeInfo: ScopeInfo): IrFunction {
+        return if (expression is IrCall)
+            createAccessor(expression.symbol, scopeInfo, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
+        else
+            createAccessor(expression.symbol, scopeInfo, null, null)
+    }
+
+    fun getSyntheticFunctionAccessor(reference: IrFunctionReference, scopeInfo: ScopeInfo): IrFunction {
+        return createAccessor(reference.symbol, scopeInfo, reference.dispatchReceiver?.type, null)
     }
 
     private fun createAccessor(
         symbol: IrFunctionSymbol,
-        scopes: List<ScopeWithIr>,
+        scopeInfo: ScopeInfo,
         dispatchReceiverType: IrType?,
         superQualifierSymbol: IrClassSymbol?
-    ): IrFunctionSymbol {
+    ): IrFunction {
         // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
         // we also need to put its accessor into A. However, due to the way that calls are implemented in the
         // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
@@ -97,8 +109,9 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         //
         // Finally, we need to produce accessors for calls to protected static methods coming from Java,
         // which we put in the closest enclosing class which has access to the method in question.
-
-        val parent = symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent, scopes)
+        val function = symbol.owner
+        val parent = function.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: function.parent, scopeInfo)
+        if (parent !is IrDeclarationContainer) compilationException("The accessor parent must be IrDeclarationContainer", parent)
 
         // The key in the cache/map needs to be BOTH the symbol of the function being accessed AND the parent
         // of the accessor. Going from the above example, if we have another class C similar to B:
@@ -111,64 +124,25 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
         // cannot use the function symbol (A.g in the example) by itself as the key since there should be
         // one accessor per dispatch receiver (i.e., parent of the accessor).
-        return functionMap.getOrPut(FunctionKey(symbol, parent, superQualifierSymbol)) {
-            when (symbol) {
-                is IrConstructorSymbol ->
-                    symbol.owner.makeConstructorAccessor().symbol
-                is IrSimpleFunctionSymbol ->
-                    symbol.owner.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopes).symbol
+        val functionMap = function.syntheticAccessors ?: hashMapOf<AccessorKey, IrFunction>().also { function.syntheticAccessors = it }
+        return functionMap.getOrPut(AccessorKey(parent, superQualifierSymbol)) {
+            when (function) {
+                is IrConstructor ->
+                    function.makeConstructorAccessor()
+                is IrSimpleFunction ->
+                    function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopeInfo)
             }
         }
     }
 
-    protected fun IrConstructor.makeConstructorAccessor(
+    protected abstract fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-    ): IrConstructor {
-        val source = this
+    ): IrFunction
 
-        return factory.buildConstructor {
-            origin = originForConstructorAccessor
-            name = source.name
-            visibility = DescriptorVisibilities.PUBLIC
-        }.also { accessor ->
-            accessor.parent = source.parent
-
-            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            if (source.constructedClass.modality == Modality.SEALED) {
-                for (accessorValueParameter in accessor.valueParameters) {
-                    accessorValueParameter.annotations = emptyList()
-                }
-            }
-
-            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
-
-            accessor.addValueParameter(
-                "constructor_marker".synthesizedString,
-                context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
-                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
-            )
-
-            accessor.body = context.irFactory.createExpressionBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                createConstructorCall(accessor, source.symbol)
-            )
-        }
-    }
-
-    private fun createConstructorCall(accessor: IrConstructor, targetSymbol: IrConstructorSymbol) =
-        IrDelegatingConstructorCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType,
-            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
-        ).also {
-            copyAllParamsToArgs(it, accessor)
-        }
-
-    protected open fun accessorModality(parent: IrDeclarationParent): Modality = Modality.FINAL
+    protected abstract fun accessorModality(parent: IrDeclarationParent): Modality
 
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(
-        superQualifierSymbol: IrClassSymbol?, dispatchReceiverType: IrType?, parent: IrDeclarationParent, scopes: List<ScopeWithIr>
+        superQualifierSymbol: IrClassSymbol?, dispatchReceiverType: IrType?, parent: IrDeclarationParent, scopeInfo: ScopeInfo
     ): IrSimpleFunction {
         val source = this
 
@@ -176,7 +150,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.accessorName(superQualifierSymbol, scopes)
+            name = source.accessorName(superQualifierSymbol, scopeInfo)
             visibility = DescriptorVisibilities.PUBLIC
             modality = accessorModality(parent)
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
@@ -205,41 +179,40 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
             copyAllParamsToArgs(it, accessor)
         }
 
-    fun getSyntheticGetter(expression: IrGetField, scopes: List<ScopeWithIr>): IrSimpleFunctionSymbol {
-        val dispatchReceiverType = expression.receiver?.type
-        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
-        val symbol = expression.symbol
-        val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent, scopes) as IrClass
-        return getterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
-            makeGetterAccessorSymbol(symbol, parent, expression.superQualifierSymbol)
+    fun getSyntheticGetter(expression: IrGetField, scopeInfo: ScopeInfo): IrSimpleFunction {
+        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
+        val getterMap =
+            field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
+        return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
+            makeGetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
 
-    private fun makeGetterAccessorSymbol(
-        fieldSymbol: IrFieldSymbol,
+    private fun makeGetterAccessor(
+        field: IrField,
         parent: IrClass,
         superQualifierSymbol: IrClassSymbol?
-    ): IrSimpleFunctionSymbol =
+    ): IrSimpleFunction =
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.owner.accessorNameForGetter(superQualifierSymbol)
+            name = field.accessorNameForGetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
-            returnType = fieldSymbol.owner.type
+            returnType = field.type
         }.also { accessor ->
             accessor.parent = parent
 
-            if (!fieldSymbol.owner.isStatic) {
+            if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.body = createAccessorBodyForGetter(fieldSymbol.owner, accessor, superQualifierSymbol)
-        }.symbol
+            accessor.body = createAccessorBodyForGetter(field, accessor, superQualifierSymbol)
+        }
 
     private fun createAccessorBodyForGetter(
         targetField: IrField,
@@ -261,43 +234,42 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         )
     }
 
-    fun getSyntheticSetter(expression: IrSetField, scopes: List<ScopeWithIr>): IrSimpleFunctionSymbol {
-        val dispatchReceiverType = expression.receiver?.type
-        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
-        val symbol = expression.symbol
-        val parent = symbol.owner.accessorParent(dispatchReceiverClassSymbol?.owner ?: symbol.owner.parent, scopes) as IrClass
-        return setterMap.getOrPut(FieldKey(symbol, parent, expression.superQualifierSymbol)) {
-            makeSetterAccessorSymbol(symbol, parent, expression.superQualifierSymbol)
+    fun getSyntheticSetter(expression: IrSetField, scopeInfo: ScopeInfo): IrSimpleFunction {
+        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
+        val setterMap =
+            field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
+        return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
+            makeSetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
 
-    private fun makeSetterAccessorSymbol(
-        fieldSymbol: IrFieldSymbol,
+    private fun makeSetterAccessor(
+        field: IrField,
         parent: IrClass,
         superQualifierSymbol: IrClassSymbol?
-    ): IrSimpleFunctionSymbol =
+    ): IrSimpleFunction =
         context.irFactory.buildFun {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = fieldSymbol.owner.accessorNameForSetter(superQualifierSymbol)
+            name = field.accessorNameForSetter(superQualifierSymbol)
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
             returnType = context.irBuiltIns.unitType
         }.also { accessor ->
             accessor.parent = parent
 
-            if (!fieldSymbol.owner.isStatic) {
+            if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter(SETTER_VALUE_PARAMETER_NAME, field.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
-            accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor, superQualifierSymbol)
-        }.symbol
+            accessor.body = createAccessorBodyForSetter(field, accessor, superQualifierSymbol)
+        }
 
     private fun createAccessorBodyForSetter(
         targetField: IrField,
@@ -324,7 +296,15 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         )
     }
 
-    private fun copyAllParamsToArgs(
+    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrClass> {
+        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
+        val field = expression.symbol.owner
+        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
+
+        return field to parent
+    }
+
+    protected fun copyAllParamsToArgs(
         call: IrFunctionAccessExpression,
         syntheticFunction: IrFunction
     ) {
@@ -363,67 +343,124 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
      * In case of Java `protected static`, access could be done from a public inline function in the same package,
      * or a subclass of the Java class. Both cases require an accessor, which we cannot add to a Java class.
      */
-    protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
+    protected abstract fun IrDeclarationWithVisibility.accessorParent(
+        parent: IrDeclarationParent,
+        scopeInfo: ScopeInfo,
+    ): IrDeclarationParent
 
-    protected open fun mapFunctionName(function: IrSimpleFunction): String = function.name.asString()
-
-    protected open fun functionAccessorSuffix(
+    protected abstract fun AccessorNameBuilder.buildFunctionName(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
-        scopes: List<ScopeWithIr>,
-    ): String = function.run {
-        when {
-            // Accessors for top level functions never need a suffix.
-            isTopLevel -> ""
+        scopeInfo: ScopeInfo,
+    )
 
-            // Accessor for _s_uper-qualified call
-            superQualifier != null -> "\$s" + superQualifier.owner.syntheticAccessorToSuperSuffix()
+    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopeInfo: ScopeInfo): Name =
+        AccessorNameBuilder().apply { buildFunctionName(this@accessorName, superQualifier, scopeInfo) }.build()
 
-            // Access to protected members that need an accessor must be because they are inherited,
-            // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
-            // parts of the inheritance hierarchy and need to distinguish with a suffix.
-            isStatic && visibility.isProtected -> "\$s" + parentAsClass.syntheticAccessorToSuperSuffix()
+    protected abstract fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
+    protected abstract fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
-            else -> ""
-        }
-    }
 
-    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
-        return Name.identifier("access\$${mapFunctionName(this)}${functionAccessorSuffix(this, superQualifier, scopes)}")
-    }
+    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name =
+        AccessorNameBuilder().apply { buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol) }.build()
 
-    protected open fun fieldGetterName(field: IrField): String = "<get-${field.name}>"
-
-    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val getterName = fieldGetterName(this)
-        return Name.identifier("access\$$getterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
-    }
-
-    protected open fun fieldSetterName(field: IrField): String = "<set-${field.name}>"
-
-    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val setterName = fieldSetterName(this)
-        return Name.identifier("access\$$setterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
-    }
+    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name =
+        AccessorNameBuilder().apply { buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol) }.build()
 
     /**
-     * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
+     * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
+     *
+     * Before:
+     * ```kotlin
+     * class C private constructor(val value: Int) {
+     *
+     *     private fun privateFun(a: Int): String = a.toString()
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(privateFun(x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value)
+     * }
+     * ```
+     *
+     * After:
+     * ```kotlin
+     * class C private constructor(val value: Int) {
+     *
+     *     public constructor(
+     *         value: Int,
+     *         constructor_marker: DefaultConstructorMarker?
+     *     ) : this(value)
+     *
+     *     private fun privateFun(a: Int): String = a.toString()
+     *
+     *     public static fun access$privateFun($this: C, a: Int): String =
+     *         $this.protectedFun(a)
+     *
+     *     internal inline fun foo(x: Int) {
+     *         println(C.access$privateFun(this, x))
+     *     }
+     *
+     *     internal inline fun copy(): C = C(value, null)
+     * }
+     * ```
      */
-    protected open fun fieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?): String = field.run {
-        if (superQualifierSymbol != null) {
-            return "p\$s${superQualifierSymbol.owner.syntheticAccessorToSuperSuffix()}"
+    fun modifyFunctionAccessExpression(
+        oldExpression: IrFunctionAccessExpression,
+        accessorSymbol: IrFunctionSymbol
+    ): IrFunctionAccessExpression {
+        val newExpression = when {
+            oldExpression is IrDelegatingConstructorCall -> accessorSymbol.produceCallToSyntheticDelegatingConstructor(oldExpression)
+            oldExpression is IrEnumConstructorCall -> compilationException(
+                "Generating synthetic accessors for IrEnumConstructorCall is not supported",
+                oldExpression,
+            )
+            accessorSymbol is IrConstructorSymbol -> accessorSymbol.produceCallToSyntheticConstructor(oldExpression)
+            else -> accessorSymbol.produceCallToSyntheticFunction(oldExpression)
         }
-
-        // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
-        // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
-        // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
-        return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
+        newExpression.copyTypeArgumentsFrom(oldExpression)
+        val receiverAndArgs = oldExpression.receiverAndArgs()
+        receiverAndArgs.forEachIndexed { i, irExpression ->
+            newExpression.putValueArgument(i, irExpression)
+        }
+        if (accessorSymbol is IrConstructorSymbol) {
+            newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
+        }
+        return newExpression
     }
 
-    private fun IrClass.syntheticAccessorToSuperSuffix(): String =
-        // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
-        name.asString().hashCode().toString()
+    private fun IrFunctionSymbol.produceCallToSyntheticFunction(
+        oldExpression: IrFunctionAccessExpression
+    ): IrCall {
+        return IrCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            this as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
+            origin = oldExpression.origin
+        )
+    }
 
-    protected open val DescriptorVisibility.isProtected
-        get() = this == DescriptorVisibilities.PROTECTED
+    private fun IrFunctionSymbol.produceCallToSyntheticDelegatingConstructor(
+        oldExpression: IrFunctionAccessExpression
+    ): IrDelegatingConstructorCall {
+        return IrDelegatingConstructorCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            context.irBuiltIns.unitType,
+            this as IrConstructorSymbol, oldExpression.typeArgumentsCount
+        )
+    }
+
+    private fun IrFunctionSymbol.produceCallToSyntheticConstructor(
+        oldExpression: IrFunctionAccessExpression
+    ): IrFunctionAccessExpression {
+        return IrConstructorCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            this as IrConstructorSymbol
+        )
+    }
+
+    fun createAccessorMarkerArgument() =
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable())
 }

@@ -1,5 +1,7 @@
-KtCollectionLiteralReference:
-  (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KtCollectionLiteralReference:
+    (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
-KtDefaultAnnotationArgumentReference:
-  a: kotlin.Array<kotlin.reflect.KClass<*>>
+KtValueArgument(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KtDefaultAnnotationArgumentReference:
+    a: kotlin.Array<kotlin.reflect.KClass<*>>

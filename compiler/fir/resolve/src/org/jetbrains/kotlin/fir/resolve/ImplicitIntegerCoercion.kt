@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirModuleCapability
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationClassIds
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
@@ -29,4 +28,4 @@ val FirCallableSymbol<*>.isMarkedWithImplicitIntegerCoercion
 val FirCallableDeclaration.isMarkedWithImplicitIntegerCoercion
     get() =
         moduleData.capabilities.contains(ImplicitIntegerCoercionModuleCapability) ||
-                resolvedAnnotationClassIds(symbol).any { it == implicitIntegerCoercionAnnotationClassId }
+                symbol.resolvedAnnotationClassIds.any { it == implicitIntegerCoercionAnnotationClassId }

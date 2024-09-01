@@ -1,5 +1,17 @@
+@R|TypeAnnWithArg|(LAZY_EXPRESSION)  {MyTypeAlias=} kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
+  anchor -> [FirTypeAliasSymbol MyTypeAlias]
+
+@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
+  anchor -> [FirTypeAliasSymbol MyTypeAlias]
+
+@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /resolveMe
+  anchor -> [FirTypeAliasSymbol MyTypeAlias]
+
 FILE: [ResolvedTo(IMPORTS)] insideFunction.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,5 +22,5 @@ FILE: [ResolvedTo(IMPORTS)] insideFunction.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = @TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) List<@TypeAnnWithArg[Unresolved](LAZY_EXPRESSION) Int>>
-    public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|MyTypeAlias|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|
+    public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|@R|TypeAnnWithArg|(LAZY_EXPRESSION)  {MyTypeAlias=} kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/collections/List<@R|TypeAnnWithArg|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }

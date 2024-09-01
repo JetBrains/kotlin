@@ -13,21 +13,24 @@ import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
-internal sealed class WasmVM(val shortName: String) {
-    val name: String = javaClass.simpleName
-    protected val tool = ExternalTool(System.getProperty("javascript.engine.path.$name"))
+internal sealed class WasmVM(
+    val shortName: String,
+    val property: String,
+    val entryPointIsJsFile: Boolean
+) {
+    protected val tool = ExternalTool(System.getProperty(property))
 
     abstract fun run(
-        entryMjs: String,
+        entryFile: String,
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
         toolArgs: List<String> = emptyList(),
     ): String
 
-    object V8 : WasmVM("V8") {
+    object V8 : WasmVM(shortName = "V8", property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
         override fun run(
-            entryMjs: String,
+            entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
@@ -38,14 +41,14 @@ internal sealed class WasmVM(val shortName: String) {
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
-                entryMjs,
+                entryFile,
                 workingDirectory = workingDirectory,
             )
     }
 
-    object SpiderMonkey : WasmVM("SM") {
+    object SpiderMonkey : WasmVM(shortName = "SM", property = "javascript.engine.path.SpiderMonkey", entryPointIsJsFile = true) {
         override fun run(
-            entryMjs: String,
+            entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
@@ -55,14 +58,32 @@ internal sealed class WasmVM(val shortName: String) {
                 *toolArgs.toTypedArray(),
                 "--wasm-verbose",
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
-                "--module=$entryMjs",
+                "--module=$entryFile",
                 workingDirectory = workingDirectory,
             )
     }
 
-    object NodeJs : WasmVM("NodeJs") {
+    object WasmEdge : WasmVM(shortName = "WasmEdge", property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
         override fun run(
-            entryMjs: String,
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ) =
+            tool.run(
+                *toolArgs.toTypedArray(),
+                "--enable-gc",
+                "--enable-exception-handling",
+                entryFile,
+                "startTest",
+                workingDirectory = workingDirectory,
+            )
+    }
+
+    object NodeJs : WasmVM(shortName = "NodeJs", property = "javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
+        override fun run(
+            entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
@@ -71,7 +92,7 @@ internal sealed class WasmVM(val shortName: String) {
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
-                entryMjs,
+                entryFile,
                 workingDirectory = workingDirectory
             )
     }

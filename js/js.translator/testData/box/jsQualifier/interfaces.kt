@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1238
 // FILE: bar.kt
 @file:JsQualifier("foo")
 package foo

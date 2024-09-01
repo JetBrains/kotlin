@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.contai
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderScopeWithParentDeclarations
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -19,8 +19,8 @@ abstract class AbstractContainingDeclarationProviderByMemberScopeTest : Abstract
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(mainFile)
 
         val memberToContainingClass = analyseForTest(declaration) {
-            val symbol = declaration.getClassOrObjectSymbol()!!
-            renderScopeWithParentDeclarations(symbol.getMemberScope())
+            val symbol = declaration.classSymbol!!
+            renderScopeWithParentDeclarations(symbol.memberScope)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(memberToContainingClass)

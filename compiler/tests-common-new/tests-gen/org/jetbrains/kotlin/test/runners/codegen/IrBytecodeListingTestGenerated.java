@@ -335,6 +335,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     }
 
     @Test
+    @TestMetadata("annotationMixedTargeting.kt")
+    public void testAnnotationMixedTargeting() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationMixedTargeting.kt");
+    }
+
+    @Test
     @TestMetadata("annotationsOnDelegatedMembers.kt")
     public void testAnnotationsOnDelegatedMembers() {
       runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationsOnDelegatedMembers.kt");

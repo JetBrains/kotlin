@@ -21,7 +21,6 @@ fun test(a: A, b: B){
     a.size
     a.remove(element = 1)
     a.addFirst(3)
-    a.addLast(null)
     a.removeFirst()
     a.removeLast()
     a.reversed()

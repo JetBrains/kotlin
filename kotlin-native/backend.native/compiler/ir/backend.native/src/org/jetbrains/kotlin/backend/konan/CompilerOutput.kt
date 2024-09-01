@@ -112,7 +112,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
-        val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
+        val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
         if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
             LLVMStripModuleDebugInfo(parsedModule)
         }
@@ -133,7 +133,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 private fun linkAllDependencies(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>) {
     val (runtimeModules, additionalModules) = collectLlvmModules(generationState, generatedBitcodeFiles)
     // TODO: Possibly slow, maybe to a separate phase?
-    val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(generationState, runtimeModules).run()
+    val optimizedRuntimeModules = linkRuntimeModules(generationState, runtimeModules)
 
     // When the main module `generationState.llvmModule` is very large it is much faster to
     // link all the auxiliary modules together first before linking with the main module.
@@ -169,7 +169,10 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
     val config = generationState.config
     val produce = config.produce
 
-    if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
+    val staticFramework = produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework
+    val swiftExport = config.swiftExport && produce == CompilerOutputKind.STATIC
+
+    if (staticFramework || swiftExport) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
     linkAllDependencies(generationState, generatedBitcodeFiles.map { it.absoluteFile.normalize().path })
@@ -177,7 +180,7 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
 }
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
-    val parsedModule = parseBitcodeFile(generationState.llvmContext, path)
+    val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, path)
     if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }

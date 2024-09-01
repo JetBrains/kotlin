@@ -55,9 +55,9 @@ interface SendChannel<in E : Any?> {
 
 private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
   return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
-    flow.collect<Any?>(action = local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
+    flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
       return $this$produce.<get-channel>().send(e = { // BLOCK
-        val tmp_0: @ParameterName(name = "value") Any? = value
+        val tmp_0: Any? = value
         when {
           EQEQ(arg0 = tmp_0, arg1 = null) -> Any()
           else -> tmp_0
@@ -72,9 +72,9 @@ private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
 private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
   return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
     val channel: ChannelCoroutine<Any> = $this$produce.<get-channel>() as ChannelCoroutine<Any>
-    flow.collect<Any?>(action = local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
+    flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
       return channel.sendFair(element = { // BLOCK
-        val tmp_1: @ParameterName(name = "value") Any? = value
+        val tmp_1: Any? = value
         when {
           EQEQ(arg0 = tmp_1, arg1 = null) -> Any()
           else -> tmp_1
@@ -112,7 +112,7 @@ fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFuncti
 
 @Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
 fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
-  return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: @ParameterName(name = "cause") Throwable?) {
+  return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: Throwable?) {
     action.invoke(p1 = it)
   }
 )
@@ -139,4 +139,3 @@ fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<Corouti
 inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   return TODO()
 }
-

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -202,6 +202,6 @@ class WasmBackendContext(
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        configuration.irMessageLogger
+        configuration.messageCollector
     )
 }

@@ -6,6 +6,12 @@ pluginManagement {
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
     repositories {
+        maven {
+            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+            }
+        }
         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         google()
         mavenCentral()
@@ -19,8 +25,7 @@ pluginManagement {
 
 plugins {
     id "internal-gradle-setup" // it's recommended to apply this plugin at first, as it changes the local.properties file
-    id "build-cache"
-    id "gradle-enterprise"
+    id "develocity"
     id "jvm-toolchain-provisioning"
     id "kotlin-daemon-config"
 }
@@ -108,6 +113,7 @@ include ":benchmarks",
         ":compiler:incremental-compilation-impl",
         ":compiler:tests-compiler-utils",
         ":compiler:tests-common",
+        ":compiler:tests-integration",
         ":compiler:tests-mutes",
         ":compiler:tests-mutes:tc-integration",
         ":compiler:tests-against-klib",
@@ -122,6 +128,7 @@ include ":benchmarks",
         ":js:js.translator",
         ":js:js.dce",
         ":js:js.tests",
+        ":js:js.tests:klib-compatibility",
         ":native:kotlin-native-utils",
         ":native:frontend.native",
         ":native:kotlin-klib-commonizer",
@@ -136,6 +143,8 @@ include ":benchmarks",
         ":native:objcexport-header-generator-analysis-api",
         ":native:objcexport-header-generator:testLibraryA",
         ":native:objcexport-header-generator:testLibraryB",
+        ":native:objcexport-header-generator:testInternalLibrary",
+        ":native:objcexport-header-generator:testExtensionsLibrary",
         ":core:compiler.common",
         ":core:compiler.common.jvm",
         ":core:compiler.common.js",
@@ -202,7 +211,6 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:fir-plugin-prototype",
         ":plugins:fir-plugin-prototype:plugin-annotations",
         ":plugins:fir-plugin-prototype:fir-plugin-ic-test",
-        ":kotlin-test-js-runner",
         ":kotlin-metadata",
         ":kotlin-metadata-jvm",
         ":kotlinx-metadata-klib",
@@ -232,6 +240,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-gradle-plugin-idea",
         ":kotlin-gradle-plugin-idea-proto",
         ":kotlin-gradle-plugin-idea-for-compatibility-tests",
+        ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
+        ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
         ":kotlin-gradle-statistics",
@@ -304,6 +314,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":wasm:wasm.tests",
         ":wasm:wasm.frontend",
         ":wasm:wasm.config",
+        ":wasm:wasm.debug.browsers",
         ":repo:codebase-tests",
         ":repo:artifacts-tests"
 
@@ -397,6 +408,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
+            ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
             ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
@@ -431,9 +443,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:analysis-api-k2-tests-for-ide",
             ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
             ":prepare:ide-plugin-dependencies:analysis-api-fe10-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:kt-references-fe10-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-providers-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-project-structure-for-ide",
+            ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
             ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
             ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
@@ -450,11 +460,13 @@ include ":compiler:build-tools:kotlin-build-tools-api",
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":plugins:compose-compiler-plugin",
             ":plugins:compose-compiler-plugin:compiler",
-            ":plugins:compose-compiler-plugin:compiler:integration-tests",
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-            ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
+            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"
+
+    if (buildProperties.inIdeaSync) {
+        include ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
+    }
 }
 
 // Swift Export modules
@@ -629,14 +641,12 @@ include ":generators:analysis-api-generator",
         ":analysis:analysis-api",
         ":analysis:analysis-api-impl-barebone",
         ":analysis:analysis-api-impl-base",
-        ":analysis:analysis-api-providers",
+        ":analysis:analysis-api-platform-interface",
         ":analysis:analysis-internal-utils",
         ":analysis:analysis-test-framework",
         ":analysis:kt-references",
-        ":analysis:kt-references:kt-references-fe10",
         ":analysis:symbol-light-classes",
         ":analysis:light-classes-base",
-        ":analysis:project-structure",
         ":analysis:analysis-api-standalone",
         ":analysis:analysis-api-standalone:analysis-api-standalone-base",
         ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
@@ -658,10 +668,7 @@ if (buildProperties.isKotlinNativeEnabled) {
 }
 
 
-if (buildProperties.inJpsBuildIdeaSync) {
-    include ":kotlin-stdlib:jps-build"
-    project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
-} else {
+if (!buildProperties.inJpsBuildIdeaSync) {
     // modules that we are currently cannot compile with jps
     include ":core:builtins",
             ":kotlin-stdlib-common",
@@ -706,7 +713,6 @@ include ":compiler:android-tests"
 rootProject.name = "kotlin"
 
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
-project(':kotlin-test-js-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-js-runner" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlin-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
@@ -759,6 +765,8 @@ project(':native:objcexport-header-generator-k1').projectDir = "$rootDir/native/
 project(':native:objcexport-header-generator-analysis-api').projectDir = "$rootDir/native/objcexport-header-generator/impl/analysis-api" as File
 project(':native:objcexport-header-generator:testLibraryA').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testLibraryA" as File
 project(':native:objcexport-header-generator:testLibraryB').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testLibraryB" as File
+project(':native:objcexport-header-generator:testInternalLibrary').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testInternalLibrary" as File
+project(':native:objcexport-header-generator:testExtensionsLibrary').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testExtensionsLibrary" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-compiler-gradle" as File
@@ -883,6 +891,7 @@ project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as F
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
 
 project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
+project(':js:js.tests:klib-compatibility').projectDir = "$rootDir/js/js.tests/klib-compatibility" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
 project(':kotlinx-serialization-compiler-plugin').projectDir = "$rootDir/plugins/kotlinx-serialization" as File
@@ -903,12 +912,14 @@ project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 if (!buildProperties.inJpsBuildIdeaSync) {
     project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")
     project(':plugins:compose-compiler-plugin:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
-    project(':plugins:compose-compiler-plugin:compiler:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler/integration-tests")
     project(':plugins:compose-compiler-plugin:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
     project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
     project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes').projectDir =
             file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
-    project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
+
+    if (buildProperties.inIdeaSync) {
+        project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
+    }
 }
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
@@ -940,6 +951,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:libllvmext'
     include ':kotlin-native:llvmDebugInfoC'
     include ':kotlin-native:utilities'
+    include ':kotlin-native:tools:kdumputil'
     include ':kotlin-native:platformLibs'
     include ':kotlin-native:libclangext'
     include ':kotlin-native:llvmInterop'
@@ -948,4 +960,5 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:prepare:kotlin-native-compiler-embeddable'
     include ':native:kotlin-test-native-xctest'
     include ':native:cli-native'
+    include ':native:native.tests:cli-tests'
 }

@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.imports.Importable
 
-sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, TypeRefWithNullability, Importable
-        where BuilderField : AbstractField<*>,
+sealed class Builder<ElementField, Element> : FieldContainer<ElementField>, TypeRefWithNullability, Importable
+        where ElementField : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
 
-    val parents: MutableList<IntermediateBuilder<BuilderField, Element>> = mutableListOf()
+    val parents: MutableList<IntermediateBuilder<ElementField, Element>> = mutableListOf()
 
     val usedTypes: MutableList<Importable> = mutableListOf()
 
-    abstract val uselessFields: List<BuilderField>
+    abstract val uselessFields: List<ElementField>
 
     private val fieldsFromParentIndex: Map<String, Boolean> by lazy {
         mutableMapOf<String, Boolean>().apply {
@@ -41,21 +41,21 @@ sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, Type
     override fun copy(nullable: Boolean) = this
 }
 
-class LeafBuilder<BuilderField, Element, Implementation>(
+class LeafBuilder<Field, Element, Implementation>(
     val implementation: Implementation,
-) : Builder<BuilderField, Element>()
-        where BuilderField : AbstractField<*>,
-              Element : AbstractElement<Element, *, Implementation>,
-              Implementation : AbstractImplementation<Implementation, Element, BuilderField> {
+) : Builder<Field, Element>()
+        where Field : AbstractField<Field>,
+              Element : AbstractElement<Element, Field, Implementation>,
+              Implementation : AbstractImplementation<Implementation, Element, Field> {
     override val typeName: String
         get() = (implementation.name ?: implementation.element.typeName) + "Builder"
 
-    override val allFields: List<BuilderField> by lazy { implementation.fieldsInConstructor }
+    override val allFields: List<Field> by lazy { implementation.fieldsInConstructor }
 
-    override val uselessFields: List<BuilderField> by lazy {
-        val fieldsFromParents = parents.flatMap { it.allFields }.distinct()
+    override val uselessFields: List<Field> by lazy {
+        val fieldsFromParents = parents.flatMap { it.allFields }.map { it.name }.toSet()
         val fieldsFromImplementation = implementation.allFields
-        (fieldsFromImplementation - allFields).filter { it in fieldsFromParents }
+        (fieldsFromImplementation - allFields).filter { it.name in fieldsFromParents }
     }
 
     override val packageName: String = implementation.packageName.replace(".impl", ".builder")
@@ -63,21 +63,24 @@ class LeafBuilder<BuilderField, Element, Implementation>(
     var wantsCopy: Boolean = false
 }
 
-class IntermediateBuilder<BuilderField, Element>(
+class IntermediateBuilder<Field, Element>(
     override val typeName: String,
     override var packageName: String,
-) : Builder<BuilderField, Element>()
-        where BuilderField : AbstractField<*>,
+) : Builder<Field, Element>()
+        where Field : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
-    val fields: MutableList<BuilderField> = mutableListOf()
+    val fields: MutableList<Field> = mutableListOf()
     var materializedElement: Element? = null
+    var isSealed: Boolean = false
 
-    override val allFields: List<BuilderField> by lazy {
-        mutableSetOf<BuilderField>().apply {
-            parents.forEach { this += it.allFields }
-            this += fields
-        }.toList()
+    override val allFields: List<Field> by lazy {
+        buildMap<String, Field> {
+            parents.forEach { parent ->
+                parent.allFields.associateByTo(this) { it.name }
+            }
+            fields.associateByTo(this) { it.name }
+        }.values.toList()
     }
 
-    override val uselessFields: List<BuilderField> = emptyList()
+    override val uselessFields: List<Field> = emptyList()
 }

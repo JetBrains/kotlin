@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: lib
+    added file: m.kt
+STEP 1:
+    dependencies: lib
+STEP 2:
+    dependencies: lib
+STEP 3:
+    dependencies: lib
+    updated imports: m.kt
+STEP 4:
+    dependencies: lib

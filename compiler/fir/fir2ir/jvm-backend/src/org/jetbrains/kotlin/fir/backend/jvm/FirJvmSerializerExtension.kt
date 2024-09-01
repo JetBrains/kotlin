@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -294,17 +295,30 @@ open class FirJvmSerializerExtension(
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
         if (!hasJvmFieldAnnotation(session)) return false
 
-        val containerSymbol = (dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(session)
+        val containerSymbol = dispatchReceiverType?.classLikeLookupTagIfAny?.toRegularClassSymbol(session)
         // Note: companions are anyway forbidden in local classes
         if (containerSymbol == null || !containerSymbol.isCompanion || containerSymbol.isLocal) {
             return false
         }
 
         val grandParent = containerSymbol.classId.outerClassId?.let {
-            session.symbolProvider.getRegularClassSymbolByClassId(it)?.fir
+            session.getRegularClassSymbolByClassId(it)?.fir
         }
         return grandParent != null &&
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
+    }
+
+    override fun getClassSupertypes(klass: FirClass): List<FirTypeRef> {
+        if (classBuilderMode == ClassBuilderMode.KAPT3) {
+            // In K1, error supertypes are filtered on the frontend level in `DescriptorResolver.addValidSupertype`. Doing the same in FIR
+            // would be incorrect because there would be no errors reported on the corresponding FIR types. And not filtering them at all
+            // would lead to differences in metadata in generated stubs. So we fix this difference during metadata serialization.
+            return super.getClassSupertypes(klass)
+                .filterNot { it.coneType is ConeErrorType }
+                .ifEmpty { listOf(session.builtinTypes.anyType) }
+        }
+
+        return super.getClassSupertypes(klass)
     }
 
     override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
@@ -366,7 +380,7 @@ class FirJvmSignatureSerializer(stringTable: FirElementAwareStringTable) : JvmSi
     }
 
     private fun mapTypeDefault(typeRef: FirTypeRef): String? {
-        val classId = typeRef.coneTypeSafe<ConeClassLikeType>()?.classId
+        val classId = typeRef.coneType.classId
         return if (classId == null) null else ClassMapperLite.mapClass(classId.asString())
     }
 }

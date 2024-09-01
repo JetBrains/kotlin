@@ -9,6 +9,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
@@ -17,10 +18,10 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -55,7 +56,7 @@ internal class SymbolLightTypeParameter private constructor(
         kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 
-    private val ktModule: KtModule get() = parent.ktModule
+    private val ktModule: KaModule get() = parent.ktModule
 
     private inline fun <T> withTypeParameterSymbol(crossinline action: KaSession.(KaTypeParameterSymbol) -> T): T =
         typeParameterSymbolPointer.withSymbol(ktModule, action)
@@ -92,7 +93,7 @@ internal class SymbolLightTypeParameter private constructor(
             typeParameterSymbol.upperBounds
                 .filter { type ->
                     when (type) {
-                        is KaNonErrorClassType -> type.classId != StandardClassIds.Any
+                        is KaClassType -> type.classId != StandardClassIds.Any
                         is KaErrorType -> false
                         else -> true
                     }
@@ -132,8 +133,15 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getLBrace(): PsiElement? = null
     override fun getRBrace(): PsiElement? = null
     override fun getScope(): PsiElement = parent
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
+
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        return InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+    }
+
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean {
+        return InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
+    }
+
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null

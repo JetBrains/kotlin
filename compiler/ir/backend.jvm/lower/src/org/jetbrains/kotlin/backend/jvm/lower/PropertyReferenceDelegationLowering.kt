@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.Name
 )
 internal class PropertyReferenceDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(PropertyReferenceDelegationTransformer(context), null)
     }
 }

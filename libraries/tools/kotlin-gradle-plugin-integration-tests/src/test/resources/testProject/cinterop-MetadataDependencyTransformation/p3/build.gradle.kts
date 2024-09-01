@@ -16,7 +16,9 @@ plugins {
 kotlin {
     jvm()
     linuxX64()
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     mingwX64("windowsX64")
 
     val commonMain by sourceSets.getting
@@ -30,8 +32,14 @@ kotlin {
     val windowsAndLinuxTest by sourceSets.creating
     val linuxX64Main by sourceSets.getting
     val linuxX64Test by sourceSets.getting
-    val iosMain by sourceSets.getting
-    val iosTest by sourceSets.getting
+    val iosMain by sourceSets.creating
+    val iosTest by sourceSets.creating
+    val iosX64Main by sourceSets.getting
+    val iosArm64Main by sourceSets.getting
+    val iosSimulatorArm64Main by sourceSets.getting
+    val iosX64Test by sourceSets.getting
+    val iosArm64Test by sourceSets.getting
+    val iosSimulatorArm64Test by sourceSets.getting
     val windowsX64Main by sourceSets.getting
     val windowsX64Test by sourceSets.getting
 
@@ -45,7 +53,11 @@ kotlin {
             - Does not include linuxArm64
              */
             -appleAndLinuxMain {
-                -iosMain
+                -iosMain {
+                    -iosX64Main
+                    -iosArm64Main
+                    -iosSimulatorArm64Main
+                }
                 -linuxX64Main
             }
 
@@ -65,7 +77,11 @@ kotlin {
     commonTest {
         -nativeTest {
             -appleAndLinuxTest {
-                -iosTest
+                -iosTest {
+                    -iosX64Test
+                    -iosArm64Test
+                    -iosSimulatorArm64Test
+                }
                 -linuxX64Test
             }
 

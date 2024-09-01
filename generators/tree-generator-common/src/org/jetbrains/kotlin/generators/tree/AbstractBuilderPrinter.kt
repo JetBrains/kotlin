@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.utils.withIndent
 
-abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, ElementField>(val printer: ImportCollectingPrinter)
+abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val printer: ImportCollectingPrinter)
         where Element : AbstractElement<Element, ElementField, Implementation>,
-              Implementation : AbstractImplementation<Implementation, Element, BuilderField>,
-              BuilderField : AbstractField<*>,
+              Implementation : AbstractImplementation<Implementation, Element, ElementField>,
               ElementField : AbstractField<ElementField> {
 
     companion object {
@@ -27,17 +25,17 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     protected abstract val builderDslAnnotation: ClassRef<*>
 
-    protected open fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: BuilderField) {
+    protected open fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: ElementField) {
         print(field.name)
     }
 
     protected open fun actualTypeOfField(field: ElementField): TypeRefWithNullability =
         if (field is ListField) StandardTypes.mutableList.withArgs(field.baseType) else field.typeRef
 
-    protected open fun copyField(field: BuilderField, originalParameterName: String, copyBuilderVariableName: String) {
+    protected open fun copyField(field: ElementField, originalParameterName: String, copyBuilderVariableName: String) {
         printer.run {
             when {
-                field.origin is ListField -> println(
+                field is ListField -> println(
                     copyBuilderVariableName,
                     ".",
                     field.name,
@@ -52,18 +50,18 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    fun printBuilder(builder: Builder<BuilderField, Element>) {
+    fun printBuilder(builder: Builder<ElementField, Element>) {
         printer.run {
             addAllImports(builder.usedTypes)
             if (builder is LeafBuilder<*, *, *> && builder.allFields.isEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                printDslBuildFunction(builder as LeafBuilder<BuilderField, Element, Implementation>, hasRequiredFields = false)
+                printDslBuildFunction(builder as LeafBuilder<ElementField, Element, Implementation>, hasRequiredFields = false)
                 return
             }
 
             println("@", builderDslAnnotation.render())
             when (builder) {
-                is IntermediateBuilder -> print("interface ")
+                is IntermediateBuilder -> print("${if (builder.isSealed) "sealed " else ""}interface ")
                 is LeafBuilder<*, *, *> -> {
                     if (builder.isOpen) {
                         print("open ")
@@ -132,7 +130,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
             if (builder is LeafBuilder<*, *, *>) {
                 println()
                 @Suppress("UNCHECKED_CAST")
-                printDslBuildFunction(builder as LeafBuilder<BuilderField, Element, Implementation>, hasRequiredFields)
+                printDslBuildFunction(builder as LeafBuilder<ElementField, Element, Implementation>, hasRequiredFields)
 
                 if (builder.wantsCopy) {
                     println()
@@ -142,7 +140,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    private fun lambdaParameterForBuilderFunction(builder: Builder<BuilderField, Element>, hasRequiredFields: Boolean) =
+    private fun lambdaParameterForBuilderFunction(builder: Builder<ElementField, Element>, hasRequiredFields: Boolean) =
         FunctionParameter(
             name = "init",
             type = Lambda(receiver = builder, returnType = StandardTypes.unit),
@@ -157,11 +155,11 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    private fun builderFunctionName(builder: LeafBuilder<BuilderField, Element, Implementation>) =
+    private fun builderFunctionName(builder: LeafBuilder<ElementField, Element, Implementation>) =
         "build" + builder.implementation.run { name?.removePrefix(namePrefix) ?: element.name }
 
     private fun ImportCollectingPrinter.printDslBuildFunction(
-        builder: LeafBuilder<BuilderField, Element, Implementation>,
+        builder: LeafBuilder<ElementField, Element, Implementation>,
         hasRequiredFields: Boolean,
     ) {
         val isEmpty = builder.allFields.isEmpty()
@@ -195,28 +193,28 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
     }
 
-    private fun BuilderField.needBackingField(fieldIsUseless: Boolean) =
-        !nullable && origin !is ListField && if (fieldIsUseless) {
+    private fun ElementField.needBackingField(fieldIsUseless: Boolean) =
+        !nullable && this !is ListField && if (fieldIsUseless) {
             implementationDefaultStrategy?.defaultValue == null
         } else {
             defaultValueInBuilder == null
         }
 
-    private fun BuilderField.needNotNullDelegate(fieldIsUseless: Boolean) =
+    private fun ElementField.needNotNullDelegate(fieldIsUseless: Boolean) =
         needBackingField(fieldIsUseless) && (typeRef == StandardTypes.boolean || typeRef == StandardTypes.int)
 
     private fun ImportCollectingPrinter.printFieldInBuilder(
-        field: BuilderField,
-        builder: Builder<BuilderField, Element>,
+        field: ElementField,
+        builder: Builder<ElementField, Element>,
         fieldIsUseless: Boolean,
     ): Pair<Boolean, Boolean> {
         if (
             field.implementationDefaultStrategy?.withGetter == true
             && !fieldIsUseless || field.invisibleField
         ) return false to false
-        if (field.origin is ListField) {
+        if (field is ListField) {
             @Suppress("UNCHECKED_CAST")
-            printFieldListInBuilder(field.origin as ElementField, builder, fieldIsUseless)
+            printFieldListInBuilder(field as ElementField, builder, fieldIsUseless)
             return true to false
         }
         val defaultValue = if (fieldIsUseless)
@@ -265,7 +263,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     private fun ImportCollectingPrinter.printDeprecationOnUselessFieldIfNeeded(
         field: AbstractField<*>,
-        builder: Builder<BuilderField, Element>,
+        builder: Builder<ElementField, Element>,
         fieldIsUseless: Boolean,
     ) {
         if (fieldIsUseless) {
@@ -281,7 +279,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
 
     private fun ImportCollectingPrinter.printFieldListInBuilder(
         field: ElementField,
-        builder: Builder<BuilderField, Element>,
+        builder: Builder<ElementField, Element>,
         fieldIsUseless: Boolean,
     ) {
         printDeprecationOnUselessFieldIfNeeded(field, builder, fieldIsUseless)
@@ -293,7 +291,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         println()
     }
 
-    private fun ImportCollectingPrinter.printModifiers(builder: Builder<BuilderField, Element>, field: AbstractField<*>, fieldIsUseless: Boolean) {
+    private fun ImportCollectingPrinter.printModifiers(builder: Builder<ElementField, Element>, field: AbstractField<*>, fieldIsUseless: Boolean) {
         if (builder is IntermediateBuilder) {
             print("abstract ")
         }
@@ -304,7 +302,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
         }
         @Suppress("UNCHECKED_CAST")
         if (builder is LeafBuilder<*, *, *> &&
-            (field as BuilderField).needBackingField(fieldIsUseless) &&
+            (field as ElementField).needBackingField(fieldIsUseless) &&
             !fieldIsUseless &&
             !field.needNotNullDelegate(fieldIsUseless = false)
         ) {
@@ -313,7 +311,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, BuilderField, Ele
     }
 
     private fun ImportCollectingPrinter.printDslBuildCopyFunction(
-        builder: LeafBuilder<BuilderField, Element, Implementation>,
+        builder: LeafBuilder<ElementField, Element, Implementation>,
         hasRequiredFields: Boolean,
     ) {
         val optIns = builder.allFields

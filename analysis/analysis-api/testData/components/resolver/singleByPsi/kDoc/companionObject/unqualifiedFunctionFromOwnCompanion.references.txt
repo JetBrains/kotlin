@@ -1,2 +1,3 @@
-KDocReference:
-  (in Base.Companion) fun foo()
+KDocName(8,11): 'foo'
+  KDocReference:
+    (in Base.Companion) fun foo()

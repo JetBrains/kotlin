@@ -1,6 +1,5 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
-// SKIP_MINIFICATION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
@@ -64,10 +63,10 @@ inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
 }
 
 @JsExport
-fun formatList(value: List<*>): String = value.joinToString(", ") { it.toString() }
+fun formatList(value: MutableList<*>): String = value.joinToString(", ") { it.toString() }
 
 @JsExport
-fun createList(): List<*> = listOf(1, 2, 3)
+fun createList(): MutableList<*> = mutableListOf(1, 2, 3)
 
 // KT-53180
 @JsExport

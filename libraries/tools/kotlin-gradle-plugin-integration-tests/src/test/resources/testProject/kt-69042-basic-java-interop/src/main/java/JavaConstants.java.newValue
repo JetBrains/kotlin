@@ -1,0 +1,4 @@
+public class JavaConstants {
+    public static final String VERSION = "2";
+    public static final String UNRELATED_VERSION = "3"; // java ic might be bugged, trick it into working for test purposes
+}

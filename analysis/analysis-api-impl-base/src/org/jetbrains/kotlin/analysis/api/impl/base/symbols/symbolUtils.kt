@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
     ClassKind.INTERFACE -> KaClassKind.INTERFACE
     ClassKind.ENUM_CLASS -> KaClassKind.ENUM_CLASS
@@ -19,7 +21,16 @@ fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (thi
     ClassKind.ENUM_ENTRY -> invalidEnumEntryAsClassKind()
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 fun invalidEnumEntryAsClassKind(): Nothing {
     error("KtClassKind is not applicable for enum entry, as enum entry is a callable, not a classifier")
 }
+
+@KaImplementationDetail
+val Modality.asKaSymbolModality: KaSymbolModality
+    get() = when (this) {
+        Modality.FINAL -> KaSymbolModality.FINAL
+        Modality.SEALED -> KaSymbolModality.SEALED
+        Modality.OPEN -> KaSymbolModality.OPEN
+        Modality.ABSTRACT -> KaSymbolModality.ABSTRACT
+    }

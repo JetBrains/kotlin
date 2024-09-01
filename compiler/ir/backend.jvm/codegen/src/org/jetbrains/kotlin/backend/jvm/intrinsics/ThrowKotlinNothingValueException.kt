@@ -17,13 +17,9 @@ object ThrowKotlinNothingValueException : IntrinsicMethod() {
         classCodegen: ClassCodegen
     ): IntrinsicFunction =
         IntrinsicFunction.create(expression, signature, classCodegen) { mv ->
-            if (classCodegen.context.config.useKotlinNothingValueException) {
-                mv.anew(Type.getObjectType("kotlin/KotlinNothingValueException"))
-                mv.dup()
-                mv.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false)
-            } else {
-                mv.aconst(null)
-            }
+            mv.anew(Type.getObjectType("kotlin/KotlinNothingValueException"))
+            mv.dup()
+            mv.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false)
             mv.athrow()
         }
 }

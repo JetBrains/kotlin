@@ -91,7 +91,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
-                return compare(a.typeArguments, b.typeArguments)
+                return compare(a.typeArgumentsOfLowerBoundIfFlexible, b.typeArgumentsOfLowerBoundIfFlexible)
             }
             is ConeFlexibleType -> {
                 require(b is ConeFlexibleType) {

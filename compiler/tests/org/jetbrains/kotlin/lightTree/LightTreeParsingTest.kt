@@ -58,7 +58,7 @@ class LightTreeParsingTest : KtPlatformLiteFixture() {
                     .mapNotNull { it?.startOffset }
                     .map {
                         val nextPos = positionFinder.findNextPosition(it)
-                        LinePos( mapping.getLineByOffset(it), nextPos.line, nextPos.column, nextPos.lineContent)
+                        LinePos(mapping.getLineByOffset(it), nextPos.line, nextPos.column, nextPos.lineContent)
                     }
             Triple(code.toString(), mapping, linePositions)
         }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -117,6 +118,9 @@ abstract class FirAbstractImportingScope(
             provider::getTopLevelPropertySymbols
         )
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractImportingScope
 }
 
 internal fun FirSimpleFunction.buildImportedVersion(importedClassId: ClassId): FirSimpleFunction {

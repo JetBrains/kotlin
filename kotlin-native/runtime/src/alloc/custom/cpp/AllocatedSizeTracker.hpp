@@ -21,10 +21,16 @@ struct AllocatedSizeTracker {
 
     class Heap {
     public:
-        void recordDifference(std::ptrdiff_t diffBytes, bool notifyScheduler) noexcept;
+        /** Returns the tracker value after the update. */
+        std::size_t recordDifference(std::ptrdiff_t diffBytes) noexcept;
+        void recordDifferenceAndNotifyScheduler(std::ptrdiff_t diffBytes) noexcept;
     private:
         std::atomic<std::ptrdiff_t> allocatedBytes_ = 0;
     };
 };
+
+namespace test_support {
+void setSchedulerNotificationHook(void (*hook)(std::size_t)) noexcept;
+}
 
 }

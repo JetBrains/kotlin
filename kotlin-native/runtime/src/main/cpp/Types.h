@@ -68,11 +68,10 @@ extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo;
 extern const TypeInfo* theCleanerImplTypeInfo;
 extern const TypeInfo* theRegularWeakReferenceImplTypeInfo;
 
-KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE RUNTIME_USED RUNTIME_WEAK;
+KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE RUNTIME_EXPORT RUNTIME_WEAK;
 KBoolean IsInstanceInternal(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) RUNTIME_PURE;
 KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) RUNTIME_PURE;

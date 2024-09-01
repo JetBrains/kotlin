@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
-@file:OptIn(ExperimentalMultiplatform::class)
+<!OPT_IN_WITHOUT_ARGUMENTS!>@file:OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
 
 expect annotation class ActualOnly
 
@@ -9,7 +9,7 @@ expect annotation class ActualOnly
 <!EXPECT_ACTUAL_OPT_IN_ANNOTATION{JVM}!>expect<!> annotation class Both
 
 @RequiresOptIn
-@OptionalExpectation
+@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
 expect annotation class MyOptIn
 
 // MODULE: m1-jvm()()(m1-common)

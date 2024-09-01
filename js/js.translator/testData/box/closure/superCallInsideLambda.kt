@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1292
-
 var result = ""
 
 fun <T> call(lambda: () -> T): T {

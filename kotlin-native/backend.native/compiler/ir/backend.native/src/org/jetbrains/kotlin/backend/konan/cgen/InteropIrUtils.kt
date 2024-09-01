@@ -1,23 +1,24 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.cgen
 
-import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
 internal fun IrType.isCEnumType(): Boolean {
     if (isNullable()) return false

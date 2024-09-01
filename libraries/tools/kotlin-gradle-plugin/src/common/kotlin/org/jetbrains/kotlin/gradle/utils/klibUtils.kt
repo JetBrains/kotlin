@@ -10,7 +10,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
 
 internal fun Project.klibModuleName(
-    baseName: Provider<String> = baseModuleName()
+    baseName: Provider<String> = baseModuleName(),
 ): Provider<String> = baseName.map {
     klibModuleName(it)
 }

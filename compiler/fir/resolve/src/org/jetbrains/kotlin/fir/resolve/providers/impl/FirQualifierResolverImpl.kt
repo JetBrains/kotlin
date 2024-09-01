@@ -32,14 +32,16 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
         return symbolProvider.getClassLikeSymbolByClassId(fqName)
     }
 
-    override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
+    override fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
         if (parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
-            return resolveSymbol(parts.drop(1))
+            return resolveFullyQualifiedSymbol(parts.drop(1))
         }
 
         val firProvider = session.symbolProvider
 
-        if (parts.isNotEmpty()) {
+        // This implementation mimics the K1 behavior where we allow resolving `Foo.Bar` from the root package without import but not `Foo`.
+        // See KT-69985 and compiler/testData/diagnostics/tests/imports/noImportFromRootPackage.kt.
+        if (parts.size > 1) {
             val lastPart = mutableListOf<FirQualifierPart>()
             val firstPart = parts.toMutableList()
 

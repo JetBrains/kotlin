@@ -251,8 +251,6 @@ internal class CAdapterApiExporter(
         // Include header into C++ source.
         headerFile.forEachLine { it -> output(it) }
 
-        output("#include <exception>")
-
         output("""
     |struct KObjHeader;
     |typedef struct KObjHeader KObjHeader;
@@ -263,7 +261,13 @@ internal class CAdapterApiExporter(
     |typedef struct FrameOverlay FrameOverlay;
     |
     |#define RUNTIME_NOTHROW __attribute__((nothrow))
-    |#define RUNTIME_USED __attribute__((used))
+    |
+    |#if __has_attribute(retain)
+    |#define RUNTIME_EXPORT __attribute__((used,retain))
+    |#else
+    |#define RUNTIME_EXPORT __attribute__((used))
+    |#endif
+    |
     |#define RUNTIME_NORETURN __attribute__((noreturn))
     |
     |extern "C" {
@@ -379,7 +383,7 @@ internal class CAdapterApiExporter(
 
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
+        output("RUNTIME_EXPORT ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
         if (defFile != null) {

@@ -1,0 +1,26 @@
+KtCallExpression(45,50): 'Foo()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo<ERROR CLASS: Cannot infer argument for type parameter T>
+          symbol = <constructor>(x: T): Foo<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = ERROR CLASS: Cannot infer argument for type parameter T
+              symbol = x: T
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+      }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>
+    isInBestCandidates = true

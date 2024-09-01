@@ -1,13 +1,13 @@
 expression: av
-expected type: KaFunctionalType:
-  annotationsList: []
+expected type: KaFunctionType:
+  annotations: []
   typeArguments: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/String
   ]

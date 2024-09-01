@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.dsl.DependencyConstraintHandler
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -37,7 +35,7 @@ internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
     if (propertiesProvider.stdlibDefaultDependency)
         project.configureStdlibDefaultDependency(kotlinExtension, coreLibrariesVersion)
 
-    if (propertiesProvider.kotlinTestInferJvmVariant) { // TODO: extend this logic to PM20
+    if (propertiesProvider.kotlinTestInferJvmVariant) {
         project.configureKotlinTestDependency(
             kotlinExtension,
             coreLibrariesVersion,
@@ -48,7 +46,10 @@ internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
         project.configureKotlinDomApiDefaultDependency(kotlinExtension, coreLibrariesVersion)
     }
 
-    project.configurations.configureDefaultVersionsResolutionStrategy(coreLibrariesVersion)
+    project.configurations.configureDefaultVersionsResolutionStrategy(
+        coreLibrariesVersion,
+        project.dependencies.constraints,
+    )
 
     if (propertiesProvider.stdlibJdkVariantsVersionAlignment) {
         project.configurations.configureStdlibVersionAlignment()
@@ -59,16 +60,22 @@ internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
 
 private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
     coreLibrariesVersion: Provider<String>,
-) = all { configuration ->
+    constraintsHandler: DependencyConstraintHandler,
+) = configureEach { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
             .withType<ExternalDependency>()
-            .configureEach { dependency ->
+            .all { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     dependency.version.isNullOrEmpty()
                 ) {
-                    dependency.version {
-                        it.require(coreLibrariesVersion.get())
+                    constraintsHandler.add(
+                        configuration.name,
+                        dependency.module.toString()
+                    ) {
+                        it.version { constraint ->
+                            constraint.require(coreLibrariesVersion.get())
+                        }
                     }
                 }
             }
@@ -111,3 +118,4 @@ internal fun DependencyHandler.kotlinDependency(moduleName: String, versionOrNul
     create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 internal fun Configuration.allNonProjectDependencies() = allDependencies.matching { it !is ProjectDependency }
+internal fun DependencySet.allNonProjectDependencies() = matching { it !is ProjectDependency }

@@ -1,0 +1,13 @@
+/labelClashesWithContextReceivers.fir.kt:(168,175): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please don't use context receivers. You can either pass parameters explicitly or use members with extensions.
+
+See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. During the transition period, neither context receivers nor context parameters will be supported. This warning will become an error in future releases.
+
+/labelClashesWithContextReceivers.fir.kt:(237,242): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(274,281): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please don't use context receivers. You can either pass parameters explicitly or use members with extensions.
+
+See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. During the transition period, neither context receivers nor context parameters will be supported. This warning will become an error in future releases.
+
+/labelClashesWithContextReceivers.fir.kt:(327,332): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(433,443): error: Ambiguous label.

@@ -10,20 +10,24 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
@@ -31,9 +35,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -186,7 +190,7 @@ class JvmMappedScope(
             origin = FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
-                type = firKotlinClass.typeParameters.firstOrNull()
+                coneType = firKotlinClass.typeParameters.firstOrNull()
                     ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }
                     ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
             }
@@ -324,7 +328,7 @@ class JvmMappedScope(
 
             fun FirConstructor.isTrivialCopyConstructor(): Boolean =
                 valueParameters.singleOrNull()?.let {
-                    (it.returnTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag == firKotlinClass.symbol.toLookupTag()
+                    it.returnTypeRef.coneType.lowerBoundIfFlexible().classLikeLookupTagIfAny == firKotlinClass.symbol.toLookupTag()
                 } ?: false
 
             // In K1 it is handled by JvmBuiltInsCustomizer.getConstructors
@@ -415,7 +419,7 @@ class JvmMappedScope(
          * @returns {T1  -> F1, T2 -> F2} substitution
          */
         private fun createMappingSubstitutor(fromClass: FirRegularClass, toClass: FirRegularClass, session: FirSession): ConeSubstitutor =
-            ConeSubstitutorByMap.create(
+            substitutorByMap(
                 fromClass.typeParameters.zip(toClass.typeParameters).associate { (fromTypeParameter, toTypeParameter) ->
                     fromTypeParameter.symbol to ConeTypeParameterTypeImpl(
                         ConeTypeParameterLookupTag(toTypeParameter.symbol),
@@ -431,6 +435,17 @@ class JvmMappedScope(
 
     override fun toString(): String {
         return "JVM mapped scope for ${firKotlinClass.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JvmMappedScope {
+        return JvmMappedScope(
+            newSession,
+            firKotlinClass,
+            firJavaClass,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+            javaMappedClassUseSiteScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: javaMappedClassUseSiteScope,
+        )
     }
 }
 

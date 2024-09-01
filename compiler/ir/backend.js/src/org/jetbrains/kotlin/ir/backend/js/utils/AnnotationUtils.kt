@@ -32,13 +32,11 @@ object JsAnnotations {
     val jsGeneratorFqn = FqName("kotlin.js.JsGenerator")
 }
 
-@Suppress("UNCHECKED_CAST")
 fun IrConstructorCall.getSingleConstStringArgument() =
-    (getValueArgument(0) as IrConst<String>).value
+    (getValueArgument(0) as IrConst).value as String
 
-@Suppress("UNCHECKED_CAST")
 fun IrConstructorCall.getSingleConstBooleanArgument() =
-    (getValueArgument(0) as IrConst<Boolean>).value
+    (getValueArgument(0) as IrConst).value as Boolean
 
 fun IrAnnotationContainer.getJsModule(): String? =
     getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()

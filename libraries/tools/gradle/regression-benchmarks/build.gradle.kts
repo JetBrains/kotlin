@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+
 plugins {
     `java-base`
+    id("android-sdk-provisioner")
 }
 
 val compilerClasspath = configurations.create("compilerClasspath") {
@@ -74,17 +77,8 @@ fun addBenchmarkTask(
     }
 }
 
-val acceptAndroidSdkLicenses = tasks.register("acceptAndroidSdkLicenses") {
-    useAndroidSdk()
-    acceptAndroidSdkLicenses()
-}
-
-fun JavaExec.usesAndroidSdk() {
-    dependsOn(acceptAndroidSdkLicenses)
-
-    doFirst {
-        environment("ANDROID_HOME", configurations["androidSdk"].singleFile.canonicalPath)
-    }
+val acceptLicensesTask = with(androidSdkProvisioner) {
+    registerAcceptLicensesTask()
 }
 
 addBenchmarkTask(
@@ -92,7 +86,10 @@ addBenchmarkTask(
     script = "duckduckgo.benchmark.kts",
     JavaLanguageVersion.of(17)
 ) {
-    usesAndroidSdk()
+    androidSdkProvisioner {
+        provideToThisTaskAsEnvironmentVariable(ProvisioningType.SDK)
+        dependsOn(acceptLicensesTask)
+    }
 }
 
 addBenchmarkTask(

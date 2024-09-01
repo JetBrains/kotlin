@@ -66,3 +66,8 @@ int** multiplyMatrix(int m1, int m2, const int** mat1, int n1, int n2, const int
     }
     return  res;
 }
+
+void vecSumAssign(int n, float* first, float* second) {
+    for (int i = 0; i < n; ++i)
+        *first++ += *second++;
+}

@@ -5,21 +5,21 @@
 
 package org.jetbrains.sir.lightclasses
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.sir.lightclasses.nodes.*
 
 public class SirDeclarationFromKtSymbolProvider(
-    private val ktModule: KtModule,
+    private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
 
     override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration {
         return when (val ktSymbol = this@sirDeclaration) {
-            is KaNamedClassOrObjectSymbol -> {
+            is KaNamedClassSymbol -> {
                 SirClassFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
@@ -33,7 +33,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     sirSession = sirSession,
                 )
             }
-            is KaFunctionLikeSymbol -> {
+            is KaFunctionSymbol -> {
                 SirFunctionFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,

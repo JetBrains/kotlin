@@ -5,8 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
@@ -21,7 +21,7 @@ import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirVariableFromKtSymbol(
     override val ktSymbol: KaVariableSymbol,
-    override val ktModule: KtModule,
+    override val ktModule: KaModule,
     override val sirSession: SirSession,
 ) : SirVariable(), SirFromKtSymbol<KaVariableSymbol> {
 
@@ -60,9 +60,11 @@ internal class SirVariableFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
+
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
 
     private val accessorKind by lazy {
         ktSymbol.sirCallableKind

@@ -84,6 +84,7 @@ internal fun Settings.withCustomCompiler(compiler: ReleasedCompiler): Settings {
             KotlinNativeClassLoader(lazyClassLoader = compiler.lazyClassloader),
             PipelineType.DEFAULT,
             GCType.UNSPECIFIED,
+            ThreadStateChecker.DISABLED
         )
     ) {}
 }

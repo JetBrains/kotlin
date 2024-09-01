@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
@@ -41,11 +41,21 @@ class ConeEquivalentCallConflictResolver(
         outerLoop@ for (myCandidate in fromSourceFirst) {
             val me = myCandidate.symbol.fir
             if (me is FirCallableDeclaration && me.symbol.containingClassLookupTag() == null) {
-                for (otherCandidate in result) {
+                val resultIterator = result.iterator()
+                while (resultIterator.hasNext()) {
+                    val otherCandidate = resultIterator.next()
                     val other = otherCandidate.symbol.fir
                     if (other is FirCallableDeclaration && other.symbol.containingClassLookupTag() == null) {
                         if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
-                            continue@outerLoop
+                            /**
+                             * If we have an expect function in the result set and encounter a non-expect function among non-processed
+                             * candidates, then we need to prefer this new function to the original expect one
+                             */
+                            if (other.isExpect && !me.isExpect) {
+                                resultIterator.remove()
+                            } else {
+                                continue@outerLoop
+                            }
                         }
                     }
                 }
@@ -69,7 +79,6 @@ class ConeEquivalentCallConflictResolver(
         // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
         // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
         if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
-        if (first.isExpect != second.isExpect) return false
         if (first is FirVariable != second is FirVariable) {
             return false
         }
@@ -102,7 +111,8 @@ class ConeEquivalentCallConflictResolver(
         get() {
             val function = symbol.fir as? FirFunction ?: return null
             val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
-            val mapping = argumentMapping ?: return null
+            if (!argumentMappingInitialized) return null
+            val mapping = argumentMapping
             val result = IntArray(mapping.size + 1) { function.valueParameters.size }
             for ((index, parameter) in mapping.values.withIndex()) {
                 result[index + 1] = parametersToIndices[parameter] ?: error("Unmapped argument in arguments mapping")

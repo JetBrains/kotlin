@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.library.abi
 
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
-import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.library.abi.handlers.LibraryAbiDumpHandler
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -111,10 +111,10 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
         get() = ::FirFrontendFacade
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrJsResultsConverter
+        get() = ::Fir2IrResultsConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirJsKlibBackendFacade
+        get() = ::FirJsKlibSerializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) {
         builder.configureFirParser(FirParser.Psi)
@@ -133,5 +133,5 @@ open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTes
         get() = ::ClassicFrontend2IrConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::JsKlibBackendFacade
+        get() = ::JsKlibSerializerFacade
 }

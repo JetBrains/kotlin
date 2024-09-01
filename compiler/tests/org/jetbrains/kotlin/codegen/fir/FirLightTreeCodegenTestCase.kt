@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.codegen.fir
 
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.jvm.compiler.JvmIrLinkageModeTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
 
@@ -118,7 +117,7 @@ class FirLightTreeMethodOrderTest : IrMethodOrderTest() {
                 }
             """,
             "\$obj$1",
-            listOf("<init>()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V", "f3()V")
+            listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
         )
     }
 }
@@ -132,14 +131,6 @@ class FirLightTreeReflectionClassLoaderTest : IrReflectionClassLoaderTest() {
 }
 
 class FirLightTreeCustomBytecodeTextTest : IrCustomBytecodeTextTest() {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = LightTree
-}
-
-class FirLightTreeCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
     override val useFir: Boolean
         get() = true
 
@@ -163,10 +154,3 @@ class FirLightTreeSourceInfoGenTest : IrSourceInfoGenTest() {
         get() = LightTree
 }
 
-class FirLightTreeLinkageModeTest : JvmIrLinkageModeTest() {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = LightTree
-}

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -26,13 +28,12 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -42,7 +43,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
         val session = context.session
         val annotation = declaration.backingField?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session)
             ?: return
-        val containingClassSymbol = declaration.containingClassLookupTag()?.toFirRegularClassSymbol(session)
+        val containingClassSymbol = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)
 
         val problem = when {
             declaration.delegate != null -> DELEGATE
@@ -68,15 +69,23 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
             declaration.returnTypeRef.needsMultiFieldValueClassFlattening(session) -> RETURN_TYPE_IS_VALUE_CLASS
+            containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS -> ANNOTATION
             else -> return
         }
 
-        val factory = if (declaration.fromPrimaryConstructor == true &&
-            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)
-        ) {
-            FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
-        } else {
-            FirJvmErrors.INAPPLICABLE_JVM_FIELD
+        val languageVersionSettings = context.session.languageVersionSettings
+        val factory = when {
+            declaration.fromPrimaryConstructor == true &&
+                    !languageVersionSettings.supportsFeature(ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)
+                -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+            }
+            problem == ANNOTATION && !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+            }
+            else -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD
+            }
         }
 
         reporter.reportOn(annotation.source, factory, problem.errorMessage, context)

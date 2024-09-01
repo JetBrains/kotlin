@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in foo) fun kotlin.Any.myRun()
+KtNameReferenceExpression(50,55): 'myRun'
+  KtSimpleNameReference:
+    (in foo) fun kotlin.Any.myRun()

@@ -24,7 +24,7 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
         if (this.signature?.isInteropSignature() == true) return true
 
         // K2 doesn't properly put signatures into such symbols yet, workaround:
-        return this.isBound && this.owner is Fir2IrLazyClass && this.owner.isFromInteropLibraryByDescriptor()
+        return this.isBound && this.owner is Fir2IrLazyClass && this.owner.isFromCInteropLibrary()
     }
 
     // This is an alternative to .isObjCClass that doesn't need to walk up all the class heirarchy,

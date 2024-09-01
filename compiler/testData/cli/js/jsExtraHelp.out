@@ -1,8 +1,9 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xcache-directory=<path>   Path to the cache directory.
+  -Xwasm-debugger-custom-formatters
+                             Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xenable-js-scripting      Enable experimental support for .kts files using K/JS (with '-Xir' only).
-  -Xerror-tolerance-policy   Set up an error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL). Deprecated, will be removed in next compiler version.
   -Xenable-extension-functions-in-externals
                              Enable extension function members in external interfaces.
   -Xfake-override-validator  Enable the IR fake override validator.
@@ -10,6 +11,8 @@ where advanced options include:
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file. This is available only in the IR backend.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
+  -Xwasm-source-map-include-mappings-from-unavailable-sources
+                             Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
   -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
   -Xir-base-class-in-metadata Write base classes into metadata.
   -Xir-build-cache           Use the compiler to build the cache.
@@ -56,6 +59,7 @@ where advanced options include:
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
+  -Xwasm-attach-js-exception Attach a thrown by JS-value to the JsException class
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
   -Xwasm-use-traps-instead-of-exceptions
@@ -85,6 +89,8 @@ where advanced options include:
                              Enable signature uniqueness checks.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
+  -Xklib-double-inlining     Turn on experimental double-inlining mode.
+                             Warning: This feature is unstable.
   -Xexplicit-api={strict|warning|disable}
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
@@ -111,6 +117,7 @@ where advanced options include:
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
+  -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
   -Xpartial-linkage-loglevel={info|warning|error}
                              Define the compile-time log level for partial linkage.
@@ -123,7 +130,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
-  -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
+  -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
@@ -140,6 +147,8 @@ where advanced options include:
                              Suppress error about API version greater than language version.
                              Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
+  -Xsuppress-warning=<WARNING_NAME>
+                             Suppress specified warning module-wide.
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
@@ -151,7 +160,13 @@ where advanced options include:
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
-  -Xwhen-guards              Enable language support for when guards.
+  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
+  -Xverify-ir-visibility-after-inlining
+                             Check for visibility violations in IR when validating it after the function inlining phase.
+                             Only has effect if '-Xverify-ir' is not 'none'.
+                             This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+
+  -Xwhen-guards              Enable experimental language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

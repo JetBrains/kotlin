@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in <local>: test) fun local()
+KtNameReferenceExpression(139,144): 'local'
+  KtSimpleNameReference:
+    (in <local>: test) fun local()

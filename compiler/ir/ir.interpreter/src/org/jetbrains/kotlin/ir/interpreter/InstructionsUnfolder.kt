@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
@@ -49,7 +50,7 @@ internal fun unfoldInstruction(element: IrElement?, environment: IrInterpreterEn
         is IrGetObjectValue -> unfoldGetObjectValue(element, environment)
         is IrGetEnumValue -> unfoldGetEnumValue(element, environment)
         is IrEnumEntry -> unfoldEnumEntry(element, environment)
-        is IrConst<*> -> callStack.pushSimpleInstruction(element)
+        is IrConst -> callStack.pushSimpleInstruction(element)
         is IrVariable -> unfoldVariable(element, callStack)
         is IrSetValue -> unfoldSetValue(element, callStack)
         is IrTypeOperatorCall -> unfoldTypeOperatorCall(element, callStack)
@@ -196,7 +197,7 @@ private fun unfoldEnumConstructorCall(element: IrEnumConstructorCall, environmen
         val constructorCallCopy = element.shallowCopy()
         val enumObject = environment.callStack.loadState(element.getThisReceiver())
         environment.irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().forEachIndexed { index, it ->
-            val field = enumObject.getField(it.symbol) as Primitive<*>
+            val field = enumObject.getField(it.symbol) as Primitive
             constructorCallCopy.putValueArgument(index, field.value.toIrConst(field.type))
         }
         return unfoldValueParameters(constructorCallCopy, environment)
@@ -232,15 +233,6 @@ private fun unfoldBody(body: IrBody, callStack: CallStack) {
 }
 
 private fun unfoldBlock(block: IrBlock, callStack: CallStack) {
-    if (block is IrReturnableBlock) {
-        val inlinedDeclaration = block.inlineFunction?.originalFunction?.let { it.property ?: it }
-        if (inlinedDeclaration != null && inlinedDeclaration.hasAnnotation(intrinsicConstEvaluationAnnotation)) {
-            val inlinedBlock = block.statements.single() as IrInlinedFunctionBlock
-            callStack.pushCompoundInstruction(inlinedBlock.inlineCall)
-            return
-        }
-    }
-
     callStack.newSubFrame(block)
     callStack.pushSimpleInstruction(block)
     unfoldStatements(block.statements, callStack)
@@ -401,7 +393,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
     // this callback is used to check the need for an explicit toString call
     val explicitToStringCheck = fun() {
         when (val state = callStack.peekState()) {
-            is Primitive<*> -> {
+            is Primitive -> {
                 // This block is not really needed, but this way it is easier to handle `toString` for JS.
                 callStack.popState()
                 val toStringCall = IrCallImpl.fromSymbolOwner(

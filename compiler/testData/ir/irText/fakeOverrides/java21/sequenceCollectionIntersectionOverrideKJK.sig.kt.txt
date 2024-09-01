@@ -704,10 +704,10 @@ class B : LinkedList<Int>, List<Int> {
   /* fake */ override fun toString(): @EnhancedNullability String
 
   // CHECK:
-  //   Mangled name: B#addFirst(kotlin.Int?){}
-  //   Public signature: /B.addFirst|-2173470440078379794[0]
-  //   Public signature debug description: addFirst(kotlin.Int?){}
-  override fun addFirst(e: Int?): Unit
+  //   Mangled name: B#addFirst(kotlin.Int){}
+  //   Public signature: /B.addFirst|4572978427297742516[0]
+  //   Public signature debug description: addFirst(kotlin.Int){}
+  override fun addFirst(e: Int): Unit
 
   // CHECK JVM_IR:
   //   Mangled name: B#remove(){}kotlin.Int
@@ -1487,3 +1487,4 @@ class D : LinkedList<Int?>, MutableList<Int?> {
 //   Public signature: /test|7656439746344069424[0]
 //   Public signature debug description: test(A;B;C;D){}
 fun test(a: A, b: B, c: C, d: D): Unit
+

@@ -363,7 +363,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             KtFakeSourceElementKind.DataClassGeneratedMembers -> false
             KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
             KtFakeSourceElementKind.ImplicitConstructor -> false
-            else -> hasModifier(KtTokens.ACTUAL_KEYWORD) || hasModifier(KtTokens.IMPL_KEYWORD)
+            else -> hasModifier(KtTokens.ACTUAL_KEYWORD)
         }
     }
 

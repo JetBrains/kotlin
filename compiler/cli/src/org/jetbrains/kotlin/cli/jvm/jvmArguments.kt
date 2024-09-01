@@ -260,7 +260,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
     val useOldBackend = arguments.useOldBackend
-    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 || !useOldBackend
+    val useIR = languageVersionSettings.languageVersion.usesK2 || !useOldBackend
 
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 
@@ -286,8 +286,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
     put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
     put(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS, arguments.emitJvmTypeAnnotations)
-    put(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES, arguments.noOptimizedCallableReferences)
-    put(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION, arguments.noKotlinNothingValueException)
     put(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, arguments.noResetJarTimestamps)
     put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
     put(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION, arguments.noSourceDebugExtension)
@@ -316,14 +314,10 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
     put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
-    put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, arguments.useFastJarFileSystem)
+    arguments.useFastJarFileSystem?.let { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, it) }
 
     if (arguments.useOldClassFilesReading) {
         messageCollector.report(INFO, "Using the old java class files reading implementation")
-    }
-
-    if (arguments.useFastJarFileSystem) {
-        messageCollector.report(INFO, "Using fast Jar FS implementation")
     }
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)

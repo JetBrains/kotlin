@@ -44,7 +44,7 @@ fun <`_`> bar1(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> = TODO()
 fun test() {
     val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { <!CANNOT_INFER_PARAMETER_TYPE!>{ it }<!> }
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!UNRESOLVED_REFERENCE!>{ it }<!> }
-    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE!>{ it }<!> }
+    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_PARAMETER_TYPE!>{ it }<!> }
     val x4 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>foo<!><!UNRESOLVED_REFERENCE!><<!>Int<!SYNTAX!>, _ -> Float><!> { { <!UNRESOLVED_REFERENCE!>it<!> } }
     val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
     val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }

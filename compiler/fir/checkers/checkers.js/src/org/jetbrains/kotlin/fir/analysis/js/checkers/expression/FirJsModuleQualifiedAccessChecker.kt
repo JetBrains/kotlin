@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -31,11 +31,11 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
         expression: FirQualifiedAccessExpression
     ): List<Pair<FirBasedSymbol<*>, AbstractKtSourceElement?>> {
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol()
-        if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol(calleeSymbol.moduleData.session) == null) {
+        if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol() == null) {
             return listOf(calleeSymbol to expression.calleeReference.source)
         }
 
-        return when (val receiver = expression.dispatchReceiver) {
+        return when (val receiver = expression.dispatchReceiver?.unwrapSmartcastExpression()) {
             null -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
             is FirResolvedQualifier -> {
                 val classSymbol = receiver.symbol

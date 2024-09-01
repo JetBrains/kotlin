@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
-import org.jetbrains.kotlin.gradle.utils.directoryProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
@@ -46,13 +45,14 @@ import javax.inject.Inject
 internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
+    layout: ProjectLayout,
     providerFactory: ProviderFactory,
 ) : DefaultTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService {
 
-    private val konanHome = project.file(project.konanHome)
+    private val konanHome = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Internal
     internal val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
@@ -79,21 +79,42 @@ internal abstract class NativeDistributionCommonizerTask
     @Deprecated("Use lazy replacement", replaceWith = ReplaceWith("rootOutputDirectoryProperty.get().asFile"))
     internal val rootOutputDirectory: File get() = rootOutputDirectoryProperty.asFile.get()
 
-    @get:OutputDirectory
+    private val kotlinPluginVersion = project.getKotlinPluginVersion()
+
+    @get:Internal
     internal val rootOutputDirectoryProperty: DirectoryProperty = objectFactory
-        .directoryProperty(
-            project.file(project.konanHome)
-                .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-                .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-                .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
+        .directoryProperty().fileProvider(
+            konanHome.map {
+                it.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                    .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
+                    .resolve(URLEncoder.encode(kotlinPluginVersion, Charsets.UTF_8.name()))
+            }
         )
+
+    /**
+     * With Project Isolation support, each Gradle Project with KMP enabled will have its own [NativeDistributionCommonizerTask] task.
+     * And because Native Distribution can be shared with multiple Gradle Builds, its commonized libraries also can be shared.
+     * So each [NativeDistributionCommonizerTask] can write to the same output directory [rootOutputDirectoryProperty].
+     * But in practice only one task will do actual commonization, other will just wait for it to finish.
+     * And that would make gradle to remember that outptus stored in [rootOutputDirectoryProperty] is associated with the task that did
+     * the job. And will report warning about task that uses commonizer output being implicitly depended on commonizer tasks that did
+     * the commonization.
+     *
+     * To fix that problem [commonizedNativeDistributionLocationFile] was introduced. This file referenced the actual location where
+     * commonized libraries are located. But internal Project tasks can "map" this [commonizedNativeDistributionLocationFile] to avoid
+     * issues with tasks dependencies.
+     */
+    @get:OutputFile
+    internal val commonizedNativeDistributionLocationFile: RegularFileProperty = objectFactory
+        .fileProperty()
+        .value(layout.buildDirectory.file("kotlin/commonizedNativeDistributionLocation.txt"))
 
     private val isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
 
     private val commonizerCache
         get() = NativeDistributionCommonizerCache(
             outputDirectory = rootOutputDirectoryProperty.get().asFile,
-            konanHome = konanHome,
+            konanHome = konanHome.get(),
             logger = logger,
             isCachingEnabled = isCachingEnabled
         )
@@ -129,6 +150,8 @@ internal abstract class NativeDistributionCommonizerTask
 
     @TaskAction
     protected fun run() {
+        commonizedNativeDistributionLocationFile.get().asFile.writeText(rootOutputDirectoryProperty.get().asFile.absolutePath)
+
         val metricsReporter = metrics.get()
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
@@ -136,7 +159,7 @@ internal abstract class NativeDistributionCommonizerTask
                 val commonizer = GradleCliCommonizer(commonizerToolRunner.get(), kotlinCompilerArgumentsLogLevel.get())
                 /* Invoke commonizer with only 'to do' targets */
                 commonizer.commonizeNativeDistribution(
-                    konanHome,
+                    konanHome.get(),
                     rootOutputDirectoryProperty.get().asFile,
                     todoOutputTargets,
                     logLevel,
@@ -157,7 +180,11 @@ internal abstract class NativeDistributionCommonizerTask
 }
 
 private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedCommonizerTarget> {
-    return allprojects.flatMap { project -> project.collectAllSharedCommonizerTargetsFromProject() }.toSet()
+    return if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
+        collectAllSharedCommonizerTargetsFromProject()
+    } else {
+        allprojects.flatMap { project -> project.collectAllSharedCommonizerTargetsFromProject() }.toSet()
+    }
 }
 
 private fun Project.collectAllSharedCommonizerTargetsFromProject(): Set<SharedCommonizerTarget> {

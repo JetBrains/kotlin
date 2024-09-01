@@ -1,9 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1652
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test1
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test2
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test3
-// CHECK_CONTAINS_NO_CALLS: test4 except=toString TARGET_BACKENDS=JS
 
 fun test1(a: Sequence<String>): String {
     var s = ""

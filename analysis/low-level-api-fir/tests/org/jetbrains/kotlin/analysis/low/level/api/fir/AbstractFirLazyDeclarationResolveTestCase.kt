@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -78,6 +79,22 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         session: LLFirResolveSession,
     ): FirBasedSymbol<*> {
         val directives = moduleStructure.allDirectives
+        val memberSymbol = chooseMemberDeclarationIfNeeded(symbol, session, directives)
+        val propertyPart = directives.singleOrZeroValue(Directives.RESOLVE_PROPERTY_PART) ?: return memberSymbol
+        requireIsInstance<FirPropertySymbol>(memberSymbol)
+
+        return when (propertyPart) {
+            PropertyPart.GETTER -> memberSymbol.getterSymbol!!
+            PropertyPart.SETTER -> memberSymbol.setterSymbol!!
+            PropertyPart.BACKING_FIELD -> memberSymbol.backingFieldSymbol!!
+        }
+    }
+
+    private fun chooseMemberDeclarationIfNeeded(
+        symbol: FirBasedSymbol<*>,
+        session: LLFirResolveSession,
+        directives: RegisteredDirectives,
+    ): FirBasedSymbol<*> {
         val memberClassFilters = listOfNotNull(
             directives.singleOrZeroValue(Directives.MEMBER_CLASS_FILTER),
             directives.singleOrZeroValue(Directives.MEMBER_NAME_FILTER),
@@ -101,14 +118,6 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
             1 -> filteredSymbols.single()
             else -> error("Result ambiguity:\n${filteredSymbols.joinToString("\n")}")
-        }.let { resultSymbol ->
-            val isGetter = directives.singleOrZeroValue(Directives.IS_GETTER)
-            if (isGetter == null) {
-                resultSymbol
-            } else {
-                requireIsInstance<FirPropertySymbol>(resultSymbol)
-                if (isGetter) resultSymbol.getterSymbol!! else resultSymbol.setterSymbol!!
-            }
         }
     }
 
@@ -181,12 +190,20 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             }
         }
 
-        val IS_GETTER by valueDirective("Choose getter/setter in the case of property", parser = String::toBooleanStrict)
-
+        val RESOLVE_PROPERTY_PART by enumDirective<PropertyPart>("Choose getter/setter/backing field in the case of property")
         val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
         val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
 
         val LAZY_MODE by enumDirective<LazyResolveMode>("Describes which lazy resolution call should be used")
+    }
+
+    /**
+     * Describes which part of [org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol] should be chosen.
+     */
+    protected enum class PropertyPart {
+        GETTER,
+        SETTER,
+        BACKING_FIELD;
     }
 
     protected enum class LazyResolveMode {

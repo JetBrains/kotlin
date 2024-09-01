@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
@@ -68,7 +69,7 @@ import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst ?: return null
     val value = const.value as? String ?: return null
     return when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
@@ -77,9 +78,6 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
         else -> value
     }
 }
-
-val IrFunction.propertyIfAccessor: IrDeclaration
-    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
 fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     return (this as? IrSimpleFunction)?.isCompiledToJvmDefault(jvmDefaultMode) == true
@@ -350,8 +348,8 @@ fun IrField.isAssertionsDisabledField(context: JvmBackendContext) =
 fun IrClass.hasAssertionsDisabledField(context: JvmBackendContext) =
     fields.any { it.isAssertionsDisabledField(context) }
 
-fun IrField.constantValue(): IrConst<*>? {
-    val value = initializer?.expression as? IrConst<*> ?: return null
+fun IrField.constantValue(): IrConst? {
+    val value = initializer?.expression as? IrConst ?: return null
 
     // JVM has a ConstantValue attribute which does two things:
     //   1. allows the field to be inlined into other modules;
@@ -411,7 +409,7 @@ fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean, jvmDe
 }
 
 fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = getValueArgument(i)?.let {
-    if (it is IrConst<*> && it.kind == IrConstKind.Int)
+    if (it is IrConst && it.kind == IrConstKind.Int)
         it.value as Int
     else
         null
@@ -422,7 +420,7 @@ fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
 
 fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
     getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.String)
+        if (it is IrConst && it.kind == IrConstKind.String)
             it.value as String
         else
             null
@@ -430,7 +428,7 @@ fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
 
 fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
     getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.Boolean)
+        if (it is IrConst && it.kind == IrConstKind.Boolean)
             it.value as Boolean
         else
             null
@@ -472,11 +470,6 @@ val IrClass.isOptionalAnnotationClass: Boolean
     get() = kind == ClassKind.ANNOTATION_CLASS &&
             isExpect &&
             hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
-
-fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
-    return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
-}
 
 fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
     val originalSignature = context.defaultMethodSignatureMapper.mapAsmMethod(function)

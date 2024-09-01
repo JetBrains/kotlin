@@ -17,14 +17,12 @@ import kotlin.io.path.name
 import kotlin.io.path.pathString
 
 @MppGradlePluginTests
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_73)
 @DisplayName("Test resources consumption APIs")
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
     @DisplayName("Resolve resources with consumption API using variant reselection")
     // Before 7.6 Gradle fails to resolve project dependencies with variant reselection
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_74)
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleAndroidTest
     fun testWithVariantReselection(
         gradleVersion: GradleVersion,

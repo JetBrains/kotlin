@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree"))
 
+    implementation(project(":js:js.ast"))
     implementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common"))
 
     compileOnly(intellijCore())

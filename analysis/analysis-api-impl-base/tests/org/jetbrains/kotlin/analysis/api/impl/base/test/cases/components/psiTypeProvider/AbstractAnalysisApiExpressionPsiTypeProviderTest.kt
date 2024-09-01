@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -38,10 +38,10 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             ?: error("Can't find psi context for $containingDeclaration")
 
         val actual = analyze(mainFile) {
-            val returnType = declarationAtCaret.getKaType()
+            val returnType = declarationAtCaret.expressionType
             if (returnType != null) {
                 prettyPrint {
-                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")
+                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(useSiteSession, returnType)}")
                     for (allowErrorTypes in listOf(false, true)) {
                         for (typeMappingMode in KaTypeMappingMode.entries) {
                             for (isAnnotationMethod in listOf(false, true)) {

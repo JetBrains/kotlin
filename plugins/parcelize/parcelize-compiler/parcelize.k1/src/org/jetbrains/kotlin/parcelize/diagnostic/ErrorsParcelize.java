@@ -42,6 +42,7 @@ public interface ErrorsParcelize {
     DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_TYPE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELER_SHOULD_BE_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> PARCELER_TYPE_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> DUPLICATING_TYPE_PARCELERS = DiagnosticFactory0.create(ERROR);
@@ -53,6 +54,8 @@ public interface ErrorsParcelize {
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_IGNORED_ON_PARCEL = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<PsiElement> VALUE_PARAMETER_USED_IN_CLASS_BODY = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

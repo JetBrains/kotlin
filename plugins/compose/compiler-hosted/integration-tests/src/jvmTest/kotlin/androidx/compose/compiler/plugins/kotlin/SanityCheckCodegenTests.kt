@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Ignore
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -102,24 +102,27 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     fun testParameterInlineCaptureLambda() {
         testCompile(
             """
-            import androidx.compose.runtime.Composable
-            import androidx.compose.ui.graphics.Color
-
-            @Composable
-            inline fun InlineWidget(
-                propagateMinConstraints: Boolean = false,
-                content: () -> Unit
-            ) {
-            }
-
-            @Composable
-            fun DarkThemeSample() {
-                val color = Color.Black
-                InlineWidget {
-                    println(color)
+                import androidx.compose.runtime.Composable
+                import androidx.compose.ui.graphics.Color
+    
+                @Composable
+                inline fun InlineWidget(
+                    propagateMinConstraints: Boolean = false,
+                    content: () -> Unit
+                ) {
                 }
-            }
-        """
+    
+                @Composable
+                fun DarkThemeSample() {
+                    val color = Color.Black
+                    InlineWidget {
+                        println(color)
+                    }
+                }
+            """,
+            additionalPaths = listOf(
+                Classpath.composeUiGraphicsJar()
+            )
         )
     }
 
@@ -139,4 +142,40 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             """
         )
     }
+}
+
+class  SanityCheckGroupOptimizationCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
+    }
+
+    @Test
+    fun test_groupAroundIfComposeCallInIfConditionWithShortCircuit() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                ReceiveValue(if (getCondition()) 0 else 1)
+                ReceiveValue(if (state && getCondition()) 0 else 1)
+                ReceiveValue(if (getCondition() && state) 0 else 1)
+                ReceiveValue(if (getCondition() || state) 0 else 1)
+                ReceiveValue(if (state || getCondition()) 0 else 1)
+            }
+
+            val state by mutableStateOf(true)
+
+            @Composable
+            fun getCondition() = remember { mutableStateOf(false) }.value
+
+            @Composable
+            fun ReceiveValue(value: Int) { }
+        """
+    )
 }

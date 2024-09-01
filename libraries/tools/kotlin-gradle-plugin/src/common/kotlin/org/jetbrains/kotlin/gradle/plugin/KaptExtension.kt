@@ -26,8 +26,6 @@ import java.util.*
 open class KaptExtension : KaptExtensionConfig {
     open var generateStubs: Boolean = false
 
-    open var inheritedAnnotations: Boolean = true
-
     override var useLightAnalysis: Boolean = true
 
     override var correctErrorTypes: Boolean = false

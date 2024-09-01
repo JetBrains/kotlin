@@ -51,7 +51,7 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                 if (this == original) return this
                 val isError = this is IrErrorExpression
                 val message = when (this) {
-                    is IrConst<*> -> this.value.toString()
+                    is IrConst -> this.value.toString()
                     is IrErrorExpression -> this.description
                     else -> TODO("unsupported type ${this::class.java}")
                 }
@@ -88,7 +88,7 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
             override fun visitField(declaration: IrField): IrStatement {
                 val initializer = declaration.initializer
                 val expression = initializer?.expression ?: return declaration
-                if (expression is IrConst<*>) return declaration
+                if (expression is IrConst) return declaration
 
                 val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
                 if (isConst) {

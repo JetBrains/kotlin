@@ -95,8 +95,6 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             val isConfigurationCacheRequested = project.isConfigurationCacheRequested
             val isProjectIsolationRequested = project.isProjectIsolationRequested
 
-            ProjectConfigurationFusService.registerIfAbsent(project)
-
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFusService>)
@@ -130,6 +128,8 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
                 })
                 spec.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
+                //init value to avoid `java.lang.IllegalStateException: GradleScopeServices has been closed` exception on close
+                spec.parameters.configurationMetrics.add(MetricContainer())
             }.also { buildService ->
                 //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
                 // buildService.get() call will cause parameters calculation and configuration cache storage.

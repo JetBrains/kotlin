@@ -88,7 +88,7 @@ private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeS
 internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).lastOrNull { !it.isFiller() } ?: this
 
-internal fun LighterASTNode.isFiller() = tokenType in FILLER_TOKENS
+fun LighterASTNode.isFiller(): Boolean = tokenType in FILLER_TOKENS
 
 private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
@@ -109,4 +109,3 @@ val KtLightSourceElement.startOffsetSkippingComments: Int
         val comments = children.takeWhile { it.tokenType in FILLER_TOKENS }
         return startOffset + comments.sumOf { it.textLength }
     }
-

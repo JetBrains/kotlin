@@ -234,6 +234,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
   }
 
   @Test
+  @TestMetadata("RepeatableAnnotation")
+  public void testRepeatableAnnotation() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotation/");
+  }
+
+  @Test
   @TestMetadata("Sealed")
   public void testSealed() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");

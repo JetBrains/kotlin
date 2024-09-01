@@ -73,9 +73,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
 
         for (supertypeEntry in declaration.superTypeRefs) {
-            if (supertypeEntry !is FirImplicitAnyTypeRef && supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
-                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
-            }
+            if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
+            if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface == true) continue
+            reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
         }
 
         if (declaration.isSubtypeOfCloneable(context.session)) {
@@ -164,7 +164,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             classScope.processFunctionsByName(Name.identifier(reservedName)) {
                 val functionSymbol = it.unwrapFakeOverrides()
                 if (functionSymbol.isAbstract) return@processFunctionsByName
-                val containingClassSymbol = functionSymbol.getContainingClassSymbol(context.session) ?: return@processFunctionsByName
+                val containingClassSymbol = functionSymbol.getContainingClassSymbol() ?: return@processFunctionsByName
                 if (containingClassSymbol == declaration.symbol) {
                     if (functionSymbol.source?.kind is KtRealSourceElementKind) {
                         reporter.reportOn(
@@ -271,7 +271,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
                 val singleParameterReturnTypeRef = typedEquals.valueParameters.single().returnTypeRef
-                if (singleParameterReturnTypeRef.coneType.typeArguments.any { !it.isStarProjection }) {
+                if (singleParameterReturnTypeRef.coneType.typeArgumentsOfLowerBoundIfFlexible.any { !it.isStarProjection }) {
                     reporter.reportOn(singleParameterReturnTypeRef.source, FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, context)
                 }
             }
@@ -302,7 +302,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
-        if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
+        if (this.typeArgumentsOfLowerBoundIfFlexible.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
             return false
 
         val arrayElementType = arrayElementType()?.type ?: return false

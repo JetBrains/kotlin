@@ -1,0 +1,8 @@
+Restored type is the same as the original one
+
+KaTypeParameterType:
+  abbreviation: null
+  annotations: []
+  name: T
+  nullability: NON_NULLABLE
+  symbol: KaTypeParameterSymbol(T)

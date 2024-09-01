@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signat
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,14 +36,14 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
     ) {
         analyseForTest(callableDeclaration) {
             val typesToCheckOn = buildList {
-                add(builtinTypes.INT)
-                add(buildClassType(StandardClassIds.List) { argument(builtinTypes.LONG) })
+                add(builtinTypes.int)
+                add(buildClassType(StandardClassIds.List) { argument(builtinTypes.long) })
             }
 
-            val symbol = callableDeclaration.getSymbol() as KaCallableSymbol
+            val symbol = callableDeclaration.symbol as KaCallableSymbol
             val typeParameters = buildList {
                 addAll(symbol.typeParameters)
-                (symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.let { addAll(it.typeParameters) }
+                (symbol.containingDeclaration as? KaClassSymbol)?.let { addAll(it.typeParameters) }
             }
             val combinations = buildList { combinations(typesToCheckOn, persistentListOf(), typeParameters.size) }
             check(combinations.size == typesToCheckOn.size.toDouble().pow(typeParameters.size).toInt())
@@ -73,9 +72,9 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
             testServices.assertions.assertEquals(symbol, substitutedViaSignature.symbol)
         }
         when (symbol) {
-            is KaFunctionLikeSymbol -> {
-                val substitutedViaSignature: KaFunctionLikeSignature<KaFunctionLikeSymbol> = symbol.asSignature().substitute(substitutor)
-                val directlySubstituted: KaFunctionLikeSignature<KaFunctionLikeSymbol> = symbol.substitute(substitutor)
+            is KaFunctionSymbol -> {
+                val substitutedViaSignature: KaFunctionSignature<KaFunctionSymbol> = symbol.asSignature().substitute(substitutor)
+                val directlySubstituted: KaFunctionSignature<KaFunctionSymbol> = symbol.substitute(substitutor)
 
                 testServices.assertions.assertEquals(directlySubstituted, substitutedViaSignature)
                 testServices.assertions.assertEquals(symbol, directlySubstituted.symbol)
@@ -83,9 +82,9 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
 
                 checkSubstitutionResult(symbol, directlySubstituted, substitutor, testServices)
             }
-            is KaVariableLikeSymbol -> {
-                val substitutedViaSignature: KaVariableLikeSignature<KaVariableLikeSymbol> = symbol.asSignature().substitute(substitutor)
-                val directlySubstituted: KaVariableLikeSignature<KaVariableLikeSymbol> = symbol.substitute(substitutor)
+            is KaVariableSymbol -> {
+                val substitutedViaSignature: KaVariableSignature<KaVariableSymbol> = symbol.asSignature().substitute(substitutor)
+                val directlySubstituted: KaVariableSignature<KaVariableSymbol> = symbol.substitute(substitutor)
 
                 testServices.assertions.assertEquals(directlySubstituted, substitutedViaSignature)
                 testServices.assertions.assertEquals(symbol, directlySubstituted.symbol)
@@ -97,8 +96,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
     }
 
     private fun KaSession.checkSubstitutionResult(
-        symbol: KaFunctionLikeSymbol,
-        signature: KaFunctionLikeSignature<*>,
+        symbol: KaFunctionSymbol,
+        signature: KaFunctionSignature<*>,
         substitutor: KaSubstitutor,
         testServices: TestServices,
     ) {
@@ -113,8 +112,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
     }
 
     private fun KaSession.checkSubstitutionResult(
-        symbol: KaVariableLikeSymbol,
-        signature: KaVariableLikeSignature<*>,
+        symbol: KaVariableSymbol,
+        signature: KaVariableSignature<*>,
         substitutor: KaSubstitutor,
         testServices: TestServices,
     ) {

@@ -11,11 +11,11 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestConfiguration
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -133,14 +133,14 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     /**
      * Consider implementing this method if your test logic needs the whole
-     * [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure].
+     * [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure].
      *
      * Examples of use cases:
      *
      * - Find all files in all modules
      * - Find two declarations from different files and different modules and compare them
      *
-     * The [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure] can be accessed via
+     * The [KtTestModuleStructure][org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure] can be accessed via
      * [ktTestModuleStructure] on [testServices].
      *
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
@@ -273,7 +273,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {
             frontend = FrontendKinds.FIR
-            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            targetPlatform = configurator.defaultTargetPlatform
             dependencyKind = DependencyKind.Source
         }
 
@@ -294,6 +294,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         startingArtifactFactory = { ResultingArtifact.Source() }
         this.testInfo = this@AbstractAnalysisApiBasedTest.testInfo
+
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
     protected fun runTest(@TestDataFile path: String) {
@@ -380,7 +382,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
 
-            analyzeCopy(fileCopy, DanglingFileResolutionMode.IGNORE_SELF) {
+            analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
                 action(PsiTreeUtil.findSameElementInCopy<KtElement>(contextElement, fileCopy))
             }
         } else {

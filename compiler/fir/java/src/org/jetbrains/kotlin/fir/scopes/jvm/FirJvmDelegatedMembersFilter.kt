@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
  */
 class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegatedMembersFilter() {
     companion object {
-        private val PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
+        val PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
     }
 
     override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {

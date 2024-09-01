@@ -30,7 +30,7 @@ dependencies {
     embedded(protobufLite())
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 

@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToTsDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -35,6 +34,9 @@ import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class WasmCompilerResult(
     val wat: String?,
@@ -57,23 +59,16 @@ data class LoweredIrWithExtraArtifacts(
 )
 
 fun compileToLoweredIr(
-    depsDescriptors: ModulesStructure,
+    irModuleInfo: IrModuleInfo,
+    mainModule: MainModule,
+    configuration: CompilerConfiguration,
+    performanceManager: CommonCompilerPerformanceManager?,
     phaseConfig: PhaseConfig,
-    irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
 ): LoweredIrWithExtraArtifacts {
-    val mainModule = depsDescriptors.mainModule
-    val configuration = depsDescriptors.compilerConfiguration
-    val performanceManager = depsDescriptors.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
-
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = loadIr(
-        depsDescriptors,
-        irFactory,
-        verifySignatures = false,
-        loadFunctionInterfacesIntoStdlib = true,
-    )
+    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
@@ -130,11 +125,16 @@ fun compileWasm(
     allowIncompleteImplementations: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
+    useDebuggerCustomFormatters: Boolean = false
 ): WasmCompilerResult {
+    val useJsTag = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
+
     val compiledWasmModule = WasmCompiledModuleFragment(
         backendContext.irBuiltIns,
-        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)
+        backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
+        backendContext.isWasmJsTarget && useJsTag,
     )
+
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
     allModules.forEach { codeGenerator.collectInterfaceTables(it) }
     allModules.forEach { codeGenerator.generateModule(it) }
@@ -174,11 +174,13 @@ fun compileWasm(
     if (backendContext.isWasmJsTarget) {
         jsUninstantiatedWrapper = compiledWasmModule.generateAsyncJsWrapper(
             "./$baseFileName.wasm",
-            backendContext.jsModuleAndQualifierReferences
+            backendContext.jsModuleAndQualifierReferences,
+            useJsTag
         )
         jsWrapper = compiledWasmModule.generateEsmExportsWrapper(
             "./$baseFileName.uninstantiated.mjs",
-            backendContext.jsModuleAndQualifierReferences
+            backendContext.jsModuleAndQualifierReferences,
+            useDebuggerCustomFormatters
         )
     } else {
         jsUninstantiatedWrapper = null
@@ -220,7 +222,8 @@ ${generateExports()}
 
 fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
     wasmFilePath: String,
-    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>
+    jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
+    useJsTag: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -298,6 +301,9 @@ $jsCodeBodyIndented
     const wasmFilePath = ${wasmFilePath.toJsStringLiteral()};
     const importObject = {
         js_code,
+        intrinsics: {
+            ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
+        },
 $imports
     };
     
@@ -360,7 +366,8 @@ For more information, see https://kotl.in/wasm-help
 
 fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
     asyncWrapperFileName: String,
-    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
+    useCustomFormatters: Boolean
 ): String {
     val importedModules = jsModuleImports
         .map {
@@ -404,6 +411,7 @@ fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
     return """
 $importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
+${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
 const exports = (await instantiate({
 $imports
@@ -415,7 +423,8 @@ ${generateExports()}
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String
+    fileNameBase: String,
+    useDebuggerCustomFormatters: Boolean
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -433,6 +442,13 @@ fun writeCompilationResult(
     }
     result.debugInformation?.sourceMapForText?.let {
         File(dir, "$fileNameBase.wat.map").writeText(it)
+    }
+    if (useDebuggerCustomFormatters) {
+        val fileName = "custom-formatters.js"
+        val systemClassLoader = ClassLoader.getSystemClassLoader()
+        val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName)
+
+        Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
     }
 
     if (result.dts != null) {
@@ -458,15 +474,6 @@ fun WasmCompiledModuleFragment.generateExports(): String {
 
     /*language=js */
     return """
-export default new Proxy(exports, {
-    _shownError: false,
-    get(target, prop) {
-        if (!this._shownError) {
-            this._shownError = true;
-            throw new Error("Do not use default import. Use corresponding named import instead.")
-        }
-    }
-});
 ${exportNames?.let { "export $it = exports;" }}
 """
 }

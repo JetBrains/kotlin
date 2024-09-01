@@ -466,7 +466,6 @@ class WasmIrToBinary(
             b.writeString(t.importPair.moduleName)
             b.writeString(t.importPair.declarationName)
             b.writeByte(4)
-            return
         }
         b.writeByte(0) // attribute
         assert(t.type.id != null) { "Unlinked tag id" }
@@ -737,6 +736,7 @@ private class SourceLocationMappingToBinary(
 ) : SourceLocationMapping() {
     override val generatedLocation: SourceLocation.Location by lazy {
         SourceLocation.Location(
+            module = "",
             file = "",
             line = 0,
             column = offsets.sumOf {

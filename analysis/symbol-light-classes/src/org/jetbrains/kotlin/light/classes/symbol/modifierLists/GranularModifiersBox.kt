@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 import com.intellij.psi.PsiModifier
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentHashMap
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
@@ -65,8 +64,8 @@ internal class GranularModifiersBox(
             }.toPersistentHashMap()
 
         internal fun computeVisibilityForMember(
-            ktModule: KtModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
                 it.toPsiVisibilityForMember()
@@ -76,8 +75,8 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeVisibilityForClass(
-            ktModule: KtModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
             isTopLevel: Boolean,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
@@ -88,11 +87,11 @@ internal class GranularModifiersBox(
         }
 
         internal fun computeSimpleModality(
-            ktModule: KtModule,
-            declarationPointer: KaSymbolPointer<KaSymbolWithModality>,
+            ktModule: KaModule,
+            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
         ): PersistentMap<String, Boolean> {
             val modality = declarationPointer.withSymbol(ktModule) {
-                if ((it as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
+                if ((it as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
                     it.enumClassModality()
                 } else {
                     it.computeSimpleModality()

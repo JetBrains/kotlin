@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.KtElement
@@ -36,11 +36,11 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
         analyseForTest(ktFile) {
             val diagnosticsInFile =
-                ktFile.collectDiagnosticsForFile(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
+                ktFile.collectDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
             val diagnosticsFromElements = buildList {
                 ktFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtElement(element: KtElement) {
-                        for (diagnostic in element.getDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {
+                        for (diagnostic in element.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {
                             add(element to diagnostic.getKey())
                         }
                         super.visitKtElement(element)

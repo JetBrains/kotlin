@@ -1,0 +1,14 @@
+KtNameReferenceExpression(192,200): 'variable'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = variable
+          receiverType = null
+          returnType = MyClass
+          symbol = var variable: MyClass
+          callableId = /variable
+      simpleAccess = Read
+      typeArgumentsMapping = {}

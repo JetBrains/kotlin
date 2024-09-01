@@ -99,7 +99,7 @@ sealed interface TestRunParameter {
         val negativeRegexes = negativePatterns.map(::fromGTestPattern)
 
         override fun applyTo(programArgs: MutableList<String>) {
-            "--ktest_filter=${positivePatterns.joinToString(":")}-${negativePatterns.joinToString(":")}"
+            programArgs += "--ktest_filter=${positivePatterns.joinToString(":")}-${negativePatterns.joinToString(":")}"
         }
 
         override fun testMatches(testName: TestName): Boolean {

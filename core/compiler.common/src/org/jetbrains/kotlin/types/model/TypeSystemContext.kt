@@ -140,6 +140,8 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker>
 
     fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker
+
+    fun supportsImprovedVarianceInCst(): Boolean
 }
 
 // This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
@@ -307,13 +309,14 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
      * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
      *
-     * In FIR, we try to have a correct one: (Foo & Any..Foo?) <: T
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we try to have a correct one: (Foo & Any..Foo?) <: T
      *
      * The same logic applies for T! <: UpperConstraint, as well
      * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
-     * In FIR, we use UpperConstraint & Any..UpperConstraint?
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we use UpperConstraint & Any..UpperConstraint?
      *
-     * In future once we have only FIR (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * In future once we have only K2 (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      */
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
@@ -558,10 +561,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
-
-    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
-
-    fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
 
     fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
 

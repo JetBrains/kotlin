@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(RAW_FIR)] suppress_file.kt
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)

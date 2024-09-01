@@ -10,8 +10,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.KtInMemoryTextSourceFile
-import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
@@ -21,10 +20,8 @@ import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.utils.isCustomTestData
-import org.jetbrains.kotlin.toSourceLinesMapping
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -60,6 +57,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(),
             scopeProvider = StubFirScopeProvider,
@@ -92,6 +90,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     fun testCompareDiagnostics() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(),
             scopeProvider = StubFirScopeProvider,

@@ -1,34 +1,34 @@
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/Base.noGeneric
   name: noGeneric
   origin: SOURCE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/ClassWithGenericBase.withOuterGeneric
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/Base.withOwnGeneric
   name: withOwnGeneric
   origin: SOURCE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KaFunctionSymbol:
+KaNamedFunctionSymbol:
   callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY

@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -31,15 +29,38 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+
+private class ExportedCollectionsInfo(context: JsIrBackendContext) {
+    val exportedMethodNames = setOf(
+        "asJsReadonlyArrayView",
+        "asJsArrayView",
+        "asJsReadonlySetView",
+        "asJsSetView",
+        "asJsReadonlyMapView",
+        "asJsMapView"
+    )
+
+    val exportableSymbols = setOf(
+        context.ir.symbols.list,
+        context.ir.symbols.mutableList,
+        context.ir.symbols.set,
+        context.ir.symbols.mutableSet,
+        context.ir.symbols.map,
+        context.ir.symbols.mutableMap,
+    )
+}
 
 // TODO: Remove the lowering and move annotations into stdlib after solving problem with tests on KLIB
 class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private companion object {
         private val FACTORY_FOR_KOTLIN_COLLECTIONS by IrDeclarationOriginImpl
     }
+
+    private val exportedCollectionsInfo = ExportedCollectionsInfo(context)
 
     private val jsNameCtor by lazy(LazyThreadSafetyMode.NONE) {
         context.intrinsics.jsNameAnnotationSymbol.primaryConstructorSymbol
@@ -51,28 +72,8 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         context.intrinsics.jsImplicitExportAnnotationSymbol.primaryConstructorSymbol
     }
 
-    private val IrClassSymbol.primaryConstructorSymbol: IrConstructorSymbol get() = owner.primaryConstructor!!.symbol
-
-    private val exportedMethodNames = setOf(
-        "asJsReadonlyArrayView",
-        "asJsArrayView",
-        "asJsReadonlySetView",
-        "asJsSetView",
-        "asJsReadonlyMapView",
-        "asJsMapView"
-    )
-
-    private val exportableSymbols = setOf(
-        context.ir.symbols.list,
-        context.ir.symbols.mutableList,
-        context.ir.symbols.set,
-        context.ir.symbols.mutableSet,
-        context.ir.symbols.map,
-        context.ir.symbols.mutableMap,
-    )
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrClass && declaration.symbol in exportableSymbols) {
+        if (declaration is IrClass && declaration.symbol in exportedCollectionsInfo.exportableSymbols) {
             declaration.addJsName()
             declaration.markWithJsImplicitExport()
 
@@ -99,7 +100,9 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
         val (factoryMethodName, factoryMethodForTheCollectionSymbol) =
-            typesToItsFactoryMethods[symbol] ?: error("Unexpected collection: ${fqNameWhenAvailable ?: name}")
+            typesToItsFactoryMethods[symbol] ?: irError("Unexpected collection") {
+                withIrEntry("this", this@addCompanionWithJsFactoryFunction)
+            }
 
         val companionObject = context.irFactory.createClass(
             startOffset = UNDEFINED_OFFSET,
@@ -123,7 +126,6 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
                 type = companionObject.typeWith(),
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = UNDEFINED_PARAMETER_INDEX,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -192,7 +194,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     }
 
     private fun IrDeclaration.shouldIncludeInInterfaceExport() =
-        this is IrSimpleFunction && name.toString() in exportedMethodNames
+        this is IrSimpleFunction && name.toString() in exportedCollectionsInfo.exportedMethodNames
 
     private fun IrDeclaration.excludeFromJsExport() {
         if (this is IrSimpleFunction) {
@@ -215,3 +217,32 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     private data class FactoryMethod(val name: String, val callee: IrSimpleFunctionSymbol)
 }
+
+class RemoveImplicitExportsFromCollections(private val context: JsIrBackendContext) : DeclarationTransformer {
+    private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
+    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) {
+        context.intrinsics.jsImplicitExportAnnotationSymbol.primaryConstructorSymbol
+    }
+
+    private val exportedCollectionsInfo = ExportedCollectionsInfo(context)
+
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (
+            !strictImplicitExport &&
+            declaration is IrClass &&
+            declaration.symbol in exportedCollectionsInfo.exportableSymbols &&
+            declaration.isJsImplicitExport()
+        ) {
+            declaration.removeJsImplicitExport()
+        }
+
+        return null
+    }
+
+    private fun IrDeclaration.removeJsImplicitExport() {
+        annotations = annotations.filter { it.symbol != jsImplicitExportCtor }
+    }
+
+}
+
+private val IrClassSymbol.primaryConstructorSymbol: IrConstructorSymbol get() = owner.primaryConstructor!!.symbol

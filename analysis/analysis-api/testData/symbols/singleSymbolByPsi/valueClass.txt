@@ -1,11 +1,12 @@
-KaNamedClassOrObjectSymbol:
-  annotationsList: [
+KaNamedClassSymbol:
+  annotations: [
     kotlin/jvm/JvmInline()
       psi: KtAnnotationEntry
   ]
   classId: ValueClass
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -14,19 +15,19 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: true
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: ValueClass
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(valueClass.kt)
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

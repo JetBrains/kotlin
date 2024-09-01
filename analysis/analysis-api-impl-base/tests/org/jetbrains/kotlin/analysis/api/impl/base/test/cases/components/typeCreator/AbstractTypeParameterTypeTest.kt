@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator
 
-import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -21,7 +20,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeParameter
 
         val actual = analyseForTest(expressionAtCaret) {
-            val symbol = expressionAtCaret.getTypeParameterSymbol()
+            val symbol = expressionAtCaret.symbol
             val ktType = buildTypeParameterType(symbol)
             buildString {
                 appendLine("${KtTypeParameter::class.simpleName}: ${expressionAtCaret.text}")

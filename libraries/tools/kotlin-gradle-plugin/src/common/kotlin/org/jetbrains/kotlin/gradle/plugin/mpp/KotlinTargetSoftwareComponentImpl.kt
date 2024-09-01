@@ -42,7 +42,7 @@ internal fun KotlinTargetSoftwareComponent(
                 // Test failing without it - KotlinAndroidMppIT#testMppAndroidLibFlavorsPublication
                 kotlinUsageContext.attributes.keySet()
                 kotlinUsageContext.copyAttributesTo(
-                    project,
+                    project.providers,
                     dest = this
                 )
             }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,9 +26,9 @@ class KaResolveExtensionProviderForTest(
     private val files: List<KaResolveExtensionFile>,
     private val packages: Set<FqName>,
     private val shadowedScope: GlobalSearchScope,
-    private val hasResolveExtension: (KtModule) -> Boolean = { true }
+    private val hasResolveExtension: (KaModule) -> Boolean = { true }
 ) : KaResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> {
+    override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
         if (!hasResolveExtension(module)) return emptyList()
         return listOf(KaResolveExtensionForTest(files, packages, shadowedScope))
     }

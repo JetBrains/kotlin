@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.*
@@ -45,15 +44,12 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 
@@ -107,7 +103,6 @@ open class IncrementalFirJvmCompilerRunner(
 
                 put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
                 this.messageCollector = collector
-                put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(collector))
 
                 setupCommonArguments(args) { JvmMetadataVersion(*it) }
 
@@ -199,22 +194,15 @@ open class IncrementalFirJvmCompilerRunner(
                     val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
                         sources.filterTo(mutableSetOf()) { dirtySources.any { df -> df.path == it.path } }
                     }
-                    val groupedSource = GroupedKtSources(
+                    val groupedSources = GroupedKtSources(
                         commonSources = allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
                         platformSources = allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
                         sourcesByModuleName = dirtySourcesByModuleName
                     )
-                    val compilerInput = ModuleCompilerInput(
-                        targetId,
-                        groupedSource,
-                        CommonPlatforms.defaultCommonPlatform,
-                        JvmPlatforms.unspecifiedJvmPlatform,
-                        configuration
-                    )
 
                     val analysisResults =
                         compileModuleToAnalyzedFir(
-                            compilerInput,
+                            ModuleCompilerInput(targetId, groupedSources, configuration),
                             projectEnvironment,
                             emptyList(),
                             incrementalExcludesScope,

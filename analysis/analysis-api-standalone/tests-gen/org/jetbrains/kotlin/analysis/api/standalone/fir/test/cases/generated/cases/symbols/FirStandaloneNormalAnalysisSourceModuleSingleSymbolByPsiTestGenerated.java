@@ -59,6 +59,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
   }
 
   @Test
+  @TestMetadata("file.kt")
+  public void testFile() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/file.kt");
+  }
+
+  @Test
+  @TestMetadata("fileWithAnnotations.kt")
+  public void testFileWithAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/fileWithAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithReceiverAnnotation.kt")
   public void testFunctionWithReceiverAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");
@@ -348,6 +360,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     }
 
     @Test
+    @TestMetadata("destructuringDeclarationMutable.kt")
+    public void testDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationMutable.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringDeclarationParameterInLambda.kt")
     public void testDestructuringDeclarationParameterInLambda() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
@@ -357,6 +375,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     @TestMetadata("entryInDestructuringDeclaration.kt")
     public void testEntryInDestructuringDeclaration() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("entryInDestructuringDeclarationMutable.kt")
+    public void testEntryInDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclarationMutable.kt");
     }
 
     @Test
@@ -400,9 +424,57 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
     }
 
     @Test
+    @TestMetadata("memberLevelDestructuringDeclaration.kt")
+    public void testMemberLevelDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/memberLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelDestructuringDeclarationEntry.kt")
+    public void testMemberLevelDestructuringDeclarationEntry() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/memberLevelDestructuringDeclarationEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelDestructuringDeclarationEntryMutable.kt")
+    public void testMemberLevelDestructuringDeclarationEntryMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/memberLevelDestructuringDeclarationEntryMutable.kt");
+    }
+
+    @Test
+    @TestMetadata("memberLevelDestructuringDeclarationMutable.kt")
+    public void testMemberLevelDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/memberLevelDestructuringDeclarationMutable.kt");
+    }
+
+    @Test
     @TestMetadata("objectWithTypeArgsAsExpression.kt")
     public void testObjectWithTypeArgsAsExpression() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/objectWithTypeArgsAsExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuringDeclaration.kt")
+    public void testTopLevelDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/topLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuringDeclarationEntry.kt")
+    public void testTopLevelDestructuringDeclarationEntry() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/topLevelDestructuringDeclarationEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuringDeclarationEntryMutable.kt")
+    public void testTopLevelDestructuringDeclarationEntryMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/topLevelDestructuringDeclarationEntryMutable.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDestructuringDeclarationMutable.kt")
+    public void testTopLevelDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/topLevelDestructuringDeclarationMutable.kt");
     }
   }
 }

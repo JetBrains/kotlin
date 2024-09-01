@@ -10,7 +10,7 @@ FILE: tryInference.kt
         R|/takeA|(try {
             R|/materialize|<R|A|>()
         }
-        catch (e: R|kotlin/Exception|) {
+        catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
             R|/materialize|<R|A|>()
         }
         finally {

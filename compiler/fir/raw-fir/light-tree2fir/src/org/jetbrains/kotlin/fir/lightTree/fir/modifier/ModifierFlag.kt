@@ -41,12 +41,10 @@ enum class ModifierFlag(val value: Long) {
     PARAMETER_CONST(1L shl 28),
     PLATFORM_EXPECT(1L shl 29),
     PLATFORM_ACTUAL(1L shl 30),
-    PLATFORM_HEADER(1L shl 31),
-    PLATFORM_IMPL(1L shl 32),
-    VARIANCE_IN(1L shl 33),
-    VARIANCE_OUT(1L shl 34),
-    VARIANCE_INVARIANT(1L shl 35),
-    REIFICATION_REIFIED(1L shl 36);
+    VARIANCE_IN(1L shl 31),
+    VARIANCE_OUT(1L shl 32),
+    VARIANCE_INVARIANT(1L shl 33),
+    REIFICATION_REIFIED(1L shl 34);
 
     companion object {
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(
@@ -89,8 +87,6 @@ enum class ModifierFlag(val value: Long) {
             // Platform
             KtTokens.EXPECT_KEYWORD to PLATFORM_EXPECT,
             KtTokens.ACTUAL_KEYWORD to PLATFORM_ACTUAL,
-            KtTokens.HEADER_KEYWORD to PLATFORM_HEADER,
-            KtTokens.IMPL_KEYWORD to PLATFORM_IMPL,
 
             // Variance
             KtTokens.IN_KEYWORD to VARIANCE_IN,

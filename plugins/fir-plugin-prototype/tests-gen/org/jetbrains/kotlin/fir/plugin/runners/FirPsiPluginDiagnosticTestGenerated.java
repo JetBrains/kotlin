@@ -188,6 +188,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("recursiveAnnotation.kt")
+    public void testRecursiveAnnotation() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/recursiveAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("redundantTransformedVisibility.kt")
     public void testRedundantTransformedVisibility() {
       runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/redundantTransformedVisibility.kt");
@@ -213,6 +219,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     @Test
     public void testAllFilesPresentInSupertypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/diagnostics/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("entityTypeSuperClass.kt")
+    public void testEntityTypeSuperClass() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/entityTypeSuperClass.kt");
     }
 
     @Test

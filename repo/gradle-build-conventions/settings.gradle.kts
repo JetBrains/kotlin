@@ -1,5 +1,3 @@
-import java.util.*
-
 pluginManagement {
     apply(from = "../scripts/cache-redirector.settings.gradle.kts")
     apply(from = "../scripts/kotlin-bootstrap.settings.gradle.kts")
@@ -15,8 +13,7 @@ pluginManagement {
 }
 
 plugins {
-    id("build-cache")
-    id("gradle-enterprise")
+    id("develocity")
     id("jvm-toolchain-provisioning")
     id("kotlin-daemon-config")
 }
@@ -31,4 +28,7 @@ dependencyResolutionManagement {
 
 include(":buildsrc-compat")
 include(":prepare-deps")
+include(":generators")
 include(":compiler-tests-convention")
+include(":android-sdk-provisioner")
+include(":asm-deprecating-transformer")

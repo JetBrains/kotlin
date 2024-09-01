@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -32,17 +30,14 @@ internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: Fir
 }
 
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
-    val symbol = (this.fullyExpandedType(session) as? ConeLookupTagBasedType)
-        ?.lookupTag
-        ?.toSymbol(session) as? FirRegularClassSymbol
-        ?: return null
+    val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
 
-fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeSimpleKotlinType>? {
+fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
-    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeSimpleKotlinType }
+    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
     fields.singleOrNull()?.let { (name, type) ->
         if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
@@ -58,25 +53,25 @@ private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSessio
 }
 
 private fun isRecursiveSingleFieldValueClass(
-    type: ConeSimpleKotlinType,
+    type: ConeRigidType,
     session: FirSession,
-    visited: MutableSet<ConeSimpleKotlinType>
+    visited: MutableSet<ConeRigidType>
 ): Boolean {
     val nextType = type.valueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
     return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
 }
 
-private fun ConeSimpleKotlinType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeSimpleKotlinType>>? {
-    val symbol = this.toSymbol(session) as? FirRegularClassSymbol ?: return null
+private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
+    val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
-    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeSimpleKotlinType }
+    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }
 }
 
 fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
-    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
+    containingClassLookupTag()?.toRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
         with(this@isTypedEqualsInValueClass) {
             contextReceivers.isEmpty() && receiverParameter == null

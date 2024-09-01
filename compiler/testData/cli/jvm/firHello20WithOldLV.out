@@ -1,2 +1,0 @@
-warning: deprecated compiler flag -Xuse-k2 overrides "-language-version 1.5" to 2.0; please remove -Xuse-k2 and use -language-version to select either 1.5 or 2.0
-OK

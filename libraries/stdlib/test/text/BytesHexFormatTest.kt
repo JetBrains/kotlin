@@ -375,6 +375,7 @@ class BytesHexFormatTest {
                 prefix = "0x"
                 suffix = "h"
                 removeLeadingZeros = true
+                minLength = 4
             }
         }
 
@@ -392,7 +393,8 @@ class BytesHexFormatTest {
                 number = NumberHexFormat(
                     prefix = "0x",
                     suffix = "h",
-                    removeLeadingZeros = true
+                    removeLeadingZeros = true,
+                    minLength = 4
                 )
             )
             """.trimIndent()
@@ -414,7 +416,8 @@ class BytesHexFormatTest {
             NumberHexFormat(
                 prefix = "0x",
                 suffix = "h",
-                removeLeadingZeros = true
+                removeLeadingZeros = true,
+                minLength = 4
             )
             """.trimIndent()
         assertEquals(expectedNumberHexFormat, format.number.toString())

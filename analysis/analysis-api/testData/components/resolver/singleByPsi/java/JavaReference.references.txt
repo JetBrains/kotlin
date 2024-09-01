@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in java.util) open class HashSet<E : kotlin.Any!> : java.util.AbstractSet<E!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableSet<E>
+KtNameReferenceExpression(17,24): 'HashSet'
+  KtSimpleNameReference:
+    (in java.util) open class HashSet<E : kotlin.Any!> : java.util.AbstractSet<E!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableSet<E>

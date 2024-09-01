@@ -1,7 +1,6 @@
 // ISSUE: KT-60832
 // KT-60832: `O.bar()` is transpiled into `function bar_0()` and cannot be used. `K.bar()` is wrongly used instead of `O.bar()`.
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// SKIP_MINIFICATION
 // ES_MODULES
 
 // FILE: apiO.kt

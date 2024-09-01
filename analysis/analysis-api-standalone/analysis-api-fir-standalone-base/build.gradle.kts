@@ -16,8 +16,13 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
 }
 
-
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }
+}
+
+kotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
 }

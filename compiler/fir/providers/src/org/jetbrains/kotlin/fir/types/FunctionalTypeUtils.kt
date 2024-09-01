@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.originalOrSelf
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -33,13 +35,15 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 // ---------------------------------------------- is type is a function type ----------------------------------------------
 
-fun ConeKotlinType.functionTypeKind(session: FirSession): FunctionTypeKind? {
-    return lowerBoundIfFlexible().functionTypeKind(session)
+fun ConeKotlinType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
+    return lowerBoundIfFlexible().functionTypeKind(session, expandTypeAliases)
 }
 
-fun ConeSimpleKotlinType.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
     if (this !is ConeClassLikeType) return null
-    return fullyExpandedType(session).lookupTag.functionTypeKind(session)
+
+    val targetType = if (expandTypeAliases) fullyExpandedType(session) else this
+    return targetType.lookupTag.functionTypeKind(session)
 }
 
 private fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
@@ -115,21 +119,35 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
     } else {
         FunctionTypeKind.Function
     }
-    return createFunctionTypeWithNewKind(session, newKind)
+    return createFunctionTypeWithNewKind(
+        session = session,
+        kind = newKind,
+        additionalAnnotations = kind.annotationOnInvokeClassId
+            ?.takeUnless { classId -> type.attributes.customAnnotations.hasAnnotation(classId, session) }
+            ?.let { annotationClassId ->
+                listOf(buildAnnotation {
+                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                    annotationTypeRef = buildResolvedTypeRef {
+                        coneType = annotationClassId.defaultType(emptyList())
+                    }
+                })
+            } ?: emptyList()
+    )
 }
 
 fun ConeKotlinType.createFunctionTypeWithNewKind(
     session: FirSession,
     kind: FunctionTypeKind,
+    additionalAnnotations: List<FirAnnotation> = emptyList(),
     updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
 ): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
-    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArguments.size - 1))
-    val typeArguments = expandedType.typeArguments
+    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(expandedType.typeArgumentsOfLowerBoundIfFlexible.size - 1))
+    val typeArguments = expandedType.typeArgumentsOfLowerBoundIfFlexible
     return functionTypeId.toLookupTag().constructClassType(
         updateTypeArguments?.let { typeArguments.updateTypeArguments() } ?: typeArguments,
         isNullable = expandedType.isNullable,
-        attributes = expandedType.attributes
+        attributes = expandedType.attributes.add(additionalAnnotations.computeTypeAttributes(session, shouldExpandTypeAliases = false)),
     )
 }
 
@@ -184,7 +202,7 @@ private fun ConeKotlinType.isSubtypeOfFunctionType(session: FirSession, expected
 
 fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
     require(this.isSomeFunctionType(session))
-    val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass) ?: return null
+    val functionN = lookupTag.toClassSymbol(session)?.fir ?: return null
     var baseInvokeSymbol: FirNamedFunctionSymbol? = null
     functionN.unsubstitutedScope(
         session,
@@ -260,22 +278,22 @@ fun ConeKotlinType.findContributedInvokeSymbol(
 fun ConeKotlinType.contextReceiversTypes(session: FirSession): List<ConeKotlinType> {
     if (!isSomeFunctionType(session)) return emptyList()
     return fullyExpandedType(session).let { expanded ->
-        val contextReceivers = expanded.typeArguments.take(expanded.contextReceiversNumberForFunctionType)
-        contextReceivers.map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+        val contextReceivers = expanded.typeArgumentsOfLowerBoundIfFlexible.take(expanded.contextReceiversNumberForFunctionType)
+        contextReceivers.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
     }
 }
 
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (!isSomeFunctionType(session) || !isExtensionFunctionType(session)) return null
     return fullyExpandedType(session).let { expanded ->
-        expanded.typeArguments[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.type)
+        expanded.typeArgumentsOfLowerBoundIfFlexible[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
     }
 }
 
 fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType {
     require(this is ConeClassLikeType)
     // TODO: add requirement
-    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.type)
+    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.coneType)
 }
 
 fun ConeKotlinType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {
@@ -286,13 +304,13 @@ fun ConeKotlinType.valueParameterTypesWithoutReceivers(session: FirSession): Lis
     val receiversNumber = expandedType.contextReceiversNumberForFunctionType + if (expandedType.isExtensionFunctionType) 1 else 0
     val valueParameters = expandedType.typeArguments.drop(receiversNumber).dropLast(1)
 
-    return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+    return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
 
 fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
     require(this is ConeClassLikeType)
     // TODO: add requirement
-    return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.type) }
+    return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
 
 private fun ConeTypeProjection.typeOrDefault(default: ConeKotlinType): ConeKotlinType = when (this) {

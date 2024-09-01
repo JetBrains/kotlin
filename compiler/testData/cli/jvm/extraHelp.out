@@ -86,13 +86,9 @@ where advanced options include:
                              This option is deprecated and will be deleted in future versions.
                              It has no effect when -language-version is 2.0 or higher.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
-  -Xno-kotlin-nothing-value-exception
-                             Don't use KotlinNothingValueException, which has been available since 1.4.
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xno-optimize              Disable optimizations.
-  -Xno-optimized-callable-references
-                             Don't use optimized callable reference superclasses, which have been available since 1.4.
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java.
   -Xno-receiver-assertions   Don't generate not-null assertions for extension receiver arguments of platform types.
   -Xno-reset-jar-timestamps  Don't reset jar entry timestamps to a fixed date.
@@ -145,7 +141,7 @@ where advanced options include:
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-javac                Use javac for Java source and class file analysis.
-  -Xuse-kapt4                Enable the experimental KAPT 4.
+  -Xuse-k2-kapt              Enable the experimental support for K2 KAPT.
   -Xuse-old-backend          Use the old JVM backend.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
@@ -203,6 +199,7 @@ where advanced options include:
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
+  -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
@@ -210,7 +207,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate the backend's state after these phases.
   -Xphases-to-validate-before Validate the backend's state before these phases.
   -Xplugin=<path>            Load plugins from the given classpath.
-  -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
+  -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
@@ -226,6 +223,8 @@ where advanced options include:
                              Suppress error about API version greater than language version.
                              Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
+  -Xsuppress-warning=<WARNING_NAME>
+                             Suppress specified warning module-wide.
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
@@ -237,7 +236,13 @@ where advanced options include:
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
-  -Xwhen-guards              Enable language support for when guards.
+  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
+  -Xverify-ir-visibility-after-inlining
+                             Check for visibility violations in IR when validating it after the function inlining phase.
+                             Only has effect if '-Xverify-ir' is not 'none'.
+                             This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+
+  -Xwhen-guards              Enable experimental language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

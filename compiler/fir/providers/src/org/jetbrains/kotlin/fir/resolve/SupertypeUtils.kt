@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -52,7 +55,7 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
     val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
 
     fun ConeKotlinType.collectClassIds() {
-        when (val unwrappedType = lowerBoundIfFlexible().fullyExpandedType(useSiteSession)) {
+        when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
             else -> {}
@@ -60,7 +63,7 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
     }
 
     type.collectClassIds()
-    return lookupTags.mapNotNull { it.toSymbol(useSiteSession) as? FirClassSymbol<*> }
+    return lookupTags.mapNotNull { it.toClassSymbol(useSiteSession) }
 }
 
 fun lookupSuperTypes(
@@ -294,7 +297,7 @@ private fun ConeClassLikeType?.isClassBasedType(
     useSiteSession: FirSession
 ): Boolean {
     if (this is ConeErrorType) return false
-    val symbol = this?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol ?: return false
+    val symbol = this?.lookupTag?.toClassSymbol(useSiteSession) ?: return false
     return when (symbol) {
         is FirAnonymousObjectSymbol -> true
         is FirRegularClassSymbol -> symbol.fir.classKind == ClassKind.CLASS
@@ -302,12 +305,12 @@ private fun ConeClassLikeType?.isClassBasedType(
 }
 
 fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: FirSession): ConeSubstitutor {
-    val klass = superType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return ConeSubstitutor.Empty
-    val arguments = superType.typeArguments.map {
+    val klass = superType.lookupTag.toRegularClassSymbol(session)?.fir ?: return ConeSubstitutor.Empty
+    val arguments = superType.typeArgumentsOfLowerBoundIfFlexible.map {
         it as? ConeKotlinType ?: ConeErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
     }
     val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
-    return ConeSubstitutorByMap.create(mapping, session)
+    return substitutorByMap(mapping, session)
 }
 
 fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol {
@@ -315,7 +318,7 @@ fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegu
         val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
         if (symbol.classKind == ClassKind.CLASS) return symbol
     }
-    return session.builtinTypes.anyType.type.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
+    return session.builtinTypes.anyType.coneType.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
 }
 
 fun FirClassLikeSymbol<*>.getSuperTypes(

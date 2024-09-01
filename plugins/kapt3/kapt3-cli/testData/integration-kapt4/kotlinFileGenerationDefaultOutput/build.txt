@@ -20,7 +20,7 @@ ap/Processor.kt
 
 # kapt
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -Kapt-mode=stubsAndApt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
@@ -34,7 +34,7 @@ Test.kt
 
 # kotlinc
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -d output/classes
 -cp output/classes:output/ap:%KOTLIN_STDLIB%
 Test.kt

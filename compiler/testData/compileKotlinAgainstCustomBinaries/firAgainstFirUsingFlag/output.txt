@@ -1,2 +1,2 @@
-warning: deprecated compiler flag -Xuse-k2 is redundant because of "-language-version 2.0" and should be removed
+warning: deprecated compiler flag -Xuse-k2 is redundant because of "-language-version 2.1" and should be removed
 OK

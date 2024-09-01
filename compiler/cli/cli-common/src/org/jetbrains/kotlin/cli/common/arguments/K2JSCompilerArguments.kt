@@ -83,6 +83,16 @@ class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xwasm-debugger-custom-formatters",
+        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values"
+    )
+    var debuggerCustomFormatters = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
@@ -269,6 +279,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         description = "Print reachability information about declarations to 'stdout' while performing DCE."
     )
     var irDcePrintReachabilityInfo = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
+        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine."
+    )
+    var includeUnavailableSourcesIntoSourceMap = false
         set(value) {
             checkFrozen()
             field = value
@@ -553,14 +573,6 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
-    @Argument(value = "-Xerror-tolerance-policy", description = "Set up an error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL). " +
-            "Deprecated, will be removed in next compiler version.")
-    var errorTolerancePolicy: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(value = "-Xwasm", description = "Use the experimental WebAssembly compiler backend.")
     var wasm = false
         set(value) {
@@ -625,6 +637,16 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         description = "Use an updated version of the exception proposal with try_table."
     )
     var wasmUseNewExceptionProposal = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-attach-js-exception",
+        description = "Attach a thrown by JS-value to the JsException class"
+    )
+    var wasmUseJsTag: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -700,4 +722,4 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 }
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache || useK2
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// LANGUAGE: +AllowSuperCallToJavaInterface
 // FILE: JavaInterfaceBase.java
 
 public interface JavaInterfaceBase {

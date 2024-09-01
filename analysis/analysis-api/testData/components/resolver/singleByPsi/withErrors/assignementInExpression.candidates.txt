@@ -1,2 +1,2 @@
-KtBinaryExpression:
-NO_CANDIDATES
+KtBinaryExpression(76,82): 'x /= x'
+  NO_CANDIDATES

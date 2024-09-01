@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -105,7 +106,7 @@ class JvmSharedVariablesManager(
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable): IrStatement {
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
         val default = IrConstImpl.defaultValueForType(initializer.startOffset, initializer.endOffset, originalDeclaration.type)
-        if (initializer is IrConst<*> && initializer.value == default.value) {
+        if (initializer is IrConst && initializer.value == default.value) {
             // The field is preinitialized to the default value, so an explicit set is not required.
             return sharedVariableDeclaration
         }

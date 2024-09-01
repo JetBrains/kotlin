@@ -41,6 +41,19 @@ func smoke() throws {
     try assertEquals(actual: org.kotlin.xor(a: false, b: false), expected: false ^ false)
 }
 
+func SmokesDependencies() throws {
+    try assertEquals(actual: dependency_usage(), expected: 5)
+}
+
+func SmokeOverrides() throws {
+    try assertEquals(actual: foo(arg: Foo()), expected: "foo")
+    try assertEquals(actual: foo(arg: Bar()), expected: "bar")
+    try assertEquals(actual: foo(arg: 1), expected: "int")
+
+    try assertEquals(actual: foo(arg1: Foo(), arg2: 1), expected: "foo_int")
+    try assertEquals(actual: foo(arg1: 1, arg2: Foo()), expected: "int_foo")
+}
+
 class Smoke0Tests : TestProvider {
     var tests: [TestCase] = []
 
@@ -48,6 +61,8 @@ class Smoke0Tests : TestProvider {
         providers.append(self)
         tests = [
             TestCase(name: "Smokes", method: withAutorelease(smoke)),
+            TestCase(name: "SmokesDependencies", method: withAutorelease(SmokesDependencies)),
+            TestCase(name: "SmokeOverrides", method: withAutorelease(SmokeOverrides)),
         ]
     }
 }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -108,5 +109,5 @@ private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqNa
         override fun getMemberScope(): MemberScope = MemberScope.Empty
     }
 
-    return IrFileImpl(fileEntry, packageFragmentDescriptor).also { this.files += it }
+    return IrFileImpl(fileEntry, packageFragmentDescriptor).also(this::addFile)
 }

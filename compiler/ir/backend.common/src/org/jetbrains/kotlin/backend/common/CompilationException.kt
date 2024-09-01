@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 /**
  * @param file If [file] is not known at this moment, [initializeFileDetails] should be invoked later in a `catch` to initialize the
@@ -119,8 +119,8 @@ fun Throwable.wrapWithCompilationException(
     message: String,
     file: IrFile,
     element: IrElement?
-): RuntimeException {
-    return if (this is ProcessCanceledException)
+): Throwable {
+    return if (shouldIjPlatformExceptionBeRethrown(this))
         this
     else
         CompilationException(

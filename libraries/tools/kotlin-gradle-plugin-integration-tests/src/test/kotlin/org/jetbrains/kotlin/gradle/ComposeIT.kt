@@ -9,10 +9,12 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
+import kotlin.io.path.createFile
 import kotlin.io.path.writeText
 
 @DisplayName("Compose compiler Gradle plugin")
@@ -58,12 +60,72 @@ class ComposeIT : KGPBaseTest() {
                     ":compileDebugKotlin",
                     "-P plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionKeyMetaClasses=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:nonSkippingGroupOptimization=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:strongSkipping=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=false",
+                            "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true",
                     LogLevel.INFO
                 )
+            }
+        }
+    }
+
+    @DisplayName("Should conditionally suggest to migrate to new compose plugin")
+    @AndroidTestVersions(
+        maxVersion = TestVersions.AGP.AGP_86,
+        additionalVersions = [TestVersions.AGP.AGP_85]
+    )
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    @TestMetadata("AndroidSimpleApp")
+    fun testAndroidComposeSuggestion(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |$originalBuildScript
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:1.6.4"
+                |}
+                |
+                |android.buildFeatures.compose = true
+                |
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            buildAndFail("assembleDebug") {
+                when (agpVersion) {
+                    TestVersions.AgpCompatibilityMatrix.AGP_73.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_74.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_80.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_81.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_82.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_83.version,
+                    TestVersions.AgpCompatibilityMatrix.AGP_84.version,
+                        -> {
+                        assertOutputContains(APPLY_COMPOSE_SUGGESTION)
+                    }
+                    else -> {
+                        // This error should come from AGP side
+                        assertOutputContains(
+                            "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
+                                    "  when compose is enabled. See the following link for more information:\n" +
+                                    "  https://d.android.com/r/studio-ui/compose-compiler"
+                        )
+                    }
+                }
             }
         }
     }
@@ -141,7 +203,7 @@ class ComposeIT : KGPBaseTest() {
                 .suppressDeprecationWarningsOn(
                     "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
                 ) {
-                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
                 }
         ) {
             build(":composeApp:assembleDebug") {
@@ -216,6 +278,110 @@ class ComposeIT : KGPBaseTest() {
             )
 
             enableLocalBuildCache(localCacheDir)
+        }
+    }
+
+    @DisplayName("Run Compose compiler with runtime v1.0")
+    @GradleAndroidTest
+    @OtherGradlePluginTests
+    @TestMetadata("AndroidSimpleApp")
+    fun testComposePluginWithRuntimeV1_0(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |plugins {
+                |    id "org.jetbrains.kotlin.plugin.compose"
+                |${originalBuildScript.substringAfter("plugins {")}
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:1.0.0"
+                |}
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            val composableFile = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
+            composableFile.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.Composable
+                |
+                |@Composable fun Test() { Test() }
+            """.trimMargin())
+
+            build("assembleDebug") {
+                assertTasksExecuted(":compileDebugKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Run Compose compiler with the latest runtime")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @OtherGradlePluginTests
+    @TestMetadata("AndroidSimpleApp")
+    fun testComposePluginWithRuntimeLatest(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        val composeSnapshotId = System.getProperty("composeSnapshotId")
+        val composeSnapshotVersion = System.getProperty("composeSnapshotVersion")
+        project(
+            projectName = "AndroidSimpleApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+            )
+        ) {
+            buildGradle.modify { originalBuildScript ->
+                """
+                |plugins {
+                |    id "org.jetbrains.kotlin.plugin.compose"
+                |${originalBuildScript.substringAfter("plugins {")}
+                |
+                |dependencies {
+                |    implementation "androidx.compose.runtime:runtime:$composeSnapshotVersion"
+                |}
+                """.trimMargin()
+            }
+
+            gradleProperties.appendText(
+                """
+                android.useAndroidX=true
+                """.trimIndent()
+            )
+
+            val composableFile = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
+            composableFile.appendText(
+                """
+                |package com.example
+                |
+                |import androidx.compose.runtime.Composable
+                |
+                |@Composable fun Test() { Test() }
+            """.trimMargin())
+
+            build("assembleDebug") {
+                assertTasksExecuted(":compileDebugKotlin")
+            }
         }
     }
 

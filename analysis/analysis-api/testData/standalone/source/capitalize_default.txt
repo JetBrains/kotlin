@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:capitalize(p: PsiType:String): PsiType:String

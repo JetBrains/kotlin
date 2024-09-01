@@ -6,6 +6,9 @@ plugins {
 dependencies {
     api(project(":compiler:config"))
     compileOnly(intellijCore())
+
+    compileOnly(project(":core:metadata"))
+    embedded(project(":core:metadata")) { isTransitive = false }
 }
 
 sourceSets {

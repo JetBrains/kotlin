@@ -1,22 +1,24 @@
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /BaseClass.bar
+  compilerVisibility: Public
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: true
   isVal: false
+  location: CLASS
   modality: OPEN
   name: bar
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: BaseClass
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

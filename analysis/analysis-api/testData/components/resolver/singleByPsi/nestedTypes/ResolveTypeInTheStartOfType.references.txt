@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in foo.bar.baz) class AA
+KtNameReferenceExpression(101,103): 'AA'
+  KtSimpleNameReference:
+    (in foo.bar.baz) class AA

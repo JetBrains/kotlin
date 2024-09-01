@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.Ignore
+import kotlin.test.assertEquals
 
 @Disabled("Used for local testing only")
 @MppGradlePluginTests
@@ -22,12 +23,7 @@ class K2HierarchicalMppIT : HierarchicalMppIT() {
 @MppGradlePluginTests
 @DisplayName("KLibs in K2")
 class K2KlibBasedMppIT : KlibBasedMppIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
-
-@Ignore
-class K2NewMultiplatformIT : NewMultiplatformIT() {
-    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2().disableConfigurationCache_KT70416()
 }
 
 @Disabled("Used for local testing only")
@@ -37,7 +33,9 @@ class K2CommonizerIT : CommonizerIT() {
 
 @Ignore
 class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .copy(languageVersion = "2.0")
+        .disableConfigurationCache_KT70416()
 }
 
 @MppGradlePluginTests
@@ -204,6 +202,14 @@ class CustomK2Tests : KGPBaseTest() {
         ) {
             build("compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileCommonMainKotlinMetadata") {
+                    val stdlibCounts = args.count { it != "-nostdlib" && it.contains("stdlib") }
+                    assertEquals(
+                        1,
+                        stdlibCounts,
+                        "Expected a single stdlib in the command line arguments, but got $stdlibCounts"
+                    )
+                }
             }
         }
     }

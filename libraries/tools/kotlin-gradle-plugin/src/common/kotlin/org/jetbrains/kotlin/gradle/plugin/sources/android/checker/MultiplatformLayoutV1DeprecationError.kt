@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 

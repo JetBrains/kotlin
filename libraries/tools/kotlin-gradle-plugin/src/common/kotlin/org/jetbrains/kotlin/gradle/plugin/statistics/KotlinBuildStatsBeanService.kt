@@ -9,9 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ProviderFactory
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
@@ -71,8 +68,7 @@ internal abstract class KotlinBuildStatsBeanService internal constructor(
         internal fun initStatsService(project: Project) {
             runMetricMethodSafely(logger, "${KotlinBuildStatsBeanService::class.java}.initStatsService") {
                 val gradle = project.gradle
-                val configurationTimePropertiesAccessor = project.configurationTimePropertiesAccessor
-                val statisticsIsEnabled = checkStatisticsEnabled(gradle, project.providers, configurationTimePropertiesAccessor)
+                val statisticsIsEnabled = checkStatisticsEnabled(gradle, project.providers)
                 if (!statisticsIsEnabled) {
                     null
                 } else {
@@ -103,13 +99,11 @@ internal abstract class KotlinBuildStatsBeanService internal constructor(
         private fun checkStatisticsEnabled(
             gradle: Gradle,
             providerFactory: ProviderFactory,
-            configurationTimePropertiesAccessor: ConfigurationTimePropertiesAccessor,
         ): Boolean {
             return if (File(gradle.gradleUserHomeDir, DISABLE_STATISTICS_FILE_NAME).exists()) {
                 false
             } else {
                 providerFactory.gradleProperty(ENABLE_STATISTICS_PROPERTY_NAME)
-                    .usedAtConfigurationTime(configurationTimePropertiesAccessor)
                     .orNull?.toBoolean() ?: DEFAULT_STATISTICS_STATE
             }
         }

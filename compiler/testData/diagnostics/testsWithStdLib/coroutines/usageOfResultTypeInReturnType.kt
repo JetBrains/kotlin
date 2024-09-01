@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE
-// LANGUAGE: +InlineClasses -AllowResultInReturnType, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses -JvmInlineValueClasses
 
 typealias ResultAlias<T> = Result<T>
 

@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1787
 package foo
 
 fun testSize(expectedSize: Int, vararg i: UInt): Boolean {

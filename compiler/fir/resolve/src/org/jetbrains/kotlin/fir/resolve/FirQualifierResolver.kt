@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 abstract class FirQualifierResolver : FirSessionComponent {
     abstract fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>?
-    abstract fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
+    abstract fun resolveFullyQualifiedSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
 }
 
 val FirSession.qualifierResolver: FirQualifierResolver by FirSession.sessionComponentAccessor()

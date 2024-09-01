@@ -1,54 +1,62 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
+    isActual: false
+    isExpect: false
     isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/I.p)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: A
-    symbolKind: LOCAL
-    typeParameters: []
+    visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /I.p
+  compilerVisibility: Private
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Private
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: A
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Private
+    visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: I
     getContainingFileSymbol: KaFileSymbol(A.kt)
     getContainingJvmClassName: I
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -64,25 +72,25 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: p
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: I
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getP
@@ -90,8 +98,9 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: I
   contextReceivers: []
   hasStableParameterNames: true
@@ -99,70 +108,80 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
+  location: CLASS
+  modality: FINAL
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: I
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
+          compilerVisibility: Private
           contextReceivers: []
+          isActual: false
+          isExpect: false
           isExtension: false
+          isVal: true
+          location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/I.p)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: A
-          symbolKind: LOCAL
-          typeParameters: []
+          visibility: PRIVATE
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
-          getContainingModule: KtSourceModule "Sources of main"
+          getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /I.p
+        compilerVisibility: Private
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
+          compilerVisibility: Private
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
+          isActual: false
           isDefault: true
+          isExpect: false
           isExtension: false
           isInline: false
           isOverride: false
+          location: PROPERTY
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: A
-          symbolKind: ACCESSOR
-          typeParameters: []
           valueParameters: []
-          visibility: Private
+          visibility: PRIVATE
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: I
           getContainingFileSymbol: KaFileSymbol(A.kt)
           getContainingJvmClassName: I
-          getContainingModule: KtSourceModule "Sources of main"
+          getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
         hasGetter: true
@@ -178,52 +197,56 @@ KaConstructorSymbol:
         isOverride: false
         isStatic: false
         isVal: true
+        location: CLASS
         modality: FINAL
         name: p
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: A
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
-        visibility: Private
+        visibility: PRIVATE
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: I
         getContainingFileSymbol: KaFileSymbol(A.kt)
         getContainingJvmClassName: I
-        getContainingModule: KtSourceModule "Sources of main"
+        getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
         javaGetterName: getP
         javaSetterName: null
         setterDeprecationStatus: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: A
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(A.kt)
       getContainingJvmClassName: I
-      getContainingModule: KtSourceModule "Sources of main"
+      getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingJvmClassName: I
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,0 +1,87 @@
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  containingClassId: A
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isPrimary: false
+  location: CLASS
+  modality: FINAL
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: A
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: i
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
+      getContainingJvmClassName: A
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
+  getContainingJvmClassName: A
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: A
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(implicitConstructorDelegationCall.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

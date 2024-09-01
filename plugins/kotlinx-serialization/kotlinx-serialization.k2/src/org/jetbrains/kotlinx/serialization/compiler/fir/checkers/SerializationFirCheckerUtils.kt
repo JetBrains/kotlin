@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.customAnnotations
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
@@ -43,7 +43,7 @@ internal fun FirClassSymbol<*>?.classSerializer(c: CheckerContext): FirClassSymb
     if (this == null) return null
     val session = c.session
     // serializer annotation on class?
-    getSerializableWith(session)?.let { return it.toRegularClassSymbol(session) }
+    getSerializableWith(session)?.let { return it.classSymbolOrUpperBound(session) }
     // companion object serializer?
     if (this is FirRegularClassSymbol && isInternallySerializableObject(session)) return companionObjectSymbol
     // can infer @Poly?

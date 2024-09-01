@@ -1,4 +1,4 @@
 FILE: recursiveTypeAlias.kt
-    public abstract interface Something<D, T : R|() -> Something1<D>|> : R|kotlin/Any| {
+    public abstract interface Something<D, T : R|() -> {Something1<D>=} ERROR CLASS: Loop in supertype: /Something1 -> /Something|> : R|kotlin/Any| {
     }
     public final typealias Something1<D> = <ERROR TYPE REF: Loop in supertype: /Something1 -> /Something>

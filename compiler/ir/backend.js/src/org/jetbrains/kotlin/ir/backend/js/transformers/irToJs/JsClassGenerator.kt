@@ -471,7 +471,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 es6mode -> JsNameRef(context.getNameForMemberFunction(defaultConstructor), classNameRef)
                 else -> context.getNameForStaticFunction(defaultConstructor).makeRef()
             }
-            else -> null
+            null -> null
         }
     }
 

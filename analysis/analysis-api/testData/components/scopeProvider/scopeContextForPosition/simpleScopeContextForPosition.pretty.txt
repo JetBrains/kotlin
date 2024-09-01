@@ -7,7 +7,7 @@ implicit receivers:
   owner symbol: KaFirAnonymousFunctionSymbol
 
   type: C
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   LocalScope, index = 0

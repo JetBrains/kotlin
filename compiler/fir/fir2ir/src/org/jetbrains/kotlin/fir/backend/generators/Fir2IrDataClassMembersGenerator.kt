@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_DATA_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -165,7 +168,7 @@ class Fir2IrDataClassMembersGenerator(
             isOperator: Boolean = false,
         ): IrSimpleFunction {
             val symbol = c.declarationStorage.createFunctionSymbol()
-            return c.irFactory.createSimpleFunction(
+            return IrFactoryImpl.createSimpleFunction(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = origin,
@@ -196,8 +199,8 @@ class Fir2IrDataClassMembersGenerator(
             }
         }
 
-        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
-            c.irFactory.createValueParameter(
+        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType): IrValueParameter =
+            IrFactoryImpl.createValueParameter(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 origin = IrDeclarationOrigin.DEFINED,
@@ -205,7 +208,6 @@ class Fir2IrDataClassMembersGenerator(
                 type = type,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -266,8 +268,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
          */
         private fun ConeKotlinType.coerceToAny(): ConeKotlinType {
             return when {
-                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.type
-                this is ConeDynamicType -> session.builtinTypes.anyType.type
+                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.coneType
+                this is ConeDynamicType -> session.builtinTypes.anyType.coneType
                 else -> this
             }
         }
@@ -278,7 +280,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             irClass,
             irClass.kotlinFqName,
             origin,
-            forbidDirectFieldAccess = false
+            forbidDirectFieldAccess = false,
+            generateBodies = !configuration.skipBodies,
         ) {
             override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
                 // TODO
@@ -305,7 +308,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
-                    return getHashCodeFunction(session.builtinTypes.anyType.type.toRegularClassSymbol(session)!!.fir)
+                    return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope(c)
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
@@ -348,7 +351,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 val (symbol, hasDispatchReceiver) = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
-                        val preparedType = type.unwrapFlexibleAndDefinitelyNotNull().coerceToAny()
+                        val preparedType = type.unwrapToSimpleTypeUsingLowerBound().coerceToAny()
                         val classForType = when (val classifier = preparedType.toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -59,7 +60,7 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
     override fun getClassifierNames(): Set<Name> = emptySet()
 
     private val anyTypeScope by lazy {
-        session.builtinTypes.anyType.type.scope(
+        session.builtinTypes.anyType.coneType.scope(
             session,
             scopeSession,
             CallableCopyTypeCalculator.DoNothing,
@@ -106,6 +107,12 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
             processor(it.symbol)
         }
     }
+
+    @DelicateScopeAPI
+    @OptIn(FirDynamicScopeConstructor::class)
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDynamicScope {
+        return FirDynamicScope(newSession, newScopeSession)
+    }
 }
 
 class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
@@ -124,11 +131,11 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         cachesFactory.createCache { name -> buildPseudoPropertyByName(name) }
 
     private val dynamicTypeRef: FirResolvedTypeRef = buildResolvedTypeRef {
-        type = ConeDynamicType.create(session)
+        coneType = ConeDynamicType.create(session)
     }
 
     private val anyArrayTypeRef: FirResolvedTypeRef = buildResolvedTypeRef {
-        type = ConeClassLikeTypeImpl(
+        coneType = ConeClassLikeTypeImpl(
             StandardClassIds.Array.toLookupTag(),
             arrayOf(dynamicTypeRef.coneType),
             isNullable = false

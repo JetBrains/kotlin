@@ -17,6 +17,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.Family
@@ -40,7 +42,7 @@ abstract class PodBuildTask @Inject constructor(
     internal abstract val pod: Property<CocoapodsDependency>
 
     @get:Input
-    internal abstract val sdk: Property<String>
+    internal abstract val appleTarget: Property<AppleTarget>
 
     @get:Input
     internal abstract val family: Property<Family>
@@ -81,8 +83,8 @@ abstract class PodBuildTask @Inject constructor(
             "xcodebuild",
             "-project", podsXcodeProjDir.asFile.name,
             "-scheme", pod.get().schemeName,
-            "-sdk", sdk.get(),
-            "-configuration", podBuildSettings.configuration
+            "-destination", appleTarget.get().genericPlatformDestination,
+            "-configuration", podBuildSettings.configuration,
         )
 
         runCommand(podXcodeBuildCommand, logger) {

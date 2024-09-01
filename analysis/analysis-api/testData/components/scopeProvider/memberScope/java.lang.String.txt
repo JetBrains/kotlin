@@ -1,59 +1,64 @@
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: java/lang/String.value
+  compilerVisibility: Private
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: true
+  location: CLASS
   modality: FINAL
   name: value
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/CharArray!
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: java/lang/String.hash
+  compilerVisibility: Private
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: OPEN
   name: hash
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.hash32
+  compilerVisibility: PackageVisibility
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -69,128 +74,136 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hash32
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: java/lang/String.hash32
+  compilerVisibility: Private
   contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
   isStatic: false
   isVal: false
+  location: CLASS
   modality: OPEN
   name: hash32
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaSyntheticJavaPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: java/lang/String.length
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: java/lang/String.length
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: false
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: java/lang/String
     getContainingFileSymbol: null
     getContainingJvmClassName: java.lang.String
-    getContainingModule: KtSdkModule "SDK jdk"
+    getContainingModule: KaLibraryModule "SDK jdk"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: null
+  isActual: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KaFunctionSymbol(java/lang/String.length)
+  javaGetterSymbol: KaNamedFunctionSymbol(java/lang/String.length)
   javaSetterSymbol: null
+  location: CLASS
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: length
   javaSetterName: null
   setterDeprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.isEmpty
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -206,30 +219,31 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: isEmpty
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.codePointAt
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -245,55 +259,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: codePointAt
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.codePointBefore
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -309,55 +329,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: codePointBefore
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.codePointCount
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -373,79 +399,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: codePointCount
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.offsetByCodePoints
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -461,79 +498,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: offsetByCodePoints
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.getChars
+  compilerVisibility: PackageVisibility
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -549,78 +597,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getChars
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.getChars
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -636,129 +695,150 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getChars
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: [
+KaNamedFunctionSymbol:
+  annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: java/lang/String.getBytes
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -774,126 +854,147 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.getBytes
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -909,53 +1010,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/ByteArray!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.getBytes
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -971,53 +1078,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/ByteArray!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/nio/charset/Charset!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.getBytes
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1033,29 +1146,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/ByteArray!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.equals
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1071,55 +1185,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: @EnhancedNullability kotlin/Any?
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.contentEquals
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1135,54 +1255,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: contentEquals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/lang/StringBuffer!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.contentEquals
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1198,54 +1324,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: contentEquals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharSequence!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.equalsIgnoreCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1261,54 +1393,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: equalsIgnoreCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.compareTo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1324,54 +1462,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: compareTo
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.compareToIgnoreCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1387,54 +1531,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: compareToIgnoreCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.regionMatches
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1450,126 +1600,147 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: regionMatches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.regionMatches
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1585,150 +1756,176 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: regionMatches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p4
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.startsWith
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1744,78 +1941,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: startsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.startsWith
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1831,54 +2039,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: startsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.endsWith
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1894,54 +2108,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: endsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.hashCode
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1957,30 +2177,31 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: hashCode
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.indexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1996,55 +2217,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.indexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2060,79 +2287,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.indexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2148,54 +2386,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.indexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2211,78 +2455,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.indexOfSupplementary
+  compilerVisibility: Private
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2298,79 +2553,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: indexOfSupplementary
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.lastIndexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2386,55 +2652,61 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.lastIndexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2450,79 +2722,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.lastIndexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2538,54 +2821,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.lastIndexOf
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2601,78 +2890,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.lastIndexOfSupplementary
+  compilerVisibility: Private
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2688,79 +2988,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: lastIndexOfSupplementary
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Private
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.substring
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2776,54 +3087,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: substring
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.substring
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2839,78 +3156,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: substring
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.subSequence
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2926,79 +3254,90 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: subSequence
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: @EnhancedNullability kotlin/CharSequence
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.concat
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3014,53 +3353,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: concat
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.replace
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3076,78 +3421,89 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: replace
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Char
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Char
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.replace
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3163,76 +3519,87 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: replace
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharSequence!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharSequence!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.matches
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3248,54 +3615,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: matches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.contains
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3311,54 +3684,60 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: contains
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharSequence!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.replaceFirst
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3374,76 +3753,87 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: replaceFirst
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.replaceAll
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3459,76 +3849,87 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: replaceAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.split
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3544,77 +3945,88 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: split
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.split
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3630,53 +4042,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: split
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toLowerCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3692,53 +4110,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toLowerCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/util/Locale!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toLowerCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3754,29 +4178,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toLowerCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toUpperCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3792,53 +4217,59 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toUpperCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/util/Locale!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toUpperCase
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3854,29 +4285,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toUpperCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.trim
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3892,29 +4324,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: trim
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toString
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3930,30 +4363,31 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toString
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: @EnhancedNullability kotlin/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.toCharArray
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3969,29 +4403,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: toCharArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/CharArray!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.intern
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4007,29 +4442,30 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: intern
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: java/lang/String.get
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4045,57 +4481,63 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: OPEN
   name: get
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Char
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
-KaNamedClassOrObjectSymbol:
-  annotationsList: []
+KaNamedClassSymbol:
+  annotations: []
   classId: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -4104,38 +4546,39 @@ KaNamedClassOrObjectSymbol:
   isFun: false
   isInline: false
   isInner: false
+  location: CLASS
   modality: OPEN
   name: CaseInsensitiveComparator
-  origin: JAVA
+  origin: JAVA_LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaFlexibleType:
-          annotationsList: []
+          annotations: []
           type: kotlin/String!
       ]
       type: java/util/Comparator<kotlin/String!>
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: java/io/Serializable
   ]
-  symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Private
+  visibility: PRIVATE
   getContainingFileSymbol: null
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4143,24 +4586,26 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4168,48 +4613,55 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4217,48 +4669,55 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4266,96 +4725,113 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4363,99 +4839,116 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/IntArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4463,123 +4956,145 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KaConstructorSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4587,72 +5102,84 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4660,119 +5187,141 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4780,119 +5329,141 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/nio/charset/Charset!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4900,71 +5471,83 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4972,71 +5555,83 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/nio/charset/Charset!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5044,96 +5639,113 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5141,48 +5753,55 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/ByteArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5190,48 +5809,55 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/lang/StringBuffer!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: Public
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5239,48 +5865,55 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: java/lang/StringBuilder!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
+  compilerVisibility: PackageVisibility
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5288,75 +5921,87 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Boolean
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
+  compilerVisibility: PackageVisibility
   containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5364,89 +6009,105 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/String
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
+      location: LOCAL
+      modality: FINAL
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/CharArray!
-      symbolKind: LOCAL
-      typeParameters: []
+      visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
-      getContainingModule: KtSdkModule "SDK jdk"
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: PackageVisibility
+  visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
-  getContainingModule: KtSdkModule "SDK jdk"
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

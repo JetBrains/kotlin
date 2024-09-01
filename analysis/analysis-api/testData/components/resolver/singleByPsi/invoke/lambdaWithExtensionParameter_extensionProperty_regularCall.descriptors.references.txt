@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in test) val test.Foo.action: () -> kotlin.Unit
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(94,100): 'action'
+  KtSimpleNameReference:
+    (in test) val test.Foo.action: () -> kotlin.Unit
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

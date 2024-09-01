@@ -15,6 +15,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import java.io.File
@@ -27,7 +29,7 @@ abstract class PodSetupBuildTask @Inject constructor(projectLayout: ProjectLayou
     abstract val frameworkName: Property<String>
 
     @get:Input
-    internal abstract val sdk: Property<String>
+    internal abstract val appleTarget: Property<AppleTarget>
 
     @get:Nested
     abstract val pod: Property<CocoapodsDependency>
@@ -36,7 +38,7 @@ abstract class PodSetupBuildTask @Inject constructor(projectLayout: ProjectLayou
     internal abstract val podsXcodeProjDir: Property<File>
 
     @get:OutputFile
-    val buildSettingsFile: Provider<RegularFile> = projectLayout.cocoapodsBuildDirs.buildSettings(pod, sdk)
+    val buildSettingsFile: Provider<RegularFile> = projectLayout.cocoapodsBuildDirs.buildSettings(pod, appleTarget)
 
     @TaskAction
     fun setupBuild() {
@@ -46,7 +48,7 @@ abstract class PodSetupBuildTask @Inject constructor(projectLayout: ProjectLayou
             "xcodebuild", "-showBuildSettings",
             "-project", podsXcodeProjDir.name,
             "-scheme", pod.get().schemeName,
-            "-sdk", sdk.get()
+            "-sdk", appleTarget.get().sdk,
         )
 
         val outputText = runCommand(buildSettingsReceivingCommand, logger) { directory(podsXcodeProjDir.parentFile) }

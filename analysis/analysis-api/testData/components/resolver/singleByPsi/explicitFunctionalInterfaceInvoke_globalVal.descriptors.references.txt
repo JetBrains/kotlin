@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in A) operator fun invoke()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(94,100): 'invoke'
+  KtSimpleNameReference:
+    (in A) operator fun invoke()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

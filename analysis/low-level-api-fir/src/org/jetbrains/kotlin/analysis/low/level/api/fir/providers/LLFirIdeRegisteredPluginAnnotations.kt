@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass

@@ -250,27 +250,11 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    private fun ClassBuilder.generateHashCode(thisKind: PrimitiveType) {
-        method {
-            signature {
-                isOverride = true
-                methodName = "hashCode"
-                returnType = PrimitiveType.INT.capitalized
-            }
-
-            when (thisKind) {
-                PrimitiveType.LONG -> "((this ushr 32) xor this).toInt()"
-                PrimitiveType.FLOAT -> "toBits()"
-                PrimitiveType.DOUBLE -> "toBits().hashCode()"
-                else -> "this${thisKind.castToIfNecessary(PrimitiveType.INT)}"
-            }.setAsExpressionBody()
-        }
-    }
-
     private fun ClassBuilder.generateReinterpret(otherKind: PrimitiveType) {
         method {
             annotations += "WasmNoOpCast"
             annotations += "PublishedApi"
+            expectActual = ExpectActualModifier.Unspecified
             signature {
                 visibility = MethodVisibility.INTERNAL
                 methodName = "reinterpretAs${otherKind.capitalized}"

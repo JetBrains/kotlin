@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// DISABLE_IR_VISIBILITY_CHECKS: NATIVE, WASM
+// ^ UninitializedPropertyAccessException is internal on Native and Wasm
+
 // FILE: lateinit.kt
 
 private lateinit var s: String

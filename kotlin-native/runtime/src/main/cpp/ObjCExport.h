@@ -16,55 +16,6 @@
 
 extern "C" {
 
-struct ObjCToKotlinMethodAdapter {
-  const char* selector;
-  const char* encoding;
-  IMP imp;
-};
-
-struct KotlinToObjCMethodAdapter {
-  const char* selector;
-  ClassId interfaceId;
-  int itableSize;
-  int itableIndex;
-  int vtableIndex;
-  const void* kotlinImpl;
-};
-
-struct ObjCTypeAdapter {
-  const TypeInfo* kotlinTypeInfo;
-
-  const void * const * kotlinVtable;
-  int kotlinVtableSize;
-
-  const InterfaceTableRecord* kotlinItable;
-  int kotlinItableSize;
-
-  const char* objCName;
-
-  const ObjCToKotlinMethodAdapter* directAdapters;
-  int directAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* classAdapters;
-  int classAdapterNum;
-
-  const ObjCToKotlinMethodAdapter* virtualAdapters;
-  int virtualAdapterNum;
-
-  const KotlinToObjCMethodAdapter* reverseAdapters;
-  int reverseAdapterNum;
-};
-
-struct TypeInfoObjCExportAddition {
-  /*convertReferenceToRetainedObjC*/ void* convertToRetained;
-  Class objCClass;
-  const ObjCTypeAdapter* typeAdapter;
-};
-
-struct WritableTypeInfo {
-  TypeInfoObjCExportAddition objCExport;
-};
-
 struct Block_descriptor_1;
 
 // Based on https://clang.llvm.org/docs/Block-ABI-Apple.html and libclosure source.

@@ -78,14 +78,14 @@ FILE fqName:<root> fileName:/functionsDifferInTypeParameterBounds.kt
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
                   GET_VAR 'val tmp_0: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
                 then: CALL 'public abstract fun foo <S2> (s: S2 of <root>.X.foo): kotlin.String declared in <root>.X' type=kotlin.String origin=null
-                  <S2>: <root>.A
+                  <S2>: <root>.B
                   $this: GET_VAR '<this>: <root>.X declared in <root>.X.foo' type=<root>.X origin=null
                   s: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.C
                   GET_VAR 'val tmp_0: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
                 then: CALL 'public abstract fun foo <S3> (s: S3 of <root>.X.foo): kotlin.String declared in <root>.X' type=kotlin.String origin=null
-                  <S3>: <root>.A
+                  <S3>: <root>.C
                   $this: GET_VAR '<this>: <root>.X declared in <root>.X.foo' type=<root>.X origin=null
                   s: GET_VAR 's: S1 of <root>.X.foo declared in <root>.X.foo' type=S1 of <root>.X.foo origin=null
               BRANCH

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.literalExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.literalExpression]
  */
 abstract class FirLiteralExpression : FirExpression() {
     abstract override val source: KtSourceElement?
@@ -25,6 +25,7 @@ abstract class FirLiteralExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val kind: ConstantValueKind
     abstract val value: Any?
+    abstract val prefix: String?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitLiteralExpression(this, data)

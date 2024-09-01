@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,8 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -28,10 +28,11 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightSuspendContinuationParameter(
-    private val functionSymbolPointer: KaSymbolPointer<KaFunctionSymbol>,
+    private val functionSymbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(containingMethod) {
-    private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaFunctionSymbol) -> T): T {
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
         return functionSymbolPointer.withSymbol(ktModule, action)
     }
 
@@ -47,7 +48,9 @@ internal class SymbolLightSuspendContinuationParameter(
             ktType.asPsiType(
                 this,
                 allowErrorTypes = true,
-                getTypeMappingMode(ktType)
+                getTypeMappingMode(ktType),
+                forceValueClassResolution = method.canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             ) ?: nonExistentType()
         }
     }
@@ -62,7 +65,7 @@ internal class SymbolLightSuspendContinuationParameter(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
-                    if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
+                    if (withFunctionSymbol { it.visibility == KaSymbolVisibility.PRIVATE })
                         KaTypeNullability.UNKNOWN
                     else
                         KaTypeNullability.NON_NULLABLE

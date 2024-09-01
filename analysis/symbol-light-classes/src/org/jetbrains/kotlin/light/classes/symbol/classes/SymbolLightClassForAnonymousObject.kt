@@ -1,22 +1,20 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -24,20 +22,20 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
-        classOrObjectSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
+        classSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
         ktModule = ktModule,
         manager = anonymousObjectDeclaration.manager,
     )
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
-        ktModule: KtModule,
+        classSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
+        ktModule: KaModule,
         manager: PsiManager,
-    ) : super(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    ) : super(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()
@@ -51,13 +49,13 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getBaseClassType(): PsiClassType = _baseClassType
 
     private val _extendsList by lazyPub {
-        withClassOrObjectSymbol {
+        withClassSymbol {
             createInheritanceList(forExtendsList = true, it.superTypes)
         }
     }
 
     private val _implementsList by lazyPub {
-        withClassOrObjectSymbol {
+        withClassSymbol {
             createInheritanceList(forExtendsList = false, it.superTypes)
         }
     }
@@ -66,25 +64,25 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassOrObjectSymbol {
-            val result = mutableListOf<KtLightMethod>()
-            val declaredMemberScope = it.getDeclaredMemberScope()
+        withClassSymbol {
+            val result = mutableListOf<PsiMethod>()
+            val declaredMemberScope = it.declaredMemberScope
 
-            createMethods(declaredMemberScope.getCallableSymbols(), result)
-            createConstructors(declaredMemberScope.getConstructors(), result)
+            createMethods(declaredMemberScope.callables, result)
+            createConstructors(declaredMemberScope.constructors, result)
             result
         }
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
-        val result = mutableListOf<KtLightField>()
+    override fun getOwnFields(): List<PsiField> = cachedValue {
+        val result = mutableListOf<PsiField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 
-        withClassOrObjectSymbol {
-            it.getDeclaredMemberScope().getCallableSymbols()
+        withClassSymbol {
+            it.declaredMemberScope.callables
                 .filterIsInstance<KaPropertySymbol>()
                 .forEach { propertySymbol ->
-                    createField(
+                    createAndAddField(
                         propertySymbol,
                         nameGenerator,
                         isStatic = false,
@@ -110,5 +108,5 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 }

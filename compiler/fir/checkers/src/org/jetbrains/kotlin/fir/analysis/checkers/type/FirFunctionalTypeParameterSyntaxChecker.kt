@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirSyntaxChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.KtParameter
 
-abstract class FirFunctionalTypeParameterSyntaxChecker : FirTypeRefChecker(MppCheckerKind.Common), FirSyntaxChecker<FirFunctionTypeParameter, KtParameter> {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirFunctionTypeRef) return
+abstract class FirFunctionalTypeParameterSyntaxChecker : FirFunctionTypeRefChecker(
+    MppCheckerKind.Common
+), FirSyntaxChecker<FirFunctionTypeParameter, KtParameter> {
+    override fun check(typeRef: FirFunctionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         for (parameter in typeRef.parameters) {
             checkSyntax(parameter, context, reporter)
         }

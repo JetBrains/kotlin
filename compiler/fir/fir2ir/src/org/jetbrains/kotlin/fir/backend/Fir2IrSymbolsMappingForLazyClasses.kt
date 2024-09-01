@@ -26,32 +26,40 @@ import kotlin.reflect.KProperty
  * and in return values of storages.
  */
 class Fir2IrSymbolsMappingForLazyClasses {
-    private var symbolMap = mutableListOf<SymbolRemapper>()
+    private var remapper: SymbolRemapper? = null
 
     /**
      * This value can be used for fast check if something changed since last time.
      * It should have new unique values on each change of class' state.
      *
-     * As for now, only adds are supported, so the size of the list works as this unique number.
-     *
      * Typical usage should cache the mapping result, and invalidate cache if and only if this value has changed.
      */
-    val generation: Int get() = symbolMap.size
+    var generation: Int = 0
+        private set
 
     fun remapFunctionSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
-        return symbolMap.fold(symbol) { s, m -> m.getReferencedSimpleFunction(s) }
+        return remapper?.getReferencedSimpleFunction(symbol) ?: symbol
     }
 
     fun remapPropertySymbol(symbol: IrPropertySymbol): IrPropertySymbol {
-        return symbolMap.fold(symbol) { s, m -> m.getReferencedProperty(s) }
+        return remapper?.getReferencedProperty(symbol) ?: symbol
     }
 
     @RequiresOptIn
     annotation class SymbolRemapperInternals
 
     @SymbolRemapperInternals
-    fun initializeSymbolMap(map: SymbolRemapper) {
-        symbolMap.add(map)
+    fun initializeRemapper(remapper: SymbolRemapper) {
+        require(this.remapper == null) { "Remapper already initialized"}
+        this.remapper = remapper
+        generation++
+    }
+
+    @SymbolRemapperInternals
+    fun unregisterRemapper() {
+        requireNotNull(remapper) { "Remapper was already disposed" }
+        remapper = null
+        generation++
     }
 }
 

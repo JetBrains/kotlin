@@ -1,4 +1,4 @@
-
+// IGNORE_INLINER: IR
 
 // WITH_STDLIB
 // FILE: test.kt

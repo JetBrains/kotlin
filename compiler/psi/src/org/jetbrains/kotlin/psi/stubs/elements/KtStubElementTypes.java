@@ -88,8 +88,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtDynamicType> DYNAMIC_TYPE =
             new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType.class);
 
-    KtPlaceHolderStubElementType<KtFunctionType> FUNCTION_TYPE =
-            new KtPlaceHolderStubElementType<>("FUNCTION_TYPE", KtFunctionType.class);
+    KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
 
     KtTypeCodeFragmentType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
     KtExpressionCodeFragmentType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();

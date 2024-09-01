@@ -1777,7 +1777,7 @@ internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
+internal actual fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
     return copyOfUninitializedElements(0, newSize)
 }
 
@@ -2366,7 +2366,7 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2384,7 +2384,7 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIn
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2402,7 +2402,7 @@ public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2420,7 +2420,7 @@ public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2438,7 +2438,7 @@ public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2456,7 +2456,7 @@ public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2474,7 +2474,7 @@ public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2492,7 +2492,7 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**

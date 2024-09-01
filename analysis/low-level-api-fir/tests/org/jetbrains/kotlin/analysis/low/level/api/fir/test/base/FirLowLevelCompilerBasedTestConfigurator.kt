@@ -10,15 +10,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtScriptModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaScriptModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -58,12 +58,12 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
 
             val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
                 Pair(
-                    KtScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
+                    KaScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
                     TestModuleKind.ScriptSource,
                 )
             } else {
                 Pair(
-                    KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
+                    KaSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
                     TestModuleKind.Source,
                 )
             }
@@ -74,7 +74,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         return KtTestModuleStructure(
             testModuleStructure = moduleStructure,
             mainModules = mainModules,
-            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtBinaryModule>() }.asIterable(),
+            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KaLibraryModule>() }.asIterable(),
         )
     }
 

@@ -29,10 +29,6 @@ class Element(
 
     override val packageName: String = category.packageName
 
-    val additionalIrFactoryMethodParameters = mutableListOf<Field>()
-    var generateIrFactoryMethod = category == Category.Declaration
-    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
-
     /**
      * Allows to forcibly skip generation of the method for this element in visitors.
      */
@@ -44,17 +40,6 @@ class Element(
             return customParentInVisitor
                 ?: elementParents.singleOrNull { it.typeKind == TypeKind.Class }?.element
                 ?: IrTree.rootElement.takeIf { elementBaseType in otherParents }
-        }
-
-
-    var typeKind: TypeKind? = null
-        set(value) {
-            kind = when (value) {
-                TypeKind.Class -> ImplementationKind.AbstractClass
-                TypeKind.Interface -> ImplementationKind.Interface
-                null -> null
-            }
-            field = value
         }
 
     override val namePrefix: String

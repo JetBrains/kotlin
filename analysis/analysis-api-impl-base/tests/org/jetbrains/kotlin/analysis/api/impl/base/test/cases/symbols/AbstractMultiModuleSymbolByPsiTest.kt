@@ -10,7 +10,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -31,13 +31,13 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
             prettyPrinter.appendLine(fileDirective)
 
             analyseForTest(file) {
-                val fileSymbol = file.getFileSymbol()
+                val fileSymbol = file.symbol
                 file.forEachDescendantOfType<KtDeclaration>(predicate = { it.isValidForSymbolCreation }) { declaration ->
-                    val symbol = declaration.getSymbol()
+                    val symbol = declaration.symbol
 
                     checkContainingFileSymbol(fileSymbol, symbol, testServices)
 
-                    debugPrinter.appendLine(debugRenderer.render(analysisSession, symbol))
+                    debugPrinter.appendLine(debugRenderer.render(useSiteSession, symbol))
                     debugPrinter.appendLine()
 
                     prettyPrinter.withIndents(indentCount = declaration.parentsOfType<KtDeclaration>(withSelf = false).count()) {

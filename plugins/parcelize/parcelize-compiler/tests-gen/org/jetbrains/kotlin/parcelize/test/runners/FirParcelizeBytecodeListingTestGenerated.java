@@ -61,6 +61,12 @@ public class FirParcelizeBytecodeListingTestGenerated extends AbstractFirParceli
   }
 
   @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/codegen/dataClass.kt");
+  }
+
+  @Test
   @TestMetadata("describeContentsFromSuperType.kt")
   public void testDescribeContentsFromSuperType() {
     runTest("plugins/parcelize/parcelize-compiler/testData/codegen/describeContentsFromSuperType.kt");
@@ -88,6 +94,12 @@ public class FirParcelizeBytecodeListingTestGenerated extends AbstractFirParceli
   @TestMetadata("IBinderIInterface.kt")
   public void testIBinderIInterface() {
     runTest("plugins/parcelize/parcelize-compiler/testData/codegen/IBinderIInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("inheritance.kt")
+  public void testInheritance() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/codegen/inheritance.kt");
   }
 
   @Test

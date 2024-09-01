@@ -20,5 +20,5 @@ interface C {
     override fun hashCode() = 42
 }
 
-<!MUST_BE_INITIALIZED!>@Suppress(<!ERROR_SUPPRESSION!>"PROPERTY_WITH_NO_TYPE_NO_INITIALIZER"<!>)
-val z<!>
+@Suppress(<!ERROR_SUPPRESSION!>"PROPERTY_WITH_NO_TYPE_NO_INITIALIZER"<!>)
+<!MUST_BE_INITIALIZED!>val z<!>

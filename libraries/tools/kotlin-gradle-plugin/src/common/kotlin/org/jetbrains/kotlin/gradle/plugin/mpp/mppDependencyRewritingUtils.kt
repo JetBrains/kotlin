@@ -9,9 +9,7 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.artifacts.*
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.Provider
@@ -23,14 +21,23 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
 import org.jetbrains.kotlin.gradle.utils.getValue
 
 internal data class ModuleCoordinates(
-    val group: String?,
-    val name: String,
-    val version: String?
-)
+    private val moduleGroup: String?,
+    private val moduleName: String,
+    private val moduleVersion: String?,
+) : ModuleVersionIdentifier {
+    override fun getGroup() = moduleGroup ?: "unspecified"
+    override fun getName() = moduleName
+    override fun getVersion() = moduleVersion ?: "unspecified"
+
+    override fun getModule(): ModuleIdentifier = object : ModuleIdentifier {
+        override fun getGroup(): String = moduleGroup ?: "unspecified"
+        override fun getName(): String = moduleName
+    }
+}
 
 internal class PomDependenciesRewriter(
     project: Project,
-    component: KotlinTargetComponent
+    component: KotlinTargetComponent,
 ) {
 
     // Get the dependencies mapping according to the component's UsageContexts:
@@ -47,7 +54,7 @@ internal class PomDependenciesRewriter(
 
     fun rewritePomMppDependenciesToActualTargetModules(
         pomXml: XmlProvider,
-        includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>? = null
+        includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>? = null,
     ) {
         val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
 
@@ -188,8 +195,16 @@ private fun associateDependenciesWithActualModuleDependencies(
                     val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
                         ?: return@associate noMapping
 
-                    if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
-                        // This is a dependency on a module that resolved to another module; map the original dependency to the target module
+                    // This is a heuristical check for External Variants.
+                    // In ResolvedDependency API these dependencies have no artifacts and single children dependency.
+                    // That single dependency is an actual variant that contains artifacts and other dependencies.
+                    // For example see: `org.jetbrains.kotlinx:kotlinx-coroutines-core` jvmApiElements-published
+                    // It has reference to `org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm` and has no other dependencies nor artifacts.
+                    // If dependency was resolved but moduleArtifacts for some reason failed to resolve: it's OK!
+                    // It means there are some artifacts that can't be resolved.
+                    // For example resolved project dependency to android variant from included build.
+                    val moduleArtifacts = runCatching { resolvedDependency.moduleArtifacts }.getOrNull() ?: return@associate noMapping
+                    if (moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
                         val targetModule = resolvedDependency.children.single()
                         coordinates to ModuleCoordinates(
                             targetModule.moduleGroup,

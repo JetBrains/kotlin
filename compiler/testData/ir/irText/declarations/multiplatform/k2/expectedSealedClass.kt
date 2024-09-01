@@ -3,7 +3,6 @@
 
 // FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
-// SKIP_KLIB_TEST
 
 // MODULE: common
 // FILE: common.kt

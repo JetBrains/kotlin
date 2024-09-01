@@ -114,3 +114,10 @@ val KProperty1<out CommonCompilerArguments, *>.cliArgument: String
         val argumentAnnotation = javaField.getAnnotation<Argument>(Argument::class.java)
         return argumentAnnotation.value
     }
+
+/**
+ * Returns a string of the form "argument=value" where "argument" is the [Argument.value] of this compiler argument.
+ */
+fun KProperty1<out CommonCompilerArguments, *>.cliArgument(value: String): String {
+    return "$cliArgument=$value"
+}

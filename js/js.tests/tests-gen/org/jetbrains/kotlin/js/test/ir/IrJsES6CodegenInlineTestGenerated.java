@@ -951,6 +951,18 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
+    @TestMetadata("kt69457.kt")
+    public void testKt69457() {
+      runTest("compiler/testData/codegen/boxInline/callableReference/kt69457.kt");
+    }
+
+    @Test
+    @TestMetadata("kt69470.kt")
+    public void testKt69470() {
+      runTest("compiler/testData/codegen/boxInline/callableReference/kt69470.kt");
+    }
+
+    @Test
     @TestMetadata("propertyIntrinsic.kt")
     public void testPropertyIntrinsic() {
       runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
@@ -1909,6 +1921,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
         }
 
         @Test
+        @TestMetadata("defaultThatCapturesPreviousParameter.kt")
+        public void testDefaultThatCapturesPreviousParameter() {
+          runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/defaultThatCapturesPreviousParameter.kt");
+        }
+
+        @Test
         @TestMetadata("differentInvokeSignature.kt")
         public void testDifferentInvokeSignature() {
           runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
@@ -2730,6 +2748,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
     public void testLocalFunInLambdaCapturesAnotherFun() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
+    public void testLocalFunInLambdaCapturesOuterVariable() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
     }
   }
 

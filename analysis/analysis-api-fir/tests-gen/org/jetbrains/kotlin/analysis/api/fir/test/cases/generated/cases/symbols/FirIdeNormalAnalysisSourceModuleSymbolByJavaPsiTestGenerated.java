@@ -68,4 +68,40 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByJavaPsiTestGenerated extend
   public void testJavaStaticFieldFromSuperclass() {
     runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/javaStaticFieldFromSuperclass.kt");
   }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedClass.kt")
+  public void testPackagePrivateProtectedClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedField.kt")
+  public void testPackagePrivateProtectedField() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedField.kt");
+  }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedMethod.kt")
+  public void testPackagePrivateProtectedMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedStaticClass.kt")
+  public void testPackagePrivateProtectedStaticClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedStaticClass.kt");
+  }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedStaticField.kt")
+  public void testPackagePrivateProtectedStaticField() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedStaticField.kt");
+  }
+
+  @Test
+  @TestMetadata("packagePrivateProtectedStaticMethod.kt")
+  public void testPackagePrivateProtectedStaticMethod() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByJavaPsi/packagePrivateProtectedStaticMethod.kt");
+  }
 }

@@ -9,6 +9,7 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -35,12 +36,12 @@ enum class UniqueKind(val llvmName: String) {
 }
 
 internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrFunction): LlvmCallable =
+    fun forFunction(function: IrSimpleFunction): LlvmCallable =
             forFunctionOrNull(function) ?: with(function) {
                 error("$name in $file/${parent.fqNameForIrSerialization}")
             }
 
-    fun forFunctionOrNull(function: IrFunction): LlvmCallable? =
+    fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
             (function.metadata as? KonanMetadata.Function)?.llvm
 
     fun forClass(irClass: IrClass) =
@@ -425,7 +426,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
-            val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
+            val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())
             } else {
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
@@ -435,8 +436,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         }
     }
 
-    override fun visitFunction(declaration: IrFunction) {
-        super.visitFunction(declaration)
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        super.visitSimpleFunction(declaration)
 
         if (!declaration.isReal) return
 
@@ -444,7 +445,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
-                    || (declaration.isAccessor && declaration.isFromInteropLibrary())
+                    || (declaration.isAccessor && declaration.isFromCInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
             val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)
@@ -489,7 +490,7 @@ internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: 
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 
-    class Function(irFunction: IrFunction, val llvm: LlvmCallable) : Declaration<IrFunction>(irFunction)
+    class Function(irFunction: IrSimpleFunction, val llvm: LlvmCallable) : Declaration<IrSimpleFunction>(irFunction)
 
     class InstanceField(irField: IrField, val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField)
 

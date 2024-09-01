@@ -11,6 +11,6 @@ object Object {
 }
 
 // FILE: 2.kt
-import singlePrivateObject.<!INVISIBLE_REFERENCE, TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_WARNING!>SinglePrivateObject<!>.clbl
+import singlePrivateObject.<!INVISIBLE_REFERENCE, TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR!>SinglePrivateObject<!>.clbl
 
 import singlePrivateObject.<!INVISIBLE_REFERENCE!>SinglePrivateObject<!>.Shmobject

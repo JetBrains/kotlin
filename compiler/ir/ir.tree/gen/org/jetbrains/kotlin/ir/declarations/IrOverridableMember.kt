@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.overridableMember]
  */
-interface IrOverridableMember : IrDeclaration, IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {
+sealed interface IrOverridableMember : IrDeclaration, IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {
     var modality: Modality
 }

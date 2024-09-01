@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -96,7 +97,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                 if (visitedSymbols.add(constituentTypeSymbol)) visit(constituentTypeSymbol)
 
                 val parameters = constituentTypeSymbol.typeParameterSymbols
-                val arguments = constituentType.typeArguments.asList()
+                val arguments = constituentType.typeArgumentsOfLowerBoundIfFlexible.asList()
                 if (parameters.size != arguments.size) continue
                 val substitutor = runIf(arguments.any { it.kind != ProjectionKind.INVARIANT }) {
                     substitutorByType(parameters, arguments, session)
@@ -120,7 +121,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                         // upper bounds of a skolem type variable Q in a skolemization of a projected generic type in ST, add an
                         // expanding edge from T to V, where V is the type parameter corresponding to Q.
                         val bounds = SmartSet.create<ConeKotlinType>()
-                        constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.type) }
+                        constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.coneType) }
                         typeProjection.type?.let(bounds::add)
                         val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds() }
 

@@ -183,9 +183,9 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     ) {
         val module: TestModule.Exclusive = TestModule.Exclusive(
             name = name,
-            directDependencySymbols = emptySet(),
-            directFriendSymbols = emptySet(),
-            directDependsOnSymbols = emptySet(),
+            directRegularDependencySymbols = emptySet(),
+            directFriendDependencySymbols = emptySet(),
+            directDependsOnDependencySymbols = emptySet(),
         )
 
         val localBuildDir: File =

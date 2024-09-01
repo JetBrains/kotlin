@@ -43,4 +43,4 @@ fun main() {
 ## Specific Directives
 - `// FIR_IDENTICAL` should be prepended in a `.kt` file of an old diagnostic test when analysis result of old FE and FIR are the same
 - `// FIR_IGNORE` should be prepended in a `.fir.kt` file of an old diagnostic test known to fail with exception
-- `// !DUMP_CFG` generates `.dot` file with rendered data flow graph (see comment at `org.jetbrains.kotlin.fir.AbstractFirDiagnosticsTest`) 
+- `// DUMP_CFG` generates `.dot` file with rendered data flow graph (see comment at `org.jetbrains.kotlin.fir.AbstractFirDiagnosticsTest`) 

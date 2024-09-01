@@ -203,7 +203,7 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun ensureExtraCapacity(n: Int) {
         if (shouldCompact(extraCapacity = n)) {
-            rehash(hashSize)
+            compact(updateHashArray = true)
         } else {
             ensureCapacity(length + n)
         }
@@ -240,14 +240,19 @@ internal class InternalHashMap<K, V> private constructor(
     // Null-check for escaping extra boxing for non-nullable keys.
     private fun hash(key: K) = if (key == null) 0 else (key.hashCode() * MAGIC) ushr hashShift
 
-    private fun compact() {
+    private fun compact(updateHashArray: Boolean) {
         var i = 0
         var j = 0
         val valuesArray = valuesArray
         while (i < length) {
-            if (presenceArray[i] >= 0) {
+            val hash = presenceArray[i]
+            if (hash >= 0) {
                 keysArray[j] = keysArray[i]
                 if (valuesArray != null) valuesArray[j] = valuesArray[i]
+                if (updateHashArray) {
+                    presenceArray[j] = hash
+                    hashArray[hash] = j + 1
+                }
                 j++
             }
             i++
@@ -259,14 +264,13 @@ internal class InternalHashMap<K, V> private constructor(
     }
 
     private fun rehash(newHashSize: Int) {
+//        require(newHashSize > hashSize) { "Rehash can only be executed with a grown hash array" }
+
         registerModification()
-        if (length > _size) compact()
-        if (newHashSize != hashSize) {
-            hashArray = IntArray(newHashSize)
-            hashShift = computeShift(newHashSize)
-        } else {
-            hashArray.fill(0, 0, hashSize)
-        }
+        if (length > _size) compact(updateHashArray = false)
+        hashArray = IntArray(newHashSize)
+        hashShift = computeShift(newHashSize)
+
         var i = 0
         while (i < length) {
             if (!putRehash(i++)) {

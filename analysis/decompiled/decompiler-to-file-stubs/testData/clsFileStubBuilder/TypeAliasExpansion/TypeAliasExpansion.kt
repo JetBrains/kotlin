@@ -2,8 +2,10 @@ package test
 
 typealias StringAlias = String
 typealias EntryAlias = Map.Entry<String, Int>
+typealias FunctionAlias = (String) -> Int
 
 typealias NestedStringAlias = StringAlias
+typealias NestedFunctionAlias = FunctionAlias
 
 typealias ParameterizedListAlias<A> = List<A>
 
@@ -17,10 +19,17 @@ typealias NullableStringAlias = String?
 typealias NestedNullableStringAlias = NullableStringAlias
 typealias NullableNestedStringAlias = StringAlias?
 
+typealias NullableFunctionAlias = ((String) -> Int)?
+typealias NestedNullableFunctionAlias = NullableFunctionAlias
+typealias NullableNestedFunctionAlias = FunctionAlias?
+
 class TypeAliasExpansion {
     fun entryToString(entry: EntryAlias): StringAlias = entry.key
 
+    val functionAlias: FunctionAlias = { name -> name.length }
+
     val nestedStringAlias: NestedStringAlias = ""
+    val nestedFunctionAlias: NestedFunctionAlias = { name -> name.length }
 
     val parameterizedListAliasWithString: ParameterizedListAlias<String> = emptyList()
     val parameterizedListAliasWithStringAlias: ParameterizedListAlias<StringAlias> = emptyList()
@@ -47,4 +56,16 @@ class TypeAliasExpansion {
 
     val nullableNestedStringAlias: NullableNestedStringAlias = null
     val nullableNestedStringAliasNullable: NullableNestedStringAlias? = null
+
+    val functionAliasNullable: FunctionAlias? = null
+    val nestedFunctionAliasNullable: NestedFunctionAlias? = null
+
+    val nullableFunctionAlias: NullableFunctionAlias = null
+    val nullableFunctionAliasNullable: NullableFunctionAlias? = null
+
+    val nestedNullableFunctionAlias: NestedNullableFunctionAlias = null
+    val nestedNullableFunctionAliasNullable: NestedNullableFunctionAlias? = null
+
+    val nullableNestedFunctionAlias: NullableNestedFunctionAlias = null
+    val nullableNestedFunctionAliasNullable: NullableNestedFunctionAlias? = null
 }

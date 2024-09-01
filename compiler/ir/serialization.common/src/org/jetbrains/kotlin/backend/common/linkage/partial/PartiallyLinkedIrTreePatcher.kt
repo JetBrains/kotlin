@@ -785,11 +785,11 @@ internal class PartiallyLinkedIrTreePatcher(
             // Default values are not kept in value parameters of fake override/delegated/override functions.
             // So we need to look up for default value across all overridden functions.
             val functionsToCheckDefaultValues by lazy {
-                if (function !is IrSimpleFunction)
-                    listOf(function)
-                else
-                    function.allOverridden(includeSelf = true)
+                when (function) {
+                    is IrConstructor -> listOf(function)
+                    is IrSimpleFunction -> function.allOverridden(includeSelf = true)
                         .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
+                }
             }
 
             val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
@@ -900,7 +900,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 isUsableAnnotation = initialErrorMessagesCount == currentErrorMessagesCount && !isPartialLinkageRuntimeError()
         }
 
-        override fun visitConst(expression: IrConst<*>): IrExpression = expression // Nothing can be unlinked here.
+        override fun visitConst(expression: IrConst): IrExpression = expression // Nothing can be unlinked here.
 
         override fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
             checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
@@ -916,7 +916,7 @@ internal class PartiallyLinkedIrTreePatcher(
                             val valueParameter = symbol.owner.valueParameters.getOrNull(index)
                             return@checkArgumentsAndValueParameters valueParameter?.hasEqualFqName(REPLACE_WITH_CONSTRUCTOR_EXPRESSION_FIELD_FQN) == true
                         }
-                        defaultArgument is IrConst<*> -> {
+                        defaultArgument is IrConst -> {
                             // Nothing can be unlinked here.
                         }
                         defaultArgument is IrErrorExpression -> {

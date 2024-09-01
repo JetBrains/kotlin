@@ -2,6 +2,7 @@ import Properties
 
 func testConstants() throws {
     try assertEquals(actual: BOOLEAN_CONST, expected: true)
+    try assertEquals(actual: CHAR_CONST, expected: 65)
     try assertEquals(actual: BYTE_CONST, expected: 1)
     try assertEquals(actual: SHORT_CONST, expected: 2)
     try assertEquals(actual: INT_CONST, expected: 3)

@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS
-// EXPECTED_REACHABLE_NODES: 1298
 package foo
 
 fun check(e: Throwable, expectedString: String) {

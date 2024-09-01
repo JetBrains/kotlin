@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
@@ -39,9 +38,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
@@ -57,6 +56,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
+import org.jetbrains.kotlin.utils.exceptions.PlatformExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -465,10 +465,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-        catch (CompilationException | ProcessCanceledException e) {
+        catch (CompilationException e) {
             throw e;
         }
-        catch (RuntimeException e) {
+        catch (Throwable e) {
+            PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
             throw new RuntimeException("Error generating constructors of class " + myClass.getName() + " with kind " + kind, e);
         }
     }

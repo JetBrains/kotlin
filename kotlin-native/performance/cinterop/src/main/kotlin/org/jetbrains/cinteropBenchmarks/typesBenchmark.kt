@@ -29,3 +29,7 @@ expect class BoxedIntBenchmark() {
 expect class IntMatrixBenchmark() {
     fun intMatrixBenchmark()
 }
+
+expect class PinnedArrayBenchmark() {
+    fun pinnedArrayBenchmark()
+}

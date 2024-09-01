@@ -115,8 +115,9 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
      *
      * @param args data for constant creation.
      */
-    fun createImmutableBlob(value: IrConst<String>): LLVMValueRef {
-        val args = value.value.map { llvm.int8(it.code.toByte()) }
+    fun createImmutableBlob(value: IrConst): LLVMValueRef {
+        val strValue = value.value as String
+        val args = strValue.map { llvm.int8(it.code.toByte()) }
         return createConstKotlinArray(context.ir.symbols.immutableBlob.owner, args)
     }
 }

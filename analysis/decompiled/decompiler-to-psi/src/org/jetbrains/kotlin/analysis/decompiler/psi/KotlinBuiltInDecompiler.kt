@@ -61,19 +61,28 @@ private val stubVersionForStubBuilderAndDecompiler: Int
 class BuiltInDefinitionFile(
     proto: ProtoBuf.PackageFragment,
     version: BuiltInsBinaryVersion,
-    val packageDirectory: VirtualFile,
+    /**
+     * Directory where the VirtualFile is situated. Can be null in the case when the builtin file is created in the air.
+     */
+    val packageDirectory: VirtualFile?,
     val isMetadata: Boolean,
     private val filterOutClassesExistingAsClassFiles: Boolean = true,
 ) : KotlinMetadataStubBuilder.FileWithMetadata.Compatible(proto, version, BuiltInSerializerProtocol) {
     override val classesToDecompile: List<ProtoBuf.Class>
         get() = super.classesToDecompile.let { classes ->
+            if (packageDirectory == null) {
+                // If a builtin file is created in the air,
+                // that means we need all built-in files because there are no .class files to replace them with,
+                // see KT-61757
+                return@let classes
+            }
             if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES || !filterOutClassesExistingAsClassFiles) classes
             else classes.filter { classProto ->
-                shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
+                shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName), packageDirectory)
             }
         }
 
-    private fun shouldDecompileBuiltInClass(classId: ClassId): Boolean {
+    private fun shouldDecompileBuiltInClass(classId: ClassId, packageDirectory: VirtualFile): Boolean {
         val realJvmClassFileName = classId.shortClassName.asString() + "." + JavaClassFileType.INSTANCE.defaultExtension
         return packageDirectory.findChild(realJvmClassFileName) == null
     }

@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
@@ -43,7 +44,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         require(index >= 0)
         val origin = typeParameter.computeIrOrigin()
         val irTypeParameter = typeParameter.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createTypeParameter(
+            IrFactoryImpl.createTypeParameter(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -77,7 +78,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             else -> regularClass.modality ?: Modality.FINAL
         }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createClass(
+            IrFactoryImpl.createClass(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = regularClass.computeIrOrigin(predefinedOrigin),
@@ -206,7 +207,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         // finding the parent class that actually contains the [klass] in the tree - it is the root one that should be created on the fly
         val classOrLocalParent = generateSequence(klass) { c ->
             (c as? FirRegularClass)?.containingClassForLocalAttr?.let { lookupTag ->
-                (firProvider.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirClass)?.takeIf {
+                (lookupTag.toClassSymbol(session)?.fir)?.takeIf {
                     it.declarations.contains(c)
                 }
             }
@@ -227,7 +228,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private val temporaryParent by lazy {
-        irFactory.createSimpleFunction(
+        IrFactoryImpl.createSimpleFunction(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.DEFINED,
@@ -259,7 +260,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
         val irAnonymousObject = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createClass(
+            IrFactoryImpl.createClass(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -286,7 +287,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         symbol: IrTypeAliasSymbol,
     ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
         classifierStorage.preCacheTypeParameters(typeAlias)
-        irFactory.createTypeAlias(
+        IrFactoryImpl.createTypeAlias(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.DEFINED,
@@ -309,7 +310,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         val conversionData = codeFragment.conversionData
 
         val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createClass(
+            IrFactoryImpl.createClass(
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
@@ -352,7 +353,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
             val origin = enumEntry.computeIrOrigin(predefinedOrigin)
-            irFactory.createEnumEntry(
+            IrFactoryImpl.createEnumEntry(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
@@ -370,6 +371,13 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                         (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
                     )
                     this.correspondingClass = klass
+                }
+                if (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB ||
+                    origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                ) {
+                    // This [IrEnumEntry] won't be visited by [Fir2IrVisitor],
+                    // hence annotation generation at this point.
+                    annotationGenerator.generate(this, enumEntry)
                 }
                 declarationStorage.leaveScope(this.symbol)
             }
@@ -407,7 +415,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             classId.packageFqName, session.moduleData.dependencies.first()
         )
 
-        return irFactory.createClass(
+        return IrFactoryImpl.createClass(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,

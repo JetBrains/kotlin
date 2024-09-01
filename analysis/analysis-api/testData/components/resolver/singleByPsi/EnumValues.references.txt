@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.E) fun values(): kotlin.Array<test.E>
+KtNameReferenceExpression(55,61): 'values'
+  KtSimpleNameReference:
+    (in test.E) fun values(): kotlin.Array<test.E>

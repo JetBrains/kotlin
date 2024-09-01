@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: rootPackage.kt
 class Klass {
     class Nested

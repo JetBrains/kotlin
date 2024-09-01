@@ -44,6 +44,7 @@ data class DestructuringDeclaration(
             extractedAnnotations = annotations
         )
         return buildBlock {
+            source = this@DestructuringDeclaration.source
             with(builder) {
                 addDestructuringStatements(
                     statements,

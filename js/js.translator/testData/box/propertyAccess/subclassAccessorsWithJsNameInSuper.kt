@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1303
-
 open class A {
     open val x: Int
         @JsName("getX_") get() = 23

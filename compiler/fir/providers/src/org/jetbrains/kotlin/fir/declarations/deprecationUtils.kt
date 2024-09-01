@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -211,7 +212,7 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
             var worstDeprecationInfo = getOwnDeprecationForCallSite(session, *sites)
             val visited = mutableMapOf<ConeKotlinType, FirDeprecationInfo?>()
 
-            resolvedExpandedTypeRef.type.forEachType {
+            resolvedExpandedTypeRef.coneType.forEachType {
                 val deprecationInfo = visited.getOrPut(it) {
                     val symbol = it.toSymbol(session) ?: return@forEachType
                     symbol.getDeprecationForCallSite(session, *sites)

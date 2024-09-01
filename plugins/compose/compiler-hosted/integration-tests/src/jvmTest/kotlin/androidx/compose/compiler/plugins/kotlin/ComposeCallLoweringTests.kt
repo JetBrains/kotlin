@@ -429,16 +429,55 @@ fun <T> B(foo: T, bar: String) { }
         )
     }
 
+    @Test
+    fun testDataClass() {
+        classLoader(
+            mapOf(
+                Pair(
+                    "com/example/model/Post.kt", """
+            package com.example.model
+            data class Post(
+                val id: String,
+                val title: String,
+                val subtitle: String? = null,
+                val url: String,
+            )
+            """
+                ),
+                Pair(
+                    "main.kt", """
+            package home
+
+            import androidx.compose.foundation.Image
+            import androidx.compose.runtime.Composable
+            import androidx.compose.ui.res.painterResource
+            import com.example.model.Post
+
+            @Composable
+            fun PostImage(post: Post) {
+                Image(painter = painterResource(post.id), contentDescription = post.title)
+            }
+            """
+                ),
+            ),
+            additionalPaths = listOf(
+                Classpath.composeFoundationJar(),
+                Classpath.composeUiJar(),
+                Classpath.composeUiGraphicsJar(),
+            )
+        )
+    }
+
     fun codegen(text: String, dumpClasses: Boolean = false) {
         codegenNoImports(
             """
-           import androidx.compose.runtime.*
-
-           $text
-
-           @Composable fun LinearLayout(block: @Composable ()->Unit) { }
-        """,
-            dumpClasses
+               import androidx.compose.runtime.*
+    
+               $text
+    
+               @Composable fun LinearLayout(block: @Composable ()->Unit) { }
+           """,
+            dumpClasses,
         )
     }
 
@@ -446,6 +485,18 @@ fun <T> B(foo: T, bar: String) { }
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
-        classLoader(text, fileName, dumpClasses)
+        classLoader(
+            text,
+            fileName,
+            dumpClasses,
+            additionalPaths
+        )
+    }
+
+    companion object {
+        private val additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     }
 }

@@ -205,6 +205,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             testRunSettings.get<PipelineType>().compilerFlags + listOf(
                 "-Xstatic-framework",
                 "-Xbinary=bundleId=stub",
+                "-module-name", kotlinFrameworkName
             )
         )
         val module = generateTestCaseWithSingleModule(sourceDirectory, freeCompilerArgs)

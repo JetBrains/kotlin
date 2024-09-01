@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
 // JVM_ABI_K1_K2_DIFF: KT-67645
-// STDLIB_COMPILATION
+// PREFER_IN_TEST_OVER_STDLIB
 
 // MODULE: common
 // FILE: array.kt

@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 private val hashCodeCallableId = CallableId(StandardClassIds.Any, Name.identifier("hashCode"))
 
-context(KtAnalysisSession)
-internal val KtCallableSymbol.isHashCode: Boolean
-    get() = this.callableId == hashCodeCallableId ||
-        getAllOverriddenSymbols().any { overriddenSymbol -> overriddenSymbol.callableId == hashCodeCallableId }
+internal fun KaSession.isHashCode(symbol: KaCallableSymbol): Boolean = symbol.callableId == hashCodeCallableId ||
+        symbol.allOverriddenSymbols.any { overriddenSymbol -> overriddenSymbol.callableId == hashCodeCallableId }

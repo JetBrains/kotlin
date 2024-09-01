@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 // CHECK_NOT_CALLED: bar_vux9f0$

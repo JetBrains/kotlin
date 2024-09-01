@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirBuilderConfigurator
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 
-object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder.elements) {
-    override fun configureBuilders() = with(FirTreeBuilder) {
+class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<AbstractFirTreeBuilder>(model) {
+    override fun configureBuilders() = with(FirTree) {
         val declarationBuilder by builder {
             fields from declaration without "symbol"
         }
@@ -33,6 +34,7 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             parents += declarationBuilder
             parents += annotationContainerBuilder
             fields from klass without listOf("symbol", "resolvePhase", "resolveState", "controlFlowGraphReference")
+            isSealed = true
         }
 
         builder(file) {
@@ -249,6 +251,11 @@ object BuilderConfigurator : AbstractFirBuilderConfigurator<FirTreeBuilder>(FirT
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
             openBuilder()
             withCopy()
+        }
+
+        builder(backingField) {
+            parents += variableBuilder
+            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
         builder(enumEntry) {

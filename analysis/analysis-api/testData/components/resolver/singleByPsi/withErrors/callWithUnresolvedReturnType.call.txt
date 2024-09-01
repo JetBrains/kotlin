@@ -1,0 +1,34 @@
+KtCallExpression(81,87): 'foo(x)'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          x -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = ERROR CLASS: Symbol not found for Unresolved
+            symbol = /foo(x: kotlin.Int): ERROR CLASS: Symbol not found for Unresolved
+            valueParameters = [
+              KaVariableSignature:
+                name = x
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = x: kotlin.Int
+                callableId = null
+            ]
+            callableId = /foo
+        typeArgumentsMapping = {
+          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        }
+    ]
+    diagnostic = ERROR<NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER: Not enough information to infer type argument for 'T'.>

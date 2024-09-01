@@ -82,7 +82,7 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
-    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
+    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
     }
@@ -537,10 +537,10 @@ public class KotlinTestUtils {
                     String directive = ignoreDirectives[0] + targetBackend.name() + "\n";
 
                     String newText;
-                    if (text.startsWith("// !") || text.startsWith("// ")) {
+                    if (text.startsWith("//")) {
                         StringBuilder prefixBuilder = new StringBuilder();
                         int l = 0;
-                        while (text.startsWith("// !", l) || text.startsWith("// ", l)) {
+                        while (text.startsWith("//", l)) {
                             int r = text.indexOf("\n", l) + 1;
                             if (r <= 0) r = text.length();
                             prefixBuilder.append(text.substring(l, r));

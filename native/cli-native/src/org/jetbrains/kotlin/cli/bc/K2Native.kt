@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.bc
@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 
-private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -64,8 +64,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             runKonanDriver(configuration, environment, rootDisposable)
         } catch (e: Throwable) {
-            if (e is KonanCompilationException || e is CompilationErrorException)
+            if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationError)
                 return ExitCode.COMPILATION_ERROR
+
+            if (e is KonanPendingCompilationError) {
+                configuration.report(ERROR, e.message)
+                return ExitCode.COMPILATION_ERROR
+            }
 
             configuration.report(ERROR, """
                 |Compilation failed: ${e.message}
@@ -105,6 +110,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configuration.put(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
+        configuration.put(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING, arguments.experimentalDoubleInlining)
+        arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
+        configuration.put(
+            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
+            arguments.narrowedSyntheticAccessorsVisibility
+        )
+
         return environment
     }
 
@@ -129,7 +141,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val spawnedConfiguration = CompilerConfiguration()
 
                 spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                spawnedConfiguration.put(IrMessageLogger.IR_MESSAGE_LOGGER, configuration.getNotNull(IrMessageLogger.IR_MESSAGE_LOGGER))
+                spawnedConfiguration.performanceManager = configuration.performanceManager
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)
                 spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)

@@ -125,8 +125,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allLoopExpressionCheckers.check(errorLoop, data)
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {
-        checkers.allLogicExpressionCheckers.check(binaryLogicExpression, data)
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: CheckerContext) {
+        checkers.allBooleanOperatorExpressionCheckers.check(booleanOperatorExpression, data)
     }
 
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: CheckerContext) {
@@ -189,6 +189,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allCallCheckers.check(delegatedConstructorCall, data)
     }
 
+    override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall, data: CheckerContext) {
+        checkers.allCallCheckers.check(multiDelegatedConstructorCall, data)
+    }
+
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
         checkers.allThrowExpressionCheckers.check(throwExpression, data)
     }
@@ -218,7 +222,7 @@ class ExpressionCheckersDiagnosticComponent(
     }
 
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(smartCastExpression, data)
+        checkers.allSmartCastExpressionCheckers.check(smartCastExpression, data)
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CheckerContext) {

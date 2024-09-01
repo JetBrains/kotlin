@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test: Regenerate Compose compiler goldens" type="GradleRunConfiguration" factoryName="Gradle" folderName="Compose">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="GENERATE_GOLDEN" value="true" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:cleanJvmTest" />
+          <option value=":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:jvmTest" />
+        </list>
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
+    <method v="2" />
+  </configuration>
+</component>

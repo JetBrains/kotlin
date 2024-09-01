@@ -1,0 +1,25 @@
+KtCallExpression(74,87): 'Foo<String>()'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = Foo<kotlin.String>
+            symbol = <constructor>(x: T): Foo<T>
+            valueParameters = [
+              KaVariableSignature:
+                name = x
+                receiverType = null
+                returnType = kotlin.String
+                symbol = x: T
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>

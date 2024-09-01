@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalInheritorsOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
@@ -45,7 +45,7 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
             val classSymbol = todo.popLast().toRegularClassSymbol(context.session) ?: continue
             if (done.add(classSymbol)) {
                 f(classSymbol)
-                classSymbol.resolvedSuperTypeRefs.mapNotNullTo(todo) { it.type as? ConeClassLikeType }
+                classSymbol.resolvedSuperTypeRefs.mapNotNullTo(todo) { it.coneType as? ConeClassLikeType }
             }
         }
     }

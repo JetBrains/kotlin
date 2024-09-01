@@ -62,7 +62,8 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         val password = properties.buildReportHttpPassword
         val user = properties.buildReportHttpUser
         val includeGitBranchName = properties.buildReportHttpIncludeGitBranchName
-        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment, includeGitBranchName)
+        val useExecutor = properties.buildReportHttpUseExecutor
+        HttpReportSettings(url, password, user, properties.buildReportHttpVerboseEnvironment, includeGitBranchName, useExecutor)
     } else {
         null
     }

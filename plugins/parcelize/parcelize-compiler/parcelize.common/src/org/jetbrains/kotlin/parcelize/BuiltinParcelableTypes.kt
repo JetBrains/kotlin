@@ -39,7 +39,17 @@ object BuiltinParcelableTypes {
     val PARCELABLE_SUPERTYPE_FQNAMES = setOf(
         "android.os.Parcelable",
         "android.os.IBinder",
-        "java.io.Serializable"
+    )
+
+    val EXTERNAL_SERIALIZABLE_FQNAMES = setOf(
+        "java.io.Serializable",
+    )
+
+    val STDLIB_SUPPORTED_TYPES_FQNAMES = setOf(
+        "kotlin.time.Duration",
+        "kotlin.ranges.CharRange",
+        "kotlin.ranges.IntRange",
+        "kotlin.ranges.LongRange",
     )
 
     val PARCELABLE_BASE_TYPE_FQNAMES = setOf(
@@ -86,8 +96,7 @@ object BuiltinParcelableTypes {
         "kotlin.ULongArray",
         "kotlin.UShort",
         "kotlin.UShortArray",
-        "kotlin.time.Duration",
-    ) + PARCELABLE_SUPERTYPE_FQNAMES
+    ) + PARCELABLE_SUPERTYPE_FQNAMES + EXTERNAL_SERIALIZABLE_FQNAMES + STDLIB_SUPPORTED_TYPES_FQNAMES
 
     val PARCELABLE_CONTAINER_FQNAMES = setOf(
         "android.util.SparseArray",

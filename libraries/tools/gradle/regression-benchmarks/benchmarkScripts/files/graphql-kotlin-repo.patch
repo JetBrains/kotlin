@@ -1,5 +1,5 @@
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 22383a2ff..9869bd429 100644
+index cc8f246fa..372ab197d 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -20,19 +20,15 @@ plugins {
@@ -11,7 +11,7 @@ index 22383a2ff..9869bd429 100644
 +            mavenCentral()
          }
      }
- 
+
      repositories {
 +        mavenLocal()
          mavenCentral()
@@ -25,7 +25,7 @@ index 22383a2ff..9869bd429 100644
  }
 
 diff --git a/gradle.properties b/gradle.properties
-index 314ccfb8c..ee33f75bc 100644
+index 5f87e678e..3fc4f5527 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -15,7 +15,7 @@ org.gradle.jvmargs=-Xmx2g -XX:+HeapDumpOnOutOfMemoryError
@@ -37,8 +37,19 @@ index 314ccfb8c..ee33f75bc 100644
  kotlinCoroutinesVersion = 1.6.4
  # kotlinx-serialization 1.3.3 calls Kotlin 1.7 API
  kotlinxSerializationVersion = 1.3.2
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+index 8049c684f..068cdb2dc 100644
+--- a/gradle/wrapper/gradle-wrapper.properties
++++ b/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.3-bin.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
 diff --git a/settings.gradle.kts b/settings.gradle.kts
-index f6fa7cee5..5bbb4828a 100644
+index dde7eff60..a30d11913 100644
 --- a/settings.gradle.kts
 +++ b/settings.gradle.kts
 @@ -9,6 +9,11 @@ pluginManagement {

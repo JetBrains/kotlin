@@ -75,11 +75,7 @@ fun run() {
     }
     if (foo.hashCode() == hash) {
         // toString (virtually):
-        if (Platform.memoryModel == MemoryModel.STRICT)
-            println(map.keys.map { it.toString() }.minOrNull() == foo.description())
-        else
-            // TODO: hack until proper cycle collection in maps.
-            println(true)
+        println(map.keys.map { it.toString() }.minOrNull() == foo.description())
     }
     println(globalString)
     autoreleasepool {
@@ -119,7 +115,7 @@ class Bar : Foo() {
     }
 }
 
-@Suppress("CONFLICTING_OBJC_OVERLOADS")
+@Suppress("CONFLICTING_OBJC_OVERLOADS", "CONFLICTING_OVERLOADS")
 class MutablePairImpl(first: Int, second: Int) : NSObject(), MutablePairProtocol {
     private var elements = intArrayOf(first, second)
 

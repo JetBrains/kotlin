@@ -14,8 +14,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -25,10 +27,13 @@ import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 internal val XcodeVersionSetupAction = KotlinProjectSetupAction {
     launch {
-        val xcodeVersionTask = XcodeVersionTask.locateOrRegister(this@KotlinProjectSetupAction)
+        val hasAppleTargets = multiplatformExtension.awaitTargets().any { it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily }
+        if (hasAppleTargets) {
+            val xcodeVersionTask = XcodeVersionTask.locateOrRegister(this@KotlinProjectSetupAction)
 
-        tasks.withType<UsesXcodeVersion>().configureEach { task ->
-            task._xcodeVersion.set(xcodeVersionTask.flatMap { it.outputFile })
+            tasks.withType<UsesXcodeVersion>().configureEach { task ->
+                task._xcodeVersion.set(xcodeVersionTask.flatMap { it.outputFile })
+            }
         }
     }
 }

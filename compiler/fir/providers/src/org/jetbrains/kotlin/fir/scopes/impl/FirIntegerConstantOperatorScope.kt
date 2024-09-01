@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -34,7 +35,7 @@ class FirIntegerConstantOperatorScope(
         val baseType = when (isUnsigned) {
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
-        }.type
+        }.coneType
 
         baseType.scope(
             session,
@@ -79,7 +80,7 @@ class FirIntegerConstantOperatorScope(
             symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
             origin = FirDeclarationOrigin.WrappedIntegerOperator
             returnTypeRef = buildResolvedTypeRef {
-                type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
+                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
             }
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol
@@ -124,6 +125,11 @@ class FirIntegerConstantOperatorScope(
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         return ProcessorAction.NONE
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirIntegerConstantOperatorScope {
+        return FirIntegerConstantOperatorScope(newSession, newScopeSession, isUnsigned)
     }
 }
 

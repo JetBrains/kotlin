@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun <T : R|kotlin/CharSequence?|> foo(mapper: R|Mapper|, cls: R|java/lang/Class<T>?|): R|kotlin/Unit| {
-        lval result: R|T & Any| = R|<local>/mapper|.R|/Mapper.readValue|<R|T!|>(R|<local>/cls|)!!
+        lval result: R|T & Any| = R|<local>/mapper|.R|/Mapper.readValue|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=T) T!|>(R|<local>/cls|)!!
         R|<local>/result|.R|kotlin/CharSequence.length|
     }

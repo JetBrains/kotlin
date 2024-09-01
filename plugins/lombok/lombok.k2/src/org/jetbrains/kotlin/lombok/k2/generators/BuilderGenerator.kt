@@ -353,7 +353,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         }
         isPrimary = false
         returnTypeRef = buildResolvedTypeRef {
-            type = outerClassSymbol.defaultType()
+            coneType = outerClassSymbol.defaultType()
         }
         dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null
         typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }

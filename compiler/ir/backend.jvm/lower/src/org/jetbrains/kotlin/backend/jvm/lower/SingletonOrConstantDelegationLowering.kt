@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 )
 internal class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(SingletonOrConstantDelegationTransformer(context), null)
     }
 }
@@ -57,7 +56,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
 
         backingField = null
 
-        val initializerBlock = if (delegate !is IrConst<*> && delegate !is IrGetValue)
+        val initializerBlock = if (delegate !is IrConst && delegate !is IrGetValue)
             context.irFactory.createAnonymousInitializer(
                 delegate.startOffset,
                 delegate.endOffset,

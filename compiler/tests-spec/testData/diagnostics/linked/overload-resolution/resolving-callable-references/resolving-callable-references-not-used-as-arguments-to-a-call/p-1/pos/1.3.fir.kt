@@ -31,7 +31,7 @@ class Case() {
 
     }
 
-    val V.Companion.b: String // (3)
+    val V.Companion.<!EXTENSION_SHADOWED_BY_MEMBER!>b<!>: String // (3)
         get() = "1"
 
 }

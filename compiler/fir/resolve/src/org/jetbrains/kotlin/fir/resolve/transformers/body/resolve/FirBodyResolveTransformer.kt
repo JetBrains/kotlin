@@ -25,6 +25,7 @@ open class FirBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
+    expandTypeAliases = true,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformer(this)
     final override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformer(this)

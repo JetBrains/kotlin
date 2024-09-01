@@ -72,9 +72,27 @@ public class FirIdeNormalAnalysisScriptSourceModuleSingleSymbolByPsiTestGenerate
     }
 
     @Test
+    @TestMetadata("entryInScriptDestructuringDeclarationMutable.kts")
+    public void testEntryInScriptDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInScriptDestructuringDeclarationMutable.kts");
+    }
+
+    @Test
     @TestMetadata("entryUnderscoreInScriptDestructuringDeclaration.kts")
     public void testEntryUnderscoreInScriptDestructuringDeclaration() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInScriptDestructuringDeclaration.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptDestructuringDeclaration.kts")
+    public void testScriptDestructuringDeclaration() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/scriptDestructuringDeclaration.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptDestructuringDeclarationMutable.kts")
+    public void testScriptDestructuringDeclarationMutable() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/scriptDestructuringDeclarationMutable.kts");
     }
   }
 

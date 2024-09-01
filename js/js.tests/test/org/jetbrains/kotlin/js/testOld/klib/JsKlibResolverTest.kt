@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -50,6 +52,44 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(JUnit4Assertions, result.output, missingLibrary = "/v2/lib1", tmpdir)
     }
 
+    fun testResolvingTransitiveDependenciesRecordedInManifest() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        createModules(moduleA, moduleB, moduleC)
+
+        val aKlib = tmpdir.resolve("a.klib").also { it.mkdirs() }
+        val resultA = compileKlib(moduleA.sourceFile, dependency = null, outputFile = aKlib)
+        assertEquals(ExitCode.OK, resultA.exitCode)
+
+        val bKlib = tmpdir.resolve("b.klib").also { it.mkdirs() }
+        val resultB = compileKlib(moduleB.sourceFile, dependency = aKlib, outputFile = bKlib)
+        assertEquals(ExitCode.OK, resultB.exitCode)
+
+        // remove transitive dependency `a`, to check that subsequent compilation of `c` would not fail,
+        // since resolve on 1-st stage is performed without dependencies
+        aKlib.deleteRecursively()
+        val cKlib = tmpdir.resolve("c.klib").also { it.mkdirs() }
+        val resultC = compileKlib(moduleC.sourceFile, dependency = bKlib, outputFile = cKlib)
+        assertEquals(ExitCode.OK, resultC.exitCode)
+
+        val resultJS = compileToJs(cKlib, dependency = bKlib, outputFile = cKlib)
+        assertEquals(ExitCode.OK, resultJS.exitCode)
+        assertTrue(resultJS.output.contains("warning: KLIB resolver: Could not find \"a\" in "))
+        assertTrue(resultJS.output.contains("No function found for symbol 'a/a|a(kotlin.Int){}[0]'"))
+    }
+
+    private data class Module(val name: String, val dependencyNames: List<String>) {
+        constructor(name: String, vararg dependencyNames: String) : this(name, dependencyNames.asList())
+
+        lateinit var dependencies: List<Module>
+        lateinit var sourceFile: File
+
+        fun initDependencies(resolveDependency: (String) -> Module) {
+            dependencies = dependencyNames.map(resolveDependency)
+        }
+    }
+
     private fun createKlibDir(name: String, version: Int): File =
         tmpdir.resolve("v$version").resolve(name).apply(File::mkdirs)
 
@@ -60,16 +100,39 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            "-Xir-produce-klib-dir",
-            "-libraries", libraries,
-            "-ir-output-dir", outputFile.absolutePath,
-            "-ir-output-name", outputFile.nameWithoutExtension,
+            K2JSCompilerArguments::irProduceKlibDir.cliArgument,
+            K2JSCompilerArguments::libraries.cliArgument, libraries,
+            K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
+            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             sourceFile.absolutePath
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JsIrCompiler().execFullPathsInMessages(printStream, args)
+            K2JSCompiler().execFullPathsInMessages(printStream, args)
+        }
+
+        return CompilationResult(exitCode, compilerXmlOutput.toString())
+    }
+
+    private fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
+        val libraries = listOfNotNull(
+            StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
+            dependency
+        ).joinToString(File.pathSeparator) { it.absolutePath }
+
+        val args = arrayOf(
+            K2JSCompilerArguments::irProduceJs.cliArgument,
+            K2JSCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
+            K2JSCompilerArguments::libraries.cliArgument, libraries,
+            K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
+            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
+            K2JSCompilerArguments::target.cliArgument, "es2015",
+        )
+
+        val compilerXmlOutput = ByteArrayOutputStream()
+        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            K2JSCompiler().execFullPathsInMessages(printStream, args)
         }
 
         return CompilationResult(exitCode, compilerXmlOutput.toString())
@@ -91,5 +154,35 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
                 appendLine(output)
             }
         }
+    }
+
+    private fun createModules(vararg modules: Module): List<Module> {
+        val mapping: Map<String, Module> = modules.groupBy(Module::name).mapValues {
+            it.value.singleOrNull() ?: error("Duplicated modules: ${it.value}")
+        }
+
+        modules.forEach { it.initDependencies(mapping::getValue) }
+
+        val generatedSourcesDir = tmpdir.resolve("generated-sources")
+        generatedSourcesDir.mkdirs()
+
+        modules.forEach { module ->
+            module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
+            module.sourceFile.writeText(
+                buildString {
+                    appendLine("package ${module.name}")
+                    appendLine()
+                    appendLine("fun ${module.name}(indent: Int) {")
+                    appendLine("    repeat(indent) { print(\"  \") }")
+                    appendLine("    println(\"${module.name}\")")
+                    module.dependencyNames.forEach { dependencyName ->
+                        appendLine("    $dependencyName.$dependencyName(indent + 1)")
+                    }
+                    appendLine("}")
+                }
+            )
+        }
+
+        return modules.asList()
     }
 }

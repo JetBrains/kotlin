@@ -307,7 +307,7 @@ This can be used in the event of problems with the new implementation."""
         value = "-Xuse-fast-jar-file-system",
         description = "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental."
     )
-    var useFastJarFileSystem = false
+    var useFastJarFileSystem: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -614,26 +614,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         }
 
     @Argument(
-        value = "-Xno-optimized-callable-references",
-        description = "Don't use optimized callable reference superclasses, which have been available since 1.4."
-    )
-    var noOptimizedCallableReferences = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xno-kotlin-nothing-value-exception",
-        description = "Don't use KotlinNothingValueException, which has been available since 1.4."
-    )
-    var noKotlinNothingValueException = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xno-reset-jar-timestamps",
         description = "Don't reset jar entry timestamps to a fixed date."
     )
@@ -828,10 +808,10 @@ This option is deprecated and will be deleted in future versions."""
         }
 
     @Argument(
-        value = "-Xuse-kapt4",
-        description = "Enable the experimental KAPT 4."
+        value = "-Xuse-k2-kapt",
+        description = "Enable the experimental support for K2 KAPT."
     )
-    var useKapt4 = false
+    var useK2Kapt = false
         set(value) {
             checkFrozen()
             field = value

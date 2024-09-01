@@ -10,14 +10,17 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.descendants
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.ENUM_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
@@ -142,24 +145,49 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
-        override fun mark(element: KtNamedDeclaration): List<TextRange> {
-            val nameIdentifier = element.nameIdentifier
-            if (nameIdentifier != null) {
-                if (element is KtClassOrObject) {
-                    val startElement =
-                        element.getModifierList()?.getModifier(KtTokens.ENUM_KEYWORD)
-                            ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
-                            ?: element
+    val CONTEXT_KEYWORD: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> =
+            element.descendants().firstIsInstanceOrNull<KtContextReceiverList>()?.firstChild?.textRange?.let(::markRange)
+                ?: DEFAULT.mark(element)
+    }
 
-                    return markRange(startElement, nameIdentifier)
+    private fun findStartingPsiElementForDeclarationName(
+        element: KtNamedDeclaration,
+    ): PsiElement =
+        element.getModifierList()?.getModifier(ENUM_KEYWORD)
+            ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
+            ?: element
+
+    @JvmField
+    val DECLARATION_NAME: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            if (element is KtNamedDeclaration) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) {
+                    if (element is KtClassOrObject) {
+                        val startElement = findStartingPsiElementForDeclarationName(element)
+                        return markRange(startElement, nameIdentifier)
+                    }
+                    return markElement(nameIdentifier)
                 }
-                return markElement(nameIdentifier)
-            }
-            if (element is KtNamedFunction) {
-                return DECLARATION_SIGNATURE.mark(element)
+                if (element is KtNamedFunction) {
+                    return DECLARATION_SIGNATURE.mark(element)
+                }
+            } else if (element is KtPropertyAccessor) {
+                return markElement(element.namePlaceholder)
             }
             return DEFAULT.mark(element)
+        }
+    }
+
+    @JvmField
+    val DECLARATION_NAME_OR_ACCESSOR: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            return when (element) {
+                is KtPropertyAccessor -> markElement(element.namePlaceholder)
+                is KtNamedDeclaration -> DECLARATION_NAME.mark(element)
+                else -> super.mark(element)
+            }
         }
     }
 
@@ -225,6 +253,36 @@ object PositioningStrategies {
                 }
             }
             return super.mark(element)
+        }
+    }
+
+    @JvmField
+    val CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            when (element) {
+                is KtNamedFunction -> {
+                    val startElement = element.funKeyword ?: element
+                    val endOfSignatureElement =
+                        element.typeReference
+                            ?: element.valueParameterList
+                            ?: element.nameIdentifier
+                            ?: element
+                    return markRange(startElement, endOfSignatureElement)
+                }
+                is KtProperty -> {
+                    val endOfSignatureElement = element.typeReference ?: element.nameIdentifier ?: element
+                    return markRange(element.valOrVarKeyword, endOfSignatureElement)
+                }
+                is KtPropertyAccessor -> {
+                    val endOfSignatureElement =
+                        element.returnTypeReference
+                            ?: element.rightParenthesis
+                            ?: element.namePlaceholder
+
+                    return markRange(element.namePlaceholder, endOfSignatureElement)
+                }
+            }
+            return DECLARATION_SIGNATURE.mark(element)
         }
     }
 
@@ -932,9 +990,8 @@ object PositioningStrategies {
             } else if (element is KtLabelReferenceExpression) {
                 return super.mark(element.getReferencedNameElement())
             } else if (element is KtPackageDirective) {
-                val nameIdentifier = element.nameIdentifier
-                if (nameIdentifier != null) {
-                    return super.mark(nameIdentifier)
+                element.packageNameExpression?.let {
+                    return super.mark(it)
                 }
             }
 
@@ -1107,6 +1164,13 @@ object PositioningStrategies {
             if (element is KtBinaryExpression && element.operationToken == KtTokens.EQ) {
                 // Look for reference in LHS of variable assignment.
                 element.left?.let { return mark(it) }
+            }
+            if (element is KtClassOrObject) {
+                val nameIdentifier = (element as? KtNamedDeclaration)?.nameIdentifier
+                if (nameIdentifier != null) {
+                    val startElement = findStartingPsiElementForDeclarationName(element)
+                    return markRange(startElement, nameIdentifier)
+                }
             }
             var result: PsiElement = when (element) {
                 is KtQualifiedExpression -> {

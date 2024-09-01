@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63864
 // WITH_STDLIB
 // MODULE: lib
 // FILE: lib.kt

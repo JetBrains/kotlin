@@ -1,2 +1,3 @@
-KDocReference:
-  (in <local>: f.C) fun aa()
+KDocName(48,50): 'aa'
+  KDocReference:
+    (in <local>: f.C) fun aa()

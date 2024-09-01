@@ -1,5 +1,6 @@
-KtSimpleNameReference:
-  (in JavaClass) var JavaClass.something: kotlin.Int
-
-SyntheticPropertyAccessorReference:
-  (in JavaClass) open fun setSomething(value: kotlin.Int)
+KtNameReferenceExpression(269,278): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)

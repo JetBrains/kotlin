@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 abstract class LLFirLibraryLikeSession(
-    ktModule: KtModule,
+    ktModule: KaModule,
     builtinTypes: BuiltinTypes,
 ) : LLFirSession(ktModule, builtinTypes, Kind.Library) {
     private val scopeSessionProvider = LLFirScopeSessionProvider.create(project, invalidationTrackers = emptyList())

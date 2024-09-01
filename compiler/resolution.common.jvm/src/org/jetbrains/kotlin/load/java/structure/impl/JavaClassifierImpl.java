@@ -45,7 +45,7 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
 
     @Override
     public final boolean isFromSource() {
-        return true;
+        return !JavaPsiUtilsKt.isCompiledElement(getPsi());
     }
 
     @NotNull

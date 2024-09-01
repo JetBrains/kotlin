@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind

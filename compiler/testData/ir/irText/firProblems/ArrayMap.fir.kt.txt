@@ -126,7 +126,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
   fun entries(): List<Entry<T>> {
-    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: @ParameterName(name = "index") Int, value: Any?): Entry<T>? {
+    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
       return when {
         EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
         else -> null
@@ -336,4 +336,3 @@ fun ArrayMap<*>.isEmpty(): Boolean {
 fun ArrayMap<*>.isNotEmpty(): Boolean {
   return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
 }
-

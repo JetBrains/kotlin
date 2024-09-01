@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.receiverParameter]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.receiverParameter]
  */
 abstract class FirReceiverParameter : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?

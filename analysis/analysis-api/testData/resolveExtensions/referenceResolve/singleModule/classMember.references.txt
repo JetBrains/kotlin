@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in generated.GeneratedClass2) fun generatedClassMember2(): generated.GeneratedClass1 [origin = SOURCE]
+KtNameReferenceExpression(105,126): 'generatedClassMember2'
+  KtSimpleNameReference:
+    (in generated.GeneratedClass2) fun generatedClassMember2(): generated.GeneratedClass1 [origin = SOURCE]

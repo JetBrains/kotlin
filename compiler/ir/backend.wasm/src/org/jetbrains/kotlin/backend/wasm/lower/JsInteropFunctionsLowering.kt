@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,7 +62,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (declaration.getWasmImportDescriptor() != null) return null
         check(!(isExported && isExternal)) { "Exported external declarations are not supported: ${declaration.fqNameWhenAvailable}" }
         check(declaration.parent !is IrClass) { "Interop members are not supported:  ${declaration.fqNameWhenAvailable}" }
-        if (context.mapping.wasmNestedExternalToNewTopLevelFunction.keys.contains(declaration)) return null
+        if (context.mapping.wasmNestedExternalToNewTopLevelFunction[declaration] != null) return null
 
         additionalDeclarations.clear()
         currentParent = declaration.parent
@@ -283,7 +283,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.doubleType,
             context.wasmSymbols.voidType ->
                 return null
-
+            else -> {}
         }
 
         if (isExternalType(this))
@@ -424,6 +424,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.doubleType,
             symbols.voidType ->
                 return null
+            else -> {}
         }
 
         if (isExternalType(this))

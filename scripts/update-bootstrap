@@ -29,7 +29,7 @@ if __name__ == '__main__':
     git_add(properties, kotlinc)
     git_commit(f'Advance bootstrap to {version}')
 
-    subprocess.run(['sed', '-i', '-e', "'/<components>/,/<\/components>/d'", 'gradle/verification-metadata.xml'])
+    subprocess.run(['sed', '-i', '-e', r'/<components>/,/<\/components>/d', 'gradle/verification-metadata.xml'])
     subprocess.run(['./gradlew', '-i', '--write-verification-metadata', 'sha256,md5', '-Pkotlin.native.enabled=true', 'resolveDependencies'])
     status_output = subprocess.run(['git', 'status', '--porcelain'], capture_output=True).stdout
     if len(status_output) != 0:

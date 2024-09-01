@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
@@ -18,22 +19,23 @@ import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
-    fun getModuleName(module: KtModule): String?
+
+    fun KaSession.getModuleName(module: KaModule): String?
 
     companion object {
         val default = KtObjCExportModuleNaming(listOf(KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming))
     }
 }
 
-context(KtAnalysisSession, KtObjCExportSession)
-internal fun KtModule.getObjCKotlinModuleName(): String? {
-    return cached(GetObjCKotlinModuleNameCacheKey(this)) {
-        internal.moduleNaming.getModuleName(this)
+internal fun ObjCExportContext.getObjCKotlinModuleName(module: KaModule): String? {
+    return exportSession.cached(GetObjCKotlinModuleNameCacheKey(module)) {
+        with(exportSession.internal.moduleNaming) {
+            analysisSession.getModuleName(module)
+        }
     }
 }
 
-private data class GetObjCKotlinModuleNameCacheKey(private val module: KtModule)
+private data class GetObjCKotlinModuleNameCacheKey(private val module: KaModule)
 
 /**
  * Combines several [implementations] to a single [KtObjCExportModuleNaming].
@@ -44,16 +46,15 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 }
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
-    override fun getModuleName(module: KtModule): String? {
+    override fun KaSession.getModuleName(module: KaModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
         the contained manifest to get the 'shortName' or 'uniqueName'.
 
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
-        if (module !is KtLibraryModule) return null
-        val binaryRoot = module.getBinaryRoots().singleOrNull() ?: return null
+        if (module !is KaLibraryModule) return null
+        val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
             .getOrElse { error -> error.printStackTrace(); return null } ?: return null
@@ -62,18 +63,22 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
-    context(KtAnalysisSession)
-    override fun getModuleName(module: KtModule): String? {
+    @OptIn(KaExperimentalApi::class)
+    override fun KaSession.getModuleName(module: KaModule): String? {
         return when (module) {
-            is KtSourceModule -> module.stableModuleName ?: module.moduleName
-            is KtLibraryModule -> module.libraryName
+            is KaSourceModule -> module.stableModuleName ?: module.name
+            is KaLibraryModule -> module.libraryName
             else -> null
         }
     }
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    context(KtAnalysisSession) override fun getModuleName(module: KtModule): String? {
-        return implementations.firstNotNullOfOrNull { implementation -> implementation.getModuleName(module) }
+    override fun KaSession.getModuleName(module: KaModule): String? {
+        return implementations.firstNotNullOfOrNull { implementation ->
+            with(implementation) {
+                getModuleName(module)
+            }
+        }
     }
 }

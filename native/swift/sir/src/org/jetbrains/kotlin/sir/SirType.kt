@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
+
 sealed interface SirType
 
 class SirNominalType(
-    val type: SirNamedDeclaration,
+    val typeDeclaration: SirNamedDeclaration,
+    val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
 ) : SirType {
     override fun equals(other: Any?): Boolean {
@@ -17,14 +20,14 @@ class SirNominalType(
 
         other as SirNominalType
 
-        if (type != other.type) return false
+        if (typeDeclaration != other.typeDeclaration) return false
         if (parent != other.parent) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = type.hashCode()
+        var result = typeDeclaration.hashCode()
         result = 31 * result + (parent?.hashCode() ?: 0)
         return result
     }
@@ -33,6 +36,7 @@ class SirNominalType(
 class SirExistentialType(
     // TODO: Protocols. For now, only `any Any` is supported
 ) : SirType {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other != null && this::class != other::class) return false
@@ -54,4 +58,6 @@ class SirErrorType(val reason: String) : SirType
 /**
  * A synthetic type for not yet supported Kotlin types.
  */
-class SirUnsupportedType() : SirType
+data object SirUnsupportedType : SirType
+
+public fun SirType.optional(): SirNominalType = SirNominalType(SirSwiftModule.optional, listOf(this))

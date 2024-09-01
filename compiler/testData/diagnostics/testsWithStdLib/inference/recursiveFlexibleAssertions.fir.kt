@@ -25,6 +25,9 @@ ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
 extends AbstractAssert<SELF, ACTUAL> implements ObjectEnumerableAssert<SELF, ELEMENT> {}
 
 // FILE: AbstractListAssert.java
+
+import java.util.List;
+
 public abstract class AbstractListAssert<
         SELF extends AbstractListAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>,
 ACTUAL extends List<? extends ELEMENT>,
@@ -37,7 +40,14 @@ implements IndexedObjectEnumerableAssert<SELF, ELEMENT> {
     }
 }
 
+// FILE: ObjectAssert.java
+
+public class ObjectAssert<ELEMENT> extends AbstractAssert<ObjectAssert<ELEMENT>, ELEMENT> {}
+
 // FILE: ListAssert.java
+
+import java.util.List;
+
 public class ListAssert<ELEMENT> extends AbstractListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> {}
 
 // FILE: AbstractCharSequenceAssert.java

@@ -46,7 +46,7 @@ object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker(MppC
                     }
                 }
 
-                if ((enclosingAnonymousFuncParam?.returnTypeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(context.session) == true) {
+                if ((enclosingAnonymousFuncParam?.returnTypeRef as? FirResolvedTypeRef)?.coneType?.isSuspendOrKSuspendFunctionType(context.session) == true) {
                     isSuspendFunctionFound = true
                     break
                 }

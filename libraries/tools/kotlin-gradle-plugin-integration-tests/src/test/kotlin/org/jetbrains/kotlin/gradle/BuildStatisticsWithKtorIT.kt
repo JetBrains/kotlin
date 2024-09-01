@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -156,7 +157,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             project("incrementalMultiproject", gradleVersion) {
                 enableStatisticReports(BuildReportType.HTTP, "http://localhost:$port/badRequest")
                 build("assemble") {
-                    assertOutputContainsExactTimes("Failed to send statistic to", 1)
+                    assertOutputContainsExactlyTimes("Failed to send statistic to", 1)
                 }
             }
         }
@@ -236,7 +237,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     fun testConfigurationCache(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
-            val buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            val buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
             project("incrementalMultiproject", gradleVersion) {
                 setProjectForTest(port)
                 build("assemble", buildOptions = buildOptions) {
@@ -302,13 +303,20 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     @DisplayName("Validate build with project isolation")
     @GradleTest
     @JvmGradlePluginTests
+    @TestMetadata("incrementalMultiproject")
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
-            val buildOptions = defaultBuildOptions.copy(projectIsolation = true, configurationCache = null)
-            project("incrementalMultiproject", gradleVersion) {
+            project(
+                "incrementalMultiproject",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(
+                    projectIsolation = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
+                )
+            ) {
                 setProjectForTest(port)
-                build("assemble", "--stacktrace", buildOptions = buildOptions) {
+                build("assemble", "--stacktrace") {
                     assertOutputDoesNotContain("Failed to send statistic to")
                 }
             }

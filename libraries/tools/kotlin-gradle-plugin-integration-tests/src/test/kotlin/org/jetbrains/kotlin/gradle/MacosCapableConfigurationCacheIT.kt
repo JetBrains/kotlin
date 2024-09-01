@@ -19,9 +19,6 @@ import java.nio.file.Path
 class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-    )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
@@ -65,10 +62,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("works with apple framework embedding and signing")
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testAppleFrameworkTasks(gradleVersion: GradleVersion, @TempDir targetBuildDir: Path) {
         project(

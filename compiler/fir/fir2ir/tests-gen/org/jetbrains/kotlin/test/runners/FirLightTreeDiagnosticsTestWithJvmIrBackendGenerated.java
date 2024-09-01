@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend {
   @Test
   public void testAllFilesPresentInTestsWithJvmBackend() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class ContextReceivers {
     @Test
     public void testAllFilesPresentInContextReceivers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class DuplicateJvmSignature {
     @Test
     public void testAllFilesPresentInDuplicateJvmSignature() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -151,7 +151,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
 
       @Test
       public void testAllFilesPresentInAccidentalOverrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -239,7 +239,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class Bridges {
       @Test
       public void testAllFilesPresentInBridges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -267,7 +267,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class Erasure {
       @Test
       public void testAllFilesPresentInErasure() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -397,7 +397,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class FinalMembersFromBuiltIns {
       @Test
       public void testAllFilesPresentInFinalMembersFromBuiltIns() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -419,7 +419,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class FunctionAndProperty {
       @Test
       public void testAllFilesPresentInFunctionAndProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -537,7 +537,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -553,7 +553,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/javaInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -623,7 +623,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class JvmName {
       @Test
       public void testAllFilesPresentInJvmName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmName"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -639,7 +639,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class JvmOverloads {
       @Test
       public void testAllFilesPresentInJvmOverloads() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -655,7 +655,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class JvmStatic {
       @Test
       public void testAllFilesPresentInJvmStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -695,7 +695,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class SpecialNames {
       @Test
       public void testAllFilesPresentInSpecialNames() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -777,7 +777,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class Statics {
       @Test
       public void testAllFilesPresentInStatics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -823,7 +823,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class Synthesized {
       @Test
       public void testAllFilesPresentInSynthesized() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -839,7 +839,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class TraitImpl {
       @Test
       public void testAllFilesPresentInTraitImpl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -885,7 +885,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public class ValueClasses {
       @Test
       public void testAllFilesPresentInValueClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test
@@ -932,7 +932,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -948,7 +948,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class Scripts {
     @Test
     public void testAllFilesPresentInScripts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
   }
 
@@ -958,7 +958,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class TypeOf {
     @Test
     public void testAllFilesPresentInTypeOf() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -980,7 +980,7 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   public class ValueClasses {
     @Test
     public void testAllFilesPresentInValueClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test

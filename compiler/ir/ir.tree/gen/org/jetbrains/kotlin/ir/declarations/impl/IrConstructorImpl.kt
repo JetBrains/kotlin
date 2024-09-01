@@ -48,8 +48,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
 
     override var extensionReceiverParameter: IrValueParameter? = null
 
-    override var valueParameters: List<IrValueParameter> = emptyList()
-
     override var contextReceiverParametersCount: Int = 0
 
     override var body: IrBody? = null

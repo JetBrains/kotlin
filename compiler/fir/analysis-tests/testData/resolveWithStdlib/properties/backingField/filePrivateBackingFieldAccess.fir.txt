@@ -1,6 +1,6 @@
 FILE: filePrivateBackingFieldAccess.kt
     public final val list: R|kotlin/collections/List<kotlin/String>|
-        private <explicit backing field>: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        private final backing field field: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
         public get(): R|kotlin/collections/List<kotlin/String>|
     public final fun add(s: R|kotlin/String|): R|kotlin/Unit| {
         R|/list|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/s|)

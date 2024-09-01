@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
+internal class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
     override fun copy(): KtFakeLightClass = SymbolBasedFakeLightClass(kotlinOrigin)
 
     private val _containingClass: KtFakeLightClass? by lazyPub {

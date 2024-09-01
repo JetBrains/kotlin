@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -140,9 +141,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             when (val result = step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
-                    if (step.inputArtifactKind != step.outputArtifactKind) {
-                        dependencyProvider.registerArtifact(module, result.outputArtifact)
-                    }
+                    dependencyProvider.registerArtifact(module, result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {

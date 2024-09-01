@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
+import org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
  * not necessarily the case for declaration providers (e.g. the IDE declaration provider hitting the index without caching).
  *
  * However, since symbol names providers may not be able to compute name sets per their contract, we may have to fall back to the
- * [declaration provider][org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider].
+ * [declaration provider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  *
  * Since this fallback is not suitable for symbols from binary libraries in Standalone mode, the symbol names provider absolutely needs to
  * work there. This functionality is covered by package scope tests.
@@ -48,13 +48,13 @@ internal object DeclarationsInPackageProvider {
                 analysisSession.targetPlatform.isJvm() -> {
                     val psiPackage = PsiPackageImpl(PsiManager.getInstance(analysisSession.project), packageFqName.asString())
                     forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
-                        finder.getClassNames(psiPackage, analysisSession.useSiteAnalysisScope)
+                        finder.getClassNames(psiPackage, analysisSession.analysisScope)
                             .mapNotNullTo(this, Name::identifier)
                     }
                 }
             }
 
-            addAll(collectGeneratedTopLevelClassifiers(packageFqName, analysisSession.useSiteSession))
+            addAll(collectGeneratedTopLevelClassifiers(packageFqName, analysisSession.firSession))
         }
     }
 
@@ -64,12 +64,12 @@ internal object DeclarationsInPackageProvider {
                 analysisSession.symbolNamesProvider.getTopLevelCallableNamesInPackage(packageFqName)
                     ?: analysisSession.useSiteScopeDeclarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
             )
-            addAll(collectGeneratedTopLevelCallables(packageFqName, analysisSession.useSiteSession))
+            addAll(collectGeneratedTopLevelCallables(packageFqName, analysisSession.firSession))
         }
     }
 
     private val KaFirSession.symbolNamesProvider: FirSymbolNamesProvider
-        get() = useSiteSession.symbolProvider.symbolNamesProvider
+        get() = firSession.symbolProvider.symbolNamesProvider
 
     private fun collectGeneratedTopLevelClassifiers(packageFqName: FqName, session: FirSession): Set<Name> {
         val declarationGenerators = session.extensionService.declarationGenerators

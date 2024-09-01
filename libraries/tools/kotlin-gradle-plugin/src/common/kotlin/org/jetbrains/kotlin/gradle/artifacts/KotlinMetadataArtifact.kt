@@ -11,9 +11,9 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
@@ -31,7 +31,7 @@ internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements
     }
 
     /* Include 'KotlinProjectStructureMetadata' file */
-    val generateMetadata = target.project.createGenerateProjectStructureMetadataTask()
+    val generateMetadata = target.project.locateOrRegisterGenerateProjectStructureMetadataTask()
     metadataJarTask.configure { jar ->
         jar.from(generateMetadata.map { it.resultFile }) { spec ->
             spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }

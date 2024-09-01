@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -32,17 +33,17 @@ class MppCompilerPluginsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
 
+            buildGradle.replaceText(
+                """//id("org.jetbrains.kotlin.plugin.allopen")""",
+                """id("org.jetbrains.kotlin.plugin.allopen")""",
+            )
+            buildGradle.replaceText(
+                """//id("org.jetbrains.kotlin.plugin.noarg")""",
+                """id("org.jetbrains.kotlin.plugin.noarg")""",
+            )
+
             buildGradle.append(
                 """
-                buildscript {
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version"
-                        classpath "org.jetbrains.kotlin:kotlin-noarg:${'$'}kotlin_version"
-                    }
-                }
-                apply plugin: 'kotlin-allopen'
-                apply plugin: 'kotlin-noarg'
-    
                 allOpen { annotation 'com.example.Annotation' }
                 noArg { annotation 'com.example.Annotation' }
 

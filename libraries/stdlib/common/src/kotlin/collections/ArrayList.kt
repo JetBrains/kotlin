@@ -40,11 +40,11 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
 
     override val size: Int
     override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    override fun contains(element: E): Boolean
+    override fun containsAll(elements: Collection<E>): Boolean
     override operator fun get(index: Int): E
-    override fun indexOf(element: @UnsafeVariance E): Int
-    override fun lastIndexOf(element: @UnsafeVariance E): Int
+    override fun indexOf(element: E): Int
+    override fun lastIndexOf(element: E): Int
 
     // From MutableCollection
 

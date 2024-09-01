@@ -1,2 +1,3 @@
-KDocReference:
-  (in <local>: f.C) val bb: kotlin.Int
+KDocName(48,50): 'bb'
+  KDocReference:
+    (in <local>: f.C) val bb: kotlin.Int

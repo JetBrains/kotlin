@@ -39,11 +39,13 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELAB
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER_SHOULD_BE_OBJECT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER_TYPE_INCOMPATIBLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.REDUNDANT_TYPE_PARCELER
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY
 
 object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
@@ -119,6 +121,13 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
+            PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED,
+            "Type is not directly supported by ''Parcelize'' because it contains an instance of {0}. " +
+                    "Add the ''@TypeParceler<{0}, ...>'' annotation to provide the missing serialization logic.",
+            RENDER_TYPE
+        )
+
+        map.put(
             PARCELER_SHOULD_BE_OBJECT,
             "Parceler should be an object."
         )
@@ -169,6 +178,11 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         map.put(
             DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead."
+        )
+
+        map.put(
+            VALUE_PARAMETER_USED_IN_CLASS_BODY,
+            "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
         )
     }
 }

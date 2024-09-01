@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 }
 
 sourceSets {

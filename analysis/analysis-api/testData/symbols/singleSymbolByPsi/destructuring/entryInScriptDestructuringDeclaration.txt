@@ -1,32 +1,35 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /a
+  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
+    compilerVisibility: Public
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
+    isActual: false
     isDefault: true
+    isExpect: false
     isExtension: false
     isInline: false
     isOverride: false
+    location: PROPERTY
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
     valueParameters: []
-    visibility: Public
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(entryInScriptDestructuringDeclaration.kts)
     getContainingJvmClassName: null
-    getContainingModule: KtScriptModule "Script entryInScriptDestructuringDeclaration.kts"
+    getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
     deprecationStatus: null
   hasBackingField: true
   hasGetter: true
@@ -42,21 +45,21 @@ KaKotlinPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
+  location: TOP_LEVEL
   modality: FINAL
   name: a
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(entryInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
-  getContainingModule: KtScriptModule "Script entryInScriptDestructuringDeclaration.kts"
+  getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
   deprecationStatus: null
   getterDeprecationStatus: null
   javaGetterName: getA

@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
@@ -18,9 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getOrNull
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
@@ -42,7 +38,6 @@ internal abstract class PropertiesBuildService @Inject constructor(
 
     interface Params : BuildServiceParameters {
         val localProperties: MapProperty<String, String>
-        val configurationTimePropertiesAccessor: Property<ConfigurationTimePropertiesAccessor>
     }
 
     /**
@@ -50,7 +45,6 @@ internal abstract class PropertiesBuildService @Inject constructor(
      */
     private val propertiesPerProject = ConcurrentHashMap<String, Provider<String>>()
 
-    private val configurationTimePropertiesAccessor by lazy { parameters.configurationTimePropertiesAccessor.get() }
     private val localProperties by lazy { parameters.localProperties.get() }
     private val logger = Logging.getLogger(this::class.java)
 
@@ -72,7 +66,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
             // MemoizedCallable.
             val valueFromGradleAndLocalProperties = MemoizedCallable {
                 extraPropertiesExtension.getOrNull(propertyName)?.toString()
-                    ?: providerFactory.gradleProperty(propertyName).usedAtConfigurationTime(configurationTimePropertiesAccessor).orNull
+                    ?: providerFactory.gradleProperty(propertyName).orNull
                     ?: localProperties[propertyName]
             }
             providerFactory.provider { valueFromGradleAndLocalProperties.call() }
@@ -166,7 +160,6 @@ internal abstract class PropertiesBuildService @Inject constructor(
         fun registerIfAbsent(project: Project): Provider<PropertiesBuildService> =
             project.gradle.registerClassLoaderScopedBuildService(PropertiesBuildService::class) {
                 it.parameters.localProperties.set(project.localProperties)
-                it.parameters.configurationTimePropertiesAccessor.set(project.configurationTimePropertiesAccessor)
             }
     }
 

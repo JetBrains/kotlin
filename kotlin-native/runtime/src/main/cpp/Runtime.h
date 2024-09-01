@@ -6,6 +6,7 @@
 #ifndef RUNTIME_RUNTIME_H
 #define RUNTIME_RUNTIME_H
 
+#include <cstdint>
 #include "Porting.h"
 #include "Memory.h"
 
@@ -19,7 +20,7 @@ struct InitNode {
   InitNode* next;
 };
 
-// For experimental MM, if runtime gets initialized, it will be in the native state after this.
+// If runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
 void deinitRuntimeIfNeeded();
 
@@ -32,8 +33,8 @@ void Kotlin_shutdownRuntime();
 // Appends given node to an initializer list.
 RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
 
-void CallInitGlobalPossiblyLock(int* state, void (*init)());
-void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)());
+void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)());
+void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)());
 
 bool Kotlin_memoryLeakCheckerEnabled();
 

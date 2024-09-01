@@ -13,15 +13,15 @@ alloc::Allocator::ThreadData::ThreadData(Allocator& allocator) noexcept : impl_(
 
 alloc::Allocator::ThreadData::~ThreadData() = default;
 
-ALWAYS_INLINE ObjHeader* alloc::Allocator::ThreadData::allocateObject(const TypeInfo* typeInfo) noexcept {
+PERFORMANCE_INLINE ObjHeader* alloc::Allocator::ThreadData::allocateObject(const TypeInfo* typeInfo) noexcept {
     return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
 }
 
-ALWAYS_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+PERFORMANCE_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
     return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
 }
 
-ALWAYS_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
+PERFORMANCE_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
         ObjHeader* object, const TypeInfo* typeInfo) noexcept {
     return impl_->extraObjectDataFactoryThreadQueue().CreateExtraObjectDataForObject(object, typeInfo);
 }
@@ -38,6 +38,18 @@ void alloc::Allocator::ThreadData::prepareForGC() noexcept {
 void alloc::Allocator::ThreadData::clearForTests() noexcept {
     impl_->extraObjectDataFactoryThreadQueue().ClearForTests();
     impl_->objectFactoryThreadQueue().ClearForTests();
+}
+
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    for (auto node : impl_->objectFactory().LockForIter()) {
+        fn(node.GetObjHeader());
+    }
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    for (auto& extraObjectData : impl_->extraObjectDataFactory().LockForIter()) {
+        fn(&extraObjectData);
+    }
 }
 
 alloc::Allocator::Allocator() noexcept : impl_(std::make_unique<Impl>()) {}

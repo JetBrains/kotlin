@@ -70,11 +70,6 @@ abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
          * @see PropertiesProvider.enableKotlinToolingMetadataArtifact
          */
         const val defaultTaskName: String = "buildKotlinToolingMetadata"
-
-        /**
-         * The name of the default [FromKpmModule] task of the given [GradleKpmModule]'s name
-         */
-        fun taskNameForKotlinModule(moduleName: String): String = lowerCamelCaseName(defaultTaskName, moduleName)
     }
 
     @get:OutputDirectory

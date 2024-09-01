@@ -12,6 +12,9 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
 
     operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
 
+    val factories: Collection<AbstractKtDiagnosticFactory>
+        get() = renderersMap.keys
+
     fun containsKey(factory: AbstractKtDiagnosticFactory): Boolean {
         return renderersMap.containsKey(factory)
     }

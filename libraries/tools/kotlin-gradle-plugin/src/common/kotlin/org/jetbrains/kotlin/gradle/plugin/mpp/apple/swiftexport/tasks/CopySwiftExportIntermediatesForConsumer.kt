@@ -6,19 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportConstants
 import java.io.File
 import javax.inject.Inject
 
@@ -30,13 +22,9 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     private val fileSystem: FileSystemOperations,
 ) : DefaultTask() {
 
-    @get:InputDirectory
+    @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val includeBridgeDirectory: DirectoryProperty
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val includeKotlinRuntimeDirectory: DirectoryProperty
+    abstract val includes: ConfigurableFileCollection
 
     @get:Input
     abstract val libraryName: Property<String>
@@ -49,76 +37,51 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         })
     )
 
-    @get:InputFiles
+    @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: ConfigurableFileCollection = objectFactory.fileCollection()
+    abstract val library: RegularFileProperty
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val interfaces: ConfigurableFileCollection = objectFactory.fileCollection()
 
-    @get:Internal
-    val syntheticInterfacesDestinationPath: DirectoryProperty = objectFactory.directoryProperty().convention(
-        builtProductsDirectory.dir(SwiftExportConstants.KOTLIN_BRIDGE)
-    )
-
-    @get:Internal
-    val kotlinRuntimeDestinationPath: DirectoryProperty = objectFactory.directoryProperty().convention(
-        builtProductsDirectory.dir(SwiftExportConstants.KOTLIN_RUNTIME)
-    )
-
-    fun addLibrary(library: Provider<File>) {
-        libraries.from(library)
-    }
-
     fun addInterface(swiftInterface: Provider<File>) {
         interfaces.from(swiftInterface)
     }
 
-    private val libraryTools by lazy { LibraryTools(logger) }
-
     @TaskAction
     fun copy() {
-        mergeAndCopyLibrary()
+        copyLibrary()
         copyInterfaces()
         copyOtherIncludes()
     }
 
-    private fun mergeAndCopyLibrary() {
-        val libsInput = libraries.files.toList()
-        if (libsInput.count() > 1) {
-            val output = builtProductsDirectory.map { it.asFile.resolve(libraryName.get()) }.get()
-            libraryTools.createFatLibrary(libsInput, output)
-        } else {
-            fileSystem.copy {
-                it.from(libsInput.single())
-                it.into(builtProductsDirectory)
-                it.rename {
-                    libraryName.get()
-                }
+    private fun copyLibrary() {
+        fileSystem.copy { spec ->
+            spec.from(library)
+            spec.into(builtProductsDirectory)
+            spec.rename {
+                libraryName.get()
             }
         }
     }
 
     private fun copyInterfaces() {
         interfaces.files.forEach { swiftInterface ->
-            fileSystem.copy {
-                it.from(swiftInterface)
-                it.into(builtProductsDirectory)
-                it.includeEmptyDirs = false
+            fileSystem.copy { spec ->
+                spec.from(swiftInterface)
+                spec.into(builtProductsDirectory)
+                spec.includeEmptyDirs = false
             }
         }
     }
 
     private fun copyOtherIncludes() {
-        fileSystem.copy {
-            it.from(includeBridgeDirectory)
-            it.into(syntheticInterfacesDestinationPath)
-        }
-
-        fileSystem.copy {
-            it.from(includeKotlinRuntimeDirectory)
-            it.into(kotlinRuntimeDestinationPath)
+        includes.forEach { include ->
+            fileSystem.copy { spec ->
+                spec.from(include)
+                spec.into(builtProductsDirectory)
+            }
         }
     }
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -19,10 +24,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.objcinterop.getObjCMethodInfo
 import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -382,10 +387,7 @@ internal fun KotlinStubs.generateObjCCall(
             receiverOrSuper, symbols.nativePtrType, CTypes.voidPtr).name
     callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
 
-    if (isDirect) {
-        callBuilder.cCallBuilder.arguments += "0"
-        callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
-    } else {
+    if (!isDirect) {
         callBuilder.cCallBuilder.arguments += "@selector($selector)"
         callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
     }
@@ -1164,7 +1166,6 @@ private class ObjCBlockPointerValuePassing(
                 type = symbols.nativePtrType,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = 0,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -1216,7 +1217,6 @@ private class ObjCBlockPointerValuePassing(
                     type = functionType.arguments[index].typeOrNull!!,
                     isAssignable = false,
                     symbol = IrValueParameterSymbolImpl(),
-                    index = index,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,

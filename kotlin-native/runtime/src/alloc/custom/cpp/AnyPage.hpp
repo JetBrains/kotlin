@@ -29,6 +29,14 @@ protected:
     // Intentionally non-virtual. `AnyPage` should not be used in any context other than base class clause.
     // Please use concrete implementations instead.
     ~AnyPage() = default;
+};
+
+template<typename Page>
+class alignas(kPageAlignment) MultiObjectPage : public AnyPage<Page> {
+protected:
+    // Intentionally non-virtual. `MultiObjectPage` should not be used in any context other than base class clause.
+    // Please use concrete implementations instead.
+    ~MultiObjectPage() = default;
 
     AllocatedSizeTracker::Page allocatedSizeTracker_{};
 };

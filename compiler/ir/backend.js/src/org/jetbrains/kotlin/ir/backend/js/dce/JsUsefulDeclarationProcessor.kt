@@ -85,7 +85,9 @@ internal class JsUsefulDeclarationProcessor(
                     val classTypeToCreate = when (jsClassOrThis) {
                         is IrCall -> jsClassOrThis.getTypeArgument(0)!!
                         is IrGetValue -> jsClassOrThis.type
-                        else -> error("Unexpected first argument of createThis function call")
+                        else -> irError("Unexpected first argument of createThis function call") {
+                            jsClassOrThis?.let { withIrEntry("jsClassOrThis", it) }
+                        }
                     }
 
                     val classToCreate = classTypeToCreate.classifierOrFail.owner as IrClass

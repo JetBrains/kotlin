@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
 class JsIrConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            configurationCache = true,
-            configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+            configurationCacheProblems = ConfigurationCacheProblems.FAIL
         )
 
     @DisplayName("configuration cache is working for kotlin2js plugin")

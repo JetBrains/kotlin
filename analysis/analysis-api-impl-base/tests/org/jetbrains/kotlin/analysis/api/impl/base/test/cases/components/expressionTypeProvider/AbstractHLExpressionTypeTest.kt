@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expres
 
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -36,7 +36,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                var ktType = expression.getKaType()
+                var ktType = expression.expressionType
                 if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
                     ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
                 }

@@ -76,7 +76,7 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 moduleData = field.moduleData
                 returnTypeRef = if (accessors.chain) {
                     buildResolvedTypeRef {
-                        type = classSymbol.defaultType()
+                        coneType = classSymbol.defaultType()
                     }
                 } else {
                     session.builtinTypes.unitType

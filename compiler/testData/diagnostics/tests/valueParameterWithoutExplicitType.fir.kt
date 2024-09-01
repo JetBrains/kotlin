@@ -1,0 +1,3 @@
+fun foo(
+    <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>x<!>
+) {}

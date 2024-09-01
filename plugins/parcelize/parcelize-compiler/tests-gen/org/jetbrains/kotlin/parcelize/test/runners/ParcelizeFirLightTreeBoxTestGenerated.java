@@ -73,9 +73,21 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("changingBaseClassProperty.kt")
+  public void testChangingBaseClassProperty() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/changingBaseClassProperty.kt");
+  }
+
+  @Test
   @TestMetadata("charSequence.kt")
   public void testCharSequence() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/charSequence.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorParamAndPropertyWithSameName.kt")
+  public void testConstructorParamAndPropertyWithSameName() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorParamAndPropertyWithSameName.kt");
   }
 
   @Test
@@ -130,6 +142,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   @TestMetadata("customSimple.kt")
   public void testCustomSimple() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/customSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/dataClass.kt");
   }
 
   @Test
@@ -337,6 +355,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("mppAdditionalAnnotations.kt")
+  public void testMppAdditionalAnnotations() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppAdditionalAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("mppWithExpectParcelable.kt")
   public void testMppWithExpectParcelable() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable.kt");
@@ -433,6 +457,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("overridingBaseValue.kt")
+  public void testOverridingBaseValue() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/overridingBaseValue.kt");
+  }
+
+  @Test
   @TestMetadata("parcelableValueClass.kt")
   public void testParcelableValueClass() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelableValueClass.kt");
@@ -460,6 +490,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   @TestMetadata("privateConstructor.kt")
   public void testPrivateConstructor() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/privateConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("ranges.kt")
+  public void testRanges() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/ranges.kt");
   }
 
   @Test

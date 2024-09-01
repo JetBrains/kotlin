@@ -5,30 +5,24 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 import org.jetbrains.kotlin.backend.konan.objcexport.plus
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
 
-
-context(KtAnalysisSession)
-internal fun KtAnnotationsList.translateToObjCComment(): ObjCComment? {
-    val annotations = getObjCDocumentedAnnotations()
+internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComment? {
+    val annotations = getObjCDocumentedAnnotations(list)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
 
     if (annotations.isEmpty()) return null
@@ -38,10 +32,13 @@ internal fun KtAnnotationsList.translateToObjCComment(): ObjCComment? {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildComment]
  */
-context(KtAnalysisSession)
-internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
-    val throwsComments = if (isSuspend || bridge.returnsError) {
-        val effectiveThrows = effectiveThrows.toSet()
+internal fun KaSession.translateToObjCComment(
+    function: KaFunctionSymbol,
+    bridge: MethodBridge,
+    parameters: List<ObjCParameter>,
+): ObjCComment? {
+    val throwsComments = if (function.isSuspend || bridge.returnsError) {
+        val effectiveThrows = getEffectiveThrows(function).toSet()
         when {
             effectiveThrows.contains(StandardClassIds.Throwable) -> {
                 listOf("@note This method converts all Kotlin exceptions to errors.")
@@ -65,34 +62,33 @@ internal fun KtFunctionLikeSymbol.translateToObjCComment(bridge: MethodBridge, p
         }
     } else emptyList()
 
-    val visibilityComments = buildObjCVisibilityComment("method")
+    val visibilityComments = function.buildObjCVisibilityComment("method")
 
-    val paramComments = valueParameters.mapNotNull { parameterSymbol ->
-        parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
-            ?.renderedObjCDocumentedParamAnnotations(parameterSymbol)
+    val paramComments = function.valueParameters.mapNotNull { parameterSymbol ->
+        val param = parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
+        param?.let { renderedObjCDocumentedParamAnnotations(it, parameterSymbol) }
     }
-    val annotationsComments = annotationsList.translateToObjCComment()
+    val annotationsComments = translateToObjCComment(function.annotations)
     return annotationsComments + paramComments + throwsComments + visibilityComments
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
-context(KtAnalysisSession)
-private fun ObjCParameter.renderedObjCDocumentedParamAnnotations(parameterSymbol: KtValueParameterSymbol): String? {
-    val renderedAnnotationsString = parameterSymbol.getObjCDocumentedAnnotations()
+private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaValueParameterSymbol): String? {
+    val renderedAnnotationsString = getObjCDocumentedAnnotations(parameterSymbol)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
         .ifEmpty { return null }
         .joinToString(" ")
-    return "@param $name annotations $renderedAnnotationsString"
+    return "@param ${parameter.name} annotations $renderedAnnotationsString"
 }
 
 
-private fun renderAnnotation(annotation: KtAnnotationApplicationWithArgumentsInfo): String? {
+private fun renderAnnotation(annotation: KaAnnotation): String? {
     return renderAnnotation(annotation.classId ?: return null, annotation.arguments)
 }
 
-private fun renderAnnotation(clazz: ClassId, arguments: List<KtNamedAnnotationValue>): String {
+private fun renderAnnotation(clazz: ClassId, arguments: List<KaNamedAnnotationValue>): String {
     return buildString {
         append(clazz.asSingleFqName())
         if (arguments.isNotEmpty()) {
@@ -103,16 +99,14 @@ private fun renderAnnotation(clazz: ClassId, arguments: List<KtNamedAnnotationVa
     }
 }
 
-private fun KtNamedAnnotationValue.render(): String {
+private fun KaNamedAnnotationValue.render(): String {
     return "$name=${expression.renderAsSourceCode()}"
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.visibilityComments]
  */
-private fun KtSymbol.buildObjCVisibilityComment(kind: String): ObjCComment? {
-    return when ((this as? KtSymbolWithVisibility)?.visibility ?: return null) {
-        Visibilities.Protected -> ObjCComment("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
-        else -> null
-    }
+private fun KaSymbol.buildObjCVisibilityComment(kind: String): ObjCComment? = when ((this as? KaDeclarationSymbol)?.visibility) {
+    KaSymbolVisibility.PROTECTED -> ObjCComment("@note This $kind has protected visibility in Kotlin source and is intended only for use by subclasses.")
+    else -> null
 }

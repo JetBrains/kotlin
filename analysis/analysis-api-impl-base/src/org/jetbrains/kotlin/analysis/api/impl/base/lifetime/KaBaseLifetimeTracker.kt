@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.analysis.api.impl.base.lifetime
 import com.intellij.openapi.project.Project
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.providers.lifetime.KaLifetimeTracker
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker
 
 internal class KaBaseLifetimeTracker : KaLifetimeTracker {
-    private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KtLifetimeToken>> { persistentListOf() }
+    private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KaLifetimeToken>> { persistentListOf() }
 
-    override val currentToken: KtLifetimeToken? get() = lifetimeOwnersStack.get().lastOrNull()
+    override val currentToken: KaLifetimeToken? get() = lifetimeOwnersStack.get().lastOrNull()
 
-    fun beforeEnteringAnalysis(session: KtAnalysisSession) {
+    fun beforeEnteringAnalysis(session: KaSession) {
         lifetimeOwnersStack.set(lifetimeOwnersStack.get().add(session.token))
     }
 
-    fun afterLeavingAnalysis(session: KtAnalysisSession) {
+    fun afterLeavingAnalysis(session: KaSession) {
         val stack = lifetimeOwnersStack.get()
         val last = stack.last()
         check(last == session.token)

@@ -41,7 +41,6 @@ extern "C" {
 
 RUNTIME_NORETURN void ThrowWorkerAlreadyTerminated();
 RUNTIME_NORETURN void ThrowWrongWorkerOrAlreadyTerminated();
-RUNTIME_NORETURN void ThrowCannotTransferOwnership();
 RUNTIME_NORETURN void ThrowFutureInvalidState();
 OBJ_GETTER(WorkerLaunchpad, KRef);
 
@@ -52,17 +51,7 @@ namespace {
 enum class WorkerExceptionHandling {
     kDefault, // Perform the default processing of unhandled exception.
     kIgnore, // Do nothing on exception escaping job unit.
-    kLog, // Deprecated.
 };
-
-WorkerExceptionHandling workerExceptionHandling() noexcept {
-    switch (compiler::workerExceptionHandling()) {
-        case compiler::WorkerExceptionHandling::kLegacy:
-            return WorkerExceptionHandling::kLog;
-        case compiler::WorkerExceptionHandling::kUseHook:
-            return WorkerExceptionHandling::kDefault;
-    }
-}
 
 } // namespace
 
@@ -217,10 +206,6 @@ THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 
 KNativePtr transfer(ObjHolder* holder, KInt mode) {
   void* result = CreateStablePointer(holder->obj());
-  if (!ClearSubgraphReferences(holder->obj(), mode == CHECKED)) {
-    DisposeStablePointer(result);
-    ThrowCannotTransferOwnership();
-  }
   holder->clear();
   return result;
 }
@@ -368,7 +353,6 @@ class State {
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
-    GC_RegisterWorker(worker);
     return worker;
   }
 
@@ -396,7 +380,6 @@ class State {
         workers_.erase(it);
       }
     }
-    GC_UnregisterWorker(worker);
     delete worker;
   }
 
@@ -806,7 +789,7 @@ Worker* WorkerInit(MemoryState* memoryState) {
   if (::g_worker != nullptr) {
       worker = ::g_worker;
   } else {
-      worker = theState()->addWorkerUnlocked(workerExceptionHandling(), nullptr, WorkerKind::kOther);
+      worker = theState()->addWorkerUnlocked(WorkerExceptionHandling::kDefault, nullptr, WorkerKind::kOther);
       ::g_worker = worker;
   }
   worker->setThread(pthread_self());
@@ -1013,7 +996,6 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
 }
 
 JobKind Worker::processQueueElement(bool blocking) {
-  GC_CollectorCallback(this);
   if (terminated_) return JOB_TERMINATE;
   Job job = getJob(blocking);
   switch (job.kind) {
@@ -1045,9 +1027,6 @@ JobKind Worker::processQueueElement(bool blocking) {
           case WorkerExceptionHandling::kDefault:
               kotlin::ProcessUnhandledException(e.GetExceptionObject());
               break;
-          case WorkerExceptionHandling::kLog:
-              ReportUnhandledException(e.GetExceptionObject());
-              break;
         }
       }
 
@@ -1075,7 +1054,6 @@ JobKind Worker::processQueueElement(bool blocking) {
             case WorkerExceptionHandling::kIgnore:
                 break;
             case WorkerExceptionHandling::kDefault: // TODO: Pass exception object into the future and do nothing in the default case.
-            case WorkerExceptionHandling::kLog:
                 ReportUnhandledException(e.GetExceptionObject());
                 break;
         }
@@ -1094,7 +1072,7 @@ JobKind Worker::processQueueElement(bool blocking) {
 extern "C" {
 
 KInt Kotlin_Worker_startInternal(KBoolean errorReporting, KRef customName) {
-    return startWorker(errorReporting ? workerExceptionHandling() : WorkerExceptionHandling::kIgnore, customName);
+    return startWorker(errorReporting ? WorkerExceptionHandling::kDefault : WorkerExceptionHandling::kIgnore, customName);
 }
 
 KInt Kotlin_Worker_currentInternal() {
@@ -1147,20 +1125,6 @@ OBJ_GETTER(Kotlin_Worker_attachObjectGraphInternal, KNativePtr stable) {
 
 KNativePtr Kotlin_Worker_detachObjectGraphInternal(KInt transferMode, KRef producer) {
   return detachObjectGraphInternal(transferMode, producer);
-}
-
-void Kotlin_Worker_freezeInternal(KRef object) {
-  if (object != nullptr && compiler::freezingEnabled())
-    FreezeSubgraph(object);
-}
-
-KBoolean Kotlin_Worker_isFrozenInternal(KRef object) {
-  if (!compiler::freezingChecksEnabled()) return false;
-  return object == nullptr || isPermanentOrFrozen(object);
-}
-
-void Kotlin_Worker_ensureNeverFrozen(KRef object) {
-  EnsureNeverFrozen(object);
 }
 
 void Kotlin_Worker_waitTermination(KInt id) {

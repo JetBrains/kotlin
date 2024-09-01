@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
@@ -20,14 +20,13 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.toSymbol
 
 object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isTailRec) return
-        if (!(declaration.isEffectivelyFinal(context) || declaration.visibility == Visibilities.Private)) {
+        if (!(declaration.isEffectivelyFinal() || declaration.visibility == Visibilities.Private)) {
             reporter.reportOn(declaration.source, FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR, context)
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
@@ -64,7 +63,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
                 finallyScopeCount--
             }
 
-            override fun visitFunctionCallNode(node: FunctionCallNode) {
+            override fun visitFunctionCallExitNode(node: FunctionCallExitNode) {
                 val functionCall = node.fir
                 val resolvedSymbol = functionCall.calleeReference.toResolvedCallableSymbol() as? FirNamedFunctionSymbol ?: return
                 if (resolvedSymbol != declaration.symbol) return
@@ -74,7 +73,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
                     return
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
-                val dispatchReceiverOwner = declaration.dispatchReceiverType?.toSymbol(context.session) as? FirClassSymbol<*>
+                val dispatchReceiverOwner = declaration.dispatchReceiverType?.toClassSymbol(context.session)
                 val sameReceiver = dispatchReceiver == null ||
                         (dispatchReceiver is FirThisReceiverExpression && dispatchReceiver.calleeReference.boundSymbol == dispatchReceiverOwner) ||
                         dispatchReceiverOwner?.classKind?.isSingleton == true
@@ -103,7 +102,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
             val hasMore = when (next) {
                 // If exiting another function, then it means this call is inside a nested local function, in which case, it's not a tailrec call.
                 is FunctionExitNode -> return next.fir != tailrecFunction
-                is JumpNode, is BinaryAndExitNode, is BinaryOrExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode,
+                is JumpNode, is BooleanOperatorExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode,
                 is ExitSafeCallNode
                 -> next.hasMoreFollowingInstructions(tailrecFunction)
                 else -> return true

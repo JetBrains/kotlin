@@ -1,0 +1,6 @@
+Restored type is the same as the original one
+
+KaDynamicType:
+  abbreviation: null
+  annotations: []
+  nullability: UNKNOWN

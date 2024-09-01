@@ -5,71 +5,78 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.KaCachedService
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 
+@KaImplementationDetail
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
-    /**
-     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in [analyze].
-     */
+    // We cache several services to avoid repeated `getService` calls in `analyze`.
     @KaCachedService
     private val permissionChecker by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaAnalysisPermissionChecker.getInstance(project)
     }
 
-    /**
-     * Caches [KaBaseLifetimeTracker] to avoid repeated [Project.getService] calls in [analyze].
-     */
     @KaCachedService
     private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaBaseLifetimeTracker.getInstance(project)
     }
 
-    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
-
-    override val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+    @KaCachedService
+    protected val tokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinLifetimeTokenFactory.getInstance(project)
     }
 
-    override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {
+    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
+
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
         // Catch issues with analysis on invalid PSI as early as possible.
         PsiUtilCore.ensureValid(useSiteElement)
 
         beforeEnteringAnalysis(session)
     }
 
-    override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteModule: KtModule) {
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule) {
         beforeEnteringAnalysis(session)
     }
 
-    private fun beforeEnteringAnalysis(session: KtAnalysisSession) {
+    private fun beforeEnteringAnalysis(session: KaSession) {
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
+        }
+
+        /**
+         * The Analysis API is not supposed to work in the dumb mode.
+         * See [KaSession] KDoc for more details.
+         */
+        if (DumbService.isDumb(project)) {
+            throw IndexNotReadyException.create()
         }
 
         lifetimeTracker.beforeEnteringAnalysis(session)
         writeActionStartedChecker.beforeEnteringAnalysis()
     }
 
-    override fun afterLeavingAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
         afterLeavingAnalysis(session)
     }
 
-    override fun afterLeavingAnalysis(session: KtAnalysisSession, useSiteModule: KtModule) {
+    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
         afterLeavingAnalysis(session)
     }
 
-    private fun afterLeavingAnalysis(session: KtAnalysisSession) {
+    private fun afterLeavingAnalysis(session: KaSession) {
         writeActionStartedChecker.afterLeavingAnalysis()
         lifetimeTracker.afterLeavingAnalysis(session)
     }

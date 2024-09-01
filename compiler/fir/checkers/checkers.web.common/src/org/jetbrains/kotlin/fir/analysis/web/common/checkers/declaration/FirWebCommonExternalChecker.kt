@@ -73,10 +73,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             }
         }
 
-        if (declaration is FirPropertyAccessor && declaration.isDirectlyExternal(context.session)) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)
-        } else if (
-            declaration !is FirConstructor &&
+        if (declaration !is FirConstructor &&
             declaration !is FirField &&
             declaration.isPrivateMemberOfExternalClass(context.session)
         ) {
@@ -216,7 +213,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
 
     private fun FirDeclaration.checkConstructorPropertyParam(context: CheckerContext, reporter: DiagnosticReporter) {
         if (this !is FirProperty || source?.kind != KtFakeSourceElementKind.PropertyFromParameter) return
-        val containingClass = getContainingClassSymbol(context.session) as? FirClassSymbol<*> ?: return
+        val containingClass = getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         if (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS) return
         reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
     }
@@ -232,14 +229,14 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
         if (this is FirPropertyAccessor && visibility == propertySymbol.visibility) return false
         if (this !is FirMemberDeclaration || visibility != Visibilities.Private) return false
 
-        val containingDeclaration = getContainingClassSymbol(session) ?: return false
+        val containingDeclaration = getContainingClassSymbol() ?: return false
         return isNativeOrEffectivelyExternal(containingDeclaration, session)
     }
 
     private fun FirDeclaration.isNonAbstractMemberIfInterface(session: FirSession): Boolean {
         return this is FirCallableDeclaration
                 && modality != Modality.ABSTRACT
-                && (getContainingClassSymbol(session) as? FirClassSymbol<*>)?.classKind == ClassKind.INTERFACE
+                && (getContainingClassSymbol() as? FirClassSymbol<*>)?.classKind == ClassKind.INTERFACE
                 && this !is FirPropertyAccessor
     }
 

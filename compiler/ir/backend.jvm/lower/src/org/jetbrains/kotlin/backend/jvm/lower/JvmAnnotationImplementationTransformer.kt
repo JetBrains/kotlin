@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -94,7 +95,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         // Mark the implClass as part of the public ABI if it was instantiated from a public
         // inline function, since annotation implementation classes are regenerated during inlining.
         if (annotationClass.symbol in publicAnnotationImplementationClasses) {
-            jvmContext.publicAbiSymbols += implClass.symbol
+            implClass.isPublicAbi = true
         }
 
         implClass.addFunction(

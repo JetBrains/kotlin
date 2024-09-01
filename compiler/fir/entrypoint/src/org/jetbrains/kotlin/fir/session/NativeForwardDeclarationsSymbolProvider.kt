@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
-import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +56,7 @@ class NativeForwardDeclarationsSymbolProvider(
     private val includedForwardDeclarations: Set<ClassId> by lazy {
         buildSet {
             for (library in kotlinLibraries) {
-                if (!library.isInterop) continue
+                if (!library.isCInteropLibrary() && !library.isCommonizedCInteropLibrary()) continue
 
                 for (fqName in library.includedForwardDeclarations) {
                     val classId = ClassId.topLevel(FqName(fqName))
@@ -163,7 +164,7 @@ fun createSyntheticForwardDeclarationClass(
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
         superTypeRefs += buildResolvedTypeRef {
-            type = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
+            coneType = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
                 .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
         }
 
@@ -173,7 +174,7 @@ fun createSyntheticForwardDeclarationClass(
                     NativeStandardInteropNames.cInteropPackage,
                     NativeStandardInteropNames.ExperimentalForeignApi
                 )
-                type = annotationClassId.toLookupTag()
+                coneType = annotationClassId.toLookupTag()
                     .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
             }
             argumentMapping = FirEmptyAnnotationArgumentMapping

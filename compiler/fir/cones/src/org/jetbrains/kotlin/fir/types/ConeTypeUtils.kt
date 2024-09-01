@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDiagnostics
+import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
@@ -16,6 +22,12 @@ val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NO
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
 val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
+
+val ConeKotlinType.lookupTagIfAny: ConeClassifierLookupTag?
+    get() = (this as? ConeLookupTagBasedType)?.lookupTag
+
+val ConeKotlinType.classLikeLookupTagIfAny: ConeClassLikeLookupTag?
+    get() = (this as? ConeClassLikeType)?.lookupTag
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
@@ -39,7 +51,7 @@ inline fun ConeKotlinType.forEachType(
 
             is ConeDefinitelyNotNullType -> stack.add(next.original)
             is ConeIntersectionType -> stack.addAll(next.intersectedTypes)
-            else -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
+            else -> next.typeArgumentsOfLowerBoundIfFlexible.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
         }
     }
 }
@@ -57,7 +69,8 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
         is ConeFlexibleType -> lowerBound.contains(predicate, visited) || upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
-        else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
+        is ConeCapturedType -> constructor.projection.type?.contains(predicate, visited) == true
+        else -> typeArgumentsOfLowerBoundIfFlexible.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
     }
 }
 
@@ -71,24 +84,19 @@ fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
     }
 }
 
-fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
+fun ConeKotlinType.upperBoundIfFlexible(): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> upperBound
+        is ConeDefinitelyNotNullType -> this
     }
 }
 
-fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
+fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> lowerBound
-    }
-}
-
-fun ConeSimpleKotlinType.originalIfDefinitelyNotNullable(): ConeSimpleKotlinType {
-    return when (this) {
-        is ConeDefinitelyNotNullType -> original
-        else -> this
+        is ConeDefinitelyNotNullType -> this
     }
 }
 
@@ -96,7 +104,7 @@ fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeInterse
     return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
-fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
@@ -140,12 +148,31 @@ fun ConeKotlinType.renderReadable(): String {
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadableWithFqNames(): String {
+fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
     val builder = StringBuilder()
-    ConeTypeRendererForReadability(builder) { ConeIdRendererForDiagnostics() }.render(this)
+    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeIdRendererForDiagnostics() }.render(this)
     return builder.toString()
 }
 
 fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }
 
 fun ConeKotlinType.hasCapture(): Boolean = contains { it is ConeCapturedType }
+
+fun ConeRigidType.getConstructor(): TypeConstructorMarker {
+    return when (this) {
+        is ConeLookupTagBasedType -> this.lookupTag
+        is ConeCapturedType -> this.constructor
+        is ConeTypeVariableType -> this.typeConstructor
+        is ConeIntersectionType -> this
+        is ConeStubType -> this.constructor
+        is ConeDefinitelyNotNullType -> original.getConstructor()
+        is ConeIntegerLiteralType -> this
+    }
+}
+
+val ConeKotlinType.typeArgumentsOfLowerBoundIfFlexible: Array<out ConeTypeProjection>
+    get() = when(this) {
+        is ConeClassLikeType -> typeArguments
+        is ConeFlexibleType -> lowerBound.typeArgumentsOfLowerBoundIfFlexible
+        else -> ConeTypeProjection.EMPTY_ARRAY
+    }

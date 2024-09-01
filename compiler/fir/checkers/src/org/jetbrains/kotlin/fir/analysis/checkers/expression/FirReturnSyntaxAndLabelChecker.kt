@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
@@ -30,6 +33,8 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         val targetSymbol = labeledElement.symbol
         if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.NotAFunctionLabel) {
             reporter.reportOn(source, FirErrors.NOT_A_FUNCTION_LABEL, context)
+        } else if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.UnresolvedLabel) {
+            reporter.reportOn(source, FirErrors.UNRESOLVED_LABEL, context)
         } else if (!isReturnAllowed(targetSymbol, context)) {
             reporter.reportOn(source, FirErrors.RETURN_NOT_ALLOWED, context)
         }

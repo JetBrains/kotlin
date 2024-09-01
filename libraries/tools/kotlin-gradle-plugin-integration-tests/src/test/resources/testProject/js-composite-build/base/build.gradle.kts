@@ -1,7 +1,7 @@
 group = "com.example"
 
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 repositories {

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 

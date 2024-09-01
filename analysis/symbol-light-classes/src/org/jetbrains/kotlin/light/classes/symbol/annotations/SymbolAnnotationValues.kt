@@ -71,7 +71,7 @@ internal class SymbolPsiClassObjectAccessExpression(
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
     override fun getType(): PsiType = psiType
     override fun getOperand(): PsiTypeElement = LightTypeElementWithParent(this, type)
-    override fun getText(): String = type.getCanonicalText(false) + ".class"
+    override fun getText(): String = kotlinOrigin?.text ?: (type.getCanonicalText(false) + ".class")
 }
 
 private class LightTypeElementWithParent(private val lightParent: PsiElement, type: PsiType) : LightTypeElement(lightParent.manager, type) {

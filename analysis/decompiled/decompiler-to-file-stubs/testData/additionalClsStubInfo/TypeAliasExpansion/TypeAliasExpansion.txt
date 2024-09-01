@@ -8,6 +8,72 @@ KotlinStub$CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.functionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$FUNCTION_TYPE    abbreviatedType: test.FunctionAlias
+          KotlinStub$VALUE_PARAMETER_LIST
+            KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.functionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.FunctionAlias?
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NestedFunctionAlias
+          KotlinStub$VALUE_PARAMETER_LIST
+            KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NestedFunctionAlias?
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
     KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithAliasTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithAliasTypeArgument]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
@@ -56,6 +122,40 @@ KotlinStub$CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion
                   KotlinStub$USER_TYPE
                     KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NestedNullableFunctionAlias
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NestedNullableFunctionAlias?
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
     KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAlias]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
@@ -162,6 +262,74 @@ KotlinStub$CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NullableFunctionAlias
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NullableFunctionAlias?
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NullableNestedFunctionAlias
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$FUNCTION_TYPE    abbreviatedType: test.NullableNestedFunctionAlias?
+            KotlinStub$VALUE_PARAMETER_LIST
+              KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
     KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAlias]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE

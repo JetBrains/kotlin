@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
 // FILE: a.kt
 
 private fun bar(): String = "O"

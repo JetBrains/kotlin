@@ -1,0 +1,5 @@
+public final class home/MainKt {
+    // source: 'main.kt'
+    private final static method PostImage$lambda$0(p0: com.example.model.Post, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
+    public final static method PostImage(p0: com.example.model.Post, p1: androidx.compose.runtime.Composer, p2: int): void
+}

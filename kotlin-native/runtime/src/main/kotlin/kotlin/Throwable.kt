@@ -1,14 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.concurrent.freeze
-import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.GCUnsafeCall
@@ -22,20 +20,23 @@ import kotlinx.cinterop.ExperimentalForeignApi
  * @param cause the cause of this throwable.
  */
 @ExportTypeInfo("theThrowableTypeInfo")
-@OptIn(FreezingIsDeprecated::class)
-public open class Throwable(public open val message: String?, public open val cause: Throwable?) {
+public actual open class Throwable
+public actual constructor(
+        public actual open val message: String?,
+        public actual open val cause: Throwable?
+) {
 
-    public constructor(message: String?) : this(message, null)
+    public actual constructor(message: String?) : this(message, null)
 
-    public constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    public constructor() : this(null, null)
+    public actual constructor() : this(null, null)
 
     @get:ExportForCppRuntime("Kotlin_Throwable_getStackTrace")
     private val stackTrace: NativePtrArray = getCurrentStackTrace()
 
     private val stackTraceStrings: Array<String> by lazy {
-        getStackTraceStrings(stackTrace).freeze()
+        getStackTraceStrings(stackTrace)
     }
 
     /**
@@ -181,17 +182,13 @@ public actual inline fun Throwable.printStackTrace(): Unit = printStackTrace()
 /**
  * Adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.
- *
- * Legacy MM: does nothing if this [Throwable] is frozen.
  */
 @SinceKotlin("1.4")
-@OptIn(FreezingIsDeprecated::class)
 public actual fun Throwable.addSuppressed(exception: Throwable) {
-    if (this !== exception && !this.isFrozen) {
+    if (this !== exception) {
         val suppressed = suppressedExceptionsList
         when {
             suppressed == null -> suppressedExceptionsList = mutableListOf<Throwable>(exception)
-            suppressed.isFrozen -> suppressedExceptionsList = suppressed.toMutableList().apply { add(exception) }
             else -> suppressed.add(exception)
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -70,7 +69,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
         staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus buildValueParameter(staticFunction) {
             origin = STATIC_THIS_PARAMETER
             name = Name.identifier("\$this")
-            index = 0
             type = function.dispatchReceiverParameter!!.type
         }
 
@@ -78,7 +76,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus function.valueParameters.map {
             // TODO better way to avoid copying default value
-            it.copyTo(staticFunction, index = it.index + 1, defaultValue = null)
+            it.copyTo(staticFunction, defaultValue = null)
         }
 
         val oldParameters =
@@ -125,10 +123,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                     expression = (it.copyWithParameters() as IrExpressionBody).expression,
                 )
                 is IrSyntheticBody -> it
-                else -> compilationException(
-                    "Unexpected body kind",
-                    it,
-                )
             }
         }
 

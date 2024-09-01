@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope.SyntheticGetterCompatibility.*
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
@@ -119,11 +121,11 @@ class FirSyntheticPropertiesScope private constructor(
         val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
         if (getterCompatibility == Incompatible) return
 
-        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.coneType
         if (getterReturnType == null && needCheckForSetter) {
             // During implicit body resolve phase, we can encounter a reference to a not yet resolved Kotlin class that inherits a
             // synthetic property from a Java class. In that case, resolve the return type here, ignoring error types (e.g. cycles).
-            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.type?.takeUnless { it is ConeErrorType }
+            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.coneType?.takeUnless { it is ConeErrorType }
         }
 
         // `void` type is the only case when we've got not-nullable non-enhanced Unit from Java
@@ -140,7 +142,7 @@ class FirSyntheticPropertiesScope private constructor(
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                 val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (parameter.isVararg) return
-                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
+                val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.coneType ?: return
                 if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
                 matchingSetter = setterSymbol.fir
             })
@@ -202,7 +204,7 @@ class FirSyntheticPropertiesScope private constructor(
         setterSymbol: FirNamedFunctionSymbol,
         setterParameterType: ConeKotlinType
     ): Boolean {
-        val getterReturnType = getterSymbol.resolvedReturnTypeRef.type
+        val getterReturnType = getterSymbol.resolvedReturnTypeRef.coneType
         if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, setterParameterType)) return true
         if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, setterParameterType)) return false
 
@@ -340,14 +342,13 @@ class FirSyntheticPropertiesScope private constructor(
      * }
      */
     private fun isJavaTypeOnThePath(baseType: ConeSimpleKotlinType?): Boolean {
-        val lookupTagToStop = (baseType as? ConeLookupTagBasedType)?.lookupTag ?: return false
-        val dispatchReceiverClassSymbol = (dispatchReceiverType as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session) ?: return false
+        val lookupTagToStop = baseType?.lookupTagIfAny ?: return false
+        val dispatchReceiverClassSymbol = dispatchReceiverType.lookupTagIfAny?.toSymbol(session) ?: return false
 
         val typeContext = session.typeContext
         fun checkType(type: ConeClassLikeType): Boolean {
-            val state = typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
             if (type.toRegularClassSymbol(session)?.isJavaOrEnhancement == true) {
-                if (AbstractTypeChecker.isSubtypeOfClass(state, type.lookupTag, lookupTagToStop)) {
+                if (AbstractTypeChecker.isSubtypeOfClass(typeContext, type.lookupTag, lookupTagToStop)) {
                     return true
                 }
             }
@@ -370,6 +371,18 @@ class FirSyntheticPropertiesScope private constructor(
                 return false
             }
         }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirSyntheticPropertiesScope? {
+        return FirSyntheticPropertiesScope(
+            newSession,
+            baseScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: baseScope,
+            dispatchReceiverType,
+            syntheticNamesProvider,
+            returnTypeCalculator,
+            isSuperCall
+        )
     }
 }
 

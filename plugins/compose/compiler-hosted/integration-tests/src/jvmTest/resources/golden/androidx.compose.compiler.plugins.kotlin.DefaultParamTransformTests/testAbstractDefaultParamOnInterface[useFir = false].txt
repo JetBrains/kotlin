@@ -1,0 +1,219 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+
+interface Test {
+    @Composable fun foo(param: Int = remember { 0 })
+}
+
+interface TestBetween : Test {
+     @Composable fun betweenFoo(param: Int = remember { 0 })
+}
+
+class TestImpl : TestBetween {
+    @Composable override fun foo(param: Int) {}
+    @Composable override fun betweenFoo(param: Int) {}
+}
+
+@Composable fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl) {
+    test.foo()
+    test.foo(0)
+
+    testBetween.foo()
+    testBetween.foo(0)
+    testBetween.betweenFoo()
+    testBetween.betweenFoo(0)
+
+    testImpl.foo()
+    testImpl.foo(0)
+    testImpl.betweenFoo()
+    testImpl.betweenFoo(0)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Test {
+  @Composable
+  abstract fun foo(param: Int, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    @ComposableInferredTarget(scheme = "[0[0]]")
+    fun foo%default(param: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(foo%default)<rememb...>:Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty or 0b00110000
+      } else if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (%default and 0b0001 != 0) {
+          param = <block>{
+            sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+            val tmp0_group = %composer.cache(false) {
+              0
+            }
+            sourceInformationMarkerEnd(%composer)
+            tmp0_group
+          }
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.foo(param, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        foo%default(param, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+  }
+}
+interface TestBetween : Test {
+  @Composable
+  abstract fun betweenFoo(param: Int, %composer: Composer?, %changed: Int)
+  class ComposeDefaultImpls {
+    @Composable
+    fun betweenFoo%default(param: Int, %this%: TestBetween, %composer: Composer?, %changed: Int, %default: Int) {
+      %composer = %composer.startRestartGroup(<>)
+      sourceInformation(%composer, "C(betweenFoo%default)<rememb...>:Test.kt")
+      val %dirty = %changed
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty or 0b0110
+      } else if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+      }
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty or 0b00110000
+      } else if (%changed and 0b00110000 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+          %composer.changed(%this%)
+        } else {
+          %composer.changedInstance(%this%)
+        }
+        ) 0b00100000 else 0b00010000
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (%default and 0b0001 != 0) {
+          param = <block>{
+            sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+            val tmp0_group = %composer.cache(false) {
+              0
+            }
+            sourceInformationMarkerEnd(%composer)
+            tmp0_group
+          }
+        }
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        %this%.betweenFoo(param, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+      %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+        betweenFoo%default(param, %this%, %composer, updateChangedFlags(%changed or 0b0001), %default)
+      }
+    }
+  }
+}
+@StabilityInferred(parameters = 1)
+class TestImpl : TestBetween {
+  @Composable
+  override fun foo(param: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(foo):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  @Composable
+  override fun betweenFoo(param: Int, %composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(betweenFoo):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(CallWithDefaults)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(test)
+    } else {
+      %composer.changedInstance(test)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+      %composer.changed(testBetween)
+    } else {
+      %composer.changedInstance(testBetween)
+    }
+    ) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(testImpl)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    foo%default(0, test, %composer, 0b01110000 and %dirty shl 0b0011, 0b0001)
+    foo%default(0, test, %composer, 0b0110 or 0b01110000 and %dirty shl 0b0011, 0)
+    foo%default(0, testBetween, %composer, 0b01110000 and %dirty, 0b0001)
+    foo%default(0, testBetween, %composer, 0b0110 or 0b01110000 and %dirty, 0)
+    betweenFoo%default(0, testBetween, %composer, 0b01110000 and %dirty, 0b0001)
+    betweenFoo%default(0, testBetween, %composer, 0b0110 or 0b01110000 and %dirty, 0)
+    foo%default(0, testImpl, %composer, 0b01110000 and %dirty shr 0b0011, 0b0001)
+    foo%default(0, testImpl, %composer, 0b0110 or 0b01110000 and %dirty shr 0b0011, 0)
+    betweenFoo%default(0, testImpl, %composer, 0b01110000 and %dirty shr 0b0011, 0b0001)
+    betweenFoo%default(0, testImpl, %composer, 0b0110 or 0b01110000 and %dirty shr 0b0011, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    CallWithDefaults(test, testBetween, testImpl, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -128,7 +128,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             visitQualifiedAccess(node, node.fir, data)
         }
 
-        override fun visitFunctionCallNode(node: FunctionCallNode, data: Data) {
+        override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Data) {
             visitAnnotations(node, data)
             // TODO, KT-64094: receiver of implicit invoke calls does not generate a QualifiedAccessNode.
             ((node.fir as? FirImplicitInvokeCall)?.explicitReceiver as? FirQualifiedAccessExpression)

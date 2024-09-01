@@ -54,11 +54,15 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitAnonymousFunctionCaptureNode(node: AnonymousFunctionCaptureNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 
-     // ----------------------------------- Files ------------------------------------------
+    // ----------------------------------- Files ------------------------------------------
 
     open fun visitFileEnterNode(node: FileEnterNode, data: D): R {
         return visitNode(node, data)
@@ -247,35 +251,19 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    open fun visitBinaryAndEnterNode(node: BinaryAndEnterNode, data: D): R {
+    open fun visitBooleanOperatorEnterNode(node: BooleanOperatorEnterNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndExitLeftOperandNode(node: BinaryAndExitLeftOperandNode, data: D): R {
+    open fun visitBooleanOperatorExitLeftOperandNode(node: BooleanOperatorExitLeftOperandNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndEnterRightOperandNode(node: BinaryAndEnterRightOperandNode, data: D): R {
+    open fun visitBooleanOperatorEnterRightOperandNode(node: BooleanOperatorEnterRightOperandNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndExitNode(node: BinaryAndExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrEnterNode(node: BinaryOrEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrExitLeftOperandNode(node: BinaryOrExitLeftOperandNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrEnterRightOperandNode(node: BinaryOrEnterRightOperandNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrExitNode(node: BinaryOrExitNode, data: D): R {
+    open fun visitBooleanOperatorExitNode(node: BooleanOperatorExitNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -327,7 +315,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitFunctionCallNode(node: FunctionCallNode, data: D): R {
+    open fun visitFunctionCallEnterNode(node: FunctionCallEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: D): R {
         return visitNode(node, data)
     }
 

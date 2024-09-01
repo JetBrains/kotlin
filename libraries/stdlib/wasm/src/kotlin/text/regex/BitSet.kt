@@ -13,7 +13,10 @@ package kotlin.native
  * @constructor creates an empty bit set with the specified [size]
  * @param size the size of one element in the array used to store bits.
  */
-internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
+internal actual class BitSet
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+actual constructor(size: Int = ELEMENT_SIZE) {
 
     companion object {
         // Default size of one element in the array used to store bits.
@@ -29,11 +32,11 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
         get() = size - 1
 
     /** True if this BitSet contains no bits set to true. */
-    val isEmpty: Boolean
+    actual val isEmpty: Boolean
         get() = bits.all { it == ALL_FALSE }
 
     /** Actual number of bits available in the set. All bits with indices >= size assumed to be 0 */
-    var size: Int = size
+    actual var size: Int = size
         private set
 
     // Transforms a bit index into an element index in the `bits` array.
@@ -116,17 +119,20 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
     }
 
     /** Set the bit specified to the specified value. */
-    fun set(index: Int, value: Boolean = true) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun set(index: Int, value: Boolean = true) {
         ensureCapacity(index)
         val (elementIndex, offset) = index.asBitCoordinates
         setBitsWithMask(elementIndex, offset.asMask, value)
     }
 
     /** Sets the bits with indices between [from] (inclusive) and [to] (exclusive) to the specified value. */
-    fun set(from : Int, to: Int, value: Boolean = true) = set(from until to, value)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun set(from : Int, to: Int, value: Boolean = true) = set(from until to, value)
 
     /** Sets the bits from the range specified to the specified value. */
-    fun set(range: IntRange, value: Boolean = true) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun set(range: IntRange, value: Boolean = true) {
         if (range.start < 0 || range.endInclusive < 0) {
             throw IndexOutOfBoundsException()
         }
@@ -193,7 +199,8 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
      * Returns -1 if there is no such bits after [startIndex].
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
-    fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
 
     /**
      * Returns an index of a next bit which value is `false` after [startIndex] (inclusive).
@@ -201,10 +208,11 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
      * sequence of `false` bits after (size - 1)-th.
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
-    fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
 
     /** Returns a value of a bit with the [index] specified. */
-    operator fun get(index: Int): Boolean {
+    actual operator fun get(index: Int): Boolean {
         if (index < 0) {
             throw IndexOutOfBoundsException()
         }
@@ -229,16 +237,16 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
     }
 
     /** Performs a logical and operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun and(another: BitSet) = doOperation(another, Long::and)
+    actual fun and(another: BitSet) = doOperation(another, Long::and)
 
     /** Performs a logical or operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun or(another: BitSet) = doOperation(another, Long::or)
+    actual fun or(another: BitSet) = doOperation(another, Long::or)
 
     /** Performs a logical xor operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun xor(another: BitSet) = doOperation(another, Long::xor)
+    actual fun xor(another: BitSet) = doOperation(another, Long::xor)
 
     /** Performs a logical and + not operations over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun andNot(another: BitSet) {
+    actual fun andNot(another: BitSet) {
         ensureCapacity(another.lastIndex)
         var index = 0
         while (index < another.bits.size) {
@@ -252,6 +260,6 @@ internal class BitSet constructor(size: Int = ELEMENT_SIZE) {
     }
 
     /** Returns true if the specified BitSet has any bits set to true that are also set to true in this BitSet. */
-    fun intersects(another: BitSet): Boolean =
+    actual fun intersects(another: BitSet): Boolean =
         (0 until minOf(bits.size, another.bits.size)).any { bits[it] and another.bits[it] != 0L }
 }

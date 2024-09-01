@@ -1,0 +1,23 @@
+/whenWithGuardDisabled.fir.kt:(361,371): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(404,460): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(482,502): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(648,658): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(648,658): error: Guard statements are only allowed in 'when' with subject.
+
+/whenWithGuardDisabled.fir.kt:(730,745): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(730,745): error: Guard statements are only allowed in 'when' with subject.
+
+/whenWithGuardDisabled.fir.kt:(901,911): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(901,911): error: Use of comma in 'when' condition with guard statement is not allowed.
+
+/whenWithGuardDisabled.fir.kt:(1008,1012): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
+
+/whenWithGuardDisabled.fir.kt:(1060,1070): error: The feature "when guards" is experimental and should be enabled explicitly
+
+/whenWithGuardDisabled.fir.kt:(1195,1205): error: The feature "when guards" is experimental and should be enabled explicitly

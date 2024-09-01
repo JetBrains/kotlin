@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -25,7 +25,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        doLazyResolveTest(mainFile, testServices, renderAllFiles = true) { firResolveSession ->
+        doLazyResolveTest(mainFile, testServices, outputRenderingMode = OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { firResolveSession ->
             findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
         }
     }

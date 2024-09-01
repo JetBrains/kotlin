@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MyClass3 modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      JavaAnn(value = ["asd"])
+      JavaAnn(value = ["asd"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyClass3
     CONSTRUCTOR visibility:public <> () returnType:<root>.MyClass3 [primary]
       BLOCK_BODY
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:MyClass4 modality:FINAL visibility:public superTypes:[kotlin.Any]
     annotations:
-      JavaAnn(value = [])
+      JavaAnn(value = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyClass4
     CONSTRUCTOR visibility:public <> () returnType:<root>.MyClass4 [primary]
       BLOCK_BODY

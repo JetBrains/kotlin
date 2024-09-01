@@ -75,17 +75,16 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @TestMetadata("errorDiagnosticBuildFails")
     fun testErrorDiagnosticBuildFailsWithConfigurationCache(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildFails", gradleVersion) {
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
                 assertConfigurationCacheStored()
                 assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
             }
 
             // fails again
-            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
                 assertConfigurationCacheReused()
                 assertEqualsToFile(expectedOutputFile("assemble-cache-reused"), extractProjectsAndTheirDiagnostics())
             }
@@ -205,7 +204,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @DisplayName("checkKotlinGradlePluginConfigurationErrors does not cause a false positive configuration cache warning")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5) // STABLE_CONFIGURATION_CACHE was introduced in 7.5
     fun testKt63165(gradleVersion: GradleVersion) {
         // the false positive warning is https://github.com/gradle/gradle/issues/22481
         project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {

@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-NO_CANDIDATES
+KtNameReferenceExpression(17,24): 'HashMap'
+  NO_CANDIDATES

@@ -200,9 +200,12 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
     }
 
     @DisplayName("Multiplatform project with Java plugin applied could be resolved in all configurations")
+    // we muted this test for Gradle version higher than 8.7 because of KT-69814
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_7)
     @GradleTest
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
-        project("new-mpp-jvm-with-java-multi-module", gradleVersion) {
+        val buildOptions = defaultBuildOptions
+        project("new-mpp-jvm-with-java-multi-module", gradleVersion, buildOptions) {
             testResolveAllConfigurations("app")
         }
     }
@@ -248,7 +251,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 otherProjectName = "sample-lib",
                 pathPrefix = "new-mpp-lib-and-app"
             )
-            buildGradle.replaceText("'com.example:sample-lib:1.0'", "project(':sample-lib')")
+            buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
             val isAtLeastGradle75 = gradleVersion >= GradleVersion.version("7.5")
 

@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -97,7 +97,7 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
             val ktModule = ktTestModule.ktModule as KtModuleByCompilerConfiguration
 
             val project = ktModule.project
-            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(ktModule as KtModule)
+            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSession(ktModule as KaModule)
 
             val allFirFiles = module.files.filter { it.isKtFile }.zip(
                 ktModule.psiFiles

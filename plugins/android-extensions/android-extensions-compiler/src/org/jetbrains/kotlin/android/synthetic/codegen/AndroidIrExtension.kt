@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -367,7 +368,6 @@ private fun TranslationPluginContext.declareParameterStub(parameterDescriptor: P
         type = type,
         isAssignable = false,
         symbol = symbol,
-        index = parameterDescriptor.indexOrMinusOne,
         varargElementType = varargElementType,
         isCrossinline = parameterDescriptor.isCrossinline,
         isNoinline = parameterDescriptor.isNoinline,

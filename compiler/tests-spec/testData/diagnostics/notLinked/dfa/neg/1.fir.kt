@@ -112,8 +112,8 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (<!SENSELESS_COMPARISON!>x !== null === null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>get(0)
-    if (<!SENSELESS_COMPARISON!>x !== null != null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+    if (<!SENSELESS_COMPARISON!>x !== null === null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!> != null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+    if (<!SENSELESS_COMPARISON!>x !== null != null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!> != null === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
 }
 
 // TESTCASE NUMBER: 9
@@ -121,8 +121,8 @@ fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
     if (<!SENSELESS_COMPARISON!>x === null === null<!>) {
 
     } else if (<!USELESS_IS_CHECK!>false is Boolean<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
     }
 }
 
@@ -156,16 +156,16 @@ fun case_11(x: TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>, y: Typ
         if (<!EQUALITY_NOT_APPLICABLE!>y != null is Boolean<!> == true) {
             if (<!USELESS_IS_CHECK!>(nullableStringProperty == null) !is Boolean<!>) {
                 if (<!EQUALITY_NOT_APPLICABLE!>t != null is Boolean<!>) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.equals(null)
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propT
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propNullableT
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.propNullableAny
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.funT()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.funNullableT()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect?")!>x<!>.funNullableAny()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.equals(null)
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propT
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>propAny
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableT
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableAny
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funT()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableT()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableAny()
                 }
             }
         }
@@ -175,16 +175,16 @@ fun case_11(x: TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>, y: Typ
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndirect) =
     if (<!DEPRECATED_IDENTITY_EQUALS!><!USELESS_IS_CHECK!>(x == null) !is Boolean<!> === false<!>) "1"
-    else if (<!USELESS_IS_CHECK!>(<!SENSELESS_COMPARISON!>y === null !== null<!>) is Boolean<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.equals(null)
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propT
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>propAny
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableT
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.propNullableAny
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funT()
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funNullableT()
-    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect")!>x<!>.funNullableAny()
+    else if (<!USELESS_IS_CHECK!>(<!SENSELESS_COMPARISON!>y === null !== null<!>) is Boolean<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.equals(null)
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propT
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>propAny
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableT
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableAny
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funT()
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableT()
+    else if (<!SENSELESS_COMPARISON!>y === null != null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableAny()
     else "-1"
 
 // TESTCASE NUMBER: 13
@@ -265,8 +265,8 @@ fun case_16() {
     val x: TypealiasNullableNothing = null
 
     if (<!SENSELESS_COMPARISON!>x != <!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!><!USELESS_IS_CHECK!>null !is Boolean !is Boolean<!> !is Boolean<!> !is Boolean<!> !is Boolean<!><!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!><!UNSAFE_CALL!>.<!><!CANNOT_INFER_PARAMETER_TYPE!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!><!CANNOT_INFER_PARAMETER_TYPE!>java<!>
     }
 }
 

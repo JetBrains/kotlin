@@ -1,18 +1,18 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
-val composeVersion = "1.7.0-alpha07"
 repositories {
-    google {
-        content {
-            includeGroup("androidx.collection")
-            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
-            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
-        }
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        androidXMavenLocal(androidXMavenLocalPath)
+    }
+    androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
+    composeGoogleMaven(libs.versions.compose.stable.get())
+}
+
+fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
+    testImplementation(dependency) {
+        isTransitive = false
     }
 }
 
@@ -40,12 +40,26 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":generators:analysis-api-generator"))
     testApi(project(":compiler:plugin-api"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
-    testImplementation("androidx.compose.runtime:runtime:$composeVersion")
+    // runtime tests
+    testImplementation(composeRuntime())
+    testImplementation(composeRuntimeTestUtils())
 
-    testImplementation(toolsJar())
+    // other compose
+    testImplementationArtifactOnly(compose("foundation", "foundation"))
+    testImplementationArtifactOnly(compose("foundation", "foundation-layout"))
+    testImplementationArtifactOnly(compose("animation", "animation"))
+    testImplementationArtifactOnly(compose("ui", "ui"))
+    testImplementationArtifactOnly(compose("ui", "ui-graphics"))
+    testImplementationArtifactOnly(compose("ui", "ui-text"))
+    testImplementationArtifactOnly(compose("ui", "ui-unit"))
+
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -60,12 +74,7 @@ kotlin {
 
 val generationRoot = projectDir.resolve("tests-gen")
 sourceSets {
-    "main" {
-        this.java.srcDirs("src/main/java")
-        this.resources.srcDir("src/main/resources")
-    }
     "test" {
-        this.java.srcDirs("src/test/kotlin")
         this.java.srcDir(generationRoot.name)
     }
 }
@@ -82,11 +91,17 @@ publish {
     }
 }
 
+val runtimeJar = runtimeJar()
+sourcesJar()
+javadocJar()
+
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist", "jar")
+    dependsOn(":dist")
+    dependsOn(runtimeJar)
+    systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
     workingDir = rootDir
     useJUnitPlatform()
 }
 
-standardPublicJars()
+val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
 testsJar()

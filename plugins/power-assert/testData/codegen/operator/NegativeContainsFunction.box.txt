@@ -1,6 +1,7 @@
-Assertion failed
+---
 assert(!listOf("Hello", "World").contains("Hello"))
        ||                        |
        ||                        true
        |[Hello, World]
        false
+---

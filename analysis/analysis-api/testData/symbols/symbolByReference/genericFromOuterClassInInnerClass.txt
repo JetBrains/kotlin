@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: test/TopLevel.Base.withOuter
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,26 +17,26 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: CLASS
   modality: FINAL
   name: withOuter
   origin: SOURCE
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: Outer?
-  symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
     ]
     type: test/TopLevel.Base<T, Outer>
   getContainingFileSymbol: KaFileSymbol(genericFromOuterClassInInnerClass.kt)
   getContainingJvmClassName: test.TopLevel.Base
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

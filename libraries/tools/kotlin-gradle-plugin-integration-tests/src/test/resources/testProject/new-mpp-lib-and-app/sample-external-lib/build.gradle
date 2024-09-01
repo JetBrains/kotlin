@@ -1,22 +1,10 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
+
 group = "com.external.dependency"
 version = "1.2.3"
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 kotlin {
     // Check the new preset functions:
@@ -73,19 +61,20 @@ kotlin {
 
 kotlin.sourceSets.each { println it.kotlin.srcDirs }
 
-apply plugin: 'maven-publish'
-
-publishing {
-    repositories {
-        maven { url "<localRepo>" }
-    }
-}
-
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
         jvm('jvm6').compilations.create('benchmark') {
             assemble.dependsOn compileKotlinTask
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }

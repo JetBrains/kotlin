@@ -3,7 +3,7 @@ enum class X {
 
         override val value = "OK"
 
-        val bmr = B::value.get()
+        val bmr = this::value.get()
 
         override fun foo(): String {
             return bmr

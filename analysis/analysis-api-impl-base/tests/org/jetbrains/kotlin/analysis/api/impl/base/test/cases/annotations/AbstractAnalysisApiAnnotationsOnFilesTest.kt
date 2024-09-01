@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiAnnotationsOnFilesTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyseForTest(mainFile) {
-            val fileSymbol = mainFile.getFileSymbol()
-            TestAnnotationRenderer.renderAnnotations(analysisSession, fileSymbol.annotationsList)
+            val fileSymbol = mainFile.symbol
+            TestAnnotationRenderer.renderAnnotations(useSiteSession, fileSymbol.annotations)
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

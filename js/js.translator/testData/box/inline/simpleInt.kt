@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1294
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleInt.1.kt
@@ -30,51 +29,51 @@ class Inline(val res : Int) {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=test0Param count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test0Param name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test0Param count=0
+// CHECK_LABELS_COUNT: function=test0Param name=$l$block count=0
 fun test0Param(): Int {
     val inlineX = Inline(10)
     return inlineX.foo({ -> 1})
 }
 
-// CHECK_BREAKS_COUNT: function=test1Param count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1Param name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1Param count=0
+// CHECK_LABELS_COUNT: function=test1Param name=$l$block count=0
 fun test1Param(): Int {
     val inlineX = Inline(10)
     return inlineX.foo11({ z: Int -> z})
 }
 
-// CHECK_BREAKS_COUNT: function=test1ParamCaptured count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1ParamCaptured name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1ParamCaptured count=0
+// CHECK_LABELS_COUNT: function=test1ParamCaptured name=$l$block count=0
 fun test1ParamCaptured(): Int {
     val s = 100
     val inlineX = Inline(10)
     return inlineX.foo11({ z: Int -> s})
 }
 
-// CHECK_BREAKS_COUNT: function=test1ParamMissed count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1ParamMissed name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1ParamMissed count=0
+// CHECK_LABELS_COUNT: function=test1ParamMissed name=$l$block count=0
 fun test1ParamMissed() : Int {
     val inlineX = Inline(10)
     return inlineX.foo11({ z: Int -> 111})
 }
 
-// CHECK_BREAKS_COUNT: function=test1ParamFromCallContext count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1ParamFromCallContext name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1ParamFromCallContext count=0
+// CHECK_LABELS_COUNT: function=test1ParamFromCallContext name=$l$block count=0
 fun test1ParamFromCallContext() : Int {
     val inlineX = Inline(1000)
     return inlineX.fooRes({ z: Int -> z})
 }
 
-// CHECK_BREAKS_COUNT: function=test2Params count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test2Params name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test2Params count=0
+// CHECK_LABELS_COUNT: function=test2Params name=$l$block count=0
 fun test2Params() : Int {
     val inlineX = Inline(1000)
     return inlineX.fooRes2({ y: Int, z: Int -> 2 * y + 3 * z})
 }
 
-// CHECK_BREAKS_COUNT: function=test2ParamsWithCaptured count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test2ParamsWithCaptured name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test2ParamsWithCaptured count=0
+// CHECK_LABELS_COUNT: function=test2ParamsWithCaptured name=$l$block count=0
 fun test2ParamsWithCaptured() : Int {
     val inlineX = Inline(1000)
     val s = 9

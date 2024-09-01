@@ -1,14 +1,14 @@
 element: param1
 implicit receivers:
   type: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: TypeParam
     ]
     type: test/MyClass<TypeParam>
-  owner symbol: KaFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassSymbol
 
 scopes:
   TypeScope, index = 0
@@ -16,45 +16,53 @@ scopes:
     classifiers: 0
     callables: 5
       KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
+          compilerVisibility: Private
           contextReceivers: []
+          isActual: false
+          isExpect: false
           isExtension: false
+          isVal: true
+          location: PROPERTY
+          modality: FINAL
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(test/MyClass.property)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
-          symbolKind: LOCAL
-          typeParameters: []
+          visibility: PRIVATE
         callableId: test/MyClass.property
+        compilerVisibility: Public
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
+          compilerVisibility: Public
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
+          isActual: false
           isDefault: true
+          isExpect: false
           isExtension: false
           isInline: false
           isOverride: false
+          location: PROPERTY
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
-          symbolKind: ACCESSOR
-          typeParameters: []
           valueParameters: []
-          visibility: Public
+          visibility: PUBLIC
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -69,21 +77,22 @@ scopes:
         isOverride: false
         isStatic: false
         isVal: true
+        location: CLASS
         modality: FINAL
         name: property
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
-        symbolKind: CLASS_MEMBER
         typeParameters: []
-        visibility: Public
-      KaFunctionSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
         callableId: test/MyClass.member
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -99,21 +108,22 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: FINAL
         name: member
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KaFunctionSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
         callableId: kotlin/Any.equals
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -129,42 +139,48 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: equals
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Boolean
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
+            isActual: false
             isCrossinline: false
+            isExpect: false
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
+            location: LOCAL
+            modality: FINAL
             name: other
             origin: LIBRARY
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Any?
-            symbolKind: LOCAL
-            typeParameters: []
+            visibility: PUBLIC
         ]
-        visibility: Public
-      KaFunctionSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
         callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -180,21 +196,22 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: hashCode
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
-      KaFunctionSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
         callableId: kotlin/Any.toString
+        compilerVisibility: Public
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -210,22 +227,23 @@ scopes:
         isStatic: false
         isSuspend: false
         isTailRec: false
+        location: CLASS
         modality: OPEN
         name: toString
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
-        symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
-        visibility: Public
+        visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
+        compilerVisibility: Public
         containingClassId: test/MyClass
         contextReceivers: []
         hasStableParameterNames: true
@@ -233,75 +251,91 @@ scopes:
         isExpect: false
         isExtension: false
         isPrimary: true
+        location: CLASS
+        modality: FINAL
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: [
             KaTypeParameterType:
-              annotationsList: []
+              annotations: []
               type: TypeParam
           ]
           type: test/MyClass<TypeParam>
-        symbolKind: CLASS_MEMBER
         typeParameters: [
           KaTypeParameterSymbol(TypeParam)
         ]
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
+            isActual: false
             isCrossinline: false
+            isExpect: false
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
+            location: LOCAL
+            modality: FINAL
             name: param1
             origin: SOURCE
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: test/Param1
-            symbolKind: LOCAL
-            typeParameters: []
+            visibility: PUBLIC
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
+            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
+            isActual: false
             isCrossinline: false
+            isExpect: false
             isExtension: false
             isImplicitLambdaParameter: false
             isNoinline: false
+            isVal: true
             isVararg: false
+            location: LOCAL
+            modality: FINAL
             name: param2
             origin: SOURCE
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: test/Param2
-            symbolKind: LOCAL
-            typeParameters: []
+            visibility: PUBLIC
         ]
-        visibility: Public
+        visibility: PUBLIC
 
   TypeParameterScope, index = 1
     packages: 0
     classifiers: 1
       KaTypeParameterSymbol:
-        annotationsList: []
+        annotations: []
+        compilerVisibility: Local
+        isActual: false
+        isExpect: false
         isReified: false
+        location: CLASS
+        modality: FINAL
         name: TypeParam
         origin: SOURCE
-        typeParameters: []
         upperBounds: []
         variance: INVARIANT
+        visibility: LOCAL
     callables: 0
     constructors: 0
 
@@ -314,11 +348,12 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 3
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Param1
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -327,23 +362,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Param1
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/Param2
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -352,23 +388,24 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: Param2
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: []
-        visibility: Public
-      KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
         classId: test/MyClass
         classKind: CLASS
         companionObject: null
+        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -377,20 +414,20 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        location: TOP_LEVEL
         modality: FINAL
         name: MyClass
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
-        symbolKind: TOP_LEVEL
         typeParameters: [
           KaTypeParameterSymbol(TypeParam)
         ]
-        visibility: Public
+        visibility: PUBLIC
     callables: 0
     constructors: 0
 

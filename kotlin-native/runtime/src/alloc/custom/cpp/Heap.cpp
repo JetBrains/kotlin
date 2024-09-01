@@ -12,7 +12,6 @@
 #include <new>
 #include <vector>
 
-#include "CustomAllocConstants.hpp"
 #include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
@@ -27,7 +26,7 @@ void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
     nextFitPages_.PrepareForGC();
     singleObjectPages_.PrepareForGC();
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockPages_[blockSize].PrepareForGC();
     }
     extraObjectPages_.PrepareForGC();
@@ -39,11 +38,11 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     CustomAllocDebug("Heap::Sweep()");
     {
         auto sweepHandle = gcHandle.sweep();
-        for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
             fixedBlockPages_[blockSize].Sweep(sweepHandle, finalizerQueue);
         }
         nextFitPages_.Sweep(sweepHandle, finalizerQueue);
-        singleObjectPages_.SweepAndFree(sweepHandle, finalizerQueue);
+        singleObjectPages_.Sweep(sweepHandle, finalizerQueue);
     }
     CustomAllocDebug("Heap: before extra sweep FinalizerQueue size == %zu", finalizerQueue.size());
     {
@@ -90,21 +89,21 @@ FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {
 
 std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     std::vector<ObjHeader*> allocated;
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
         for (auto* page : fixedBlockPages_[blockSize].GetPages()) {
             for (auto* block : page->GetAllocatedBlocks()) {
-                allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
+                allocated.push_back(reinterpret_cast<CustomHeapObject*>(block)->object());
             }
         }
     }
     for (auto* page : nextFitPages_.GetPages()) {
         for (auto* block : page->GetAllocatedBlocks()) {
-            allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
+            allocated.push_back(reinterpret_cast<CustomHeapObject*>(block)->object());
         }
     }
     for (auto* page : singleObjectPages_.GetPages()) {
         for (auto* block : page->GetAllocatedBlocks()) {
-            allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
+            allocated.push_back(reinterpret_cast<CustomHeapObject*>(block)->object());
         }
     }
     std::vector<ObjHeader*> unfinalized;
@@ -117,12 +116,12 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
 }
 
 void Heap::ClearForTests() noexcept {
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].ClearForTests();
+    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockPages_[blockSize].Clear();
     }
-    nextFitPages_.ClearForTests();
-    singleObjectPages_.ClearForTests();
-    extraObjectPages_.ClearForTests();
+    nextFitPages_.Clear();
+    singleObjectPages_.Clear();
+    extraObjectPages_.Clear();
 }
 
 } // namespace kotlin::alloc

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in Controller) suspend fun suspendHere(x: ERROR_TYPE(Unresolved type for Continuation<Unit>))
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(183,194): 'suspendHere'
+  KtSimpleNameReference:
+    (in Controller) suspend fun suspendHere(x: ERROR_TYPE(Unresolved type for Continuation<Unit>))
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

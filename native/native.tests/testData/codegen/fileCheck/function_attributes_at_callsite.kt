@@ -1,15 +1,15 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
-// CHECK: declare void @ThrowException(%struct.ObjHeader*) #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES:[0-9]+]]
+// CHECK: declare void @ThrowException(ptr noundef) #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES:[0-9]+]]
 
 // CHECK: void @"kfun:#flameThrower(){}kotlin.Nothing"() #[[FLAME_THROWER_DECLARATION_ATTRIBUTES:[0-9]+]]
 fun flameThrower(): Nothing {
-    // CHECK: call void @ThrowException(%struct.ObjHeader* {{.*}}) #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES:[0-9]+]]
+    // CHECK: call void @ThrowException(ptr {{.*}}) #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES:[0-9]+]]
     throw Throwable("🔥")
 }
 
-// CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
 
     // CHECK: invoke void @"kfun:#flameThrower(){}kotlin.Nothing"() #[[FLAME_THROWER_CALLSITE_ATTRIBUTES:[0-9]+]]

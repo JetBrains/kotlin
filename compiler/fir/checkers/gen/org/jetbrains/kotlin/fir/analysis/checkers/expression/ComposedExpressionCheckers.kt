@@ -39,8 +39,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _loopExpressionCheckers
     override val loopJumpCheckers: Set<FirLoopJumpChecker>
         get() = _loopJumpCheckers
-    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
-        get() = _logicExpressionCheckers
+    override val booleanOperatorExpressionCheckers: Set<FirBooleanOperatorExpressionChecker>
+        get() = _booleanOperatorExpressionCheckers
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
         get() = _returnExpressionCheckers
     override val blockCheckers: Set<FirBlockChecker>
@@ -57,6 +57,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _getClassCallCheckers
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
         get() = _safeCallExpressionCheckers
+    override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker>
+        get() = _smartCastExpressionCheckers
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
         get() = _equalityOperatorCallCheckers
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
@@ -95,7 +97,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _whenExpressionCheckers: MutableSet<FirWhenExpressionChecker> = mutableSetOf()
     private val _loopExpressionCheckers: MutableSet<FirLoopExpressionChecker> = mutableSetOf()
     private val _loopJumpCheckers: MutableSet<FirLoopJumpChecker> = mutableSetOf()
-    private val _logicExpressionCheckers: MutableSet<FirLogicExpressionChecker> = mutableSetOf()
+    private val _booleanOperatorExpressionCheckers: MutableSet<FirBooleanOperatorExpressionChecker> = mutableSetOf()
     private val _returnExpressionCheckers: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
     private val _blockCheckers: MutableSet<FirBlockChecker> = mutableSetOf()
     private val _annotationCheckers: MutableSet<FirAnnotationChecker> = mutableSetOf()
@@ -104,6 +106,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _elvisExpressionCheckers: MutableSet<FirElvisExpressionChecker> = mutableSetOf()
     private val _getClassCallCheckers: MutableSet<FirGetClassCallChecker> = mutableSetOf()
     private val _safeCallExpressionCheckers: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
+    private val _smartCastExpressionCheckers: MutableSet<FirSmartCastExpressionChecker> = mutableSetOf()
     private val _equalityOperatorCallCheckers: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
     private val _typeOperatorCallCheckers: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
@@ -131,7 +134,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.whenExpressionCheckers.filterTo(_whenExpressionCheckers, predicate)
         checkers.loopExpressionCheckers.filterTo(_loopExpressionCheckers, predicate)
         checkers.loopJumpCheckers.filterTo(_loopJumpCheckers, predicate)
-        checkers.logicExpressionCheckers.filterTo(_logicExpressionCheckers, predicate)
+        checkers.booleanOperatorExpressionCheckers.filterTo(_booleanOperatorExpressionCheckers, predicate)
         checkers.returnExpressionCheckers.filterTo(_returnExpressionCheckers, predicate)
         checkers.blockCheckers.filterTo(_blockCheckers, predicate)
         checkers.annotationCheckers.filterTo(_annotationCheckers, predicate)
@@ -140,6 +143,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.elvisExpressionCheckers.filterTo(_elvisExpressionCheckers, predicate)
         checkers.getClassCallCheckers.filterTo(_getClassCallCheckers, predicate)
         checkers.safeCallExpressionCheckers.filterTo(_safeCallExpressionCheckers, predicate)
+        checkers.smartCastExpressionCheckers.filterTo(_smartCastExpressionCheckers, predicate)
         checkers.equalityOperatorCallCheckers.filterTo(_equalityOperatorCallCheckers, predicate)
         checkers.stringConcatenationCallCheckers.filterTo(_stringConcatenationCallCheckers, predicate)
         checkers.typeOperatorCallCheckers.filterTo(_typeOperatorCallCheckers, predicate)

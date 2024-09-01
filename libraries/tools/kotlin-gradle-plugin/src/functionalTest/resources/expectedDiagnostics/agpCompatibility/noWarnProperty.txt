@@ -1,1 +1,0 @@
-[FailedToGetAgpVersionWarning | WARNING] Failed to get AndroidGradlePluginVersion

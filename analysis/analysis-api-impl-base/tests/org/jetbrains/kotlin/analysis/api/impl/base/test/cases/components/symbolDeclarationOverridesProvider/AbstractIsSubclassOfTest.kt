@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -21,8 +21,8 @@ abstract class AbstractIsSubclassOfTest : AbstractAnalysisApiBasedTest() {
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(subClass) {
-                val subClassSymbol = subClass.getClassOrObjectSymbol()!!
-                val superClassSymbol = superClass.getClassOrObjectSymbol()!!
+                val subClassSymbol = subClass.classSymbol!!
+                val superClassSymbol = superClass.classSymbol!!
 
                 val isSubClass = subClassSymbol.isSubClassOf(superClassSymbol)
                 val isDirectSubClass = subClassSymbol.isDirectSubClassOf(superClassSymbol)

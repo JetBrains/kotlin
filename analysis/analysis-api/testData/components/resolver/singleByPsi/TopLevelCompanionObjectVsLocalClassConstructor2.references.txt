@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in <local>: test.Conflict) constructor()
+KtNameReferenceExpression(141,149): 'Conflict'
+  KtSimpleNameReference:
+    (in <local>: test.Conflict) constructor()

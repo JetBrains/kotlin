@@ -1,5 +1,5 @@
 FILE: NamedParameterInConcurrentMap.kt
     public final fun main(): R|kotlin/Unit| {
-        lval map: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/String>| = R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String|, R|kotlin/String|>()
+        lval map: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/String>| = R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>()
         R|<local>/map|.R|SubstitutionOverride<java/util/concurrent/ConcurrentHashMap.put: R|@EnhancedNullability kotlin/String?|>|(String(key), String(value))
     }

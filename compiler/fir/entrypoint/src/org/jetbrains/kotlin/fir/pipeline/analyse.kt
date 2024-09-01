@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
+import org.jetbrains.kotlin.fir.analysis.collectors.CliDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
+import org.jetbrains.kotlin.fir.analysis.collectors.components.LossDiagnosticCollectorComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
@@ -28,14 +32,32 @@ fun FirSession.runCheckers(
     mppCheckerKind: MppCheckerKind
 ): Map<FirFile, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
-    collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
             collector.collectDiagnostics(file, reporter)
         }
     }
+    collector.collectDiagnosticsInSettings(reporter)
     return firFiles.associateWith {
         val path = it.sourceFile?.path ?: return@associateWith emptyList()
         reporter.diagnosticsByFilePath[path] ?: emptyList()
     }
+}
+
+fun FirSession.collectLostDiagnosticsOnFile(
+    scopeSession: ScopeSession,
+    file: FirFile,
+    reporter: BaseDiagnosticsCollector,
+): List<KtDiagnostic> {
+    val collector = CliDiagnosticsCollector(this, scopeSession) { reporter ->
+        DiagnosticCollectorComponents(
+            listOf(LossDiagnosticCollectorComponent(this, reporter)),
+            ReportCommitterDiagnosticComponent(this, reporter)
+        )
+    }
+    withFileAnalysisExceptionWrapping(file) {
+        collector.collectDiagnostics(file, reporter)
+    }
+    val path = file.sourceFile?.path ?: return emptyList()
+    return reporter.diagnosticsByFilePath[path] ?: emptyList()
 }

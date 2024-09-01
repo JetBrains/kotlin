@@ -26,7 +26,9 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
         val proxyDeclaration = when (declaration) {
             is IrSimpleFunction -> declaration.takeIf { it.correspondingPropertySymbol == null }?.generateStaticMethodProxy(containingClass)
             is IrProperty -> declaration.generateStaticPropertyProxy(containingClass)
-            else -> error("Unexpected declaration type: ${declaration::class.simpleName}")
+            else -> irError("Unexpected declaration type") {
+                withIrEntry("declaration", declaration)
+            }
         } ?: return null
 
         containingClass.declarations.add(proxyDeclaration)

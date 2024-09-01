@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
@@ -40,7 +39,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
     init {
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
         val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
-        val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val buildIdService = BuildIdService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
@@ -89,7 +87,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.incremental = false
             task.useModuleDetection.convention(false)
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
-            task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
 
             task.explicitApiMode
                 .value(project.providers.provider { ext.explicitApi })

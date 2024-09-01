@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 package foo
 
 // CHECK_NOT_CALLED_IN_SCOPE: function=max scope=box

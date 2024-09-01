@@ -20,35 +20,6 @@ import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
 
 @Tag("stdlib")
-@PredefinedTestCases(
-    TC(
-        name = "default",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [
-            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
-            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
-            "-language-version", "1.9",
-            "-api-version", "2.0",
-            "-Xsuppress-api-version-greater-than-language-version-error"
-        ],
-        sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "libraries/stdlib/native-wasm/test/**.kt",
-            "kotlin-native/runtime/test/**.kt"
-        ],
-        ignoredTests = [DISABLED_STDLIB_TEST]
-    )
-)
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class StdlibTest : AbstractNativeBlackBoxTest() {
-    @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("default"))
-}
-
-@Tag("stdlib")
 @Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
@@ -57,7 +28,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         freeCompilerArgs = [
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API,
             "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
             "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
             "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
@@ -72,10 +43,12 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "2m")
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "10m")
+// Stdlib tests rely on `-Xmulti-platform` thus don't work with one-stage mode.
+@EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class FirStdlibTest : AbstractNativeBlackBoxTest() {
+class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }
@@ -84,6 +57,7 @@ private const val ENABLE_MPP = "-Xmulti-platform"
 internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.ExperimentalStdlibApi"
 private const val ENABLE_X_ENCODING_API = "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
+private const val ENABLE_X_UUID_API = "-opt-in=kotlin.uuid.ExperimentalUuidApi"
 private const val ENABLE_X_FOREIGN_API = "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
 private const val ENABLE_X_NATIVE_API = "-opt-in=kotlin.experimental.ExperimentalNativeApi"
 private const val ENABLE_OBSOLETE_NATIVE_API = "-opt-in=kotlin.native.ObsoleteNativeApi"

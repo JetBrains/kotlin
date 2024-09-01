@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
     val session: FirSession
@@ -32,9 +29,8 @@ interface Fir2IrComponents {
 
     val builtins: Fir2IrBuiltinSymbolsContainer
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
-    val manglers: Manglers
+    val irMangler: KotlinMangler.IrMangler
 
-    val irFactory: IrFactory
     val irProviders: List<IrProvider>
     val lock: IrLock
 
@@ -52,7 +48,6 @@ interface Fir2IrComponents {
     val annotationGenerator: AnnotationGenerator
     val callGenerator: CallAndReferenceGenerator
     val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator
-    val delegatedMemberGenerator: DelegatedMemberGenerator
     val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses
 
     val extensions: Fir2IrExtensions
@@ -77,9 +72,4 @@ interface Fir2IrComponents {
      * the first scenario above. We set [filesBeingCompiled] as `null` if we do not use the CodeGen analysis API.
      */
     val filesBeingCompiled: Set<FirFile>?
-
-    interface Manglers {
-        val irMangler: KotlinMangler.IrMangler
-        val firMangler: FirMangler
-    }
 }

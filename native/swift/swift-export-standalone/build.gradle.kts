@@ -56,9 +56,7 @@ val test by nativeTest("test", null) {
     useJUnitPlatform { }
 }
 
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+publish()
 
 runtimeJar()
 sourcesJar()

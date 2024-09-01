@@ -128,6 +128,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("constValFromLib.kt")
+    public void testConstValFromLib() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/constValFromLib.kt");
+    }
+
+    @Test
     @TestMetadata("customName.kt")
     public void testCustomName() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");
@@ -137,6 +143,24 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     @TestMetadata("duplicateLibrary.kt")
     public void testDuplicateLibrary() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary2.kt")
+    public void testDuplicateLibrary2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary2.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary3.kt")
+    public void testDuplicateLibrary3() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary3.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary4.kt")
+    public void testDuplicateLibrary4() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary4.kt");
     }
 
     @Test
@@ -161,6 +185,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     @TestMetadata("inlineFunctionUsageSource.kt")
     public void testInlineFunctionUsageSource() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineFunctionUsageSource.kt");
+    }
+
+    @Test
+    @TestMetadata("intersectionOverrideFromSourceSession.kt")
+    public void testIntersectionOverrideFromSourceSession() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/intersectionOverrideFromSourceSession.kt");
     }
 
     @Test
@@ -320,6 +350,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
       @TestMetadata("localMutated.kt")
       public void testLocalMutated() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutated.kt");
+      }
+
+      @Test
+      @TestMetadata("localMutatedWithAugmentedAssignment.kt")
+      public void testLocalMutatedWithAugmentedAssignment() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithAugmentedAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("localMutatedWithSugar.kt")
+      public void testLocalMutatedWithSugar() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutatedWithSugar.kt");
       }
 
       @Test

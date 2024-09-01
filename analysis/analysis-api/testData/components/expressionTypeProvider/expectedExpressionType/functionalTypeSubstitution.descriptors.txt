@@ -2,10 +2,10 @@ expression: {
             s: String -> 0
     }
 expected type: KaUsualClassType:
-  annotationsList: []
+  annotations: []
   typeArguments: [
     KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
   ]
   type: java/lang/Comparable<T>

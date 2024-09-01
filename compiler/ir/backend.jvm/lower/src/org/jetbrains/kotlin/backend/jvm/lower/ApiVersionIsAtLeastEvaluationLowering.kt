@@ -43,11 +43,8 @@ internal class ApiVersionIsAtLeastEvaluationLowering(val context: JvmBackendCont
         }
     }
 
-    override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
-        return super.visitBlock(
-            expression,
-            data.copy(isInsideInlinedBlock = data.isInsideInlinedBlock || expression is IrInlinedFunctionBlock)
-        )
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data): IrExpression {
+        return super.visitInlinedFunctionBlock(inlinedBlock, data.copy(isInsideInlinedBlock = true))
     }
 
     override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {

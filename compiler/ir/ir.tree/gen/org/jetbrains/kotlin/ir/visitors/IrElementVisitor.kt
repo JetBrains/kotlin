@@ -160,7 +160,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitClassReference(expression: IrClassReference, data: D): R =
         visitDeclarationReference(expression, data)
 
-    fun visitConst(expression: IrConst<*>, data: D): R =
+    fun visitConst(expression: IrConst, data: D): R =
         visitExpression(expression, data)
 
     fun visitConstantValue(expression: IrConstantValue, data: D): R =

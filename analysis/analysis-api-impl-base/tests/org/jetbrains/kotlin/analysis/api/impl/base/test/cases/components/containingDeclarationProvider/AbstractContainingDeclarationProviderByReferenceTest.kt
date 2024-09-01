@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.name
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,7 +26,7 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
         analyseForTest(mainFile) {
             val ktSymbol = referenceExpression.mainReference.resolveToSymbol() ?: error("Reference is not resolved")
 
-            val actualString = generateSequence(ktSymbol) { it.getContainingSymbol() }
+            val actualString = generateSequence(ktSymbol) { it.containingDeclaration }
                 .filterIsInstance<KaDeclarationSymbol>()
                 .joinToString("\n") { render(it) }
 
@@ -41,6 +41,6 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
             else -> null
         }
 
-        return qualifiedName ?: (symbol as? KaNamedSymbol)?.name?.asString() ?: "Unnamed"
+        return qualifiedName ?: symbol.name?.asString() ?: "Unnamed"
     }
 }

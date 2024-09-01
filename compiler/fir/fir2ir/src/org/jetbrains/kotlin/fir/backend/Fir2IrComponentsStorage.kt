@@ -22,12 +22,11 @@ class Fir2IrComponentsStorage(
     override val session: FirSession,
     override val scopeSession: ScopeSession,
     val fir: List<FirFile>,
-    override val irFactory: IrFactory,
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
     commonMemberStorage: Fir2IrCommonMemberStorage,
-    irMangler: KotlinMangler.IrMangler,
+    override val irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     override val firProvider: FirProviderWithGeneratedFiles,
@@ -64,16 +63,7 @@ class Fir2IrComponentsStorage(
     override val callGenerator: CallAndReferenceGenerator = CallAndReferenceGenerator(this, fir2IrVisitor, conversionScope)
 
     override val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator = Fir2IrLazyFakeOverrideGenerator(this)
-    override val delegatedMemberGenerator: DelegatedMemberGenerator = DelegatedMemberGenerator(this)
     override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
-
-    override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
-        override val irMangler: KotlinMangler.IrMangler
-            get() = irMangler
-
-        override val firMangler: FirMangler
-            get() = commonMemberStorage.mangler
-    }
 }

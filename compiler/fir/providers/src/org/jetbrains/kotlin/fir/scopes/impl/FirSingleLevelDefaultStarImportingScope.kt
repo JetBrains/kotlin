@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -24,12 +25,12 @@ interface DefaultStarImportingScopeMarker
 class FirSingleLevelDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority,
-    excludedImportNames: Set<FqName>
+    private val priority: DefaultImportPriority,
+    private val additionalExcludedImportNames: Set<FqName>
 ) : FirAbstractStarImportingScope(
     session, scopeSession,
     lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage),
-    excludedImportNames + session.defaultImportProvider.excludedImports
+    additionalExcludedImportNames + session.defaultImportProvider.excludedImports
 ), DefaultStarImportingScopeMarker {
     // TODO: put languageVersionSettings into FirSession?
     override val starImports: List<FirResolvedImport> = run {
@@ -74,5 +75,10 @@ class FirSingleLevelDefaultStarImportingScope(
                 }
             }
         }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirSingleLevelDefaultStarImportingScope {
+        return FirSingleLevelDefaultStarImportingScope(newSession, newScopeSession, priority, additionalExcludedImportNames)
     }
 }

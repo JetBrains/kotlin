@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/test.kt
     FIELD PROPERTY_BACKING_FIELD name:key type:<root>.A.Key<kotlin.Boolean> visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A.Key' type=<root>.A.Key<kotlin.Boolean> origin=null
-          <class: T>: kotlin.Boolean
+          <class: T>: @[FlexibleNullability] kotlin.Boolean?
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-key> visibility:public modality:FINAL <> () returnType:<root>.A.Key<kotlin.Boolean>
       correspondingProperty: PROPERTY name:key visibility:public modality:FINAL [val]
       BLOCK_BODY

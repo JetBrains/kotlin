@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-63864
 public object SomeObject {
     private val workerThread = object : Thread() {
         override fun run() {

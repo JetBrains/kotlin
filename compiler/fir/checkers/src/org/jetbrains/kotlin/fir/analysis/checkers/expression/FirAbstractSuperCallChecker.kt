@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,7 +36,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppChec
             // handles all the FirSimpleFunction/FirProperty/etc.
             val declarationSymbol = expression.toResolvedCallableSymbol() ?: return
 
-            val containingClassSymbol = declarationSymbol.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+            val containingClassSymbol = declarationSymbol.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
 
             if (containingClassSymbol.isAbstract) {
                 if (declarationSymbol.isAbstract) {

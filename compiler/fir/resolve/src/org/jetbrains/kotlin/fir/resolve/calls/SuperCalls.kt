@@ -16,11 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +30,7 @@ fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
     containingCall: FirQualifiedAccessExpression,
 ): List<ConeKotlinType> {
-    val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
+    val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).coneType }
     val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)
     if (supertypes.size <= 1 && !isMethodOfAny) return supertypes
 
@@ -67,7 +65,7 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         getFunctionMembers(it, calleeName)
     }
     return typesWithConcreteOverride.ifEmpty {
-        listOf(session.builtinTypes.anyType.type)
+        listOf(session.builtinTypes.anyType.coneType)
     }
 }
 
@@ -121,7 +119,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
             typesWithNonConcreteMembers.filter {
                 // We aren't interested in objects or enum classes here
                 // (objects can't be inherited, enum classes cannot have specific equals/hashCode)
-                it is ConeClassLikeType && (it.lookupTag.toSymbol(session) as? FirRegularClassSymbol)?.classKind?.isClass == true
+                it is ConeClassLikeType && it.lookupTag.toRegularClassSymbol(session)?.classKind?.isClass == true
             }
     }
 }

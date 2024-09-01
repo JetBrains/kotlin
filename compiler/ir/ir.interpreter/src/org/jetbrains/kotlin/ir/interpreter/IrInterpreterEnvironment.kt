@@ -115,7 +115,7 @@ class IrInterpreterEnvironment(
         val end = original.endOffset
         val type = original.type.makeNotNull()
         return when (state) {
-            is Primitive<*> -> when {
+            is Primitive -> when {
                 configuration.platform.isJs() && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
                 configuration.platform.isJs() && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
                 state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
@@ -128,7 +128,7 @@ class IrInterpreterEnvironment(
             is Complex -> {
                 val stateType = state.irClass.defaultType
                 when {
-                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
+                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive).value.toIrConst(type, start, end)
                     else -> original
                 }
             }

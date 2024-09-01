@@ -13,7 +13,6 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for running Swift Export XCTests")
 @SwiftExportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 class SwiftExportXCIT : KGPBaseTest() {
 
     @DisplayName("run XCTests for testing Swift Export")
@@ -26,14 +25,21 @@ class SwiftExportXCIT : KGPBaseTest() {
                 boot()
             }
 
-            nativeProject("simpleSwiftExport", gradleVersion) {
-                projectPath.enableSwiftExport()
-
+            nativeProject(
+                "simpleSwiftExport",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                    nativeOptions = BuildOptions.NativeOptions().copy(
+                        swiftExportEnabled = true,
+                    )
+                )
+            ) {
                 buildXcodeProject(
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",
                     buildMode = XcodeBuildMode.TEST,
-                    extraArguments = mapOf("VALID_ARCHS" to "arm64")
+                    appendToProperties = { "kotlin.experimental.swift-export.enabled=true" }
                 )
             }
         }

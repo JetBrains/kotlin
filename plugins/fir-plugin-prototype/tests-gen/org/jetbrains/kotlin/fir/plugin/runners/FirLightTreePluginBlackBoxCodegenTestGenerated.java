@@ -103,6 +103,12 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
   }
 
   @Test
+  @TestMetadata("mppDependencyWithActualTypealiasAnnotation.kt")
+  public void testMppDependencyWithActualTypealiasAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/mppDependencyWithActualTypealiasAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClassesWithSupertypesDependantOnAnnotationArgument.kt")
   public void testNestedClassesWithSupertypesDependantOnAnnotationArgument() {
     runTest("plugins/fir-plugin-prototype/testData/box/nestedClassesWithSupertypesDependantOnAnnotationArgument.kt");

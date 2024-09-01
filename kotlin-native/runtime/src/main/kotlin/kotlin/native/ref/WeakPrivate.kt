@@ -33,21 +33,6 @@ import kotlin.native.internal.*
  * considered dead, the reference inside `RegularWeakReferenceImpl` is nulled out.
  */
 
-// Clear holding the counter object, which refers to the actual object.
-@NoReorderFields
-@Frozen
-@OptIn(FreezingIsDeprecated::class)
-internal class WeakReferenceCounterLegacyMM(var referred: COpaquePointer?) : WeakReferenceImpl() {
-    // Spinlock, potentially taken when materializing or removing 'referred' object.
-    var lock: Int = 0
-
-    // Optimization for concurrent access.
-    var cookie: Int = 0
-
-    @GCUnsafeCall("Konan_WeakReferenceCounterLegacyMM_get")
-    external override fun get(): Any?
-}
-
 @NoReorderFields
 @ExportTypeInfo("theRegularWeakReferenceImplTypeInfo")
 @HasFinalizer // TODO: Consider just using Cleaners.
@@ -68,10 +53,6 @@ internal abstract class WeakReferenceImpl {
 @GCUnsafeCall("Konan_getWeakReferenceImpl")
 @Escapes(0b01) // referent escapes.
 external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
-
-// Create a counter object for legacy MM.
-@ExportForCppRuntime
-internal fun makeWeakReferenceCounterLegacyMM(referred: COpaquePointer) = WeakReferenceCounterLegacyMM(referred)
 
 // Create a counter object.
 @ExportForCppRuntime

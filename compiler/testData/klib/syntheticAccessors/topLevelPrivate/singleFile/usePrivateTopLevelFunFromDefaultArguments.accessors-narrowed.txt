@@ -1,0 +1,16 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelFunFromDefaultArguments.kt */
+
+/* TARGET declaration */ private fun o(): String
+/* TARGET declaration */ private fun k(): String
+internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
+    oo: String
+        /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
+    kk: Function0<String>
+        local fun <anonymous>(): String
+            /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
+/* ACCESSOR declaration */ internal fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String
+    /* TARGET use-site */ k()

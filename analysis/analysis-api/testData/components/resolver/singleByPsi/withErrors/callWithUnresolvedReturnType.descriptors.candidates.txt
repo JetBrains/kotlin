@@ -1,0 +1,33 @@
+KtCallExpression(81,87): 'foo(x)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        x -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /foo(x: kotlin.Int): ERROR_TYPE
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = x: kotlin.Int
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
+    isInBestCandidates = true

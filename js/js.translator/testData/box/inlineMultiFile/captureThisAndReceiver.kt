@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/capture/captureThisAndReceiver.1.kt

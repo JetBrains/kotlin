@@ -5,9 +5,15 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
@@ -16,7 +22,8 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
-import org.jetbrains.kotlin.sir.providers.utils.updateImports
+import org.jetbrains.kotlin.sir.providers.utils.containingModule
+import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
@@ -24,10 +31,10 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirClassFromKtSymbol(
-    override val ktSymbol: KaNamedClassOrObjectSymbol,
-    override val ktModule: KtModule,
+    override val ktSymbol: KaNamedClassSymbol,
+    override val ktModule: KaModule,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KaNamedClassOrObjectSymbol> {
+) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol> {
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)
@@ -35,6 +42,14 @@ internal class SirClassFromKtSymbol(
     override val visibility: SirVisibility by lazy {
         SirVisibility.PUBLIC
     }
+    override val modality: SirClassModality by lazy {
+        when (ktSymbol.modality) {
+            KaSymbolModality.OPEN -> SirClassModality.OPEN
+            KaSymbolModality.FINAL -> SirClassModality.FINAL
+            KaSymbolModality.SEALED, KaSymbolModality.ABSTRACT -> SirClassModality.UNSPECIFIED
+        }
+    }
+
     override val documentation: String? by lazy {
         ktSymbol.documentation()
     }
@@ -44,7 +59,7 @@ internal class SirClassFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
 
@@ -53,15 +68,27 @@ internal class SirClassFromKtSymbol(
     }
 
     override val superClass: SirType? by lazyWithSessions {
-        // For now, we support only `class C : Kotlin.Any()` class declarations, and
-        // translate Kotlin.Any to KotlinRuntime.KotlinBase.
-        ktSymbol.getContainingModule().sirModule().updateImports(listOf(SirImport(KotlinRuntimeModule.name)))
-        SirNominalType(KotlinRuntimeModule.kotlinBase)
+        ktSymbol.superTypes
+            .mapNotNull { it.symbol as? KaClassSymbol }
+            .firstOrNull { it.classKind == KaClassKind.CLASS }
+            ?.let {
+                if (it.classId == DefaultTypeClassIds.ANY) {
+                    SirNominalType(KotlinRuntimeModule.kotlinBase).also {
+                        ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
+                    }
+                } else {
+                    (it.sirDeclaration() as? SirNamedDeclaration)
+                        ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
+                        ?.let { SirNominalType(it) }
+                }
+            }
     }
 
+    override val attributes: MutableList<SirAttribute> = mutableListOf()
+
     private fun childDeclarations(): List<SirDeclaration> = withSessions {
-        ktSymbol.getCombinedDeclaredMemberScope()
-            .extractDeclarations(analysisSession)
+        ktSymbol.combinedDeclaredMemberScope
+            .extractDeclarations(useSiteSession)
             .toList()
     }
 
@@ -71,7 +98,12 @@ internal class SirClassFromKtSymbol(
         isFailable = false
         initKind = SirInitializerKind.ORDINARY
         isOverride = true
-        parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
+        parameters.add(
+            SirParameter(
+                argumentName = "__externalRCRef",
+                type = SirNominalType(SirSwiftModule.uint)
+            )
+        )
     }.also { it.parent = this }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KaClassKind.OBJECT)

@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
 // MODULE: #my_libr@ry
 // MODULE_KIND: PLAIN
 // FILE: bar.kt

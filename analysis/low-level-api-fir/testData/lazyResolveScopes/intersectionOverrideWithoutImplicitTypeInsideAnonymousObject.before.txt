@@ -23,8 +23,8 @@ public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=s
 
 
 public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
-
-
+    public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|T|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(STATUS)] var bar: R|T|
     public [ResolvedTo(STATUS)] [ContainingClassKey=C] get(): R|T|

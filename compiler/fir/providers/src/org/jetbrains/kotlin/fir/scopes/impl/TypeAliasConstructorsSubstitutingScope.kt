@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
@@ -12,11 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.withReplacedConeType
+import org.jetbrains.kotlin.fir.types.*
 
 private object TypeAliasConstructorKey : FirDeclarationDataKey()
 
@@ -30,11 +35,21 @@ var FirConstructor.typeAliasForConstructor: FirTypeAliasSymbol? by FirDeclaratio
 val FirConstructorSymbol.typeAliasForConstructor: FirTypeAliasSymbol?
     get() = fir.typeAliasForConstructor
 
+private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
+
+var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
+
 class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
+    private val abbreviation: ConeClassLikeType?,
 ) : FirScope() {
+    private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
+        .moduleData
+        .session
+        .languageVersionSettings
+        .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
@@ -47,6 +62,12 @@ class TypeAliasConstructorsSubstitutingScope(
 
                     this.typeParameters.clear()
                     typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+
+                    if (abbreviation != null && aliasedTypeExpansionGloballyEnabled) {
+                        returnTypeRef = returnTypeRef.withReplacedConeType(
+                            returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
+                        )
+                    }
 
                     if (outerType != null) {
                         // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
@@ -76,8 +97,18 @@ class TypeAliasConstructorsSubstitutingScope(
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
                     typeAliasForConstructor = typeAliasSymbol
+                    if (delegatingScope is FirClassSubstitutionScope) {
+                        typeAliasConstructorSubstitutor = delegatingScope.substitutor
+                    }
                 }.symbol
             )
+        }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): TypeAliasConstructorsSubstitutingScope? {
+        return delegatingScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
+            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType, abbreviation)
         }
     }
 }

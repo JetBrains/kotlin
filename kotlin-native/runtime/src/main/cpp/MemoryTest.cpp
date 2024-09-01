@@ -12,11 +12,7 @@
 using namespace kotlin;
 
 TEST(MemoryStateTestDeathTest, GetMemoryStateForUnregisteredThread) {
-    if (CurrentMemoryModel == MemoryModel::kExperimental) {
-        EXPECT_DEATH(mm::GetMemoryState(), "Thread is not attached to the runtime");
-    } else {
-        EXPECT_EQ(mm::GetMemoryState(), nullptr);
-    }
+    EXPECT_DEATH(mm::GetMemoryState(), "Thread is not attached to the runtime");
 }
 
 TEST(MemoryStateTest, GetMemoryStateForRegisteredThread) {

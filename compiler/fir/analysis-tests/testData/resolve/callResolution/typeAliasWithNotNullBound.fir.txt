@@ -6,7 +6,7 @@ FILE: typeAliasWithNotNullBound.kt
 
     }
     public final typealias MyAlias = R|Inv<out kotlin/CharSequence>|
-    public final fun foo(p: R|MyAlias|): R|kotlin/Unit| {
+    public final fun foo(p: R|{MyAlias=} Inv<out kotlin/CharSequence>|): R|kotlin/Unit| {
         R|/bar|<R|CapturedType(out kotlin/CharSequence)|>(R|<local>/p|).R|kotlin/CharSequence.length|
     }
     public final fun <T : R|kotlin/Any|> bar(x: R|Inv<T>|): R|T| {

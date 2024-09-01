@@ -12,6 +12,6 @@ public final fun test6(x: R|{test/LLL<{test/LLL<kotlin/String>=} kotlin/collecti
 
 public final typealias L<T> = R|kotlin/collections/List<T>|
 
-public final typealias LL<T> = R|test/L<T>|
+public final typealias LL<T> = R|kotlin/collections/List<T>|
 
-public final typealias LLL<T> = R|test/LL<T>|
+public final typealias LLL<T> = R|kotlin/collections/List<T>|

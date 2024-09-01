@@ -1,0 +1,7 @@
+KaFileSymbol:
+  annotations: []
+  location: TOP_LEVEL
+  origin: SOURCE
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

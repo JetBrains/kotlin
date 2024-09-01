@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -33,7 +31,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, IrElement>() {
     override fun visitElement(element: FirElement, data: IrElement): IrElement {
-        TODO("Should not be here: ${element::class}: ${element.render()}")
+        error("Each FIR element should have it's own `visit` overload, but got ${element::class.simpleName} here")
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: IrElement): IrElement = data
@@ -46,9 +44,8 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         return data
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: IrElement): IrElement = data
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: IrElement): IrElement = data
 
-    // TODO: maybe a place to do coerceIntToAnotherIntegerType?
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: IrElement): IrElement = data
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: IrElement): IrElement = data
@@ -82,16 +79,12 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: IrElement): IrElement = data
 
-    // TODO: element-wise cast?
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: IrElement): IrElement = data
 
-    // TODO: element-wise cast?
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: IrElement): IrElement = data
 
-    // TODO: element-wise cast?
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: IrElement): IrElement = data
 
-    // TODO: element-wise cast?
     override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: IrElement): IrElement = data
 
     // ==================================================================================
@@ -138,7 +131,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         return data
     }
 
-    // TODO: Need to visit lhs/rhs branches?
     override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: IrElement): IrElement = data
 
     // ==================================================================================
@@ -164,9 +156,11 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     override fun visitTryExpression(tryExpression: FirTryExpression, data: IrElement): IrElement {
         val irTry = data as IrTry
 
-        (irTry.tryResult as? IrContainerExpression)?.insertImplicitCasts()
-        for (catch in irTry.catches) {
-            (catch.result as? IrContainerExpression)?.insertImplicitCasts()
+        irTry.tryResult = irTry.tryResult.insertSpecialCast(
+            tryExpression.tryBlock, tryExpression.tryBlock.resolvedType, tryExpression.resolvedType
+        )
+        for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
+            irCatch.result = irCatch.result.insertSpecialCast(firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType)
         }
         (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)
         return data
@@ -227,8 +221,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
             typeCanBeEnhancedOrFlexibleNullable(expandedValueType, session) && !expandedExpectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
-            // TODO: coerceIntToAnotherIntegerType
-            // TODO: even implicitCast call can be here?
             else -> this
         }
     }
@@ -270,7 +262,6 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 if (i != lastIndex || coerceLastExpressionToUnit) {
                     statements[i] = coerceToUnitIfNeeded(irStatement, builtins)
                 }
-                // TODO: for the last statement, need to cast to the return type if mismatched
             }
         }
 
@@ -399,7 +390,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 )
         }
 
-        internal fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
+        fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
             // Cast type massage 1. Remove @EnhancedNullability
             // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
             val castType = original.type.removeAnnotations { annotationCall ->

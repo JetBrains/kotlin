@@ -23,20 +23,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrPropertyWithLateBindingImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    override var startOffset: Int,
+    override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
+    override var isFakeOverride: Boolean,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
-    override var isFakeOverride: Boolean,
 ) : IrPropertyWithLateBinding() {
     override var annotations: List<IrConstructorCall> = emptyList()
 

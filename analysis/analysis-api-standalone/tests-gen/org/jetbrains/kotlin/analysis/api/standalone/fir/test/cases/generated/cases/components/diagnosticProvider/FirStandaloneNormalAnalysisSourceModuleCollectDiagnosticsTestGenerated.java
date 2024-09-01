@@ -288,6 +288,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     public void testDeprecationAtTopLevel() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/deprecationAtTopLevel.kt");
     }
+
+    @Test
+    @TestMetadata("globalWarningSuppression.kt")
+    public void testGlobalWarningSuppression() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/globalWarningSuppression.kt");
+    }
   }
 
   @Nested

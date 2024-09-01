@@ -135,7 +135,7 @@ object ClassicBuiltinSpecialProperties {
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolean {
-    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin == FirDeclarationOrigin.BuiltIns
+    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true
 }
 
 private fun FirNamedFunctionSymbol.firstOverriddenFunction(

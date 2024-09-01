@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  Value [fake.kt]
+KtNameReferenceExpression(29,34): 'Value'
+  KtSimpleNameReference:
+    (in <local>: foo) Value [fake.kt]

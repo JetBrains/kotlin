@@ -1,0 +1,17 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal inline fun String.internalInlineExtension(): String
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = this)
+private inline fun String.privateInlineExtension4(): String
+    /* TARGET use-site */ this.privateExtension()
+private inline fun String.privateInlineExtension3(): String
+    /* TARGET use-site */ this.privateExtension()
+private inline fun String.privateInlineExtension2(): String
+    /* TARGET use-site */ this.privateExtension()
+private inline fun String.privateInlineExtension1(): String
+    /* TARGET use-site */ <this>.privateExtension()
+/* TARGET declaration */ private fun String.privateExtension(): String
+/* ACCESSOR declaration */ internal fun access$privateExtension$tAKt($receiver: String): String
+    /* TARGET use-site */ $receiver.privateExtension()

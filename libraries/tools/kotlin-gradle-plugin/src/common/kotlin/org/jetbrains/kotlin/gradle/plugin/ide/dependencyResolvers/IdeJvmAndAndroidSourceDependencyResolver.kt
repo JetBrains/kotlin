@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.gradle.utils.setAttributeProvider
 import org.jetbrains.kotlin.gradle.utils.toMap
 
@@ -114,7 +113,10 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
                         .orEmpty()
                         .forEach { (key, value) ->
                             @Suppress("UNCHECKED_CAST")
-                            setAttributeProvider(sourceSet.project, key as Attribute<Any>) { value as Any }
+                            setAttributeProvider(
+                                sourceSet.project.providers,
+                                key as Attribute<Any>
+                            ) { value as Any }
                         }
                 },
                 componentFilter = { id -> id is ProjectComponentIdentifier }

@@ -249,9 +249,7 @@ class GenerationState private constructor(
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(
-        module, languageVersionSettings, config.generateOptimizedCallableReferenceSuperClasses
-    )
+    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, languageVersionSettings)
     val factory: ClassFileFactory
     private var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics? = null
 

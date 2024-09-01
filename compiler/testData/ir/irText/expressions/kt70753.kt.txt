@@ -1,0 +1,23 @@
+class A {
+  val string: String
+    field = string
+    get
+
+  constructor(string: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val a: A = try { // BLOCK
+    getA()
+  } /*!! A */
+  catch (e: Exception){ // BLOCK
+    A(string = "OK")
+  }
+
+  return "OK"
+}

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) fun call() [fake.kt]
+KtNameReferenceExpression(16,20): 'call'
+  KtSimpleNameReference:
+    (in ROOT) fun call() [fake.kt]

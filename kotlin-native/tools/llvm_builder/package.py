@@ -106,13 +106,18 @@ def construct_cmake_flags(
         '-DLLVM_ENABLE_TERMINFO=OFF',
         '-DLLVM_INCLUDE_GO_TESTS=OFF',
         '-DLLVM_ENABLE_Z3_SOLVER=OFF',
+        '-DLLVM_ENABLE_ZSTD=OFF',
         '-DCOMPILER_RT_BUILD_BUILTINS=ON',
         '-DLLVM_ENABLE_THREADS=ON',
         '-DLLVM_OPTIMIZED_TABLEGEN=ON',
         '-DLLVM_ENABLE_IDE=OFF',
         '-DLLVM_BUILD_UTILS=ON',
-        '-DLLVM_INSTALL_UTILS=ON'
+        '-DLLVM_INSTALL_UTILS=ON',
+        '-DBUG_REPORT_URL=https://youtrack.jetbrains.com/newIssue?project=KT',
     ]
+    if not host_is_windows(): # TODO(KT-70399): Enable for all hosts when Windows builder gets zlib.
+        cmake_args.append("-DLLVM_ENABLE_ZLIB=FORCE_ON")
+
     if not building_bootstrap:
         if distribution_components:
             cmake_args.append('-DLLVM_DISTRIBUTION_COMPONENTS=' + ';'.join(distribution_components))
@@ -143,6 +148,7 @@ def construct_cmake_flags(
 
     if host_is_darwin():
         cmake_args.append('-DLLVM_ENABLE_LIBCXX=ON')
+        cmake_args.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=11.2')
         if building_bootstrap:
             # Don't waste time by doing unnecessary work for throwaway toolchain.
             cmake_args.extend([
@@ -222,7 +228,7 @@ def run_command(command: List[str], dry_run):
 
     if not dry_run:
         subprocess.run(command, shell=True, check=True)
-        
+
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
     print(f"Force-creating directory {build_path}")
@@ -247,10 +253,8 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     """
     Downloads a single commit from the given repository.
     """
-    if host_is_darwin():
-        default_repo, default_branch = "https://github.com/apple/llvm-project", "apple/stable/20200714"
-    else:
-        default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/11.x"
+    default_repo = "https://github.com/Kotlin/llvm-project"
+    default_branch = "kotlin/llvm-16.0.0-apple" if host_is_darwin() else "kotlin/llvm-16.0.0"
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
@@ -343,8 +347,8 @@ def build_distribution(args):
             intermediate_build_results.append(install_path)
             build_targets = ["install"]
 
-        projects = ["clang", "lld", "libcxx", "libcxxabi", "compiler-rt"]
-        runtimes = None
+        projects = ["clang", "lld"]
+        runtimes = ["compiler-rt"] if host_is_windows() else ["libcxx", "libcxxabi", "compiler-rt"]
 
         build_dir = force_create_directory(current_dir, f"llvm-stage-{stage}-build")
         intermediate_build_results.append(build_dir)

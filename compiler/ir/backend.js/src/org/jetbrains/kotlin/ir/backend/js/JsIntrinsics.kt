@@ -355,7 +355,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsExportIgnoreAnnotationSymbol by context.lazy2 {
         jsExportAnnotationSymbol.owner
             .findDeclaration<IrClass> { it.fqNameWhenAvailable == FqName("kotlin.js.JsExport.Ignore") }
-            ?.symbol ?: error("can't find kotlin.js.JsExport.Ignore annotation")
+            ?.symbol ?: irError("can't find kotlin.js.JsExport.Ignore annotation") {
+            withIrEntry("jsExportAnnotationSymbol.owner", jsExportAnnotationSymbol.owner)
+        }
     }
 
     val jsImplicitExportAnnotationSymbol =

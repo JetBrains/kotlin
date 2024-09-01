@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,11 +20,11 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicLongFieldUpdater
 
 /**
- * An [LLFirSession] stores all symbols, components, and configuration needed for the resolution of Kotlin code/binaries from a [KtModule].
+ * An [LLFirSession] stores all symbols, components, and configuration needed for the resolution of Kotlin code/binaries from a [KaModule].
  *
  * ### Invalidation
  *
- * [LLFirSession] will be invalidated by [LLFirSessionInvalidationService] when its [KtModule] or one of the module's dependencies is
+ * [LLFirSession] will be invalidated by [LLFirSessionInvalidationService] when its [KaModule] or one of the module's dependencies is
  * modified, or when a global modification event occurs. Sessions are managed by [LLFirSessionCache], which holds a soft reference to its
  * [LLFirSession]s. This allows a session to be garbage collected when it is softly reachable. The session's [LLFirSessionCleaner] ensures
  * that its associated [Disposable] is properly disposed even after garbage collection.
@@ -33,8 +33,8 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater
  * [session invalidation event][LLFirSessionInvalidationTopics]. This allows entities whose lifetime depends on the session's lifetime to be
  * invalidated with the session. Such an event is not published when the session is garbage collected due to being softly reachable, because
  * the [LLFirSessionCleaner] is not guaranteed to be executed in a write action. If we try to publish a session invalidation event outside
- * a write action, another thread might already have built another [LLFirSession] for the same [KtModule], causing a race between the new
- * session and the session invalidation event (which can only refer to the [KtModule] because the session has already been garbage
+ * a write action, another thread might already have built another [LLFirSession] for the same [KaModule], causing a race between the new
+ * session and the session invalidation event (which can only refer to the [KaModule] because the session has already been garbage
  * collected).
  *
  * Because of this, it's important that cached entities which depend on a session's lifetime (and therefore its session invalidation events)
@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater
  */
 @OptIn(PrivateSessionConstructor::class)
 abstract class LLFirSession(
-    val ktModule: KtModule,
+    val ktModule: KaModule,
     override val builtinTypes: BuiltinTypes,
     kind: Kind
 ) : FirSession(sessionProvider = null, kind) {
@@ -70,7 +70,7 @@ abstract class LLFirSession(
 
         // `LLFirSessionCache` is used as a disposable parent so that disposal is triggered after the Kotlin plugin is unloaded. We don't
         // register a module as a disposable parent, because (1) IJ `Module`s may persist beyond the plugin's lifetime, (2) not all
-        // `KtModule`s have a corresponding `Module`, and (3) sessions are invalidated (and subsequently cleaned up) when their module is
+        // `KaModule`s have a corresponding `Module`, and (3) sessions are invalidated (and subsequently cleaned up) when their module is
         // removed.
         Disposer.register(LLFirSessionCache.getInstance(project), disposable)
 
@@ -127,7 +127,7 @@ private class LLFirSessionValidityModificationTracker(private val sessionRef: We
 }
 
 abstract class LLFirModuleSession(
-    ktModule: KtModule,
+    ktModule: KaModule,
     builtinTypes: BuiltinTypes,
     kind: Kind
 ) : LLFirSession(ktModule, builtinTypes, kind)

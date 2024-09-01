@@ -10,6 +10,7 @@
 #include <optional>
 
 #include "Allocator.hpp"
+#include "CallsChecker.hpp"
 #include "Logging.hpp"
 #include "concurrent/Mutex.hpp"
 #include "Porting.h"
@@ -127,8 +128,9 @@ struct GCInfo {
 
 GCInfo last;
 GCInfo current;
-// This lock can be got by thread in runnable state making parallel mark, so
-kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock;
+// This lock can be obtained by a thread in a runnable state which participates in parallel mark.
+// Thread state switches are undesirable during parallel mark.
+kotlin::SpinLock lock;
 
 GCInfo* statByEpoch(uint64_t epoch) {
     if (current.epoch == epoch) return &current;
@@ -189,6 +191,8 @@ GCHandle GCHandle::getByEpoch(uint64_t epoch) {
 
 // static
 std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto epoch = current.epoch) {
         return GCHandle::getByEpoch(*epoch);
@@ -397,6 +401,8 @@ size_t GCHandle::getKeptSizeBytes() noexcept {
 }
 
 void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& heap = stat->sweepStats.heap;
@@ -412,6 +418,8 @@ void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
 }
 
 void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& extra = stat->sweepStats.extra;
@@ -472,7 +480,7 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
     if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            handle_.getEpoch(), "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
             threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 

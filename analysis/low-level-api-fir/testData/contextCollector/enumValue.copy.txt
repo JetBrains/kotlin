@@ -39,7 +39,7 @@ Tower Data Context:
     Element 10
         Scope: FirLocalScope
             Properties:
-                FirBackingFieldSymbol private <explicit backing field>: R|kotlin/Int|
+                FirBackingFieldSymbol private backing field field: R|kotlin/Int|
     Element 11
         Scope: FirLocalScope
 

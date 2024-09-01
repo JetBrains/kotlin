@@ -1,6 +1,6 @@
 // SKIP_WHEN_OUT_OF_CONTENT_ROOT
 // MEMBER_NAME_FILTER: something
-// IS_GETTER: true
+// RESOLVE_PROPERTY_PART: GETTER
 // FILE: Derived.kt
 class Der<caret>ived : Base() {
     @Anno("getSomething: ${getterProperty}")

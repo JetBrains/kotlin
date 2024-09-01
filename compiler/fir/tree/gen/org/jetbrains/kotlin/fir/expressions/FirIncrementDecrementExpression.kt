@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.incrementDecrementExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.incrementDecrementExpression]
  */
 abstract class FirIncrementDecrementExpression : FirExpression() {
     abstract override val source: KtSourceElement?
@@ -38,6 +38,8 @@ abstract class FirIncrementDecrementExpression : FirExpression() {
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceExpression(newExpression: FirExpression)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIncrementDecrementExpression
 }

@@ -20,6 +20,9 @@ public class SirEnumGeneratorImpl(
 
     private val createdEnums: MutableMap<FqName, SirEnum> = mutableMapOf()
 
+    override val collectedPackages: Set<FqName>
+        get() = createdEnums.keys
+
     override fun FqName.sirPackageEnum(): SirEnum {
         require(!this.isRoot)
 
@@ -33,11 +36,14 @@ public class SirEnumGeneratorImpl(
     }
 
     private fun createEnum(fqName: FqName, parent: SirMutableDeclarationContainer): SirEnum = createdEnums.getOrPut(fqName) {
-        parent.addChild {
-            buildEnum {
-                origin = SirOrigin.Namespace(fqName.pathSegments().map { it.asString() })
-                name = fqName.pathSegments().last().asString()
+        val enumToCreateName = fqName.pathSegments().last().asString()
+        parent.declarations
+            .filterIsInstance<SirEnum>().find { it.name == enumToCreateName }
+            ?: parent.addChild {
+                buildEnum {
+                    origin = SirOrigin.Namespace(fqName.pathSegments().map { it.asString() })
+                    name = enumToCreateName
+                }
             }
-        }
     }
 }

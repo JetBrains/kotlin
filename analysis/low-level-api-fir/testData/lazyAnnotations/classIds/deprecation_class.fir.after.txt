@@ -1,0 +1,1 @@
+@R|kotlin/Deprecated|[Types](String(deprecated class), ReplaceWith#(String(1).plus#(String(2)))) public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|

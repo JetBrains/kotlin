@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -23,12 +28,19 @@ import org.jetbrains.kotlin.name.Name
  * It contains all context-modification-related methods unlike CheckerContext that is assumed to be read-only
  */
 abstract class CheckerContextForProvider(
-    sessionHolder: SessionHolder,
-    returnTypeCalculator: ReturnTypeCalculator,
-    allInfosSuppressed: Boolean,
-    allWarningsSuppressed: Boolean,
-    allErrorsSuppressed: Boolean
-) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
+    override val sessionHolder: SessionHolder,
+    override val returnTypeCalculator: ReturnTypeCalculator,
+    override val allInfosSuppressed: Boolean,
+    override val allWarningsSuppressed: Boolean,
+    override val allErrorsSuppressed: Boolean
+) : CheckerContext() {
+    protected companion object {
+        fun getGloballySuppressedDiagnostics(session: FirSession): PersistentSet<String> {
+            var set = persistentSetOf<String>()
+            set = set.addAll(session.languageVersionSettings.getFlag(AnalysisFlags.globallySuppressedDiagnostics))
+            return set
+        }
+    }
 
     abstract fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,

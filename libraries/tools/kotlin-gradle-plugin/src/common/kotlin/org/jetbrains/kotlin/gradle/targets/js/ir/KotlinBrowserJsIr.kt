@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,8 +15,9 @@ import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -30,12 +31,12 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -94,15 +95,18 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         webpackTaskConfigurations.add(body)
     }
 
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalDceDsl
-    override fun dceTask(body: Action<KotlinJsDce>) {
-        project.logger.warn("dceTask configuration is useless with IR compiler. Use @JsExport on declarations instead.")
+    override fun dceTask(body: Action<@Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.gradle.dsl.KotlinJsDce>) {
+        project.logger.warn(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE)
     }
 
     override fun configureRun(
         compilation: KotlinJsIrCompilation,
     ) {
-        val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
+        val commonRunTaskName = disambiguateCamelCased(RUN_TASK_NAME)
+        val commonRunTask = project.locateTask<Task>(commonRunTaskName) ?: registerSubTargetTask<Task>(commonRunTaskName) {}
 
         compilation.binaries
             .matching { it is Executable }
@@ -166,7 +170,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )
                 }
 
-                if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                if (mode == KotlinJsBinaryMode.DEVELOPMENT && compilation.isMain()) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.dependsOn(runTask)
                 }
@@ -223,7 +227,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 val distributionTask = registerSubTargetTask<Copy>(
                     disambiguateCamelCased(
-                        if (binary.mode == KotlinJsBinaryMode.PRODUCTION) "" else binary.name,
+                        if (
+                            binary.mode == KotlinJsBinaryMode.PRODUCTION &&
+                            binary.compilation.isMain()
+                        ) "" else binary.name,
                         DISTRIBUTION_TASK_NAME
                     )
                 ) { copy ->
@@ -244,11 +251,9 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     copy.into(binary.distribution.outputDirectory)
                 }
 
-                if (mode == KotlinJsBinaryMode.PRODUCTION) {
+                if (mode == KotlinJsBinaryMode.PRODUCTION && compilation.isMain()) {
                     assembleTaskProvider.dependsOn(distributionTask)
-                    registerSubTargetTask<Task>(
-                        disambiguateCamelCased(WEBPACK_TASK_NAME)
-                    ) {
+                    registerSubTargetTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
                         it.dependsOn(webpackTask)
                     }
                 }

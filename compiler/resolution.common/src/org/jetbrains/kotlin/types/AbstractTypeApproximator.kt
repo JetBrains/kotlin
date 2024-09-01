@@ -55,7 +55,7 @@ abstract class AbstractTypeApproximator(
 
             type.isError() ->
                 // todo -- fix builtIns. Now builtIns here is DefaultBuiltIns
-                (if (conf.errorType) null else type.defaultResult(toSuper)).toApproximationResult()
+                (if (!conf.approximateErrorTypes) null else type.defaultResult(toSuper)).toApproximationResult()
 
             depth > 3 ->
                 type.defaultResult(toSuper).toApproximationResult()
@@ -118,9 +118,9 @@ abstract class AbstractTypeApproximator(
             is SimpleTypeMarker -> return approximateTo(type, conf, depth)
             is FlexibleTypeMarker -> {
                 if (type.isDynamic()) {
-                    return if (conf.dynamic) null else type.bound()
+                    return if (!conf.approximateDynamic) null else type.bound()
                 } else if (type.isRawType()) {
-                    return if (conf.rawType) null else type.bound()
+                    return if (!conf.approximateRawTypes) null else type.bound()
                 }
 
 //              TODO: Restore check
@@ -129,7 +129,7 @@ abstract class AbstractTypeApproximator(
 //                  "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
 //              }
 
-                if (conf.flexible) {
+                if (!conf.approximateFlexible) {
                     /**
                      * Let inputType = L_1..U_1; resultType = L_2..U_2
                      * We should create resultType such as inputType <: resultType.
@@ -187,7 +187,7 @@ abstract class AbstractTypeApproximator(
         // This saves us from doing twice the work unnecessarily in many cases.
         return isK2 &&
                 upperBoundConstructor.isArrayConstructor() &&
-                upperBound.getArgumentOrNull(0).let { it is CapturedTypeMarker && conf.capturedType(ctx, it) }
+                upperBound.getArgumentOrNull(0).let { it is CapturedTypeMarker && conf.shouldApproximateCapturedType(ctx, it) }
     }
 
     private fun approximateLocalTypes(
@@ -197,10 +197,10 @@ abstract class AbstractTypeApproximator(
         depth: Int,
     ): SimpleTypeMarker? {
         if (!toSuper) return null
-        if (!conf.localTypes && !conf.anonymous) return null
+        if (!conf.approximateLocalTypes && !conf.approximateAnonymous) return null
 
         fun TypeConstructorMarker.isAcceptable(conf: TypeApproximatorConfiguration): Boolean {
-            return !(conf.localTypes && isLocalType()) && !(conf.anonymous && isAnonymous())
+            return !(conf.approximateLocalTypes && isLocalType()) && !(conf.approximateAnonymous && isAnonymous())
         }
 
         val constructor = type.typeConstructor()
@@ -289,6 +289,15 @@ abstract class AbstractTypeApproximator(
             "Supertypes for intersection type should not be empty: $type"
         }
 
+        val upperBoundForApproximation = type.getUpperBoundForApproximationOfIntersectionType()
+
+        if (toSuper && upperBoundForApproximation != null &&
+            (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE ||
+                    conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE)
+        ) {
+            return approximateToSuperType(upperBoundForApproximation, conf, depth) ?: upperBoundForApproximation
+        }
+
         var thereIsApproximation = false
         val newTypes = typeConstructor.supertypes().map {
             val newType = if (toSuper) approximateToSuperType(it, conf, depth) else approximateToSubType(it, conf, depth)
@@ -304,11 +313,10 @@ abstract class AbstractTypeApproximator(
          *
          * For other case -- it's impossible to find some type except Nothing as subType for intersection type.
          */
-        val baseResult = when (conf.intersection) {
+        val baseResult = when (conf.intersectionStrategy) {
             TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED -> if (!thereIsApproximation) {
                 return null
             } else {
-                val upperBoundForApproximation = type.getUpperBoundForApproximationOfIntersectionType()
                 intersectTypes(newTypes, upperBoundForApproximation, toSuper, conf, depth)
             }
             TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
@@ -352,41 +360,6 @@ abstract class AbstractTypeApproximator(
         toSuper: Boolean,
         depth: Int,
     ): KotlinTypeMarker? {
-        fun KotlinTypeMarker.replaceRecursionWithStarProjection(capturedType: CapturedTypeMarker): KotlinTypeMarker {
-            // This replacement is important for resolving the code like below in K2.
-            //     fun bar(y: FieldOrRef<*>) = y.field
-            //     interface FieldOrRef<FF : AbstractField<FF>> { val field: FF }
-            //     abstract class AbstractField<out F : AbstractField<F>>
-            // During resolving the value parameter y type, K1 also builds a type for a star projection *.
-            // See fun TypeParameterDescriptor.starProjectionType(): KotlinType and fun buildStarProjectionTypeByTypeParameters.
-            // Thanks to it, K1 builds the star projection type as AbstractField<*> and no other approximation is needed.
-            //
-            // In turn, K2 never makes such a thing (K2 star projection has no associated type).
-            // Instead, it resolves y.field as CapturedType(*) C (see usage one line below),
-            // and the constructor of this captured type has a star projection and a supertype of `AbstractField<C>`.
-            //
-            // Without this replacement, the type approximator currently cannot handle such a situation properly
-            // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
-            // The check it == type here is intended to find a recursion inside a captured type.
-            // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
-
-            fun TypeArgumentMarker.unwrapForComparison(): KotlinTypeMarker? {
-                if (this.isStarProjection()) return null
-                return getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
-            }
-
-            return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
-                replaceArguments {
-                    when {
-                        it.unwrapForComparison() != capturedType -> it
-                        // It's possible to use the stub here, because K2 star projection is an object and
-                        // in fact this parameter is never used
-                        else -> createStarProjection(TypeParameterMarkerStubForK2StarProjection)
-                    }
-                }
-            } else this
-        }
-
         val supertypes = capturedType.typeConstructor().supertypes()
         val baseSuperType = when (supertypes.size) {
             0 -> nullableAnyType() // Let C = in Int, then superType for C and C? is Any?
@@ -422,7 +395,7 @@ abstract class AbstractTypeApproximator(
         }
         val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
 
-        if (!conf.capturedType(ctx, capturedType)) {
+        if (!conf.shouldApproximateCapturedType(ctx, capturedType)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
@@ -457,6 +430,41 @@ abstract class AbstractTypeApproximator(
                 else -> it
             }
         }
+    }
+
+    private fun KotlinTypeMarker.replaceRecursionWithStarProjection(capturedType: CapturedTypeMarker): KotlinTypeMarker {
+        // This replacement is important for resolving the code like below in K2.
+        //     fun bar(y: FieldOrRef<*>) = y.field
+        //     interface FieldOrRef<FF : AbstractField<FF>> { val field: FF }
+        //     abstract class AbstractField<out F : AbstractField<F>>
+        // During resolving the value parameter y type, K1 also builds a type for a star projection *.
+        // See fun TypeParameterDescriptor.starProjectionType(): KotlinType and fun buildStarProjectionTypeByTypeParameters.
+        // Thanks to it, K1 builds the star projection type as AbstractField<*> and no other approximation is needed.
+        //
+        // In turn, K2 never makes such a thing (K2 star projection has no associated type).
+        // Instead, it resolves y.field as CapturedType(*) C (see usage one line below),
+        // and the constructor of this captured type has a star projection and a supertype of `AbstractField<C>`.
+        //
+        // Without this replacement, the type approximator currently cannot handle such a situation properly
+        // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
+        // The check it == type here is intended to find a recursion inside a captured type.
+        // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
+
+        fun TypeArgumentMarker.unwrapForComparison(): KotlinTypeMarker? {
+            if (this.isStarProjection()) return null
+            return getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
+        }
+
+        return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
+            replaceArguments {
+                when {
+                    it.unwrapForComparison() != capturedType -> it
+                    // It's possible to use the stub here, because K2 star projection is an object and
+                    // in fact this parameter is never used
+                    else -> createStarProjection(TypeParameterMarkerStubForK2StarProjection)
+                }
+            }
+        } else this
     }
 
     private object TypeParameterMarkerStubForK2StarProjection : TypeParameterMarker
@@ -499,11 +507,11 @@ abstract class AbstractTypeApproximator(
         }
 
         if (typeConstructor is TypeVariableTypeConstructorMarker) {
-            return if (conf.shouldKeepTypeVariableBasedType(typeConstructor, isK2)) null else type.defaultResult(toSuper)
+            return if (!conf.shouldApproximateTypeVariableBasedType(typeConstructor, isK2)) null else type.defaultResult(toSuper)
         }
 
         if (typeConstructor.isIntegerLiteralConstantTypeConstructor()) {
-            return runIf(conf.integerLiteralConstantType) {
+            return runIf(conf.approximateIntegerLiteralConstantTypes) {
                 // We ensure that expectedTypeForIntegerLiteralType is only used for top-level and possibly flexible ILTs.
                 // Otherwise, we can accidentally approximate nested ILTs to wrong types.
                 check(conf.expectedTypeForIntegerLiteralType == null || depth <= 0)
@@ -513,7 +521,7 @@ abstract class AbstractTypeApproximator(
         }
 
         if (typeConstructor.isIntegerConstantOperatorTypeConstructor()) {
-            return runIf(conf.integerConstantOperatorType) {
+            return runIf(conf.approximateIntegerConstantOperatorTypes) {
                 // We ensure that expectedTypeForIntegerLiteralType is only used for top-level and possibly flexible ILTs.
                 // Otherwise, we can accidentally approximate nested ILTs to wrong types.
                 check(conf.expectedTypeForIntegerLiteralType == null || depth <= 0)
@@ -541,7 +549,7 @@ abstract class AbstractTypeApproximator(
             return typeWithErasedNullability
         }
 
-        return if (conf.definitelyNotNullType || languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
+        return if (!conf.approximateDefinitelyNotNullTypes || languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
             approximatedOriginalType?.makeDefinitelyNotNullOrNotNull(preserveAttributes = true)
         } else {
             if (toSuper)
@@ -566,7 +574,7 @@ abstract class AbstractTypeApproximator(
     ): SimpleTypeMarker? {
         val typeConstructor = type.typeConstructor()
         if (typeConstructor.parametersCount() != type.argumentsCount()) {
-            return if (conf.errorType) {
+            return if (!conf.approximateErrorTypes) {
                 createErrorType(
                     "Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})",
                     type
@@ -595,7 +603,7 @@ abstract class AbstractTypeApproximator(
                 (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
                 toSuper &&
                 capturedType.typeParameter() == parameter &&
-                (!isK2 || conf.capturedType(ctx, capturedType))
+                (!isK2 || conf.shouldApproximateCapturedType(ctx, capturedType))
             ) {
                 newArguments[index] = capturedStarProjectionOrNull
                 continue@loop
@@ -603,7 +611,7 @@ abstract class AbstractTypeApproximator(
 
             when (effectiveVariance) {
                 null -> {
-                    return if (conf.errorType) {
+                    return if (!conf.approximateErrorTypes) {
                         createErrorType(
                             "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
                                     "but argument variance is ${argument.getVariance()})",
@@ -613,15 +621,13 @@ abstract class AbstractTypeApproximator(
                 }
                 TypeVariance.OUT, TypeVariance.IN -> {
                     if (
-                        conf.intersectionTypesInContravariantPositions &&
+                        conf.approximateIntersectionTypesInContravariantPositions &&
                         effectiveVariance == TypeVariance.IN &&
-                        argumentType.typeConstructor().isIntersection()
+                        argumentType.typeConstructor().isIntersection() &&
+                        isIntersectionTypeEffectivelyNothing(argumentType.typeConstructor() as IntersectionTypeConstructorMarker)
                     ) {
-                        val argumentTypeConstructor = argumentType.typeConstructor()
-                        if (argumentTypeConstructor.isIntersection() && isIntersectionTypeEffectivelyNothing(argumentTypeConstructor as IntersectionTypeConstructorMarker)) {
-                            newArguments[index] = createStarProjection(parameter)
-                            continue@loop
-                        }
+                        newArguments[index] = createStarProjection(parameter)
+                        continue@loop
                     }
 
                     /**
@@ -635,7 +641,7 @@ abstract class AbstractTypeApproximator(
                         val approximatedType = approximateToSuperType(argumentType, conf, depth)
                             ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter, conf)
 
-                        if (conf.intersection == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
+                        if (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
                             && argumentType.typeConstructor().isIntersection()
                             && parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }
                         ) {
@@ -655,7 +661,7 @@ abstract class AbstractTypeApproximator(
                     }
 
                     if (
-                        conf.intersection != TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED &&
+                        conf.intersectionStrategy != TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED &&
                         effectiveVariance == TypeVariance.OUT &&
                         argumentType.typeConstructor().isIntersection()
                     ) {
@@ -750,7 +756,7 @@ abstract class AbstractTypeApproximator(
         parameter: TypeParameterMarker,
         conf: TypeApproximatorConfiguration,
     ): KotlinTypeMarker {
-        if (!isK2 || conf.flexible) {
+        if (!isK2 || !conf.approximateFlexible) {
             return this
         }
 
@@ -763,7 +769,9 @@ abstract class AbstractTypeApproximator(
 
     private fun KotlinTypeMarker.isFlexibleOrCapturedWithFlexibleSuperTypes(): Boolean {
         return hasFlexibleNullability() ||
-                (asSimpleType()?.asCapturedType()?.typeConstructor()?.supertypes()?.all { it.hasFlexibleNullability() } == true)
+                (asSimpleType()?.originalIfDefinitelyNotNullable()?.asCapturedType()?.typeConstructor()?.supertypes()?.all {
+                    it.hasFlexibleNullability()
+                } == true)
     }
 
     private fun shouldUseSubTypeForCapturedArgument(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
-import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.Assert
 import java.io.File
@@ -47,7 +47,7 @@ fun ScriptEngine.runTestFunction(
         entryModulePath != null && entryModulePath.endsWith(ESM_EXTENSION) -> "globalThis".also {
             eval("import('${entryModulePath.escapePath()}').then(module => Object.assign(globalThis, module)).catch(console.error)")
         }
-        withModuleSystem -> "\$kotlin_test_internal\$.require('" + testModuleName!! + "')"
+        withModuleSystem -> "$KOTLIN_TEST_INTERNAL.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
         else -> testModuleName
     }

@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-NO_CANDIDATES
+KtNameReferenceExpression(77,81): 'Fake'
+  NO_CANDIDATES

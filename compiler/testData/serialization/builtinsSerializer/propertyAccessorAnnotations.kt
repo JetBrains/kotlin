@@ -1,3 +1,4 @@
+// FIR_DIFFERENCE
 package test
 
 annotation class Anno(val value: String)

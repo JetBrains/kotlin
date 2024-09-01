@@ -72,7 +72,7 @@ private fun printImpl(message: String?, useErrorStream: Boolean, newLine: Boolea
     }
 }
 
-internal fun printError(error: String?) {
+internal actual fun printError(error: String?) {
     printImpl(error, useErrorStream = true, newLine = false)
 }
 

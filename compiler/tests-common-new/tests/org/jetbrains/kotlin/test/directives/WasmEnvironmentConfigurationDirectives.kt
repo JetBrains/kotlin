@@ -18,7 +18,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_NEW_EXCEPTION_HANDLING_PROPOSAL by directive(
-        description = "Generate wasm the updated EH proposal and test in runtime with EH turned on",
+        description = "Generate wasm with the updated EH proposal turned on",
+    )
+
+    val USE_JS_TAG by directive(
+        description = "Generate wasm with usage of WebAssembly.JSTag inside a EH proposal",
     )
 
     // Next directives are used only inside test system and must not be present in test file
@@ -41,6 +45,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val GENERATE_SOURCE_MAP by directive(
         description = "Enables generation of source map",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES by directive(
+        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine",
         applicability = DirectiveApplicability.Global
     )
 

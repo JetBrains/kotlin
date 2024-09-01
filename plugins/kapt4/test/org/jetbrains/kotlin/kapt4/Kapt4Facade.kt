@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -16,9 +15,8 @@ import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.test.KaptMessageCollectorProvider
+import org.jetbrains.kotlin.kapt3.test.handlers.renderNormalizedMetadata
 import org.jetbrains.kotlin.kapt3.test.kaptOptionsProvider
-import org.jetbrains.kotlin.kotlinp.Settings
-import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 import java.io.PrintWriter
-import kotlin.metadata.jvm.KotlinClassMetadata
 
 internal class Kapt4Facade(private val testServices: TestServices) :
     AbstractTestFacade<ResultingArtifact.Source, Kapt4ContextBinaryArtifact>() {
@@ -61,7 +58,6 @@ internal class Kapt4Facade(private val testServices: TestServices) :
     }
 }
 
-@OptIn(KtAnalysisApiInternals::class)
 private fun run(
     configuration: CompilerConfiguration,
     options: KaptOptions,
@@ -119,17 +115,9 @@ internal data class Kapt4ContextBinaryArtifact(
 }
 
 private fun Printer.renderMetadata(metadata: Metadata) {
-    val text = JvmKotlinp(Settings(isVerbose = true, sortDeclarations = true)).printClassFile(KotlinClassMetadata.readLenient(metadata))
-    // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
-    // to avoid them being interpreted as Java comments.
-    val sanitized = text.split('\n')
-        .dropLast(1)
-        .map {
-            it.replace("/*", "(*").replace("*/", "*)")
-        }
     println("/**")
-    sanitized.forEach {
-        println(" * ", it)
+    for (line in renderNormalizedMetadata(metadata)) {
+        println(" * ", line)
     }
     println(" */")
     println("@kotlin.Metadata()")

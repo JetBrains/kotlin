@@ -1,4 +1,3 @@
-// JVM_ABI_K1_K2_DIFF: KT-63864
 // KT-54635: Kotlin/JS cannot distinguish between Int and Double at runtime
 // Expected: types third level 1.0
 // Actual: types third level 1

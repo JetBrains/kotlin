@@ -1,15 +1,19 @@
 <caret_1>:
-  KDocReference:
-    (in test) fun test.Foo.extFun()
+  KDocName(54,65): 'test.extFun'
+    KDocReference:
+      (in test) fun test.Foo.extFun()
 
 <caret_2>:
-  KDocReference:
-    (in test) fun test.Foo.extFun()
+  KDocName(71,77): 'extFun'
+    KDocReference:
+      (in test) fun test.Foo.extFun()
 
 <caret_3>:
-  KDocReference:
-    (in test) fun test.Foo.extFun()
+  KDocName(86,96): 'Foo.extFun'
+    KDocReference:
+      (in test) fun test.Foo.extFun()
 
 <caret_4>:
-  KDocReference:
-    (in test) fun test.Foo.extFun()
+  KDocName(102,117): 'test.Foo.extFun'
+    KDocReference:
+      (in test) fun test.Foo.extFun()

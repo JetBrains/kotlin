@@ -23,7 +23,7 @@ using ::testing::_;
 
 namespace {
 
-using IntList = SingleLockList<int, SpinLock<MutexThreadStateHandling::kIgnore>>;
+using IntList = SingleLockList<int, SpinLock>;
 
 } // namespace
 
@@ -368,7 +368,7 @@ private:
 } // namespace
 
 TEST(SingleLockListTest, PinnedType) {
-    SingleLockList<PinnedType, SpinLock<MutexThreadStateHandling::kIgnore>> list;
+    SingleLockList<PinnedType, SpinLock> list;
     constexpr int kFirst = 1;
 
     auto* itemNode = list.Emplace(kFirst);
@@ -406,7 +406,7 @@ private:
 TEST(SingleLockListTest, Destructor) {
     testing::StrictMock<testing::MockFunction<DestructorHook>> hook;
     {
-        SingleLockList<WithDestructorHook, SpinLock<MutexThreadStateHandling::kIgnore>> list;
+        SingleLockList<WithDestructorHook, SpinLock> list;
         auto* first = list.Emplace(hook.AsStdFunction())->Get();
         auto* second = list.Emplace(hook.AsStdFunction())->Get();
         auto* third = list.Emplace(hook.AsStdFunction())->Get();
@@ -425,7 +425,7 @@ TEST(SingleLockListTest, Destructor) {
 TEST(SingleLockListTest, CustomAllocator) {
     testing::StrictMock<test_support::SpyAllocatorCore> allocatorCore;
     auto allocator = test_support::MakeAllocator<int>(allocatorCore);
-    SingleLockList<int, SpinLock<MutexThreadStateHandling::kIgnore>, decltype(allocator)> list(allocator);
+    SingleLockList<int, SpinLock, decltype(allocator)> list(allocator);
 
     EXPECT_CALL(allocatorCore, allocate(_)).Times(3);
     auto* node1 = list.Emplace(1);

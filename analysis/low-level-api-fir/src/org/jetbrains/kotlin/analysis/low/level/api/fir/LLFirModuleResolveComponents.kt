@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStruct
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 
 internal class LLFirModuleResolveComponents(
-    val module: KtModule,
+    val module: KaModule,
     val globalResolveComponents: LLFirGlobalResolveComponents,
     val scopeProvider: FirScopeProvider
 ) {

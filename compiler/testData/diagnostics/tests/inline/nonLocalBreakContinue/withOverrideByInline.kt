@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +BreakContinueInInlineLambdas
 // DIAGNOSTICS: -UNREACHABLE_CODE
 // ISSUE: KT-1436
@@ -16,12 +15,12 @@ fun test(a: Test, b: Test2){
             <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
         }
         (a as Test2).bar {
-            continue
-            break
+            <!UNSUPPORTED_FEATURE!>continue<!>
+            <!UNSUPPORTED_FEATURE!>break<!>
         }
         b.bar {
-            continue
-            break
+            <!UNSUPPORTED_FEATURE!>continue<!>
+            <!UNSUPPORTED_FEATURE!>break<!>
         }
     }
 }

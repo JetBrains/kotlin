@@ -1,6 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
-// TARGET_BACKENDS=JS_IR
-
 package foo
 
 @JsExport

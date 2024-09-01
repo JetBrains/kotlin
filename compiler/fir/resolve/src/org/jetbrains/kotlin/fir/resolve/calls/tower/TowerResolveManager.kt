@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext

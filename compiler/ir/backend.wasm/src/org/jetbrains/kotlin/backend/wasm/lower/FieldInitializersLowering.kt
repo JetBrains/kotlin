@@ -50,7 +50,7 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 if (!declaration.isStatic) return
                 val initValue: IrExpression = declaration.initializer?.expression ?: return
                 // Constant primitive initializers without implicit casting can be processed by native wasm initializers
-                if (initValue is IrConst<*>) {
+                if (initValue is IrConst) {
                     if (initValue.kind is IrConstKind.Null) return
                     if (initValue.type == declaration.type && initValue.kind !is IrConstKind.String) return
                 }

@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 
 const val COMPILE_ONLY = "compileOnly"
 const val COMPILE = "compile"
@@ -56,7 +62,10 @@ internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Depe
         isCanBeConsumed = false
     }
 
-internal fun ConfigurationContainer.createConsumable(name: String): Configuration = create(name).apply {
+internal fun ConfigurationContainer.createConsumable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration = create(name, configurationOnCreate).apply {
     isCanBeResolved = false
 }
 
@@ -68,8 +77,11 @@ internal fun ConfigurationContainer.findConsumable(name: String): Configuration?
     }
 }
 
-internal fun ConfigurationContainer.maybeCreateConsumable(name: String): Configuration =
-    findConsumable(name) ?: createConsumable(name)
+internal fun ConfigurationContainer.maybeCreateConsumable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration =
+    findConsumable(name) ?: createConsumable(name, configurationOnCreate)
 
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,
@@ -99,3 +111,31 @@ internal fun ConfigurationContainer.maybeCreateDependencyScope(
     name: String,
     configurationOnCreate: Configuration.() -> Unit = {},
 ): Configuration = findDependencyScope(name) ?: createDependencyScope(name, configurationOnCreate).get()
+
+internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
+    project: Project,
+    kotlinCompilation: KotlinCompilation<*>,
+    addArtifactsToVariantCreatedByJavaLibraryPlugin: Boolean = false,
+) {
+    if (!project.kotlinPropertiesProvider.addSecondaryClassesVariant) return
+
+    val apiClassesVariant = outgoing.variants.maybeCreate(CLASSES_SECONDARY_VARIANT_NAME)
+    apiClassesVariant.attributes.attribute(
+        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+        project.objects.named(LibraryElements.CLASSES)
+    )
+
+    project.whenEvaluated {
+        // Java-library plugin already has done all required work here
+        if (!addArtifactsToVariantCreatedByJavaLibraryPlugin && project.plugins.hasPlugin("java-library")) return@whenEvaluated
+
+        kotlinCompilation.output.classesDirs.files.forEach { classesDir ->
+            apiClassesVariant.artifact(classesDir) {
+                it.type = ArtifactTypeDefinition.JVM_CLASS_DIRECTORY
+                it.builtBy(kotlinCompilation.output.classesDirs.buildDependencies)
+            }
+        }
+    }
+}
+
+internal val Configuration.lenientArtifactsView get() = incoming.artifactView { view -> view.isLenient = true }.artifacts

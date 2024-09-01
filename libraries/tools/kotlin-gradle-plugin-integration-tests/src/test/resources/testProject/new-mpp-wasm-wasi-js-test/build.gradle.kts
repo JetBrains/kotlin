@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>").apply(false)
+    kotlin("multiplatform").apply(false)
 }
 
 rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {

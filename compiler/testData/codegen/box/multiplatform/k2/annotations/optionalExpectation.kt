@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // OPT_IN: kotlin.ExperimentalMultiplatform
 // WITH_STDLIB
+// ISSUE: KT-69024
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -36,12 +37,21 @@ import a.B
 @B.C(true)
 fun ok() = "OK"
 
+expect annotation class C()
+
+@OptionalExpectation
+expect annotation class AnnWithOptionalExpectation(val c: C) {
+    annotation class NestedAnnWithOptionalExpectation(val c2: C)
+}
+
 // MODULE: main(library)()(common2)
 // FILE: main.kt
 
 package usage
 
 import a.A
+
+actual annotation class C()
 
 @A(42)
 fun box(): String = ok()

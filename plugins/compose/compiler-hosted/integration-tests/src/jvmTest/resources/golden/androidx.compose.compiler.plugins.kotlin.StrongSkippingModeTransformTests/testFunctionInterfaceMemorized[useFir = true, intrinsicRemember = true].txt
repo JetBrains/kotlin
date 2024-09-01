@@ -49,14 +49,18 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val capture = 0
-    TestMemoizedFun(%composer.cache(false) {
-      TestFunInterface { it: Int ->
-        use(it)
+    TestMemoizedFun(<block>{
+      %composer.cache(false) {
+        TestFunInterface { it: Int ->
+          use(it)
+        }
       }
     }, %composer, 0)
-    TestMemoizedFun(%composer.cache(false) {
-      TestFunInterface { it: Int ->
-        use(capture)
+    TestMemoizedFun(<block>{
+      %composer.cache(false) {
+        TestFunInterface { it: Int ->
+          use(capture)
+        }
       }
     }, %composer, 0)
     if (isTraceInProgress()) {

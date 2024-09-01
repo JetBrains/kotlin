@@ -10,7 +10,8 @@ interface IFoo {
 var global = Z(0)
 
 
-inline class Z(val x: Int) : IFoo {
+@JvmInline
+value class Z(val x: Int) : IFoo {
 
     override fun fooFun(z: Z): Z = Z(z.x + x)
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -42,9 +43,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     ): SMAPAndMethodNode =
         try {
             doGenerate(reifiedTypeParameters)
-        } catch (e: ProcessCanceledException) {
-            throw e
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
@@ -162,7 +162,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
                     (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
-                    (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
+                    (when (this) {
+                        is IrConstructor -> 0
+                        is IrSimpleFunction -> Opcodes.ACC_STATIC
+                    })
         }
 
         val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
@@ -247,7 +250,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun IrFunction.createFrameMapWithReceivers(): IrFrameMap {
         val frameMap = IrFrameMap()
-        val receiver = if (this is IrConstructor) parentAsClass.thisReceiver else dispatchReceiverParameter
+        val receiver = when (this) {
+            is IrConstructor -> parentAsClass.thisReceiver
+            is IrSimpleFunction -> dispatchReceiverParameter
+        }
         receiver?.let {
             frameMap.enter(it, classCodegen.typeMapper.mapTypeAsDeclaration(it.type))
         }

@@ -19,23 +19,23 @@ object DelegateTest2 {
 
     var intResult = 0
     val i1 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i1<!>
+        intResult += <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i1<!>
         0
     }
     val i2 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>-=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i2<!>
+        intResult -= <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i2<!>
         0
     }
     val i3 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>*=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i3<!>
+        intResult *= <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i3<!>
         0
     }
     val i4 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>/=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i4<!>
+        intResult /= <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i4<!>
         0
     }
     val i5 by lazy {
-        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>%=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i5<!>
+        intResult %= <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>i5<!>
         0
     }
 }

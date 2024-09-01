@@ -1,12 +1,12 @@
 expression: consumer::accept
-expected type: KaFunctionalType:
-  annotationsList: []
+expected type: KaFunctionType:
+  annotations: []
   typeArguments: [
     KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
   ]

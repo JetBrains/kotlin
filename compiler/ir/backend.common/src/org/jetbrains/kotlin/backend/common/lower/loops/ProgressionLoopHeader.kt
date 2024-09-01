@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.irCastIfNeeded
 
 class ProgressionLoopHeader(
     headerInfo: ProgressionHeaderInfo,
@@ -102,12 +104,15 @@ class ProgressionLoopHeader(
                 else
                     oldLoop.origin
                 val newLoop = IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, newLoopOrigin).apply {
-                    val loopVariableExpression = irGet(loopVariable!!).let {
-                        headerInfo.progressionType.run {
-                            if (this is UnsignedProgressionType) {
-                                // The loop variable is signed but bounds are signed for unsigned progressions.
-                                it.asSigned()
-                            } else it
+                    // Inliner might erase type of `loopVariable` to `Any`, so loopVariableExpression needs a cast to the known type,
+                    // which is usually `headerInfo.progressionType.elementClass`
+                    val loopVariableExpression = headerInfo.progressionType.run {
+                        if (this is UnsignedProgressionType) {
+                            // The loop variable is signed but bounds are signed for unsigned progressions.
+                            // Also, cannot use unreliable `elementClass` here: it depends on `allowUnsignedBounds`
+                            irCastIfNeeded(irGet(loopVariable!!), unsignedType).asSigned()
+                        } else {
+                            irCastIfNeeded(irGet(loopVariable!!), elementClass.defaultType)
                         }
                     }
                     label = oldLoop.label

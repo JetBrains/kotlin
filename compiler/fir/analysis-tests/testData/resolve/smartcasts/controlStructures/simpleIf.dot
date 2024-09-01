@@ -167,29 +167,30 @@ digraph simpleIf_kt {
                         65 [label="Smart cast: R|<local>/x|"];
                         66 [label="Function call arguments exit"];
                     }
-                    67 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
-                    68 [label="Exit block"];
+                    67 [label="Function call enter: R|<local>/x|.R|kotlin/Int.inc|()"];
+                    68 [label="Function call exit: R|<local>/x|.R|kotlin/Int.inc|()" style="filled" fillcolor=yellow];
+                    69 [label="Exit block"];
                 }
-                69 [label="Exit when branch result"];
-                70 [label="Enter when branch result"];
+                70 [label="Exit when branch result"];
+                71 [label="Enter when branch result"];
                 subgraph cluster_19 {
                     color=blue
-                    71 [label="Enter block"];
-                    72 [label="Exit block"];
+                    72 [label="Enter block"];
+                    73 [label="Exit block"];
                 }
-                73 [label="Exit when branch result"];
-                74 [label="Enter when branch result"];
+                74 [label="Exit when branch result"];
+                75 [label="Enter when branch result"];
                 subgraph cluster_20 {
                     color=blue
-                    75 [label="Enter block"];
-                    76 [label="Exit block"];
+                    76 [label="Enter block"];
+                    77 [label="Exit block"];
                 }
-                77 [label="Exit when branch result"];
-                78 [label="Exit when"];
+                78 [label="Exit when branch result"];
+                79 [label="Exit when"];
             }
-            79 [label="Exit block"];
+            80 [label="Exit block"];
         }
-        80 [label="Exit function test_3" style="filled" fillcolor=red];
+        81 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     44 -> {45};
     45 -> {46};
@@ -197,12 +198,12 @@ digraph simpleIf_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {51 74};
+    50 -> {51 75};
     51 -> {52};
     52 -> {53};
     53 -> {54};
     54 -> {55};
-    55 -> {56 70};
+    55 -> {56 71};
     56 -> {57};
     57 -> {58};
     58 -> {59};
@@ -216,16 +217,17 @@ digraph simpleIf_kt {
     66 -> {67};
     67 -> {68};
     68 -> {69};
-    69 -> {78};
-    70 -> {71};
+    69 -> {70};
+    70 -> {79};
     71 -> {72};
     72 -> {73};
-    73 -> {78};
-    74 -> {75};
+    73 -> {74};
+    74 -> {79};
     75 -> {76};
     76 -> {77};
     77 -> {78};
     78 -> {79};
     79 -> {80};
+    80 -> {81};
 
 }

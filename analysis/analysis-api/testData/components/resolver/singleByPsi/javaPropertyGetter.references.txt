@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in JavaClass) open val foo: kotlin.Int
+KtNameReferenceExpression(76,79): 'foo'
+  KtSimpleNameReference:
+    (in JavaClass) open val foo: kotlin.Int

@@ -5,11 +5,19 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.source
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByFqNameTest
+import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceTestConfigurator
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
+    SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JvmPlatforms.defaultJvmPlatform),
     EXTENSIONS.FIR_JAVA,
+    isTestAgainstCompiledCode = false,
+)
+
+abstract class AbstractJsSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
+    SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JsPlatforms.defaultJsPlatform),
+    EXTENSIONS.KMP_JAVA,
     isTestAgainstCompiledCode = false,
 )

@@ -26,6 +26,7 @@ interface KotlinTopLevelExtensionConfig {
      * - 'kotlin-stdlib'
      * - 'kotlin-test'
      * - 'kotlin-dom-api-compat'
+     * - 'kotlin-reflect'
      *
      * Default: The same version as the version used in the Kotlin Gradle plugin
      */

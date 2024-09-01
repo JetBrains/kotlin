@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// EXPECTED_REACHABLE_NODES: 1282
 package foo
 
 // CHECK_LABELS_COUNT: function=box name=block count=1

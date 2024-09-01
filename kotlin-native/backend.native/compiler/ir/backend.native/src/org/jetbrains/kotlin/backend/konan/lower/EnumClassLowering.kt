@@ -6,17 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeMapping
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -30,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.ARGUMENTS_REORDERING_FOR_CALL
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -38,20 +36,20 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(followAttributeOwner = false)
 
 internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
 internal class EnumsSupport(
-        mapping: NativeMapping,
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
 ) {
-    private val enumValueGetters = mapping.enumValueGetters
-    private val enumEntriesMaps = mapping.enumEntriesMaps
-
     fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
-        return enumEntriesMaps.getOrPut(enumClass) {
+        return enumClass::enumEntriesMap.getOrSetIfNull {
             data class NameWithOrdinal(val name: Name, val ordinal: Int)
             enumClass.declarations.asSequence()
                     .filterIsInstance<IrEnumEntry>()
@@ -63,9 +61,9 @@ internal class EnumsSupport(
         }
     }
 
-    fun getValueGetter(enumClass: IrClass): IrFunction {
+    fun getValueGetter(enumClass: IrClass): IrSimpleFunction {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
-        return enumValueGetters.getOrPut(enumClass) {
+        return enumClass::enumValueGetter.getOrSetIfNull {
             irFactory.buildFun {
                 startOffset = enumClass.startOffset
                 endOffset = enumClass.endOffset
@@ -317,7 +315,6 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             }).also {
                 it.setDeclarationsParent(valuesField)
             }
-            valuesField.annotations += buildSimpleAnnotation(context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.ir.symbols.sharedImmutable.owner)
         }
 
         fun defineEntriesField() {

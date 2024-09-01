@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider
 
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtExpression
@@ -21,7 +21,7 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
 
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                val functionType = expressionAtCaret.getExpectedType()
+                val functionType = expressionAtCaret.expectedType
                 functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind
             }
         }

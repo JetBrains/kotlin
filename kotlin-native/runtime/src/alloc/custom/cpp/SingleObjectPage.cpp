@@ -8,55 +8,63 @@
 #include <atomic>
 #include <cstdint>
 
+#include "AllocatorImpl.hpp"
 #include "CustomLogging.hpp"
-#include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
+#include "NextFitPage.hpp"
 
 namespace kotlin::alloc {
 
 SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
-    RuntimeAssert(cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE, "blockSize too small for SingleObjectPage");
-    uint64_t size = sizeof(SingleObjectPage) + cellCount * sizeof(uint64_t);
-    return new (SafeAlloc(size)) SingleObjectPage(size);
+    RuntimeAssert(cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
+    auto objectSize = AllocationSize::cells(cellCount);
+    return new (SafeAlloc(pageSize(objectSize).inBytes())) SingleObjectPage(objectSize);
 }
 
-SingleObjectPage::SingleObjectPage(size_t size) noexcept : size_(size) {}
+SingleObjectPage::SingleObjectPage(AllocationSize objectSize) noexcept {
+    auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
+    heap.allocatedSizeTracker().recordDifferenceAndNotifyScheduler(static_cast<ptrdiff_t>(objectSize.inBytes()));
+}
 
 void SingleObjectPage::Destroy() noexcept {
-    Free(this, size_);
+    auto* object = reinterpret_cast<CustomHeapObject*>(data_)->object();
+    auto objectSize = AllocationSize::bytesAtLeast(CustomAllocator::GetAllocatedHeapSize(object));
+
+    auto& heap = mm::GlobalData::Instance().allocator().impl().heap();
+    heap.allocatedSizeTracker().recordDifference(-static_cast<ptrdiff_t>(objectSize.inBytes()));
+
+    Free(this, pageSize(objectSize).inBytes());
 }
 
 uint8_t* SingleObjectPage::Data() noexcept {
     return data_;
 }
 
-uint8_t* SingleObjectPage::TryAllocate() noexcept {
-    if (isAllocated_) return nullptr;
-
-    allocatedSizeTracker_.onPageOverflow(size_);
-
-    isAllocated_ = true;
+uint8_t* SingleObjectPage::Allocate() noexcept {
     return Data();
 }
 
-bool SingleObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-    CustomAllocDebug("SingleObjectPage@%p::Sweep()", this);
+bool SingleObjectPage::SweepAndDestroy(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+    CustomAllocDebug("SingleObjectPage@%p::SweepAndDestroy()", this);
     if (SweepObject(Data(), finalizerQueue, sweepHandle)) {
         return true;
     }
 
-    allocatedSizeTracker_.afterSweep(0);
+    Destroy();
 
-    isAllocated_ = false;
     return false;
+}
+
+AllocationSize SingleObjectPage::pageSize(AllocationSize objectSize) noexcept {
+    return objectSize + AllocationSize::bytesAtLeast(sizeof(SingleObjectPage));
 }
 
 std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
-    if (isAllocated_) {
-        allocated.push_back(data_);
-    }
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
+        allocated.push_back(block);
+    });
     return allocated;
 }
 

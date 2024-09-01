@@ -27,6 +27,6 @@ actual fun foo(test: String) {
 
 fun main() {
     <!DEPRECATION_ERROR!>A<!>()
-    <!DEPRECATION_ERROR!>B<!>()
-    <!DEPRECATION_ERROR!>foo<!>("")
+    <!UNRESOLVED_REFERENCE!>B<!>()
+    <!UNRESOLVED_REFERENCE!>foo<!>("")
 }

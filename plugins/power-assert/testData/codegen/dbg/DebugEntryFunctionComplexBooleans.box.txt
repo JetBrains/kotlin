@@ -1,11 +1,15 @@
-false=true
+---false=true
+
 dbg(
     key = greeting != null && greeting.length == 5,
           |        |
           |        false
           null
+
     value = name == null || name.length == 5
             |    |
             |    true
             null
+
 )
+---

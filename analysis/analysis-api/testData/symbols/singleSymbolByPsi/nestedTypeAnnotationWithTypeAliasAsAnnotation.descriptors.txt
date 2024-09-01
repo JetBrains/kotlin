@@ -1,6 +1,7 @@
-KaFunctionSymbol:
-  annotationsList: []
+KaNamedFunctionSymbol:
+  annotations: []
   callableId: /foo2
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -16,27 +17,41 @@ KaFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
-    owningCallableSymbol: KaFunctionSymbol(/foo2)
-    type: KaTypeParameterType:
-      annotationsList: []
+    owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
       type: T
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingJvmClassName: null
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaTypeParameterType:
-            annotationsList: [
+            annotations: [
               BaseAnnotation()
                 psi: KtAnnotationEntry
             ]
@@ -45,13 +60,12 @@ KaFunctionSymbol:
         type: kotlin/collections/List<@R|BaseAnnotation|()  T>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|BaseAnnotation|()  T>>?
-  symbolKind: TOP_LEVEL
   typeParameters: [
     KaTypeParameterSymbol(T)
   ]
   valueParameters: []
-  visibility: Public
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
   getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
-  getContainingModule: KtSourceModule "Sources of main"
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

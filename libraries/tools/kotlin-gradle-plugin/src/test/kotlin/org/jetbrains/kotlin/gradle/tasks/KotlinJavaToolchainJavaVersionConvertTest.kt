@@ -75,5 +75,5 @@ class KotlinJavaToolchainJavaVersionConvertTest {
         )
     }
 
-    private fun jvm(javaVersion: JavaVersion) = Jvm.discovered(File("/tmp"), "any", javaVersion)
+    private fun jvm(javaVersion: JavaVersion) = Jvm.discovered(File("/tmp"), "any", javaVersion.majorVersion.toInt())
 }

@@ -59,7 +59,9 @@ class JsNameLinkingNamer(
     }
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
-        require(function.dispatchReceiverParameter != null)
+        require(function.dispatchReceiverParameter != null) {
+            "Function '${function.fqNameWhenAvailable}' has no dispatch receiver"
+        }
         val signature = jsFunctionSignature(function, context)
         if (context.keeper.shouldKeep(function)) {
             context.minimizedNameGenerator.keepName(signature)
