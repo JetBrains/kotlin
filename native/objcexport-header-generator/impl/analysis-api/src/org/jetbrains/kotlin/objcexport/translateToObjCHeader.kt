@@ -200,7 +200,11 @@ private class KtObjCExportHeaderGenerator(
                     is ObjCTopLevel -> emptyList()
                 }
             }.flatMap { type ->
-                val typeArguments = if (type is ObjCClassType) type.typeArguments else emptyList()
+                val typeArguments = when (type) {
+                    is ObjCClassType -> type.typeArguments
+                    is ObjCBlockPointerType -> type.allReturnTypes()
+                    else -> emptyList()
+                }
                 typeArguments + type
             }
             .filterIsInstance<ObjCReferenceType>()

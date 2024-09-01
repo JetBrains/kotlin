@@ -22,6 +22,6 @@ fun ObjCExportStub.closureSequence(): Sequence<ObjCExportStub> = sequence {
     }
 }
 
-fun Iterable<ObjCExportStub>.closureSequence() = sequence<ObjCExportStub> {
+fun Iterable<ObjCExportStub>.closureSequence() = sequence {
     forEach { stub -> yieldAll(stub.closureSequence()) }
 }

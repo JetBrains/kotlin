@@ -540,6 +540,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("enumCKeywordsAndSpecialNamesTranslation"))
     }
 
+    @Test
+    fun `test - KotlinUnit is forwarded`() {
+        doTest(headersTestDataDir.resolve("kotlinUnitIsForwarded"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

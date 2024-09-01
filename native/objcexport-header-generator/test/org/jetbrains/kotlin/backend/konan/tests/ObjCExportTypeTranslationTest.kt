@@ -630,6 +630,33 @@ class ObjCExportTypeTranslationTest(
         assertEquals("Class", header.renderTypesOfSymbol("foo"))
     }
 
+    //
+
+    @Test
+    fun `test - function type - returns function with no arguments and no return type`() {
+        val header = header(
+            """
+                val foo: () -> () -> Unit = { {} }
+            """.trimIndent()
+        )
+        assertEquals("KotlinUnit *(^(^)(void))(void)", header.renderTypesOfSymbol("foo"))
+    }
+
+    @Test
+    fun `test - function type - returns chain of functions with different arguments`() {
+        val header = header(
+            """
+                class Bar
+                val foo: () -> (String, Int) -> (String?) -> (Long, Bar) -> (Any) -> Bar = null!!
+            """.trimIndent()
+        )
+
+        assertEquals(
+            "Bar *(^(^(^(^(^)(void))(NSString *, Int *))(NSString * _Nullable))(Long *, Bar *))(id)",
+            header.renderTypesOfSymbol("foo")
+        )
+    }
+
     private fun header(
         @Language("kotlin") vararg sourceCode: String,
         configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration(),

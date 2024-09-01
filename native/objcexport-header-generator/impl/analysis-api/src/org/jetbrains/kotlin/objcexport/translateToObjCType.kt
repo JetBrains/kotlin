@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 internal fun ObjCExportContext.translateToObjCType(type: KaType, typeBridge: TypeBridge): ObjCType {
     return when (typeBridge) {
         is ReferenceBridge -> translateToObjCReferenceType(type)
-        is BlockPointerBridge -> translateToObjCFunctionType(type, typeBridge)
+        is BlockPointerBridge -> translateToObjCFunctionType(type, typeBridge.returnsVoid)
         is ValueTypeBridge -> when (typeBridge.objCValueType) {
             ObjCValueType.BOOL -> ObjCPrimitiveType.BOOL
             ObjCValueType.UNICHAR -> ObjCPrimitiveType.unichar

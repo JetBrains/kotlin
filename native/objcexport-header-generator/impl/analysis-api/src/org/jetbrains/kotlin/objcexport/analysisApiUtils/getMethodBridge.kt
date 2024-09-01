@@ -129,8 +129,11 @@ private fun KaSession.bridgeFunctionType(type: KaType): TypeBridge {
         returnType = type
     }
 
-    val returnsVoid = returnType.isUnitType || returnType.isNothingType
-    return BlockPointerBridge(numberOfParameters, returnsVoid)
+    return BlockPointerBridge(numberOfParameters, isObjCVoid(returnType))
+}
+
+internal fun KaSession.isObjCVoid(type: KaType): Boolean {
+    return type.isUnitType || type.isNothingType
 }
 
 /**
