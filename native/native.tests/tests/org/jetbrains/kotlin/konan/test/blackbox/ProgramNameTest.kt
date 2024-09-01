@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.native.executors.runProcess
@@ -42,7 +42,7 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
 
         fun validate(expected: String, vararg args: String) {
             val binaryName = kotlinCompilation.resultingArtifact.executableFile.path
-            val result = testRunSettings.executor.runProcess(cExecutable.absolutePath, binaryName, *args) {
+            val result = testRunSettings.testProcessExecutor.runProcess(cExecutable.absolutePath, binaryName, *args) {
                 timeout = 60.seconds
             }
             val sanitizedStdout = result.stdout.replace("\r\n", "\n") // Ignore if we have unix or windows line endings
