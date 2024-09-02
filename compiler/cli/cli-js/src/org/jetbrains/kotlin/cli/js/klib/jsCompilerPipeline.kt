@@ -239,7 +239,7 @@ fun transformFirToIr(
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
         typeSystemContextProvider = ::IrTypeSystemContextImpl,
         specialAnnotationsProvider = null,
-        extraActualDeclarationExtractorInitializer = { null },
+        extraActualDeclarationExtractorsInitializer = { emptyList() },
     ) { irModuleFragment ->
         (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
