@@ -48,6 +48,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExport
   }
 
   @Test
+  @TestMetadata("null_type")
+  public void testNull_type() {
+    runTest("native/native.tests/testData/SwiftExport/null_type/");
+  }
+
+  @Test
   @TestMetadata("properties")
   public void testProperties() {
     runTest("native/native.tests/testData/SwiftExport/properties/");

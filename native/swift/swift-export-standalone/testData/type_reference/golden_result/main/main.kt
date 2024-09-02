@@ -227,6 +227,30 @@ public fun __root___combine__TypesOfArguments__main_Class_without_package_Export
     combine(__arg1, __arg2, __arg3, __arg4)
 }
 
+@ExportedBridge("__root___nullableRef_get")
+public fun __root___nullableRef_get(): kotlin.native.internal.NativePtr {
+    val _result = nullableRef
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___")
+public fun __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Class_without_package
+    nullableRef = __newValue
+}
+
+@ExportedBridge("__root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___")
+public fun __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i: kotlin.native.internal.NativePtr): Unit {
+    val __i = if (i == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(i) as Class_without_package
+    nullable_input_ref(__i)
+}
+
+@ExportedBridge("__root___nullable_output_ref")
+public fun __root___nullable_output_ref(): kotlin.native.internal.NativePtr {
+    val _result = nullable_output_ref()
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_DATA_OBJECT")
 public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
     val _result = produce_DATA_OBJECT()

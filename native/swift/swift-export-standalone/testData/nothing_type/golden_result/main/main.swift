@@ -2,6 +2,7 @@
 import KotlinRuntime
 
 public typealias Foo = Swift.Never
+public typealias OptionalNothing = Swift.Never
 public final class Bar : KotlinRuntime.KotlinBase {
     public var p: Swift.Never {
         get {

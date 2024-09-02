@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -37,7 +38,8 @@ public class SirTypeProviderImpl(
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
-                ktType.isMarkedNullable -> null // TODO("KT-70920")
+                ktType.isMarkedNullable ->
+                    null // TODO("KT-70920")
                 ktType.isCharType -> SirNominalType(SirSwiftModule.utf16CodeUnit)
                 ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
 
@@ -62,27 +64,32 @@ public class SirTypeProviderImpl(
             }
         }
 
-        fun buildRegularType(ktType: KaType): SirType = with(ktAnalysisSession) {
-            when (ktType) {
+        fun buildRegularType(kaType: KaType): SirType = with(ktAnalysisSession) {
+            when (kaType) {
                 is KaUsualClassType -> with(sirSession) {
-                    if (ktType.isMarkedNullable) {
-                        SirUnsupportedType
-                    } else if (ktType.isAnyType) {
-                        SirNominalType(KotlinRuntimeModule.kotlinBase)// nullability = TODO("KT-70919")
-                    } else {
-                        val classSymbol = ktType.symbol
-                        if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)// nullability = TODO("KT-70919")
-                        } else {
-                            SirUnsupportedType
+                    when {
+                        kaType.isNothingType -> null // TODO: KT-71087
+                        kaType.isStringType -> null // TODO: KT-71086
+                        kaType.isAnyType -> KotlinRuntimeModule.kotlinBase
+                        else -> {
+                            val classSymbol = kaType.symbol
+                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                                classSymbol.sirDeclaration() as SirNamedDeclaration
+                            } else {
+                                null
+                            }
                         }
                     }
+                        ?.let { SirNominalType(it).optionalIfNeeded(kaType) }
+                        ?: SirUnsupportedType
                 }
                 is KaFunctionType,
                 is KaTypeParameterType,
                     -> SirUnsupportedType
-                is KaErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type $ktType")
+                is KaErrorType
+                    -> SirErrorType(kaType.errorMessage)
+                else
+                    -> SirErrorType("Unexpected type $kaType")
             }
         }
 
@@ -128,3 +135,16 @@ public class SirTypeProviderImpl(
         return this
     }
 }
+
+private fun SirType.optionalIfNeeded(originalKtType: KaType) =
+    if (originalKtType.nullability == KaTypeNullability.NULLABLE && !originalKtType.isTypealiasToNullableType) {
+        optional()
+    } else {
+        this
+    }
+
+private val KaType.isTypealiasToNullableType: Boolean
+    get() = (symbol as? KaTypeAliasSymbol)
+        .takeIf { it?.expandedType?.nullability == KaTypeNullability.NULLABLE }
+        ?.let { return true }
+        ?: false

@@ -84,6 +84,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("nullable_type")
+  public void testNullable_type() {
+    runTest("native/swift/swift-export-standalone/testData/nullable_type/");
+  }
+
+  @Test
   @TestMetadata("package_flattening")
   public void testPackage_flattening() {
     runTest("native/swift/swift-export-standalone/testData/package_flattening/");

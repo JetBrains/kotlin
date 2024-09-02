@@ -14,7 +14,7 @@ private const val cinterop = "kotlinx.cinterop.*"
 private const val stdintHeader = "stdint.h"
 private const val foundationHeader = "Foundation/Foundation.h"
 
-internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerator {
+internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : BridgeGenerator {
     override fun generateFunctionBridges(request: BridgeRequest) = buildList {
         when (request.callable) {
             is SirFunction -> {
@@ -142,7 +142,7 @@ private fun BridgeRequest.initializationDescriptor(typeNamer: SirTypeNamer): Bri
 // 1. this name will be UGLY in the debug session
 private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>, typeNamer: SirTypeNamer): String {
     val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-        typeNamer.swiftFqName(it.bridge.swiftType).replace(".", "_")
+        typeNamer.swiftFqName(it.bridge.swiftType).replace(".", "_") + if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
@@ -212,6 +212,11 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.string -> Bridge.AsObjCBridged(type, KotlinType.String, CType.NSString)
 
         SirSwiftModule.utf16CodeUnit -> Bridge.AsIs(type, KotlinType.Char, CType.UInt16)
+
+        SirSwiftModule.optional -> Bridge.AsOptionalWrapper(
+            obj = bridgeType(type.typeArguments.first()) as? Bridge.AsObject
+                ?: error("Optional can only wrap objects currently. See KT-66875")
+        )
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -344,7 +349,11 @@ private sealed class Bridge(
         override val inSwiftSources = IdentityValueConversion
     }
 
-    class AsObjCBridged(swiftType: SirType, localKotlinType: KotlinType, cType: CType) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
+    class AsObjCBridged(
+        swiftType: SirType,
+        localKotlinType: KotlinType,
+        cType: CType
+    ) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
                 "interpretObjCPointer<${localKotlinType.repr}>($valueExpression)"
@@ -354,6 +363,37 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = IdentityValueConversion
+    }
+
+    class AsOptionalWrapper(
+        val obj: AsObject,
+    ) : Bridge(obj.swiftType, obj.kotlinType, obj.cType) {
+        override val inKotlinSources: ValueConversion
+            get() = object : ValueConversion {
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return "if ($valueExpression == kotlin.native.internal.NativePtr.NULL) null else ${
+                        obj.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+                    }"
+                }
+
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return "if ($valueExpression == null) return kotlin.native.internal.NativePtr.NULL else return ${
+                        obj.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
+                    }"
+                }
+
+            }
+        override val inSwiftSources: ValueConversion
+            get() = object : ValueConversion {
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return obj.inSwiftSources.swiftToKotlin(typeNamer, "$valueExpression?") + " ?? 0"
+                }
+
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                    return "switch $valueExpression { case 0: .none; case let res: ${obj.inSwiftSources.kotlinToSwift(typeNamer, "res")}; }"
+                }
+
+            }
     }
 
     /**

@@ -36,10 +36,9 @@ public class SirVisibilityCheckerImpl(
                 ktSymbol.isConsumableBySirBuilder()
             }
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType
-                .takeIf { !it.isMarkedNullable }
-                ?.let {
+                .let {
                     it.isPrimitive || it.isNothingType || it.isVisible(ktAnalysisSession)
-                } ?: false
+                }
             else -> false
         }
         return if (isConsumable) SirVisibility.PUBLIC else SirVisibility.PRIVATE

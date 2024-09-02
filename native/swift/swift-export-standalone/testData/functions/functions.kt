@@ -63,6 +63,10 @@ fun foo(arg1: Int) = 123
 
 fun foo(arg1: Double) = 321
 
+class Foo
+fun foo(arg1: Foo): Unit = TODO()
+fun foo(arg1: Foo?): Unit = TODO()
+
 // FILE: extension_fun.kt
 // we do not support extention fun. This should not be exported
 fun Int.foo(): Unit = TODO()

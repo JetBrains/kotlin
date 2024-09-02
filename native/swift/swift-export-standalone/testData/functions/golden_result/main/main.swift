@@ -49,14 +49,36 @@ public extension ExportedKotlinPackages.namespace2 {
     }
 }
 public extension ExportedKotlinPackages.overload {
+    public final class Foo : KotlinRuntime.KotlinBase {
+        public override init() {
+            let __kt = overload_Foo_init_allocate()
+            super.init(__externalRCRef: __kt)
+            overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        public override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
     public static func foo(
         arg1: Swift.Double
     ) -> Swift.Int32 {
         return overload_foo__TypesOfArguments__Swift_Double__(arg1)
     }
     public static func foo(
+        arg1: ExportedKotlinPackages.overload.Foo
+    ) -> Swift.Void {
+        return overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo__(arg1.__externalRCRef())
+    }
+    public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {
         return overload_foo__TypesOfArguments__Swift_Int32__(arg1)
+    }
+    public static func foo(
+        arg1: ExportedKotlinPackages.overload.Foo?
+    ) -> Swift.Void {
+        return overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(arg1?.__externalRCRef() ?? 0)
     }
 }

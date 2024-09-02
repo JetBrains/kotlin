@@ -51,7 +51,10 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
 val SirType.swiftName
     get(): String = when (this) {
         is SirExistentialType -> "Any"
-        is SirNominalType -> typeDeclaration.swiftFqName
+        is SirNominalType -> if (typeDeclaration == SirSwiftModule.optional)
+            "Optional<${typeArguments.first().swiftName}>"
+        else
+            typeDeclaration.swiftFqName
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
     }

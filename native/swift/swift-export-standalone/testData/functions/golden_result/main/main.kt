@@ -55,6 +55,18 @@ public fun namespace2_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     return _result
 }
 
+@ExportedBridge("overload_Foo_init_allocate")
+public fun overload_Foo_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<overload.Foo>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__")
+public fun overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
+    kotlin.native.internal.initInstance(____kt, overload.Foo())
+}
+
 @ExportedBridge("overload_foo__TypesOfArguments__Swift_Int32__")
 public fun overload_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     val __arg1 = arg1
@@ -67,5 +79,17 @@ public fun overload_foo__TypesOfArguments__Swift_Double__(arg1: Double): Int {
     val __arg1 = arg1
     val _result = overload.foo(__arg1)
     return _result
+}
+
+@ExportedBridge("overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo__")
+public fun overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo__(arg1: kotlin.native.internal.NativePtr): Unit {
+    val __arg1 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as overload.Foo
+    overload.foo(__arg1)
+}
+
+@ExportedBridge("overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___")
+public fun overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(arg1: kotlin.native.internal.NativePtr): Unit {
+    val __arg1 = if (arg1 == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg1) as overload.Foo
+    overload.foo(__arg1)
 }
 

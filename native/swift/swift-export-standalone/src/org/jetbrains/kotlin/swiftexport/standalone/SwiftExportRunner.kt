@@ -314,6 +314,7 @@ private object StandaloneSirTypeNamer : SirTypeNamer {
         return when(val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
+            SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
             else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
         }
     }

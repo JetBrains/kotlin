@@ -15,7 +15,15 @@ int32_t namespace1_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
 
 int32_t namespace2_foo__TypesOfArguments__Swift_Int32__(int32_t arg1);
 
+uintptr_t overload_Foo_init_allocate();
+
+void overload_Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
 int32_t overload_foo__TypesOfArguments__Swift_Int32__(int32_t arg1);
 
 int32_t overload_foo__TypesOfArguments__Swift_Double__(double arg1);
+
+void overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo__(uintptr_t arg1);
+
+void overload_foo__TypesOfArguments__ExportedKotlinPackages_overload_Foo_opt___(uintptr_t arg1);
 

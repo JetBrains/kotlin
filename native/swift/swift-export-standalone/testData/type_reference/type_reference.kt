@@ -86,6 +86,13 @@ class Demo(
         set(value) = TODO()
 }
 
+// FILE: nullability.kt
+import Class_without_package
+
+fun nullable_input_ref(i: Class_without_package?): Unit = TODO()
+fun nullable_output_ref(): Class_without_package? = null
+var nullableRef: Class_without_package? = null
+
 // FILE: inheritance.kt
 
 open class OPEN_CLASS
@@ -107,31 +114,27 @@ enum class ENUM {
     A,
 }
 
-fun nullable_input_ref(i: Class_without_package?): Unit = TODO()
-fun nullable_output_ref(): Class_without_package? = null
-
 fun nullable_input_prim(i: Int?): Unit = TODO()
 fun nullable_output_prim(): Int? = null
 
-var nullableRef: Class_without_package? = null
 var nullablePrim: Int? = null
 
 fun Int?.extensionOnNullabelPrimitive(): Unit = TODO()
 fun Class_without_package?.extensionOnNullabelRef(): Unit = TODO()
 
-fun recieve_DATA_CLASS(x: DATA_CLASS): Unit = TODO()
+fun receive_DATA_CLASS(x: DATA_CLASS): Unit = TODO()
 fun produce_DATA_CLASS(): DATA_CLASS = TODO()
 
-fun recieve_VALUE_CLASS(x: VALUE_CLASS): Unit = TODO()
+fun receive_VALUE_CLASS(x: VALUE_CLASS): Unit = TODO()
 fun produce_VALUE_CLASS(): VALUE_CLASS = TODO()
 
-fun recieve_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
+fun receive_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
 fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()
 
-fun recieve_INTERFACE(x: INTERFACE): Unit = TODO()
+fun receive_INTERFACE(x: INTERFACE): Unit = TODO()
 fun produce_INTERFACE(): INTERFACE = TODO()
 
-fun recieve_ENUM(x: ENUM): Unit = TODO()
+fun receive_ENUM(x: ENUM): Unit = TODO()
 fun produce_ENUM(): ENUM = TODO()
 
 // FILE: predefined_type_with_package.kt

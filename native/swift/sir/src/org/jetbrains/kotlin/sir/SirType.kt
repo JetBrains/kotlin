@@ -60,4 +60,4 @@ class SirErrorType(val reason: String) : SirType
  */
 data object SirUnsupportedType : SirType
 
-public fun SirType.optional(): SirNominalType = SirNominalType(SirSwiftModule.optional, listOf(this))
+fun SirType.optional(): SirNominalType = SirNominalType(SirSwiftModule.optional, listOf(this))

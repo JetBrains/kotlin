@@ -65,6 +65,14 @@ uintptr_t __root___Object_without_package_get();
 
 void __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
+uintptr_t __root___nullableRef_get();
+
+void __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(uintptr_t newValue);
+
+void __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(uintptr_t i);
+
+uintptr_t __root___nullable_output_ref();
+
 uintptr_t __root___produce_DATA_OBJECT();
 
 uintptr_t __root___produce_OPEN_CLASS();

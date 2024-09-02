@@ -215,6 +215,14 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var nullableRef: main.Class_without_package? {
+    get {
+        return switch __root___nullableRef_get() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
+    }
+    set {
+        return __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(newValue?.__externalRCRef() ?? 0)
+    }
+}
 public var val_class: main.Class_without_package {
     get {
         return main.Class_without_package(__externalRCRef: __root___val_class_get())
@@ -274,6 +282,14 @@ public func combine(
     arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package
 ) -> Swift.Void {
     return __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
+}
+public func nullable_input_ref(
+    i: main.Class_without_package?
+) -> Swift.Void {
+    return __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i?.__externalRCRef() ?? 0)
+}
+public func nullable_output_ref() -> main.Class_without_package? {
+    return switch __root___nullable_output_ref() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
 }
 public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: __root___produce_DATA_OBJECT())
@@ -441,28 +457,12 @@ public extension ExportedKotlinPackages.ignored {
             fatalError()
         }
     }
-    public static var nullableRef: Swift.Never {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
     public static func nullable_input_prim(
         i: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
-    public static func nullable_input_ref(
-        i: Swift.Never
-    ) -> Swift.Void {
-        fatalError()
-    }
     public static func nullable_output_prim() -> Swift.Never {
-        fatalError()
-    }
-    public static func nullable_output_ref() -> Swift.Never {
         fatalError()
     }
     public static func produce_ABSTRACT_CLASS() -> Swift.Never {
@@ -480,27 +480,27 @@ public extension ExportedKotlinPackages.ignored {
     public static func produce_VALUE_CLASS() -> Swift.Never {
         fatalError()
     }
-    public static func recieve_ABSTRACT_CLASS(
+    public static func receive_ABSTRACT_CLASS(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
-    public static func recieve_DATA_CLASS(
+    public static func receive_DATA_CLASS(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
-    public static func recieve_ENUM(
+    public static func receive_ENUM(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
-    public static func recieve_INTERFACE(
+    public static func receive_INTERFACE(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
-    public static func recieve_VALUE_CLASS(
+    public static func receive_VALUE_CLASS(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()

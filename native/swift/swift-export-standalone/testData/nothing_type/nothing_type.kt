@@ -4,7 +4,7 @@
 
 typealias Foo = Nothing
 
-typealias OptionalNothing = Nothing? // we do not support optionals currently - will not be translated.
+typealias OptionalNothing = Nothing? // broken due to unsupported Nullable Nothing types. TODO: KT-71087
 
 fun meaningOfLife(): Nothing = TODO()
 
