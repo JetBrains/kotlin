@@ -25,7 +25,7 @@ expect fun interface F5 {
     fun run()
 }
 
-expect fun interface F7 {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> fun interface F7 {
     fun run()
 }
 
