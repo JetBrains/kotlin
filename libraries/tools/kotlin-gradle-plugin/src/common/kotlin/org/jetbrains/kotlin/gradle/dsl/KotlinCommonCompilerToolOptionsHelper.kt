@@ -12,6 +12,7 @@ internal object KotlinCommonCompilerToolOptionsHelper {
         args: org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments,
     ) {
         args.allWarningsAsErrors = from.allWarningsAsErrors.get()
+        args.extraWarnings = from.extraWarnings.get()
         args.suppressWarnings = from.suppressWarnings.get()
         args.verbose = from.verbose.get()
         args.freeArgs += from.freeCompilerArgs.get()
@@ -22,6 +23,7 @@ internal object KotlinCommonCompilerToolOptionsHelper {
         into: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions,
     ) {
         into.allWarningsAsErrors.convention(from.allWarningsAsErrors)
+        into.extraWarnings.convention(from.extraWarnings)
         into.suppressWarnings.convention(from.suppressWarnings)
         into.verbose.convention(from.verbose)
         into.freeCompilerArgs.addAll(from.freeCompilerArgs)

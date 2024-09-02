@@ -92,6 +92,20 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+    )
+    @Argument(
+        value = "-Wextra",
+        description = "Enable extra checkers for K2."
+    )
+    var extraWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     var internalArguments: List<InternalArgument> = emptyList()
         set(value) {
             checkFrozen()

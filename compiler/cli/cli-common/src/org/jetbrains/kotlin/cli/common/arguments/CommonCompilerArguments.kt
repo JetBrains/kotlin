@@ -518,16 +518,6 @@ This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibi
         }
 
     @Argument(
-        value = "-Wextra",
-        description = "Enable extra checkers for K2."
-    )
-    var extraWarnings = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production."
     )

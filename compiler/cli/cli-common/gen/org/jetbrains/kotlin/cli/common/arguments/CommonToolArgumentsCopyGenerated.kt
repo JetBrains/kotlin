@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 fun copyCommonToolArguments(from: CommonToolArguments, to: CommonToolArguments): CommonToolArguments {
     to.allWarningsAsErrors = from.allWarningsAsErrors
     to.extraHelp = from.extraHelp
+    to.extraWarnings = from.extraWarnings
     to.freeArgs = from.freeArgs
     to.help = from.help
     to.internalArguments = from.internalArguments

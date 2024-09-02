@@ -19,6 +19,14 @@ interface KotlinCommonCompilerToolOptions {
     val allWarningsAsErrors: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
+     * Enable extra checkers for K2.
+     *
+     * Default value: false
+     */
+    @get:org.gradle.api.tasks.Input
+    val extraWarnings: org.gradle.api.provider.Property<kotlin.Boolean>
+
+    /**
      * Don't generate any warnings.
      *
      * Default value: false

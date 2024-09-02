@@ -12,6 +12,9 @@ internal abstract class KotlinCommonCompilerToolOptionsDefault @javax.inject.Inj
     override val allWarningsAsErrors: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 
+    override val extraWarnings: org.gradle.api.provider.Property<kotlin.Boolean> =
+        objectFactory.property(kotlin.Boolean::class.java).convention(false)
+
     override val suppressWarnings: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 

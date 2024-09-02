@@ -204,6 +204,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonComp
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
 	public abstract fun getAllWarningsAsErrors ()Lorg/gradle/api/provider/Property;
+	public abstract fun getExtraWarnings ()Lorg/gradle/api/provider/Property;
 	public abstract fun getFreeCompilerArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getSuppressWarnings ()Lorg/gradle/api/provider/Property;
 	public abstract fun getVerbose ()Lorg/gradle/api/provider/Property;

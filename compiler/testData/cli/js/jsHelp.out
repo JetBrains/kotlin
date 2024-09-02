@@ -20,6 +20,7 @@ where possible options include:
   -Werror                    Report an error if there are any warnings.
   -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
   -X                         Print a synopsis of advanced options.
+  -Wextra                    Enable extra checkers for K2.
   -help (-h)                 Print a synopsis of standard options.
   -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
   -language-version <version> Provide source compatibility with the specified version of Kotlin.
@@ -33,7 +34,6 @@ where possible options include:
                              progressive mode enabled may cause compilation errors in progressive mode.
   -script                    Evaluate the given Kotlin script (*.kts) file.
   -nowarn                    Don't generate any warnings.
-  -Wextra                    Enable extra checkers for K2.
   -verbose                   Enable verbose logging output.
   -version                   Display the compiler version.
   -J<option>                 Pass an option directly to JVM.
