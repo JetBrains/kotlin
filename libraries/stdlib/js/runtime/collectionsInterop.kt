@@ -32,11 +32,11 @@ internal fun <E> createMutableSetFrom(set: JsReadonlySet<E>): MutableSet<E> =
 
 @PublishedApi
 internal fun <K, V> createMapFrom(map: JsReadonlyMap<K, V>): Map<K, V> =
-    buildMapInternal { forEach({ key, value, _ -> put(key, value) }, map) }
+    buildMapInternal { forEach({ value, key, _ -> put(key, value) }, map) }
 
 @PublishedApi
 internal fun <K, V> createMutableMapFrom(map: JsReadonlyMap<K, V>): MutableMap<K, V> =
-    LinkedHashMap<K, V>().apply { forEach({ key, value, _ -> put(key, value) }, map) }
+    LinkedHashMap<K, V>().apply { forEach({ value, key, _ -> put(key, value) }, map) }
 
 internal fun <E> createJsReadonlyArrayViewFrom(list: List<E>): JsReadonlyArray<E> =
     createJsArrayViewWith(
@@ -111,7 +111,7 @@ internal fun <E> createJsReadonlySetViewFrom(set: Set<E>): JsReadonlySet<E> =
         setContains = { v -> set.contains(v) },
         valuesIterator = { createJsIteratorFrom(set.iterator()) },
         entriesIterator = { createJsIteratorFrom(set.iterator()) { arrayOf(it, it) } },
-        forEach = { cb, t -> forEach(cb, t) }
+        forEach = { callback, set, thisArg -> forEach(callback, set, thisArg) }
     )
 
 internal fun <E> createJsSetViewFrom(set: MutableSet<E>): JsSet<E> =
@@ -123,7 +123,7 @@ internal fun <E> createJsSetViewFrom(set: MutableSet<E>): JsSet<E> =
         setContains = { v -> set.contains(v) },
         valuesIterator = { createJsIteratorFrom(set.iterator()) },
         entriesIterator = { createJsIteratorFrom(set.iterator()) { arrayOf(it, it) } },
-        forEach = { cb, t -> forEach(cb, t) }
+        forEach = { callback, set, thisArg -> forEach(callback, set, thisArg) }
     )
 
 @Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
@@ -135,7 +135,7 @@ private fun <E> createJsSetViewWith(
     setContains: (E) -> Boolean,
     valuesIterator: () -> dynamic,
     entriesIterator: () -> dynamic,
-    forEach: (dynamic, dynamic) -> Unit,
+    forEach: (callback: dynamic, set: dynamic, thisArg: dynamic) -> Unit,
 ): dynamic {
     val setView = objectCreate<JsSetView<E>>().also {
         js("it[Symbol.iterator] = valuesIterator")
@@ -151,7 +151,7 @@ private fun <E> createJsSetViewWith(
             keys: valuesIterator,
             values: valuesIterator,
             entries: entriesIterator,
-            forEach: function (cb, thisArg) { forEach(cb, thisArg || setView) }
+            forEach: function (cb, thisArg) { forEach(cb, setView, thisArg) }
        })
     """)
 }
@@ -170,7 +170,7 @@ internal fun <K, V> createJsReadonlyMapViewFrom(map: Map<K, V>): JsReadonlyMap<K
         keysIterator = { createJsIteratorFrom(map.keys.iterator()) },
         valuesIterator = { createJsIteratorFrom(map.values.iterator()) },
         entriesIterator = { createJsIteratorFrom(map.entries.iterator()) { arrayOf(it.key, it.value) } },
-        forEach = { cb, t -> forEach(cb, t) }
+        forEach = { callback, map, thisArg -> forEach(callback, map, thisArg) }
     )
 
 internal fun <K, V> createJsMapViewFrom(map: MutableMap<K, V>): JsMap<K, V> =
@@ -184,7 +184,7 @@ internal fun <K, V> createJsMapViewFrom(map: MutableMap<K, V>): JsMap<K, V> =
         keysIterator = { createJsIteratorFrom(map.keys.iterator()) },
         valuesIterator = { createJsIteratorFrom(map.values.iterator()) },
         entriesIterator = { createJsIteratorFrom(map.entries.iterator()) { arrayOf(it.key, it.value) } },
-        forEach = { cb, t -> forEach(cb, t) }
+        forEach = { callback, map, thisArg -> forEach(callback, map, thisArg) }
     )
 
 @Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
@@ -198,7 +198,7 @@ private fun <K, V> createJsMapViewWith(
     keysIterator: () -> dynamic,
     valuesIterator: () -> dynamic,
     entriesIterator: () -> dynamic,
-    forEach: (dynamic, dynamic) -> Unit,
+    forEach: (callback: dynamic, map: dynamic, thisArg: dynamic) -> Unit,
 ): dynamic {
     val mapView = objectCreate<JsMapView<K, V>>().also {
         js("it[Symbol.iterator] = entriesIterator")
@@ -215,7 +215,7 @@ private fun <K, V> createJsMapViewWith(
             keys: keysIterator,
             values: valuesIterator,
             entries: entriesIterator,
-            forEach: function (cb, thisArg) { forEach(cb, thisArg || mapView) }
+            forEach: function (cb, thisArg) { forEach(cb, mapView, thisArg) }
        })
     """)
 }
@@ -239,13 +239,13 @@ private fun <T> createJsIteratorFrom(iterator: Iterator<T>, transform: (T) -> dy
     return jsIterator
 }
 
-private fun forEach(cb: (dynamic, dynamic, dynamic) -> Unit, thisArg: dynamic) {
-    val iterator = thisArg.entries()
+private fun forEach(cb: (dynamic, dynamic, dynamic) -> Unit, collection: dynamic, thisArg: dynamic = js("undefined")) {
+    val iterator = collection.entries()
     var result = iterator.next()
 
     while (!result.done) {
         val value = result.value
-        cb(value[0], value[1], thisArg)
+        cb.asDynamic().call(thisArg, value[1], value[0], collection)
         result = iterator.next()
     }
 }

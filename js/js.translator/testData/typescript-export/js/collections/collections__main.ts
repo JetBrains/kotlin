@@ -262,14 +262,26 @@ function testMutableMap() {
 function joinSetOrMap(setOrMap: ReadonlySet<number> | ReadonlyMap<string, number>): string {
     let result = ""
 
+    const fakeThis = {};
     if (setOrMap instanceof Set) {
-        setOrMap.forEach((a: any) => {
-            result += a
-        });
+        setOrMap.forEach(
+            function (this: any, value: any, value2: any, set: any) {
+                result += value
+                assert(value === value2, "Problem with 'value' and 'value2' args passed to forEach callback")
+                assert(set === setOrMap, "Problem with passing map to forEach callback")
+                assert(this === fakeThis, "`this` should be passed through to forEach callback")
+            },
+            fakeThis
+        );
     } else {
-        setOrMap.forEach((key: any, value: any) => {
-            result += `[${key}:${value}]`
-        });
+        setOrMap.forEach(
+            function (this: any, value: any, key: any, map: any) {
+                result += `[${key}:${value}]`
+                assert(map === setOrMap, "Problem with passing map to forEach callback")
+                assert(this === fakeThis, "`this` should be passed through to forEach callback")
+            },
+            fakeThis,
+        );
     }
 
     return result
