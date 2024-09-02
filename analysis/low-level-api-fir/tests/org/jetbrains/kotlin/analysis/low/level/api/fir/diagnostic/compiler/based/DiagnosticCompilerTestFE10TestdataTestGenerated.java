@@ -27896,6 +27896,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("directJavaActualization_javaInDifferentModule.kt")
+        public void testDirectJavaActualization_javaInDifferentModule() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_javaInDifferentModule.kt");
+        }
+
+        @Test
         @TestMetadata("directJavaActualization_missingAnnotationOnJava.kt")
         public void testDirectJavaActualization_missingAnnotationOnJava() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/directJavaActualization/directJavaActualization_missingAnnotationOnJava.kt");
