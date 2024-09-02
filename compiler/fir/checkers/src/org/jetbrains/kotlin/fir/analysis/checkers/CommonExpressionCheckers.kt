@@ -17,7 +17,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker,
             FirUnderscoreChecker,
             FirExpressionAnnotationChecker,
             FirDeprecationChecker,
@@ -66,6 +65,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
+            FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.FunctionCall,
             FirConventionFunctionCallChecker,
             FirDivisionByZeroChecker,
             FirConstructorCallChecker,
@@ -167,6 +167,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = setOf(
+            FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.ResolvedQualifier,
             FirStandaloneQualifierChecker,
             FirPackageOnLhsQualifierChecker,
             FirOptInUsageQualifierChecker,
@@ -193,6 +194,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = setOf(
+            FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.CallableReference,
             FirTypeArgumentsOfQualifierOfCallableReferenceChecker,
             FirCustomEnumEntriesMigrationReferenceChecker,
         )
