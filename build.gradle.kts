@@ -704,6 +704,7 @@ tasks {
     register("compileAll") {
         allprojects
             .filter { !it.path.startsWith(":native") || kotlinBuildProperties.isKotlinNativeEnabled }
+            .filter { !it.path.startsWith(":native:kotlin-test-native-xctest") }
             .forEach {
                 dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
                 dependsOn(it.tasks.withType<JavaCompile>())
