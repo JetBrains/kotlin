@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
+/**
+ * Mental model: `KotlinActual` is annotated with `@kotlin.Deprecated(level = DeprecationLevel.ERROR)`
+ */
 sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : FirExpression> :
     FirExpressionChecker<T>(MppCheckerKind.Common) {
     object ResolvedQualifier : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirResolvedQualifier>() {
