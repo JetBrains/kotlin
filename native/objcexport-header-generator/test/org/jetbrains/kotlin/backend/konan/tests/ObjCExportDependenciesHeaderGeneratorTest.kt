@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.reflect.KCallable
 import kotlin.test.fail
 
 /**

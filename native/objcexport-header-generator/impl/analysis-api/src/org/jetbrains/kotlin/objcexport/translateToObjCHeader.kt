@@ -199,10 +199,18 @@ private class KtObjCExportHeaderGenerator(
                     is ObjCInterface -> childStub.superClassGenerics
                     is ObjCTopLevel -> emptyList()
                 }
-            }.flatMap { type ->
+            }.map { type ->
+                /**
+                 * [ObjCBlockPointerType] can be wrapped into [ObjCNullableReferenceType]
+                 * So before traversing [allTypes] we need to unwrap it into non null type
+                 */
+                if (type is ObjCNullableReferenceType) type.nonNullType
+                else type
+            }
+            .flatMap { type ->
                 val typeArguments = when (type) {
                     is ObjCClassType -> type.typeArguments
-                    is ObjCBlockPointerType -> type.allReturnTypes()
+                    is ObjCBlockPointerType -> type.allTypes()
                     else -> emptyList()
                 }
                 typeArguments + type
