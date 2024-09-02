@@ -445,7 +445,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(param.source, FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, context)
             }
 
-            if (coneType.isMarkedOrFlexiblyNullable && isFunctionalType) {
+            if (coneType.isMarkedNullable && isFunctionalType) {
                 reporter.reportOn(
                     param.source,
                     FirErrors.NULLABLE_INLINE_PARAMETER,
@@ -596,7 +596,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 private fun FirValueParameter.isInlinable(session: FirSession): Boolean {
     if (isNoinline) return false
     val fullyExpandedType = returnTypeRef.coneType.fullyExpandedType(session)
-    return fullyExpandedType.isNonKFunctionType(session) && !fullyExpandedType.isMarkedOrFlexiblyNullable
+    return fullyExpandedType.isNonKFunctionType(session) && !fullyExpandedType.isMarkedNullable
 }
 
 fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession): FirInlineDeclarationChecker.InlineFunctionBodyContext {

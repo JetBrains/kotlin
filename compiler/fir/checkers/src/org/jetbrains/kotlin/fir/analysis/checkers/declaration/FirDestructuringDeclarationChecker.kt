@@ -153,7 +153,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 )
             }
             is ConeInapplicableCandidateError -> {
-                if (destructuringDeclarationType.isMarkedOrFlexiblyNullable) {
+                if (destructuringDeclarationType.isMarkedNullable) {
                     reporter.reportOn(
                         source,
                         FirErrors.COMPONENT_FUNCTION_ON_NULLABLE,

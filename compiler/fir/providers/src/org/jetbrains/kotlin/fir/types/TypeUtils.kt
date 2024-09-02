@@ -258,7 +258,7 @@ fun <T : ConeKotlinType> T.withNullability(
                 it.withNullability(true, typeContext, preserveAttributes = preserveAttributes)
             }
 
-            false -> if (intersectedTypes.any { !it.isFlexibleOrMarkedNullable }) this else this.mapTypes {
+            false -> if (intersectedTypes.any { !it.isMarkedOrFlexiblyNullable }) this else this.mapTypes {
                 it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
             }
         }

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.canBeNull
+import org.jetbrains.kotlin.fir.types.coneType
 
 object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -48,7 +50,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on delegated properties", context)
         }
 
-        if (declaration.isNullable()) {
+        if (declaration.returnTypeRef.coneType.canBeNull(context.session)) {
             reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound", context)
         }
 
@@ -107,7 +109,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
 
         fun isForbiddenTypeForLateinit(type: ConeKotlinType): Boolean {
             if (type.isPrimitiveOrNullablePrimitive) return true
-            if (type.hasNullableUpperBound) return true
+            if (type.canBeNull(session)) return true
             if (type.isSingleFieldValueClass(session)) {
                 return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
             }
@@ -118,14 +120,6 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         if (type.isRecursiveValueClassType(session)) return false
         return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
     }
-
-    private val ConeKotlinType.hasNullableUpperBound
-        get() = when (this) {
-            is ConeTypeParameterType -> isMarkedNullable || lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isMarkedOrFlexiblyNullable }
-            else -> isMarkedOrFlexiblyNullable
-        }
-
-    private fun FirProperty.isNullable() = returnTypeRef.coneType.hasNullableUpperBound
 
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
     private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter

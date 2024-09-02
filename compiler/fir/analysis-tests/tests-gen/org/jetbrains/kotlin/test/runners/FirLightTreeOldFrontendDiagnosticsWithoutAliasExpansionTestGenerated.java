@@ -826,6 +826,11 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/lateinit")
     @TestDataPath("$PROJECT_ROOT")
     public class Lateinit {
+      @Test
+      @TestMetadata("modifierApplicability_lv12.kt")
+      public void testModifierApplicability_lv12() {
+        runTest("compiler/testData/diagnostics/tests/lateinit/modifierApplicability_lv12.kt");
+      }
     }
 
     @Nested
@@ -1004,6 +1009,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @TestMetadata("TypeAliasVsProperty.kt")
       public void testTypeAliasVsProperty() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/TypeAliasVsProperty.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ShadowedExtension {
+        @Test
+        @TestMetadata("extensionFunShadowedByMemberFun.kt")
+        public void testExtensionFunShadowedByMemberFun() {
+          runTest("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/extensionFunShadowedByMemberFun.kt");
+        }
       }
     }
 

@@ -85,10 +85,10 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
 }
 
 internal fun ConeKotlinType.toKotlinTypeIfPlatform(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedOrFlexiblyNullable, attributes)
+    session.platformClassMapper.getCorrespondingKotlinClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedNullable, attributes)
 
 internal fun ConeKotlinType.toPlatformTypeIfKotlin(session: FirSession): ConeClassLikeType? =
-    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedOrFlexiblyNullable, attributes)
+    session.platformClassMapper.getCorrespondingPlatformClass(classId)?.constructClassLikeType(typeArgumentsOfLowerBoundIfFlexible, isMarkedNullable, attributes)
 
 internal class ArgumentInfo(
     val argument: FirExpression,
