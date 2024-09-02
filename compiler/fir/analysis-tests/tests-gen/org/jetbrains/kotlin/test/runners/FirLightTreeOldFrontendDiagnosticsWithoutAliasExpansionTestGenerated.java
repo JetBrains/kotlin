@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -1986,6 +1987,17 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @TestMetadata("overloadsWithUnsignedAfter.kt")
       public void testOverloadsWithUnsignedAfter() {
         runTest("compiler/testData/diagnostics/tests/unsignedTypes/overloadsWithUnsignedAfter.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+      @Test
+      @TestMetadata("annotations.kt")
+      public void testAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/valueClasses/annotations.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
       }
     }
 
