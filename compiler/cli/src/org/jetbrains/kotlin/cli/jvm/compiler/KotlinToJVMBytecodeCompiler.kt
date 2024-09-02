@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.toLogger
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontend
+import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.compileSourceFilesToAnalyzedFirViaPsi
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -89,7 +88,6 @@ object KotlinToJVMBytecodeCompiler {
                 return false
             }
 
-            // K2/PSI: single module chunk mode fallback (KT-61745)
             if (chunk.size == 1) {
                 return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIRAndPsi(
                     projectEnvironment,
@@ -101,7 +99,7 @@ object KotlinToJVMBytecodeCompiler {
                 )
             }
 
-            runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIR(environment, projectEnvironment, compilerConfiguration, chunk)
+            runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(environment, projectEnvironment, compilerConfiguration, chunk)
         } else {
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
         } ?: return true
@@ -126,7 +124,7 @@ object KotlinToJVMBytecodeCompiler {
             }
             // Lowerings (per module)
             codegenInputs += runLowerings(
-                environment, moduleConfiguration, moduleDescriptor, bindingContext,
+                environment.project, moduleConfiguration, moduleDescriptor, bindingContext,
                 ktFiles, module, codegenFactory, backendInput, diagnosticsReporter, firJvmBackendResolver
             )
         }
@@ -141,7 +139,7 @@ object KotlinToJVMBytecodeCompiler {
         return writeOutputsIfNeeded(project, compilerConfiguration, messageCollector, outputs, mainClassFqName)
     }
 
-    private fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIR(
+    private fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
         environment: KotlinCoreEnvironment,
         projectEnvironment: VfsBasedProjectEnvironment,
         compilerConfiguration: CompilerConfiguration,
@@ -157,7 +155,7 @@ object KotlinToJVMBytecodeCompiler {
 
         with(frontendContext) {
             // K2/PSI: frontend
-            val firResult = runFrontend(
+            val firResult = compileSourceFilesToAnalyzedFirViaPsi(
                 sourceFiles, diagnosticsReporter, chunk.joinToString(separator = "+") { it.getModuleName() },
                 chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
             ) ?: run {
@@ -217,7 +215,7 @@ object KotlinToJVMBytecodeCompiler {
         )
     }
 
-    private data class BackendInputForMultiModuleChunk(
+    internal data class BackendInputForMultiModuleChunk(
         val codegenFactory: CodegenFactory,
         val backendInput: CodegenFactory.BackendInput,
         val moduleDescriptor: ModuleDescriptor,
@@ -298,7 +296,7 @@ object KotlinToJVMBytecodeCompiler {
         val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         val input = runLowerings(
-            environment, environment.configuration, result.moduleDescriptor, result.bindingContext,
+            environment.project, environment.configuration, result.moduleDescriptor, result.bindingContext,
             environment.getSourceFiles(), null, codegenFactory, backendInput, diagnosticsReporter
         )
         return runCodegen(input, input.state, codegenFactory, diagnosticsReporter, environment.configuration)
@@ -330,7 +328,7 @@ object KotlinToJVMBytecodeCompiler {
         return Pair(codegenFactory, backendInput)
     }
 
-    private fun Fir2IrActualizedResult.codegenFactoryWithJvmIrBackendInput(
+    internal fun Fir2IrActualizedResult.codegenFactoryWithJvmIrBackendInput(
         configuration: CompilerConfiguration
     ): Pair<CodegenFactory, CodegenFactory.BackendInput> {
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
@@ -412,22 +410,22 @@ object KotlinToJVMBytecodeCompiler {
         override fun toString() = "All files under: $directories"
     }
 
-    private fun runLowerings(
-        environment: KotlinCoreEnvironment,
+    internal fun runLowerings(
+        project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
-        sourceFiles: List<KtFile>,
+        sourceFiles: List<KtFile>?,
         module: Module?,
         codegenFactory: CodegenFactory,
         backendInput: CodegenFactory.BackendInput,
         diagnosticsReporter: BaseDiagnosticsCollector,
         firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
     ): CodegenFactory.CodegenInput {
-        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
         val state = GenerationState.Builder(
-            environment.project,
+            project,
             ClassBuilderFactories.BINARIES,
             moduleDescriptor,
             bindingContext,
@@ -447,7 +445,10 @@ object KotlinToJVMBytecodeCompiler {
         performanceManager?.notifyGenerationStarted()
 
         state.beforeCompile()
-        state.oldBEInitTrace(sourceFiles)
+
+        if (sourceFiles != null) {
+            state.oldBEInitTrace(sourceFiles)
+        }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -456,7 +457,7 @@ object KotlinToJVMBytecodeCompiler {
             .also { performanceManager?.notifyIRLoweringFinished() }
     }
 
-    private fun runCodegen(
+    internal fun runCodegen(
         codegenInput: CodegenFactory.CodegenInput,
         state: GenerationState,
         codegenFactory: CodegenFactory,

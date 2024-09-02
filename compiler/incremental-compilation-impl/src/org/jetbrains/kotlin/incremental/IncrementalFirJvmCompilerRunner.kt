@@ -201,7 +201,7 @@ open class IncrementalFirJvmCompilerRunner(
                     )
 
                     val analysisResults =
-                        compileModuleToAnalyzedFir(
+                        compileModuleToAnalyzedFirViaLightTreeIncrementally(
                             ModuleCompilerInput(targetId, groupedSources, configuration),
                             projectEnvironment,
                             emptyList(),

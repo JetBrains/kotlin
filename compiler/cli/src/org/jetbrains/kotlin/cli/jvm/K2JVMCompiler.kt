@@ -131,9 +131,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val targetDescription = chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
                 names.singleOrNull() ?: names.joinToString()
             }
-            // K2 works with multi-module chunks only in PSI mode (KT-61745)
-            if (chunk.size == 1 &&
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
                 configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
             ) {
                 if (messageCollector.hasErrors()) return COMPILATION_ERROR
@@ -146,7 +144,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
 
                 if (!compileModulesUsingFrontendIrAndLightTree(
-                        projectEnvironment, configuration, messageCollector, buildFile, chunk.single(), targetDescription,
+                        projectEnvironment, configuration, messageCollector,
+                        buildFile, chunk, targetDescription,
                         checkSourceFiles = !arguments.allowNoSourceFiles,
                         isPrintingVersion = arguments.version,
                     )

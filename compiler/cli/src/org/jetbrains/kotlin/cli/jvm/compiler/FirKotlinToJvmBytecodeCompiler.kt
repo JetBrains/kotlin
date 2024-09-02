@@ -99,7 +99,7 @@ object FirKotlinToJvmBytecodeCompiler {
             irGenerationExtensions = emptyList(),
         )
         val diagnosticsReporter = createPendingReporter(messageCollector)
-        return context.runFrontend(sources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
+        return context.compileSourceFilesToAnalyzedFirViaPsi(sources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
     }
 
     fun compileModulesUsingFrontendIRAndPsi(
@@ -157,12 +157,11 @@ object FirKotlinToJvmBytecodeCompiler {
 
         if (!checkKotlinPackageUsageForPsi(configuration, allSources)) return null
 
-        val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val diagnosticsReporter = createPendingReporter(messageCollector)
 
-        val firResult = runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths())
+        val firResult = compileSourceFilesToAnalyzedFirViaPsi(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths())
         if (firResult == null) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticName)
             return null
         }
 
@@ -176,7 +175,7 @@ object FirKotlinToJvmBytecodeCompiler {
             diagnosticsReporter
         )
 
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticName)
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -188,7 +187,7 @@ object FirKotlinToJvmBytecodeCompiler {
             messageCollector.report(severity, message)
         }
 
-    fun FrontendContext.runFrontend(
+    fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
         ktFiles: List<KtFile>,
         diagnosticsReporter: BaseDiagnosticsCollector,
         rootModuleName: String,
@@ -317,6 +316,18 @@ object FirKotlinToJvmBytecodeCompiler {
         ) : this(
             projectEnvironment,
             environment.messageCollector,
+            compilerConfiguration,
+            project
+        )
+
+        constructor(
+            projectEnvironment: VfsBasedProjectEnvironment,
+            messageCollector: MessageCollector,
+            compilerConfiguration: CompilerConfiguration,
+            project: Project?,
+        ) : this(
+            projectEnvironment,
+            messageCollector,
             incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
             extensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
             configuration = compilerConfiguration,
