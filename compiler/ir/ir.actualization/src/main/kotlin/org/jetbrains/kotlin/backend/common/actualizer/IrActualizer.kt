@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -34,7 +33,7 @@ class IrActualizer(
     expectActualTracker: ExpectActualTracker?,
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>,
-    extraActualClassExtractor: IrExtraActualDeclarationExtractor? = null,
+    extraActualClassExtractors: List<IrExtraActualDeclarationExtractor> = emptyList(),
 ) {
     private val collector = ExpectActualCollector(
         mainFragment,
@@ -42,7 +41,7 @@ class IrActualizer(
         typeSystemContext,
         ktDiagnosticReporter,
         expectActualTracker,
-        extraActualClassExtractor,
+        extraActualClassExtractors,
     )
 
     val classActualizationInfo: ClassActualizationInfo = collector.collectClassActualizationInfo()
