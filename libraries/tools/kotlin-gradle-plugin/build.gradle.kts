@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("gradle-plugin-common-configuration")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
 }
@@ -50,12 +50,38 @@ kotlin {
     }
 }
 
-apiValidation {
-    publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
-    publicMarkers.add("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
-    publicMarkers.add("org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl")
-    nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
-    additionalSourceSets.add("common")
+binaryCompatibilityValidator {
+    targets.configureEach {
+        ignoredPackages.addAll(
+            "org.jetbrains.kotlin.gradle.internal",
+            "org.jetbrains.kotlin.gradle.plugin.internal",
+            "org.jetbrains.kotlin.gradle.scripting.internal",
+            "org.jetbrains.kotlin.gradle.targets.js.internal",
+            "org.jetbrains.kotlin.gradle.targets.native.internal",
+            "org.jetbrains.kotlin.gradle.tasks.internal",
+            "org.jetbrains.kotlin.gradle.testing.internal",
+        )
+        ignoredMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+
+        inputClasses.from(project.sourceSets.main.map { it.output.classesDirs })
+        inputClasses.from(project.sourceSets.common.map { it.output.classesDirs })
+    }
+
+    val externalApiMarkers = setOf(
+        "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
+        "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+        "org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl",
+    )
+
+    targets.register("all") {
+        // Dump of all public API, intended for regular usage in build scripts.
+        ignoredMarkers.addAll(externalApiMarkers)
+    }
+
+    targets.register("external") {
+        // Dump of all external API, intended for use in official JetBrains plugins like Compose.
+        publicMarkers.addAll(externalApiMarkers)
+    }
 }
 
 val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
