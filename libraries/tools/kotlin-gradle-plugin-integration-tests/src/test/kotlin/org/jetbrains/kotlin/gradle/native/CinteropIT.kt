@@ -63,7 +63,7 @@ class CinteropIT : KGPBaseTest() {
     fun cinteropWithDefFileFromTaskOutput(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-def-creation-task", gradleVersion = gradleVersion) {
 
-            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().canonicalFile.absolutePath
+            val defFilePath = projectPath.resolve("def/cinterop.def").toFile().absoluteFile.absolutePath
 
             build(":assemble") {
                 assertTasksExecuted(":createDefFileTask")

@@ -236,7 +236,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     if (cinterop.classpath.isEmpty()) fail("Missing classpath for $cinterop")
                     cinterop.classpath.forEach { cinteropFile ->
                         /* Check file was copied into root .gradle folder */
-                        assertEquals(persistentCInteropsCache.toFile().canonicalFile, cinteropFile.parentFile.canonicalFile)
+                        assertEquals(persistentCInteropsCache.toFile().absoluteFile, cinteropFile.parentFile.absoluteFile)
 
                         /* Check crc in file name */
                         val crc = CRC32()
