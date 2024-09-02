@@ -69,7 +69,7 @@ internal abstract class AbstractFirMetadataSerializer(
             dependsOnDependencies(refinedPaths.map { it.toPath() })
         }
 
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
         val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
             .filterIsInstance<JvmClasspathRoot>()

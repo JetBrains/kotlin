@@ -32,12 +32,13 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
+    val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
             KtDiagnosticReporterWithImplicitIrBasedContext(
-                DiagnosticReporterFactory.createPendingReporter(),
+                DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 config.languageVersionSettings
             ),
             ir.irBuiltins,

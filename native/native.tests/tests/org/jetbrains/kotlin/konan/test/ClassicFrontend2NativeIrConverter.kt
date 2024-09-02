@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -133,7 +134,7 @@ class ClassicFrontend2NativeIrConverter(
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
             pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
             irMangler = KonanManglerIr,
             metadataSerializer = null

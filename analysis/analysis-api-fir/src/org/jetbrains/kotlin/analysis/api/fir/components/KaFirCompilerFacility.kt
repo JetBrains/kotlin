@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -167,7 +168,7 @@ internal class KaFirCompilerFacility(
         require(targetFiles.isNotEmpty())
 
         val jvmIrDeserializer = JvmIrDeserializerImpl()
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
 
         val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
 

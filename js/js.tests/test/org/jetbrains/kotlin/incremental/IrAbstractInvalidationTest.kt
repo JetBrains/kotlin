@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
@@ -113,7 +115,7 @@ abstract class IrAbstractInvalidationTest(
             jsOutputName = moduleName,
             icData = icData,
             moduleFragment = moduleFragment,
-            diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
         )
     }
 }

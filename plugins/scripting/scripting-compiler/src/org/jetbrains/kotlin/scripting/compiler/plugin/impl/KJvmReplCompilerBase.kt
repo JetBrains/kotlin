@@ -136,7 +136,9 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 val isIr = context.environment.configuration.getBoolean(JVMConfigurationKeys.IR)
 
-                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector()
+                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector { message, severity ->
+                    messageCollector.report(severity, message)
+                }
 
                 val genStateBuilder = GenerationState.Builder(
                     snippetKtFile.project,

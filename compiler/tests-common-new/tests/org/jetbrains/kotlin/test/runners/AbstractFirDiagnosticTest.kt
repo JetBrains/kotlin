@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -91,7 +92,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
 }
 
 class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
-    val reporter = SimpleDiagnosticsCollector()
+    val reporter = SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
 }
 
 val TestServices.lightTreeSyntaxDiagnosticsReporterHolder: LightTreeSyntaxDiagnosticsReporterHolder? by TestServices.nullableTestServiceAccessor()

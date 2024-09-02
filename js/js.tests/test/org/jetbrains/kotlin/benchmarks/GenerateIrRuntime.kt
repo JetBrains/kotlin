@@ -484,7 +484,8 @@ class GenerateIrRuntime {
         files: List<KtFile>,
         perFile: Boolean = false
     ): String {
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
         val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             files,
@@ -525,9 +526,11 @@ class GenerateIrRuntime {
 
 
     private fun doSerializeIrModule(module: IrModuleFragment): SerializedIrModule {
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
         return JsIrModuleSerializer(
             KtDiagnosticReporterWithImplicitIrBasedContext(
-                DiagnosticReporterFactory.createPendingReporter(),
+                DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 configuration.languageVersionSettings,
             ),
             module.irBuiltins,

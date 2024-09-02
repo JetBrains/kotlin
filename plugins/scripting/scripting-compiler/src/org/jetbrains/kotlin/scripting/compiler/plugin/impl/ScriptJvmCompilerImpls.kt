@@ -274,7 +274,7 @@ private fun generate(
     analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector
 ): GenerationState {
-    val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+    val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
     return GenerationState.Builder(
         sourceFiles.first().project,
         ClassBuilderFactories.BINARIES,
@@ -327,7 +327,7 @@ private fun doCompileWithK2(
     )
 
     val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
     val projectEnvironment = context.environment.toAbstractProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)

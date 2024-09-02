@@ -124,7 +124,8 @@ object GenerationUtils {
         )
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         firAnalyzerFacade.runResolution()
         val (moduleFragment, components, pluginContext, _, _, symbolTable) = firAnalyzerFacade.result.convertToIrAndActualizeForJvm(
             fir2IrExtensions,

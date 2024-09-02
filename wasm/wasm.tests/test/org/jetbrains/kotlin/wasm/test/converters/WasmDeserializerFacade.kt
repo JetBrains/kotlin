@@ -96,7 +96,7 @@ class WasmDeserializerFacade(
         return IrBackendInput.WasmDeserializedFromKlibBackendInput(
             moduleInfo,
             irPluginContext = pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             klib = inputArtifact.outputFile,
         )
     }

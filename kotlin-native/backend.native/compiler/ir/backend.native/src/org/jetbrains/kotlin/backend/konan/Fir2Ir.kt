@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
@@ -69,7 +70,8 @@ internal fun PhaseContext.fir2Ir(
         // Yes, just to all of them.
         moduleDescriptor.setDependencies(ArrayList(librariesDescriptors))
     }
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
     val actualizedResult = input.firResult.convertToIrAndActualize(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector.RawReporter
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
 
 object DiagnosticReporterFactory {
-    fun createReporter(rawReporter: RawReporter = RawReporter.DO_NOTHING, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
+    fun createReporter(rawReporter: RawReporter, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
         return if (disableSuppress) {
             SimpleDiagnosticsCollector(rawReporter)
         } else {
@@ -20,7 +21,21 @@ object DiagnosticReporterFactory {
         }
     }
 
-    fun createPendingReporter(rawReporter: RawReporter = RawReporter.DO_NOTHING): PendingDiagnosticsCollectorWithSuppress {
+    fun createReporter(messageCollector: MessageCollector, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
+        val rawReporter = RawReporter { message, severity ->
+            messageCollector.report(severity, message)
+        }
+
+        return createReporter(rawReporter)
+    }
+
+    fun createPendingReporter(rawReporter: RawReporter): PendingDiagnosticsCollectorWithSuppress {
         return PendingDiagnosticsCollectorWithSuppress(rawReporter)
+    }
+
+    fun createPendingReporter(messageCollector: MessageCollector): PendingDiagnosticsCollectorWithSuppress {
+        return createPendingReporter { message, severity ->
+            messageCollector.report(severity, message)
+        }
     }
 }

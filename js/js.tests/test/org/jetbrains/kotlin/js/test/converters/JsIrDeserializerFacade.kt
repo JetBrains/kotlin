@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -51,11 +52,12 @@ class JsIrDeserializerFacade(
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
 
         val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         return IrBackendInput.JsIrDeserializedFromKlibBackendInput(
             moduleInfo,
             irPluginContext = pluginContext,
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
             klib = inputArtifact.outputFile,
         )
     }

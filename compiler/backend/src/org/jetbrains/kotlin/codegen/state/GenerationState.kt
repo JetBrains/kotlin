@@ -139,18 +139,20 @@ class GenerationState private constructor(
         fun codegenFactory(v: CodegenFactory) =
             apply { codegenFactory = v }
 
-        fun build() =
-            GenerationState(
+
+        fun build(): GenerationState {
+            return GenerationState(
                 project, builderFactory, module, bindingContext, configuration,
                 generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, isIrBackend, ignoreErrors,
-                diagnosticReporter ?: DiagnosticReporterFactory.createReporter(),
+                diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
                 isIncrementalCompilation
             ).also {
                 it.files = files
                 it.codegenFactory = codegenFactory
             }
+        }
     }
 
     abstract class GenerateClassFilter {

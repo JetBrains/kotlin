@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationEx
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -77,9 +75,10 @@ abstract class AbstractFir2IrResultsConverter(
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val messageCollector = compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val irMangler = createIrMangler()
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector)
 
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 

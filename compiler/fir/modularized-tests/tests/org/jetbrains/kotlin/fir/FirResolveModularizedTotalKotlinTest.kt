@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.collectSources
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -96,9 +98,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
             )
 
         val scopeSession = ScopeSession()
+        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common)
+                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common, messageCollector)
             } else {
                 it
             }
@@ -270,21 +273,25 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
-    mppCheckerKind: MppCheckerKind
+    mppCheckerKind: MppCheckerKind,
+    messageCollector: MessageCollector
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
 
-    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
+    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector, messageCollector)
 }
 
-class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiagnosticCollector) : FirTransformer<Nothing?>() {
+class FirCheckersRunnerTransformer(
+    private val diagnosticCollector: AbstractDiagnosticCollector,
+    private val messageCollector: MessageCollector,
+) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
         withFileAnalysisExceptionWrapping(file) {
-            val reporter = DiagnosticReporterFactory.createPendingReporter()
+            val reporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
             diagnosticCollector.collectDiagnostics(file, reporter)
         }
     }

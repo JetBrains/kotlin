@@ -108,7 +108,7 @@ object KotlinToJVMBytecodeCompiler {
         // K1/K2 common multi-chunk part
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
 
         val codegenInputs = ArrayList<CodegenFactory.CodegenInput>(chunk.size)
 
@@ -149,7 +149,8 @@ object KotlinToJVMBytecodeCompiler {
     ): BackendInputForMultiModuleChunk? {
         val sourceFiles = environment.getSourceFiles()
         val project = projectEnvironment.project
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
         val frontendContext = FirKotlinToJvmBytecodeCompiler.FrontendContextForMultiChunkMode(
             projectEnvironment, environment, compilerConfiguration, project
         )
@@ -294,7 +295,8 @@ object KotlinToJVMBytecodeCompiler {
         result.throwIfError()
 
         val (codegenFactory, backendInput) = convertToIr(environment, result)
-        val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
+        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         val input = runLowerings(
             environment, environment.configuration, result.moduleDescriptor, result.bindingContext,
             environment.getSourceFiles(), null, codegenFactory, backendInput, diagnosticsReporter
