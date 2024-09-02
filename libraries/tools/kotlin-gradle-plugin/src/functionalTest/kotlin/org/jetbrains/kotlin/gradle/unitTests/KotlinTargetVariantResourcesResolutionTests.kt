@@ -183,7 +183,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                 expectedResult = { _, middle, producer ->
                     setOf(
                         producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"),
-                        middle.buildFile("libs/middle-wasm-js.klib"),
+                        middle.buildFile("classes/kotlin/wasmJs/main"),
                     )
                 }
             )

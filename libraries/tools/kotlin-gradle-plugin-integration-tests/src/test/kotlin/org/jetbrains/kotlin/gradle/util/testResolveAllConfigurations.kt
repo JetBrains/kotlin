@@ -61,7 +61,14 @@ private fun Project.registerResolveAllConfigurationsTask() {
                         else project.path + ":" + configuration.name
                     try {
                         println("Resolving $configurationPath")
-                        configuration.files.forEach { println(">> $configurationPath --> ${it.name}") }
+                        configuration.files.forEach {
+                            val path = if (it.extension in setOf("jar", "klib")) {
+                                it.name
+                            } else {
+                                it.relativeTo(project.rootDir).path
+                            }
+                            println(">> $configurationPath --> $path")
+                        }
                         println("OK, resolved $configurationPath\n")
                     } catch (e: Throwable) {
                         var ex = e as Throwable?

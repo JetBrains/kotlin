@@ -21,6 +21,9 @@ internal val ConfigureNonPackedKlibConsumingSideEffect = KotlinTargetSideEffect 
 private fun KotlinJsIrTarget.configureNonPackedJsKlibConsuming() {
     compilations.configureEach { compilation ->
         KlibPackaging.setAttributeTo(project, compilation.configurations.compileDependencyConfiguration.attributes, false)
+        // K/JS uses runtime classpath for the linking phase
+        val runtimeClasspath = compilation.configurations.runtimeDependencyConfiguration ?: error("$compilation has no runtime classpath")
+        KlibPackaging.setAttributeTo(project, runtimeClasspath.attributes, false)
     }
 }
 

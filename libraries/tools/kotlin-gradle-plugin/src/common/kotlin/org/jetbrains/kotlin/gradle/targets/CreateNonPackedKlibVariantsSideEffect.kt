@@ -26,8 +26,12 @@ internal val CreateNonPackedKlibVariantsSideEffect = KotlinTargetSideEffect { ta
 
 private fun KotlinJsIrTarget.createJsKlibSecondaryVariants() {
     val apiElements = project.configurations.getByName(apiElementsConfigurationName)
-    val secondaryVariant = createSecondaryKlibVariant(project, apiElements)
-    secondaryVariant.artifact(compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.map { it.klibDirectory.get() })
+    val secondaryApiVariant = createSecondaryKlibVariant(project, apiElements)
+    secondaryApiVariant.artifact(compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.map { it.klibDirectory.get() })
+
+    val runtimeElements = project.configurations.getByName(runtimeElementsConfigurationName)
+    val secondaryRuntimeVariant = createSecondaryKlibVariant(project, runtimeElements)
+    secondaryRuntimeVariant.artifact(compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.map { it.klibDirectory.get() })
 }
 
 private fun KotlinNativeTarget.createNativeKlibSecondaryVariants() {

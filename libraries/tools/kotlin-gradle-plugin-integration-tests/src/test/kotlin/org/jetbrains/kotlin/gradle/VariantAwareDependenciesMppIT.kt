@@ -62,7 +62,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 )
 
             testResolveAllConfigurations("kotlin2JsInternalTest") { _, buildResult ->
-                buildResult.assertOutputContains(">> :kotlin2JsInternalTest:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
+                buildResult.assertOutputContains(">> :kotlin2JsInternalTest:runtimeClasspath --> build/classes/kotlin/nodeJs/main")
             }
         }
     }

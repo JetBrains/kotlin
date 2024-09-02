@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -20,6 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
+import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
@@ -37,8 +44,13 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         code = code
     )
 
-    private fun buildKmpProjectWithKlibTargets(preApplyCode: Project.() -> Unit = {}): ProjectInternal {
-        val project = buildProjectWithMPP(preApplyCode = preApplyCode) {
+    private fun buildKmpProjectWithKlibTargets(
+        projectBuilder: ProjectBuilder.() -> Unit = { },
+        evaluate: Boolean = true,
+        preApplyCode: Project.() -> Unit = {},
+        code: Project.() -> Unit = {},
+    ): ProjectInternal {
+        val project = buildProjectWithMPP(projectBuilder = projectBuilder, preApplyCode = preApplyCode) {
             @OptIn(ExperimentalWasmDsl::class)
             with(multiplatformExtension) {
                 linuxX64 {
@@ -50,7 +62,10 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 applyDefaultHierarchyTemplate()
             }
         }
-        project.evaluate()
+        code(project)
+        if (evaluate) {
+            project.evaluate()
+        }
         return project
     }
 
@@ -141,11 +156,11 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun nonPackedKlibsUsageMayBeDisabled() {
-        val project = buildKmpProjectWithKlibTargets {
-            project.enableNonPackedKlibsUsage(false)
-        }
+        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
         val apiConfigurations = project.getKlibApiConfigurations()
         project.assertKlibWithoutNonPackedVariant(apiConfigurations)
+        val runtimeConfigurations = project.getKlibRuntimeConfigurations()
+        project.assertKlibWithoutNonPackedVariant(runtimeConfigurations)
     }
 
     @Test
@@ -153,6 +168,8 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         val project = buildKmpProjectWithKlibTargets()
         val apiConfigurations = project.getKlibApiConfigurations()
         project.assertKlibWithNonPackedVariants(apiConfigurations)
+        val runtimeConfigurations = project.getKlibRuntimeConfigurations()
+        project.assertKlibWithNonPackedVariants(runtimeConfigurations)
     }
 
     @Test
@@ -165,23 +182,92 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun klibPackagingAttributeIsNotPublishedWhenNonPackedKlibsAreNotUsed() {
-        val project = buildKmpProjectWithKlibTargets {
-            project.enableNonPackedKlibsUsage(false)
+        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) }) {
             plugins.apply("maven-publish")
         }
         project.assertKlibPackagingAttributeNotPublished()
     }
 
+    @Test
+    fun checkNonPackedKlibApiVariantResolved() {
+        checkNonPackedKlibVariantResolved { it.compileDependencyFiles }
+    }
+
+    @Test
+    fun checkNonPackedKlibRuntimeVariantResolved() {
+        val hasRuntimeClasspath = setOf(KotlinPlatformType.wasm, KotlinPlatformType.js)
+        checkNonPackedKlibVariantResolved(hasDependencies = { it.platformType in hasRuntimeClasspath }) { it.runtimeDependencyFiles }
+    }
+
+    /**
+     * Covers the case:
+     * * app.main -> lib.main
+     * * lib.test -> app.main
+     * In this case, the classpath of lib.test should not contain lib in both packed and non-packed form
+     */
+    private fun checkNonPackedKlibVariantResolved(
+        hasDependencies: (KotlinCompilation<*>) -> Boolean = { true },
+        resolvedDependencies: (KotlinCompilation<*>) -> FileCollection?,
+    ) {
+        val disableDefaultDependencies: Project.() -> Unit = {
+            // disable external dependencies, leaving only project dependencies
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
+        }
+        val app = buildKmpProjectWithKlibTargets(
+            projectBuilder = { withName("app") },
+            evaluate = false,
+            preApplyCode = disableDefaultDependencies,
+        )
+        val lib = buildKmpProjectWithKlibTargets(
+            projectBuilder = { withName("lib").withParent(app) },
+            evaluate = false,
+            preApplyCode = disableDefaultDependencies,
+        ) {
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
+            multiplatformExtension.sourceSets.commonTest.get().dependencies {
+                implementation(project(":"))
+            }
+        }
+        app.multiplatformExtension.sourceSets.commonMain.get().dependencies {
+            implementation(project(":lib"))
+        }
+        app.evaluate()
+        lib.evaluate()
+
+        fun assertNoPackedKlibsInResolvedDependencies(targets: Iterable<KotlinTarget>) {
+            for (target in targets) {
+                if (target.platformType !in PLATFORM_TYPES_SUPPORTING_NON_PACKED_KLIB) continue
+                for (compilation in target.compilations) {
+                    if (hasDependencies(compilation)) {
+                        val files = (resolvedDependencies(compilation)?.files
+                            ?: error("$compilation should have non-null dependency configuration"))
+                        for (file in files) {
+                            assert(file.extension != "klib") { // checks if it is a directory by extension
+                                "Expected $file to be a directory (non-packed klib) of $compilation"
+                            }
+                        }
+                    } else {
+                        assertNull(resolvedDependencies(compilation), "$compilation should not have dependency configuration")
+                    }
+                }
+            }
+        }
+
+        assertNoPackedKlibsInResolvedDependencies(app.multiplatformExtension.targets)
+        assertNoPackedKlibsInResolvedDependencies(lib.multiplatformExtension.targets)
+    }
+
     private fun Project.getKlibApiConfigurations(): List<Configuration> {
-        val platformTypes = setOf(KotlinPlatformType.wasm, KotlinPlatformType.native, KotlinPlatformType.js)
         val usages = setOf(KotlinUsages.KOTLIN_API, KotlinUsages.KOTLIN_CINTEROP)
         val apiConfigurations = project.configurations.filter {
             it.isCanBeConsumed &&
-                    it.attributes.getAttribute(KotlinPlatformType.attribute) in platformTypes &&
+                    it.attributes.getAttribute(KotlinPlatformType.attribute) in PLATFORM_TYPES_SUPPORTING_NON_PACKED_KLIB &&
                     it.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.toString() in usages
         }
         val numberOfConfigurations =
-            multiplatformExtension.targets.filter { it.platformType in platformTypes }.size + multiplatformExtension.targets.filterIsInstance<KotlinNativeTarget>()
+            multiplatformExtension.targets.filter { it.platformType in PLATFORM_TYPES_SUPPORTING_NON_PACKED_KLIB }.size + multiplatformExtension.targets.filterIsInstance<KotlinNativeTarget>()
                 .sumOf { it.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.size }
         assert(numberOfConfigurations == apiConfigurations.size) {
             """
@@ -191,6 +277,29 @@ class MultiplatformSecondaryOutgoingVariantsTest {
             """.trimIndent()
         }
         return apiConfigurations
+    }
+
+    /**
+     * Returns runtime elements configurations of Klib producing targets that can have secondary outgoing variant
+     */
+    private fun Project.getKlibRuntimeConfigurations(): List<Configuration> {
+        val platformTypes = setOf(KotlinPlatformType.js)
+        val runtimeConfigurations = project.configurations.filter {
+            it.isCanBeConsumed &&
+                    it.attributes.getAttribute(KotlinPlatformType.attribute) in platformTypes &&
+                    it.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.toString() == KotlinUsages.KOTLIN_RUNTIME &&
+                    it.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)?.toString() == Category.LIBRARY
+        }
+        val numberOfConfigurations =
+            multiplatformExtension.targets.filter { it.platformType in platformTypes }.size
+        assert(numberOfConfigurations == runtimeConfigurations.size) {
+            """
+                The number of consumable runtime configurations is unexpected. Expected to have 1 configuration per target ($numberOfConfigurations in total). 
+                Found: ${runtimeConfigurations.map { it.name }}.
+                Targets: ${multiplatformExtension.targets.map { it.name }}
+            """.trimIndent()
+        }
+        return runtimeConfigurations
     }
 
     private val Project.jvmApiConfigurations
@@ -306,5 +415,9 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 assertTrue(javaClasses.buildDependencies.getDependencies(null).size >= 1)
             }
         }
+    }
+
+    companion object {
+        val PLATFORM_TYPES_SUPPORTING_NON_PACKED_KLIB = setOf(KotlinPlatformType.wasm, KotlinPlatformType.native, KotlinPlatformType.js)
     }
 }
