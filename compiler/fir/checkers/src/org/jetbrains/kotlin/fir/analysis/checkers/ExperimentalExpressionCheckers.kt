@@ -23,4 +23,9 @@ object ExperimentalExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             RedundantInterpolationPrefixCheckerLiteral,
         )
+
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
+        get() = setOf(
+            CanBeReplacedWithOperatorAssignmentChecker,
+        )
 }
