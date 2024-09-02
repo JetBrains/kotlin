@@ -421,15 +421,9 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         internal fun typeCanBeEnhancedOrFlexibleNullable(type: ConeKotlinType, session: FirSession): Boolean {
             return when {
                 type.hasEnhancedNullability -> true
-                type.hasFlexibleNullability && type.canBeNull(session) -> true
+                type.hasFlexibleMarkedNullability && type.canBeNull(session) -> true
                 else -> false
             }
         }
-
-        private val ConeKotlinType.hasFlexibleNullability: Boolean
-            get() {
-                if (this !is ConeFlexibleType) return false
-                return lowerBound.isMarkedNullable != upperBound.isMarkedNullable
-            }
     }
 }
