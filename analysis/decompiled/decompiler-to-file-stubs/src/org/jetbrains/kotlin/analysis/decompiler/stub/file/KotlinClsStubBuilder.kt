@@ -169,11 +169,24 @@ private class AnnotationLoaderForClassFileStubBuilder(
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         return object : AnnotationMemberDefaultValueVisitor() {
             override fun visitEnd() {
-                if (!isImplicitRepeatableContainer(annotationClassId)) {
-                    result.add(AnnotationWithArgs(annotationClassId, args))
-                } else {
-                    extractRepeatableAnnotationsFromRepeatableContainer()
+                when {
+                    isRepeatableWithImplicitContainer(annotationClassId, args) -> {
+                        // do not add `java.lang.annotation.Repeatable` to stub for a repeatable annotation class
+                    }
+                    !isImplicitRepeatableContainer(annotationClassId) -> {
+                        result.add(AnnotationWithArgs(annotationClassId, args))
+                    }
+                    else -> {
+                        extractRepeatableAnnotationsFromRepeatableContainer()
+                    }
                 }
+            }
+
+            private fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
+                if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false
+
+                val containerKClassValue = arguments[JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME] as? KClassValue ?: return false
+                return isImplicitRepeatableContainer((containerKClassValue.value as KClassValue.Value.NormalClass).classId)
             }
 
             private fun extractRepeatableAnnotationsFromRepeatableContainer() {

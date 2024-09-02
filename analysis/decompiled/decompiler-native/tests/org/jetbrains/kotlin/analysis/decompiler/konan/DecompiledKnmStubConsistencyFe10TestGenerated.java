@@ -240,6 +240,12 @@ public class DecompiledKnmStubConsistencyFe10TestGenerated extends AbstractDecom
   }
 
   @Test
+  @TestMetadata("RepeatableAnnotationClass")
+  public void testRepeatableAnnotationClass() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/RepeatableAnnotationClass/");
+  }
+
+  @Test
   @TestMetadata("Sealed")
   public void testSealed() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/Sealed/");
