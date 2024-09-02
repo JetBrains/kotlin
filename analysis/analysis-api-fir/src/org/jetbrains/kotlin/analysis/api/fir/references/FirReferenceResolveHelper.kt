@@ -477,11 +477,15 @@ internal object FirReferenceResolveHelper {
     ): List<KaSymbol> {
         val fullFqName = fir.importedFqName
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
-        val rawImportForSelectedFqName = buildImport {
-            importedFqName = selectedFqName
-            isAllUnder = false
+        val resolvedImport = if (selectedFqName == fullFqName) {
+            fir
+        } else {
+            val rawImportForSelectedFqName = buildImport {
+                importedFqName = selectedFqName
+                isAllUnder = false
+            }
+            FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
         }
-        val resolvedImport = FirImportResolveTransformer(session).transformImport(rawImportForSelectedFqName, null) as FirResolvedImport
         val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
         val selectedName = resolvedImport.importedName ?: return emptyList()
         return buildList {
