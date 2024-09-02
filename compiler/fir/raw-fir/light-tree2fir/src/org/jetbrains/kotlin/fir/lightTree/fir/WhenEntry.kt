@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.buildBalancedOrExpressionTree
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 
 data class WhenEntry(
     val conditions: List<FirExpression>,
+    val guardKeyword: LighterASTNode?,
     val guard: FirExpression?,
     val firBlock: FirBlock,
     val node: LighterASTNode,
@@ -31,4 +34,7 @@ data class WhenEntry(
             else -> buildBalancedOrExpressionTree(conditions)
         }
     }
+
+    val hasCorrectKeyword: Boolean
+        get() = guardKeyword == null || guardKeyword.tokenType == KtTokens.IF_KEYWORD
 }

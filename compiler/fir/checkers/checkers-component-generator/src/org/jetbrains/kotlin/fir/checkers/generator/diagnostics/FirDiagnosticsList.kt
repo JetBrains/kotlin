@@ -114,6 +114,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val MISSING_CONSTRUCTOR_KEYWORD by error<PsiElement>()
         val REDUNDANT_INTERPOLATION_PREFIX by warning<PsiElement>()
+        val INCORRECT_GUARD_KEYWORD by error<PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
@@ -1719,6 +1720,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNUSED_ANONYMOUS_PARAMETER by warning<KtElement>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirValueParameterSymbol>("parameter")
         }
+        val SUGGEST_GUARD_KEYWORD by warning<PsiElement>(PositioningStrategy.OPERATOR)
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {

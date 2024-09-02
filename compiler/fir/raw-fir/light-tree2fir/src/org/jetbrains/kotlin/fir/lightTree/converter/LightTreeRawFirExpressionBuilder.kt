@@ -809,6 +809,8 @@ class LightTreeRawFirExpressionBuilder(
                 shouldBind = shouldBind || entry.shouldBindSubject
                 val branch = entry.firBlock
                 val entrySource = entry.node.toFirSourceElement()
+                val correctKeyword = entry.hasCorrectKeyword
+                val guardKeywordSrc = entry.guardKeyword?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                 branches += if (!entry.isElse) {
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
@@ -816,6 +818,8 @@ class LightTreeRawFirExpressionBuilder(
                             source = entrySource
                             condition = firCondition.guardedBy(entry.guard)
                             result = branch
+                            hasCorrectGuardKeyword = correctKeyword
+                            guardKeywordSource = guardKeywordSrc
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
@@ -823,6 +827,8 @@ class LightTreeRawFirExpressionBuilder(
                             source = entrySource
                             condition = firCondition.guardedBy(entry.guard)
                             result = branch
+                            hasCorrectGuardKeyword = correctKeyword
+                            guardKeywordSource = guardKeywordSrc
                         }
                     }
                 } else {
@@ -830,6 +836,8 @@ class LightTreeRawFirExpressionBuilder(
                         source = entrySource
                         condition = entry.guard ?: buildElseIfTrueCondition()
                         result = branch
+                        hasCorrectGuardKeyword = correctKeyword
+                        guardKeywordSource = guardKeywordSrc
                     }
                 }
             }
@@ -854,6 +862,7 @@ class LightTreeRawFirExpressionBuilder(
         val conditions = mutableListOf<FirExpression>()
         var guard: FirExpression? = null
         var shouldBindSubject = false
+        var guardKeyword: LighterASTNode? = null
         whenEntry.forEachChildren {
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject.takeIf { hasSubject })
@@ -867,14 +876,17 @@ class LightTreeRawFirExpressionBuilder(
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
-                WHEN_ENTRY_GUARD -> guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard")
+                WHEN_ENTRY_GUARD -> {
+                    guardKeyword = it.getFirstChild()
+                    guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped(), "No expression in guard")
+                }
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
 
-        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guardKeyword, guard, firBlock, whenEntry, isElse, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(

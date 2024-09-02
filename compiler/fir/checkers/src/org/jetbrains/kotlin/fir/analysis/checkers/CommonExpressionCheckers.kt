@@ -103,6 +103,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirCommaInWhenConditionChecker,
             FirConfusingWhenBranchSyntaxChecker,
             FirWhenGuardChecker,
+            FirCorrectGuardKeywordChecker,
         )
 
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker>

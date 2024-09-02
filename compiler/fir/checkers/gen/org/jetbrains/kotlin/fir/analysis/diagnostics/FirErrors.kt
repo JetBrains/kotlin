@@ -180,6 +180,7 @@ object FirErrors {
     val ERROR_SUPPRESSION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ERROR_SUPPRESSION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val MISSING_CONSTRUCTOR_KEYWORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_CONSTRUCTOR_KEYWORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val REDUNDANT_INTERPOLATION_PREFIX: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_INTERPOLATION_PREFIX", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val INCORRECT_GUARD_KEYWORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("INCORRECT_GUARD_KEYWORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Unresolved
     val INVISIBLE_REFERENCE: KtDiagnosticFactory3<FirBasedSymbol<*>, Visibility, ClassId?> = KtDiagnosticFactory3("INVISIBLE_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
@@ -866,6 +867,7 @@ object FirErrors {
     val VARIABLE_NEVER_READ: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIABLE_NEVER_READ", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
     val USELESS_CALL_ON_NOT_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CALL_ON_NOT_NULL", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class)
     val UNUSED_ANONYMOUS_PARAMETER: KtDiagnosticFactory1<FirValueParameterSymbol> = KtDiagnosticFactory1("UNUSED_ANONYMOUS_PARAMETER", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtElement::class)
+    val SUGGEST_GUARD_KEYWORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUGGEST_GUARD_KEYWORD", WARNING, SourceElementPositioningStrategies.OPERATOR, PsiElement::class)
 
     // Returns
     val RETURN_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("RETURN_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.RETURN_WITH_LABEL, KtReturnExpression::class)

@@ -23,12 +23,16 @@ class FirRegularWhenBranchBuilder : FirAbstractWhenBranchBuilder {
     override var source: KtSourceElement? = null
     override lateinit var condition: FirExpression
     override lateinit var result: FirBlock
+    override var hasCorrectGuardKeyword: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    override var guardKeywordSource: KtSourceElement? = null
 
     override fun build(): FirWhenBranch {
         return FirRegularWhenBranch(
             source,
             condition,
             result,
+            hasCorrectGuardKeyword,
+            guardKeywordSource,
         )
     }
 

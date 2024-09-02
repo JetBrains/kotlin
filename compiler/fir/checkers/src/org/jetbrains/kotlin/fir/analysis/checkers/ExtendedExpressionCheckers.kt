@@ -41,4 +41,9 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             RedundantInterpolationPrefixCheckerLiteral,
         )
+
+    override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
+        get() = setOf(
+            SuggestGuardChecker
+        )
 }

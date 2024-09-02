@@ -41856,6 +41856,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("suggestGuardExpressions.kt")
+        public void testSuggestGuardExpressions() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/suggestGuardExpressions.kt");
+        }
+
+        @Test
+        @TestMetadata("suggestGuardTypes.kt")
+        public void testSuggestGuardTypes() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/suggestGuardTypes.kt");
+        }
+
+        @Test
         @TestMetadata("thisInSubject.kt")
         public void testThisInSubject() {
           runTest("compiler/testData/diagnostics/tests/when/guard/thisInSubject.kt");

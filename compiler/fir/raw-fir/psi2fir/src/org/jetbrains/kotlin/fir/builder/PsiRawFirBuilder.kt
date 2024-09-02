@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -2655,6 +2656,8 @@ open class PsiRawFirBuilder(
                 for (entry in expression.entries) {
                     val entrySource = entry.toFirSourceElement()
                     val entryGuard = entry.guard?.let { it.getExpression().toFirExpression("No expression in guard") }
+                    val correctKeyword = entry.guard?.hasCorrectKeyword != false
+                    val guardKeywordSrc = entry.guard?.guardKeyword?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                     val branchBody = entry.expression.toFirBlock()
                     branches += if (entry.elseKeyword == null) {
                         if (hasSubject) {
@@ -2666,6 +2669,8 @@ open class PsiRawFirBuilder(
                                     { toFirOrErrorType() },
                                 ).guardedBy(entryGuard)
                                 result = branchBody
+                                hasCorrectGuardKeyword = correctKeyword
+                                guardKeywordSource = guardKeywordSrc
                             }
                         } else {
                             val ktCondition = entry.conditions.first()
@@ -2702,6 +2707,8 @@ open class PsiRawFirBuilder(
                                         })
                                     }.guardedBy(entryGuard)
                                 result = branchBody
+                                hasCorrectGuardKeyword = correctKeyword
+                                guardKeywordSource = guardKeywordSrc
                             }
                         }
                     } else {
@@ -2709,6 +2716,8 @@ open class PsiRawFirBuilder(
                             source = entrySource
                             condition = entryGuard ?: buildElseIfTrueCondition()
                             result = branchBody
+                            hasCorrectGuardKeyword = correctKeyword
+                            guardKeywordSource = guardKeywordSrc
                         }
                     }
                 }

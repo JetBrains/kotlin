@@ -963,7 +963,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         }
 
-        if (at(IF_KEYWORD)) {
+        if (at(IF_KEYWORD) || at(ANDAND)) {
             parseWhenEntryGuard();
         }
 
@@ -1034,9 +1034,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      * whenEntryGuard
      *   : "if" expression
      *   ;
+     *
+     * We parse an extended language with 'if' and '&&' and then check for wrong usages
      */
     private void parseWhenEntryGuard() {
-        assert _at(IF_KEYWORD);
+        assert _at(IF_KEYWORD) || _at(ANDAND);
 
         PsiBuilder.Marker guard = mark();
         advance(); // IF_KEYWORD

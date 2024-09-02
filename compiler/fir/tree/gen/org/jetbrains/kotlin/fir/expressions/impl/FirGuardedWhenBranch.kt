@@ -21,6 +21,8 @@ internal class FirGuardedWhenBranch(
     override val source: KtSourceElement?,
     override var condition: FirExpression,
     override var result: FirBlock,
+    override val hasCorrectGuardKeyword: Boolean,
+    override val guardKeywordSource: KtSourceElement?,
 ) : FirWhenBranch() {
     override val hasGuard: Boolean
         get() = true

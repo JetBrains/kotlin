@@ -301,6 +301,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INCORRECT_GUARD_KEYWORD) { firDiagnostic ->
+        IncorrectGuardKeywordImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INVISIBLE_REFERENCE) { firDiagnostic ->
         InvisibleReferenceImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -4942,6 +4948,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UNUSED_ANONYMOUS_PARAMETER) { firDiagnostic ->
         UnusedAnonymousParameterImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SUGGEST_GUARD_KEYWORD) { firDiagnostic ->
+        SuggestGuardKeywordImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

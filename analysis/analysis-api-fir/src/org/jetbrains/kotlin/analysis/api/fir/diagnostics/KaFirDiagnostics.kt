@@ -254,6 +254,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInterpolationPrefix::class
     }
 
+    interface IncorrectGuardKeyword : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = IncorrectGuardKeyword::class
+    }
+
     interface InvisibleReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KaSymbol
@@ -3451,6 +3455,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface UnusedAnonymousParameter : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = UnusedAnonymousParameter::class
         val parameter: KaSymbol
+    }
+
+    interface SuggestGuardKeyword : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SuggestGuardKeyword::class
     }
 
     interface ReturnNotAllowed : KaFirDiagnostic<KtReturnExpression> {

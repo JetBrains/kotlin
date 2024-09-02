@@ -21,5 +21,7 @@ interface FirAbstractWhenBranchBuilder {
     abstract var source: KtSourceElement?
     abstract var condition: FirExpression
     abstract var result: FirBlock
+    abstract var hasCorrectGuardKeyword: Boolean
+    abstract var guardKeywordSource: KtSourceElement?
     fun build(): FirWhenBranch
 }
