@@ -92,13 +92,13 @@ fun box(): String {
 // EXPECTATIONS WASM
 // test.kt:22 $box (17, 4)
 // test.kt:23 $box (8, 8, 4)
-// test.kt:16 $bar (13, 13, 4)
-// test.kt:6 $generate (4, 10, 10, 4)
+// test.kt:16 $bar (13, 13, 13, 4)
+// test.kt:6 $generate (4, 10, 10, 4, 4)
 // test.kt:3 $Controller.<init>
-// test.kt:17 $bar$lambda.invoke (18, 12, 8, 18, 37)
+// test.kt:17 $bar$lambda.invoke (18, 12, 8, 18, 18, 37)
 // test.kt:11 $foo (36, 38, 38, 38, 38, 36, 43)
-// test.kt:9 $A.<init> (8, 22)
-// test.kt:24 $box$lambda.invoke (8, 17, 8, 18)
+// test.kt:9 $A.<init> (8, 8, 8, 22)
+// test.kt:24 $box$lambda.invoke (8, 17, 17, 8, 18)
 // test.kt:7 $generate
 // test.kt:19 $bar
-// test.kt:27 $box (11, 4)
+// test.kt:27 $box (11, 11, 11, 4)

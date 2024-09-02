@@ -22,5 +22,5 @@ fun box(): String {
 
 // EXPECTATIONS WASM
 // test.kt:9 $box (11, 11, 11, 11, 4)
-// test.kt:4 $ifoo$default (0, 22, 22, 22, 22, 0)
+// test.kt:4 $ifoo$default (0, 0, 0, 22, 0)
 // test.kt:5 $ifoo (11, 4)

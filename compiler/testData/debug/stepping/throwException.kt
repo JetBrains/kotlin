@@ -46,6 +46,6 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:7 $box (20, 23, 8)
 // test.kt:15 $throwIfLess (8, 10, 8, 8, 10, 8)
 // test.kt:16 $throwIfLess (14, 14, 8, 14, 14, 8)
-// test.kt:6 $box
+// test.kt:6 $box (4, 4)
 // test.kt:8 $box (27, 13)
 // test.kt:9 $box (20, 23, 8)

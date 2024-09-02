@@ -48,8 +48,8 @@ fun fail() : String {
 // test.kt:12 box
 
 // EXPECTATIONS WASM
-// test.kt:7 $box (4, 4, 4)
-// test.kt:15 $box (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
+// test.kt:7 $box (4, 4)
+// test.kt:15 $box (11, 11, 4, 11, 11, 4)
 // test.kt:8 $box
 // test.kt:19 $fail (11, 11, 11, 11, 4, 11, 11, 11, 11, 4)
 // test.kt:4 $execute (38, 45, 38, 46, 38, 45, 38, 46)

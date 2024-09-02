@@ -138,17 +138,18 @@ fun box() {
 
 // EXPECTATIONS FIR WASM
 // test.kt:5 $foo (4, 4, 4, 4, 4, 4)
+// test.kt:10 $foo (8, 8, 8, 8, 8, 8)
 
 // EXPECTATIONS ClassicFrontend WASM
 // test.kt:5 $foo (4, 4, 4)
+// test.kt:10 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
 
 // EXPECTATIONS WASM
-// test.kt:10 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
 // test.kt:14 $foo (8, 8, 8)
 // test.kt:30 $mightThrow2 (8, 8, 22, 22, 16, 8, 22, 22, 16)
 // test.kt:31 $mightThrow2
 // test.kt:13 $foo (12, 12, 4, 12, 12, 4, 12, 12, 4)
-// test.kt:18 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:18 $foo (8, 8, 8, 8, 8, 8)
 // test.kt:20 $foo (1, 1, 1)
 // test.kt:35 $box (13, 4)
 // test.kt:36 $box

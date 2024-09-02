@@ -197,7 +197,7 @@ class O<T>(i: T) {
 // test.kt:5 $box (4, 4, 4)
 // test.kt:20 $B.<init>
 // test.kt:6 $box (4, 6, 4, 4)
-// test.kt:21 $C.<init> (8, 19)
+// test.kt:21 $C.<init> (8, 8, 8, 19)
 // test.kt:7 $box (4, 4, 4)
 // test.kt:23 $D.<init> (4, 17)
 // test.kt:24 $D.<init>
@@ -218,7 +218,7 @@ class O<T>(i: T) {
 // test.kt:40 $J.<init> (16, 8)
 // test.kt:42 $J.<init>
 // test.kt:12 $box (4, 6, 4, 4)
-// test.kt:43 $K.<init> (8, 19)
+// test.kt:43 $K.<init> (8, 8, 8, 19)
 // test.kt:45 $K.<init> (16, 8)
 // test.kt:13 $box (4, 4, 4)
 // test.kt:49 $L.<init>
@@ -240,7 +240,7 @@ class O<T>(i: T) {
 // test.kt:71 $N.<init>
 // test.kt:67 $N.<init> (16, 8)
 // test.kt:68 $N.<init>
-// test.kt:16 $box (4, 6, 6, 6, 6, 4, 4)
+// test.kt:16 $box (4, 6, 6, 4, 4)
 // test.kt:73 $O.<init> (16, 16)
 // test.kt:17 $box (4, 6, 9, 9, 9, 9, 4)
 // test.kt:74 $O.<init> (36, 31)

@@ -131,7 +131,7 @@ fun box() {
 // test.kt:20 $Bar.<init>
 // test.kt:51 $box (4, 4, 4)
 // test.kt:24 $Boo.<init> (16, 8)
-// test.kt:27 $Boo.<init>
+// test.kt:27 $Boo.<init> (12, 12, 12)
 // test.kt:30 $Boo.<init> (16, 8)
 // test.kt:32 $Boo.<init>
 // test.kt:52 $box (4, 4)

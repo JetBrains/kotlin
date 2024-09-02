@@ -66,10 +66,10 @@ fun box() {
 // test.kt:21 $box (17, 4)
 // test.kt:22 $box
 // test.kt:9 $box (4, 4)
-// test.kt:15 $<no name provided>.<init>
+// test.kt:15 $<no name provided>.<init> (12, 12)
 // test.kt:11 $<no name provided>.bar
-// test.kt:23 $<no name provided>.bar (8, 8)
-// test.kt:25 $<no name provided>.<init> (16, 25, 25, 25, 25, 16)
+// test.kt:23 $<no name provided>.bar (8, 8, 8)
+// test.kt:25 $<no name provided>.<init> (16, 25, 16)
 // test.kt:27 $<no name provided>.<init>
 // test.kt:27 $<no name provided>.bar
 // test.kt:12 $<no name provided>.bar

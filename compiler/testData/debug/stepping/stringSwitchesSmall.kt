@@ -105,7 +105,7 @@ fun box() {
 // test.kt:30 box
 
 // EXPECTATIONS WASM
-// test.kt:27 $box (17, 17, 17, 17, 4)
+// test.kt:27 $box (17, 17, 17, 4)
 // test.kt:6 $stringSwitch (8, 13, 13, 13, 13, 8, 20, 8, 8)
 // test.kt:5 $stringSwitch (4, 4, 4)
 // test.kt:11 $stringSwitch (19, 4, 19, 4, 19, 4)
@@ -114,11 +114,11 @@ fun box() {
 // test.kt:20 $stringSwitch (8, 15, 8, 8)
 // test.kt:17 $stringSwitch (4, 4, 4)
 // test.kt:24 $stringSwitch (1, 1, 1)
-// test.kt:28 $box (17, 17, 17, 17, 4)
+// test.kt:28 $box (17, 17, 17, 4)
 // test.kt:7 $stringSwitch (8, 13, 13, 13, 13, 8, 21)
 // test.kt:13 $stringSwitch (8, 16)
 // test.kt:21 $stringSwitch (8, 16)
-// test.kt:29 $box (17, 17, 17, 17, 4)
+// test.kt:29 $box (17, 17, 17, 4)
 // test.kt:8 $stringSwitch
 // test.kt:14 $stringSwitch
 // test.kt:22 $stringSwitch
