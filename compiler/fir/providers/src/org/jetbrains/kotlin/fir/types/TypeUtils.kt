@@ -797,6 +797,10 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
     return withAttributes(attributes.remove(CompilerConeAttributes.RawType))
 }
 
+/**
+ * Returns true if this type can be `null`.
+ * This function expands typealiases, checks upper bounds of type parameters, the components of intersection types, etc.
+ */
 fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
     return when (this) {
         is ConeFlexibleType -> upperBound.canBeNull(session)

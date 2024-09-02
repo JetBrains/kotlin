@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
+/**
+ * Returns `true` if the type is flexible and either bound [isMarkedNullable] or if the type itself [isMarkedNullable].
+ */
 val ConeKotlinType.isMarkedOrFlexiblyNullable: Boolean
     get() = when (this) {
         is ConeFlexibleType -> upperBound.isMarkedNullable
@@ -28,6 +31,16 @@ val ConeKotlinType.isMarkedOrFlexiblyNullable: Boolean
 )
 val ConeRigidType.isMarkedOrFlexiblyNullable: Boolean get() = isMarkedNullable
 
+/**
+ * Returns `true` if the type is marked as nullable.
+ *
+ * Note that a return value of `true` implies that this type can be `null`, however, the inverse isn't true.
+ *
+ * A type resolving to a typealias not marked as nullable can contain `null` if the typealias expands to a nullable type.
+ * A type parameter type not marked as nullable can contain `null` if the type has a nullable upper bound.
+ *
+ * For a comprehensive check if a type can be `null`, consider using `canBeNull()`.
+ */
 val ConeKotlinType.isMarkedNullable: Boolean
     get() = when (this) {
         is ConeLookupTagBasedType -> isMarkedNullable
