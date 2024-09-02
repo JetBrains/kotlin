@@ -165,7 +165,7 @@ fun createSyntheticForwardDeclarationClass(
 
         superTypeRefs += buildResolvedTypeRef {
             coneType = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
-                .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                .constructClassType()
         }
 
         annotations += buildAnnotation {
@@ -175,7 +175,7 @@ fun createSyntheticForwardDeclarationClass(
                     NativeStandardInteropNames.ExperimentalForeignApi
                 )
                 coneType = annotationClassId.toLookupTag()
-                    .constructClassType(typeArguments = ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                    .constructClassType()
             }
             argumentMapping = FirEmptyAnnotationArgumentMapping
         }

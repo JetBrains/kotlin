@@ -70,7 +70,7 @@ class FirCloneableSymbolProvider(
 
             name = StandardClassIds.Callables.clone.callableName
             symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
-            dispatchReceiverType = this@buildRegularClass.symbol.constructType(emptyArray(), isMarkedNullable = false)
+            dispatchReceiverType = this@buildRegularClass.symbol.constructType()
         }
 
         this.scopeProvider = scopeProvider

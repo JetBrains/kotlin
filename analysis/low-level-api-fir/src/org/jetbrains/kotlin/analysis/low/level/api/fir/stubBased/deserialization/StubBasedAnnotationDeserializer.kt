@@ -79,7 +79,7 @@ class StubBasedAnnotationDeserializer(
         return buildAnnotation {
             source = KtRealPsiSourceElement(ktAnnotation)
             annotationTypeRef = buildResolvedTypeRef {
-                coneType = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                coneType = classId.toLookupTag().constructClassType()
             }
             this.argumentMapping = buildAnnotationArgumentMapping {
                 valueArguments?.forEach { (name, constantValue) ->
@@ -101,7 +101,7 @@ class StubBasedAnnotationDeserializer(
             is KClassValue -> buildGetClassCall {
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
-                val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                val referencedType = lookupTag.constructType()
                 val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {

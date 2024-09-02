@@ -1320,7 +1320,7 @@ class CallAndReferenceGenerator(
      */
     private fun List<FirTypeProjection>.toExpandedTypeArguments(typeAliasSymbol: FirTypeAliasSymbol): List<FirTypeProjection> {
         return typeAliasSymbol
-            .constructType(map { it.toConeTypeProjection() }.toTypedArray(), false)
+            .constructType(map { it.toConeTypeProjection() }.toTypedArray())
             .fullyExpandedType(session)
             .typeArguments
             .map { typeProjection ->

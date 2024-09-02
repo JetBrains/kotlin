@@ -117,7 +117,7 @@ internal class StubBasedFirTypeDeserializer(
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
                         coneType = StandardNames.FqNames.parameterNameClassId.toLookupTag()
-                            .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
+                            .constructClassType()
                     }
                     this.argumentMapping = buildAnnotationArgumentMapping {
                         mapping[StandardNames.NAME] =

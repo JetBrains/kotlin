@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
 fun ConeClassifierLookupTag.constructType(
-    typeArguments: Array<out ConeTypeProjection>,
-    isMarkedNullable: Boolean,
+    typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
@@ -25,8 +25,8 @@ fun ConeClassifierLookupTag.constructType(
 }
 
 fun ConeClassLikeLookupTag.constructClassType(
-    typeArguments: Array<out ConeTypeProjection>,
-    isMarkedNullable: Boolean,
+    typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this, typeArguments, isMarkedNullable, attributes)
@@ -45,8 +45,8 @@ fun ClassId.constructClassLikeType(
 }
 
 fun FirClassifierSymbol<*>.constructType(
-    typeArguments: Array<ConeTypeProjection>,
-    isMarkedNullable: Boolean,
+    typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
@@ -56,8 +56,8 @@ fun FirClassifierSymbol<*>.constructType(
 }
 
 fun FirClassLikeSymbol<*>.constructType(
-    typeArguments: Array<ConeTypeProjection>,
-    isMarkedNullable: Boolean,
+    typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)

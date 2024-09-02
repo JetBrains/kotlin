@@ -345,7 +345,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         return buildAnnotation {
             annotationTypeRef = annotationClassId
                 .toLookupTag()
-                .constructClassType(typeArguments = emptyArray(), isMarkedNullable = false)
+                .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
                 for (i in 0 until this@toFirAnnotation.valueArgumentsCount) {

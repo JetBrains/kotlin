@@ -1243,7 +1243,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             ConeStarProjection
                         }
                     }
-                val type = symbol?.constructType(typeArguments, isMarkedNullable = false)
+                val type = symbol?.constructType(typeArguments)
                 if (type != null) {
                     lhs.replaceConeTypeOrNull(
                         type.also {
@@ -1257,7 +1257,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             is FirResolvedReifiedParameterReference -> {
                 val symbol = lhs.symbol
-                symbol.constructType(emptyArray(), isMarkedNullable = false)
+                symbol.constructType()
             }
             else -> {
                 if (!shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall)) return transformedGetClassCall

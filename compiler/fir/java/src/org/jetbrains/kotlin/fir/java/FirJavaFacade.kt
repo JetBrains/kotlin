@@ -715,7 +715,6 @@ abstract class FirJavaFacade(
         typeParameters.map {
             ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false)
         }.toTypedArray(),
-        isMarkedNullable = false,
     )
 
     private fun FqName.topLevelName() =

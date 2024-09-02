@@ -386,7 +386,7 @@ fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
     val typeParameterSymbol = parameterReferenceBuilder.symbol
-    return typeParameterSymbol.constructType(emptyArray(), false)
+    return typeParameterSymbol.constructType()
 }
 
 internal fun typeForQualifierByDeclaration(
@@ -398,12 +398,12 @@ internal fun typeForQualifierByDeclaration(
     }
     if (declaration is FirRegularClass) {
         if (declaration.classKind == ClassKind.OBJECT) {
-            return declaration.symbol.constructType(emptyArray(), false)
+            return declaration.symbol.constructType()
         } else {
             val companionObjectSymbol = declaration.companionObjectSymbol
             if (companionObjectSymbol != null) {
                 session.lookupTracker?.recordCompanionLookup(companionObjectSymbol.classId, element.source, file.source)
-                return companionObjectSymbol.constructType(emptyArray(), false)
+                return companionObjectSymbol.constructType()
             }
         }
     }
@@ -495,7 +495,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
         is FirClassifierSymbol<*> -> {
             buildResolvedTypeRef {
                 source = null
-                coneType = symbol.constructType(emptyArray(), isMarkedNullable = false)
+                coneType = symbol.constructType()
             }
         }
         else -> errorWithAttachment("Failed to extract type from symbol: ${symbol::class.java}") {

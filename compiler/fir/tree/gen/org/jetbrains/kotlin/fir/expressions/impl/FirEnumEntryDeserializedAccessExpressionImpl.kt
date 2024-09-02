@@ -33,7 +33,7 @@ internal class FirEnumEntryDeserializedAccessExpressionImpl(
     override val source: KtSourceElement?
         get() = null
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    override var coneTypeOrNull: ConeKotlinType? = enumClassId.toLookupTag().constructClassType(emptyArray(), false)
+    override var coneTypeOrNull: ConeKotlinType? = enumClassId.toLookupTag().constructClassType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

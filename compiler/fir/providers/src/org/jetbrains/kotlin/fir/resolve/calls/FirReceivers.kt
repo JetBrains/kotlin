@@ -210,7 +210,7 @@ class ImplicitDispatchReceiverValue(
     constructor(
         boundSymbol: FirClassSymbol<*>, useSiteSession: FirSession, scopeSession: ScopeSession
     ) : this(
-        boundSymbol, boundSymbol.constructType(typeArguments = emptyArray(), isMarkedNullable = false),
+        boundSymbol, boundSymbol.constructType(),
         useSiteSession, scopeSession
     )
 

@@ -453,7 +453,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(enumEntryDeserializedAccessExpression) {
             noSource()
             default("coneTypeOrNull") {
-                value = "enumClassId.toLookupTag().constructClassType(emptyArray(), false)"
+                value = "enumClassId.toLookupTag().constructClassType()"
                 additionalImports(toLookupTagImport, constructClassTypeImport)
             }
         }

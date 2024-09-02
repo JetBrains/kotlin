@@ -196,7 +196,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
     private fun ConeClassLikeLookupTag.toDefaultResolvedTypeRef(): FirResolvedTypeRef =
         buildResolvedTypeRef {
-            coneType = constructClassType(emptyArray(), isMarkedNullable = false)
+            coneType = constructClassType()
         }
 
     private fun createEnumEntryAccess(classId: ClassId, name: Name): FirEnumEntryDeserializedAccessExpression =

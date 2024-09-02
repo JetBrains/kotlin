@@ -43,7 +43,7 @@ fun checkMissingDependencySuperTypes(
             source,
             diagnostic,
             superType.withArguments(emptyArray()).withNullability(nullable = false, context.session.typeContext),
-            declaration.constructType(emptyArray(), false),
+            declaration.constructType(),
             context
         )
     }

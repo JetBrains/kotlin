@@ -41,7 +41,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         }
 
         if (correspondingDeclaration is FirTypeAliasSymbol) {
-            val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray(), isMarkedNullable = false)
+            val qualifierType = correspondingDeclaration.constructType(typeArgumentsWithSourceInfo.toTypedArray())
             val expandedLhsType = qualifierType.fullyExpandedType(context.session)
             typeArgumentsWithSourceInfo = expandedLhsType.typeArguments.toList()
 

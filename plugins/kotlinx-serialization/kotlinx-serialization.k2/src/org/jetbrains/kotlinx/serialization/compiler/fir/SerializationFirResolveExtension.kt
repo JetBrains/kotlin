@@ -236,8 +236,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             returnTypeProvider = { typeParameters ->
                 val parametersAsArguments = typeParameters.map { it.toConeType() }.toTypedArray<ConeTypeProjection>()
                 kSerializerId.constructClassLikeType(
-                    arrayOf(serializableClassSymbol.constructType(parametersAsArguments, false)),
-                    isMarkedNullable = false
+                    arrayOf(serializableClassSymbol.constructType(parametersAsArguments)),
                 )
             }
         ) {
@@ -313,10 +312,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     arrayOf(
                         owner.constructType(
                             typeParameters.map { it.toConeType() }.toTypedArray(),
-                            isMarkedNullable = false
                         )
                     ),
-                    isMarkedNullable = false
                 )
             }
         }.apply {
