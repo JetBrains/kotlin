@@ -95,7 +95,12 @@ class FunctionCallTransformer(
         const val DEFAULT_NAME = "DataFrameType"
     }
 
-    private val typeTransformers = listOf(GroupByCallTransformer(), DataFrameCallTransformer())
+    private interface CallTransformer {
+        fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType?
+        fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall?
+    }
+
+    private val transformers = listOf(GroupByCallTransformer(), DataFrameCallTransformer())
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
@@ -121,53 +126,8 @@ class FunctionCallTransformer(
             hashToTwoCharString(abs(hash))
         }
 
-        return typeTransformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, hash) }
+        return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, hash) }
     }
-
-    private fun buildNewTypeArgument(argument: ConeTypeProjection?, name: Name, hash: String): FirRegularClass {
-        val suggestedName = if (argument == null) {
-            "${name.asTokenName()}_$hash"
-        } else {
-            when (argument) {
-                is ConeStarProjection -> {
-                    "${name.asTokenName()}_$hash"
-                }
-                is ConeKotlinTypeProjection -> {
-                    val titleCase = argument.type.classId?.shortClassName
-                        ?.identifierOrNullIfSpecial?.titleCase()
-                        ?.substringBeforeLast("_")
-                        ?: DEFAULT_NAME
-                    "${titleCase}_$hash"
-                }
-            }
-        }
-        val tokenId = nextName("${suggestedName}I")
-        val token = buildSchema(tokenId)
-
-        val dataFrameTypeId = nextName(suggestedName)
-        val dataFrameType = buildRegularClass {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Source
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
-            deprecationsProvider = EmptyDeprecationsProvider
-            classKind = ClassKind.CLASS
-            scopeProvider = FirKotlinScopeProvider()
-            superTypeRefs += buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    ConeClassLookupTagWithFixedSymbol(tokenId, token.symbol),
-                    emptyArray(),
-                    isNullable = false
-                )
-            }
-
-            this.name = dataFrameTypeId.shortClassName
-            this.symbol = FirRegularClassSymbol(dataFrameTypeId)
-        }
-        return dataFrameType
-    }
-
-    private fun Name.asTokenName() = identifierOrNullIfSpecial?.titleCase() ?: DEFAULT_NAME
 
     private fun exposesLocalType(callInfo: CallInfo): Boolean {
         val property = callInfo.containingDeclarations.lastOrNull()?.symbol as? FirPropertySymbol
@@ -184,17 +144,10 @@ class FunctionCallTransformer(
         return "$char1$char2"
     }
 
-    private fun nextName(s: String) = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
-
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
-        return typeTransformers
+        return transformers
             .firstNotNullOfOrNull { it.transformOrNull(call, originalSymbol) }
             ?: call
-    }
-
-    interface CallTransformer {
-        fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType?
-        fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall?
     }
 
     inner class DataFrameCallTransformer : CallTransformer {
@@ -293,6 +246,53 @@ class FunctionCallTransformer(
             return buildLetCall(call, originalSymbol, keyApis + groupApis, additionalDeclarations = listOf(groupToken, keyToken))
         }
     }
+
+    private fun buildNewTypeArgument(argument: ConeTypeProjection?, name: Name, hash: String): FirRegularClass {
+        val suggestedName = if (argument == null) {
+            "${name.asTokenName()}_$hash"
+        } else {
+            when (argument) {
+                is ConeStarProjection -> {
+                    "${name.asTokenName()}_$hash"
+                }
+                is ConeKotlinTypeProjection -> {
+                    val titleCase = argument.type.classId?.shortClassName
+                        ?.identifierOrNullIfSpecial?.titleCase()
+                        ?.substringBeforeLast("_")
+                        ?: DEFAULT_NAME
+                    "${titleCase}_$hash"
+                }
+            }
+        }
+        val tokenId = nextName("${suggestedName}I")
+        val token = buildSchema(tokenId)
+
+        val dataFrameTypeId = nextName(suggestedName)
+        val dataFrameType = buildRegularClass {
+            moduleData = session.moduleData
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            origin = FirDeclarationOrigin.Source
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
+            deprecationsProvider = EmptyDeprecationsProvider
+            classKind = ClassKind.CLASS
+            scopeProvider = FirKotlinScopeProvider()
+            superTypeRefs += buildResolvedTypeRef {
+                type = ConeClassLikeTypeImpl(
+                    ConeClassLookupTagWithFixedSymbol(tokenId, token.symbol),
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
+
+            this.name = dataFrameTypeId.shortClassName
+            this.symbol = FirRegularClassSymbol(dataFrameTypeId)
+        }
+        return dataFrameType
+    }
+
+    private fun nextName(s: String) = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
+
+    private fun Name.asTokenName() = identifierOrNullIfSpecial?.titleCase() ?: DEFAULT_NAME
 
     @OptIn(SymbolInternals::class)
     private fun buildLetCall(
