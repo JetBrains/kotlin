@@ -1,19 +1,15 @@
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension
-import java.net.URI
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.spdx.sbom.gradle.SpdxSbomExtension
+import java.net.URI
 
-
-/*
- * When called with `--write-verification-metadata` resolves all build dependencies including implicit dependencies for all platforms and
- * dependencies downloaded by plugins. Useful to populate Gradle dependency cache or update `verification-metadata.xml` properly.
- *
- * `./gradlew resolveDependencies --write-verification-metadata md5,sha256 -Pkotlin.native.enabled=true`
- */
-tasks.register("resolveDependencies") {
-    doFirst {
+val resolveDependenciesInAllProjects by tasks.registering {
+    description = "Resolves dependencies in all projects (for dependency verification or populating caches)."
+    notCompatibleWithConfigurationCache("Uses project during task execution")
+    doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+    doLast {
         allprojects {
             logger.lifecycle("Resolving dependencies in ${project.displayName}")
 
@@ -39,16 +35,23 @@ tasks.register("resolveDependencies") {
                 }
             }
         }
+    }
+}
 
+val resolveJsTools by tasks.registering {
+    description = "Resolves JavaScript tools (for dependency verification or populating caches)."
+    notCompatibleWithConfigurationCache("Uses project during task execution")
+    doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+    doLast {
         fun Project.resolveDependencies(
             vararg dependency: String,
-            repositoryHandler: (RepositoryHandler.() -> ArtifactRepository)? = null
+            repositoryHandler: RepositoryHandler.() -> ArtifactRepository,
         ) {
-            val repo = repositoryHandler?.let { repositories.repositoryHandler() }
+            val repo = repositories.repositoryHandler()
             dependency.forEach {
                 configurations.detachedConfiguration(dependencies.create(it)).resolve()
             }
-            repo?.run { repositories.remove(this) }
+            repo.run { repositories.remove(this) }
         }
 
         rootProject.extensions.findByType<D8RootExtension>()?.run {
@@ -59,7 +62,8 @@ tasks.register("resolveDependencies") {
                 "google.d8:v8:mac64-rel-$version@zip"
             ) {
                 ivy {
-                    url = URI(downloadBaseUrl)
+                    name = "D8-ResolveDependencies"
+                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
                     patternLayout {
                         artifact("[artifact]-[revision].[ext]")
                     }
@@ -77,7 +81,8 @@ tasks.register("resolveDependencies") {
                 "com.github.webassembly:binaryen:$version:x86_64-windows@tar.gz"
             ) {
                 ivy {
-                    url = URI(downloadBaseUrl)
+                    name = "Binaryen-ResolveDependencies"
+                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
                     patternLayout {
                         artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
                     }
@@ -95,7 +100,8 @@ tasks.register("resolveDependencies") {
                 "org.nodejs:node:$version:darwin-arm64@tar.gz"
             ) {
                 ivy {
-                    url = URI(downloadBaseUrl)
+                    name = "NodeJs-ResolveDependencies"
+                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
                     patternLayout {
                         artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
                     }
@@ -108,7 +114,8 @@ tasks.register("resolveDependencies") {
         rootProject.extensions.findByType<YarnRootExtension>()?.run {
             project.resolveDependencies("com.yarnpkg:yarn:$version@tar.gz") {
                 ivy {
-                    url = URI(downloadBaseUrl)
+                    name = "Yarn-ResolveDependencies"
+                    url = requireNotNull(downloadBaseUrl) { "downloadBaseUrl was null for $name repository" }.let(::URI)
                     patternLayout {
                         artifact("v[revision]/[artifact](-v[revision]).[ext]")
                     }
@@ -120,13 +127,38 @@ tasks.register("resolveDependencies") {
     }
 }
 
-tasks.register("resolveToolchains") {
-    allprojects {
-        logger.lifecycle("Resolving toolchains in ${project.displayName}")
-        plugins.withId("java-base") {
-            val service = project.extensions.getByType<JavaToolchainService>()
-            val javaExtension = extensions.getByType<JavaPluginExtension>()
-            service.compilerFor(javaExtension.toolchain).get()
+/**
+ * When called with `--write-verification-metadata` resolves all build dependencies including implicit dependencies for all platforms and
+ * dependencies downloaded by plugins.
+ *
+ * Useful for populating Gradle dependency cache or updating `verification-metadata.xml` properly.
+ *
+ * `./gradlew resolveDependencies --write-verification-metadata md5,sha256 -Pkotlin.native.enabled=true`
+ */
+tasks.register("resolveDependencies") {
+    description = "Resolves all dependencies, including implicit dependencies, in all projects for dependency verification."
+    group = "build setup"
+
+    dependsOn(
+        resolveDependenciesInAllProjects,
+        resolveJsTools,
+    )
+}
+
+tasks.register("resolveJavaToolchainsInAllProjects") {
+    // Currently unused.
+    // It is supposed to run during agent image build to populate caches, along with resolveDependencies.
+    description = "Resolves Java Toolchains in all Java projects."
+    notCompatibleWithConfigurationCache("Uses project during task execution")
+    doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+    doLast("Resolve Java toolchains in all projects") {
+        allprojects {
+            plugins.withId("java-base") {
+                val service = project.extensions.getByType<JavaToolchainService>()
+                val javaExtension = extensions.getByType<JavaPluginExtension>()
+                val compiler = service.compilerFor(javaExtension.toolchain).get()
+                logger.lifecycle("Resolved Java Toolchain ${compiler.metadata} in ${project.displayName}")
+            }
         }
     }
 }
