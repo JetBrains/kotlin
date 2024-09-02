@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isVararg
@@ -118,7 +119,7 @@ class WrapJsComposableLambdaLowering(
         return when (expression.symbol.owner.fqNameForIrSerialization) {
             ComposeCallableIds.composableLambda.asSingleFqName() -> {
                 transformComposableLambdaCall(
-                    originalCall = original,
+                    originalCall = original.deepCopyWithoutPatchingParents(), // To avoid duplicated IR nodes, since we reuse the call's args
                     currentComposer = original.getValueArgument(0),
                     lambda = original.getValueArgument(
                         original.valueArgumentsCount - 1
@@ -127,8 +128,8 @@ class WrapJsComposableLambdaLowering(
             }
             ComposeCallableIds.rememberComposableLambda.asSingleFqName() -> {
                 transformComposableLambdaCall(
-                    originalCall = original,
-                    currentComposer =  original.getValueArgument(3),
+                    originalCall = original.deepCopyWithoutPatchingParents(), // To avoid duplicated IR nodes, since we reuse the call's args
+                    currentComposer = original.getValueArgument(3),
                     lambda = original.getValueArgument(2) as IrFunctionExpression
                 )
             }
