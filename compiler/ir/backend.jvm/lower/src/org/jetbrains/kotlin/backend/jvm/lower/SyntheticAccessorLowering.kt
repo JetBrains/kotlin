@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
@@ -272,7 +270,7 @@ private class SyntheticAccessorTransformer(
         }
 
         return super.visitExpression(
-            modifyGetterExpression(
+            accessorGenerator.modifyGetterExpression(
                 expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save().symbol
             )
         )
@@ -298,7 +296,7 @@ private class SyntheticAccessorTransformer(
         }
 
         return super.visitExpression(
-            modifySetterExpression(
+            accessorGenerator.modifySetterExpression(
                 expression, accessorGenerator.getSyntheticSetter(expression, allScopes).save().symbol
             )
         )
@@ -351,93 +349,6 @@ private class SyntheticAccessorTransformer(
             }
         }
         return super.visitInlinedFunctionBlock(inlinedBlock)
-    }
-
-    /**
-     * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].
-     *
-     * Before:
-     * ```kotlin
-     * class C {
-     *     protected /*field*/ val myField: Int
-     *
-     *     internal inline fun foo(): Int = myField + 1
-     * }
-     * ```
-     *
-     * After:
-     * ```kotlin
-     * class C {
-     *     protected /*field*/ val myField: Int
-     *
-     *     public static fun access$getMyField$p($this: C): Int =
-     *         $this.myField
-     *
-     *     internal inline fun foo(): Int =
-     *         C.access$getMyField$p(this) + 1
-     * }
-     * ```
-     */
-    private fun modifyGetterExpression(
-        oldExpression: IrGetField,
-        accessorSymbol: IrSimpleFunctionSymbol
-    ): IrCall {
-        val call = IrCallImpl(
-            oldExpression.startOffset, oldExpression.endOffset,
-            oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
-            oldExpression.origin
-        )
-        oldExpression.receiver?.let {
-            call.putValueArgument(0, oldExpression.receiver)
-        }
-        return call
-    }
-
-    /**
-     * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _write_ expression [oldExpression].
-     *
-     * Before:
-     * ```kotlin
-     * class C {
-     *     protected var myField: Int = 0
-     *
-     *     internal inline fun foo(x: Int) {
-     *         myField = x
-     *     }
-     * }
-     * ```
-     *
-     * After:
-     * ```kotlin
-     * class C {
-     *     protected var myField: Int = 0
-     *
-     *     public static fun access$setMyField$p($this: C, <set-?>: Int) {
-     *         $this.myField = <set-?>
-     *     }
-     *
-     *     internal inline fun foo(x: Int) {
-     *         access$setMyField$p(this, x)
-     *     }
-     * }
-     * ```
-     */
-    private fun modifySetterExpression(
-        oldExpression: IrSetField,
-        accessorSymbol: IrSimpleFunctionSymbol
-    ): IrCall {
-        val call = IrCallImpl(
-            oldExpression.startOffset, oldExpression.endOffset,
-            oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
-            oldExpression.origin
-        )
-        oldExpression.receiver?.let {
-            call.putValueArgument(0, oldExpression.receiver)
-        }
-        call.putValueArgument(call.valueArgumentsCount - 1, oldExpression.value)
-        return call
     }
 }
 
