@@ -43941,6 +43941,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveOnTypeParameterWithSealedClassUpperBound.kt")
+      public void testExhaustiveOnTypeParameterWithSealedClassUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedClassUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("ExhaustiveOnTypeParameterWithSealedInterfaceUpperBound.kt")
+      public void testExhaustiveOnTypeParameterWithSealedInterfaceUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedInterfaceUpperBound.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveOnTypeParameterWithSealedUpperBound.kt")
       public void testExhaustiveOnTypeParameterWithSealedUpperBound() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedUpperBound.kt");
