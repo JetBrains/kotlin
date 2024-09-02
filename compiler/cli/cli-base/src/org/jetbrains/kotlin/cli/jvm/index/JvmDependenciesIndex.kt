@@ -35,6 +35,9 @@ interface JvmDependenciesIndex {
      * modules and thus takes a global view on the project. A project may have two libraries which contain a class with the same name. When
      * we have two independent modules which each depend on one library, there is no classpath issue as the libraries do not overlap. In
      * such a case, the global index must provide virtual files for both classes.
+     *
+     * The [JvmDependenciesIndex] implementation may choose to find only the first result instead of all results if it's operated under a
+     * single-module view. This avoids the possible negative performance impact of looking for multiple results.
      */
     fun <T : Any> findClasses(
         classId: ClassId,

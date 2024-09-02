@@ -16,10 +16,19 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-// speeds up finding files/classes in classpath/java source roots
 // TODO: KT-58327 needs to be adapted/removed if we want compiler to be multithreaded
-// the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
-class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
+
+/**
+ * Speeds up finding files/classes in the classpath/Java source roots.
+ *
+ * The main idea of this class is for each package to store all roots which contain the package to avoid excessive file system traversal.
+ *
+ * @param shouldOnlyFindFirstClass The index will stop the search in [findClasses] once it finds one result.
+ */
+class JvmDependenciesIndexImpl(
+    _roots: List<JavaRoot>,
+    private val shouldOnlyFindFirstClass: Boolean,
+) : JvmDependenciesIndex {
     private val lock = ReentrantLock()
 
     //these fields are computed based on _roots passed to constructor which are filled in later
@@ -117,9 +126,13 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
             if (result != null) {
                 results.add(result)
                 classSearchResults.add(ClassSearchResult.Found(directoryInRoot, root))
+
+                if (shouldOnlyFindFirstClass) {
+                    return@traverseIndex false
+                }
             }
 
-            // Traverse the whole index to find all classes.
+            // Traverse the whole index to find all classes. `shouldOnlyFindFirstClass` is handled above.
             true
         }
 
