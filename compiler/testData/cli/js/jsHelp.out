@@ -17,7 +17,7 @@ where possible options include:
   -source-map-embed-sources {always|never|inlining}
                              Embed source files into the source map.
   -source-map-names-policy {no|simple-names|fully-qualified-names}
-                             Mode for mapping generated names to original names (IR backend only).
+                             Mode for mapping generated names to original names.
   -source-map-prefix         Add the specified prefix to the paths in the source map.
   -target { es5, es2015 }    Generate JS files for the specified ECMA version.
   -Werror                    Report an error if there are any warnings.

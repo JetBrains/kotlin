@@ -86,7 +86,7 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val sourceMapEmbedSources: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode>
 
     /**
-     * Mode for mapping generated names to original names (IR backend only).
+     * Mode for mapping generated names to original names.
      *
      * Possible values: "no", "simple-names", "fully-qualified-names"
      *

@@ -114,7 +114,7 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     private val org.jetbrains.kotlin.gradle.dsl.JsSourceMapNamesPolicy?.sourceMapNamesPolicyKotlinOption get() = this?.policy
 
     /**
-     * Mode for mapping generated names to original names (IR backend only).
+     * Mode for mapping generated names to original names.
      *
      * Possible values: "no", "simple-names", "fully-qualified-names"
      *

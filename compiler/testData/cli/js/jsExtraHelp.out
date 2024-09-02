@@ -9,7 +9,7 @@ where advanced options include:
   -Xfake-override-validator  Enable the IR fake override validator.
   -Xfriend-modules=<path>    Paths to friend modules.
   -Xfriend-modules-disabled  Disable internal declaration export.
-  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file. This is available only in the IR backend.
+  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
   -Xwasm-source-map-include-mappings-from-unavailable-sources
                              Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
@@ -34,10 +34,9 @@ where advanced options include:
   -Xir-per-file              Generate one .js file per source file.
   -Xir-per-module            Generate one .js file per module.
   -Xir-per-module-output-name Add a custom output name to the split .js files.
-  -Xir-produce-js            Generate a JS file using the IR backend. This option also disables the pre-IR backend.
+  -Xir-produce-js            Generate a JS file using the IR backend.
   -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
-                             In combination with '-meta-info', this generates both IR and pre-IR versions of the library.
-  -Xir-produce-klib-file     Generate a packed klib into the file specified by '-output'. This disables the pre-IR backend.
+  -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
   -Xir-property-lazy-initialization
                              Perform lazy initialization for properties.
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
@@ -46,7 +45,7 @@ where advanced options include:
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
-  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
+  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
   -Xtyped-arrays             Translate primitive arrays into JS typed arrays.
   -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage

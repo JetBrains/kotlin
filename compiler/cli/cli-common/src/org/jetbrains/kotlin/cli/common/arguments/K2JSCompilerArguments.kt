@@ -156,7 +156,7 @@ It is deprecated and will be removed in Kotlin 2.2."""
     @Argument(
         value = "-source-map-names-policy",
         valueDescription = "{no|simple-names|fully-qualified-names}",
-        description = "Mode for mapping generated names to original names (IR backend only)."
+        description = "Mode for mapping generated names to original names."
     )
     var sourceMapNamesPolicy: String? = null
         set(value) {
@@ -245,8 +245,7 @@ It is deprecated and will be removed in Kotlin 2.2."""
 
     @Argument(
         value = "-Xir-produce-klib-dir",
-        description = """Generate an unpacked klib into the parent directory of the output JS file.
-In combination with '-meta-info', this generates both IR and pre-IR versions of the library."""
+        description = "Generate an unpacked klib into the parent directory of the output JS file."
     )
     var irProduceKlibDir = false
         set(value) {
@@ -256,7 +255,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 
     @Argument(
         value = "-Xir-produce-klib-file",
-        description = "Generate a packed klib into the file specified by '-output'. This disables the pre-IR backend."
+        description = "Generate a packed klib into the directory specified by '-ir-output-dir'."
     )
     var irProduceKlibFile = false
         set(value) {
@@ -264,7 +263,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
-    @Argument(value = "-Xir-produce-js", description = "Generate a JS file using the IR backend. This option also disables the pre-IR backend.")
+    @Argument(value = "-Xir-produce-js", description = "Generate a JS file using the IR backend.")
     var irProduceJs = false
         set(value) {
             checkFrozen()
@@ -459,7 +458,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 
     @Argument(
         value = "-Xgenerate-dts",
-        description = "Generate a TypeScript declaration .d.ts file alongside the JS file. This is available only in the IR backend."
+        description = "Generate a TypeScript declaration .d.ts file alongside the JS file."
     )
     var generateDts = false
         set(value) {
@@ -479,7 +478,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 
     @Argument(
         value = "-Xstrict-implicit-export-types",
-        description = "Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only."
+        description = "Generate strict types for implicitly exported entities inside d.ts files."
     )
     var strictImplicitExportType = false
         set(value) {
