@@ -230,6 +230,13 @@ fun Project.overrideNativeCompilerDownloadUrl() {
         "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
 }
 
+// NodeJS distribution download url override section
+fun Project.overrideNodeJsDistributionDownloadUrl() {
+    logger.info("Redirecting NodeJs distirbution download url")
+    extensions.extraProperties["kotlin.js.nodejs.baseDownloadUrl"] =
+        "https://cache-redirector.jetbrains.com/nodejs.org/dist"
+}
+
 // Check repositories are overriden section
 
 fun Project.addCheckRepositoriesTask() {
@@ -356,6 +363,7 @@ if (cacheRedirectorEnabled.get()) {
         buildscript.repositories.redirect()
         repositories.redirect()
         overrideNativeCompilerDownloadUrl()
+        overrideNodeJsDistributionDownloadUrl()
         addCheckRepositoriesTask()
     }
 }
