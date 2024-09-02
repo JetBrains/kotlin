@@ -15,6 +15,40 @@ public fun ClassWithNonPublicConstructor_a_get(self: kotlin.native.internal.Nati
     return _result
 }
 
+@ExportedBridge("Foo_Companion_get")
+public fun Foo_Companion_get(): kotlin.native.internal.NativePtr {
+    val _result = Foo.Companion
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Foo_Companion_my_func")
+public fun Foo_Companion_my_func(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
+    val _result = __self.my_func()
+    return _result
+}
+
+@ExportedBridge("Foo_Companion_my_value_inner_get")
+public fun Foo_Companion_my_value_inner_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
+    val _result = __self.my_value_inner
+    return _result
+}
+
+@ExportedBridge("Foo_Companion_my_variable_inner_get")
+public fun Foo_Companion_my_variable_inner_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
+    val _result = __self.my_variable_inner
+    return _result
+}
+
+@ExportedBridge("Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__")
+public fun Foo_Companion_my_variable_inner_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
+    val __newValue = newValue
+    __self.my_variable_inner = __newValue
+}
+
 @ExportedBridge("Foo_INSIDE_CLASS_init_allocate")
 public fun Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Foo.INSIDE_CLASS>()
@@ -93,6 +127,19 @@ public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate(
 public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UInt__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT())
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo")
+public fun OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar.NamedCompanion
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_Bar_NamedCompanion_get")
+public fun OBJECT_NO_PACKAGE_Bar_NamedCompanion_get(): kotlin.native.internal.NativePtr {
+    val _result = OBJECT_NO_PACKAGE.Bar.NamedCompanion
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_bar")

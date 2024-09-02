@@ -131,6 +131,19 @@ fun isSavedDepsObject(obj: Any): Boolean = obj == deps_instance
 class ClassWithFactory(val value: Int)
 fun ClassWithFactory(longValue: Long) = ClassWithFactory(longValue.toInt())
 
+// FILE: companion.kt
+open class HostBase {
+    companion object {
+        val hostDepth = 0
+    }
+}
+
+class HostDerived : HostBase() {
+    companion object {
+        val hostDepth = 1
+    }
+}
+
 // MODULE: second_main(deps)
 // FILE: second_main.kt
 

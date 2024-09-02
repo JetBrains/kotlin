@@ -106,8 +106,8 @@ internal class SirClassFromKtSymbol(
         )
     }.also { it.parent = this }
 
-    private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KaClassKind.OBJECT)
-        listOf(
+    private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
+        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(
             kotlinBaseInitDeclaration(),
             buildInit {
                 origin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
@@ -128,8 +128,8 @@ internal class SirClassFromKtSymbol(
             }.also {
                 it.getter.parent = it
             }
-        )
-            .map { it.also { it.parent = this } }
-    else
-        listOf(kotlinBaseInitDeclaration())
+        ).onEach { it.parent = this }
+
+        else -> listOf(kotlinBaseInitDeclaration())
+    }
 }

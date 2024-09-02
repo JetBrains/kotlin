@@ -119,10 +119,23 @@ class Foo (a: Int) {
     var my_variable: Long = 5
 
     /**
-     * should be ignored, as we did not designed this
+     * this is a sample comment for Foo's Companion object without package
      */
     companion object {
-        fun COMPANION_OBJECT_FUNCTION_SHOULD_BE_IGNORED(): Int = TODO()
+        /**
+         * this is a sample comment for fun in Foo.Comanion without package
+         */
+        fun my_func(): Boolean = TODO()
+
+        /**
+         * this is a sample comment for val in Foo.Comanion without package
+         */
+        val my_value_inner: UInt = 5u
+
+        /**
+         * this is a sample comment for var in Foo.Comanion without package
+         */
+        var my_variable_inner: Long = 5
     }
 }
 
@@ -140,12 +153,8 @@ object OBJECT_NO_PACKAGE {
         fun bar(): Int = 5
         class CLASS_INSIDE_CLASS_INSIDE_OBJECT
 
-        /**
-         * we do not support companion objects currently.
-         * https://youtrack.jetbrains.com/issue/KT-66817
-         */
-        companion object {
-            fun foo(): Int = TODO()
+        companion object NamedCompanion {
+            fun foo(): Int = 5
         }
     }
 

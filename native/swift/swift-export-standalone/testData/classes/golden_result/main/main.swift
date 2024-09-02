@@ -30,6 +30,37 @@ public final class ClassWithNonPublicConstructor : KotlinRuntime.KotlinBase {
     }
 }
 public final class Foo : KotlinRuntime.KotlinBase {
+    public final class Companion : KotlinRuntime.KotlinBase {
+        public var my_value_inner: Swift.UInt32 {
+            get {
+                return Foo_Companion_my_value_inner_get(self.__externalRCRef())
+            }
+        }
+        public var my_variable_inner: Swift.Int64 {
+            get {
+                return Foo_Companion_my_variable_inner_get(self.__externalRCRef())
+            }
+            set {
+                return Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+            }
+        }
+        public static var shared: main.Foo.Companion {
+            get {
+                return main.Foo.Companion(__externalRCRef: Foo_Companion_get())
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        public override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+        public func my_func() -> Swift.Bool {
+            return Foo_Companion_my_func(self.__externalRCRef())
+        }
+    }
     public final class INSIDE_CLASS : KotlinRuntime.KotlinBase {
         public var my_value_inner: Swift.UInt32 {
             get {
@@ -106,6 +137,24 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
                 __externalRCRef: Swift.UInt
             ) {
                 super.init(__externalRCRef: __externalRCRef)
+            }
+        }
+        public final class NamedCompanion : KotlinRuntime.KotlinBase {
+            public static var shared: main.OBJECT_NO_PACKAGE.Bar.NamedCompanion {
+                get {
+                    return main.OBJECT_NO_PACKAGE.Bar.NamedCompanion(__externalRCRef: OBJECT_NO_PACKAGE_Bar_NamedCompanion_get())
+                }
+            }
+            private override init() {
+                fatalError()
+            }
+            public override init(
+                __externalRCRef: Swift.UInt
+            ) {
+                super.init(__externalRCRef: __externalRCRef)
+            }
+            public func foo() -> Swift.Int32 {
+                return OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(self.__externalRCRef())
             }
         }
         public var i: Swift.Int32 {

@@ -291,6 +291,12 @@ func openClassesAdhereToLSP() throws {
     try assertSame(actual: polymorphicObject, expected: child)
 }
 
+func companionObject() throws {
+    try assertTrue(HostBase.Companion.shared != HostDerived.Companion.shared)
+    try assertEquals(actual: HostBase.Companion.shared.hostDepth, expected: 0)
+    try assertEquals(actual: HostDerived.Companion.shared.hostDepth, expected: 1)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -328,6 +334,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "objectsHashProperly", method: withAutorelease(objectsHashProperly)),
             TestCase(name: "openClassesAreInheritable", method: withAutorelease(openClassesAreInheritable)),
             TestCase(name: "openClassesAdhereToLSP", method: withAutorelease(openClassesAdhereToLSP)),
+            TestCase(name: "companionObject", method: withAutorelease(companionObject)),
         ]
     }
 }

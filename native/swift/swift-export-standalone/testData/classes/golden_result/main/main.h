@@ -5,6 +5,16 @@ int32_t CLASS_WITH_SAME_NAME_foo(uintptr_t self);
 
 int32_t ClassWithNonPublicConstructor_a_get(uintptr_t self);
 
+uintptr_t Foo_Companion_get();
+
+_Bool Foo_Companion_my_func(uintptr_t self);
+
+uint32_t Foo_Companion_my_value_inner_get(uintptr_t self);
+
+int64_t Foo_Companion_my_variable_inner_get(uintptr_t self);
+
+void Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__(uintptr_t self, int64_t newValue);
+
 uintptr_t Foo_INSIDE_CLASS_init_allocate();
 
 void Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
@@ -28,6 +38,10 @@ void Foo_my_variable_set__TypesOfArguments__Swift_Int64__(uintptr_t self, int64_
 uintptr_t OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate();
 
 void OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
+
+int32_t OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(uintptr_t self);
+
+uintptr_t OBJECT_NO_PACKAGE_Bar_NamedCompanion_get();
 
 int32_t OBJECT_NO_PACKAGE_Bar_bar(uintptr_t self);
 
