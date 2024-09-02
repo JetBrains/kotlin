@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useLateinitIsInitializedFromInternalInline.kt */
+
+public class OK
+    private lateinit var o: String?
+        /* TARGET declaration */ private fun <get-o>(): String
+        /* TARGET declaration */ private fun <set-o>(<set-?>: String)
+    internal inline fun initializeAndReadLateinitProperties(): String
+        /* ACCESSOR use-site */ access$<set-o>($this = <this>, <set-?> = "O")
+        /* ACCESSOR use-site */ access$<get-o>($this = <this>)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>($this: OK): String
+        /* TARGET use-site */ $this.<get-o>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-o>($this: OK, <set-?>: String)
+        /* TARGET use-site */ $this.<set-o>(<set-?> = <set-?>)

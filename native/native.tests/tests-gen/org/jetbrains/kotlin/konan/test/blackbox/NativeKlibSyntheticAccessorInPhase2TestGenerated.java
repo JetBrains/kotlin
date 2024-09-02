@@ -358,6 +358,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       }
 
       @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassConstructor.kt")
       public void testLeakingPrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateClassConstructor.kt");
@@ -661,6 +667,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       }
 
       @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassConstructor.kt")
       public void testLeakingPrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateClassConstructor.kt");
@@ -952,6 +964,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       }
 
       @Test
+      @TestMetadata("useLateinitIsInitializedFromInternalInline.kt")
+      public void testUseLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateClassConstructor.kt")
       public void testUsePrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateClassConstructor.kt");
@@ -1105,6 +1123,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
       }
 
       @Test
@@ -1294,6 +1318,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
       }
 
       @Test
@@ -1489,6 +1519,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("useLateinitIsInitializedFromInternalInline.kt")
+      public void testUseLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/useLateinitIsInitializedFromInternalInline.kt");
       }
 
       @Test

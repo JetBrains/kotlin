@@ -1,0 +1,14 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useLateinitIsInitializedFromInternalInline.kt */
+
+private lateinit var o: String?
+    /* TARGET declaration */ private fun <get-o>(): String
+    /* TARGET declaration */ private fun <set-o>(<set-?>: String)
+internal inline fun initializeAndReadLateinitProperties(): String
+    /* ACCESSOR use-site */ access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?> = "O")
+    /* ACCESSOR use-site */ access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt()
+/* ACCESSOR declaration */ internal fun access$<get-o>$tUseLateinitIsInitializedFromInternalInlineKt(): String
+    /* TARGET use-site */ <get-o>()
+/* ACCESSOR declaration */ internal fun access$<set-o>$tUseLateinitIsInitializedFromInternalInlineKt(<set-?>: String)
+    /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
