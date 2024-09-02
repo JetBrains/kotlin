@@ -12,6 +12,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
@@ -67,7 +68,7 @@ open class NodeJsRootExtension(
             downloadBaseUrl = value
         }
 
-    override var downloadBaseUrl: String? by Property("https://nodejs.org/dist")
+    override var downloadBaseUrl: String? by Property(project.kotlinPropertiesProvider.nodeJsBaseDownloadUrl)
 
     @Deprecated("Use version instead", ReplaceWith("version"))
     var nodeVersion
@@ -188,5 +189,7 @@ open class NodeJsRootExtension(
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"
+
+        internal const val NODEJS_BASE_DOWNLOAD_URL = "https://nodejs.org/dist"
     }
 }
