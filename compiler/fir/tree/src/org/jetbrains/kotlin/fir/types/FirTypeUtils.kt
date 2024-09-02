@@ -121,9 +121,6 @@ private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boo
     return type.classLikeLookupTagIfAny?.classId == classId && type.isMarkedNullable == isNullable
 }
 
-val FirTypeRef.isMarkedNullable: Boolean?
-    get() = if (this is FirTypeRefWithNullability) this.isMarkedNullable else lookupTagBasedOrNull?.isMarkedNullable
-
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)
         parameters.size + contextReceiverTypeRefs.size + 1
