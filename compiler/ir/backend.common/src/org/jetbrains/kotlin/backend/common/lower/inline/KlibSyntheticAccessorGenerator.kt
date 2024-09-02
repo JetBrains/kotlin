@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -33,7 +30,7 @@ class KlibSyntheticAccessorGenerator(
     private data class OuterThisAccessorKey(val innerClass: IrClass)
 
     companion object {
-        const val TOP_LEVEL_FUNCTION_SUFFIX_MARKER = "t"
+        private const val TOP_LEVEL_DECLARATION_SUFFIX_MARKER = "t"
 
         private var IrValueParameter.outerThisSyntheticAccessors: MutableMap<OuterThisAccessorKey, IrSimpleFunction>? by irAttribute(
             followAttributeOwner = false
@@ -83,26 +80,31 @@ class KlibSyntheticAccessorGenerator(
         scopeInfo: InlineFunctionInfo,
     ) {
         contribute(function.name.asString())
-
-        val parent = function.parent
-        if (parent is IrPackageFragment) {
-            // This is a top-level function. Include the sanitized .kt file name to avoid potential clashes.
-            check(parent is IrFile) {
-                "Unexpected type of package fragment for top-level function ${function.render()}: ${parent::class.java}, ${parent.render()}"
-            }
-
-            contribute(TOP_LEVEL_FUNCTION_SUFFIX_MARKER + parent.packagePartClassName)
-        }
+        contributeTopLevelDeclarationSuffix(function)
     }
 
     override fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
         contribute("<get-${field.name}>")
         contribute(PROPERTY_MARKER)
+        contributeTopLevelDeclarationSuffix(field)
     }
 
     override fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
         contribute("<set-${field.name}>")
         contribute(PROPERTY_MARKER)
+        contributeTopLevelDeclarationSuffix(field)
+    }
+
+    private fun AccessorNameBuilder.contributeTopLevelDeclarationSuffix(declaration: IrDeclaration) {
+        val parent = declaration.parent
+        if (parent !is IrPackageFragment) return
+
+        // This is a top-level declaration. Include the sanitized .kt file name to avoid potential clashes.
+        check(parent is IrFile) {
+            "Unexpected type of package fragment for top-level declaration ${declaration.render()}: ${parent::class.java}, ${parent.render()}"
+        }
+
+        contribute(TOP_LEVEL_DECLARATION_SUFFIX_MARKER + parent.packagePartClassName)
     }
 
     private fun IrConstructor.accessorNameForStaticConstructor(): Name =

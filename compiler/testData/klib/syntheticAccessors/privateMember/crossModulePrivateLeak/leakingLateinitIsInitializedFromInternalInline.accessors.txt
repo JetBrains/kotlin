@@ -1,6 +1,6 @@
-/* MODULE name=<main> */
+/* MODULE name=<lib> */
 
-/* FILE package=<root> fileName=useLateinitIsInitializedFromInternalInline.kt */
+/* FILE package=<root> fileName=OK.kt */
 
 public class OK
     private lateinit var o: String?

@@ -1,6 +1,6 @@
-/* MODULE name=<main> */
+/* MODULE name=<lib> */
 
-/* FILE package=<root> fileName=useLateinitIsInitializedFromInternalInline.kt */
+/* FILE package=<root> fileName=OK.kt */
 
 public class OK
     private lateinit var o: String?
@@ -24,11 +24,11 @@ public class OK
         /* ACCESSOR use-site */ access$<get-k>$p($this = <this>)
         /* ACCESSOR use-site */ access$<get-k>$p($this = <this>)
         /* ACCESSOR use-site */ access$<get-o>($this = <this>)
-    /* ACCESSOR declaration */ public /* static */ fun access$<get-o>($this: OK): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>($this: OK): String
         /* TARGET use-site */ $this.<get-o>()
-    /* ACCESSOR declaration */ public /* static */ fun access$<set-o>($this: OK, <set-?>: String)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-o>($this: OK, <set-?>: String)
         /* TARGET use-site */ $this.<set-o>(<set-?> = <set-?>)
-    /* ACCESSOR declaration */ public /* static */ fun access$<get-o>$p($this: OK): String?
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>$p($this: OK): String?
         /* TARGET use-site */ $this.#o
-    /* ACCESSOR declaration */ public /* static */ fun access$<get-k>$p($this: OK): String?
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-k>$p($this: OK): String?
         /* TARGET use-site */ $this.#k
