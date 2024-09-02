@@ -7,6 +7,7 @@
 
 package kotlinx.cli
 
+import java.util.*
 import kotlin.test.*
 
 class HelpTests {
@@ -57,7 +58,7 @@ Options:
         SAMPLES,
         GEOMEAN;
 
-        override fun toString() = name.toLowerCase()
+        override fun toString() = name.lowercase(Locale.getDefault())
     }
 
     @Test
