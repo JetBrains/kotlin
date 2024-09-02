@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/warningsSuppressionDisablesErrors.kt
+-Xir-produce-klib-dir
+-Xir-only
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-Xsuppress-warning=non-existing-diagnostic
+-Xsuppress-warning=UNINITIALIZED_VARIABLE
