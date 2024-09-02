@@ -5,10 +5,42 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import java.net.URI
 
+val verificationMetadataFile: RegularFile = layout.projectDirectory.file("gradle/verification-metadata.xml")
+
+val removeVerificationMetadataComponents by tasks.registering {
+    description = "Delete `<components>` from `verification-metadata.xml` to avoid stockpiling unused dependencies."
+
+    doNotTrackState("The task must always re-run to clear old `<components>`")
+
+    val verificationMetadataFile = verificationMetadataFile
+    outputs.file(verificationMetadataFile).withPropertyName("verificationMetadataFile")
+
+    onlyIf { verificationMetadataFile.asFile.exists() }
+
+    doLast {
+        verificationMetadataFile.asFile.apply {
+            val currentText = readText()
+            writeText(
+                buildString {
+                    appendLine(currentText.substringBefore("<components>"))
+                    appendLine("<components>")
+                    appendLine("</components>")
+                    appendLine(currentText.substringAfter("</components>", missingDelimiterValue = ""))
+                }
+            )
+        }
+    }
+}
+
 val resolveDependenciesInAllProjects by tasks.registering {
     description = "Resolves dependencies in all projects (for dependency verification or populating caches)."
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+
+    mustRunAfter(removeVerificationMetadataComponents)
+    val verificationMetadataFile = verificationMetadataFile
+    outputs.file(verificationMetadataFile).withPropertyName("verificationMetadataFile")
+
     doLast {
         allprojects {
             logger.lifecycle("Resolving dependencies in ${project.displayName}")
@@ -42,6 +74,11 @@ val resolveJsTools by tasks.registering {
     description = "Resolves JavaScript tools (for dependency verification or populating caches)."
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+
+    mustRunAfter(removeVerificationMetadataComponents)
+    val verificationMetadataFile = verificationMetadataFile
+    outputs.file(verificationMetadataFile).withPropertyName("verificationMetadataFile")
+
     doLast {
         fun Project.resolveDependencies(
             vararg dependency: String,
@@ -140,6 +177,7 @@ tasks.register("resolveDependencies") {
     group = "build setup"
 
     dependsOn(
+        removeVerificationMetadataComponents,
         resolveDependenciesInAllProjects,
         resolveJsTools,
     )
