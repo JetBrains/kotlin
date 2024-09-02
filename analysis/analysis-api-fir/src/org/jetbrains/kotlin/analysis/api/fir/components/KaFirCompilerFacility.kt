@@ -304,7 +304,12 @@ internal class KaFirCompilerFacility(
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
             JvmIrSpecialAnnotationSymbolProvider,
-            { listOfNotNull(FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it)) },
+            {
+                listOfNotNull(
+                    FirJvmBuiltinProviderActualDeclarationExtractor.initializeIfNeeded(it),
+                    FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)
+                )
+            },
         )
     }
 
