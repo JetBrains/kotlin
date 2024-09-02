@@ -761,10 +761,6 @@ tasks {
         )
     }
 
-    register("testsForBootstrapBuildTest") {
-        dependsOn(":compiler:tests-common-new:test")
-    }
-
     register("jvmCompilerIntegrationTest") {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
