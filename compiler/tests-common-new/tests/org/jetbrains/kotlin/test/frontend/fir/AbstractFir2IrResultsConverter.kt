@@ -48,7 +48,7 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter
     protected abstract fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext
     protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
-    protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?
+    protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>
 
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary>
     protected abstract val klibFactories: KlibMetadataFactories
@@ -97,7 +97,7 @@ abstract class AbstractFir2IrResultsConverter(
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             createTypeSystemContextProvider(),
             specialAnnotationsProvider = createSpecialAnnotationsProvider(),
-            extraActualDeclarationExtractorInitializer = createExtraActualDeclarationExtractorInitializer(),
+            extraActualDeclarationExtractorsInitializer = createExtraActualDeclarationExtractorInitializer(),
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
         }
