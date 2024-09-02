@@ -77,7 +77,7 @@ fun FirResult.convertToIrAndActualize(
     kotlinBuiltIns: KotlinBuiltIns,
     typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
-    extraActualDeclarationExtractorInitializer: (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?,
+    extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     val pipeline = Fir2IrPipeline(
@@ -90,7 +90,7 @@ fun FirResult.convertToIrAndActualize(
         kotlinBuiltIns,
         typeSystemContextProvider,
         specialAnnotationsProvider,
-        extraActualDeclarationExtractorInitializer,
+        extraActualDeclarationExtractorsInitializer,
         irModuleFragmentPostCompute
     )
     return pipeline.convertToIrAndActualize()
@@ -106,7 +106,7 @@ private class Fir2IrPipeline(
     val kotlinBuiltIns: KotlinBuiltIns,
     val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
-    val extraActualDeclarationExtractorInitializer: (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?,
+    val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
@@ -252,7 +252,7 @@ private class Fir2IrPipeline(
                 fir2IrConfiguration.expectActualTracker,
                 mainIrFragment,
                 dependentIrFragments,
-                this@Fir2IrPipeline.extraActualDeclarationExtractorInitializer(componentsStorage),
+                this@Fir2IrPipeline.extraActualDeclarationExtractorsInitializer(componentsStorage),
             )
         }
 

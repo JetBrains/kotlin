@@ -48,13 +48,13 @@ internal class ExpectActualCollector(
     private val typeSystemContext: IrTypeSystemContext,
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
-    private val extraActualDeclarationExtractor: IrExtraActualDeclarationExtractor?,
+    private val extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
 ) {
     fun collectClassActualizationInfo(): ClassActualizationInfo {
         val expectTopLevelDeclarations = ExpectTopLevelDeclarationCollector.collect(dependentFragments)
         val fragmentsWithActuals = dependentFragments.drop(1) + mainFragment
         return ActualDeclarationsCollector.collectActuals(
-            fragmentsWithActuals, expectTopLevelDeclarations, extraActualDeclarationExtractor
+            fragmentsWithActuals, expectTopLevelDeclarations, extraActualDeclarationExtractors
         )
     }
 
@@ -140,14 +140,14 @@ private class ActualDeclarationsCollector(private val expectTopLevelDeclarations
         fun collectActuals(
             fragments: List<IrModuleFragment>,
             expectTopLevelDeclarations: ExpectTopLevelDeclarations,
-            extraActualDeclarationExtractor: IrExtraActualDeclarationExtractor?,
+            extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
         ): ClassActualizationInfo {
             val collector = ActualDeclarationsCollector(expectTopLevelDeclarations)
             for (fragment in fragments) {
                 collector.collect(fragment)
             }
-            if (extraActualDeclarationExtractor != null) {
-                collector.collectExtraActualDeclarations(extraActualDeclarationExtractor)
+            for (extractor in extraActualDeclarationExtractors) {
+                collector.collectExtraActualDeclarations(extractor)
             }
             return ClassActualizationInfo(
                 ClassActualizationInfo.ActualClassMapping(collector.actualClasses),

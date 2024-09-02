@@ -50,7 +50,8 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter = Fir2IrVisibilityConverter.Default
     override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext = ::IrTypeSystemContextImpl
     override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider? = null
-    override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> IrExtraActualDeclarationExtractor? = { null }
+    override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> =
+        { emptyList() }
 
     override val klibFactories: KlibMetadataFactories
         get() = JsFactories
