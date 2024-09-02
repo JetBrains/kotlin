@@ -734,10 +734,10 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("Base64")
             buildWithCocoapodsWrapper("cinteropBase64IOS") {
-                val cinteropManifest = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-Base64.klib")
-                    .useAsZipFile { zipFile ->
-                        zipFile.readKLibManifest()
-                    }
+                val cinteropManifest =
+                    projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-Base64/default/manifest")
+                        .inputStream()
+                        .useToLoadProperties()
 
                 assertContains(cinteropManifest, "linkerOpts")
                 assertEquals(cinteropManifest["linkerOpts"], "-framework Base64")

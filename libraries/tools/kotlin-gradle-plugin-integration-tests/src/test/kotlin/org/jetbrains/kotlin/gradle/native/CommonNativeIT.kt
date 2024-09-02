@@ -70,7 +70,7 @@ class CommonNativeIT : KGPBaseTest() {
                 assertTasksExecuted(libCompileTasks)
                 libTargets.forEach {
                     assertOutputContains("Configuring $it")
-                    assertFileInProjectExists("lib/build/classes/kotlin/$it/main/klib/lib.klib")
+                    assertDirectoryInProjectExists("lib/build/classes/kotlin/$it/main/klib/lib")
                 }
             }
 
@@ -80,7 +80,7 @@ class CommonNativeIT : KGPBaseTest() {
                 assertTasksExecuted(appLinkTestTasks)
 
                 appTargets.forEach {
-                    assertFileInProjectExists("app/build/classes/kotlin/$it/main/klib/app.klib")
+                    assertDirectoryInProjectExists("app/build/classes/kotlin/$it/main/klib/app")
                     assertDirectoryInProjectExists("app/build/bin/$it/debugFramework")
                     assertDirectoryInProjectExists("app/build/bin/$it/debugTest")
                 }
