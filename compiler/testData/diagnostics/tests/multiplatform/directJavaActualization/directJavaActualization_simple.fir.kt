@@ -1,8 +1,9 @@
 // WITH_KOTLIN_JVM_ANNOTATIONS
+// LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo() {
+expect class Foo() {
     fun foo()
 }
 
