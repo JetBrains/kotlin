@@ -597,7 +597,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         val configuration = environmentForJS.configuration
         val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter { message, severity ->
+            messageCollector.report(severity, message)
+        }
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
