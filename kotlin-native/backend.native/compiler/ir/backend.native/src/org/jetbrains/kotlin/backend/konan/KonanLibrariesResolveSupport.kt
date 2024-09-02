@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
@@ -54,7 +54,10 @@ class KonanLibrariesResolveSupport(
             noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
             noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
             noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS),
-            duplicatedUniqueNameStrategy = configuration.get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, DENY),
+            duplicatedUniqueNameStrategy = configuration.get(
+                KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+                DuplicatedUniqueNameStrategy.DENY
+            ),
         )
     }
 

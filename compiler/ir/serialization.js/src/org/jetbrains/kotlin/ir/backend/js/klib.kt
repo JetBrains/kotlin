@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -455,7 +454,10 @@ class ModulesStructure(
         dependencies,
         compilerConfiguration.messageCollector.toLogger(),
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR),
-        duplicatedUniqueNameStrategy = compilerConfiguration.get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, DENY),
+        duplicatedUniqueNameStrategy = compilerConfiguration.get(
+            KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+            DuplicatedUniqueNameStrategy.DENY
+        ),
     )
 
     val allDependencies: List<KotlinLibrary>

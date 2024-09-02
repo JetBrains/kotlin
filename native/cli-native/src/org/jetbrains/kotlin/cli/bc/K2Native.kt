@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
@@ -30,8 +28,6 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-
-
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -120,9 +116,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         )
         configuration.put(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategies.FlagValues.byFlagValue(
+            DuplicatedUniqueNameStrategy.parseOrDefault(
                 arguments.duplicatedUniqueNameStrategy,
-                default = if (arguments.metadataKlib) ALL else DENY
+                default = if (arguments.metadataKlib) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
             )
         )
 

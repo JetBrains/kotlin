@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
@@ -44,8 +44,6 @@ import java.io.File
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibResolverTest : AbstractNativeSimpleTest() {
-    val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
-
     private data class Module(val name: String, val dependencyNames: List<String>) {
         constructor(name: String, vararg dependencyNames: String) : this(name, dependencyNames.asList())
 
@@ -212,30 +210,42 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testErrorAboutDuplicatedUniqueNamesInMetadataCompilation() {
-        testDuplicatedKlibDependency(cliFlagValue = DENY, expectedMessagePrefix = "error", freeCompilerArgs = listOf("-Xmetadata-klib"))
+        testDuplicatedKlibDependency(
+            strategy = DuplicatedUniqueNameStrategy.DENY,
+            expectedMessagePrefix = "error",
+            freeCompilerArgs = listOf("-Xmetadata-klib")
+        )
     }
 
     @Test
     fun testWarningAboutDuplicatedUniqueNamesInMetadataCompilation() {
-        testDuplicatedKlibDependency(cliFlagValue = FIRST, expectedMessagePrefix = "warning", freeCompilerArgs = listOf("-Xmetadata-klib"))
+        testDuplicatedKlibDependency(
+            strategy = DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING,
+            expectedMessagePrefix = "warning",
+            freeCompilerArgs = listOf("-Xmetadata-klib")
+        )
     }
 
     @Test
     fun testErrorAboutDuplicatedUniqueNamesWithoutCLIParam() {
-        testDuplicatedKlibDependency(cliFlagValue = null, expectedMessagePrefix = "error")
+        testDuplicatedKlibDependency(strategy = null, expectedMessagePrefix = "error")
     }
 
     @Test
     fun testErrorAboutDuplicatedUniqueNames() {
-        testDuplicatedKlibDependency(cliFlagValue = DENY, expectedMessagePrefix = "error")
+        testDuplicatedKlibDependency(strategy = DuplicatedUniqueNameStrategy.DENY, expectedMessagePrefix = "error")
     }
 
     @Test
     fun testWarningAboutDuplicatedUniqueNames() {
-        testDuplicatedKlibDependency(cliFlagValue = FIRST, expectedMessagePrefix = "warning")
+        testDuplicatedKlibDependency(strategy = DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING, expectedMessagePrefix = "warning")
     }
 
-    private fun testDuplicatedKlibDependency(cliFlagValue: String?, expectedMessagePrefix: String, freeCompilerArgs: List<String>? = null) {
+    private fun testDuplicatedKlibDependency(
+        strategy: DuplicatedUniqueNameStrategy?,
+        expectedMessagePrefix: String,
+        freeCompilerArgs: List<String>? = null,
+    ) {
         val modules = createModules(
             Module("a"),
             Module("b"),
@@ -246,15 +256,14 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             modules.compileModules(
                 produceUnpackedKlibs = true,
                 useLibraryNamesInCliArguments = false,
-                extraCmdLineParams = buildList{
-                    freeCompilerArgs?.let { addAll(it) }
-                    cliFlagValue?.let { add("-Xklib-duplicated-unique-name-strategy=$it") }
+                extraCmdLineParams = buildList {
+                    freeCompilerArgs?.let(::addAll)
+                    strategy?.asCliArgument()?.let(::add)
                 }
             ) { module, successKlib ->
                 if (module.name == "a" || module.name == "b") {
                     // set the same `unique_name`
                     patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                        @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_UNIQUE_NAME] = DUPLICATED_UNIQUE_NAME
                     }
                 }
@@ -266,7 +275,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             assertTrue(compilerOutputLines.any {
                 it.startsWith("$expectedMessagePrefix: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
             })
-            assertTrue(cliFlagValue != FIRST || compilerOutputLines.any {
+            assertTrue(strategy != DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING || compilerOutputLines.any {
                 it.contains("error: unresolved reference")
             })
         }
@@ -274,12 +283,17 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNames() {
-        testAllKlibsUsed(listOf("-Xklib-duplicated-unique-name-strategy=$ALL"))
+        testAllKlibsUsed(listOf(DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING.asCliArgument()))
     }
 
     @Test
     fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNamesInMetadataCompilation() {
-        testAllKlibsUsed(listOf("-Xklib-duplicated-unique-name-strategy=$ALL", "-Xmetadata-klib"))
+        testAllKlibsUsed(
+            listOf(
+                DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING.asCliArgument(),
+                "-Xmetadata-klib"
+            )
+        )
     }
 
     @Test
@@ -293,7 +307,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             Module("b"),
             Module("c", "a", "b"),
         )
-        val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 
         modules.compileModules(
             produceUnpackedKlibs = true,
@@ -302,7 +315,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         ) { module, successKlib ->
             when (module.name) {
                 "a", "b" -> patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                    @Suppress("DEPRECATION")
                     properties[KLIB_PROPERTY_UNIQUE_NAME] = DUPLICATED_UNIQUE_NAME
                 }
                 "c" -> assertTrue((successKlib.loggedData as LoggedData.CompilationToolCall).toolOutput.lines().any {
@@ -544,5 +556,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     companion object {
         private const val USER_DIR = "user.dir"
         private val irProvidersMismatchSrcDir = File("native/native.tests/testData/irProvidersMismatch")
+
+        private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
+
+        private fun DuplicatedUniqueNameStrategy.asCliArgument(): String {
+            return CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(alias)
+        }
     }
 }

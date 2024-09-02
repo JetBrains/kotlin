@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -71,7 +69,7 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xklib-duplicated-unique-name-strategy",
-        valueDescription = "{$DENY|$ALL|$FIRST}",
+        valueDescription = "{${DuplicatedUniqueNameStrategy.ALL_ALIASES}}",
         description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value."
     )
     var duplicatedUniqueNameStrategy: String? = null

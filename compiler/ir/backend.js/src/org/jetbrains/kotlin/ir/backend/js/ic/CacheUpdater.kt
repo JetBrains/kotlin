@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -120,7 +120,10 @@ class CacheUpdater(
                 allModules,
                 compilerConfiguration.messageCollector.toLogger(),
                 zipAccessor,
-                duplicatedUniqueNameStrategy = compilerConfiguration.get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, DENY),
+                duplicatedUniqueNameStrategy = compilerConfiguration.get(
+                    KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+                    DuplicatedUniqueNameStrategy.DENY
+                ),
             )
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->

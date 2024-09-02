@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -24,7 +22,6 @@ import java.io.File
 import java.io.PrintStream
 
 class JsKlibResolverTest : TestCaseWithTmpdir() {
-    val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
         val testDataDir = File("compiler/testData/klib/resolve/mismatched-abi-version")
@@ -98,27 +95,27 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
 
     fun testWarningAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
-            arrayOf(CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(FIRST))
+            arrayOf(DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING.asCliArgument())
         )
         result.assertFailure()
 
-        val compileroOutputLines = result.output.lines()
-        TestCase.assertTrue(compileroOutputLines.any {
+        val compilerOutputLines = result.output.lines()
+        TestCase.assertTrue(compilerOutputLines.any {
             it.startsWith("warning: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
         })
-        TestCase.assertTrue(compileroOutputLines.any {
+        TestCase.assertTrue(compilerOutputLines.any {
             it.contains("error: unresolved reference")
         })
     }
 
     fun testErrorAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
-            arrayOf(CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(DENY))
+            arrayOf(DuplicatedUniqueNameStrategy.DENY.asCliArgument())
         )
         result.assertFailure()
 
-        val compileroOutputLines = result.output.lines()
-        TestCase.assertTrue(compileroOutputLines.any {
+        val compilerOutputLines = result.output.lines()
+        TestCase.assertTrue(compilerOutputLines.any {
             it.startsWith("error: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
         })
     }
@@ -127,23 +124,23 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(emptyArray())
         result.assertFailure()
 
-        val compileroOutputLines = result.output.lines()
-        TestCase.assertTrue(compileroOutputLines.any {
+        val compilerOutputLines = result.output.lines()
+        TestCase.assertTrue(compilerOutputLines.any {
             it.startsWith("error: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
         })
     }
 
     fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNames() {
         val result = compilationResultOfModulesWithDuplicatedUniqueNames(
-            arrayOf(CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(ALL))
+            arrayOf(DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING.asCliArgument())
         )
         result.assertSuccess()
 
-        val compileroOutputLines = result.output.lines()
-        TestCase.assertTrue(compileroOutputLines.any {
+        val compilerOutputLines = result.output.lines()
+        TestCase.assertTrue(compilerOutputLines.any {
             it.startsWith("warning: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
         })
-        TestCase.assertTrue(compileroOutputLines.none {
+        TestCase.assertTrue(compilerOutputLines.none {
             it.contains("error: unresolved reference")
         })
     }
@@ -271,5 +268,13 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         }
 
         return modules.asList()
+    }
+
+    companion object {
+        private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
+
+        private fun DuplicatedUniqueNameStrategy.asCliArgument(): String {
+            return CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(alias)
+        }
     }
 }

@@ -34,21 +34,28 @@ object KlibConfigurationKeys {
         )
 
     @JvmField
-    val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<DuplicatedUniqueNameStrategies> =
+    val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<DuplicatedUniqueNameStrategy> =
         CompilerConfigurationKey.create("Duplicated KLIB dependencies handling strategy")
 }
 
-enum class DuplicatedUniqueNameStrategies(val flagValue: String) {
-    DENY(FlagValues.DENY),
-    ALL(FlagValues.ALL),
-    FIRST(FlagValues.FIRST)
+enum class DuplicatedUniqueNameStrategy(val alias: String) {
+    DENY(Aliases.DENY),
+    ALLOW_ALL_WITH_WARNING(Aliases.ALLOW_ALL_WITH_WARNING),
+    ALLOW_FIRST_WITH_WARNING(Aliases.ALLOW_FIRST_WITH_WARNING),
     ;
 
-    object FlagValues {
+    override fun toString() = alias
+
+    private object Aliases {
         const val DENY = "deny"
-        const val ALL = "allow-all-with-warning"
-        const val FIRST = "allow-first-with-warning"
-        fun byFlagValue(flagValue: String?, default: DuplicatedUniqueNameStrategies): DuplicatedUniqueNameStrategies =
-            entries.singleOrNull { it.flagValue == flagValue } ?: default
+        const val ALLOW_ALL_WITH_WARNING = "allow-all-with-warning"
+        const val ALLOW_FIRST_WITH_WARNING = "allow-first-with-warning"
+    }
+
+    companion object {
+        const val ALL_ALIASES = "${Aliases.DENY}|${Aliases.ALLOW_ALL_WITH_WARNING}|${Aliases.ALLOW_FIRST_WITH_WARNING}"
+
+        fun parseOrDefault(flagValue: String?, default: DuplicatedUniqueNameStrategy): DuplicatedUniqueNameStrategy =
+            entries.singleOrNull { it.alias == flagValue } ?: default
     }
 }

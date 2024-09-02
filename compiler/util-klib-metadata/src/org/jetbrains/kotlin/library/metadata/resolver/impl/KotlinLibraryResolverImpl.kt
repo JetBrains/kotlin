@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -40,7 +37,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean,
-        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
         .leaveDistinct()
         .omitDuplicateNames(duplicatedUniqueNameStrategy)
@@ -88,26 +85,29 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
      *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
-    private fun List<KotlinLibrary>.omitDuplicateNames(duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies) : List<KotlinLibrary> {
+    private fun List<KotlinLibrary>.omitDuplicateNames(duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy) : List<KotlinLibrary> {
         val deduplicatedLibs = groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
                 val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
                 val message = "KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths"
-                if (duplicatedUniqueNameStrategy == ALL || duplicatedUniqueNameStrategy == FIRST)
+                if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING ||
+                    duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING
+                ) {
                     logger.strongWarning(message)
-                else {
-                    logger.error(message + "\n" +
+                } else {
+                    logger.error(
+                        message + "\n" +
                                 "Please file an issue to https://kotl.in/issue and meanwhile use CLI flag `-Xklib-duplicated-unique-name-strategy` with one of the following values:\n" +
-                                "$ALL: Use all KLIB dependencies, even when they have same `unique_name` property.\n" +
-                                "$FIRST: Use the first KLIB dependency with clashing `unique_name` property. No order guarantees are given though.\n" +
-                                "$DENY: Fail a compilation with the error."
+                                "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same `unique_name` property.\n" +
+                                "${DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING}: Use the first KLIB dependency with clashing `unique_name` property. No order guarantees are given though.\n" +
+                                "${DuplicatedUniqueNameStrategy.DENY}: Fail a compilation with the error."
                     )
                 }
             }
             groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }
-        return if (duplicatedUniqueNameStrategy == FIRST)
+        return if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING)
             deduplicatedLibs
         else this
     }

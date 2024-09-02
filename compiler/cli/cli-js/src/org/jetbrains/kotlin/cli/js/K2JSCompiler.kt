@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -237,9 +236,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING, arguments.experimentalDoubleInlining)
         configuration.put(
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
-            DuplicatedUniqueNameStrategies.FlagValues.byFlagValue(
+            DuplicatedUniqueNameStrategy.parseOrDefault(
                 arguments.duplicatedUniqueNameStrategy,
-                default = DENY
+                default = DuplicatedUniqueNameStrategy.DENY
             )
         )
 
