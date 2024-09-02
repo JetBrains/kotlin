@@ -13,8 +13,8 @@ fun Project.applyEmbedAndSignEnvironment(
     configuration: String,
     sdk: String,
     archs: String,
-    builtProductsDirectory: String = layout.buildDirectory.dir("products").getFile().canonicalPath,
-    targetBuildDirectory: String = layout.buildDirectory.dir("buildDir").getFile().canonicalPath,
+    builtProductsDirectory: String = layout.buildDirectory.dir("products").getFile().absolutePath,
+    targetBuildDirectory: String = layout.buildDirectory.dir("buildDir").getFile().absolutePath,
     dwarfDsymFolderPath: String? = null,
     action: String = "build",
 ) {

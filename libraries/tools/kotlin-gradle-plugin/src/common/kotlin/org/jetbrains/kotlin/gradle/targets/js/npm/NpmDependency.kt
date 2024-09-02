@@ -81,7 +81,7 @@ fun String.isFileVersion() =
     startsWith(FILE_VERSION_PREFIX)
 
 internal fun fileVersion(directory: File): String =
-    "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+    "$FILE_VERSION_PREFIX${directory.absolutePath}"
 
 internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)

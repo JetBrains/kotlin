@@ -55,7 +55,7 @@ internal fun Project.checkDiagnostics(
 
     if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())
-            error("Expected to have some diagnostics in file://${expectedDiagnostics.canonicalPath}, but none were actually reported")
+            error("Expected to have some diagnostics in file://${expectedDiagnostics.absolutePath}, but none were actually reported")
         else
             return // do not create empty file
     }

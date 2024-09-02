@@ -88,7 +88,7 @@ private fun buildKotlinNativeCommonArgs(
     addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
-        plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }
+        plugin.files.map { it.absolutePath }.sorted().forEach { add("-Xplugin=$it") }
         addArgs("-P", plugin.options.arguments)
     }
 

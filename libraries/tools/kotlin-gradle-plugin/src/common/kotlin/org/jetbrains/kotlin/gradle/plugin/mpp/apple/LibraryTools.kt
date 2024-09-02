@@ -12,8 +12,8 @@ import java.io.File
 internal class LibraryTools(private val logger: Logger? = null) {
 
     fun createFatLibrary(inputs: List<File>, output: File) {
-        val inputLibs = inputs.map { it.canonicalPath }
-        val outputLib = output.canonicalPath
+        val inputLibs = inputs.map { it.absolutePath }
+        val outputLib = output.absolutePath
 
         val command = listOf(
             "lipo",
@@ -28,8 +28,8 @@ internal class LibraryTools(private val logger: Logger? = null) {
     }
 
     fun mergeLibraries(inputs: List<File>, output: File) {
-        val inputLibs = inputs.map { it.canonicalPath }
-        val outputLib = output.canonicalPath
+        val inputLibs = inputs.map { it.absolutePath }
+        val outputLib = output.absolutePath
 
         runCommand(
             listOf(

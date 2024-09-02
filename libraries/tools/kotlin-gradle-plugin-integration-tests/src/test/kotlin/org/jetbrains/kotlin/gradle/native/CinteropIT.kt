@@ -83,7 +83,7 @@ class CinteropIT : KGPBaseTest() {
     @GradleTest
     fun cinteropWithExplicitPassingHeader(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
-            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().canonicalPath
+            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().absolutePath
             build(":assemble") {
                 assertTasksExecuted(":cinteropCinteropNative")
                 extractNativeTasksCommandLineArgumentsFromOutput(":cinteropCinteropNative", toolName = NativeToolKind.C_INTEROP) {
@@ -152,7 +152,7 @@ class CinteropIT : KGPBaseTest() {
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
             )
         ) {
-            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().canonicalPath
+            val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().absolutePath
             // first build with non-existing .def file and configuration cache enabled
             build(":assemble") {
                 assertTasksExecuted(":cinteropCinteropNative")
@@ -179,7 +179,7 @@ class CinteropIT : KGPBaseTest() {
                     assertCommandLineArgumentsContainSequentially("-header", dummyHeaderPath)
                     assertCommandLineArgumentsContainSequentially("-Ilibs/include")
                     assertCommandLineArgumentsContainSequentially("-pkg", "cinterop")
-                    assertCommandLineArgumentsContainSequentially("-def", cinteropDefFile.toFile().canonicalPath)
+                    assertCommandLineArgumentsContainSequentially("-def", cinteropDefFile.toFile().absolutePath)
                 }
             }
         }

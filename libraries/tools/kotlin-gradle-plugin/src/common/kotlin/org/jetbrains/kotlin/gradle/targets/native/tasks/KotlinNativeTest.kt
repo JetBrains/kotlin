@@ -66,7 +66,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @get:Input
     var workingDir: String
-        get() = processOptions.workingDir.canonicalPath
+        get() = processOptions.workingDir.absolutePath
         set(value) {
             processOptions.workingDir = File(value)
         }

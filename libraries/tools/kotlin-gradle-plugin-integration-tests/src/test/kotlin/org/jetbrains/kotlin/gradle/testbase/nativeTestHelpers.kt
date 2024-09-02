@@ -108,7 +108,7 @@ fun TestProject.getFileCache(
 ): Path {
     val cacheFlavor = computeCacheDirName(HostManager.host, NativeCacheKind.STATIC.name, true, true)
     val libCacheDir = getICCacheDir(executableName, executableProjectName).resolve(cacheFlavor).resolve("$fileProjectName-per-file-cache")
-    val fileId = cacheFileId(fqName, projectPath.resolve(fileRelativePath).toFile().canonicalPath)
+    val fileId = cacheFileId(fqName, projectPath.resolve(fileRelativePath).toFile().absolutePath)
     return libCacheDir.resolve(fileId)
 }
 

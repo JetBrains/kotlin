@@ -44,7 +44,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             val icCacheDir = projectPath.resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
             val incrementalCacheArgs = arrayOf(
                 "-Xenable-incremental-compilation",
-                "-Xic-cache-dir=${icCacheDir.toFile().canonicalPath}"
+                "-Xic-cache-dir=${icCacheDir.toFile().absolutePath}"
             )
 
             // disabled incremental cache parameter

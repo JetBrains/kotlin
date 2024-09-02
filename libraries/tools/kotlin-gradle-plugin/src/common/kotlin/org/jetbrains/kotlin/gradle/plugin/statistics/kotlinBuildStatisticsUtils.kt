@@ -45,7 +45,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
                 BuildReportType.JSON -> configurationTimeMetrics.put(BooleanMetrics.JSON_BUILD_REPORT, true)
             }
         }
-        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH,  project.rootDir.absolutePath)
+        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, project.rootDir.absolutePath)
         configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
 
         //will be updated with KT-58266

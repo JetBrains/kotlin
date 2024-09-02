@@ -45,7 +45,7 @@ class OverriddenKotlinHomeCheckerTest {
     @Test
     fun `with relative path overridden kotlin native home successfull`() {
         fun createKotlinNativeDistStub(project: Project) {
-            val customKonanPath = File(project.rootDir.canonicalPath).resolve("dist")
+            val customKonanPath = File(project.rootDir.absolutePath).resolve("dist")
             customKonanPath.createDirectory()
             customKonanPath.resolve("konan").createDirectory()
             customKonanPath.resolve("bin").createDirectory()

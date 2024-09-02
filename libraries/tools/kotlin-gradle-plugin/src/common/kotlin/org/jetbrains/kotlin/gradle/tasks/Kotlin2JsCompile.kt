@@ -196,7 +196,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 libraries
                     .filter { it.exists() && libraryFilter(it) }
                     .filterMainCompilationKlibArtifact()
-                    .map { it.normalize().absolutePath }
+                    .map { it.absolutePath }
                     .toSet()
                     .takeIf { it.isNotEmpty() }
                     ?.joinToString(File.pathSeparator)

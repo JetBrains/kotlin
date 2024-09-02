@@ -57,9 +57,9 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         val inputFile = inputFileProperty.asFile.get()
         val newArgs = mutableListOf<String>()
         newArgs.addAll(binaryenArgs)
-        newArgs.add(inputFile.canonicalPath)
+        newArgs.add(inputFile.absolutePath)
         newArgs.add("-o")
-        newArgs.add(outputDirectory.file(outputFileName).get().asFile.normalize().absolutePath)
+        newArgs.add(outputDirectory.file(outputFileName).get().asFile.absolutePath)
         workingDir = inputFile.parentFile
         this.args = newArgs
         super.exec()

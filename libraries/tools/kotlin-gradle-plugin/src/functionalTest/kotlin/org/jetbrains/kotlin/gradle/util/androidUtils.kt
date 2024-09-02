@@ -20,7 +20,7 @@ fun assertAndroidSdkAvailable() {
 }
 
 fun setAndroidSdkDirProperty(project: Project) {
-    val localPropertiesFile = File(project.rootDir.canonicalPath).resolve("local.properties")
+    val localPropertiesFile = File(project.rootDir.absolutePath).resolve("local.properties")
     if (!localPropertiesFile.exists()) {
         localPropertiesFile.createNewFile()
     }

@@ -132,5 +132,5 @@ internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(enabl
 
 internal val KotlinNativeProvider.konanDistribution
     get() = bundleDirectory.map {
-        Distribution(it.asFile.canonicalPath)
+        Distribution(it.asFile.absolutePath)
     }

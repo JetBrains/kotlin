@@ -307,8 +307,8 @@ fun GradleProject.swiftExportEmbedAndSignEnvVariables(
 private fun swiftCompile(workingDir: File, libDir: File, target: String) = runProcess(
     listOf(
         "xcrun", "--sdk", "iphonesimulator", "swiftc", "./Consumer.swift",
-        "-I", libDir.canonicalPath, "-target", target,
-        "-Xlinker", "-L", "-Xlinker", libDir.canonicalPath, "-Xlinker", "-lShared",
+        "-I", libDir.absolutePath, "-target", target,
+        "-Xlinker", "-L", "-Xlinker", libDir.absolutePath, "-Xlinker", "-lShared",
         "-framework", "Foundation", "-framework", "UIKit"
     ),
     workingDir

@@ -312,7 +312,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
                         .toFile()
                         .walk()
                         .filter { it.extension == "java" }
-                        .map { it.canonicalPath }
+                        .map { it.absolutePath }
                         .toList()
                 )
                 // Make sure all compiled kt files are cleaned up.
