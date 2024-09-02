@@ -137,7 +137,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         subType: KotlinTypeMarker
     ): Boolean
 
-    fun RegularClassSymbolMarker.isNotSamInterface(): Boolean
+    fun RegularClassSymbolMarker.isSamInterface(): Boolean
 
     fun CallableSymbolMarker.isFakeOverride(containingExpectClass: RegularClassSymbolMarker?): Boolean
 
