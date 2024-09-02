@@ -151,7 +151,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             K2JSCompilerArguments::libraries.cliArgument,
             PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
             K2JSCompilerArguments::irProduceKlibDir.cliArgument,
-            K2JSCompilerArguments::irOnly.cliArgument,
             K2JSCompilerArguments::outputDir.cliArgument,
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,

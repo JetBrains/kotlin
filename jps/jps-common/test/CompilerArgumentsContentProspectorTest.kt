@@ -203,7 +203,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::irDce,
             K2JSCompilerArguments::irDcePrintReachabilityInfo,
             K2JSCompilerArguments::irPropertyLazyInitialization,
-            K2JSCompilerArguments::irOnly,
             K2JSCompilerArguments::irPerModule,
             K2JSCompilerArguments::generateDts,
             K2JSCompilerArguments::useEsClasses,

@@ -71,7 +71,6 @@ abstract class AbstractJsProtoComparisonTest(val languageVersionOverride: String
             moduleName = "out"
             libraries = jsStdlibFile.absolutePath
             irProduceKlibDir = true
-            irOnly = true
             main = K2JsArgumentConstants.NO_CALL
             freeArgs = ktFiles
             languageVersionOverride?.let { languageVersion = it }

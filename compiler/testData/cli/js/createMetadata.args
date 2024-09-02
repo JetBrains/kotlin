@@ -1,6 +1,5 @@
 compiler/testData/integration/ant/js/simpleWithoutStdlibAndFolderAsAnotherLib/jslib-example/LibraryExample.kt
 -Xir-produce-klib-dir
--Xir-only
 -ir-output-dir
 $TEMP_DIR$
 -ir-output-name

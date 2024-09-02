@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/sourceMapCharEscape.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$
 -ir-output-dir
@@ -9,7 +8,6 @@ $TEMP_DIR$/klib
 out
 ---
 -Xir-produce-js
--Xir-only
 -libraries
 $STDLIB_JS$
 -Xinclude=$TEMP_DIR$/klib

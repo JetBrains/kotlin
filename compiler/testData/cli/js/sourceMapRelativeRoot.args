@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/src/lib.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$
 -source-map
@@ -11,7 +10,6 @@ lib
 ---
 $TESTDATA_DIR$/sourceMapRelativeRoot/main/src/main.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$:$TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/
 -ir-output-dir
@@ -20,7 +18,6 @@ $TEMP_DIR$/klib
 main
 ---
 -Xir-produce-js
--Xir-only
 -libraries
 $STDLIB_JS$:$TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/
 -Xinclude=$TEMP_DIR$/klib

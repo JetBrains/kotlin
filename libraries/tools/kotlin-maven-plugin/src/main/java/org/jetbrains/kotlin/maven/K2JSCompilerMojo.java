@@ -92,9 +92,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.setOutputDir(new File(outputFile).getParent());
         arguments.setModuleKind(moduleKind);
         arguments.setMain(main);
-        arguments.setIrOnly(useIrBackend);
-        arguments.setIrProduceJs(useIrBackend);
-        arguments.setIrProduceKlibDir(useIrBackend);
+        arguments.setIrProduceJs(true);
+        arguments.setIrProduceKlibDir(true);
 
         List<String> libraries;
         try {
@@ -133,7 +132,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     }
 
     private boolean checkIsKotlinJavascriptLibrary(File file) {
-        return useIrBackend ? JsLibraryUtils.isKotlinJavascriptIrLibrary(file) : JsLibraryUtils.isKotlinJavascriptLibrary(file);
+        return JsLibraryUtils.isKotlinJavascriptIrLibrary(file);
     }
 
     /**

@@ -351,13 +351,6 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             field = value
         }
 
-    @Argument(value = "-Xir-only", description = "Disable the pre-IR backend.")
-    var irOnly = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xir-module-name",
         valueDescription = "<name>",

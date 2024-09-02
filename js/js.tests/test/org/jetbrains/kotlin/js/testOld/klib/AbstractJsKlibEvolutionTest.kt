@@ -94,7 +94,6 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
             outputDir = workingDir.normalize().absolutePath
             moduleName = module.name(version)
             irProduceKlibFile = true
-            irOnly = true
             irModuleName = module.name
             compilerType.setup(this)
         }
@@ -114,7 +113,6 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
             outputDir = jsOutDir.normalize().absolutePath
             moduleName = module.name
             irProduceJs = true
-            irOnly = true
             irModuleName = module.name
             compilerType.setup(this)
             partialLinkageMode = "disable" // Don't use partial linkage for KLIB evolution tests.

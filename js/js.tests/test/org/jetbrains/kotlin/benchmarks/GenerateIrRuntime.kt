@@ -298,7 +298,6 @@ class GenerateIrRuntime {
             outputDir = klibDirectory.path
             sourceMap = false
             irProduceKlibDir = true
-            irOnly = true
             irModuleName = "kotlin"
             allowKotlinPackage = true
             optIn = arrayOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental", "kotlin.ExperimentalMultiplatform")

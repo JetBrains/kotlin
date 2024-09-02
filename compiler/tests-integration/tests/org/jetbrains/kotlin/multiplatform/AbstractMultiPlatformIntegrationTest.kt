@@ -60,7 +60,6 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                         jsSrc,
                         commonSrc,
                         "-Xir-produce-klib-dir",
-                        "-Xir-only",
                         "-libraries",
                         PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
                         "-ir-output-dir",

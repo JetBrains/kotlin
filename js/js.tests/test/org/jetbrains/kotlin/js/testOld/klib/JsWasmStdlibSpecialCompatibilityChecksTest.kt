@@ -154,7 +154,6 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
                 this.outputDir = outputDir.absolutePath
                 this.moduleName = moduleName
                 this.irProduceKlibFile = true
-                this.irOnly = true
                 this.irModuleName = moduleName
                 this.wasm = isWasm
             }

@@ -33,7 +33,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irMinimizedMemberNames = from.irMinimizedMemberNames
     to.irModuleName = from.irModuleName
     to.irNewIr2Js = from.irNewIr2Js
-    to.irOnly = from.irOnly
     to.irPerFile = from.irPerFile
     to.irPerModule = from.irPerModule
     to.irPerModuleOutputName = from.irPerModuleOutputName

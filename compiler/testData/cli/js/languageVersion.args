@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/languageVersion.kt
 -Xir-produce-klib-dir
--Xir-only
 -ir-output-dir
 $TEMP_DIR$
 -ir-output-name

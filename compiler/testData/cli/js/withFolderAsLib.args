@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/withLib.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$:$TESTDATA_DIR$/folderAsLib
 -ir-output-dir

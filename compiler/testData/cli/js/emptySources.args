@@ -1,5 +1,4 @@
 $TEMP_DIR$
--Xir-only
 -Xir-produce-klib-dir
 -libraries
 $STDLIB_JS$

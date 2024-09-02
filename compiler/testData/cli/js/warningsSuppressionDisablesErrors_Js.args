@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/warningsSuppressionDisablesErrors_Js.kt
 -Xir-produce-klib-dir
--Xir-only
 -libraries
 $STDLIB_JS$
 -ir-output-dir

@@ -127,7 +127,6 @@ abstract class AbstractK1JvmLookupTrackerTest : AbstractJvmLookupTrackerTest() {
 abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
     override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.irProduceKlibDir = true
-        args.irOnly = true
         args.outputDir = outDir.normalize().absolutePath
         args.moduleName = "out"
     }

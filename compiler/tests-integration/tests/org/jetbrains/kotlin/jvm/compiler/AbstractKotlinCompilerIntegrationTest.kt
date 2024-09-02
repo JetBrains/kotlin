@@ -160,7 +160,6 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add(K2JSCompilerArguments::libraries.cliArgument)
             args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
             args.add(K2JSCompilerArguments::irProduceKlibDir.cliArgument)
-            args.add(K2JSCompilerArguments::irOnly.cliArgument)
             args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)
             args.add(K2JSCompilerArguments::moduleName.cliArgument)

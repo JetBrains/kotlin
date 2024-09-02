@@ -281,7 +281,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     protected open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         context.primitive { args ->
-            args.irOnly = true
             args.irProduceKlibDir = true
         }
     }
