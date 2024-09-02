@@ -99,7 +99,7 @@ class KotlinTargetAlreadyDeclaredTest {
     }
 
     @Test
-    fun `diagnostic reported when js target declared twice with different names`() {
+    fun `diagnostic not reported when js target declared twice with different names`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js("browser")
@@ -108,6 +108,6 @@ class KotlinTargetAlreadyDeclaredTest {
         }
 
         project.evaluate()
-        project.assertContainsDiagnostic(KotlinTargetAlreadyDeclared("js"))
+        project.assertNoDiagnostics(KotlinTargetAlreadyDeclared)
     }
 }

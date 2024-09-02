@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetAlreadyDeclared
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
@@ -31,7 +31,23 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
                 // skip targets without known dsl function such as external targets
                 ?: continue
 
-            collector.report(project, KotlinTargetAlreadyDeclared(targetDslFunctionName))
+            @Suppress("DEPRECATION")
+            when (targetsGroup.first().preset) {
+                // For JS targets fire WARNING for now
+                // FIXME: https://youtrack.jetbrains.com/issue/KT-59316/Deprecate-multiple-same-targets#focus=Comments-27-9992405.0-0
+                is KotlinJsIrTargetPreset -> collector.report(
+                    project,
+                    KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredWarning(
+                        targetDslFunctionName
+                    )
+                )
+                else -> collector.report(
+                    project,
+                    KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredError(
+                        targetDslFunctionName
+                    )
+                )
+            }
         }
     }
 
