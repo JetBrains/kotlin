@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
@@ -43,9 +43,26 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         doTestFriendPaths(File(tmpdir, "lib").relativeTo(File("").absoluteFile))
     }
 
-    private fun doTestFriendPaths(libDest: File, messageRenderer: MessageRenderer? = null) {
+    // This is a regression test for KT-70991.
+    // It's not a generated CLI test because the issue only reproduced when any path in the classpath is absolute, while CliTestGenerated
+    // passes relative paths of libraries to the classpath.
+    fun testNonExistingPath() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path), messageRenderer)
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2JVMCompiler(),
+            listOf(
+                libSrc.path,
+                "-d", File(tmpdir, "output").path,
+                "-Xfriend-paths=non-existing-path",
+                "-no-stdlib",
+                "-cp", ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+            ),
+        )
+    }
+
+    private fun doTestFriendPaths(libDest: File) {
+        val libSrc = File(getTestDataDirectory(), "lib.kt")
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
@@ -53,7 +70,6 @@ class FriendPathsTest : TestCaseWithTmpdir() {
                 "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
                 "-Xfriend-paths=${libDest.path}"
             ),
-            messageRenderer,
         )
     }
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -78,7 +79,7 @@ abstract class LibraryPathFilter {
             return libs.any {
                 when {
                     it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute -> path.startsWith(it.toRealPath())
+                    !it.isAbsolute && isPathAbsolute && it.exists() -> path.startsWith(it.toRealPath())
                     else -> path.startsWith(it)
                 }
             }
