@@ -5,7 +5,7 @@
 annotation class Annot
 
 @Annot
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class <!CLASSIFIER_REDECLARATION!>Foo<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
