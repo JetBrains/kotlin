@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
 data class IrValidatorConfig(
+    val checkTreeConsistency: Boolean = true,
     val checkTypes: Boolean = false,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
@@ -161,7 +162,9 @@ private fun performBasicIrValidation(
         // Performing other checks may cause e.g. infinite recursion.
         return
     }
-    element.checkDeclarationParents(reportError)
+    if (validatorConfig.checkTreeConsistency) {
+        element.checkDeclarationParents(reportError)
+    }
 }
 
 /**

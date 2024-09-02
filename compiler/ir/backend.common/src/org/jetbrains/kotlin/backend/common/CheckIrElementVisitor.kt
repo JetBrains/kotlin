@@ -26,7 +26,7 @@ internal class CheckIrElementVisitor(
     private val visitedElements = hashSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {
-        if (!visitedElements.add(element)) {
+        if (config.checkTreeConsistency && !visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
             reportError(element, "Duplicate IR node: $renderString")
 
