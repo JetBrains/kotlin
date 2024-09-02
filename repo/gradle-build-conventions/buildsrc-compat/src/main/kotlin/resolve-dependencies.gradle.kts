@@ -15,7 +15,7 @@ import org.spdx.sbom.gradle.SpdxSbomExtension
 tasks.register("resolveDependencies") {
     doFirst {
         allprojects {
-            logger.info("Resolving dependencies in $this")
+            logger.lifecycle("Resolving dependencies in ${project.displayName}")
 
             // resolve implicit dependencies one by one to avoid conflicts between them
             configurations.implicitDependencies.get().allDependencies.forEach { implicitDependency ->
@@ -122,7 +122,7 @@ tasks.register("resolveDependencies") {
 
 tasks.register("resolveToolchains") {
     allprojects {
-        logger.info("Resolving toolchains in $this")
+        logger.lifecycle("Resolving toolchains in ${project.displayName}")
         plugins.withId("java-base") {
             val service = project.extensions.getByType<JavaToolchainService>()
             val javaExtension = extensions.getByType<JavaPluginExtension>()
