@@ -685,10 +685,12 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
-        IrPropertyReferenceImpl(
+        IrPropertyReferenceImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             symbolRemapper.getReferencedProperty(expression.symbol),
+            expression.targetHasDispatchReceiver,
+            expression.targetHasExtensionReceiver,
             expression.typeArgumentsCount,
             expression.field?.let { symbolRemapper.getReferencedField(it) },
             expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },

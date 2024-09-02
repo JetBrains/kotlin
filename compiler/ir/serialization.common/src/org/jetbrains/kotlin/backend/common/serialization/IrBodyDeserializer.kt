@@ -485,9 +485,11 @@ class IrBodyDeserializer(
 
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
-        val callable = IrPropertyReferenceImpl(
+        val callable = IrPropertyReferenceImplWithShape(
             start, end, type,
             symbol,
+            proto.memberAccess.hasDispatchReceiver(),
+            proto.memberAccess.hasExtensionReceiver(),
             proto.memberAccess.typeArgumentCount,
             field,
             getter,

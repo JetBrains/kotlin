@@ -617,9 +617,11 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         val originalProperty = propertyDescriptor.original
         val symbols = resolvePropertySymbol(originalProperty, mutable)
 
-        return IrPropertyReferenceImpl(
+        return IrPropertyReferenceImplWithShape(
             startOffset, endOffset, type.toIrType(),
             symbols.propertySymbol,
+            propertyDescriptor.dispatchReceiverParameter != null,
+            propertyDescriptor.extensionReceiverParameter != null,
             if (typeArguments != null) propertyDescriptor.typeParametersCount else 0,
             getFieldForPropertyReference(originalProperty),
             symbols.getterSymbol,

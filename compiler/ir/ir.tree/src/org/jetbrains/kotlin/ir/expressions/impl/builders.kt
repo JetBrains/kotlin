@@ -1063,11 +1063,44 @@ fun IrLocalDelegatedPropertyReferenceImpl(
     valueArguments = initializeParameterArguments(0),
 )
 
+/**
+ * Note: This functions requires [symbol] to be bound.
+ * If it may be not, use [IrPropertyReferenceImplWithShape].
+ */
 fun IrPropertyReferenceImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     symbol: IrPropertySymbol,
+    typeArgumentsCount: Int,
+    field: IrFieldSymbol?,
+    getter: IrSimpleFunctionSymbol?,
+    setter: IrSimpleFunctionSymbol?,
+    origin: IrStatementOrigin? = null,
+): IrPropertyReferenceImpl = IrPropertyReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    field = field,
+    getter = getter,
+    setter = setter,
+    origin = origin,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(0),
+)
+
+/**
+ * Prefer [IrPropertyReferenceImpl], unless [symbol] may be unbound.
+ */
+fun IrPropertyReferenceImplWithShape(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrPropertySymbol,
+    hasDispatchReceiver: Boolean,
+    hasExtensionReceiver: Boolean,
     typeArgumentsCount: Int,
     field: IrFieldSymbol?,
     getter: IrSimpleFunctionSymbol?,

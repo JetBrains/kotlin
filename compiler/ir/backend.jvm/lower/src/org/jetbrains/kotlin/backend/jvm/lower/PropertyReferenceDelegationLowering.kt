@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImplWithShape
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -145,7 +146,11 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                     ?: receiver?.remapReceiver(originalThis, dispatchReceiverParameter)
                 irExprBody(with(delegate) {
                     val origin = PropertyReferenceLowering.REFLECTED_PROPERTY_REFERENCE
-                    IrPropertyReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, field, getter, setter, origin)
+                    IrPropertyReferenceImplWithShape(
+                        startOffset, endOffset, type, symbol,
+                        targetHasDispatchReceiver, targetHasExtensionReceiver,
+                        typeArgumentsCount, field, getter, setter, origin
+                    )
                 }.apply {
                     when {
                         delegate.dispatchReceiver != null -> dispatchReceiver = boundReceiver
