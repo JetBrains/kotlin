@@ -689,14 +689,12 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
     }
 
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (!isIrBackendEnabled()) return
-
         if (languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_4
             || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4
         ) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
-                "IR backend cannot be used with language or API version below 1.4"
+                "JS backend cannot be used with language or API version below 1.4"
             )
         }
     }
@@ -706,12 +704,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
             if (extensionFunctionsInExternals) {
                 this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
             }
-            if (!isIrBackendEnabled()) {
-                this[LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping] = LanguageFeature.State.DISABLED
-            }
-            if (isIrBackendEnabled()) {
-                this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
-            }
+            this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
             if (wasm) {
                 this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
             }
@@ -720,6 +713,3 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 
     override fun copyOf(): Freezable = copyK2JSCompilerArguments(this, K2JSCompilerArguments())
 }
-
-fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache
