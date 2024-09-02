@@ -2,14 +2,16 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
+open class Base() {
+    open fun fakeOverride() {}
+}
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>
+expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java
-
-@kotlin.annotations.jvm.KotlinActual public class Foo {
+@kotlin.annotations.jvm.KotlinActual public class Foo extends Base {
     @kotlin.annotations.jvm.KotlinActual public Foo() {}
-    @kotlin.annotations.jvm.KotlinActual public void foo() {
-    }
+    @kotlin.annotations.jvm.KotlinActual public void foo() {}
+    @kotlin.annotations.jvm.KotlinActual @Override void fakeOverride() {}
 }
