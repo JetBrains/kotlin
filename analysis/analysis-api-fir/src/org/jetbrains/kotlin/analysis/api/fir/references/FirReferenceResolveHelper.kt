@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -226,12 +227,17 @@ internal object FirReferenceResolveHelper {
             return getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
         }
 
+        val session = analysisSession.firResolveSession.useSiteFirSession
+
+        expression.parentOfType<KtImportDirective>(withSelf = true)?.let { import ->
+            return getSymbolsByResolvedImport(expression, symbolBuilder, import.importedFqName, session)
+        }
+
         val adjustedResolutionExpression = adjustResolutionExpression(expression)
         val fir = when (val baseFir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveSession)) {
             is FirSmartCastExpression -> baseFir.originalExpression
             else -> baseFir
         }
-        val session = analysisSession.firResolveSession.useSiteFirSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
             is FirResolvedQualifier ->
@@ -468,14 +474,22 @@ internal object FirReferenceResolveHelper {
         return listOf(symbolBuilder.buildSymbol(fir.symbol))
     }
 
-
     private fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
         builder: KaSymbolByFirBuilder,
         fir: FirResolvedImport,
         session: FirSession,
     ): List<KaSymbol> {
-        val fullFqName = fir.importedFqName
+        return getSymbolsByResolvedImport(expression,builder, fir.importedFqName, session)
+    }
+
+
+    private fun getSymbolsByResolvedImport(
+        expression: KtSimpleNameExpression,
+        builder: KaSymbolByFirBuilder,
+        fullFqName: FqName?,
+        session: FirSession,
+    ): List<KaSymbol> {
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
         val rawImportForSelectedFqName = buildImport {
             importedFqName = selectedFqName
