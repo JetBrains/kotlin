@@ -359,6 +359,8 @@ enum class LanguageFeature(
 
     DataClassCopyRespectsConstructorVisibility(sinceVersion = null), // KT-11914 Deprecation phase 3
 
+    DirectJavaActualization(sinceVersion = null), // KT-67202
+
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
 
