@@ -4,7 +4,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> fun interface Foo {
+expect fun interface Foo {
     fun foo()
 }
 
