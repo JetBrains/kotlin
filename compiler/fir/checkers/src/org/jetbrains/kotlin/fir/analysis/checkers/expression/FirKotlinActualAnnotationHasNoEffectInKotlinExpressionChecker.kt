@@ -12,24 +12,53 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        val kotlinActual = StandardClassIds.Annotations.KotlinActual
-        when (expression) {
-            is FirResolvedQualifier if expression.resolvedType.classId == kotlinActual ->
+sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : FirExpression> :
+    FirExpressionChecker<T>(MppCheckerKind.Common) {
+    object ResolvedQualifier : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirResolvedQualifier>() {
+        override fun check(
+            expression: FirResolvedQualifier,
+            context: CheckerContext,
+            reporter: DiagnosticReporter,
+        ) {
+            if (expression.resolvedType.classId == StandardClassIds.Annotations.KotlinActual) {
                 reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
-            is FirCallableReferenceAccess if expression.calleeReference.toResolvedConstructorSymbol()?.containingClassLookupTag()?.classId == kotlinActual ->
+            }
+        }
+    }
+
+    object CallableReference : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirCallableReferenceAccess>() {
+        override fun check(
+            expression: FirCallableReferenceAccess,
+            context: CheckerContext,
+            reporter: DiagnosticReporter,
+        ) {
+            if (expression.calleeReference.toResolvedConstructorSymbol()
+                    ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
+            ) {
                 reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
-            is FirFunctionCall if expression.calleeReference.toResolvedConstructorSymbol()?.containingClassLookupTag()?.classId == kotlinActual ->
+            }
+        }
+    }
+
+    object FunctionCall : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirFunctionCall>() {
+        override fun check(
+            expression: FirFunctionCall,
+            context: CheckerContext,
+            reporter: DiagnosticReporter,
+        ) {
+            if (expression.calleeReference.toResolvedConstructorSymbol()
+                    ?.containingClassLookupTag()?.classId == StandardClassIds.Annotations.KotlinActual
+            ) {
                 reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN, context)
+            }
         }
     }
 }
