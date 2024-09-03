@@ -41,7 +41,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
                 return Foo_Companion_my_variable_inner_get(self.__externalRCRef())
             }
             set {
-                return Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
+                return Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
             }
         }
         public static var shared: main.Foo.Companion {

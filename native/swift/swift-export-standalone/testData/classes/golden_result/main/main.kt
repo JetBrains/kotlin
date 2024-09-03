@@ -42,8 +42,8 @@ public fun Foo_Companion_my_variable_inner_get(self: kotlin.native.internal.Nati
     return _result
 }
 
-@ExportedBridge("Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__")
-public fun Foo_Companion_my_variable_inner_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+@ExportedBridge("Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__")
+public fun Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
     val __newValue = newValue
     __self.my_variable_inner = __newValue

@@ -13,7 +13,7 @@ uint32_t Foo_Companion_my_value_inner_get(uintptr_t self);
 
 int64_t Foo_Companion_my_variable_inner_get(uintptr_t self);
 
-void Foo_Companion_my_variable_inner_set__TypesOfArguments__int64_t__(uintptr_t self, int64_t newValue);
+void Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(uintptr_t self, int64_t newValue);
 
 uintptr_t Foo_INSIDE_CLASS_init_allocate();
 
