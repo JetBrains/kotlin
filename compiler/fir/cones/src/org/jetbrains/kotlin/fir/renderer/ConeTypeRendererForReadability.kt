@@ -61,7 +61,7 @@ open class ConeTypeRendererForReadability(
             return "$lowerRendered!"
         }
 
-        val kotlinCollectionsPrefix = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + "."
+        val kotlinCollectionsPrefix = (StandardNames.COLLECTIONS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: ""
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         val simpleCollection = replacePrefixesInTypeRepresentations(
@@ -82,7 +82,7 @@ open class ConeTypeRendererForReadability(
         )
         if (mutableEntry != null) return mutableEntry
 
-        val kotlinPrefix = StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() + "."
+        val kotlinPrefix = (StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".").takeIf { lowerRendered.startsWith(it) } ?: ""
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixesInTypeRepresentations(
             lowerRendered = lowerRendered,

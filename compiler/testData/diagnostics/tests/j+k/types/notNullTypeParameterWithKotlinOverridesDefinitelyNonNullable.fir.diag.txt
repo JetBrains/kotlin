@@ -2,4 +2,4 @@
 fun takeV(value: X & Any): Unit
 
 /main.kt:(137,145): error: 'takeVList' overrides nothing. Potential signatures for overriding:
-fun takeVList(value: (MutableList<@NotNull() X & Any>..List<@NotNull() X & Any>)): Unit
+fun takeVList(value: (Mutable)List<@NotNull() X & Any>): Unit

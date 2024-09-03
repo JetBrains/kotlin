@@ -2,10 +2,10 @@
 fun test1(a: String!): Unit
 
 /test.kt:(129,137): error: 'test2' overrides nothing. Potential signatures for overriding:
-fun test2(a: (MutableList<Int!>..List<Int!>?)): (MutableList<Int!>..List<Int!>?)
+fun test2(a: (Mutable)List<Int!>!): (Mutable)List<Int!>!
 
 /test.kt:(201,209): error: 'test3' overrides nothing. Potential signatures for overriding:
-fun test3(a: (Array<String!>..Array<out String!>?)): (Array<String!>..Array<out String!>?)
+fun test3(a: Array<(out) String!>!): Array<(out) String!>!
 
 /test.kt:(287,295): error: 'test4' overrides nothing. Potential signatures for overriding:
 fun test4(vararg indices: String!): Unit
