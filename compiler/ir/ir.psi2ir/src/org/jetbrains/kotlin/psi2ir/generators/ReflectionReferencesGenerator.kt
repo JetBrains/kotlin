@@ -651,7 +651,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         IrFunctionReferenceImpl.fromSymbolDescriptor(
             startOffset, endOffset, type.toIrType(),
             symbol,
-            typeArgumentsCount = descriptor.typeParametersCount,
             reflectionTarget = symbol,
             origin = origin
         ).apply {

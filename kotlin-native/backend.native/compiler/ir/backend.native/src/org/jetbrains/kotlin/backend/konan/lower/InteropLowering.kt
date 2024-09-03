@@ -1213,7 +1213,6 @@ private class InteropTransformer(
                             builder.startOffset, builder.endOffset,
                             symbols.executeImpl.owner.valueParameters[3].type,
                             targetSymbol,
-                            typeArgumentsCount = 0,
                             reflectionTarget = null)
 
                     builder.irCall(symbols.executeImpl).apply {

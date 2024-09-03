@@ -1186,17 +1186,16 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
     endOffset: Int,
     type: IrType,
     symbol: IrFunctionSymbol,
-    typeArgumentsCount: Int,
     reflectionTarget: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
 ): IrFunctionReferenceImpl = IrFunctionReferenceImplWithShape(
-    startOffset, endOffset,
-    type,
-    symbol,
-    typeArgumentsCount,
-    symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
-    reflectionTarget,
-    origin
+    startOffset = startOffset, endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    typeArgumentsCount = symbol.descriptor.typeParametersCount,
+    valueArgumentsCount = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+    reflectionTarget = reflectionTarget,
+    origin = origin
 )
 
 fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
