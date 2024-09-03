@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 
 private fun <SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner>> IdSignatureSymbolTableSlice(lock: IrLock) =
-    SymbolTableSlice.Flat<IdSignature, SymbolOwner, Symbol>(lock) { it.signature != null }
+    SymbolTableSlice.Flat<IdSignature, SymbolOwner, Symbol>(lock) { key, _ -> key.isPubliclyVisible }
 
 @OptIn(SymbolTableInternals::class)
 open class SymbolTable(
