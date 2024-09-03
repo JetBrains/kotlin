@@ -16,6 +16,9 @@ import kotlin.reflect.KClass
 object Names {
     val DF_CLASS_ID: ClassId
         get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
+    val GROUP_BY_CLASS_ID: ClassId
+        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api",  "GroupBy")))
+
     val COLUM_GROUP_CLASS_ID: ClassId
         get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
     val DATA_COLUMN_CLASS_ID: ClassId

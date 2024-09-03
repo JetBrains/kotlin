@@ -18,6 +18,18 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlackBoxCodegenTest {
   @Test
+  @TestMetadata("addDsl.kt")
+  public void testAddDsl() {
+    runTest("testData/box/addDsl.kt");
+  }
+
+  @Test
+  @TestMetadata("addId.kt")
+  public void testAddId() {
+    runTest("testData/box/addId.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
@@ -179,6 +191,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupBy_refine.kt")
+  public void testGroupBy_refine() {
+    runTest("testData/box/groupBy_refine.kt");
+  }
+
+  @Test
   @TestMetadata("groupBy_toDataFrame.kt")
   public void testGroupBy_toDataFrame() {
     runTest("testData/box/groupBy_toDataFrame.kt");
@@ -230,6 +248,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("main.kt")
   public void testMain() {
     runTest("testData/box/main.kt");
+  }
+
+  @Test
+  @TestMetadata("mapToFrame.kt")
+  public void testMapToFrame() {
+    runTest("testData/box/mapToFrame.kt");
+  }
+
+  @Test
+  @TestMetadata("moveToTop.kt")
+  public void testMoveToTop() {
+    runTest("testData/box/moveToTop.kt");
   }
 
   @Test
@@ -392,6 +422,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("ungroup.kt")
   public void testUngroup() {
     runTest("testData/box/ungroup.kt");
+  }
+
+  @Test
+  @TestMetadata("update.kt")
+  public void testUpdate() {
+    runTest("testData/box/update.kt");
   }
 
   @Nested
