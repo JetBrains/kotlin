@@ -6,6 +6,8 @@ public fun platformTypeSmartCast(): kotlin.Int
 public fun test(/*0*/ e: E?): kotlin.Int
 public fun withNull(/*0*/ e: E?): kotlin.Int?
 public fun withNullableNothing(/*0*/ e: E?): kotlin.Int?
+public fun withNullableNothingCheck(/*0*/ e: E?): kotlin.Int?
+public fun withWrongNullableNothingCheck(/*0*/ e: E?): kotlin.Int?
 
 public final enum class E : kotlin.Enum<E> {
     enum entry A

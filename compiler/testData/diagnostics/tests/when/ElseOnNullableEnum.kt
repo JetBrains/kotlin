@@ -23,6 +23,18 @@ fun withNull(e: E?) = when (e) {
     null -> null
 }
 
+fun withNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    E.A -> 3
+    E.B -> 4
+    is Nothing? -> null
+}
+
+fun withWrongNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    E.A -> 3
+    E.B -> 4
+    !is Nothing? -> null
+}
+
 fun nullableNothing(): Nothing? = null
 fun withNullableNothing(e: E?) = when (e) {
     E.A -> 5

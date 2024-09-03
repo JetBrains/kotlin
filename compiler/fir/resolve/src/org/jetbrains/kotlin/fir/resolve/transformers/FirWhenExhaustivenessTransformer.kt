@@ -260,7 +260,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         }
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Flags) {
-            if (typeOperatorCall.conversionTypeRef.coneType.isNullable) {
+            if (typeOperatorCall.operation == FirOperation.IS && typeOperatorCall.conversionTypeRef.coneType.isNullable) {
                 data.containsNull = true
             }
         }
