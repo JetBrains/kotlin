@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    id("org.jetbrains.kotlin.jvm")
 }
 
 description = "Binary Compatibility Validator compat - track ABI changes"
