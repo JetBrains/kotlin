@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.HandlersStepBuilder
-import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_FROM_K1_AND_K2_
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -58,20 +56,12 @@ fun TestConfigurationBuilder.firFrontendStep() {
     facadeStep(::FirFrontendFacade)
 }
 
-fun TestConfigurationBuilder.psi2ClassicBackendStep() {
-    facadeStep(::ClassicFrontend2ClassicBackendConverter)
-}
-
 fun TestConfigurationBuilder.psi2IrStep() {
     facadeStep(::ClassicFrontend2IrConverter)
 }
 
 fun TestConfigurationBuilder.fir2IrStep() {
     facadeStep(::Fir2IrResultsConverter)
-}
-
-fun TestConfigurationBuilder.classicJvmBackendStep() {
-    facadeStep(::ClassicJvmBackendFacade)
 }
 
 fun TestConfigurationBuilder.jvmIrBackendStep() {

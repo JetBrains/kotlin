@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.test.builders
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.io.path.Path
 
 @DefaultsDsl
@@ -178,11 +178,6 @@ class TestConfigurationBuilder {
 
     fun useAdditionalSourceProviders(vararg providers: Constructor<AdditionalSourceProvider>) {
         additionalSourceProviders += providers
-    }
-
-    @TestInfrastructureInternals
-    fun resetModuleStructureTransformers() {
-        moduleStructureTransformers.clear()
     }
 
     @TestInfrastructureInternals

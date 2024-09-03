@@ -131,14 +131,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractJvmIrAgainstOldBoxTest> {
-                model("codegen/box/compileKotlinAgainstKotlin")
-            }
-
-            testClass<AbstractJvmOldAgainstIrBoxTest> {
-                model("codegen/box/compileKotlinAgainstKotlin")
-            }
-
             testClass<AbstractClassicJvmIrTextTest> {
                 model(
                     "ir/irText",
@@ -179,14 +171,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
                 model("codegen/boxInline")
             }
 
