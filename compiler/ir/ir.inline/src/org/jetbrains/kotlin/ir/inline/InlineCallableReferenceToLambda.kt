@@ -185,10 +185,11 @@ abstract class InlineCallableReferenceToLambdaPhase(
             ).apply {
                 copyAttributes(original)
                 if (original is IrFunctionReference) {
-                    // It is required to copy value arguments if any
-                    copyValueArgumentsFrom(original, this@toLambda)
-                    // Don't need to copy the dispatch receiver because it was remapped on extension receiver
-                    dispatchReceiver = null
+                    // It is required to copy value arguments if any.
+                    // Don't need to copy the dispatch receiver because it was remapped on extension receiver.
+                    for (i in 0..<original.valueArgumentsCount) {
+                        putValueArgument(i, original.getValueArgument(i))
+                    }
                 }
                 extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
             }
