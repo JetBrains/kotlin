@@ -122,11 +122,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
-            testClass<AbstractKapt3BuilderModeBytecodeShapeTest> {
-                model("codegen/kapt", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractIrKapt3BuilderModeBytecodeShapeTest> {
+            testClass<AbstractKaptModeBytecodeShapeTest> {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
             }
 

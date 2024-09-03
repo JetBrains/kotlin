@@ -21,13 +21,13 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/kapt")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class Kapt3BuilderModeBytecodeShapeTestGenerated extends AbstractKapt3BuilderModeBytecodeShapeTest {
+public class KaptModeBytecodeShapeTestGenerated extends AbstractKaptModeBytecodeShapeTest {
   private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
   }
 
   public void testAllFilesPresentInKapt() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/kapt"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/kapt"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
   @TestMetadata("dataClass.kt")

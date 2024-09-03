@@ -23,18 +23,19 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
+abstract class AbstractKaptModeBytecodeShapeTest : CodegenTestCase() {
     private companion object {
         var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
             override fun getClassBuilderMode() = ClassBuilderMode.KAPT3
         }
     }
 
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
+
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         compile(files)
-        val irFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".ir.txt")
-        val nonIrFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
-        val txtFile = if (backend == TargetBackend.JVM_IR && irFile.exists()) irFile else nonIrFile
+        val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
         KotlinTestUtils.assertEqualsToFile(txtFile, BytecodeListingTextCollectingVisitor.getText(classFileFactory))
     }
 
