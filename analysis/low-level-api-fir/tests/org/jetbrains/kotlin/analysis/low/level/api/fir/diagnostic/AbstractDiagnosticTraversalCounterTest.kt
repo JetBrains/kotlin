@@ -51,7 +51,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         resolveWithClearCaches(mainFile) { firResolveSession ->
             // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
-            mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
 
             val firFile = mainFile.getOrBuildFirOfType<FirFile>(firResolveSession)
 

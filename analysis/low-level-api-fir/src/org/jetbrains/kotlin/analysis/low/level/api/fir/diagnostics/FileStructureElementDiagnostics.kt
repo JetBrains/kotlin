@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
  * @see FileStructureElementDiagnosticsCollector
  */
 internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
-    private val diagnosticByCommonCheckers: FileStructureElementDiagnosticList by lazy {
+    private val diagnosticByDefaultCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR)
     }
 
@@ -24,8 +24,8 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
 
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
         SmartList<KtPsiDiagnostic>().apply {
-            if (filter.runCommonCheckers) {
-                addAll(diagnosticByCommonCheckers.diagnosticsFor(element))
+            if (filter.runDefaultCheckers) {
+                addAll(diagnosticByDefaultCheckers.diagnosticsFor(element))
             }
             if (filter.runExtraCheckers) {
                 addAll(diagnosticByExtraCheckers.diagnosticsFor(element))
@@ -34,8 +34,8 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
 
 
     inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
-        if (filter.runCommonCheckers) {
-            diagnosticByCommonCheckers.forEach(action)
+        if (filter.runDefaultCheckers) {
+            diagnosticByDefaultCheckers.forEach(action)
         }
         if (filter.runExtraCheckers) {
             diagnosticByExtraCheckers.forEach(action)

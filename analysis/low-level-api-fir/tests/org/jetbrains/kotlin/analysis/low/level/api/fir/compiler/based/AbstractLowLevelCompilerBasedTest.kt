@@ -106,8 +106,8 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
             )
 
             val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
-                DiagnosticCheckerFilter.EXTRA_AND_COMMON_CHECKERS
-            } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
+                DiagnosticCheckerFilter.EXTRA_AND_DEFAULT_CHECKERS
+            } else DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS
 
             val analyzerFacade = facadeFactory.createFirFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
             return FirOutputPartForDependsOnModule(

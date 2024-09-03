@@ -135,7 +135,7 @@ internal class KaFirCompilerFacility(
 
         val mainFirFile = getFullyResolvedFirFile(file)
 
-        val frontendDiagnostics = file.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+        val frontendDiagnostics = file.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
         val frontendErrors = computeErrors(frontendDiagnostics, allowedErrorFilter)
 
         if (frontendErrors.isNotEmpty()) {

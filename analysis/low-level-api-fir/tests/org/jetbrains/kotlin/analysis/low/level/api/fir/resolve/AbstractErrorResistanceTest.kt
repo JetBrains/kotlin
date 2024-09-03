@@ -37,7 +37,7 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
             ENABLE_INTERRUPTION.set(true)
 
             try {
-                mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+                mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
                 fail("Analysis should be interrupted")
             } catch (e: Throwable) {
                 val errors = generateSequence(e) { it.cause }
@@ -48,7 +48,7 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
 
             ENABLE_INTERRUPTION.set(false)
 
-            val diagnostics = mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            val diagnostics = mainFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
             assert(diagnostics.isEmpty()) {
                 val messages = diagnostics.map { it.factoryName }
                 "There should be no diagnostics, found:\n" + messages.joinToString("\n")

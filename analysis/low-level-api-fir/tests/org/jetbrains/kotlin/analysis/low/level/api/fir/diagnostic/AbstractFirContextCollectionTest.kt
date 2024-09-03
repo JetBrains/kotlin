@@ -57,7 +57,7 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::declaration)
             handler.firFile = mainFile.getOrBuildFirFile(firResolveSession)
 
-            mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
+            mainFile.getDiagnostics(firResolveSession, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
         }
     }
 
