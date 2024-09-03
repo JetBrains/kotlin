@@ -78,10 +78,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
-            }
-
             testClass<AbstractIrBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k2BoxTestDir)
             }
@@ -123,10 +119,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("debug/localVariables", excludeDirs = inlineScopesTestDir)
             }
 
-            testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
-                model("codegen/boxModernJdk")
-            }
-
             testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }
@@ -142,16 +134,8 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("ir/sourceRanges")
             }
 
-            testClass<AbstractBytecodeTextTest> {
-                model("codegen/bytecodeText")
-            }
-
             testClass<AbstractIrBytecodeTextTest> {
                 model("codegen/bytecodeText")
-            }
-
-            testClass<AbstractBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline")
             }
 
             testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
@@ -159,10 +143,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }
 

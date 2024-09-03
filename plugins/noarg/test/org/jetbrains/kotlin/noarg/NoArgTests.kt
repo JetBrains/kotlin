@@ -20,13 +20,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 // ---------------------------- codegen ----------------------------
 
-open class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableNoArg()
-    }
-}
-
 open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

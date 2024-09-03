@@ -44,12 +44,12 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuFirCheckerTest
 import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsFirTest
 import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmFirLightTreeTest
 import org.jetbrains.kotlinx.atomicfu.runners.AbstractAtomicfuJvmIrTest
-import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
 
 private class ExcludePattern {
     companion object {
@@ -334,9 +334,6 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractBlackBoxCodegenTestForNoArg> {
-                model("box")
-            }
             testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
                 model("box")
             }
@@ -346,9 +343,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
-            testClass<AbstractBlackBoxCodegenTestForLombok> {
-                model("box")
-            }
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
                 model("box")
             }

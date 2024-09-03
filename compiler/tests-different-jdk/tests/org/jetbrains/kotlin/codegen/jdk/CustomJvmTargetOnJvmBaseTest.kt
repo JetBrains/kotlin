@@ -21,10 +21,6 @@ import org.junit.runner.RunWith
  */
 
 @SelectClasses(
-    BlackBoxCodegenTestGenerated::class,
-    BlackBoxInlineCodegenTestGenerated::class,
-    CompileKotlinAgainstInlineKotlinTestGenerated::class,
-
     IrBlackBoxCodegenTestGenerated::class,
     IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
     IrCompileKotlinAgainstInlineKotlinTestGenerated::class,
