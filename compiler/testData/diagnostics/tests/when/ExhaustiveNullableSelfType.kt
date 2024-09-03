@@ -49,3 +49,8 @@ fun testNullableAny(arg: Any?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
 fun testNullableAny2(arg: Any?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
     <!USELESS_IS_CHECK!>is Any?<!> -> 2
 }
+
+fun <T> testNullableTypeParameter(arg: T?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+    null -> true
+    <!USELESS_IS_CHECK!>is <!CANNOT_CHECK_FOR_ERASED!>T<!><!> -> false
+}
