@@ -1219,7 +1219,7 @@ open class PsiRawFirBuilder(
                 }
 
                 if (file is KtCodeFragment) {
-                    declarations += convertCodeFragment(file)
+                    declarations += convertCodeFragment(file, this)
                 } else {
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
@@ -1359,7 +1359,11 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertCodeFragment(file: KtCodeFragment): FirCodeFragment = buildCodeFragment {
+        private fun convertCodeFragment(
+            file: KtCodeFragment,
+            // We ask to pass the fileBuilder explicitly despite it's not in use: FirFile should be always a parent
+            @Suppress("unused") fileBuilder: FirFileBuilder
+        ): FirCodeFragment = buildCodeFragment {
             source = file.toFirSourceElement()
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
