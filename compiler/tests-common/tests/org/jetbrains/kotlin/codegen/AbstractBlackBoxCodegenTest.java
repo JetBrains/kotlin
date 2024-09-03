@@ -21,9 +21,9 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.getGeneratedClass;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 
 @ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
@@ -79,7 +79,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         assertEqualsToFile(expectedFile, text);
     }
 
-    protected void blackBox(boolean reportProblems, boolean unexpectedBehaviour) {
+    private void blackBox(boolean reportProblems, boolean unexpectedBehaviour) {
         // If there are many files, the first 'box(): String' function will be executed.
         GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader(reportProblems);
         for (KtFile firstFile : myFiles.getPsiFiles()) {
@@ -108,7 +108,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Nullable
-    protected static String getFacadeFqName(@NotNull KtFile file) {
+    private static String getFacadeFqName(@NotNull KtFile file) {
         return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
                ? null
                : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
