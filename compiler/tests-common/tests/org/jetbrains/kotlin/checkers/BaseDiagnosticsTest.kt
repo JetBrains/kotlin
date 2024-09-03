@@ -151,7 +151,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val jvmTarget: JvmTarget?
         val declareCheckType: Boolean = CHECK_TYPE_DIRECTIVE in directives
         val declareFlexibleType: Boolean
-        val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
         val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = mutableListOf()
         val withNewInferenceDirective: Boolean
@@ -163,7 +162,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
             this.jvmTarget = parseJvmTarget(directives)
-            this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             this.withNewInferenceDirective = WITH_NEW_INFERENCE_DIRECTIVE in directives
@@ -387,8 +385,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
                 "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>"
         private val EXPLICIT_FLEXIBLE_TYPES_IMPORT = "import $EXPLICIT_FLEXIBLE_PACKAGE.$EXPLICIT_FLEXIBLE_CLASS_NAME"
-        val CHECK_LAZY_LOG_DIRECTIVE = "CHECK_LAZY_LOG"
-        val CHECK_LAZY_LOG_DEFAULT = "true" == System.getProperty("check.lazy.logs", "false")
 
         val MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS"
 
