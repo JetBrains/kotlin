@@ -719,8 +719,8 @@ open class FunctionInlining(
 
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
-                val shouldCreateTemporaryVariable = !parameter.isInlineParameter() || argument.shouldBeSubstitutedViaTemporaryVariable()
 
+                val shouldCreateTemporaryVariable = !argument.doesNotNeedTemporaryVariable()
                 if (shouldCreateTemporaryVariable) {
                     val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
                     container.add(newVariable)
@@ -755,8 +755,8 @@ open class FunctionInlining(
             )
         }
 
-        private fun ParameterToArgument.shouldBeSubstitutedViaTemporaryVariable(): Boolean =
-            !(isImmutableVariableLoad && parameter.index >= 0) && !argumentExpression.isPure(false, context = context)
+        private fun ParameterToArgument.doesNotNeedTemporaryVariable(): Boolean =
+            argumentExpression.isPure(false, context = context) && parameter.isInlineParameter()
 
         private fun createTemporaryVariable(
             parameter: IrValueParameter,
