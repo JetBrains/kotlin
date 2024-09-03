@@ -1159,10 +1159,15 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
     endOffset: Int,
     type: IrType,
     symbol: IrConstructorSymbol,
-    typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-    valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
 ): IrDelegatingConstructorCallImpl =
-    IrDelegatingConstructorCallImplWithShape(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
+    IrDelegatingConstructorCallImplWithShape(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        symbol = symbol,
+        typeArgumentsCount = symbol.descriptor.typeParametersCount,
+        valueArgumentsCount = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+    )
 
 @UnsafeDuringIrConstructionAPI
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
