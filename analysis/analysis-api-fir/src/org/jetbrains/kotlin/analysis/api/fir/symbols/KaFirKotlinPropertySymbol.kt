@@ -182,6 +182,12 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
                 else -> KaFirKotlinPropertyKtPropertyBasedSymbol(symbol, session)
             }
         }
+
+        // These constants are used to reduce the chance of clash with the original symbol
+        const val HASH_CODE_ADDITION_FOR_RECEIVER: Int = 1
+        const val HASH_CODE_ADDITION_FOR_BACKING_FIELD: Int = 2
+        const val HASH_CODE_ADDITION_FOR_GETTER: Int = 3
+        const val HASH_CODE_ADDITION_FOR_SETTER: Int = 4
     }
 }
 

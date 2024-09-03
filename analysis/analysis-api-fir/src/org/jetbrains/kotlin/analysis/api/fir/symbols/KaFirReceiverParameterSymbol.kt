@@ -92,11 +92,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
             other is KaFirReceiverParameterSymbol &&
             other.owningKaSymbol == this.owningKaSymbol
 
-    /**
-     * +1 is used to reduce the chance of clash with the original symbol
-     * and other dependent parts (like backing field, property accessors, etc.)
-     */
-    override fun hashCode(): Int = 31 * owningKaSymbol.hashCode() + 1
+    override fun hashCode(): Int = 31 * owningKaSymbol.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_RECEIVER
 
     companion object {
         fun create(

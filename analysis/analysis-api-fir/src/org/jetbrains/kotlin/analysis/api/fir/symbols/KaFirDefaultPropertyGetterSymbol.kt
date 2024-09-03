@@ -138,9 +138,5 @@ internal class KaFirDefaultPropertyGetterSymbol(
             other is KaFirDefaultPropertyGetterSymbol &&
             other.owningKaProperty == owningKaProperty
 
-    /**
-     * +3 is used to reduce the chance of clash with the original symbol
-     * and other dependent parts (like receiver, backing field, etc.)
-     */
-    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + 3
+    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_GETTER
 }

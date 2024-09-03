@@ -63,11 +63,7 @@ internal class KaFirBackingFieldSymbol private constructor(
             other is KaFirBackingFieldSymbol &&
             other.owningKaProperty == owningKaProperty
 
-    /**
-     * +2 is used to reduce the chance of clash with the original symbol
-     * and other dependent parts (like receiver, property accessors, etc.)
-     */
-    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + 2
+    override fun hashCode(): Int = 31 * owningKaProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_BACKING_FIELD
 
     companion object {
         fun create(owningKaProperty: KaFirKotlinPropertySymbol<*>): KaFirBackingFieldSymbol? {
