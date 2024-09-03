@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -374,6 +375,7 @@ class StabilityInferencer(
         return when (val owner = classifier.owner) {
             is IrClass -> stabilityOf(owner, substitutions, currentlyAnalyzing)
             is IrTypeParameter -> Stability.Unstable
+            is IrScript -> Stability.Stable
             else -> error("Unexpected IrClassifier: $owner")
         }
     }

@@ -97,7 +97,7 @@ val IrType.erasedUpperBound: IrClass
         is IrSimpleType -> when (val classifier = classifier.owner) {
             is IrClass -> classifier
             is IrTypeParameter -> classifier.erasedUpperBound
-            is IrScript -> classifier.targetClass!!.owner
+            is IrScript -> classifier.targetClass?.owner ?: error(render())
             else -> error(render())
         }
         is IrErrorType -> symbol.owner
@@ -129,7 +129,14 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
-fun IrType.isInlineClassType(): Boolean = erasedUpperBound.isSingleFieldValueClass
+fun IrType.isInlineClassType(): Boolean {
+    // Workaround for KT-69856
+    return if (this is IrSimpleType && classifier.owner is IrScript) {
+        false
+    } else {
+        erasedUpperBound.isSingleFieldValueClass
+    }
+}
 
 fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
 
