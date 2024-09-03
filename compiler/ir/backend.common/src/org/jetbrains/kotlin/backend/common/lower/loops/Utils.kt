@@ -85,50 +85,15 @@ internal val IrExpression.canChangeValueDuringExecution: Boolean
 internal val IrExpression.canHaveSideEffects: Boolean
     get() = !isTrivial()
 
-private fun Any?.toByte(): Byte? =
-    when (this) {
-        is Number -> toByte()
-        is Char -> code.toByte()
-        else -> null
-    }
-
-private fun Any?.toShort(): Short? =
-    when (this) {
-        is Number -> toShort()
-        is Char -> code.toShort()
-        else -> null
-    }
-
-private fun Any?.toInt(): Int? =
-    when (this) {
-        is Number -> toInt()
-        is Char -> code
-        else -> null
-    }
-
-private fun Any?.toLong(): Long? =
-    when (this) {
-        is Number -> toLong()
-        is Char -> code.toLong()
-        else -> null
-    }
-
-private fun Any?.toFloat(): Float? =
-    when (this) {
-        is Number -> toFloat()
-        is Char -> code.toFloat()
-        else -> null
-    }
-
-private fun Any?.toDouble(): Double? =
-    when (this) {
-        is Number -> toDouble()
-        is Char -> code.toDouble()
-        else -> null
-    }
-
 internal val IrExpression.constLongValue: Long?
-    get() = if (this is IrConst) value.toLong() else null
+    get() = when {
+        this !is IrConst -> null
+        type.isUByte() -> (value as? Number)?.toLong()?.toUByte()?.toLong()
+        type.isUShort() -> (value as? Number)?.toLong()?.toUShort()?.toLong()
+        type.isUInt() -> (value as? Number)?.toLong()?.toUInt()?.toLong()
+        type.isChar() -> (value as? Char)?.code?.toLong()
+        else -> (value as? Number)?.toLong()
+    }
 
 /**
  * If [expression] can have side effects ([IrExpression.canHaveSideEffects]), this function creates a temporary local variable for that
@@ -174,15 +139,31 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
     when {
         // This expression's type could be Nothing from an exception throw.
         type == targetClass.defaultType || type.isNothing() -> this
-        this is IrConst && targetClass.defaultType.isPrimitiveType() -> { // TODO: convert unsigned too?
+        this is IrConst && targetClass.defaultType.isPrimitiveType() -> {
             val targetType = targetClass.defaultType
+            val longOrSmallerValue = constLongValue
+            val uLongValue = if (targetType.isULong()) longOrSmallerValue!!.toULong() else null
             when (targetType.getPrimitiveType()) {
-                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, targetType, value.toByte()!!)
-                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, targetType, value.toShort()!!)
-                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, targetType, value.toInt()!!)
-                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, targetType, value.toLong()!!)
-                PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, targetType, value.toFloat()!!)
-                PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, targetType, value.toDouble()!!)
+                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, targetType, longOrSmallerValue!!.toByte())
+                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, targetType, longOrSmallerValue!!.toShort())
+                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, targetType, longOrSmallerValue!!.toInt())
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, targetType, longOrSmallerValue!!.toLong())
+                PrimitiveType.FLOAT -> {
+                    val floatValue = when (val value = value) {
+                        is Float -> value
+                        is Double -> value.toFloat()
+                        else -> uLongValue?.toFloat() ?: longOrSmallerValue?.toFloat()
+                    }
+                    IrConstImpl.float(startOffset, endOffset, targetType, floatValue!!)
+                }
+                PrimitiveType.DOUBLE -> {
+                    val doubleValue = when (val value = value) {
+                        is Float -> value.toDouble()
+                        is Double -> value
+                        else -> uLongValue?.toDouble() ?: longOrSmallerValue?.toDouble()
+                    }
+                    IrConstImpl.double(startOffset, endOffset, targetType, doubleValue!!)
+                }
                 else -> error("Cannot cast expression of type ${type.render()} to ${targetType.render()}")
             }
         }
