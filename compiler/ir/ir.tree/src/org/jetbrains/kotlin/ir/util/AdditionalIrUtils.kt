@@ -59,6 +59,12 @@ private val IrDeclarationWithName.classIdImpl: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
         is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
+        is IrScript -> {
+            // if the script is already lowered, use the target class as parent, otherwise use the package as parent, assuming that
+            // the script to class lowering will rewrite it correctly
+            parent.targetClass?.owner?.classId?.createNestedClassId(this.name)
+                ?: (parent.parent as? IrFile)?.packageFqName?.child(this.name)?.let { ClassId.topLevel(it) }
+        }
         else -> null
     }
 
