@@ -1,0 +1,10 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-main-kts:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-scripting-jvm-host:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
+    testImplementation "junit:junit:4.12"
+}

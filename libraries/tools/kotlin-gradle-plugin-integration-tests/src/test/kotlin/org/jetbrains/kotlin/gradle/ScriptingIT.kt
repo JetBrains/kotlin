@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -112,6 +113,32 @@ abstract class ScriptingIT : KGPBaseTest() {
         project("simpleProject", gradleVersion) {
             build("help") {
                 assertOutputDoesNotContain(ScriptingGradleSubplugin.MISCONFIGURATION_MESSAGE_SUFFIX)
+            }
+        }
+    }
+
+    // Compose only works on JDK 11+
+    // compilerOptions("-language-version", "1.9") is set in scriptDef.kt due to KT-64362.
+    @DisplayName("Compose compiler plugin should work with scripting")
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    fun testComposeInterop(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        project(
+            projectName = "scriptingComposeInterop",
+            gradleVersion = gradleVersion,
+            buildJdk = jdk.location
+        ) {
+            val appSubProject = subProject("app")
+            appSubProject.disableLightTreeIfNeeded()
+            build(":app:test", buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+            )) {
+                assertCompiledKotlinSources(
+                    listOf(
+                        appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
+                    ),
+                    output
+                )
             }
         }
     }
