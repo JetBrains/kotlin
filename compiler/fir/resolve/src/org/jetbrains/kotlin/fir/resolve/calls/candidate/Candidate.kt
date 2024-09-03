@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Candidate(
@@ -288,12 +286,6 @@ class Candidate(
     var hasVisibleBackingField: Boolean = false
 
     // ---------------------------------------- Util ----------------------------------------
-
-    @CodeFragmentAdjustment
-    internal fun resetToResolved() {
-        lowestApplicability = CandidateApplicability.RESOLVED
-        _diagnostics.clear()
-    }
 
     var passedStages: Int = 0
 
