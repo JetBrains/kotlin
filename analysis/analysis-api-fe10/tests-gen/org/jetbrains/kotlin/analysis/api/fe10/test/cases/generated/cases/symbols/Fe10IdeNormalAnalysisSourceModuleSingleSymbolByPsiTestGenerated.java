@@ -47,6 +47,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("annotationPropertyWithComplexDefaultValue.kt")
+  public void testAnnotationPropertyWithComplexDefaultValue() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotationPropertyWithComplexDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationPropertyWithDefaultValue.kt")
+  public void testAnnotationPropertyWithDefaultValue() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotationPropertyWithDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationPropertyWithoutDefaultValue.kt")
+  public void testAnnotationPropertyWithoutDefaultValue() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotationPropertyWithoutDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("catchWithName.kt")
   public void testCatchWithName() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/catchWithName.kt");
