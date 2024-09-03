@@ -54,28 +54,6 @@ abstract class KonanCacheTask @Inject constructor(
     val cacheFile: File
         get() = cacheDirectory.resolve(if (makePerFileCache) "${klibUniqName}-per-file-cache" else "${klibUniqName}-cache")
 
-    /**
-     * Note: we can't use this function instead of [klibUniqName] in [cacheFile],
-     * because the latter is `@OutputDirectory`, so Gradle can call it even before
-     * the task dependencies are finished, and [originalKlib] might be not build yet.
-     */
-    private fun readKlibUniqNameFromManifest(): String {
-        val konanHome = compilerDistributionPath.get().absolutePath
-        val resolver = defaultResolver(
-                repositories = emptyList(),
-                directLibs = emptyList(),
-                target = PlatformManager(konanHome).targetByName(target),
-                distribution = Distribution(konanHome),
-                logger = object : Logger {
-                    override fun log(message: String) = logger.info(message)
-                    override fun warning(message: String) = logger.warn(message)
-                    override fun error(message: String): Unit = logger.error(message)
-                    override fun fatal(message: String): Nothing = kotlin.error(message)
-                }
-        )
-        return resolver.resolve(originalKlib.asFile.get().absolutePath).uniqueName
-    }
-
     @get:Input
     var cacheKind: KonanCacheKind = KonanCacheKind.STATIC
 

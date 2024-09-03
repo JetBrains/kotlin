@@ -54,15 +54,6 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             deprecatedWarning = "'-libraryVersion' ('-lv') option is deprecated and will be removed in one of the future releases"
     )
 
-    // TODO: remove after 2.0, KT-61098
-    val repo by argParser.option(
-            ArgType.String,
-            shortName = "r",
-            description = "repository to resolve dependencies",
-            // Use the name of the option directly in the deprecation message. This message is automatically printed to the console
-            // if the option has been specified. Without option name in the message it would be unclear which exactly option is deprecated.
-            deprecatedWarning = "'-repo' ('-r') option is deprecated and will be removed in one of the future releases. Please use library paths instead of library names in all options such as '-library' ('-l')."
-    ).multiple()
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,

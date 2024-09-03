@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.konan.library.BitcodeLibrary
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
@@ -68,24 +67,13 @@ internal sealed class KlibToolCommand(
         }
     }
 
-    /** TODO: unify with [libraryInDefaultRepoOrCurrentDir] */
     protected fun libraryInCurrentDir(name: String): KotlinLibrary =
-            resolverByName(
-                    emptyList(),
-                    logger = KlibToolLogger(output)
-            ).resolve(name)
-
-    /** TODO: unify with [libraryInCurrentDir] */
-    protected fun libraryInDefaultRepoOrCurrentDir(name: String): KotlinLibrary =
-            resolverByName(
-                    listOf(DependencyDirectories.localKonanDir.resolve("klib").absolutePath),
-                    logger = KlibToolLogger(output)
-            ).resolve(name)
+        resolverByName(logger = KlibToolLogger(output)).resolve(name)
 }
 
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath)
+        val library = libraryInCurrentDir(args.libraryNameOrPath)
         val metadataHeader = parseModuleHeader(library.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
@@ -151,7 +139,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun execute() {
-        val library = libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath)
+        val library = libraryInCurrentDir(args.libraryNameOrPath)
 
         if (!checkLibraryHasIr(library)) return
 
@@ -251,7 +239,7 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val module = ModuleDescriptorLoader(output).load(libraryInDefaultRepoOrCurrentDir(args.libraryNameOrPath))
+        val module = ModuleDescriptorLoader(output).load(libraryInCurrentDir(args.libraryNameOrPath))
 
         DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
     }

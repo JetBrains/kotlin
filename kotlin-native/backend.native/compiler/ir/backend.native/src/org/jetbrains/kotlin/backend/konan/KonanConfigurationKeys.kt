@@ -107,9 +107,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("compiler output kind")
         val PURGE_USER_LIBS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("purge user-specified libs too")
-        val REPOSITORIES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("library search path repositories")
-        val RUNTIME_FILE: CompilerConfigurationKey<String?> 
+        val RUNTIME_FILE: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("override default runtime file path")
         val INCLUDED_LIBRARIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey("klibs processed in the same manner as source files")

@@ -40,7 +40,6 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     val manifest = File(buildDir, "manifest.properties")
     val cstubsName ="cstubs"
     val libraries = arguments.library
-    val repos = arguments.repo
     val targetRequest = arguments.target
     val target = PlatformManager(
         KotlinNativePaths.homePath.absolutePath,
@@ -68,7 +67,6 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         nativeStubs +
         cinteropArgsToCompiler +
         libraries.flatMap { listOf("-library", it) } +
-        repos.flatMap { listOf("-repo", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
         (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +

@@ -47,7 +47,6 @@ object CommonKLibResolver {
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
         // Configure the resolver to only work with absolute paths for now.
         val libraryResolver = KLibResolverHelper(
-            repositories = emptyList(),
             directLibs = libraryAbsolutePaths,
             distributionKlib = null,
             localKotlinDir = null,
@@ -82,7 +81,6 @@ class KLibResolution(
 }
 
 private class KLibResolverHelper(
-    repositories: List<String>,
     directLibs: List<String>,
     distributionKlib: String?,
     localKotlinDir: String?,
@@ -91,7 +89,6 @@ private class KLibResolverHelper(
     private val zipAccessor: ZipFileSystemAccessor?,
     knownIrProviders: List<String>,
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    repositories,
     directLibs,
     distributionKlib,
     localKotlinDir,

@@ -122,26 +122,16 @@ fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibr
 
 // This is a simple library resolver that only cares for file names.
 abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
-    repositories: List<String>,
     directLibs: List<String>,
     val distributionKlib: String?,
     val localKotlinDir: String?,
-    val skipCurrentDir: Boolean,
+    private val skipCurrentDir: Boolean,
     override val logger: Logger
 ) : SearchPathResolver<L> {
 
-    val localHead: File?
-        get() = localKotlinDir?.File()?.klib
-
-    val distHead: File?
-        get() = distributionKlib?.File()?.child("common")
-
+    private val distHead: File? get() = distributionKlib?.File()?.child("common")
     open val distPlatformHead: File? = null
-
-    val currentDirHead: File?
-        get() = if (!skipCurrentDir) File.userDir else null
-
-    private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
+    private val currentDirHead: File? get() = if (!skipCurrentDir) File.userDir else null
 
     abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
 
@@ -154,14 +144,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
         // Current working dir:
         searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
-
-        // Custom repositories (deprecated, to be removed):
-        // TODO: remove after 2.0, KT-61098
-        repositories.mapTo(searchRoots) { SearchRoot(searchRootPath = File(it), allowLookupByRelativePath = true, isDeprecated = true) }
-
-        // Something likely never unused (deprecated, to be removed):
-        // TODO: remove after 2.0, KT-61098
-        searchRoots += localHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true, isDeprecated = true) }
 
         // Current Kotlin/Native distribution:
         searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
@@ -327,15 +309,28 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
-    repositories: List<String>,
     directLibs: List<String>,
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
     override val logger: Logger,
     private val knownIrProviders: List<String>
-) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
-    SearchPathResolver<L> {
+) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger), SearchPathResolver<L> {
+
+    @Deprecated(
+        "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' value parameter",
+        ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger, knownIrProviders)"),
+    )
+    constructor(
+        @Suppress("UNUSED_PARAMETER") repositories: List<String>,
+        directLibs: List<String>,
+        distributionKlib: String?,
+        localKotlinDir: String?,
+        skipCurrentDir: Boolean,
+        logger: Logger,
+        knownIrProviders: List<String>
+    ) : this(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger, knownIrProviders)
+
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
         val candidatePath = candidate.libraryFile.absolutePath
 
@@ -366,7 +361,7 @@ class SingleKlibComponentResolver(
     logger: Logger,
     knownIrProviders: List<String>
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    emptyList(), listOf(klibFile),
+    listOf(klibFile),
     null, null, false, logger, knownIrProviders
 ) {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)

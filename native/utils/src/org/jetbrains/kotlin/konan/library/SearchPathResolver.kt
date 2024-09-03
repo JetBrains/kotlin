@@ -13,14 +13,12 @@ interface SearchPathResolverWithTarget<L: KotlinLibrary>: SearchPathResolver<L> 
 }
 
 fun defaultResolver(
-    repositories: List<String>,
     directLibs: List<String>,
     target: KonanTarget,
     distribution: Distribution,
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
-        repositories,
         directLibs,
         target,
         distribution.klib,
@@ -30,7 +28,6 @@ fun defaultResolver(
 )
 
 fun resolverByName(
-    repositories: List<String>,
     directLibs: List<String> = emptyList(),
     distributionKlib: String? = null,
     localKotlinDir: String? = null,
@@ -38,7 +35,6 @@ fun resolverByName(
     logger: Logger
 ): SearchPathResolver<KotlinLibrary> =
     object : KotlinLibrarySearchPathResolver<KotlinLibrary>(
-        repositories,
         directLibs,
         distributionKlib,
         localKotlinDir,
@@ -49,7 +45,6 @@ fun resolverByName(
     }
 
 internal class KonanLibraryProperResolver(
-    repositories: List<String>,
     directLibs: List<String>,
     override val target: KonanTarget,
     distributionKlib: String?,
@@ -57,7 +52,7 @@ internal class KonanLibraryProperResolver(
     skipCurrentDir: Boolean,
     override val logger: Logger
 ) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
-    repositories, directLibs,
+    directLibs,
     distributionKlib,
     localKonanDir,
     skipCurrentDir,

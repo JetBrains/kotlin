@@ -30,7 +30,6 @@ internal class ModuleDescriptorLoader(output: KlibToolOutput) {
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isNativeStdlib()) {
             val resolver = resolverByName(
-                    emptyList(),
                     distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
                     skipCurrentDir = true,
                     logger = logger

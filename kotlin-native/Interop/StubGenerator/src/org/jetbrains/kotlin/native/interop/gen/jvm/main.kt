@@ -477,9 +477,7 @@ private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
 ): KotlinLibraryResolverImpl<KonanLibrary> {
     val libraries = cinteropArguments.library
-    val repos = cinteropArguments.repo
     return defaultResolver(
-            repos,
             libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
             target,
             Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)

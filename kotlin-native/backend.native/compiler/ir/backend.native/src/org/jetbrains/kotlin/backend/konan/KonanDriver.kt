@@ -195,7 +195,6 @@ class KonanDriver(
             put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
             copyNotNull(CLIConfigurationKeys.CONTENT_ROOTS)
             copyNotNull(KonanConfigKeys.LIBRARY_FILES)
-            copyNotNull(KonanConfigKeys.REPOSITORIES)
             copy(KonanConfigKeys.FRIEND_MODULES)
             copy(KonanConfigKeys.REFINES_MODULES)
             copy(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)

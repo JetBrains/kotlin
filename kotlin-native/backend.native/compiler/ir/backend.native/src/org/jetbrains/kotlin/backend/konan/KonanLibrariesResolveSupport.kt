@@ -33,10 +33,7 @@ class KonanLibrariesResolveSupport(
 
     private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
 
-    private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-
     private val resolver = defaultResolver(
-            repositories,
             libraryNames.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
             target,
             distribution,
