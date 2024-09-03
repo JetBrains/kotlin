@@ -65,7 +65,12 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return when {
                 this is ConeIntersectionType -> intersectedTypes
                 this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
-                    -> lookupTag.typeParameterSymbol.resolvedBounds.flatMap { it.coneType.unwrapTypeParameterAndIntersectionTypes(session) }
+                    -> buildList {
+                    lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
+                        it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                    }
+                    add(this@unwrapTypeParameterAndIntersectionTypes)
+                }
                 this is ConeDefinitelyNotNullType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> original.unwrapTypeParameterAndIntersectionTypes(session)
                     .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
