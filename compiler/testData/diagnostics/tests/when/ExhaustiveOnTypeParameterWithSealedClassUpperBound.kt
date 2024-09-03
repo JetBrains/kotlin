@@ -14,6 +14,13 @@ fun <T: SealedClass> testInstance(value: T) = <!NO_ELSE_IN_WHEN!>when<!>(value) 
     is SealedSubObject2 -> 4
 }
 
+fun <T: SealedClass?> testInstanceDnn(value: T & Any) = <!NO_ELSE_IN_WHEN!>when<!>(value) {
+    is SealedSubClass1 -> 1
+    is SealedSubClass2 -> 2
+    is SealedSubObject1 -> 3
+    is SealedSubObject2 -> 4
+}
+
 fun <T : SealedClass> T.extensionFun() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     is SealedSubClass1 -> 1
     is SealedSubClass2 -> 2
