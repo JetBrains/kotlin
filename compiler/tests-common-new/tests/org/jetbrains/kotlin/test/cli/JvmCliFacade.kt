@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.backend.classic.JavaCompilerFacade
 import org.jetbrains.kotlin.test.cli.CliDirectives.FORCE_COMPILE_AS_JAVA_MODULE
 import org.jetbrains.kotlin.test.cli.CliDirectives.KOTLINC_ARGS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.java.JavaCompilerFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.model.DependencyKind.Binary
 import org.jetbrains.kotlin.test.model.DependencyRelation.DependsOnDependency
