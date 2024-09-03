@@ -104,7 +104,7 @@ class DynamicReceiverExpectedButWasNonDynamic(
 
 object NoCompanionObject : ResolutionDiagnostic(K2_NO_COMPANION_OBJECT)
 
-class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
+class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 

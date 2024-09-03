@@ -283,7 +283,7 @@ internal object ArgumentCheckingProcessor {
                 val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-                    reportDiagnostic(UnsafeCall(argumentType))
+                    reportDiagnostic(InapplicableNullableReceiver(argumentType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
                     reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))

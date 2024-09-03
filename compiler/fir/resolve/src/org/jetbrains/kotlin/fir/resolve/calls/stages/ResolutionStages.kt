@@ -197,7 +197,7 @@ object CheckDispatchReceiver : ResolutionStage() {
                 )
             )
         } else if (isReceiverNullable) {
-            sink.yieldDiagnostic(UnsafeCall(dispatchReceiverValueType))
+            sink.yieldDiagnostic(InapplicableNullableReceiver(dispatchReceiverValueType))
         }
     }
 }

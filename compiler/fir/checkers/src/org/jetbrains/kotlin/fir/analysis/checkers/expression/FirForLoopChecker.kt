@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.calls.OperatorCallOfNonOperatorFunction
-import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableNullableReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -56,7 +56,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                 context,
                 ITERATOR_AMBIGUITY,
                 ITERATOR_MISSING,
-                unsafeCallFactory = ITERATOR_ON_NULLABLE
+                nullableReceiverFactory = ITERATOR_ON_NULLABLE
             )
         ) {
             return
@@ -100,7 +100,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         ambiguityFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
         missingFactory: KtDiagnosticFactory0,
         noneApplicableFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? = null,
-        unsafeCallFactory: KtDiagnosticFactory0? = null,
+        nullableReceiverFactory: KtDiagnosticFactory0? = null,
     ): Boolean {
         val calleeReference = call.calleeReference
         when {
@@ -133,13 +133,13 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                             reporter.reportOn(reportSource, missingFactory, context)
                     }
                     is ConeInapplicableCandidateError -> {
-                        if (unsafeCallFactory != null || noneApplicableFactory != null) {
+                        if (nullableReceiverFactory != null || noneApplicableFactory != null) {
                             diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.forEach {
                                 when (it) {
-                                    is UnsafeCall -> {
-                                        if (unsafeCallFactory != null) {
+                                    is InapplicableNullableReceiver -> {
+                                        if (nullableReceiverFactory != null) {
                                             reporter.reportOn(
-                                                reportSource, unsafeCallFactory, context
+                                                reportSource, nullableReceiverFactory, context
                                             )
                                         } else {
                                             reporter.reportOn(

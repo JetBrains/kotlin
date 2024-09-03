@@ -123,10 +123,10 @@ private fun ConeDiagnostic.toKtDiagnostic(
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
-                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnsafeCall>()?.to(it)
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableNullableReceiver>()?.to(it)
             }
             if (diagnosticAndCandidate != null) {
-                mapUnsafeCallError(diagnosticAndCandidate.second, diagnosticAndCandidate.first, source, callOrAssignmentSource)
+                mapInapplicableNullableReceiver(diagnosticAndCandidate.second, diagnosticAndCandidate.first, source, callOrAssignmentSource)
             } else {
                 FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol })
             }
@@ -235,9 +235,9 @@ fun ConeDiagnostic.toFirDiagnostics(
     }
 }
 
-private fun mapUnsafeCallError(
+private fun mapInapplicableNullableReceiver(
     candidate: AbstractCallCandidate<*>,
-    rootCause: UnsafeCall,
+    rootCause: InapplicableNullableReceiver,
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): KtDiagnostic {
@@ -386,7 +386,7 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: source
             )
 
-            is UnsafeCall -> mapUnsafeCallError(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
+            is InapplicableNullableReceiver -> mapInapplicableNullableReceiver(diagnostic.candidate, rootCause, source, qualifiedAccessSource)
             is ManyLambdaExpressionArguments -> FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.createOn(rootCause.argument.source ?: source)
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function)
             is OperatorCallOfNonOperatorFunction ->
