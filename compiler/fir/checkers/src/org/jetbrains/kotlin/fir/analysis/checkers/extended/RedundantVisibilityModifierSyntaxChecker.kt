@@ -259,8 +259,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return findBiggestVisibility { checkVisibility ->
             scope.processPropertiesByName(propertySymbol.name) {}
             scope.processOverriddenProperties(propertySymbol) { property ->
-                val setter = property.setterSymbol ?: return@processOverriddenProperties ProcessorAction.NEXT
-                checkVisibility(setter)
+                checkVisibility(property.setterSymbol ?: property)
             }
         }
     }
