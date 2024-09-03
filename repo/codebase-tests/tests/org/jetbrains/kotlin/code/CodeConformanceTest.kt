@@ -14,6 +14,7 @@ import java.util.regex.Pattern
 class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
+        private val KOTLIN_FILE_PATTERN = Pattern.compile(".+\\.kt")
         private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
 
         @Suppress("SpellCheckingInspection")
@@ -149,6 +150,42 @@ class CodeConformanceTest : TestCase() {
                 ".gradle/expanded",
             )
         )
+    }
+
+    fun testNotUsingCanonicalFileApi() {
+        val canonicalPattern = Pattern.compile("\\.canonical(Path|File)", Pattern.MULTILINE)
+
+        // find KGP modules except the modules of internal test infrastructure
+        val kgpDirs = File("libraries/tools").walkTopDown()
+            .maxDepth(2)
+            .filter { it.isDirectory && it.name.startsWith("kotlin-gradle-") && "test" !in it.name }
+            // Check only `src` directory
+            .flatMap { it.walkTopDown().maxDepth(1).filter { file -> file.isDirectory && file.name == "src" } }
+            .map { it.path }
+            .toList()
+
+        val targetDirs = kgpDirs + listOf(
+            "build-common/src",
+            "compiler/build-tools/kotlin-build-statistics/src",
+            "compiler/build-tools/kotlin-build-tools-api/src",
+            "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-jdk-utils/src",
+            "compiler/daemon/daemon-client/src",
+            "compiler/daemon/daemon-common/src",
+            "compiler/daemon/src",
+            "compiler/incremental-compilation-impl/src",
+            "jps/jps-common/src",
+            "jps/jps-plugin/src",
+        )
+
+        targetDirs.map {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.flatten().forEach { sourceFile ->
+            val matcher = canonicalPattern.matcher(sourceFile.readText())
+            if (matcher.find()) {
+                fail("KT-69613 canonicalPath and canonicalFile apis should not be used: ${matcher.group()}\nin file: $sourceFile")
+            }
+        }
     }
 
     fun testParserCode() {
