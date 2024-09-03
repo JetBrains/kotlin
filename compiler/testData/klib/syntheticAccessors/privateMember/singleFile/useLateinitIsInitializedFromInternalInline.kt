@@ -10,11 +10,22 @@ class OK {
         x = "X"
         if (!::x.isInitialized) throw Error("Property 'x' is not initialized")
 
-        if (::y.isInitialized) throw Error("Property 'y' already initialized")
-        y = "Y"
-        if (!::y.isInitialized) throw Error("Property 'y' is not initialized")
+        object {
+            fun run() {
+                if (::y.isInitialized) throw Error("Property 'y' already initialized")
+                y = "Y"
+                if (!::y.isInitialized) throw Error("Property 'y' is not initialized")
+            }
+        }
+        val local = object {
+            lateinit var xy: String
+        }
 
-        return x + y
+        if (local::xy.isInitialized) throw Error("Property 'xy' already initialized")
+        local.xy = x + y
+        if (!local::xy.isInitialized) throw Error("Property 'xy' is not initialized")
+
+        return local.xy
     }
 
     internal fun initializeAndReadXY(): String = doInitializeAndReadXY()
@@ -24,11 +35,23 @@ class OK {
         o = "O"
         if (!::o.isInitialized) throw Error("Property 'o' is not initialized")
 
-        if (::k.isInitialized) throw Error("Property 'k' already initialized")
-        k = "K"
-        if (!::k.isInitialized) throw Error("Property 'k' is not initialized")
+        object {
+            fun run() {
+                if (::k.isInitialized) throw Error("Property 'k' already initialized")
+                k = "K"
+                if (!::k.isInitialized) throw Error("Property 'k' is not initialized")
+            }
+        }.run()
 
-        return o + k
+        val local = object {
+            lateinit var ok: String
+        }
+
+        if (local::ok.isInitialized) throw Error("Property 'ok' already initialized")
+        local.ok = o + k
+        if (!local::ok.isInitialized) throw Error("Property 'ok' is not initialized")
+
+        return local.ok
     }
 
     internal inline fun initializeAndReadOK(): String = doInitializeAndReadOK()
