@@ -1368,6 +1368,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/warningsInDummy.args");
     }
 
+    @TestMetadata("warningsSuppressionDisablesErrors_Jvm.args")
+    public void testWarningsSuppressionDisablesErrors_Jvm() {
+      runTest("compiler/testData/cli/jvm/warningsSuppressionDisablesErrors_Jvm.args");
+    }
+
     @TestMetadata("werror.args")
     public void testWerror() {
       runTest("compiler/testData/cli/jvm/werror.args");
@@ -1621,9 +1626,9 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/suppressAllWarningsJS.args");
     }
 
-    @TestMetadata("warningsSuppressionDisablesErrors.args")
-    public void testWarningsSuppressionDisablesErrors() {
-      runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors.args");
+    @TestMetadata("warningsSuppressionDisablesErrors_Js.args")
+    public void testWarningsSuppressionDisablesErrors_Js() {
+      runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
     }
 
     @TestMetadata("withFolderAsLib.args")

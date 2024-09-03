@@ -1,4 +1,4 @@
-$TESTDATA_DIR$/warningsSuppressionDisablesErrors.kt
+$TESTDATA_DIR$/warningsSuppressionDisablesErrors_Js.kt
 -Xir-produce-klib-dir
 -Xir-only
 -libraries
