@@ -1036,12 +1036,19 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
     endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
-    typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-    valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl =
-    IrCallImplWithShape(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+    IrCallImplWithShape(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        symbol = symbol,
+        typeArgumentsCount = symbol.descriptor.typeParametersCount,
+        valueArgumentsCount = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
+        origin = origin,
+        superQualifierSymbol = superQualifierSymbol
+    )
 
 fun IrCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,

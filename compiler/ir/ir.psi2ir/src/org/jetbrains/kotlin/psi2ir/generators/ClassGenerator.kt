@@ -344,7 +344,6 @@ internal class ClassGenerator(
             startOffset, endOffset,
             returnType.toIrType(),
             delegateToSymbol,
-            substitutedDelegateTo.typeParametersCount
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = substitutedDelegateTo
 
