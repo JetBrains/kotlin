@@ -37,11 +37,11 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>> :
+abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>> :
     AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
     abstract val frontend: Constructor<FrontendFacade<R>>
-    abstract val converter: Constructor<Frontend2BackendConverter<R, I>>
+    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -106,8 +106,7 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
     }
 }
 
-abstract class AbstractDiagnosticsTestWithJvmIrBackend :
-    AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact, IrBackendInput>() {
+abstract class AbstractDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend<ClassicFrontendOutputArtifact>() {
     override val targetFrontend: FrontendKind<ClassicFrontendOutputArtifact>
         get() = FrontendKinds.ClassicFrontend
 
@@ -120,7 +119,7 @@ abstract class AbstractDiagnosticsTestWithJvmIrBackend :
 
 abstract class AbstractFirDiagnosticsTestWithJvmIrBackendBase(
     val parser: FirParser
-) : AbstractDiagnosticsTestWithJvmBackend<FirOutputArtifact, IrBackendInput>() {
+) : AbstractDiagnosticsTestWithJvmBackend<FirOutputArtifact>() {
     override val targetFrontend: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
 
