@@ -584,14 +584,6 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
             )
         }
     }
-    project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
-    afterEvaluate {
-        val gradlePluginsBuildToolsApiClasspath by rootProject.buildscript.configurations
-        configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
-            it.dependencies.clear()
-            dependencies.add(it.name, files(gradlePluginsBuildToolsApiClasspath))
-        }
-    }
 }
 
 // Will allow combining outputs of multiple SourceSets
