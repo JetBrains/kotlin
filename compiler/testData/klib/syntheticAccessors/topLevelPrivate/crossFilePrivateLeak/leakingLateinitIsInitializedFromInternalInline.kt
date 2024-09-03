@@ -1,8 +1,25 @@
 // FILE: OK.kt
+private lateinit var x: String // never leaked
+lateinit var y: String // never leaked
+
 private lateinit var o: String
 lateinit var k: String
 
-internal inline fun initializeAndReadLateinitProperties(): String {
+private inline fun doInitializeAndReadXY(): String {
+    if (::x.isInitialized) throw Error("Property 'x' already initialized")
+    x = "X"
+    if (!::x.isInitialized) throw Error("Property 'x' is not initialized")
+
+    if (::y.isInitialized) throw Error("Property 'y' already initialized")
+    y = "Y"
+    if (!::y.isInitialized) throw Error("Property 'y' is not initialized")
+
+    return x + y
+}
+
+internal fun initializeAndReadXY(): String = doInitializeAndReadXY()
+
+private inline fun doInitializeAndReadOK(): String {
     if (::o.isInitialized) throw Error("Property 'o' already initialized")
     o = "O"
     if (!::o.isInitialized) throw Error("Property 'o' is not initialized")
@@ -14,5 +31,7 @@ internal inline fun initializeAndReadLateinitProperties(): String {
     return o + k
 }
 
+internal inline fun initializeAndReadOK(): String = doInitializeAndReadOK()
+
 // FILE: main.kt
-fun box(): String = initializeAndReadLateinitProperties()
+fun box(): String = initializeAndReadOK()

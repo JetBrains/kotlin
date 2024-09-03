@@ -17,13 +17,20 @@ public class OK
                 /* TARGET use-site */ <this>.#k
         public fun <set-k>(<set-?>: String)
             /* TARGET use-site */ <this>.#k = <set-?>
-    internal inline fun initializeAndReadLateinitProperties(): String
-        /* ACCESSOR use-site */ access$<get-o>$p($this = <this>)
-        /* ACCESSOR use-site */ access$<set-o>($this = <this>, <set-?> = "O")
-        /* ACCESSOR use-site */ access$<get-o>$p($this = <this>)
-        /* ACCESSOR use-site */ access$<get-k>$p($this = <this>)
-        /* ACCESSOR use-site */ access$<get-k>$p($this = <this>)
-        /* ACCESSOR use-site */ access$<get-o>($this = <this>)
+    private inline fun doInitializeAndReadOK(): String
+        /* TARGET use-site */ <this>.#o
+        /* TARGET use-site */ <this>.<set-o>(<set-?> = "O")
+        /* TARGET use-site */ <this>.#o
+        /* TARGET use-site */ <this>.#k
+        /* TARGET use-site */ <this>.#k
+        /* TARGET use-site */ <this>.<get-o>()
+    internal inline fun initializeAndReadOK(): String
+        /* ACCESSOR use-site */ access$<get-o>$p($this = this)
+        /* ACCESSOR use-site */ access$<set-o>($this = this, <set-?> = "O")
+        /* ACCESSOR use-site */ access$<get-o>$p($this = this)
+        /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+        /* ACCESSOR use-site */ access$<get-k>$p($this = this)
+        /* ACCESSOR use-site */ access$<get-o>($this = this)
     /* ACCESSOR declaration */ public /* static */ fun access$<get-o>($this: OK): String
         /* TARGET use-site */ $this.<get-o>()
     /* ACCESSOR declaration */ public /* static */ fun access$<set-o>($this: OK, <set-?>: String)

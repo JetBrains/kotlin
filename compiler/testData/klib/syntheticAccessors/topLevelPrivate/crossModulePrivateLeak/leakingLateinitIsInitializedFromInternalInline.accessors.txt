@@ -2,13 +2,20 @@
 
 /* FILE package=<root> fileName=OK.kt */
 
-internal inline fun initializeAndReadLateinitProperties(): String
+internal inline fun initializeAndReadOK(): String
     /* ACCESSOR use-site */ access$<get-o>$p$tOKKt()
     /* ACCESSOR use-site */ access$<set-o>$tOKKt(<set-?> = "O")
     /* ACCESSOR use-site */ access$<get-o>$p$tOKKt()
     /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
     /* ACCESSOR use-site */ access$<get-k>$p$tOKKt()
     /* ACCESSOR use-site */ access$<get-o>$tOKKt()
+private inline fun doInitializeAndReadOK(): String
+    /* TARGET use-site */ #o
+    /* TARGET use-site */ <set-o>(<set-?> = "O")
+    /* TARGET use-site */ #o
+    /* TARGET use-site */ #k
+    /* TARGET use-site */ #k
+    /* TARGET use-site */ <get-o>()
 private lateinit var o: String?
     /* TARGET declaration */ private /* static field */ field o: String?
     /* TARGET declaration */ private fun <get-o>(): String
