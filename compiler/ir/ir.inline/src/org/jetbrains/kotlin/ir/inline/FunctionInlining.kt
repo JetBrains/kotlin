@@ -65,6 +65,8 @@ abstract class InlineFunctionResolver {
 
     open fun needsInlining(function: IrFunction) = function.isInline && (allowExternalInlining || !function.isExternal)
 
+    open fun needsInlining(expression: IrFunctionAccessExpression) = needsInlining(expression.symbol.owner)
+
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
 
@@ -123,6 +125,9 @@ open class FunctionInlining(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
+
+        if (!inlineFunctionResolver.needsInlining(expression)) return expression
+
         val calleeSymbol = when (expression) {
             is IrCall -> expression.symbol
             is IrConstructorCall -> expression.symbol
