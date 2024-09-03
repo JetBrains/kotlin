@@ -41,9 +41,9 @@ internal abstract class IrExpectActualMatchingContext(
     val typeContext: IrTypeSystemContext,
     val expectToActualClassMap: ClassActualizationInfo.ActualClassMapping
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
-    // This incompatibility is often suppressed in the source code (e.g. in kotlin-stdlib).
-    // The backend must be able to do expect-actual matching to emit bytecode
-    // That's why we disable the checker here. Probably, this checker can be enabled once KT-60426 is fixed
+    // Default params are not checked on backend because backend ignores expect classes in fake override builder.
+    // See https://github.com/JetBrains/kotlin/commit/8d725753f8f8d430101a17bc1049463a6319359b
+    // Default params can't be accurately checked without information about overriddenSymbols of expect classes members
     override val shouldCheckDefaultParams: Boolean
         get() = false
 
