@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableSoftValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableWeakValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
@@ -40,12 +41,16 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         }
     }
 
-    private val sourceCache: SessionStorage = createCache()
-    private val binaryCache: SessionStorage = createCache()
-    private val danglingFileSessionCache: SessionStorage = createCache()
-    private val unstableDanglingFileSessionCache: SessionStorage = createCache()
+    private val sourceCache: SessionStorage = createWeakValueCache()
+    private val binaryCache: SessionStorage = createSoftValueCache()
+    private val danglingFileSessionCache: SessionStorage = createWeakValueCache()
+    private val unstableDanglingFileSessionCache: SessionStorage = createWeakValueCache()
 
-    private fun createCache(): SessionStorage = CleanableWeakValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
+    private fun createWeakValueCache(): SessionStorage =
+        CleanableWeakValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
+
+    private fun createSoftValueCache(): SessionStorage =
+        CleanableSoftValueReferenceCache { LLFirSessionCleaner(it.requestedDisposableOrNull) }
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
