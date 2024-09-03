@@ -28,7 +28,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
      *     inner class Inner<U>
      * }
      *
-     * If flag is set to `true` then `typeParameters` for class `Outer.Inner` contains both parameters: [U, R]
+     * If the flag is set to `true` then `typeParameters` for class `Outer.Inner` contains both parameters: [U, T]
      * Otherwise it contains only parameters of itself: [U]
      *
      * This flag is needed for proper calculation of substitutions for components of inner classes
@@ -36,11 +36,6 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val innerClassesCapturesOuterTypeParameters: Boolean
         get() = true
 
-    // Default params are not checked on backend because we want to keep "default params in actual" to be suppressible
-    // with @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS") but backend errors are not suppressible (KT-60426)
-    // Known clients that do suppress:
-    // - stdlib
-    // - coroutines
     val shouldCheckDefaultParams: Boolean
 
     val RegularClassSymbolMarker.classId: ClassId
