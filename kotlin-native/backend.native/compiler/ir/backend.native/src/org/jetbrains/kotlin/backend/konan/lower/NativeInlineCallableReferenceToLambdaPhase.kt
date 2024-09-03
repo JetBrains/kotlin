@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
+import org.jetbrains.kotlin.ir.inline.InlineMode
 
 internal class NativeInlineCallableReferenceToLambdaPhase(
         context: NativeGenerationState
 ) : CommonInlineCallableReferenceToLambdaPhase(
-        context.context, NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false)
+        context.context, NativeInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
 )

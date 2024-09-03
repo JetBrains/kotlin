@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -33,8 +34,8 @@ internal class SaveInlineFunctionsBeforeInlining(
 
 internal class JsInlineFunctionResolver(
     context: JsIrBackendContext,
-    override val inlineOnlyPrivateFunctions: Boolean
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<JsIrBackendContext>(context) {
+    inlineMode: InlineMode,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<JsIrBackendContext>(context, inlineMode) {
     private val enumEntriesIntrinsic = context.intrinsics.enumEntriesIntrinsic
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
 

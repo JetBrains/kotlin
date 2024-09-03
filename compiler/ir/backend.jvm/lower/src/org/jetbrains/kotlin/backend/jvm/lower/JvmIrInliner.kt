@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
+import org.jetbrains.kotlin.ir.inline.InlineMode
 
 @PhaseDescription(
     name = "FunctionInliningPhase",
@@ -32,6 +33,6 @@ class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
     }
 }
 
-class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver() {
+class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver(InlineMode.ALL_INLINE_FUNCTIONS) {
     override fun needsInlining(function: IrFunction): Boolean = function.isInlineFunctionCall(context)
 }

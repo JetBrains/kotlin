@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 class WasmInlineFunctionResolver(
     context: WasmBackendContext
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS) {
     private val enumEntriesIntrinsic = context.wasmSymbols.enumEntriesIntrinsic
 
     override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {

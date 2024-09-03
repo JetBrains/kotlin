@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
-import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
-import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
+import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
@@ -264,7 +261,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
             context,
-            JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = true),
+            JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
             produceOuterThisFields = false,
             insertAdditionalImplicitCasts = true,
         )
@@ -313,7 +310,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
             context,
-            JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false),
+            JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
             produceOuterThisFields = false,
             insertAdditionalImplicitCasts = true,
         )

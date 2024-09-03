@@ -11,18 +11,19 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal class NativeIrInliner(
-    context: NativeGenerationState,
-    inlineOnlyPrivateFunctions: Boolean,
+        context: NativeGenerationState,
+        inlineMode: InlineMode,
 ) : FunctionInlining(
-    context = context.context,
-    NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions),
-    insertAdditionalImplicitCasts = true,
-    produceOuterThisFields = false,
+        context = context.context,
+        NativeInlineFunctionResolver(context, inlineMode),
+        insertAdditionalImplicitCasts = true,
+        produceOuterThisFields = false,
 )
 
 internal class CacheInlineFunctionsBeforeInlining(private val cacheOnlyPrivateFunctions: Boolean) : FileLoweringPass {

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -407,7 +408,7 @@ private val cacheOnlyPrivateFunctionsPhase: SimpleNamedCompilerPhase<NativeGener
 
 private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
-            NativeIrInliner(context, inlineOnlyPrivateFunctions = true)
+            NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
         },
         name = "InlineOnlyPrivateFunctions",
         description = "The first phase of inlining (inline only private functions)",
@@ -430,7 +431,7 @@ private val cacheAllFunctionsPhase: SimpleNamedCompilerPhase<NativeGenerationSta
 
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
-            NativeIrInliner(context, inlineOnlyPrivateFunctions = false)
+            NativeIrInliner(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
         },
         name = "InlineAllFunctions",
         description = "The second phase of inlining (inline all functions)",

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -42,8 +43,8 @@ internal fun IrFunction.getOrSaveLoweredInlineFunction(): IrFunction =
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(
         private val generationState: NativeGenerationState,
-        override val inlineOnlyPrivateFunctions: Boolean
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context) {
+        inlineMode: InlineMode,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context, inlineMode) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
@@ -113,7 +114,7 @@ internal class NativeInlineFunctionResolver(
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
 
         if (experimentalDoubleInlining) {
-            NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
+            NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
             SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         }
     }
