@@ -14,7 +14,7 @@ fun wrong(arg: Wrong) {}
 class Wrong
 
 class Right {
-    val prop: () -> Unit by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>::wrong<!>
+    val prop: () -> Unit <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> ::wrong
 }
 
 fun box(): String {

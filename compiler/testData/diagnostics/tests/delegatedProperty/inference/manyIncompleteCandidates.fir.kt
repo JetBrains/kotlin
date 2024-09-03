@@ -4,7 +4,7 @@ package test
 import first.*
 import second.*
 
-val a12 by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>A()<!>
+val a12 <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>by<!> A()
 
 // FILE: first.kt
 package first

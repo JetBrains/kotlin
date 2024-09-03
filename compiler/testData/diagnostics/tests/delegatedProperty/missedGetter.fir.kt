@@ -1,3 +1,3 @@
-val a: Int by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>A()<!>
+val a: Int <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> A()
 
 class A

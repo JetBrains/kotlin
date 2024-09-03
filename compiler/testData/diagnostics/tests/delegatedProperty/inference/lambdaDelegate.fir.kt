@@ -20,7 +20,7 @@ class SubClass1 : NodeHolder() {
 }
 
 class SubClass2 : NodeHolder() {
-    val x by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>{}<!>
+    val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> {}
 }
 
 fun main() {
@@ -32,6 +32,6 @@ fun main() {
 
     val my_holder_bad =
         object : NodeHolder() {
-            val x by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>{}<!>
+            val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> {}
         }
 }

@@ -1,6 +1,6 @@
 import kotlin.reflect.KProperty0
 
-val a: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>A()<!>
+val a: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> A()
 
 class A {
     fun getValue(t: Any?, p: KProperty0<*>): Int = 1

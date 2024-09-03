@@ -1611,20 +1611,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEXT_NONE_APPLICABLE by error<KtExpression> {
             parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
             parameter<String>("expectedFunctionSignature")
             parameter<ConeKotlinType>("delegateType")
             parameter<String>("description")
         }
-        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
             parameter<String>("expectedFunctionSignature")
             parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
+        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
             parameter<String>("delegateFunction")
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")

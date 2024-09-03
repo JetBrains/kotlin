@@ -1126,6 +1126,12 @@ object PositioningStrategies {
         }
     }
 
+    val PROPERTY_DELEGATE_BY_KEYWORD: PositioningStrategy<KtExpression> = object : PositioningStrategy<KtExpression>() {
+        override fun mark(element: KtExpression): List<TextRange> {
+            return markElement((element.parent as? KtPropertyDelegate)?.byKeywordNode?.psi ?: element)
+        }
+    }
+
     @JvmField
     val TYPEALIAS_TYPE_REFERENCE = object : PositioningStrategy<KtTypeAlias>() {
         override fun mark(element: KtTypeAlias): List<TextRange> {

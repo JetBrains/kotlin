@@ -38,7 +38,7 @@ fun main(arg: Any, condition: Boolean) {
             true -> a = 87
             false -> a = 65
         }
-        val x by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>a<!>
+        val x <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> a
 
         change {
             a = 99

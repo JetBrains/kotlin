@@ -574,6 +574,23 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val PROPERTY_DELEGATE_BY_KEYWORD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        ): List<TextRange> {
+            val byKeyword = tree.getParent(node)
+                ?.let { tree.byKeyword(it) }
+            return markElement(byKeyword ?: node, startOffset, endOffset, tree, node)
+        }
+
+        override fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
+            return tree.getParent(node)?.tokenType == KtNodeTypes.PROPERTY_DELEGATE
+        }
+    }
+
     val INLINE_PARAMETER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD)
 
