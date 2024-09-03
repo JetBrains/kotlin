@@ -62,7 +62,12 @@ fun KGPBaseTest.project(
         workingDir,
         projectPathAdditionalSuffix,
     )
-    projectPath.addDefaultSettingsToSettingsGradle(gradleVersion, dependencyManagement, localRepoDir, buildOptions.projectIsolation)
+    projectPath.addDefaultSettingsToSettingsGradle(
+        gradleVersion,
+        dependencyManagement,
+        localRepoDir,
+        buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
+    )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
     if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
@@ -79,12 +84,7 @@ fun KGPBaseTest.project(
         gradleRunner,
         projectName,
         projectPath,
-        buildOptions.copy(
-            configurationCache = overrideConfigurationCacheValueIfNeeded(
-                buildOptions,
-                gradleVersion,
-            ),
-        ),
+        buildOptions,
         gradleVersion,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
@@ -106,32 +106,6 @@ fun KGPBaseTest.project(
     result.getOrThrow()
     return testProject
 }
-
-private fun overrideConfigurationCacheValueIfNeeded(
-    buildOptions: BuildOptions,
-    gradleVersion: GradleVersion,
-) = when (buildOptions.configurationCache) {
-    BuildOptions.ConfigurationCacheValue.AUTO -> if (
-        shouldTestWithConfigurationCacheByDefault(
-            hostIsMac = HostManager.hostIsMac,
-            gradleVersion = gradleVersion
-        )
-    ) {
-        BuildOptions.ConfigurationCacheValue.ENABLED
-    } else {
-        BuildOptions.ConfigurationCacheValue.AUTO
-    }
-    else -> buildOptions.configurationCache
-}
-
-private fun shouldTestWithConfigurationCacheByDefault(
-    hostIsMac: Boolean,
-    gradleVersion: GradleVersion,
-): Boolean =
-    // For now test with CC by default only on macOS
-    hostIsMac
-            // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
-            && gradleVersion >= GradleVersion.version("8.0")
 
 /**
  * Create a new test project with configuring single native target.

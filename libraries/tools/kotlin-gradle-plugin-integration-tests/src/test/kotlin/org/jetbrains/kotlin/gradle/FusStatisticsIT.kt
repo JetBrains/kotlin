@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -46,6 +47,8 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
+            // TODO: KT-70336 dokka doesn't support Configuration Cache
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
         ) {
             applyDokka()
             build("compileKotlin", "dokkaHtml", "-Pkotlin.session.logger.root.path=$projectPath") {
@@ -241,7 +244,7 @@ class FusStatisticsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
-        testFusStatisticsWithConfigurationCache(gradleVersion, false)
+        testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.DISABLED)
     }
 
     @JvmGradlePluginTests
@@ -251,16 +254,16 @@ class FusStatisticsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     fun testFusStatisticsWithConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
-        testFusStatisticsWithConfigurationCache(gradleVersion, true)
+        testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.ENABLED)
     }
 
-    fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion, isProjectIsolationEnabled: Boolean) {
+    fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion, isProjectIsolationEnabled: IsolatedProjectsMode) {
         project(
             "simpleProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                projectIsolation = isProjectIsolationEnabled,
+                isolatedProjects = isProjectIsolationEnabled,
                 buildReport = listOf(BuildReportType.FILE)
             ),
         ) {
@@ -276,7 +279,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     "NUMBER_OF_SUBPROJECTS=1",
                     "COMPILATIONS_COUNT=1",
                     "GRADLE_CONFIGURATION_CACHE_ENABLED=true",
-                    "GRADLE_PROJECT_ISOLATION_ENABLED=$isProjectIsolationEnabled",
+                    "GRADLE_PROJECT_ISOLATION_ENABLED=${isProjectIsolationEnabled.toBooleanFlag(gradleVersion)}",
                 )
             }
 

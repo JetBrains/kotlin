@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
@@ -311,7 +312,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 "incrementalMultiproject",
                 gradleVersion,
                 buildOptions = defaultBuildOptions.copy(
-                    projectIsolation = true,
+                    isolatedProjects = IsolatedProjectsMode.ENABLED,
                     configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 )
             ) {

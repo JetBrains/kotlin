@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -28,7 +30,7 @@ data class BuildOptions(
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
-    val projectIsolation: Boolean = false,
+    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
@@ -62,12 +64,43 @@ data class BuildOptions(
     val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
 ) {
     enum class ConfigurationCacheValue {
+
+        /** Explicitly/forcefully disable Configuration Cache */
         DISABLED,
+
+        /** Explicitly/forcefully enable Configuration Cache */
         ENABLED,
-        // AUTO means disabled by default, but enabled on macOS with Gradle >= 8.0
+
+        /** AUTO means unspecified by default, but enabled on macOS with Gradle >= 8.0 */
         AUTO,
-        // UNSPECIFIED value is only for cases, when project isolation is used without configuration cache. Otherwise Gradle runner will throw exception "The configuration cache cannot be disabled when isolated projects is enabled."
-        UNSPECIFIED
+
+        /** Gradle, depending on its version, will decide whether to enable Configuration Cache */
+        UNSPECIFIED;
+
+        fun toBooleanFlag(gradleVersion: GradleVersion): Boolean? = when (this) {
+            DISABLED -> false
+            ENABLED -> true
+            AUTO -> if (HostManager.hostIsMac && gradleVersion >= GradleVersion.version("8.0")) true else null
+            UNSPECIFIED -> null
+        }
+    }
+
+    enum class IsolatedProjectsMode {
+
+        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.MAX_SUPPORTED]; Disabled in other cases */
+        AUTO,
+
+        /** Always disable Isolated Projects */
+        DISABLED,
+
+        /** Always enable Isolated Projects */
+        ENABLED;
+
+        fun toBooleanFlag(gradleVersion: GradleVersion) = when (this) {
+            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+            DISABLED -> false
+            ENABLED -> true
+        }
     }
 
     val isK2ByDefault
@@ -132,19 +165,15 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        val configurationCacheValue = when (configurationCache) {
-            ConfigurationCacheValue.DISABLED,
-            ConfigurationCacheValue.AUTO -> false
-            ConfigurationCacheValue.ENABLED -> true
-            ConfigurationCacheValue.UNSPECIFIED -> null
-        }
-        if (configurationCacheValue != null) {
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheValue")
+        val configurationCacheFlag = configurationCache.toBooleanFlag(gradleVersion)
+        if (configurationCacheFlag != null) {
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
         }
 
         if (gradleVersion >= GradleVersion.version("7.1")) {
-            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$projectIsolation")
+            val isolatedProjectsFlag = isolatedProjects.toBooleanFlag(gradleVersion)
+            arguments.add("-Dorg.gradle.unsafe.isolated-projects=$isolatedProjectsFlag")
         }
         if (parallel) {
             arguments.add("--parallel")
@@ -354,3 +383,7 @@ fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache =
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
 fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)
+
+// TODO: KT-71130 flip projectIsolation by default to AUTO, as soon as KT-71130 is completely fixed
+fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
+fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)

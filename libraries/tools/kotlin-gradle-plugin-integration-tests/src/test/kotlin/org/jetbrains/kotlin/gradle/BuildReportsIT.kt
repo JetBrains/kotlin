@@ -18,6 +18,7 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
@@ -353,7 +354,7 @@ class BuildReportsIT : KGPBaseTest() {
             "simpleProject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                projectIsolation = true,
+                isolatedProjects = IsolatedProjectsMode.ENABLED,
                 configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
             )
@@ -662,7 +663,7 @@ class BuildReportsIT : KGPBaseTest() {
             "incrementalMultiproject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                projectIsolation = true,
+                isolatedProjects = IsolatedProjectsMode.ENABLED,
                 configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 buildReport = listOf(BuildReportType.BUILD_SCAN)
             )
