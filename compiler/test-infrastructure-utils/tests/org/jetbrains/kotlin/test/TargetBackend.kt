@@ -12,8 +12,6 @@ enum class TargetBackend(
     ANY(false),
     JVM(false),
     JVM_IR(true, JVM),
-    JVM_MULTI_MODULE_IR_AGAINST_OLD(true, JVM_IR),
-    JVM_MULTI_MODULE_OLD_AGAINST_IR(false, JVM),
     JVM_IR_SERIALIZE(true, JVM_IR),
     JS(false),
     JS_IR(true, JS),
