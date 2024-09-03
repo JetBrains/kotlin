@@ -30905,6 +30905,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("nothingToOverrideMessageWithJava.kt")
+      public void testNothingToOverrideMessageWithJava() {
+        runTest("compiler/testData/diagnostics/tests/override/nothingToOverrideMessageWithJava.kt");
+      }
+
+      @Test
       @TestMetadata("ObjectDelegationManyImpl.kt")
       public void testObjectDelegationManyImpl() {
         runTest("compiler/testData/diagnostics/tests/override/ObjectDelegationManyImpl.kt");
