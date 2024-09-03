@@ -135,8 +135,8 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
     }
 
     if (prev != nullptr && prev->heap()) {
-        // TODO Redundant if the destination object is black.
-        //      Yet at the moment there is now efficient way to distinguish black and gray objects.
+        // TODO Redundant if the object containing ref is black.
+        //      Yet at the moment there is no efficient way to distinguish black and gray objects.
 
         // TODO perhaps it would be better to pass the thread data from outside
         auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
@@ -150,6 +150,8 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 } // namespace
 
 PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
+    RuntimeAssert(mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(), "A thread executing GC barrier must be registered");
+    AssertThreadState(ThreadState::kRunnable);
     auto phase = currentPhase();
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
