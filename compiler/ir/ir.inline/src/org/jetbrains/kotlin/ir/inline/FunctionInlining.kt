@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -225,7 +226,7 @@ open class FunctionInlining(
                 parent = callee.parent
             }
 
-            val (newStatementsFromCallSite, newStatementsFromDefault) = evaluateArguments(callSite, copiedCallee)
+            val (newStatementsFromCallSite, newStatementsFromDefault, copiedParameters) = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
                 ?: error("Body not found for function ${callee.render()}")
 
@@ -248,7 +249,7 @@ open class FunctionInlining(
                 type = returnType,
                 inlineFunction = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction,
                 origin = null,
-                statements = newStatementsFromDefault + newStatements
+                statements = copiedParameters + newStatementsFromDefault + newStatements
             ).apply {
                 // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
                 @OptIn(JvmIrInlineExperimental::class)
@@ -707,12 +708,18 @@ open class FunctionInlining(
             return newVariable
         }
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): Pair<List<IrStatement>, List<IrStatement>> {
-            // The next two lists are used just as containers for two types of variables.
-            // The first one stores temp variables that represent non-default arguments of inline call, and the second one stores defaults.
-            // We want to distinguish them because non-defaults must be evaluated at the call-site and defaults at the callee-site.
+        private fun evaluateArguments(
+            callSite: IrFunctionAccessExpression, callee: IrFunction
+        ): Triple<List<IrVariable>, List<IrVariable>, List<IrVariable>> {
+            // This list stores temp variables that represent non-default arguments of inline call.
+            // The expressions that represent these arguments must be evaluated outside the inline block (at call-site).
             val evaluationStatements = mutableListOf<IrVariable>()
+            // This list stores temp variables that represent default arguments of inline call, and they must be evaluated at the callee-site.
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()
+            // This list stores variables that have the same names as parameters of inline call.
+            // The initializer of such a variable is just a temporary variable from the first list.
+            // This is required to keep debug information correct.
+            val copiedParameters = mutableMapOf<IrValueParameter, IrVariable>()
 
             val arguments = buildParameterToArgument(callSite, callee)
             val substitutor = ParameterSubstitutor()
@@ -746,8 +753,11 @@ open class FunctionInlining(
 
                 val shouldCreateTemporaryVariable = !argument.doesNotNeedTemporaryVariable()
                 if (shouldCreateTemporaryVariable) {
-                    val newVariable = createTemporaryVariable(parameter, variableInitializer, argument.isDefaultArg, callee)
-                    container.add(newVariable)
+                    val (newVariable, copiedParameter) = createTemporaryVariable(
+                        parameter, variableInitializer, argument.isDefaultArg, callee
+                    )
+                    container += newVariable
+                    copiedParameter?.let { copiedParameters[parameter] = it }
                     substituteMap[parameter] = irGetValueWithoutLocation(newVariable.symbol)
                     return@forEach
                 }
@@ -759,7 +769,11 @@ open class FunctionInlining(
                 }
             }
 
-            return evaluationStatements to evaluationStatementsFromDefault
+            copiedParameters.forEach { (parameter, variable) ->
+                substituteMap[parameter] = irGetValueWithoutLocation(variable.symbol)
+            }
+
+            return Triple(evaluationStatements, evaluationStatementsFromDefault, copiedParameters.values.toList())
         }
 
         private fun ParameterToArgument.doesNotNeedTemporaryVariable(): Boolean =
@@ -771,8 +785,8 @@ open class FunctionInlining(
             variableInitializer: IrExpression,
             isDefaultArg: Boolean,
             callee: IrFunction
-        ): IrVariable {
-            val variable = currentScope.scope.createTemporaryVariable(
+        ): Pair<IrVariable, IrVariable?> {
+            val tmpVar = currentScope.scope.createTemporaryVariable(
                 irExpression = IrBlockImpl(
                     if (isDefaultArg) variableInitializer.startOffset else UNDEFINED_OFFSET,
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
@@ -782,18 +796,33 @@ open class FunctionInlining(
                 ).apply {
                     statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
-                nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                 isMutable = false,
                 origin = if (parameter == callee.extensionReceiverParameter) {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
                 } else {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
-                }
+                },
             )
 
-            variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
+            if (isDefaultArg) {
+                tmpVar.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
+                return tmpVar to null
+            }
 
-            return variable
+            val variable = buildVariable(
+                startOffset = tmpVar.startOffset,
+                endOffset = tmpVar.endOffset,
+                parent = tmpVar.parent,
+                origin = tmpVar.origin,
+                name = Name.identifier(parameter.name.asStringStripSpecialMarkers()),
+                type = tmpVar.type,
+            ).apply {
+                // IR_TEMPORARY_VARIABLE origin makes this temporary variable invisible during debug
+                tmpVar.origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                initializer = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, tmpVar.symbol)
+            }
+
+            return tmpVar to variable
         }
 
         private fun irGetValueWithoutLocation(

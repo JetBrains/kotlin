@@ -75,6 +75,12 @@ public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("inlineArgs.kt")
+  public void testInlineArgs() {
+    runTest("native/native.tests/testData/lldb/inlineArgs.kt");
+  }
+
+  @Test
   @TestMetadata("kt33055.kt")
   public void testKt33055() {
     runTest("native/native.tests/testData/lldb/kt33055.kt");

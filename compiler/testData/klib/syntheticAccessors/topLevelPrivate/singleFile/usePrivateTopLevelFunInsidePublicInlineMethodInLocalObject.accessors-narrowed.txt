@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=usePrivateTopLevelFunInsidePublicInlineMethodInLocalObject.kt */
 
 internal inline fun internalInlineMethod(crossinline f: Function0<String>): String
-    val this: <no name provided> =
+    val tmp0: <no name provided> =
         local class <no name provided>
             public inline fun run(): String
                 /* ACCESSOR use-site */ access$privateMethod$tUsePrivateTopLevelFunInsidePublicInlineMethodInLocalObjectKt()

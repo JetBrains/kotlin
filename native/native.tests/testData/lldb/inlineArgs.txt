@@ -1,0 +1,16 @@
+> br set -n "kfun:#foo(kotlin.Int;kotlin.Int;kotlin.Int){}"
+> br set -n "kfun:#bar(){}kotlin.Int"
+> r
+> f 1
+> p x
+(int) 42[..]
+> s
+> s
+> s
+> p x
+(int) 1
+> p y
+(int) 24
+> p z
+(int) 5
+> q
