@@ -79,19 +79,18 @@ void mm::GlobalData::init() noexcept {
     }
 }
 
-// static
-void mm::GlobalData::waitInitialized() noexcept {
-        if (globalDataInitState.load(std::memory_order_acquire) == InitState::kInitialized) {
-            return;
-        }
-        if (compiler::runtimeAssertsEnabled()) {
-            auto initializingThread = globalDataInitializingThread.load(std::memory_order_relaxed);
-            RuntimeAssert(initializingThread != std::this_thread::get_id(), "A thread that initialized global data cannot be waiting for its initialization");
-        }
-        std::unique_lock guard{globalDataInitMutex};
-        globalDataInitCV.wait(guard, []() noexcept {
+void mm::waitGlobalDataInitialized() noexcept {
+    if (globalDataInitState.load(std::memory_order_acquire) == InitState::kInitialized) {
+        return;
+    }
+    if (compiler::runtimeAssertsEnabled()) {
+        auto initializingThread = globalDataInitializingThread.load(std::memory_order_relaxed);
+        RuntimeAssert(initializingThread != std::this_thread::get_id(), "A thread that initialized global data cannot be waiting for its initialization");
+    }
+    std::unique_lock guard{globalDataInitMutex};
+    globalDataInitCV.wait(guard, []() noexcept {
             return globalDataInitState.load(std::memory_order_relaxed) == InitState::kInitialized;
-        });
+            });
 }
 
 mm::GlobalData::GlobalData() noexcept = default;

@@ -22,7 +22,7 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(alloc::Allocator& allocator, 
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     }) {
-    gcThread_ = ScopedThread(ScopedThread::attributes().name("GC thread"), [this] {
+    gcThread_ = UtilityThread(UtilityThread::attributes().name("GC thread"), [this] {
         while (true) {
             auto epoch = state_.waitScheduled();
             if (epoch.has_value()) {

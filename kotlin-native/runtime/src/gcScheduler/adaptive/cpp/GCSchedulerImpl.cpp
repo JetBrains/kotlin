@@ -40,14 +40,12 @@ void gcScheduler::GCScheduler::schedule() noexcept {
 void gcScheduler::GCScheduler::scheduleAndWaitFinished() noexcept {
     auto epoch = impl().impl().scheduleManually();
     NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-    mm::GlobalData::waitInitialized();
     mm::GlobalData::Instance().gc().WaitFinished(epoch);
 }
 
 void gcScheduler::GCScheduler::scheduleAndWaitFinalized() noexcept {
     auto epoch = impl().impl().scheduleManually();
     NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-    mm::GlobalData::waitInitialized();
     mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
 }
 

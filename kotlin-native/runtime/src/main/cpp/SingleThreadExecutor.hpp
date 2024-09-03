@@ -12,7 +12,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "concurrent/ScopedThread.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -54,7 +54,7 @@ public:
     }
 
     // Id of the worker thread.
-    ScopedThread::id threadId() const noexcept { return thread_.get_id(); }
+    UtilityThread::id threadId() const noexcept { return thread_.get_id(); }
 
     // Schedule task execution on the worker thread. The returned future is resolved when the task has completed.
     // If `this` is destroyed before the task manages to complete, the returned future will fail with exception upon `.get()`.
@@ -104,7 +104,7 @@ private:
     std::deque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
-    ScopedThread thread_;
+    UtilityThread thread_;
 };
 
 } // namespace kotlin
