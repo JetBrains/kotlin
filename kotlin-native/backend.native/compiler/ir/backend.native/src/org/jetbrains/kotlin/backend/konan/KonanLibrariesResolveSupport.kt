@@ -29,15 +29,15 @@ class KonanLibrariesResolveSupport(
     private val libraryToCacheFile =
                     configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { File(it) }
 
-    private val libraryNames = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
+    private val libraryPaths = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
-    private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
+    private val unresolvedLibraries = libraryPaths.toUnresolvedLibraries
 
     private val resolver = defaultResolver(
-            libraryNames.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
-            target,
-            distribution,
-            configuration.getLogger()
+        libraryPaths.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
+        target,
+        distribution,
+        configuration.getLogger()
     ).libraryResolver(resolveManifestDependenciesLenient)
 
     // We pass included libraries by absolute paths to avoid repository-based resolution for them.
