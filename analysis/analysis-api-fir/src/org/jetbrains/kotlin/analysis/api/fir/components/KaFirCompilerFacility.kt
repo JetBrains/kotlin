@@ -294,9 +294,9 @@ internal class KaFirCompilerFacility(
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration = Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
         val firResult = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, session.getScopeSession(), firFiles)))
-
         val singleOutput = firResult.outputs.size == 1
         check(singleOutput) { "Single output invariant is used in the lambda below" }
+
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
             fir2IrConfiguration,
@@ -308,7 +308,8 @@ internal class KaFirCompilerFacility(
             JvmIrSpecialAnnotationSymbolProvider,
             extraActualDeclarationExtractorsInitializer = {
                 error(
-                    "Dead code. Output is single ($singleOutput) => " +
+                    "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +
+                            "Output is single ($singleOutput) => " +
                             "dependentIrFragments will always be empty => " +
                             "IrActualizer will never be called => " +
                             "extraActualDeclarationExtractorsInitializer will never be called"
