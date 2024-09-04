@@ -13,7 +13,6 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
-import java.net.URLClassLoader
 import java.util.*
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
@@ -23,7 +22,7 @@ internal abstract class KonanCliRunner(
         private val fileOperations: FileOperations,
         private val execOperations: ExecOperations,
         private val logger: Logger,
-        isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
+        private val isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         private val konanHome: String,
 ) {
     private val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
@@ -51,18 +50,6 @@ internal abstract class KonanCliRunner(
             include("trove4j.jar")
             include("kotlin-native-compiler-embeddable.jar")
         }.files
-    }
-
-    private data class IsolatedClassLoaderCacheKey(val classpath: Set<File>)
-
-    // A separate map for each build for automatic cleaning the daemon after the build have finished.
-    private val isolatedClassLoaders = isolatedClassLoadersService.isolatedClassLoaders
-
-    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(IsolatedClassLoaderCacheKey(classpath)) {
-        val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null).apply {
-            setDefaultAssertionStatus(true)
-        }
     }
 
     protected open val mustRunViaExec get() = false.also { System.setProperty(runFromDaemonPropertyName, "true") }
@@ -131,20 +118,19 @@ internal abstract class KonanCliRunner(
 
     private fun runInProcess(args: List<String>) {
         val transformedArgs = transformArgs(args)
-        val isolatedClassLoader = getIsolatedClassLoader()
 
         logger.log(
                 LogLevel.INFO,
                 """|Run in-process tool "$toolName"
                    |Entry point method = $mainClass.$daemonEntryPoint
-                   |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}
+                   |Classpath = ${classpath.map { it.path }.toPrettyString()}
                    |Arguments = ${args.toPrettyString()}
                    |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
                 """.trimMargin()
         )
 
         try {
-            val mainClass = isolatedClassLoader.loadClass(mainClass)
+            val mainClass = isolatedClassLoadersService.getClassLoader(classpath).loadClass(mainClass)
             val entryPoint = mainClass.methods
                     .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
 

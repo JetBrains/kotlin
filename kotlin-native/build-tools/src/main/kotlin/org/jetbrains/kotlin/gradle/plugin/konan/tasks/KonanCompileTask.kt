@@ -17,8 +17,8 @@ import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
-import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
+import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -31,10 +31,6 @@ abstract class KonanCompileTask @Inject constructor(
         private val execOperations: ExecOperations,
         private val objectFactory: ObjectFactory,
 ) : DefaultTask() {
-    init {
-        KonanCliRunnerIsolatedClassLoadersService.registerIfAbsent(project)
-    }
-
     // Changing the compiler version must rebuild the library.
     @get:Input
     protected val buildNumber = project.properties["kotlinVersion"] ?: error("kotlinVersion property is not specified in the project")
@@ -59,12 +55,12 @@ abstract class KonanCompileTask @Inject constructor(
         }
     }
 
-    @ServiceReference("KonanCliRunnerIsolatedClassLoadersService")
-    abstract fun getIsolatedClassLoadersService(): Property<KonanCliRunnerIsolatedClassLoadersService>
+    @get:ServiceReference
+    protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
 
     @TaskAction
     fun run() {
-        val toolRunner = KonanCliCompilerRunner(fileOperations, execOperations, logger, getIsolatedClassLoadersService().get(), compilerDistributionPath.get())
+        val toolRunner = KonanCliCompilerRunner(fileOperations, execOperations, logger, isolatedClassLoadersService.get(), compilerDistributionPath.get())
 
         outputDirectory.get().asFile.prepareAsOutput()
 

@@ -35,10 +35,6 @@ abstract class KonanInteropTask @Inject constructor(
         private val fileOperations: FileOperations,
         private val execOperations: ExecOperations,
 ): DefaultTask() {
-    init {
-        KonanCliRunnerIsolatedClassLoadersService.registerIfAbsent(project)
-    }
-
     @get:Input
     abstract val konanTarget: Property<KonanTarget>
 
@@ -76,8 +72,8 @@ abstract class KonanInteropTask @Inject constructor(
         }
     }
 
-    @ServiceReference("KonanCliRunnerIsolatedClassLoadersService")
-    abstract fun getIsolatedClassLoadersService(): Property<KonanCliRunnerIsolatedClassLoadersService>
+    @get:ServiceReference
+    protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
 
     private val allowRunningCInteropInProcess = project.kotlinBuildProperties.getBoolean("kotlin.native.allowRunningCinteropInProcess")
 
@@ -88,7 +84,7 @@ abstract class KonanInteropTask @Inject constructor(
                 execOperations,
                 logger,
                 layout,
-                getIsolatedClassLoadersService().get(),
+                isolatedClassLoadersService.get(),
                 compilerDistributionPath.get(),
                 konanTarget.get(),
                 allowRunningCInteropInProcess
