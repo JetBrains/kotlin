@@ -26,7 +26,7 @@ object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
         for (diagnosticName in globallySuppressedDiagnostics) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
             if (diagnosticFactory == null) {
-                reporter.reportError("Warning with name \"$diagnosticName\" does not exists")
+                reporter.reportError("Warning with name \"$diagnosticName\" does not exist")
                 continue
             }
             if (diagnosticFactory.severity == Severity.ERROR) {
