@@ -1,9 +1,11 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlinx.dataframe.plugin.classId
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.isStarProjection
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.withArguments
@@ -44,6 +47,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.List
+import org.jetbrains.kotlinx.dataframe.codeGen.*
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -58,6 +63,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DATA_ROW_CLASS_ID
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DATA_SCHEMA_CLASS_ID
+import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DF_CLASS_ID
 import java.util.*
 
 class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
@@ -160,7 +168,7 @@ class Exclude1 : AbstractInterpreter<Unit>() {
         dsl.excludeProperties.addAll(properties.arguments.filterIsInstance<FirCallableReferenceAccess>())
     }
 }
-
+@Suppress("INVISIBLE_MEMBER")
 @OptIn(SymbolInternals::class)
 internal fun KotlinTypeFacade.toDataFrame(
     maxDepth: Int,
@@ -228,17 +236,17 @@ internal fun KotlinTypeFacade.toDataFrame(
             .filterNot { excludedClasses.contains(it.first.resolvedReturnType) }
             .filter { it.first.effectiveVisibility == EffectiveVisibility.Public }
             .map { (it, name) ->
-                var resolvedReturnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
+                var returnType = it.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
 
-                resolvedReturnType = if (resolvedReturnType is ConeTypeParameterType) {
-                    if (resolvedReturnType.canBeNull(session)) {
+                returnType = if (returnType is ConeTypeParameterType) {
+                    if (returnType.canBeNull(session)) {
                         session.builtinTypes.nullableAnyType.type
                     } else {
                         session.builtinTypes.anyType.type
                     }
                 } else {
-                    resolvedReturnType.withArguments {
+                    returnType.withArguments {
                         val type = it.type
                         if (type is ConeTypeParameterType) {
                             session.builtinTypes.nullableAnyType.type
@@ -248,15 +256,16 @@ internal fun KotlinTypeFacade.toDataFrame(
                     }
                 }
 
-                if (depth >= maxDepth || resolvedReturnType.isValueType() || resolvedReturnType.classId in preserveClasses || it in preserveProperties ) {
-                    SimpleDataColumn(name,
-                        TypeApproximation(resolvedReturnType)
-                    )
+                val fieldKind = returnType.getFieldKind(session)
+
+                val keepSubtree = depth >= maxDepth && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn
+                if (keepSubtree || returnType.isValueType() || returnType.classId in preserveClasses || it in preserveProperties) {
+                    SimpleDataColumn(name, TypeApproximation(returnType))
                 } else if (
-                    resolvedReturnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)), session) ||
-                    resolvedReturnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection), isNullable = true), session)
+                    returnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)), session) ||
+                    returnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection), isNullable = true), session)
                 ) {
-                    val type: ConeKotlinType = when (val typeArgument = resolvedReturnType.typeArguments[0]) {
+                    val type: ConeKotlinType = when (val typeArgument = returnType.typeArguments[0]) {
                         is ConeKotlinType -> typeArgument
                         ConeStarProjection -> session.builtinTypes.nullableAnyType.type
                         else -> session.builtinTypes.nullableAnyType.type
@@ -264,9 +273,9 @@ internal fun KotlinTypeFacade.toDataFrame(
                     if (type.isValueType()) {
                         SimpleDataColumn(name,
                             TypeApproximation(
-                                StandardClassIds.List.constructClassLikeType(
+                                List.constructClassLikeType(
                                     arrayOf(type),
-                                    resolvedReturnType.isNullable
+                                    returnType.isNullable
                                 )
                             )
                         )
@@ -274,7 +283,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                         SimpleFrameColumn(name, convert(type, depth + 1))
                     }
                 } else {
-                    SimpleColumnGroup(name, convert(resolvedReturnType, depth + 1))
+                    SimpleColumnGroup(name, convert(returnType, depth + 1))
                 }
             }
     }
@@ -290,6 +299,21 @@ internal fun KotlinTypeFacade.toDataFrame(
         }
     }
 }
+
+// org.jetbrains.kotlinx.dataframe.codeGen.getFieldKind
+@Suppress("INVISIBLE_MEMBER")
+private fun ConeKotlinType.getFieldKind(session: FirSession) = when {
+    classId == DF_CLASS_ID -> Frame
+    classId == List && typeArguments[0].type.hasAnnotation(DATA_SCHEMA_CLASS_ID, session) -> ListToFrame
+    classId == DATA_ROW_CLASS_ID -> Group
+    hasAnnotation(DATA_SCHEMA_CLASS_ID, session) -> ObjectToGroup
+    else -> Default
+}
+
+
+private fun ConeKotlinType?.hasAnnotation(id: ClassId, session: FirSession) =
+    this?.toSymbol(session)?.hasAnnotation(id, session) == true
+
 
 class CreateDataFrameDslImplApproximation {
     val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
