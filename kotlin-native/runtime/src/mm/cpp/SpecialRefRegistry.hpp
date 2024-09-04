@@ -10,6 +10,7 @@
 
 #include "GC.hpp"
 #include "Memory.h"
+#include "Runtime.h"
 #include "ReferenceOps.hpp"
 #include "RawPtr.hpp"
 #include "ReferenceOps.hpp"
@@ -155,6 +156,7 @@ class SpecialRefRegistry : private Pinned {
             auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
             RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
             if (rcBefore == 1) {
+                Kotlin_initRuntimeIfNeeded();
                 ThreadStateGuard runnableGuard(ThreadState::kRunnable, true);
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
