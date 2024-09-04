@@ -12,32 +12,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDeclarationContainer): List<FunctionBridgeRequest> = buildList {
-    addAll(
-        container
-            .allCallables()
-            .filterIsInstance<SirInit>()
-            .flatMap { it.constructBridgeRequests(generator) }
-    )
-    addAll(
-        container
-            .allCallables()
-            .filterIsInstance<SirFunction>()
-            .flatMap { it.constructBridgeRequests(generator) }
-    )
-    addAll(
-        container
-            .allVariables()
-            .flatMap { it.constructBridgeRequests(generator) }
-    )
-    addAll(
-        container
-            .allContainers()
-            .flatMap { buildBridgeRequests(generator, it) }
-    )
-}
-
-private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
+internal fun SirFunction.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
     val fqName = ((origin as? KotlinSource)?.symbol as? KaFunctionSymbol)
         ?.callableId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
@@ -48,7 +23,7 @@ private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): Lis
     )
 }
 
-private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
+internal fun SirVariable.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
     val fqName = when (val origin = origin) {
         is KotlinSource -> (origin.symbol as? KaVariableSymbol)
             ?.callableId?.asSingleFqName()
@@ -69,7 +44,7 @@ private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): Lis
     return res.toList()
 }
 
-private fun SirInit.constructBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
+internal fun SirInit.constructFunctionBridgeRequests(generator: BridgeGenerator): List<FunctionBridgeRequest> {
     if (origin is SirOrigin.KotlinBaseInitOverride) {
         val names = parameters.map { it.argumentName!! }
         body = SirFunctionBody(buildList {

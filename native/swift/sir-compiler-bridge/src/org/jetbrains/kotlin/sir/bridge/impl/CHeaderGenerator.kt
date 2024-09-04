@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.bridge.impl
 
 import org.jetbrains.kotlin.sir.bridge.BridgePrinter
 import org.jetbrains.kotlin.sir.bridge.FunctionBridge
+import org.jetbrains.kotlin.sir.bridge.GeneratedBridge
 
 internal class CBridgePrinter : BridgePrinter {
 
@@ -14,7 +15,13 @@ internal class CBridgePrinter : BridgePrinter {
 
     private val functions = mutableSetOf<List<String>>()
 
-    override fun add(bridge: FunctionBridge) {
+    override fun add(bridge: GeneratedBridge) {
+        when (bridge) {
+            is FunctionBridge -> add(bridge)
+        }
+    }
+
+    private fun add(bridge: FunctionBridge) {
         functions += bridge.cDeclarationBridge.lines
         includes += bridge.cDeclarationBridge.headerDependencies
     }

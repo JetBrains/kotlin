@@ -9,6 +9,16 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.impl.*
 
 /**
+ * Marker interface for all possible bridge requests.
+ */
+public sealed interface BridgeRequest
+
+/**
+ * Marker interface for all possible generated bridges.
+ */
+public sealed interface GeneratedBridge
+
+/**
  * Description of a Kotlin callable for which we are creating the bridge.
  */
 public class FunctionBridgeRequest(
@@ -24,11 +34,7 @@ public class FunctionBridgeRequest(
      * Fully Qualified Name of Kotlin callable.
      */
     public val fqName: List<String>,
-) : Comparable<FunctionBridgeRequest> {
-    public override fun compareTo(other: FunctionBridgeRequest): Int {
-        return bridgeName.compareTo(other.bridgeName)
-    }
-}
+) : BridgeRequest
 
 /**
  * A C-like wrapper around some Kotlin function.
@@ -38,7 +44,7 @@ public class FunctionBridgeRequest(
 public class FunctionBridge(
     public val kotlinFunctionBridge: KotlinFunctionBridge,
     public val cDeclarationBridge: CFunctionBridge,
-)
+) : GeneratedBridge
 
 /**
  * C part of [FunctionBridgeImpl].
@@ -63,21 +69,21 @@ public class KotlinFunctionBridge(
 )
 
 /**
- * Generates [FunctionBridge] and [SirFunctionBody] that binds SIR function to its Kotlin origin.
+ * Generates various [GeneratedBridge]s given various [BridgeRequest]s
  */
 public interface BridgeGenerator {
-    public fun generateFunctionBridges(request: FunctionBridgeRequest): List<FunctionBridge>
+    public fun generateBridges(request: BridgeRequest): List<GeneratedBridge>
     public fun generateSirFunctionBody(request: FunctionBridgeRequest): SirFunctionBody
 }
 
 /**
- * A common interface for classes that serialize [FunctionBridge] in some form.
+ * A common interface for classes that serialize [GeneratedBridge] in some form.
  */
 public interface BridgePrinter {
     /**
      * Populate printer with an additional [bridge].
      */
-    public fun add(bridge: FunctionBridge)
+    public fun add(bridge: GeneratedBridge)
 
     /**
      * Outputs the aggregated result.

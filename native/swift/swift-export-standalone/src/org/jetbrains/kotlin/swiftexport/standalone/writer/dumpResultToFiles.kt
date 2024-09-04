@@ -21,15 +21,15 @@ internal fun dumpTextAtPath(
 
 internal fun generateBridgeSources(
     bridgeGenerator: BridgeGenerator,
-    requests: List<FunctionBridgeRequest>,
+    requests: List<BridgeRequest>,
     stableDeclarationsOrder: Boolean,
 ): BridgeSources {
     val kotlinBridgePrinter = createKotlinBridgePrinter()
     val cBridgePrinter = createCBridgePrinter()
 
     requests
-        .let { if (stableDeclarationsOrder) it.sorted() else it }
-        .flatMap(bridgeGenerator::generateFunctionBridges)
+        .let { if (stableDeclarationsOrder) it.sortedWith(StableBridgeRequestComparator) else it }
+        .flatMap(bridgeGenerator::generateBridges)
         .forEach {
             kotlinBridgePrinter.add(it)
             cBridgePrinter.add(it)

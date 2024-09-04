@@ -15,7 +15,11 @@ private const val stdintHeader = "stdint.h"
 private const val foundationHeader = "Foundation/Foundation.h"
 
 internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : BridgeGenerator {
-    override fun generateFunctionBridges(request: FunctionBridgeRequest) = buildList {
+    override fun generateBridges(request: BridgeRequest): List<GeneratedBridge> = when (request) {
+        is FunctionBridgeRequest -> generateFunctionBridges(request)
+    }
+
+    private fun generateFunctionBridges(request: FunctionBridgeRequest) = buildList {
         when (request.callable) {
             is SirFunction -> {
                 add(
