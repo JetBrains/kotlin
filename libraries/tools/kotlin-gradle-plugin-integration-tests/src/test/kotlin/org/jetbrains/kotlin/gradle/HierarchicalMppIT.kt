@@ -337,7 +337,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             "hierarchical-mpp-multi-modules",
             gradleVersion
         ) {
-            build("assemble")
+            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
         }
     }
 
@@ -359,7 +359,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             projectName = "kt-31468-multiple-jvm-targets-with-java",
             gradleVersion = gradleVersion
         ) {
-            build("assemble", "testClasses") {
+            build("assemble", "testClasses", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
                 assertTasksExecuted(
                     ":dependsOnPlainJvm:compileKotlinJvm",
                     ":dependsOnPlainJvm:compileJava",
@@ -825,7 +825,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = tempDir
         ).run {
-            build("publish")
+            build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
 
             fun macOnly(code: () -> List<String>): List<String> = if (OS.MAC.isCurrentOs) code() else emptyList()
 
@@ -978,7 +978,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("publish")
+            build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
 
             val gradleModuleFileContent = tempDir.resolve("test/lib/1.0/lib-1.0.module").readText()
             fun assertNoSourcesPublished(expectedJarLocation: String, variantName: String) {

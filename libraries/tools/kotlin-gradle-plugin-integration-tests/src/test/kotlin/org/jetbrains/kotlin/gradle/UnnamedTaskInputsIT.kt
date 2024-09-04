@@ -55,7 +55,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
         project("hierarchical-mpp-multi-modules", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
 
-            build("assemble") {
+            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
                 assertNoUnnamedInputsOutputs()
             }
         }

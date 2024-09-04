@@ -61,7 +61,9 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         val additionalBuildArgs = buildList {
             if (hmppSupport) {
                 add("-P" + "kotlin.mpp.hierarchicalStructureSupport")
-                add("-P" + "kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
+                add("-P" + "kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError,KotlinTargetAlreadyDeclaredError")
+            } else {
+                add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
             }
         }
 
@@ -204,6 +206,7 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                     add("assemble")
                     add("-P" + "kotlinCompileCacheBuster=${System.currentTimeMillis()}")
                     add("-P" + "kotlinCompileLogLevel=DEBUG")
+                    add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
                 }.toTypedArray(),
             ) {
                 assertTasksExecuted(":${libProject.projectPath.name}:assemble")

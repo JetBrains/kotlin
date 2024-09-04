@@ -391,7 +391,7 @@ open class CommonizerIT : KGPBaseTest() {
     @GradleTest
     fun testTwoKotlinTargetsWithSameKonanTarget(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-49735-twoKotlinTargets-oneKonanTarget", gradleVersion) {
-            build(":assemble") {
+            build(":assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
             }
         }

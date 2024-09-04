@@ -112,6 +112,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             build(
                 "clean",
                 "publish",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
                 buildOptions = defaultBuildOptions
                     .copy(configurationCache = enableConfigurationCacheSinceGradle("8.0", gradleVersion))
             ) {
@@ -149,7 +150,11 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             }
 
             // Check that a user can disable rewriting of MPP dependencies in the POMs:
-            build("publish", "-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true") {
+            build(
+                "publish",
+                "-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
+            ) {
                 assertFileContains(
                     localRepoDir.resolve("com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom"),
                     "<groupId>com.example</groupId>",
