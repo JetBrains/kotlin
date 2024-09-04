@@ -24,6 +24,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
+  @TestMetadata("classLiteral.kt")
+  public void testClassLiteral() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/classLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiver.kt");
@@ -255,6 +261,18 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   @TestMetadata("privateMemberCall.kt")
   public void testPrivateMemberCall() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateMemberCall.kt");
+  }
+
+  @Test
+  @TestMetadata("privateSealedClass.kt")
+  public void testPrivateSealedClass() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateSealedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyReference.kt")
+  public void testPropertyReference() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/propertyReference.kt");
   }
 
   @Test
