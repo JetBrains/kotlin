@@ -325,13 +325,13 @@ fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): P
 fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
     val symbol = coneClassLikeType.toSymbol(session) as? FirRegularClassSymbol ?: return PluginDataFrameSchema(emptyList())
     val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != session.builtinTypes.anyType.type) {
-        val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
-        rootSchemaSymbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
+        val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as? FirRegularClassSymbol
+        rootSchemaSymbol?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
         symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     }.let { scope ->
-        val names = scope.getCallableNames()
-        names.flatMap { scope.getProperties(it) }
+        val names = scope?.getCallableNames() ?: emptySet()
+        names.flatMap { scope?.getProperties(it) ?: emptyList() }
     }
 
     val mapping = symbol.typeParameterSymbols
