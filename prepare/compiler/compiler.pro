@@ -26,7 +26,9 @@
 -dontwarn com.sun.jna.WString
 -dontwarn dk.brics.automaton.*
 -dontwarn java.lang.invoke.MethodHandle
--dontwarn io.vavr.*
+-dontwarn javaslang.*
+-dontwarn javaslang.match.annotation.Patterns
+-dontwarn javaslang.match.annotation.Unapply
 -dontwarn javax.crypto.**
 -dontwarn kotlinx.collections.immutable.*
 -dontwarn kotlinx.collections.immutable.**
@@ -189,6 +191,7 @@
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
+-keep class javaslang.match.PatternsProcessor { *; }
 
 -keepclassmembers enum * {
     public static **[] values();

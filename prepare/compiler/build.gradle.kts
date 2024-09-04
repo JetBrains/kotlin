@@ -225,7 +225,7 @@ dependencies {
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
-    fatJarContents(libs.vavr)
+    fatJarContents(commonDependency("io.javaslang", "javaslang"))
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     fatJarContents(intellijCore())

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
-import io.vavr.Tuple2;
+import javaslang.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
@@ -101,7 +101,7 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     }
 
     private static <S> String renderVariableMap(
-            io.vavr.collection.Map<VariableDescriptor, S> map,
+            javaslang.collection.Map<VariableDescriptor, S> map,
             PseudocodeVariablesData variablesData
     ) {
         List<String> result = Lists.newArrayList();

@@ -43,7 +43,6 @@ intellij-asm = "9.0"
 diff-utils = "4.12"
 # Wasm specific
 wasmedge = "0.14.0"
-vavr = "0.10.4"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -74,7 +73,6 @@ jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-da
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
-vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
