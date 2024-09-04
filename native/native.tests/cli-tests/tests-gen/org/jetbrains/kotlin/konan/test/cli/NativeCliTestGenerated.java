@@ -58,4 +58,9 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
   public void testSimple() {
     runTest("native/native.tests/cli-tests/testData/cli/simple.args");
   }
+
+  @TestMetadata("warningsSuppressionDisablesErrors_Native.args")
+  public void testWarningsSuppressionDisablesErrors_Native() {
+    runTest("native/native.tests/cli-tests/testData/cli/warningsSuppressionDisablesErrors_Native.args");
+  }
 }

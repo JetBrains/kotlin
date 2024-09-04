@@ -1631,6 +1631,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
     }
 
+    @TestMetadata("warningsSuppressionDisablesErrors_Wasm.args")
+    public void testWarningsSuppressionDisablesErrors_Wasm() {
+      runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Wasm.args");
+    }
+
     @TestMetadata("withFolderAsLib.args")
     public void testWithFolderAsLib() {
       runTest("compiler/testData/cli/js/withFolderAsLib.args");
