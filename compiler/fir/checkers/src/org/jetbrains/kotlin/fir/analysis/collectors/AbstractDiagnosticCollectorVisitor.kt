@@ -188,6 +188,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
+        visitWithDeclaration(codeFragment)
+    }
+
     override fun visitFile(file: FirFile, data: Nothing?) {
         withAnnotationContainer(file) {
             visitWithFile(file)

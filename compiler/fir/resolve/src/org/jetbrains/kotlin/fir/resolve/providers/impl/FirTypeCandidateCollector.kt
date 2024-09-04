@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -39,8 +40,13 @@ class FirTypeCandidateCollector(
         var diagnostic: ConeDiagnostic? = null
 
         if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
-            symbolApplicability = minOf(CandidateApplicability.K2_VISIBILITY_ERROR, symbolApplicability)
-            diagnostic = ConeVisibilityError(symbol)
+            val fromCodeFragment = containingDeclarations.getOrNull(1) is FirCodeFragment
+            val applicability =
+                if (fromCodeFragment) CandidateApplicability.RESOLVED_LOW_PRIORITY else CandidateApplicability.K2_VISIBILITY_ERROR
+            symbolApplicability = minOf(applicability, symbolApplicability)
+            if (!fromCodeFragment) {
+                diagnostic = ConeVisibilityError(symbol)
+            }
         }
 
         if (resolveDeprecations) {

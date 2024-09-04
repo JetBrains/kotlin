@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
@@ -48,7 +48,9 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             )
         ) {
             if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
-                reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source), context)
+                if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
+                    reporter.report(symbol.toInvisibleReferenceDiagnostic(expression.source), context)
+                }
             }
 
             return
@@ -60,7 +62,9 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             val invisibleCompanion = expression.symbol?.fullyExpandedClass(context.session)?.toInvisibleCompanion(context)
             if (invisibleCompanion != null) {
                 if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
-                    reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source), context)
+                    if (context.containingFile?.declarations?.singleOrNull() !is FirCodeFragment) {
+                        reporter.report(invisibleCompanion.toInvisibleReferenceDiagnostic(expression.source), context)
+                    }
                 }
 
                 return
