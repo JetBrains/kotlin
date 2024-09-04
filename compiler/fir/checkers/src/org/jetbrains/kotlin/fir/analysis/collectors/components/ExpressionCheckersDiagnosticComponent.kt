@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
 @OptIn(CheckersComponentInternal::class)
 class ExpressionCheckersDiagnosticComponent(
@@ -267,7 +269,14 @@ class ExpressionCheckersDiagnosticComponent(
         context: CheckerContext
     ) {
         for (checker in this) {
-            checker.check(expression, context, reporter)
+            try {
+                checker.check(expression, context, reporter)
+            } catch (e: Exception) {
+                rethrowExceptionWithDetails("Exception in expression checker", e) {
+                    withFirEntry("expression", expression)
+                    context.containingFilePath?.let { withEntry("file", it) }
+                }
+            }
         }
     }
 }

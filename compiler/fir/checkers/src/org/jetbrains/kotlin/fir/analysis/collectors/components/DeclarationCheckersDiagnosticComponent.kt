@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
 @OptIn(CheckersComponentInternal::class)
 class DeclarationCheckersDiagnosticComponent(
@@ -130,7 +132,14 @@ class DeclarationCheckersDiagnosticComponent(
         context: CheckerContext
     ) {
         for (checker in this) {
-            checker.check(declaration, context, reporter)
+            try {
+                checker.check(declaration, context, reporter)
+            } catch (e: Exception) {
+                rethrowExceptionWithDetails("Exception in declaration checker", e) {
+                    withFirEntry("declaration", declaration)
+                    context.containingFilePath?.let { withEntry("file", it) }
+                }
+            }
         }
     }
 }
