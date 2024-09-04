@@ -40,7 +40,6 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
         val dependencyArtifacts = getArtifacts(component)
             .map { it.file }
             .filterNotCinteropKlibs()
-            .filterKlibsPassedToSwiftExport()
 
         check(dependencyArtifacts.isNotEmpty() && dependencyArtifacts.size == 1) {
             "Component $component ${
@@ -59,11 +58,8 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
     }.toList()
 }
 
-private val File.isCinteropKlib get() = extension == "klib" && nameWithoutExtension.contains("cinterop-interop")
-private val File.canKlibBePassedToSwiftExport get() = extension == "klib" || isDirectory
-
+private val File.isCinteropKlib get() = name.contains("cinterop-interop")
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
-private fun Collection<File>.filterKlibsPassedToSwiftExport(): List<File> = filter(File::canKlibBePassedToSwiftExport)
 
 private fun findAndCreateSwiftExportedModule(
     exportedModules: Set<SwiftExportedModuleVersionMetadata>,

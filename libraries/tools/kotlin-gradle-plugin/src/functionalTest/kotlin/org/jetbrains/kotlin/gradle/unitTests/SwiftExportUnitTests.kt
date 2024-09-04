@@ -260,7 +260,7 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.get()
 
         val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
-            add(SwiftExportModuleForAssertion("Subproject", "subproject.klib"))
+            add(SwiftExportModuleForAssertion("Subproject", "subproject"))
             add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib"))
         }
 
