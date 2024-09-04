@@ -127,7 +127,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
         }
     }
 
-fun IrInlinedFunctionBlock.getDefaultAdditionalStatementsFromInlinedBlock(): List<IrVariable> {
+fun IrInlinedFunctionBlock.getTmpVariablesForArguments(): List<IrVariable> {
     return this.statements.filterIsInstance<IrVariable>().filter { it.isTmpForInline }
 }
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getTmpVariablesForArguments
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
@@ -39,7 +39,7 @@ class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext
             }
 
             // we don't need to transform body of original function, just arguments that were extracted as variables
-            inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { it.transformChildrenVoid() }
+            inlinedBlock.getTmpVariablesForArguments().forEach { it.transformChildrenVoid() }
 
             expression.statements.addAll(0, newStatements)
             return expression

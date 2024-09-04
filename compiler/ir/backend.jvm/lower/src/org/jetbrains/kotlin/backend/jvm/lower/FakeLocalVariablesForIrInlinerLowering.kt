@@ -103,7 +103,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
             val tmpVar = scope.createTmpVariable(
                 irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
             )
-            val position = this@addFakeLocalVariable.getDefaultAdditionalStatementsFromInlinedBlock().size
+            val position = this@addFakeLocalVariable.getTmpVariablesForArguments().size
             this@addFakeLocalVariable.statements.add(position, tmpVar)
         }
     }
@@ -176,7 +176,7 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         super.visitInlinedFunctionBlock(inlinedBlock)
-        inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach {
+        inlinedBlock.getTmpVariablesForArguments().forEach {
             it.processFunctionParameter(inlinedBlock)
         }
     }
