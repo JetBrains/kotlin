@@ -239,7 +239,10 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun ConeKotlinType.acceptsNullValues(): Boolean {
+        // For Captured(in Type) it only accepts nulls if `Type` does
         if (this is ConeCapturedType && this.constructor.projection.kind == ProjectionKind.IN) {
+            // But `Captured(in Type)?` does accepts nulls independently of `Type`
+            if (isMarkedNullable) return true
             return constructor.projection.type!!.canBeNull(session)
         }
         return canBeNull(session) || hasEnhancedNullability

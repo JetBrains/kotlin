@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: JVM_IR
 
 // FILE: MyConsumer.java
 public interface MyConsumer<T> extends java.util.function.Consumer<T> {
