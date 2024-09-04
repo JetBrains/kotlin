@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.TypeVariance
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -475,35 +475,39 @@ internal class AdapterGenerator(
             )
         }
 
-    private fun ConeRigidType.removeExternalProjections(): ConeRigidType? =
+    private fun ConeRigidType.removeExternalProjections(): ConeRigidType? {
+        if (this@removeExternalProjections !is ConeClassLikeType) return this
+
         with(session.typeContext) {
-            val typeConstructor = typeConstructor()
-            val parameters = typeConstructor.getParameters()
+            val arguments = typeArguments.ifEmpty { return this@removeExternalProjections }
+            val parameters = lookupTag.getParameters()
             val parameterSet = parameters.toSet()
 
             @Suppress("UNCHECKED_CAST")
-            val newArguments = getArguments().mapIndexed { i, argument ->
+            val newArguments = Array(arguments.size) { i ->
+                val argument = arguments[i]
                 val parameter = parameters.getOrNull(i) ?: return null
 
                 when {
-                    !argument.isStarProjection() && argument.getVariance() == TypeVariance.IN -> {
+                    argument.kind == ProjectionKind.IN -> {
                         // Just erasing `in` from the type projection would lead to an incorrect type for the SAM adapter,
                         // and error at runtime on JVM if invokedynamic + LambdaMetafactory is used, see KT-51868.
                         // So we do it "carefully". If we have a class `A<T>` and a method that takes e.g. `A<in String>`, we check
                         // if `T` has a non-trivial upper bound. If it has one, we don't attempt to perform a SAM conversion at all.
                         // Otherwise we erase the type to `Any?`, so `A<in String>` becomes `A<Any?>`, which is the computed SAM type.
-                        val upperBound = parameter.getUpperBounds().singleOrNull()?.upperBoundIfFlexible() ?: return null
-                        if (!upperBound.isNullableAny()) return null
+                        val upperBound = parameter.getUpperBounds().singleOrNull()?.upperBoundIfFlexible() as ConeKotlinType? ?: return null
+                        if (!upperBound.isNullableAny) return null
 
                         upperBound
                     }
-                    !argument.isStarProjection() -> argument.getType()
+                    argument is ConeKotlinTypeProjection -> argument.type
                     else -> parameter.typeParameterSymbol.starProjectionTypeRepresentation(parameterSet)
                 }
-            } as List<ConeTypeProjection>
+            }
 
-            withArguments(newArguments.toTypedArray())
+            return withArguments(newArguments)
         }
+    }
 
     // See the definition from K1 at org.jetbrains.kotlin.types.StarProjectionImpl.get_type
     // In K1, it's used more frequently because of not-nullable TypeProjection::getType, but in K2 we almost got rid of it
