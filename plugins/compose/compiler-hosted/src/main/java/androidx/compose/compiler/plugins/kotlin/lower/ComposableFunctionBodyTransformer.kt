@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -694,6 +695,11 @@ class ComposableFunctionBodyTransformer(
         // ComposableDefaultParamLowering. The restartable group is moved to the wrapper, while
         // the function itself is no longer restartable.
         if (isVirtualFunctionWithDefaultParam()) {
+            return false
+        }
+
+        // Virtual functions cannot be restartable since restart logic makes a virtual call (todo: b/329477544)
+        if (modality == Modality.OPEN || overriddenSymbols.isNotEmpty()) {
             return false
         }
 
