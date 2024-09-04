@@ -12,7 +12,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object ThrowKotlinNothingValueException : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction =

@@ -42,7 +42,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         return super.visitConstructorCall(expression)
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid()
         val function = expression.symbol
 
@@ -71,7 +71,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
                 is IrExpression -> +element.transform(this@VarargLowering, null)
                 is IrSpreadElement -> {
                     val spread = element.expression
-                    if (spread is IrFunctionAccessExpression && spread.symbol.owner.isArrayOf()) {
+                    if (spread is IrFunctionAccessExpression<*> && spread.symbol.owner.isArrayOf()) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.getValueArgument(0) ?: continue@loop
                         if (argument is IrVararg) {

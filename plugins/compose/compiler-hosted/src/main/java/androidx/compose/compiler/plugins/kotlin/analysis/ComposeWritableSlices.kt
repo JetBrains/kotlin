@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 object ComposeWritableSlices {
-    val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression, Boolean> =
+    val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression<*>, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_STATIC_FUNCTION_EXPRESSION: WritableSlice<IrExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)

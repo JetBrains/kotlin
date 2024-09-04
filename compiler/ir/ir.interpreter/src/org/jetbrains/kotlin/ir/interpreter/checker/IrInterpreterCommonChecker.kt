@@ -38,7 +38,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return statements.all { it.accept(this, data) }
     }
 
-    private fun visitConstructor(expression: IrFunctionAccessExpression, data: IrInterpreterCheckerData): Boolean {
+    private fun visitConstructor(expression: IrFunctionAccessExpression<*>, data: IrInterpreterCheckerData): Boolean {
         val constructor = expression.symbol.owner
 
         if (!data.mode.canEvaluateFunction(constructor)) return false
@@ -77,7 +77,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return declaration.initializer?.accept(this, data) ?: true
     }
 
-    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: IrInterpreterCheckerData): Boolean {
+    private fun visitValueArguments(expression: IrFunctionAccessExpression<*>, data: IrInterpreterCheckerData): Boolean {
         return (0 until expression.valueArgumentsCount)
             .map { expression.getValueArgument(it) }
             .none { it?.accept(this, data) == false }

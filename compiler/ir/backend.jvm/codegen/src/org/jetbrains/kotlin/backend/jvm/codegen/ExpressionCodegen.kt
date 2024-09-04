@@ -665,7 +665,7 @@ class ExpressionCodegen(
         }
     }
 
-    private fun IrFunctionAccessExpression.getSuspensionPointKind(): SuspensionPointKind =
+    private fun IrFunctionAccessExpression<*>.getSuspensionPointKind(): SuspensionPointKind =
         when {
             !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() ->
                 SuspensionPointKind.NEVER
@@ -730,7 +730,7 @@ class ExpressionCodegen(
         return MaterialValue(this, owner, expression.type)
     }
 
-    private fun generateConstructorArguments(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, data: BlockInfo) {
+    private fun generateConstructorArguments(expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, data: BlockInfo) {
         expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
             val arg = expression.getValueArgument(i)
                 ?: error("Null argument in ExpressionCodegen for parameter ${irParameter.render()}")
@@ -1547,7 +1547,7 @@ class ExpressionCodegen(
     }
 
     private fun getOrCreateCallGenerator(
-        element: IrFunctionAccessExpression,
+        element: IrFunctionAccessExpression<*>,
         data: BlockInfo,
         signature: JvmMethodSignature
     ): IrCallGenerator {

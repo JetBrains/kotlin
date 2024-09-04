@@ -38,7 +38,7 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
         }
     }
 
-    private fun IrFunctionAccessExpression.extractThrowableArguments(): ThrowableArguments =
+    private fun IrFunctionAccessExpression<*>.extractThrowableArguments(): ThrowableArguments =
         when (valueArgumentsCount) {
             0 -> ThrowableArguments(undefinedValue(), undefinedValue())
             2 -> ThrowableArguments(

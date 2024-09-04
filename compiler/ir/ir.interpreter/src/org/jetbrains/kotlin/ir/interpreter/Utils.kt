@@ -47,7 +47,7 @@ internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.e
 
 internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
 
-internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
+internal fun IrFunctionAccessExpression<*>.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
 internal fun IrConst.toPrimitive(): Primitive = when {
     type.isByte() -> Primitive((value as Number).toByte(), type)
@@ -122,7 +122,7 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
     }
 }
 
-fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
+fun IrFunctionAccessExpression<*>.getVarargType(index: Int): IrType? {
     val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
     varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
     val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
@@ -231,7 +231,7 @@ internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
     return property.getter!!.getLastOverridden().property!!
 }
 
-internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
+internal fun IrFunctionAccessExpression<*>.getFunctionThatContainsDefaults(): IrFunction {
     val irFunction = this.symbol.owner
     fun IrValueParameter.lookup(): IrFunction? {
         return defaultValue?.let { this.parent as IrFunction }
@@ -290,7 +290,7 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
     }
 }
 
-internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFunctionAccessExpression): Map<IrTypeParameterSymbol, KTypeState> {
+internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFunctionAccessExpression<*>): Map<IrTypeParameterSymbol, KTypeState> {
     return expression.symbol.owner.typeParameters.filter { it.isReified }.map { it.symbol }.keysToMap {
         val reifiedType = expression.getTypeArgument(it.owner.index)!!.getTypeIfReified(callStack)
         KTypeState(reifiedType, this.kTypeClass.owner)

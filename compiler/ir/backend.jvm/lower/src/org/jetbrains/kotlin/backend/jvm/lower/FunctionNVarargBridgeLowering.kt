@@ -44,7 +44,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     // Change calls to big arity invoke functions to vararg calls.
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         if (expression.valueArgumentsCount < BuiltInFunctionArity.BIG_ARITY ||
             !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
                     expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||

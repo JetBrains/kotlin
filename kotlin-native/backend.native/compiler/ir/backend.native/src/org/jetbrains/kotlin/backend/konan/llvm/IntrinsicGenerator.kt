@@ -128,7 +128,7 @@ internal interface IntrinsicGeneratorEnvironment {
 
     fun calculateLifetime(element: IrElement): Lifetime
 
-    fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef>
+    fun evaluateExplicitArgs(expression: IrFunctionAccessExpression<*>): List<LLVMValueRef>
 
     fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef
 
@@ -137,13 +137,13 @@ internal interface IntrinsicGeneratorEnvironment {
     fun getStaticFieldPointer(field: IrField): LLVMValueRef
 }
 
-internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
+internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression<*>): IntrinsicType? =
         tryGetIntrinsicType(callSite.symbol.owner)
 
 internal fun tryGetIntrinsicType(function: IrFunction): IntrinsicType? =
         if (function.isTypedIntrinsic) getIntrinsicType(function) else null
 
-private fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(callSite.symbol.owner)
+private fun getIntrinsicType(callSite: IrFunctionAccessExpression<*>) = getIntrinsicType(callSite.symbol.owner)
 
 private fun getIntrinsicType(function: IrFunction): IntrinsicType {
     val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
@@ -179,7 +179,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
      * processes it. Otherwise, it returns null.
      */
     @Suppress("UNUSED_PARAMETER")
-    fun tryEvaluateSpecialCall(callSite: IrFunctionAccessExpression, resultSlot: LLVMValueRef?): LLVMValueRef? {
+    fun tryEvaluateSpecialCall(callSite: IrFunctionAccessExpression<*>, resultSlot: LLVMValueRef?): LLVMValueRef? {
         val function = callSite.symbol.owner
         if (!function.isTypedIntrinsic) {
             return null

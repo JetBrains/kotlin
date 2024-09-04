@@ -766,7 +766,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 )
 
             when (this) {
-                is IrFunctionAccessExpression -> {
+                is IrFunctionAccessExpression<*> -> {
                     if (function.isExternal) {
                         // External functions may have the default arguments declared in native implementations,
                         // which are not available from Kotlin.
@@ -1043,7 +1043,7 @@ internal class PartiallyLinkedIrTreePatcher(
         ) { super.visitBlockBody(body) }
 
         // Allows visiting any type of call: IrCall, IrConstructorCall, IrEnumConstructorCall, IrDelegatingConstructorCall.
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) = withContext(
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) = withContext(
             { oldContext ->
                 val functionSymbol = expression.symbol
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext

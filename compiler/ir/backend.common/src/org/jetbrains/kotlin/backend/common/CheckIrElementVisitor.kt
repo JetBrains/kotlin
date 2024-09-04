@@ -291,7 +291,7 @@ internal class CheckIrElementVisitor(
         }
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) {
         super.visitFunctionAccess(expression)
 
         expression.symbol.ensureBound(expression)

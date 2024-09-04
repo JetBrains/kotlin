@@ -69,7 +69,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
             val transformer = this
 
-            private fun replaceEmptyParameterWithEmptyArray(expression: IrFunctionAccessExpression) {
+            private fun replaceEmptyParameterWithEmptyArray(expression: IrFunctionAccessExpression<*>) {
                 val callee = expression.symbol.owner
                 log { "call of: ${callee.fqNameForIrSerialization}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
@@ -93,7 +93,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 expression.transformChildrenVoid(this)
             }
 
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
                 replaceEmptyParameterWithEmptyArray(expression)
                 return expression
             }

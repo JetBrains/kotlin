@@ -13,7 +13,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object RangeUntil : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen
+        expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, classCodegen: ClassCodegen
     ): IntrinsicFunction {
         return object : IntrinsicFunction(expression, signature, classCodegen, expression.argTypes(classCodegen)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {

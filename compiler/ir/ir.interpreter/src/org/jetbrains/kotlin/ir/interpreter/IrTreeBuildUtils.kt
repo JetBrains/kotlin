@@ -115,7 +115,7 @@ internal fun List<IrStatement>.wrapWithBlockBody(): IrBlockBody {
     return IrFactoryImpl.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
 }
 
-internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean = true): IrFunctionAccessExpression {
+internal fun IrFunctionAccessExpression<*>.shallowCopy(copyTypeArguments: Boolean = true): IrFunctionAccessExpression<*> {
     return when (this) {
         is IrCall -> symbol.owner.createCall()
         is IrConstructorCall -> symbol.owner.createConstructorCall()
@@ -129,7 +129,7 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
     }
 }
 
-internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
+internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression<*>, into: IrFunctionAccessExpression<*>) {
     into.dispatchReceiver = from.dispatchReceiver
     into.extensionReceiver = from.extensionReceiver
     (0 until from.valueArgumentsCount)

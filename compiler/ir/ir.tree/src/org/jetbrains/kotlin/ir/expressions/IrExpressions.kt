@@ -35,7 +35,7 @@ var IrDynamicOperatorExpression.right: IrExpression
             arguments[0] = value
     }
 
-fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
+fun IrFunctionAccessExpression<*>.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
 
 fun IrVararg.putElement(i: Int, element: IrVarargElement) {

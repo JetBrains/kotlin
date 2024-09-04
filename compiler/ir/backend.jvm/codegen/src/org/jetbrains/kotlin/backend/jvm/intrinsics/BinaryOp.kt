@@ -32,7 +32,7 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         opcode == ISHL || opcode == ISHR || opcode == IUSHR
 
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction {

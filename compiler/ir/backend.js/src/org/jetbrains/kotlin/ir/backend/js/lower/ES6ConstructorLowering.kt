@@ -43,13 +43,13 @@ val IrDeclaration.isEs6ConstructorReplacement: Boolean
 val IrDeclaration.isEs6PrimaryConstructorReplacement: Boolean
     get() = origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT
 
-val IrFunctionAccessExpression.isSyntheticDelegatingReplacement: Boolean
+val IrFunctionAccessExpression<*>.isSyntheticDelegatingReplacement: Boolean
     get() = origin == ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT
 
 val IrDeclaration.isInitFunction: Boolean
     get() = origin == ES6_INIT_FUNCTION
 
-val IrFunctionAccessExpression.isInitCall: Boolean
+val IrFunctionAccessExpression<*>.isInitCall: Boolean
     get() = origin == ES6_INIT_CALL
 
 val IrDeclaration.isSyntheticConstructorForExport: Boolean

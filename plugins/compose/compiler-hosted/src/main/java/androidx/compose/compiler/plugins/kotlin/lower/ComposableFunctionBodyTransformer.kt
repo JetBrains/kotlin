@@ -191,7 +191,7 @@ interface IrChangedBitMaskValue {
         exactName: Boolean = false
     ): IrChangedBitMaskVariable
     fun putAsValueArgumentInWithLowBit(
-        fn: IrFunctionAccessExpression,
+        fn: IrFunctionAccessExpression<*>,
         startIndex: Int,
         lowBit: Boolean
     )
@@ -202,7 +202,7 @@ interface IrChangedBitMaskValue {
 interface IrDefaultBitMaskValue {
     fun irIsolateBitAtIndex(index: Int): IrExpression
     fun irHasAnyProvidedAndUnstable(unstable: BooleanArray): IrExpression
-    fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int)
+    fun putAsValueArgumentIn(fn: IrFunctionAccessExpression<*>, startIndex: Int)
 }
 
 @JvmDefaultWithCompatibility
@@ -4434,7 +4434,7 @@ class ComposableFunctionBodyTransformer(
                 expressions.reduce { lhs, rhs -> irOrOr(lhs, rhs) }
         }
 
-        override fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int) {
+        override fun putAsValueArgumentIn(fn: IrFunctionAccessExpression<*>, startIndex: Int) {
             params.fastForEachIndexed { i, param ->
                 fn.putValueArgument(
                     startIndex + i,
@@ -4607,7 +4607,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         override fun putAsValueArgumentInWithLowBit(
-            fn: IrFunctionAccessExpression,
+            fn: IrFunctionAccessExpression<*>,
             startIndex: Int,
             lowBit: Boolean
         ) {

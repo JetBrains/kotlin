@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object GetJavaObjectType : IntrinsicMethod() {
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         when (val receiver = expression.extensionReceiver) {
             is IrClassReference -> {
                 val symbol = receiver.symbol

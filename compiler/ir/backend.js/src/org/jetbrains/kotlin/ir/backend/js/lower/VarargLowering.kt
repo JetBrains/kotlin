@@ -144,7 +144,7 @@ private class VarargTransformer(
         } else segment
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid()
 
         if (expression.symbol.owner.isExternal) {

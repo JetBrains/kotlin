@@ -50,14 +50,14 @@ abstract class AbstractValueUsageTransformer(
     protected open fun IrExpression.useAsArgument(parameter: IrValueParameter): IrExpression =
         this.useAsValue(parameter)
 
-    protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
+    protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression<*>): IrExpression =
         this.useAsArgument(expression.symbol.owner.dispatchReceiverParameter!!)
 
-    protected open fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression =
+    protected open fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression<*>): IrExpression =
         this.useAsArgument(expression.symbol.owner.extensionReceiverParameter!!)
 
     protected open fun IrExpression.useAsValueArgument(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         parameter: IrValueParameter
     ): IrExpression =
         this.useAsArgument(parameter)
@@ -92,7 +92,7 @@ abstract class AbstractValueUsageTransformer(
   //      TODO()
   //  }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid(this)
 
         with(expression) {

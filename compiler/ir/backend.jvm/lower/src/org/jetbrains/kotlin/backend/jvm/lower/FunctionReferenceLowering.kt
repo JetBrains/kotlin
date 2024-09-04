@@ -237,7 +237,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         val temporaryVals = ArrayList<IrVariable>()
 
-        val targetCall: IrFunctionAccessExpression =
+        val targetCall: IrFunctionAccessExpression<*> =
             when (targetFun) {
                 is IrSimpleFunction ->
                     IrCallImpl.fromSymbolOwner(startOffset, endOffset, targetFun.symbol)
@@ -470,7 +470,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             functionSuperClass.owner.getSingleAbstractMethod()
                 ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
 
-        private val adapteeCall: IrFunctionAccessExpression? =
+        private val adapteeCall: IrFunctionAccessExpression<*>? =
             if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
                 // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
                 // applied to a call. That call's target is the original function which we need to get owner/name/signature.
@@ -484,7 +484,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     is IrReturn -> statement.value
                     else -> statement
                 }
-                if (call !is IrFunctionAccessExpression) {
+                if (call !is IrFunctionAccessExpression<*>) {
                     throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}")
                 }
                 call
@@ -664,7 +664,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
         private fun JvmIrBuilder.generateConstructorCallArguments(
-            call: IrFunctionAccessExpression,
+            call: IrFunctionAccessExpression<*>,
             generateBoundReceiver: IrBuilder.() -> IrExpression,
         ) {
             if (isFunInterfaceConstructorReference) {
@@ -814,7 +814,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         private fun inlineAdapterCallIfPossible(
-            expression: IrFunctionAccessExpression,
+            expression: IrFunctionAccessExpression<*>,
             invokeMethod: IrSimpleFunction,
         ): IrExpression {
             val irCall = expression as? IrCall

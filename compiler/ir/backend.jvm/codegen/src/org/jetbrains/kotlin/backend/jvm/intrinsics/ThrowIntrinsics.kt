@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 class ThrowException(private val exceptionClass: Type) : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         with(codegen) {
             mv.anew(exceptionClass)
             mv.dup()

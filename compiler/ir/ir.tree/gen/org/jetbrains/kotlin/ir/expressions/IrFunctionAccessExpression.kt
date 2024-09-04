@@ -14,5 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression]
  */
 sealed class IrFunctionAccessExpression<S : IrFunctionSymbol> : IrMemberAccessExpression<S>() {
+    abstract override var symbol: S
+
     abstract var contextReceiversCount: Int
 }

@@ -328,7 +328,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     atomicArrayField.isStatic,
                     atomicArrayField.annotations,
                     arraySize,
-                    (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver,
+                    (atomicFactoryCall as IrFunctionAccessExpression<*>).dispatchReceiver,
                     parentContainer
                 ).also {
                     val initExpr = it.initializer?.expression
@@ -344,7 +344,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     atomicArrayField.isStatic,
                     atomicArrayField.annotations,
                     arraySize,
-                    (initializer as IrFunctionAccessExpression).dispatchReceiver,
+                    (initializer as IrFunctionAccessExpression<*>).dispatchReceiver,
                     parentContainer
                 )
             }
@@ -1051,7 +1051,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
 
     // AtomicIntArray(size = 10) -> 10
     protected fun IrExpression.getArraySizeArgument(): IrExpression {
-        require(this is IrFunctionAccessExpression) {
+        require(this is IrFunctionAccessExpression<*>) {
             "Expected atomic array factory invocation, but found: ${this.render()}."
         }
         return getValueArgument(0)?.deepCopyWithSymbols()

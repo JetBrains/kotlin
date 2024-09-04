@@ -265,7 +265,7 @@ fun IrBuilderWithScope.irCall(
         constructorTypeArgumentsCount = callee.owner.typeParameters.size
     )
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctionAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctionAccessExpression<*> =
     when (callee) {
         is IrConstructorSymbol -> irCall(callee, type)
         is IrSimpleFunctionSymbol -> irCall(callee, type)
@@ -277,10 +277,10 @@ fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol): IrCall =
 fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol): IrConstructorCall =
     irCall(callee, callee.owner.returnType)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpression<*> =
     irCall(callee, callee.owner.returnType)
 
-fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
+fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression<*> =
     irCall(callee.symbol)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin? = null, superQualifierSymbol: IrClassSymbol? = null): IrCall =

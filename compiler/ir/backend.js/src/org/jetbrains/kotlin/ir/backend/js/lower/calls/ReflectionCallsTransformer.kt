@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.name.Name
 
 
 class ReflectionCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
-    private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
+    private val nameToTransformer: Map<Name, (IrFunctionAccessExpression<*>) -> IrExpression>
 
-    private fun buildDynamicCall(name: String, call: IrFunctionAccessExpression): IrExpression {
+    private fun buildDynamicCall(name: String, call: IrFunctionAccessExpression<*>): IrExpression {
         val reference = IrDynamicMemberExpressionImpl(call.startOffset, call.endOffset, context.dynamicType, name, call.dispatchReceiver!!)
 
         return IrDynamicOperatorExpressionImpl(call.startOffset, call.endOffset, call.type, IrDynamicOperator.INVOKE).apply {
@@ -66,7 +66,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         nameToTransformer[symbol.owner.name]?.let {
             return it(call)

@@ -31,6 +31,6 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
         context.irBuiltIns.linkageErrorSymbol to context.intrinsics.linkageErrorSymbol
     )
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) =
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean) =
         helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
 }

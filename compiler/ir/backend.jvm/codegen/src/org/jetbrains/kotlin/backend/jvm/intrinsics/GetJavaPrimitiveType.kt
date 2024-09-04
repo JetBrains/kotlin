@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object GetJavaPrimitiveType : IntrinsicMethod() {
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val receiver = expression.extensionReceiver ?: return null
 
         val argumentType =

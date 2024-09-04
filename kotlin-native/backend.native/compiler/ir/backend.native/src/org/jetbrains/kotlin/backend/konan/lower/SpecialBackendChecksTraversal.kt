@@ -686,7 +686,7 @@ private fun BackendChecker.checkCanHandleArgumentForVarargParameter(argument: Ir
 
 private fun BackendChecker.checkCanGenerateObjCCall(
         method: IrSimpleFunction,
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         arguments: List<IrExpression?>
 ) {
     checkCanAddArguments(arguments, method, isObjCMethod = true)
@@ -762,7 +762,7 @@ private fun BackendChecker.checkCanMapCalleeFunctionParameter(
 
 private sealed class TypeLocation(val element: IrElement) {
     class FunctionArgument(val argument: IrExpression) : TypeLocation(argument)
-    class FunctionCallResult(val call: IrFunctionAccessExpression) : TypeLocation(call)
+    class FunctionCallResult(val call: IrFunctionAccessExpression<*>) : TypeLocation(call)
 
     class FunctionPointerParameter(val index: Int, element: IrElement) : TypeLocation(element)
     class FunctionPointerReturnValue(element: IrElement) : TypeLocation(element)

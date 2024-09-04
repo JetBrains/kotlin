@@ -269,11 +269,11 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         declarationStack.pop()
     }
 
-    protected open fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
+    protected open fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression<*>): Boolean {
         return (0 until functionAccess.valueArgumentsCount).count { functionAccess.getValueArgument(it) != null } != functionAccess.symbol.owner.valueParameters.size
     }
 
-    private fun <T : IrFunctionAccessExpression> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): IrExpression {
+    private fun <T : IrFunctionAccessExpression<*>> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): IrExpression {
         if (!shouldReplaceWithSyntheticFunction(expression))
             return expression
 
@@ -373,7 +373,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         }
     }
 
-    private fun createStubFunction(expression: IrFunctionAccessExpression): IrFunctionSymbol? {
+    private fun createStubFunction(expression: IrFunctionAccessExpression<*>): IrFunctionSymbol? {
         val declaration = expression.symbol.owner
 
         // We *have* to find the actual function here since on the JVM, a default stub for a function implemented
@@ -396,7 +396,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         return stubFunction.symbol
     }
 
-    protected open fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
+    protected open fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression<*>, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner

@@ -56,7 +56,7 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
 
 
     override fun IrBlockBuilder.argumentsForCall(
-        expression: IrFunctionAccessExpression, stubFunction: IrFunction
+        expression: IrFunctionAccessExpression<*>, stubFunction: IrFunction
     ): Map<IrValueParameter, IrExpression?> {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset

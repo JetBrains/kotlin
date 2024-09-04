@@ -518,7 +518,7 @@ class IrSourcePrinterVisitor(
         }
     }
 
-    private fun IrFunctionAccessExpression.printArgumentList(
+    private fun IrFunctionAccessExpression<*>.printArgumentList(
         forceParameterNames: Boolean = false,
         forceSingleLine: Boolean = false
     ) {
@@ -836,7 +836,7 @@ class IrSourcePrinterVisitor(
     // Map local return targets to the corresponding function call.
     // This is used to print qualified returns.
     private val returnTargetToCall =
-        mutableMapOf<IrReturnTargetSymbol, IrFunctionAccessExpression>()
+        mutableMapOf<IrReturnTargetSymbol, IrFunctionAccessExpression<*>>()
 
     private val IrFunction.isLambda: Boolean
         get() = name.asString() == SpecialNames.ANONYMOUS_STRING ||
@@ -1273,7 +1273,7 @@ class IrSourcePrinterVisitor(
         print("::class")
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) {
         super.visitFunctionAccess(expression)
     }
 

@@ -157,7 +157,7 @@ class IrInlineCodegen(
     override fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         isInsideIfCondition: Boolean,
     ) {
         performInline(isInsideIfCondition, function.isInlineOnly())

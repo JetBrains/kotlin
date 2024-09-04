@@ -69,7 +69,7 @@ fun IrMemberAccessExpression<*>.getArguments(): List<Pair<ParameterDescriptor, I
  */
 @ObsoleteDescriptorBasedAPI
 @Suppress("unused") // Used in kotlin-native
-fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
+fun IrFunctionAccessExpression<*>.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
     val res = mutableListOf<Pair<IrValueParameterSymbol, IrExpression>>()
     val irFunction = symbol.owner
 
@@ -97,7 +97,7 @@ fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParam
  */
 fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParameter, IrExpression?>> {
     val irFunction = when (this) {
-        is IrFunctionAccessExpression -> this.symbol.owner
+        is IrFunctionAccessExpression<*> -> this.symbol.owner
         is IrFunctionReference -> this.symbol.owner
         is IrPropertyReference -> {
             assert(this.field == null) { "Field should be null to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}" }
@@ -197,7 +197,7 @@ fun IrExpression.implicitCastIfNeededTo(type: IrType) =
     else
         IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
 
-fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
+fun IrFunctionAccessExpression<*>.usesDefaultArguments(): Boolean =
     symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null && (!it.isVararg || it.defaultValue != null) }
 
 fun IrValueParameter.createStubDefaultValue(): IrExpressionBody =
@@ -505,7 +505,7 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
  * [argumentsAsDispatchers]: optionally convert static call to call with dispatch receiver
  */
 fun irConstructorCall(
-    call: IrFunctionAccessExpression,
+    call: IrFunctionAccessExpression<IrFunctionSymbol>,
     newSymbol: IrConstructorSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsDispatchers: Boolean = false
@@ -530,7 +530,7 @@ fun irConstructorCall(
     }
 
 fun irCall(
-    call: IrFunctionAccessExpression,
+    call: IrFunctionAccessExpression<IrFunctionSymbol>,
     newFunction: IrSimpleFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
@@ -547,7 +547,7 @@ fun irCall(
     )
 
 fun irCall(
-    call: IrFunctionAccessExpression,
+    call: IrFunctionAccessExpression<IrFunctionSymbol>,
     newSymbol: IrSimpleFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
@@ -692,7 +692,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
 val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
 
-val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
+val IrFunctionAccessExpression<*>.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
 
 val IrDeclaration.isFileClass: Boolean
@@ -1084,7 +1084,7 @@ fun IrFunction.copyValueParametersToStatic(
     }
 }
 
-fun IrFunctionAccessExpression.passTypeArgumentsFrom(irFunction: IrTypeParametersContainer, offset: Int = 0) {
+fun IrFunctionAccessExpression<*>.passTypeArgumentsFrom(irFunction: IrTypeParametersContainer, offset: Int = 0) {
     irFunction.typeParameters.forEachIndexed { i, param ->
         putTypeArgument(i + offset, param.defaultType)
     }
@@ -1626,7 +1626,7 @@ fun IrModuleFragment.addFile(file: IrFile) {
     file.module = this
 }
 
-fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
+fun IrFunctionAccessExpression<*>.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
             symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
 }

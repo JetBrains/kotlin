@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
  */
 
 object HandleResultOfReflectiveAccess : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val typeMapper = codegen.typeMapper
         val mv = codegen.mv
         val type = expression.getTypeArgument(0)!!

@@ -83,7 +83,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 }
             }
 
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) {
                 expression.acceptChildrenVoid(this)
                 val function = expression.symbol.owner
                 if (function.isInlineFunctionCall(context)) {

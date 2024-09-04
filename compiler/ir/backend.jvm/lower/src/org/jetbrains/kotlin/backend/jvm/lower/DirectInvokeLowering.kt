@@ -108,9 +108,9 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                 }
         }
 
-    private fun IrFunctionAccessExpression.copyReceiverAndValueArgumentsForDirectInvoke(
+    private fun IrFunctionAccessExpression<*>.copyReceiverAndValueArgumentsForDirectInvoke(
         irFunRef: IrFunctionReference,
-        irInvokeCall: IrFunctionAccessExpression
+        irInvokeCall: IrFunctionAccessExpression<*>
     ) {
         val irFun = irFunRef.symbol.owner
         var invokeArgIndex = 0

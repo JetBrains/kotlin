@@ -30,7 +30,7 @@ object IrIllegalArgumentException : IntrinsicMethod() {
     val exceptionTypeDescriptor = Type.getType(IllegalArgumentException::class.java)!!
 
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction {
@@ -49,7 +49,7 @@ object IrIllegalArgumentException : IntrinsicMethod() {
                 v: InstructionAdapter,
                 codegen: ExpressionCodegen,
                 data: BlockInfo,
-                expression: IrFunctionAccessExpression
+                expression: IrFunctionAccessExpression<*>
             ): StackValue {
                 with(codegen) { expression.markLineNumber(startOffset = true) }
                 v.anew(exceptionTypeDescriptor)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Type
 
 object GetClassByDescriptor : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val type = Type.getType(expression.getStringConstArgument(0))
         require(type.sort != Type.VOID) { "Unexpected VOID type descriptor" }
         if (AsmUtil.isPrimitive(type)) {

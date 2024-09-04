@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Type
 
 object JvmInvokeDynamic : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         fun fail(message: String): Nothing =
             throw AssertionError("$message; expression:\n${expression.dump()}")
 

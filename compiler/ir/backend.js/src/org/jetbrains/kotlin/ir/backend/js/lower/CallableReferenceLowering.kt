@@ -306,7 +306,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
             return countImpl(parent)
         }
 
-        private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
+        private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression<*> {
             val callee = function
             val irCall = reference.run {
                 when (callee) {

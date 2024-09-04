@@ -111,7 +111,7 @@ internal class KFunctionProxy(
             is IrReturn -> statement.value
             else -> statement
         }
-        return (call as? IrFunctionAccessExpression)?.symbol
+        return (call as? IrFunctionAccessExpression<*>)?.symbol
     }
 
     private fun IrFunction.equalsByAdapteeCall(other: IrFunction): Boolean {
@@ -132,7 +132,7 @@ internal class KFunctionProxy(
             else -> Pair(statement, otherStatement)
         }
 
-        if (thisArg !is IrFunctionAccessExpression || otherArg !is IrFunctionAccessExpression) return false
+        if (thisArg !is IrFunctionAccessExpression<*> || otherArg !is IrFunctionAccessExpression<*>) return false
         if (thisArg.symbol != otherArg.symbol) return false
 
         return true

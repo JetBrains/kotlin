@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object ArrayIterator : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen,
     ): IntrinsicFunction {

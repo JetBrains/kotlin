@@ -168,7 +168,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
             }
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: TransformerData?): IrElement {
             if (data == null || !expression.symbol.owner.isRequiredToGenerateAccessor())
                 return super.visitFunctionAccess(expression, data)
 

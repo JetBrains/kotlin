@@ -20,7 +20,7 @@ interface IrInlineCallGenerator : IrCallGenerator {
     override fun genCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         isInsideIfCondition: Boolean,
     ) {
         val element = IrInlineFunctionSource(expression)
@@ -42,7 +42,7 @@ interface IrInlineCallGenerator : IrCallGenerator {
     fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         isInsideIfCondition: Boolean,
     )
 

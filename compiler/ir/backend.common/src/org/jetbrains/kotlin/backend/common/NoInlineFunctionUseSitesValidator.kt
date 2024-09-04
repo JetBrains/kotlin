@@ -26,7 +26,7 @@ internal class NoInlineFunctionUseSitesValidator(
         parentChain.pop()
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) {
         super.visitFunctionAccess(expression)
         checkFunctionUseSite(expression)
     }
@@ -36,7 +36,7 @@ internal class NoInlineFunctionUseSitesValidator(
         checkFunctionUseSite(expression)
     }
 
-    private fun checkFunctionUseSite(expression: IrMemberAccessExpression<IrFunctionSymbol>) {
+    private fun checkFunctionUseSite(expression: IrFunctionAccessExpression<IrFunctionSymbol>) {
         val function = expression.symbol.owner
         if (!function.isInline || inlineFunctionUseSiteChecker.isPermitted(expression)) return
         reportError(function, expression)

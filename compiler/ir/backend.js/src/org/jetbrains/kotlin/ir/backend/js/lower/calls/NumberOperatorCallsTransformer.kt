@@ -82,7 +82,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val function = call.symbol.owner
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
@@ -93,7 +93,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return call
     }
 
-    private fun transformRangeTo(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformRangeTo(call: IrFunctionAccessExpression<*>): IrExpression {
         if (call.valueArgumentsCount != 1) return call
         return with(call.symbol.owner.valueParameters[0].type) {
             when {
@@ -106,7 +106,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    private fun transformRangeUntil(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformRangeUntil(call: IrFunctionAccessExpression<*>): IrExpression {
         if (call.valueArgumentsCount != 1) return call
         with(call.symbol.owner) {
             val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type]
@@ -120,7 +120,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    private fun transformHashCode(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformHashCode(call: IrFunctionAccessExpression<*>): IrExpression {
         return with(call.symbol.owner.dispatchReceiverParameter!!.type) {
             when {
                 isByte() || isShort() || isInt() ->
@@ -134,7 +134,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     }
 
     private fun irBinaryOp(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         intrinsic: IrSimpleFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
@@ -144,7 +144,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return newCall
     }
 
-    class BinaryOp(call: IrFunctionAccessExpression) {
+    class BinaryOp(call: IrFunctionAccessExpression<*>) {
         val function = call.symbol.owner
         val name = function.name
         val lhs = function.dispatchReceiverParameter!!.type
@@ -155,13 +155,13 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             result.isInt() && (lhs.isInt() || rhs.isInt())
     }
 
-    private fun transformAdd(call: IrFunctionAccessExpression) =
+    private fun transformAdd(call: IrFunctionAccessExpression<*>) =
         irBinaryOp(call, intrinsics.jsPlus, toInt32 = BinaryOp(call).canAddOrSubOverflow())
 
-    private fun transformSub(call: IrFunctionAccessExpression) =
+    private fun transformSub(call: IrFunctionAccessExpression<*>) =
         irBinaryOp(call, intrinsics.jsMinus, toInt32 = BinaryOp(call).canAddOrSubOverflow())
 
-    private fun transformMul(call: IrFunctionAccessExpression) = BinaryOp(call).run {
+    private fun transformMul(call: IrFunctionAccessExpression<*>) = BinaryOp(call).run {
         when {
             result.isInt() -> when {
 
@@ -176,19 +176,19 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    private fun transformDiv(call: IrFunctionAccessExpression) =
+    private fun transformDiv(call: IrFunctionAccessExpression<*>) =
         irBinaryOp(call, intrinsics.jsDiv, toInt32 = BinaryOp(call).result.isInt())
 
-    private fun transformRem(call: IrFunctionAccessExpression) =
+    private fun transformRem(call: IrFunctionAccessExpression<*>) =
         irBinaryOp(call, intrinsics.jsMod, toInt32 = BinaryOp(call).result.isInt())
 
-    private fun transformIncrement(call: IrFunctionAccessExpression) =
+    private fun transformIncrement(call: IrFunctionAccessExpression<*>) =
         transformCrement(call, intrinsics.jsPlus)
 
-    private fun transformDecrement(call: IrFunctionAccessExpression) =
+    private fun transformDecrement(call: IrFunctionAccessExpression<*>) =
         transformCrement(call, intrinsics.jsMinus)
 
-    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
+    private fun transformCrement(call: IrFunctionAccessExpression<*>, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
         val operation = irCall(call, correspondingBinaryOp, receiversAsArguments = true).apply {
             putValueArgument(1, buildInt(1))
         }
@@ -196,7 +196,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         return convertResultToPrimitiveType(operation, call.type)
     }
 
-    private fun transformUnaryMinus(call: IrFunctionAccessExpression) =
+    private fun transformUnaryMinus(call: IrFunctionAccessExpression<*>) =
         convertResultToPrimitiveType(
             irCall(call, intrinsics.jsUnaryMinus, receiversAsArguments = true),
             call.type
@@ -209,7 +209,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         else -> e
     }
 
-    private fun withLongCoercion(default: (IrFunctionAccessExpression) -> IrExpression): (IrFunctionAccessExpression) -> IrExpression =
+    private fun withLongCoercion(default: (IrFunctionAccessExpression<*>) -> IrExpression): (IrFunctionAccessExpression<*>) -> IrExpression =
         { call ->
             assert(call.valueArgumentsCount == 1)
             val arg = call.getValueArgument(0)!!

@@ -14,12 +14,12 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 abstract class IntrinsicMethod : IntrinsicMarker {
     open fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction = TODO("implement toCallable() or invoke() of $this")
 
-    open fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
+    open fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         with(codegen) {
             val descriptor = methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
             val stackValue = toCallable(expression, descriptor, codegen.classCodegen).invoke(mv, codegen, data, expression)

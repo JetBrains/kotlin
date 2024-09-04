@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object NumberCast : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+        expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
         return IntrinsicFunction.create(expression, signature, classCodegen) {
             StackValue.coerce(argsTypes[0], signature.returnType, it)

@@ -319,7 +319,7 @@ internal class SpecialAccessLowering(
             putValueArgument(0, expression)
         }
 
-    private fun IrFunctionAccessExpression.getValueArguments(): List<IrExpression> =
+    private fun IrFunctionAccessExpression<*>.getValueArguments(): List<IrExpression> =
         (0 until valueArgumentsCount).map { getValueArgument(it)!! }
 
     private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression {

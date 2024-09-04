@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 
 object KClassJavaProperty : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val extensionReceiver = expression.extensionReceiver
         if (extensionReceiver !is IrClassReference && extensionReceiver !is IrGetClass)
             return null

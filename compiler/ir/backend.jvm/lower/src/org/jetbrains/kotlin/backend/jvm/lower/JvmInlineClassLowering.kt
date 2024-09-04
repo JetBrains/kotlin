@@ -235,7 +235,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }.copyAttributes(expression)
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)

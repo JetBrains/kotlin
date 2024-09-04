@@ -1217,7 +1217,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         expression.printConstructorCallWithNoIndent(data)
     }
 
-    private fun IrFunctionAccessExpression.printConstructorCallWithNoIndent(
+    private fun IrFunctionAccessExpression<*>.printConstructorCallWithNoIndent(
         data: IrDeclaration?
     ) {
         // TODO flag to omit comment block?

@@ -74,7 +74,7 @@ internal val IrCall.actualCallee: IrSimpleFunction
         return (this.superQualifierSymbol?.owner?.getOverridingOf(callee) ?: callee).target
     }
 
-internal val IrFunctionAccessExpression.isVirtualCall: Boolean
+internal val IrFunctionAccessExpression<*>.isVirtualCall: Boolean
     get() = this is IrCall && this.superQualifierSymbol == null && this.symbol.owner.isOverridable
 
 private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {

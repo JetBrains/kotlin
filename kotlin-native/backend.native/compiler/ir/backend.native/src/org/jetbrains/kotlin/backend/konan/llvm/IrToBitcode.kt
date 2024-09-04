@@ -245,7 +245,7 @@ internal class CodeGeneratorVisitor(
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
 
-        override fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> =
+        override fun evaluateExplicitArgs(expression: IrFunctionAccessExpression<*>): List<LLVMValueRef> =
                 this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
 
         override fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef =
@@ -2310,7 +2310,7 @@ internal class CodeGeneratorVisitor(
      * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
-    private fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> {
+    private fun evaluateExplicitArgs(expression: IrFunctionAccessExpression<*>): List<LLVMValueRef> {
         val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
             evaluateExpression(argExpr)
         }

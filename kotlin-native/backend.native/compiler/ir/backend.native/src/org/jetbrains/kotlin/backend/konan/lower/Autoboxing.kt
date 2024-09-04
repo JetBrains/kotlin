@@ -122,7 +122,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
 
-    private val IrFunctionAccessExpression.target: IrFunction
+    private val IrFunctionAccessExpression<*>.target: IrFunction
         get() = when (this) {
             is IrCall -> this.callTarget
             is IrDelegatingConstructorCall -> this.symbol.owner
@@ -137,18 +137,18 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             symbol.owner.target
         }
 
-    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
+    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression<*>): IrExpression {
         val target = expression.target
         return useAs(target.dispatchReceiverParameter!!.type,
                 // A bridge cannot be called on an improper receiver.
                 forceSkipTypeCheck = (currentFunction as? IrSimpleFunction)?.bridgeTarget == target)
     }
 
-    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
+    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression<*>): IrExpression {
         return this.useAsArgument(expression.target.extensionReceiverParameter!!)
     }
 
-    override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression,
+    override fun IrExpression.useAsValueArgument(expression: IrFunctionAccessExpression<*>,
                                                  parameter: IrValueParameter): IrExpression {
         return this.useAsArgument(expression.target.valueParameters[parameter.index])
     }

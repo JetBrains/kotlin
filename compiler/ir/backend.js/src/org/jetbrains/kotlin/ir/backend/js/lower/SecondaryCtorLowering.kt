@@ -305,7 +305,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
     }
 
     private fun replaceSecondaryConstructorWithFactoryFunction(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         newTarget: IrSimpleFunctionSymbol
     ): IrCall {
         val irClass = call.symbol.owner.parentAsClass

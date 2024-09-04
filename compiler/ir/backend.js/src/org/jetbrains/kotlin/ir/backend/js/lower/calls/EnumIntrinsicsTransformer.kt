@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 
 object EnumIntrinsicsUtils {
     private fun transformEnumTopLevelIntrinsic(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         staticMethodPredicate: (IrSimpleFunction) -> Boolean
     ): IrExpression {
         val enum = call.getTypeArgument(0)?.getClass() ?: return call
@@ -36,23 +36,23 @@ object EnumIntrinsicsUtils {
         return irCall(call, staticMethod.symbol)
     }
 
-    fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
+    fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression<*>) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("valueOf") &&
                 it.valueParameters.count() == 1 &&
                 it.valueParameters[0].type.isString()
     }
 
-    fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
+    fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression<*>) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("values") && it.valueParameters.count() == 0
     }
 
-    fun transformEnumEntriesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
+    fun transformEnumEntriesIntrinsic(call: IrFunctionAccessExpression<*>) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.special("<get-entries>")
     }
 }
 
 class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean) = when (call.symbol) {
         context.intrinsics.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
         context.intrinsics.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
         context.intrinsics.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)

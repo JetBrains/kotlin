@@ -373,7 +373,7 @@ class NativeAtomicfuIrBuilder(
         atomicArrayClass: IrClassSymbol,
         size: IrExpression,
         dispatchReceiver: IrExpression?
-    ): IrFunctionAccessExpression =
+    ): IrFunctionAccessExpression<*> =
         when (atomicArrayClass) {
             atomicSymbols.atomicIntArrayClassSymbol, atomicSymbols.atomicLongArrayClassSymbol -> {
                 irCall(atomicSymbols.getAtomicArrayConstructor(atomicArrayClass)).apply {

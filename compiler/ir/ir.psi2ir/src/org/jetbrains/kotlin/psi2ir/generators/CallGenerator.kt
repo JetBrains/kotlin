@@ -401,7 +401,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         startOffset: Int,
         endOffset: Int,
         call: CallBuilder,
-        irCall: IrFunctionAccessExpression,
+        irCall: IrFunctionAccessExpression<*>,
         irResultType: IrType,
         contextReceivers: List<IrExpression>
     ): IrExpression {
@@ -418,7 +418,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
     }
 
     private fun generateCallWithArgumentReordering(
-        irCall: IrFunctionAccessExpression,
+        irCall: IrFunctionAccessExpression<*>,
         startOffset: Int,
         endOffset: Int,
         call: CallBuilder,

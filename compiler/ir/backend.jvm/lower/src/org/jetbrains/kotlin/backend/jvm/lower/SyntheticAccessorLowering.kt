@@ -151,7 +151,7 @@ private class SyntheticAccessorTransformer(
             isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference)
         }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         if (expression.usesDefaultArguments()) {
             return super.visitFunctionAccess(expression)
         }
@@ -182,7 +182,7 @@ private class SyntheticAccessorTransformer(
     }
 
     private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         withSuper: Boolean,
         thisObjReference: IrClassSymbol?,
     ): Boolean =

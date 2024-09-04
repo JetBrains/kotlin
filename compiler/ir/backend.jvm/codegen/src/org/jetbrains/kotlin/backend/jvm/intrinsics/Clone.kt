@@ -29,7 +29,7 @@ object Clone : IntrinsicMethod() {
     private val CLONEABLE_TYPE = Type.getObjectType("java/lang/Cloneable")
 
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction {

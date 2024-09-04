@@ -16,7 +16,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object RangeTo : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+        expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
         val argType = mapRangeTypeToPrimitiveType(signature.returnType)
         return object : IntrinsicFunction(
@@ -35,7 +35,7 @@ object RangeTo : IntrinsicMethod() {
                 v: InstructionAdapter,
                 codegen: ExpressionCodegen,
                 data: BlockInfo,
-                expression: IrFunctionAccessExpression,
+                expression: IrFunctionAccessExpression<*>,
             ): StackValue {
                 with(codegen) { expression.markLineNumber(startOffset = true) }
                 v.anew(signature.returnType)

@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 abstract class IntrinsicFunction(
-    val expression: IrFunctionAccessExpression,
+    val expression: IrFunctionAccessExpression<*>,
     val signature: JvmMethodSignature,
     val classCodegen: ClassCodegen,
     val argsTypes: List<Type>,
@@ -34,7 +34,7 @@ abstract class IntrinsicFunction(
         v: InstructionAdapter,
         codegen: ExpressionCodegen,
         data: BlockInfo,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
     ): StackValue {
         loadArguments(codegen, data)
         with(codegen) { expression.markLineNumber(startOffset = true) }
@@ -70,12 +70,12 @@ abstract class IntrinsicFunction(
         codegen.gen(expression, argsTypes[index], expression.type, data)
     }
 
-    private val IrFunctionAccessExpression.typeArguments: List<IrType>
+    private val IrFunctionAccessExpression<*>.typeArguments: List<IrType>
         get() = (0 until typeArgumentsCount).map { getTypeArgument(it)!! }
 
     companion object {
         fun create(
-            expression: IrFunctionAccessExpression,
+            expression: IrFunctionAccessExpression<*>,
             signature: JvmMethodSignature,
             classCodegen: ClassCodegen,
             argsTypes: List<Type> = expression.argTypes(classCodegen),
@@ -87,7 +87,7 @@ abstract class IntrinsicFunction(
     }
 }
 
-internal fun IrFunctionAccessExpression.argTypes(classCodegen: ClassCodegen): List<Type> {
+internal fun IrFunctionAccessExpression<*>.argTypes(classCodegen: ClassCodegen): List<Type> {
     val callee = symbol.owner
     val signature = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(callee)
     return arrayListOf<Type>().apply {

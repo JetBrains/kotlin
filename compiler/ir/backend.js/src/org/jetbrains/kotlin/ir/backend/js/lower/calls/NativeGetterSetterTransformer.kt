@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
 
 
 open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : CallsTransformer {
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val callee = call.symbol.owner
 
         return when {
@@ -29,7 +29,7 @@ open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : Call
         }
     }
 
-    protected fun IrFunctionAccessExpression.transformToIndexedRead(): IrExpression {
+    protected fun IrFunctionAccessExpression<*>.transformToIndexedRead(): IrExpression {
         val obj = dispatchReceiver ?: extensionReceiver!!
         val propertyName = getValueArgument(0)!!
         return IrDynamicOperatorExpressionImpl(
@@ -43,7 +43,7 @@ open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : Call
         }
     }
 
-    protected fun IrFunctionAccessExpression.transformToIndexedWrite(): IrExpression {
+    protected fun IrFunctionAccessExpression<*>.transformToIndexedWrite(): IrExpression {
         val value = getValueArgument(1)!!
 
         return IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.EQ).also {

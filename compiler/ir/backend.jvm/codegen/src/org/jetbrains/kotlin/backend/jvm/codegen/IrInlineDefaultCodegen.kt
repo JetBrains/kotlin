@@ -39,7 +39,7 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
     override fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         isInsideIfCondition: Boolean
     ) {
         val function = expression.symbol.owner

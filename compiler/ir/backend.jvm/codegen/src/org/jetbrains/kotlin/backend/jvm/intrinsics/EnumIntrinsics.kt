@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 object EnumValueOf : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val type = expression.getTypeArgument(0)!!
         val result = expression.getValueArgument(0)!!.accept(this, data)
             .materializedAt(AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType)
@@ -44,7 +44,7 @@ object EnumValueOf : IntrinsicMethod() {
 }
 
 object EnumValues : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val type = expression.getTypeArgument(0)!!
         if (type.isReifiedTypeParameter) {
             // Note that the inliner expects exactly the following sequence of instructions.
@@ -68,7 +68,7 @@ object EnumValues : IntrinsicMethod() {
 }
 
 object EnumEntries : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val type = expression.getTypeArgument(0)!!
         if (type.isReifiedTypeParameter) {
             // Note that the inliner expects exactly the following sequence of instructions.

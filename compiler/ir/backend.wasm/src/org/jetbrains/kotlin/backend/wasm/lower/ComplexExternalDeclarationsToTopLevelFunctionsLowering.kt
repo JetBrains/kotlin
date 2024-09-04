@@ -509,7 +509,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
             )
         }
 
-        fun transformCall(call: IrFunctionAccessExpression): IrExpression {
+        fun transformCall(call: IrFunctionAccessExpression<*>): IrExpression {
             val oldFun = call.symbol.owner.realOverrideTarget
             val newFun: IrSimpleFunction = nestedExternalToNewTopLevelFunctions[oldFun] ?: return call
 

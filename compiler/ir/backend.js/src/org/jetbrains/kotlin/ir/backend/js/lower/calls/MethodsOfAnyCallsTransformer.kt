@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
-    private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
+    private val nameToTransformer: Map<Name, (IrFunctionAccessExpression<*>) -> IrExpression>
 
     init {
         nameToTransformer = hashMapOf()
@@ -52,7 +52,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     }
 
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         nameToTransformer[symbol.owner.name]?.let {
             return it(call)
@@ -61,7 +61,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
         return call
     }
 
-    private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression): Boolean {
+    private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression<*>): Boolean {
         val function = call.symbol.owner
         if (function.valueParameters.isNotEmpty() && function.name.asString() != "toString" )
             return false

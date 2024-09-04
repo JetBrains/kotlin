@@ -82,7 +82,7 @@ abstract class AbstractValueUsageLowering(
 
     override fun IrExpression.useAs(type: IrType): IrExpression = useExpressionAsType(getActualType(), type)
 
-    private val IrFunctionAccessExpression.target: IrFunction
+    private val IrFunctionAccessExpression<*>.target: IrFunction
         get() = when (this) {
             is IrConstructorCall -> this.symbol.owner
             is IrDelegatingConstructorCall -> this.symbol.owner
@@ -94,19 +94,19 @@ abstract class AbstractValueUsageLowering(
         get() = symbol.owner.realOverrideTarget
 
 
-    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
+    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression<*>): IrExpression {
         return if (expression.symbol.owner.dispatchReceiverParameter?.let { icUtils.shouldValueParameterBeBoxed(it) } == true)
             this.useAs(irBuiltIns.anyType)
         else
             this.useAsArgument(expression.target.dispatchReceiverParameter!!)
     }
 
-    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
+    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression<*>): IrExpression {
         return this.useAsArgument(expression.target.extensionReceiverParameter!!)
     }
 
     override fun IrExpression.useAsValueArgument(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         parameter: IrValueParameter
     ): IrExpression {
 

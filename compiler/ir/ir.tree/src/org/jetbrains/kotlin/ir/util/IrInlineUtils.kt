@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.isNullable
 annotation class JvmIrInlineExperimental
 
 @JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(followAttributeOwner = true)
+var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression<*>? by irAttribute(followAttributeOwner = true)
 @JvmIrInlineExperimental
 var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(followAttributeOwner = true)
 

@@ -47,7 +47,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression) -> IrExpression = { call ->
+    private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression<*>) -> IrExpression = { call ->
         IrCallImpl(
             call.startOffset,
             call.endOffset,
@@ -61,7 +61,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         symbolToTransformer[symbol]?.let {
             return it(call)
@@ -74,7 +74,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    private fun transformEqeqeqOperator(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformEqeqeqOperator(call: IrFunctionAccessExpression<*>): IrExpression {
         val lhs = call.getValueArgument(0)!!
         val rhs = call.getValueArgument(1)!!
 
@@ -89,7 +89,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         return this is IrCall && symbol == intrinsics.jsBoxIntrinsic && getValueArgument(0)!!.type.isChar()
     }
 
-    private fun transformEqeqOperator(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformEqeqOperator(call: IrFunctionAccessExpression<*>): IrExpression {
         val lhs = call.getValueArgument(0)!!
         val rhs = call.getValueArgument(1)!!
 
@@ -122,17 +122,17 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         }
     }
 
-    private fun chooseEqualityOperatorForPrimitiveTypes(call: IrFunctionAccessExpression): IrExpression = when {
+    private fun chooseEqualityOperatorForPrimitiveTypes(call: IrFunctionAccessExpression<*>): IrExpression = when {
         call.allValueArgumentsAreNullable() ->
             irCall(call, intrinsics.jsEqeq)
         else ->
             irCall(call, intrinsics.jsEqeqeq)
     }
 
-    private fun IrFunctionAccessExpression.allValueArgumentsAreNullable() =
+    private fun IrFunctionAccessExpression<*>.allValueArgumentsAreNullable() =
         (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
 
-    private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
+    private fun transformCompareToMethodCall(call: IrFunctionAccessExpression<*>): IrExpression {
         val function = call.symbol.owner as IrSimpleFunction
         if (function.parent !is IrClass) return call
 
@@ -206,14 +206,14 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         this is IrCall && symbol == icUtils.boxIntrinsic
 
     private fun IrExpression.unboxParamWithInlinedClass(): Pair<IrExpression, IrClass?> {
-        val unboxed = (this as IrFunctionAccessExpression).getValueArgument(0)
+        val unboxed = (this as IrFunctionAccessExpression<*>).getValueArgument(0)
             ?: irError("Boxed expression is expected") {
                 withIrEntry("this", this@unboxParamWithInlinedClass)
             }
         return Pair(unboxed, icUtils.getInlinedClass(unboxed.type))
     }
 
-    private fun optimizeInlineClassEquality(call: IrFunctionAccessExpression, lhs: IrExpression, rhs: IrExpression): IrExpression {
+    private fun optimizeInlineClassEquality(call: IrFunctionAccessExpression<*>, lhs: IrExpression, rhs: IrExpression): IrExpression {
         val (lhsUnboxed, lhsClassType) = lhs.unboxParamWithInlinedClass()
         val (rhsUnboxed, rhsClassType) = rhs.unboxParamWithInlinedClass()
         if (lhsClassType !== null && lhsClassType === rhsClassType && lhsUnboxed.type.isDefaultEqualsMethod()) {

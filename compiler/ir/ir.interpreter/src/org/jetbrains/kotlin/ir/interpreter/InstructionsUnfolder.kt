@@ -110,7 +110,7 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
     }
 }
 
-private fun unfoldValueParameters(expression: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
+private fun unfoldValueParameters(expression: IrFunctionAccessExpression<*>, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
     val irFunction = expression.symbol.owner
 

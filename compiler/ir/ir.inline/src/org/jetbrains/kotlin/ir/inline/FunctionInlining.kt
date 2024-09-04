@@ -121,7 +121,7 @@ open class FunctionInlining(
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid(this)
         val calleeSymbol = when (expression) {
             is IrCall -> expression.symbol
@@ -180,7 +180,7 @@ open class FunctionInlining(
     }
 
     private class CallInlining(
-        val callSite: IrFunctionAccessExpression,
+        val callSite: IrFunctionAccessExpression<*>,
         val callee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
@@ -209,7 +209,7 @@ open class FunctionInlining(
         fun inline() = inlineFunction(callSite, callee, callee.originalFunction)
 
         private fun inlineFunction(
-            callSite: IrFunctionAccessExpression,
+            callSite: IrFunctionAccessExpression<*>,
             callee: IrFunction,
             originalInlinedElement: IrElement,
         ): IrReturnableBlock {
@@ -543,7 +543,7 @@ open class FunctionInlining(
         }
 
         // callee might be a copied version of callsite.symbol.owner
-        private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction): List<ParameterToArgument> {
+        private fun buildParameterToArgument(callSite: IrFunctionAccessExpression<*>, callee: IrFunction): List<ParameterToArgument> {
 
             val parameterToArgument = mutableListOf<ParameterToArgument>()
 
@@ -681,7 +681,7 @@ open class FunctionInlining(
             return newVariable
         }
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
+        private fun evaluateArguments(callSite: IrFunctionAccessExpression<*>, callee: IrFunction): List<IrStatement> {
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrVariable>()
             val evaluationStatementsFromDefault = mutableListOf<IrVariable>()

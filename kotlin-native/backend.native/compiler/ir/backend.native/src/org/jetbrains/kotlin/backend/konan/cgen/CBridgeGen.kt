@@ -308,7 +308,7 @@ internal fun KotlinStubs.generateObjCCall(
         isStret: Boolean,
         selector: String,
         directSymbolName: String?,
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         superQualifier: IrClassSymbol?,
         receiver: ObjCCallReceiver,
         arguments: List<IrExpression?>

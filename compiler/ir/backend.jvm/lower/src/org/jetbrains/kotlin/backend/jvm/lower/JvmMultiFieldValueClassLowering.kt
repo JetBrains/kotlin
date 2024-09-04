@@ -870,7 +870,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         }
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression {
         val function = expression.symbol.owner
         val currentScope = currentScope!!.irElement as IrDeclaration
         val replacement = replacements.getReplacementFunction(function)
@@ -905,7 +905,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 val newConstructor = (function as? IrConstructor)
                     ?.let { replacements.getReplacementForRegularClassConstructor(it) }
                     ?: return super.visitFunctionAccess(expression)
-                val callFactory: (IrConstructorSymbol) -> IrFunctionAccessExpression = when (expression) {
+                val callFactory: (IrConstructorSymbol) -> IrFunctionAccessExpression<*> = when (expression) {
                     is IrConstructorCall -> { constructorSymbol ->
                         IrConstructorCallImpl.fromSymbolOwner(
                             expression.startOffset, expression.endOffset, expression.type, constructorSymbol, expression.origin

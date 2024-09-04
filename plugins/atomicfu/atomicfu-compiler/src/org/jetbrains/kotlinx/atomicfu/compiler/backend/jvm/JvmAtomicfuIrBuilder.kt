@@ -79,7 +79,7 @@ class JvmAtomicfuIrBuilder internal constructor(
         atomicArrayClass: IrClassSymbol,
         size: IrExpression,
         dispatchReceiver: IrExpression?
-    ): IrFunctionAccessExpression = irCall(atomicSymbols.getAtomicArrayConstructor(atomicArrayClass)).apply {
+    ): IrFunctionAccessExpression<*> = irCall(atomicSymbols.getAtomicArrayConstructor(atomicArrayClass)).apply {
         putValueArgument(0, size) // size
         this.dispatchReceiver = dispatchReceiver
     }

@@ -48,7 +48,7 @@ object JavaClassProperty : IntrinsicMethod() {
                 invokeGetClass(value.materialized())
         }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         invokeWith(expression.extensionReceiver!!.accept(codegen, data), wrapPrimitives = false)
         return with(codegen) { expression.onStack }
     }

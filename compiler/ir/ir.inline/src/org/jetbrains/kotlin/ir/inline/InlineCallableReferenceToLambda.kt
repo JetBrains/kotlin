@@ -53,7 +53,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
     override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
         super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?): IrElement {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: IrDeclarationParent?): IrElement {
         expression.transformChildren(this, data)
         val function = expression.symbol.owner
         if (inlineFunctionResolver.needsInlining(function)) {

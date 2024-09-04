@@ -248,10 +248,10 @@ internal class WasmVarargExpressionLowering(
         }
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) =
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) =
         transformFunctionAccessExpression(expression)
 
-    private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
+    private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid()
         val builder by lazy { context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol) }
 
@@ -283,7 +283,7 @@ internal class WasmVarargExpressionLowering(
 
     private fun isImmediatelyCreatedArray(expr: IrExpression): Boolean =
         when (expr) {
-            is IrFunctionAccessExpression -> {
+            is IrFunctionAccessExpression<*> -> {
                 val arrDescr = ArrayDescr(expr.type, context)
                 expr.symbol.owner in arrDescr.constructors || expr.symbol == context.wasmSymbols.arrayOfNulls
             }

@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
 object IrCheckNotNull : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val arg0 = expression.getValueArgument(0)!!.accept(codegen, data)
         if (AsmUtil.isPrimitive(arg0.type)) return arg0
         return object : PromisedValue(codegen, arg0.type, arg0.irType) {

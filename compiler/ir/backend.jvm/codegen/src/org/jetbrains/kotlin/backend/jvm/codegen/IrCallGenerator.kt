@@ -26,7 +26,7 @@ interface IrCallGenerator {
     fun genCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         isInsideIfCondition: Boolean,
     ) {
         with(callableMethod) {

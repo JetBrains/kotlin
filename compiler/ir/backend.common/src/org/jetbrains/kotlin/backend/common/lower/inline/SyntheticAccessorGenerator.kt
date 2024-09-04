@@ -58,7 +58,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
     }
 
-    fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopeInfo: ScopeInfo): IrFunction {
+    fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression<*>, scopeInfo: ScopeInfo): IrFunction {
         return if (expression is IrCall)
             createAccessor(expression.symbol, scopeInfo, expression.dispatchReceiver?.type, expression.superQualifierSymbol)
         else
@@ -305,7 +305,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     }
 
     protected fun copyAllParamsToArgs(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         syntheticFunction: IrFunction
     ) {
         var typeArgumentOffset = 0
@@ -407,9 +407,9 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
      * ```
      */
     fun modifyFunctionAccessExpression(
-        oldExpression: IrFunctionAccessExpression,
+        oldExpression: IrFunctionAccessExpression<*>,
         accessorSymbol: IrFunctionSymbol
-    ): IrFunctionAccessExpression {
+    ): IrFunctionAccessExpression<*> {
         val newExpression = when {
             oldExpression is IrDelegatingConstructorCall -> accessorSymbol.produceCallToSyntheticDelegatingConstructor(oldExpression)
             oldExpression is IrEnumConstructorCall -> compilationException(
@@ -431,7 +431,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     }
 
     private fun IrFunctionSymbol.produceCallToSyntheticFunction(
-        oldExpression: IrFunctionAccessExpression
+        oldExpression: IrFunctionAccessExpression<*>
     ): IrCall {
         return IrCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
@@ -442,7 +442,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     }
 
     private fun IrFunctionSymbol.produceCallToSyntheticDelegatingConstructor(
-        oldExpression: IrFunctionAccessExpression
+        oldExpression: IrFunctionAccessExpression<*>
     ): IrDelegatingConstructorCall {
         return IrDelegatingConstructorCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
@@ -452,8 +452,8 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     }
 
     private fun IrFunctionSymbol.produceCallToSyntheticConstructor(
-        oldExpression: IrFunctionAccessExpression
-    ): IrFunctionAccessExpression {
+        oldExpression: IrFunctionAccessExpression<*>
+    ): IrFunctionAccessExpression<*> {
         return IrConstructorCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,

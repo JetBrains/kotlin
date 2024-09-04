@@ -281,7 +281,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             super.visitVariable(declaration, data)
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: ClosureBuilder?) {
             super.visitFunctionAccess(expression, data)
             processScriptCapturing(expression.dispatchReceiver, expression.symbol.owner, data)
             processMemberAccess(expression.symbol.owner, data)

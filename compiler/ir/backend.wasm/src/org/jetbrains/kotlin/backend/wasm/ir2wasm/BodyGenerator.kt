@@ -621,7 +621,7 @@ class BodyGenerator(
         body.commentPreviousInstr { "box" }
     }
 
-    private fun generateCall(call: IrFunctionAccessExpression) {
+    private fun generateCall(call: IrFunctionAccessExpression<*>) {
         val location = call.getSourceLocation()
 
         // Box intrinsic has an additional klass ID argument.
@@ -771,7 +771,7 @@ class BodyGenerator(
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         function: IrFunction,
     ): Boolean {
         if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
@@ -1210,7 +1210,7 @@ class BodyGenerator(
     }
 
     // Return true if function is recognized as intrinsic.
-    private fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
+    private fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression<*>, function: IrFunction): Boolean {
         if (function.hasWasmNoOpCastAnnotation()) {
             return true
         }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
 
-typealias SymbolToTransformer = MutableMap<IrFunctionSymbol, (IrFunctionAccessExpression) -> IrExpression>
+typealias SymbolToTransformer = MutableMap<IrFunctionSymbol, (IrFunctionAccessExpression<*>) -> IrExpression>
 
 internal fun SymbolToTransformer.add(from: Map<IrClassifierSymbol, IrFunctionSymbol>, to: IrSimpleFunctionSymbol) {
     from.forEach { _, func ->
@@ -23,13 +23,13 @@ internal fun SymbolToTransformer.add(from: Map<IrClassifierSymbol, IrFunctionSym
     }
 }
 
-internal fun SymbolToTransformer.add(from: Map<IrClassifierSymbol, IrFunctionSymbol>, to: (IrFunctionAccessExpression) -> IrExpression) {
+internal fun SymbolToTransformer.add(from: Map<IrClassifierSymbol, IrFunctionSymbol>, to: (IrFunctionAccessExpression<*>) -> IrExpression) {
     from.forEach { _, func ->
         add(func, to)
     }
 }
 
-internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: (IrFunctionAccessExpression) -> IrExpression) {
+internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: (IrFunctionAccessExpression<*>) -> IrExpression) {
     put(from, to)
 }
 
@@ -37,15 +37,15 @@ internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrSimpleFunctio
     put(from) { call -> irCall(call, to, dispatchReceiverAsFirstArgument) }
 }
 
-internal fun <K> MutableMap<K, (IrFunctionAccessExpression) -> IrExpression>.addWithPredicate(
+internal fun <K> MutableMap<K, (IrFunctionAccessExpression<*>) -> IrExpression>.addWithPredicate(
     from: K,
-    predicate: (IrFunctionAccessExpression) -> Boolean,
-    action: (IrFunctionAccessExpression) -> IrExpression
+    predicate: (IrFunctionAccessExpression<*>) -> Boolean,
+    action: (IrFunctionAccessExpression<*>) -> IrExpression
 ) {
-    put(from) { call: IrFunctionAccessExpression -> if (predicate(call)) action(call) else call }
+    put(from) { call: IrFunctionAccessExpression<*> -> if (predicate(call)) action(call) else call }
 }
 
-internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrFunctionAccessExpression) -> IrExpression>
+internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrFunctionAccessExpression<*>) -> IrExpression>
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFunctionSymbol) {
     add(type, name) { irCall(it, v, receiversAsArguments = true) }
@@ -55,7 +55,7 @@ internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFuncti
     add(type, name, v.symbol)
 }
 
-internal fun MemberToTransformer.add(type: IrType, name: Name, v: (IrFunctionAccessExpression) -> IrExpression) {
+internal fun MemberToTransformer.add(type: IrType, name: Name, v: (IrFunctionAccessExpression<*>) -> IrExpression) {
     put(SimpleMemberKey(type, name), v)
 }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 class Increment(private val myDelta: Int) : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+        expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
         return IntrinsicFunction.create(expression, signature, classCodegen) {
             genIncrement(signature.returnType, myDelta, it)

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.org.objectweb.asm.Type
 
 class IntIncr(private val isPrefix: Boolean) : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val irGetValue = expression.getValueArgument(0) as? IrGetValue
             ?: error("IrGetValue expected as valueArgument #0: ${expression.dump()}")
         val irDelta = expression.getValueArgument(1) as? IrConst

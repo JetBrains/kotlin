@@ -326,7 +326,7 @@ private fun JsInvocation.pureIfPossible(function: IrFunction, context: JsGenerat
 }
 
 fun argumentsWithVarargAsSingleArray(
-    expression: IrFunctionAccessExpression,
+    expression: IrFunctionAccessExpression<*>,
     context: JsGenerationContext,
     additionalReceiver: JsExpression?,
     arguments: List<JsExpression>,
@@ -453,7 +453,7 @@ private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
     }
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =
-    this is IrFunctionAccessExpression && symbol.owner.isExternalOrInheritedFromExternal()
+    this is IrFunctionAccessExpression<*> && symbol.owner.isExternalOrInheritedFromExternal()
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
 

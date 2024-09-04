@@ -221,7 +221,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         callStack.dropFrameAndCopyResult()
     }
 
-    private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression) {
+    private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression<*>) {
         val constructor = constructorCall.symbol.owner
         val valueArguments = constructor.valueParameters.map { callStack.popState() }.reversed()
         val irClass = constructor.parentAsClass
@@ -251,9 +251,9 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val superReceiver = when (val irStatement = constructor.body?.statements?.getOrNull(0)) {
             null -> null // for jvm
-            is IrTypeOperatorCall -> (irStatement.argument as IrFunctionAccessExpression).getThisReceiver() // for enums
-            is IrFunctionAccessExpression -> irStatement.getThisReceiver()
-            is IrBlock -> (irStatement.statements.last() as IrFunctionAccessExpression).getThisReceiver()
+            is IrTypeOperatorCall -> (irStatement.argument as IrFunctionAccessExpression<*>).getThisReceiver() // for enums
+            is IrFunctionAccessExpression<*> -> irStatement.getThisReceiver()
+            is IrBlock -> (irStatement.statements.last() as IrFunctionAccessExpression<*>).getThisReceiver()
             else -> TODO("${irStatement::class.java} is not supported as first statement in constructor call")
         }
         superReceiver?.let { callStack.storeState(it, objectState) }

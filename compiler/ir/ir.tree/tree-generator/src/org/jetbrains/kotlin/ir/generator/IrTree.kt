@@ -675,6 +675,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(memberAccessExpression.withArgs("S" to s))
 
+        +referencedSymbol(s)
         +field("contextReceiversCount", int)
     }
     val constructorCall: Element by element(Expression) {

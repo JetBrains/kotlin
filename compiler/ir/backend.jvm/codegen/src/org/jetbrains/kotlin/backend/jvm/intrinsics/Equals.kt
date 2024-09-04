@@ -37,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ExplicitEquals : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val (a, b) = expression.receiverAndArgs()
 
         // TODO use specialized boxed type - this might require types like 'java.lang.Integer' in IR
@@ -57,7 +57,7 @@ class ExplicitEquals : IntrinsicMethod() {
 
 class Equals(val operator: IElementType) : IntrinsicMethod() {
 
-    private class BooleanNullCheck(val expression: IrFunctionAccessExpression, val value: PromisedValue) : BooleanValue(value.codegen) {
+    private class BooleanNullCheck(val expression: IrFunctionAccessExpression<*>, val value: PromisedValue) : BooleanValue(value.codegen) {
         override fun jumpIfFalse(target: Label) {
             value.materialize()
             markLineNumber(expression)
@@ -76,7 +76,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
     }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val (a, b) = expression.receiverAndArgs()
         if (a.isNullConst() || b.isNullConst()) {
             val irValue = if (a.isNullConst()) b else a
@@ -142,7 +142,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
     }
 
     private fun referenceEquals(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         left: IrExpression,
         right: IrExpression,
         leftType: Type,
@@ -172,7 +172,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
     private val boxedOperandType = AsmUtil.boxType(operandType)
 
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction {

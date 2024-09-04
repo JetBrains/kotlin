@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Type
 // lowering straight through to JVM codegen without interference from
 // lowerings in between.
 object JvmDebuggerInvokeSpecial : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val owner = expression.getStringConstArgument(0)
         val name = expression.getStringConstArgument(1)
         val descriptor = expression.getStringConstArgument(2)

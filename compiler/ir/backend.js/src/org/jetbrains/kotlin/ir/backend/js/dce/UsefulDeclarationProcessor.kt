@@ -42,7 +42,7 @@ abstract class UsefulDeclarationProcessor(
             element.acceptChildren(this, data)
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration) {
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: IrDeclaration) {
             super.visitFunctionAccess(expression, data)
             expression.symbol.owner.enqueue(data, "function access")
         }

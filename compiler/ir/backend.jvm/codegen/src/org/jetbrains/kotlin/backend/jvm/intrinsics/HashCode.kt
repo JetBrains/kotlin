@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 object HashCode : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val receiver = expression.dispatchReceiver ?: error("No receiver for hashCode: ${expression.render()}")
         val receiverIrType = receiver.type
         val receiverJvmType = typeMapper.mapType(receiverIrType)

@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import kotlin.math.exp
 
 object Not : IntrinsicMethod() {
-    class BooleanNegation(val expression: IrFunctionAccessExpression, val value: BooleanValue) : BooleanValue(value.codegen) {
+    class BooleanNegation(val expression: IrFunctionAccessExpression<*>, val value: BooleanValue) : BooleanValue(value.codegen) {
         override fun jumpIfFalse(target: Label) {
             markLineNumber(expression)
             value.jumpIfTrue(target)
@@ -42,6 +42,6 @@ object Not : IntrinsicMethod() {
         }
     }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) =
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo) =
         BooleanNegation(expression, expression.dispatchReceiver!!.accept(codegen, data).coerceToBoolean())
 }

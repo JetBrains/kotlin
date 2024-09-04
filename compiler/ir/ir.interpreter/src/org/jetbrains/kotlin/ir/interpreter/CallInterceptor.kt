@@ -36,7 +36,7 @@ internal interface CallInterceptor {
 
     fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*> = Any::class.java): Any?
     fun interceptCall(call: IrCall, irFunction: IrFunction, args: List<State>, defaultAction: () -> Unit)
-    fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit)
+    fun interceptConstructor(constructorCall: IrFunctionAccessExpression<*>, args: List<State>, defaultAction: () -> Unit)
     fun interceptGetObjectValue(expression: IrGetObjectValue, defaultAction: () -> Unit)
     fun interceptEnumEntry(enumEntry: IrEnumEntry, defaultAction: () -> Unit)
     fun interceptJavaStaticField(expression: IrGetField)
@@ -74,7 +74,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
     }
 
-    override fun interceptConstructor(constructorCall: IrFunctionAccessExpression, args: List<State>, defaultAction: () -> Unit) {
+    override fun interceptConstructor(constructorCall: IrFunctionAccessExpression<*>, args: List<State>, defaultAction: () -> Unit) {
         val receiver = callStack.loadState(constructorCall.getThisReceiver())
         val irConstructor = constructorCall.symbol.owner
         val irClass = irConstructor.parentAsClass

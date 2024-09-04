@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object IteratorNext : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+        expression: IrFunctionAccessExpression<*>, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
         // If the array element type is unboxed primitive, do not unbox. Otherwise AsmUtil.unbox throws exception
         val type = if (AsmUtil.isBoxedPrimitiveType(signature.returnType)) AsmUtil.unboxType(signature.returnType) else signature.returnType

@@ -135,7 +135,7 @@ abstract class AbstractAtomicfuIrBuilder(
         atomicArrayClass: IrClassSymbol,
         size: IrExpression,
         dispatchReceiver: IrExpression?
-    ): IrFunctionAccessExpression
+    ): IrFunctionAccessExpression<*>
 
     // atomicArr.compareAndSet(index, expect, update)
     fun callAtomicArray(

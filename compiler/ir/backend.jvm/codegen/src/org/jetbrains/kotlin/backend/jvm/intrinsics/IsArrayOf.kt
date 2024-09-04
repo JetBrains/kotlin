@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object IsArrayOf : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction = IntrinsicFunction.create(expression, signature, classCodegen) { v ->

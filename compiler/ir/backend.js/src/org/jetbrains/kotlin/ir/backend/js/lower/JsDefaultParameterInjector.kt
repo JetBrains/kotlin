@@ -38,7 +38,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             context.getVoid()
         }
 
-    override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
+    override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression<*>): Boolean {
         return super.shouldReplaceWithSyntheticFunction(functionAccess) || functionAccess.symbol.owner.run {
             origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
                     !isTopLevel &&
@@ -47,7 +47,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         }
     }
 
-    override fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
+    override fun IrBlockBuilder.argumentsForCall(expression: IrFunctionAccessExpression<*>, stubFunction: IrFunction): Map<IrValueParameter, IrExpression?> {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
 

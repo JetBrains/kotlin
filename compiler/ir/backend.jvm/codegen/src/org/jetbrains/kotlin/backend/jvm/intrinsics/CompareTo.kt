@@ -52,7 +52,7 @@ object CompareTo : IntrinsicMethod() {
     }
 
     override fun toCallable(
-        expression: IrFunctionAccessExpression,
+        expression: IrFunctionAccessExpression<*>,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction {
@@ -87,7 +87,7 @@ class IntegerZeroComparison(val nonZeroExpression: IrExpression, val a: Material
 }
 
 class BooleanComparison(
-    val expression: IrFunctionAccessExpression,
+    val expression: IrFunctionAccessExpression<*>,
     val op: IElementType,
     val a: MaterialValue,
     val b: MaterialValue
@@ -119,7 +119,7 @@ class BooleanComparison(
 }
 
 class NonIEEE754FloatComparison(
-    private val expression: IrFunctionAccessExpression,
+    private val expression: IrFunctionAccessExpression<*>,
     op: IElementType,
     private val a: MaterialValue,
     private val b: MaterialValue
@@ -154,7 +154,7 @@ class NonIEEE754FloatComparison(
 }
 
 class PrimitiveToObjectComparison(
-    private val expression: IrFunctionAccessExpression,
+    private val expression: IrFunctionAccessExpression<*>,
     private val op: IElementType,
     private val leftIsPrimitive: Boolean,
     private val left: MaterialValue,
@@ -214,7 +214,7 @@ class PrimitiveComparison(
     private val primitiveNumberType: PrimitiveType,
     private val operatorToken: KtSingleValueToken
 ) : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression<*>, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val parameterType = Type.getType(JvmPrimitiveType.get(primitiveNumberType).desc)
         val (left, right) = expression.receiverAndArgs()
         val a = left.accept(codegen, data).materializedAt(parameterType, left.type)

@@ -78,7 +78,7 @@ class SerializationJvmIrIntrinsicSupport(
 
     inner class ReifiedSerializerMethod(private val withModule: Boolean) : IntrinsicMethod() {
         override fun invoke(
-            expression: IrFunctionAccessExpression,
+            expression: IrFunctionAccessExpression<*>,
             codegen: ExpressionCodegen,
             data: BlockInfo
         ): PromisedValue {

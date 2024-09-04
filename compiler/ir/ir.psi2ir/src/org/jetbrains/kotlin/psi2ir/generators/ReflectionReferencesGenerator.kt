@@ -349,7 +349,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
     private fun putAdaptedValueArguments(
         startOffset: Int,
         endOffset: Int,
-        irAdapteeCall: IrFunctionAccessExpression,
+        irAdapteeCall: IrFunctionAccessExpression<*>,
         irAdapterFun: IrSimpleFunction,
         resolvedCall: ResolvedCall<*>
     ) {

@@ -122,7 +122,7 @@ internal fun IrExpression.isConstNull() = this is IrConst && this.kind.asString 
 internal fun IrField.getterName() = "<get-${name.asString()}>"
 internal fun IrField.setterName() = "<set-${name.asString()}>"
 
-internal fun IrFunctionAccessExpression.getValueArguments() =
+internal fun IrFunctionAccessExpression<*>.getValueArguments() =
     (0 until valueArgumentsCount).map { i ->
         getValueArgument(i)
     }

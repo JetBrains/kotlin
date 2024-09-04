@@ -22,7 +22,7 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, if (element is IrDeclaration && element !is IrVariable) element else data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: IrDeclaration?) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {

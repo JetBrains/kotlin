@@ -297,8 +297,8 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
             }
 
             private fun IrBuilderWithScope.passConstructorArguments(
-                call: IrFunctionAccessExpression,
-                original: IrFunctionAccessExpression,
+                call: IrFunctionAccessExpression<*>,
+                original: IrFunctionAccessExpression<*>,
                 enumEntry: IrEnumEntry? = null
             ) {
                 call.copyTypeArgumentsFrom(original)

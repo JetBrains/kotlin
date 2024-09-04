@@ -33,7 +33,7 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
             override fun visitElement(element: IrElement, data: IrFunction?) =
                 element.acceptChildren(this, element as? IrFunction ?: data)
 
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction?) {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: IrFunction?) {
                 require(data != null) { "function call not in a method: ${expression.render()}" }
                 when {
                     expression.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic -> {

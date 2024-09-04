@@ -549,7 +549,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             superQualifier: IrClassSymbol?,
             receiver: IrExpression,
             arguments: List<IrExpression?>,
-            call: IrFunctionAccessExpression,
+            call: IrFunctionAccessExpression<*>,
             method: IrSimpleFunction
     ): IrExpression = genLoweredObjCMethodCall(
             info = info,
@@ -565,7 +565,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             superQualifier: IrClassSymbol?,
             receiver: ObjCCallReceiver,
             arguments: List<IrExpression?>,
-            call: IrFunctionAccessExpression,
+            call: IrFunctionAccessExpression<*>,
             method: IrSimpleFunction
     ): IrExpression = generateWithStubs(call) {
         if (method.parent !is IrClass) {
@@ -759,7 +759,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             classPtr: IrExpression,
             initMethodInfo: ObjCMethodInfo,
             arguments: List<IrExpression?>,
-            call: IrFunctionAccessExpression,
+            call: IrFunctionAccessExpression<*>,
             initMethod: IrSimpleFunction
     ): IrExpression = genLoweredObjCMethodCall(
             initMethodInfo,
@@ -961,7 +961,7 @@ private class InteropTransformer(
         return irBlock
     }
 
-    private fun IrBuilderWithScope.transformManagedArguments(oldCall: IrFunctionAccessExpression, oldFunction: IrFunction, newCall: IrFunctionAccessExpression, newFunction: IrFunction) {
+    private fun IrBuilderWithScope.transformManagedArguments(oldCall: IrFunctionAccessExpression<*>, oldFunction: IrFunction, newCall: IrFunctionAccessExpression<*>, newFunction: IrFunction) {
         for (index in 0 until oldCall.valueArgumentsCount) {
             val newArgument = irBlock {
                 val oldArgument = irTemporary(oldCall.getValueArgument(index)!!)

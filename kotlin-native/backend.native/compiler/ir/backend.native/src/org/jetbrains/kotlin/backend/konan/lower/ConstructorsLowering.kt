@@ -215,7 +215,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         }
     }
 
-    private fun IrFunctionAccessExpression.fillArgumentsFrom(callSite: IrFunctionAccessExpression) {
+    private fun IrFunctionAccessExpression<*>.fillArgumentsFrom(callSite: IrFunctionAccessExpression<*>) {
         val constructedClass = callSite.symbol.owner.parentAsClass
         val outerReceiver = callSite.dispatchReceiver
         if (outerReceiver == null && constructedClass.isInner)

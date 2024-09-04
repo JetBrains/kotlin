@@ -96,7 +96,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // Copy a single spread expression, unless it refers to a newly constructed array.
     private fun copyArray(spread: IrExpression): IrExpression {
         if (spread is IrConstructorCall ||
-            (spread is IrFunctionAccessExpression && spread.symbol == builder.irSymbols.arrayOfNulls))
+            (spread is IrFunctionAccessExpression<*> && spread.symbol == builder.irSymbols.arrayOfNulls))
             return spread
 
         return builder.irBlock {

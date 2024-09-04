@@ -38,10 +38,10 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return super.visitFunction(declaration, declaration)
             }
 
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrElement {
+            override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: IrDeclaration): IrElement {
                 val call = super.visitFunctionAccess(expression, data)
                 val doNotIntrinsify = data.hasAnnotation(context.intrinsics.doNotIntrinsifyAnnotationSymbol)
-                if (call is IrFunctionAccessExpression) {
+                if (call is IrFunctionAccessExpression<*>) {
                     for (transformer in transformers) {
                         val newCall = transformer.transformFunctionAccess(call, doNotIntrinsify)
                         if (newCall !== call) {
@@ -56,5 +56,5 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 }
 
 interface CallsTransformer {
-    fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression
+    fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression
 }

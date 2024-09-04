@@ -344,7 +344,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun JvmIrBuilder.fillReflectedPropertyArguments(
-        call: IrFunctionAccessExpression,
+        call: IrFunctionAccessExpression<*>,
         expression: IrCallableReference<*>,
         receiver: IrExpression?,
     ) {

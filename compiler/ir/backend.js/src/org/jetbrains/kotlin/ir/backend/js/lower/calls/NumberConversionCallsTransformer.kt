@@ -74,7 +74,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression<*>, doNotIntrinsify: Boolean): IrExpression {
         val function = call.symbol.owner
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
@@ -85,7 +85,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
         return call
     }
 
-    private fun useDispatchReceiver(call: IrFunctionAccessExpression): IrExpression {
+    private fun useDispatchReceiver(call: IrFunctionAccessExpression<*>): IrExpression {
         return JsIrBuilder.buildReinterpretCast(call.dispatchReceiver!!, call.type)
     }
 }
