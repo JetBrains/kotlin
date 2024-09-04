@@ -232,11 +232,11 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitDeclarationReference(expression)
     }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: Nothing?) {
         visitFunctionAccess(expression)
     }
 
-    fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+    fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>) {
         visitMemberAccess(expression)
     }
 

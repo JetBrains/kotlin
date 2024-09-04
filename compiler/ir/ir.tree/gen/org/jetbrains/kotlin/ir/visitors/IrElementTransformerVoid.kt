@@ -202,10 +202,10 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     final override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Nothing?): IrElement =
         visitMemberAccess(expression)
 
-    open fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression =
+    open fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>): IrExpression =
         visitMemberAccess(expression)
 
-    final override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?): IrElement =
+    final override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: Nothing?): IrElement =
         visitFunctionAccess(expression)
 
     open fun visitConstructorCall(expression: IrConstructorCall): IrExpression =

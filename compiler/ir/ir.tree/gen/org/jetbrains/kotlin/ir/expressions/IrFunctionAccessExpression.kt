@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression]
  */
-sealed class IrFunctionAccessExpression : IrMemberAccessExpression<IrFunctionSymbol>() {
+sealed class IrFunctionAccessExpression<S : IrFunctionSymbol> : IrMemberAccessExpression<S>() {
     abstract var contextReceiversCount: Int
 }

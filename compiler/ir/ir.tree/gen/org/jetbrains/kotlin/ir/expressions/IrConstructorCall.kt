@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.types.model.AnnotationMarker
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructorCall]
  */
-abstract class IrConstructorCall : IrFunctionAccessExpression(), AnnotationMarker {
-    abstract override var symbol: IrConstructorSymbol
-
+abstract class IrConstructorCall : IrFunctionAccessExpression<IrConstructorSymbol>(), AnnotationMarker {
     abstract var source: SourceElement
 
     abstract var constructorTypeArgumentsCount: Int

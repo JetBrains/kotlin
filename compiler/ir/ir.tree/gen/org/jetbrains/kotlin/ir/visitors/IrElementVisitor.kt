@@ -97,7 +97,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): R =
         visitDeclarationReference(expression, data)
 
-    fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): R =
+    fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: D): R =
         visitMemberAccess(expression, data)
 
     fun visitConstructorCall(expression: IrConstructorCall, data: D): R =

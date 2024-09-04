@@ -113,7 +113,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): IrElement =
         visitDeclarationReference(expression, data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement =
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression<*>, data: D): IrElement =
         visitMemberAccess(expression, data)
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement =

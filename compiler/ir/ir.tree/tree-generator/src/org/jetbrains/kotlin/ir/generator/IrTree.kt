@@ -671,18 +671,18 @@ object IrTree : AbstractTreeBuilder() {
     val functionAccessExpression: Element by sealedElement(Expression) {
         nameInVisitorMethod = "FunctionAccess"
         transformerReturnType = rootElement
+        val s = +param("S", functionSymbol)
 
-        parent(memberAccessExpression.withArgs("S" to functionSymbol))
+        parent(memberAccessExpression.withArgs("S" to s))
 
         +field("contextReceiversCount", int)
     }
     val constructorCall: Element by element(Expression) {
         transformerReturnType = rootElement
 
-        parent(functionAccessExpression)
+        parent(functionAccessExpression.withArgs("S" to constructorSymbol))
         parent(type<AnnotationMarker>())
 
-        +referencedSymbol(constructorSymbol)
         +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
@@ -771,9 +771,8 @@ object IrTree : AbstractTreeBuilder() {
         parent(breakContinue)
     }
     val call: Element by element(Expression) {
-        parent(functionAccessExpression)
+        parent(functionAccessExpression.withArgs("S" to simpleFunctionSymbol))
 
-        +referencedSymbol(simpleFunctionSymbol)
         +referencedSymbol("superQualifierSymbol", classSymbol, nullable = true)
     }
     val callableReference: Element by element(Expression) {
@@ -839,9 +838,7 @@ object IrTree : AbstractTreeBuilder() {
         +listField("elements", constantValue, mutability = MutableList)
     }
     val delegatingConstructorCall: Element by element(Expression) {
-        parent(functionAccessExpression)
-
-        +referencedSymbol(constructorSymbol)
+        parent(functionAccessExpression.withArgs("S" to constructorSymbol))
     }
     val dynamicExpression: Element by element(Expression) {
         parent(expression)
@@ -860,9 +857,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("receiver", expression)
     }
     val enumConstructorCall: Element by element(Expression) {
-        parent(functionAccessExpression)
-
-        +referencedSymbol(constructorSymbol)
+        parent(functionAccessExpression.withArgs("S" to constructorSymbol))
     }
     val errorExpression: Element by element(Expression) {
         needAcceptMethod()

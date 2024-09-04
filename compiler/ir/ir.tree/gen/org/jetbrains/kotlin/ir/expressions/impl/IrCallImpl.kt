@@ -24,10 +24,10 @@ class IrCallImpl internal constructor(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
+    override val symbol: IrSimpleFunctionSymbol,
     override var origin: IrStatementOrigin?,
     protected override val valueArguments: Array<IrExpression?>,
     protected override val typeArguments: Array<IrType?>,
-    override var symbol: IrSimpleFunctionSymbol,
     override var superQualifierSymbol: IrClassSymbol?,
 ) : IrCall() {
     override var attributeOwnerId: IrAttributeContainer = this
