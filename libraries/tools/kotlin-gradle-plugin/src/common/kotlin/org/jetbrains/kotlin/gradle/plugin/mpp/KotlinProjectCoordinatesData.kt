@@ -64,7 +64,14 @@ internal val ExportKotlinProjectCoordinates = KotlinProjectSetupCoroutine {
 }
 
 internal fun InternalKotlinSourceSet.projectCoordinatesConfiguration() =
-    LazyResolvedConfiguration(resolvableMetadataConfiguration, project.provider { "kotlin-project-coordinates" })
+    LazyResolvedConfiguration(
+        resolvableMetadataConfiguration,
+        { attributeContainer ->
+            attributeContainer.attributeProvider(
+                ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                project.provider { "kotlin-project-coordinates" })
+        }
+    )
 
 private suspend fun Project.collectKotlinProjectCoordinates(): KotlinProjectCoordinatesData {
     return KotlinProjectCoordinatesData(

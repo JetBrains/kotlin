@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.targets
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.attributes.PUBLISH_COORDINATES_TYPE_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.internal.attributes.WITHOUT_PUBLISH_COORDINATES
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
@@ -37,9 +37,14 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     }
 
     val apiElementScope = configurations.maybeCreateDependencyScope(mainCompilation.apiConfigurationName)
+
+    val kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
+
     configurations.maybeCreateConsumable(target.apiElementsConfigurationName).apply {
         description = "API elements for main."
         isVisible = false
+        if (kotlinKmpProjectIsolationEnabled)
+            attributes.setAttribute(PUBLISH_COORDINATES_TYPE_ATTRIBUTE, WITHOUT_PUBLISH_COORDINATES)
         attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         extendsFrom(apiElementScope)
@@ -63,6 +68,8 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName).apply {
             description = "Elements of runtime for main."
             isVisible = false
+            if (kotlinKmpProjectIsolationEnabled)
+                attributes.setAttribute(PUBLISH_COORDINATES_TYPE_ATTRIBUTE, WITHOUT_PUBLISH_COORDINATES)
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration

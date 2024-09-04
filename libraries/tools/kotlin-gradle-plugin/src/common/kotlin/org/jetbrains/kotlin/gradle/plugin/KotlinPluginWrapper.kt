@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
+import org.jetbrains.kotlin.gradle.internal.attributes.setupGavAttributesMatchingStrategy
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -191,6 +192,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         if (project.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(this)
             KotlinNativeBundleArtifactFormat.setupTransform(project)
+        }
+
+        if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
+            setupGavAttributesMatchingStrategy(this)
         }
     }
 

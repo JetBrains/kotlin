@@ -5,17 +5,26 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.testbase.DependencyManagement
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.addDefaultSettingsToSettingsGradle
+import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectContains
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.defaultLocalRepo
+import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 @DisplayName("Artifacts publication")
@@ -111,4 +120,43 @@ class PublishingIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-69974: pom rewriting with substitutions and included builds")
+    @TestMetadata("pom-rewriter")
+    @GradleTest
+    fun testPomRewriter(gradleVersion: GradleVersion) {
+        val localRepo = defaultLocalRepo(gradleVersion)
+        project(
+            "pom-rewriter",
+            gradleVersion,
+            localRepoDir = localRepo,
+            buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE),
+        ) {
+
+            projectPath.resolve("included").addDefaultSettingsToSettingsGradle(
+                gradleVersion,
+                DependencyManagement.DefaultDependencyManagement(),
+                localRepo,
+                true
+            )
+
+            build("publishJvmPublicationToCustomRepository") {
+                val actualPomContext = localRepo.resolve("pom-rewriter")
+                    .resolve("pom-rewriter-root-jvm")
+                    .resolve("1.0.0")
+                    .resolve("pom-rewriter-root-jvm-1.0.0.pom")
+                    .readText()
+                    .replace("""\s+""".toRegex(), "")
+
+                val expectedPomContext = projectPath.resolve("expected-pom.xml")
+                    .readText()
+                    .replace("""\s+""".toRegex(), "")
+                    .replace("{kotlin_version}", buildOptions.kotlinVersion)
+
+                assertContains(actualPomContext, expectedPomContext)
+            }
+        }
+    }
+
+
 }
