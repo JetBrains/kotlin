@@ -89,6 +89,14 @@ object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 
 object VisibilityError : ResolutionDiagnostic(K2_VISIBILITY_ERROR)
 
+/**
+ * This visibility "error" is an analogue of [VisibilityError], created for [org.jetbrains.kotlin.fir.declarations.FirCodeFragment]
+ * to be able to resolve into private entities.
+ *
+ * [RESOLVED_LOW_PRIORITY] was chosen here to be able, from the one side,
+ * to resolve to non-private member in case of ambiguity,
+ * but from another side, to have the code without error-level diagnostics.
+ */
 object FragmentVisibilityError : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object ResolvedWithLowPriority : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
