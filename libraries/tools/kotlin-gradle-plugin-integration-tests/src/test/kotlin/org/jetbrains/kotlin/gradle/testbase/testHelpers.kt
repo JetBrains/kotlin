@@ -34,12 +34,28 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
         }
 
     projectPath.copyRecursively(dest)
-    dest.resolve("gradle.properties").append(
-        """
-            kotlin_version=${buildOptions.kotlinVersion}
-            test_fixes_version=${TestVersions.Kotlin.CURRENT}
-            """.trimIndent()
-    )
+
+    val gradlePropertiesFile = dest.resolve("gradle.properties")
+    val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion).toMutableMap()
+    if (gradlePropertiesFile.exists()) {
+        val propertiesRegex = """^\s*(\S+)=(.*)""".toRegex()
+        val content = gradlePropertiesFile.readLines()
+            .map {
+                val trimmedLine = it.trimStart()
+                val match = propertiesRegex.matchEntire(trimmedLine) ?: return@map trimmedLine
+                val (key, value) = match.destructured
+                val overriddenValue = gradlePropertiesFromBuildOptions.remove(key)
+                if (overriddenValue != null && value != overriddenValue) {
+                    "# $trimmedLine // overridden by buildOptions with\n$key=$overriddenValue\n"
+                } else {
+                    "${trimmedLine}\n"
+                }
+            }
+        gradlePropertiesFile.writeLines(content)
+    }
+
+    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { "${it.key}=${it.value}" }
+    gradlePropertiesFile.appendText("# Gradle Properties from project's buildOptions\n$gradlePropertiesContent")
 
     dest.resolve("run.sh").run {
         writeText(
@@ -86,6 +102,15 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     projectRoot.resolve("gradlew.bat").run {
         copyTo(dest.resolve(fileName))
     }
+}
+
+private fun BuildOptions.asGradleProperties(gradleVersion: GradleVersion): Map<String, String> {
+    val propertyRegex = """^-[DP](.+)=(.*)""".toRegex()
+    return toArguments(gradleVersion)
+        .mapNotNull {
+            val match = propertyRegex.matchEntire(it) ?: return@mapNotNull null
+            match.groupValues[1] to match.groupValues[2]
+        }.toMap()
 }
 
 private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
@@ -220,3 +245,6 @@ internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_L
         """.trimIndent()
     )
 }
+
+/** Helper function for test code with differences when Isolated Projects enabled */
+internal val TestProject.isolatedProjectsEnabled: Boolean get() = buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
