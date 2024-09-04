@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
@@ -168,7 +170,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
 
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-        ktCallExpression.assertIsCallOf(CallableId(FqName("commonKLib"), Name.identifier("commonKLibFunction")))
+        ktCallExpression.assertIsSuccessfulCallOf(CallableId(FqName("commonKLib"), Name.identifier("commonKLibFunction")))
     }
 
     @Test
@@ -209,11 +211,11 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
 
         val ktFileInCommon = session.modulesWithFiles.getValue(commonModule).single() as KtFile
         val callInCommon = ktFileInCommon.findDescendantOfType<KtCallExpression>()!!
-        callInCommon.assertIsCallOf(CallableId(FqName("some.example"), FqName("Person"), Name.identifier("greet")))
+        callInCommon.assertIsSuccessfulCallOf(CallableId(FqName("some.example"), FqName("Person"), Name.identifier("greet")))
 
         val ktFileInJvm = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val callInJvm = ktFileInJvm.findDescendantOfType<KtCallExpression>()!!
-        callInJvm.assertIsCallOf(CallableId(FqName("common"), Name.identifier("greetEachOther")))
+        callInJvm.assertIsSuccessfulCallOf(CallableId(FqName("common"), Name.identifier("greetEachOther")))
     }
 
     @Test
@@ -223,7 +225,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
-                val main = addModule(
+                val dep = addModule(
                     buildKtSourceModule {
                         addSourceRoot(testDataPath(root).resolve("dependent"))
                         platform = JvmPlatforms.defaultJvmPlatform
@@ -233,7 +235,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
                 sourceModule = addModule(
                     buildKtSourceModule {
                         addSourceRoot(testDataPath(root).resolve("main"))
-                        addRegularDependency(main)
+                        addRegularDependency(dep)
                         platform = JvmPlatforms.defaultJvmPlatform
                         moduleName = "main"
                     }
@@ -242,7 +244,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
         }
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-        ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+        ktCallExpression.assertIsSuccessfulCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
 
         assertEquals("main", sourceModule.name)
         assertEquals(sourceModule.name, sourceModule.stableModuleName)
@@ -367,7 +369,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
     ) {
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-        ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
+        ktCallExpression.assertIsSuccessfulCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
     }
 
     @Test
@@ -448,5 +450,93 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             val call = callExpression.resolveToCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
             assert(call.symbol is KaNamedFunctionSymbol)
         }
+    }
+
+    @Test
+    fun testConflictYetSpecificSourceRoot_java() {
+        val root = "conflict"
+
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("dependent").resolve("Foo.java"))
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        checkConflictUsage(session, sourceModule, KtCallExpression::assertIsCallOf) { symbol ->
+            Assertions.assertEquals(KaSymbolOrigin.JAVA_SOURCE, symbol.origin)
+        }
+    }
+
+    @Test
+    fun testConflictYetSpecificSourceRoot_kt() {
+        val root = "conflict"
+
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("dependent").resolve("Foo.kt"))
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        checkConflictUsage(session, sourceModule, KtCallExpression::assertIsSuccessfulCallOf) { symbol ->
+            Assertions.assertEquals(KaSymbolOrigin.SOURCE, symbol.origin)
+        }
+    }
+
+    @Test
+    fun testConflict() {
+        val root = "conflict"
+
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("dependent"))
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+        checkConflictUsage(session, sourceModule, KtCallExpression::assertIsSuccessfulCallOf) { symbol ->
+            Assertions.assertEquals(KaSymbolOrigin.SOURCE, symbol.origin)
+        }
+    }
+
+    private fun checkConflictUsage(
+        session: StandaloneAnalysisAPISession,
+        sourceModule: KaSourceModule,
+        check: KtCallExpression.(CallableId, (KaFunctionSymbol) -> Unit) -> Unit,
+        additionalCheck: (KaFunctionSymbol) -> Unit,
+    ) {
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).first { it.name == "main.kt" } as KtFile
+        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
+        check.invoke(
+            ktCallExpression,
+            CallableId(
+                FqName.ROOT,
+                FqName.fromSegments(listOf("Foo", "Companion")),
+                Name.identifier("foo")
+            ),
+            additionalCheck
+        )
     }
 }

@@ -56,7 +56,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
 
         // call
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
-        ktCallExpression.assertIsCallOf(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
+        ktCallExpression.assertIsSuccessfulCallOf(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
 
         // builtin type
         val typeReference = ktFile.findDescendantOfType<KtNamedFunction>()!!.typeReference!!
