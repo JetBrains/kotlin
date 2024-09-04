@@ -42,7 +42,7 @@ val checksumFiles = repoFile.walkTopDown()
     .filter { it.name.endsWith(".$checksumExtension") }
     .filter {
         it.name.substringBefore(".$checksumExtension")
-            .substringAfterLast(".") in listOf("jar", "klib")
+            .substringAfterLast(".") in listOf("jar", "klib", "gz", "zip")
     }
     .filterNot {
         it.name.substringAfterLast("-")
