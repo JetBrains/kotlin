@@ -34357,6 +34357,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
       }
 
       @Test
+      @TestMetadata("noAssertionForNulllableCaptured.kt")
+      public void testNoAssertionForNulllableCaptured() {
+        runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/noAssertionForNulllableCaptured.kt");
+      }
+
+      @Test
       @TestMetadata("nonNullableTypeParameter.kt")
       public void testNonNullableTypeParameter() {
         runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/nonNullableTypeParameter.kt");
