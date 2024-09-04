@@ -2917,6 +2917,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
         config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
     })
     setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
+    setRuntimeConstGlobal("Kotlin_concurrentGlobalRootSet", llvm.constInt32(if (context.config.concurrentGlobalRootSet) 1 else 0))
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
 

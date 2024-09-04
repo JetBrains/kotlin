@@ -169,6 +169,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
     }
 
+    val concurrentGlobalRootSet: Boolean
+        get() = configuration.get(BinaryOptions.concurrentGlobalRootSet) ?: false
+
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
 

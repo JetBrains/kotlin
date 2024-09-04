@@ -155,9 +155,7 @@ class SpecialRefRegistry : private Pinned {
         void releaseRef() noexcept {
             auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
             RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
-            if (rcBefore == 1) {
-                Kotlin_initRuntimeIfNeeded();
-                ThreadStateGuard runnableGuard(ThreadState::kRunnable, true);
+            if (compiler::concurrentGlobalRootSet() && rcBefore == 1) {
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
                 // Notify GC about the removal.

@@ -73,6 +73,7 @@ extern const int32_t Kotlin_disableMmap = 0;
 #endif
 extern const int32_t Kotlin_runtimeLogs[static_cast<size_t>(kotlin::logging::Tag::kEnumSize)] = {0};
 extern const int32_t Kotlin_concurrentWeakSweep = 1;
+extern const int32_t Kotlin_concurrentGlobalRootSet = 1;
 #if KONAN_WINDOWS
 // parallel mark tests hang on mingw due to (presumably) a bug in winpthread
 extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
