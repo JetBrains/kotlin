@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.AbbreviatedType
@@ -458,12 +459,14 @@ class OptInUsageChecker : CallChecker {
 
             if (element.getParentOfType<KtImportDirective>(false) == null) {
                 val containingClass = element.getParentOfType<KtClassOrObject>(strict = true)
-                val descriptions = targetDescriptor.loadOptIns(
+                val fromSuperType = containingClass != null && containingClass.superTypeListEntries.any {
+                    it.typeAsUserType == element.parent
+                }
+                val checkedDescriptor = if (fromSuperType && targetClass != null) targetClass else targetDescriptor
+                val descriptions = checkedDescriptor.loadOptIns(
                     bindingContext,
                     context.languageVersionSettings,
-                    fromSupertype = containingClass != null && containingClass.superTypeListEntries.any {
-                        it.typeAsUserType == element.parent
-                    }
+                    fromSupertype = fromSuperType
                 )
                 reportNotAllowedOptIns(descriptions, element, context)
             }
