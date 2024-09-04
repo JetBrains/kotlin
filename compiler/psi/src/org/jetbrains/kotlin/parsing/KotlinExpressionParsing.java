@@ -916,7 +916,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
-            if (at(IF_KEYWORD)) {
+            if (at(IF_KEYWORD) || at(ANDAND)) {
                 parseWhenEntryGuard();
             }
 

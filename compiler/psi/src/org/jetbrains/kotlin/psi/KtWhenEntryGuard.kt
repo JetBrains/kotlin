@@ -14,7 +14,4 @@ class KtWhenEntryGuard(node: ASTNode) : KtElementImpl(node) {
 
     val guardKeyword: PsiElement?
         get() = findChildByType(KtTokens.IF_KEYWORD) ?: findChildByType(KtTokens.ANDAND)
-
-    val hasCorrectKeyword: Boolean
-        get() = guardKeyword == KtTokens.IF_KEYWORD
 }

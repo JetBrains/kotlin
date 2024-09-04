@@ -809,35 +809,28 @@ class LightTreeRawFirExpressionBuilder(
                 shouldBind = shouldBind || entry.shouldBindSubject
                 val branch = entry.firBlock
                 val entrySource = entry.node.toFirSourceElement()
-                val correctKeyword = entry.hasCorrectKeyword
-                val guardKeywordSrc = entry.guardKeyword?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                val guardKeywordSource = entry.guardKeyword?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                 branches += if (!entry.isElse) {
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
-                        buildWhenBranch(hasGuard = entry.guard != null) {
+                        buildWhenBranch(guardKeywordSource) {
                             source = entrySource
                             condition = firCondition.guardedBy(entry.guard)
                             result = branch
-                            hasCorrectGuardKeyword = correctKeyword
-                            guardKeywordSource = guardKeywordSrc
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
-                        buildWhenBranch(hasGuard = entry.guard != null) {
+                        buildWhenBranch(guardKeywordSource) {
                             source = entrySource
                             condition = firCondition.guardedBy(entry.guard)
                             result = branch
-                            hasCorrectGuardKeyword = correctKeyword
-                            guardKeywordSource = guardKeywordSrc
                         }
                     }
                 } else {
-                    buildWhenBranch(hasGuard = entry.guard != null) {
+                    buildWhenBranch(guardKeywordSource) {
                         source = entrySource
                         condition = entry.guard ?: buildElseIfTrueCondition()
                         result = branch
-                        hasCorrectGuardKeyword = correctKeyword
-                        guardKeywordSource = guardKeywordSrc
                     }
                 }
             }

@@ -396,9 +396,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("condition", expression, withTransform = true)
         +field("result", block, withTransform = true)
-        +field("hasGuard", boolean)
-        +field("hasCorrectGuardKeyword", boolean)
-        +field("guardKeywordSource", sourceElementType, nullable = true)
+        +field("guardKeyword", sourceElementType, nullable = true)
     }
 
     val classLikeDeclaration: Element by sealedElement(Declaration) {

@@ -377,7 +377,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         val abstractWhenBranchBuilder by builder {
-            fields from whenBranch without "hasGuard"
+            fields from whenBranch without "guardKeyword"
         }
         builder(whenBranch, type = "FirRegularWhenBranch") {
             parents += abstractWhenBranchBuilder

@@ -4,18 +4,18 @@
 
 fun ok(x: Any, boolExpr: Boolean) {
     when (x) {
-        is String <!UNSUPPORTED_FEATURE!>if boolExpr<!> -> "hello"
+        is String if boolExpr -> "hello"
     }
 }
 
 fun wrongAnd(x: Any, boolExpr: Boolean) {
     when (x) {
-        is String <!UNSUPPORTED_FEATURE!>&& boolExpr<!> -> "hello"
+        is String <!INCORRECT_GUARD_KEYWORD!>&&<!> boolExpr -> "hello"
     }
 }
 
 fun comma(x: Any, boolExpr: Boolean) {
     when (x) {
-        is String, is Int <!UNSUPPORTED_FEATURE!>&& boolExpr<!> -> "hello"
+        is String, is Int <!COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD!>&& boolExpr<!> -> "hello"
     }
 }

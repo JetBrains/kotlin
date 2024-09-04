@@ -204,7 +204,7 @@ private sealed class WhenExhaustivenessChecker {
         override fun visitWhenBranch(whenBranch: FirWhenBranch, data: D) {
             // When conditions with guards do not contribute to exhaustiveness.
             // TODO(KT-63696): enhance exhaustiveness checks to consider guards.
-            if (whenBranch.hasGuard) return
+            if (whenBranch.guardKeyword != null) return
 
             whenBranch.condition.accept(this, data)
         }

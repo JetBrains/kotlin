@@ -2656,12 +2656,11 @@ open class PsiRawFirBuilder(
                 for (entry in expression.entries) {
                     val entrySource = entry.toFirSourceElement()
                     val entryGuard = entry.guard?.let { it.getExpression().toFirExpression("No expression in guard") }
-                    val correctKeyword = entry.guard?.hasCorrectKeyword != false
                     val guardKeywordSrc = entry.guard?.guardKeyword?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
                     val branchBody = entry.expression.toFirBlock()
                     branches += if (entry.elseKeyword == null) {
                         if (hasSubject) {
-                            buildWhenBranch(hasGuard = entryGuard != null) {
+                            buildWhenBranch(guardKeywordSrc) {
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
                                     ref,
@@ -2669,12 +2668,10 @@ open class PsiRawFirBuilder(
                                     { toFirOrErrorType() },
                                 ).guardedBy(entryGuard)
                                 result = branchBody
-                                hasCorrectGuardKeyword = correctKeyword
-                                guardKeywordSource = guardKeywordSrc
                             }
                         } else {
                             val ktCondition = entry.conditions.first()
-                            buildWhenBranch(hasGuard = entryGuard != null) {
+                            buildWhenBranch(guardKeywordSrc) {
                                 source = entrySource
                                 condition =
                                     if (entry.conditions.size == 1 && ktCondition is KtWhenConditionWithExpression) {
@@ -2707,17 +2704,13 @@ open class PsiRawFirBuilder(
                                         })
                                     }.guardedBy(entryGuard)
                                 result = branchBody
-                                hasCorrectGuardKeyword = correctKeyword
-                                guardKeywordSource = guardKeywordSrc
                             }
                         }
                     } else {
-                        buildWhenBranch(hasGuard = entryGuard != null) {
+                        buildWhenBranch(guardKeywordSrc) {
                             source = entrySource
                             condition = entryGuard ?: buildElseIfTrueCondition()
                             result = branchBody
-                            hasCorrectGuardKeyword = correctKeyword
-                            guardKeywordSource = guardKeywordSrc
                         }
                     }
                 }

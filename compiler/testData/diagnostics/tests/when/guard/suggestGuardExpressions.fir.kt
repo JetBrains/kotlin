@@ -3,20 +3,20 @@
 
 fun ok(x: String, boolExpr: Boolean) {
     when (x) {
-        "OK" <!UNSUPPORTED_FEATURE!>if boolExpr<!> -> "hello"
+        "OK" if boolExpr -> "hello"
         else -> "bye"
     }
 }
 
 fun suggestAnd(x: String, boolExpr: Boolean) {
     when (x) {
-        <!CONFUSING_BRANCH_CONDITION_ERROR, INCOMPATIBLE_TYPES!><!TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
+        <!CONFUSING_BRANCH_CONDITION_ERROR, INCOMPATIBLE_TYPES!><!CONDITION_TYPE_MISMATCH!>"OK"<!> <!SUGGEST_GUARD_KEYWORD!>&&<!> boolExpr<!> -> "hello"
     }
 }
 
 fun booleanNoSuggestion1(x: Boolean, boolExpr: Boolean) {
     when (x) {
-        <!CONFUSING_BRANCH_CONDITION_ERROR!><!TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
+        <!CONFUSING_BRANCH_CONDITION_ERROR!><!CONDITION_TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
         else -> "bye"
     }
 }
@@ -30,21 +30,21 @@ fun booleanNoSuggestion2(x: Boolean, boolExpr: Boolean) {
 
 fun elseOk(x: Boolean, boolExpr: Boolean) {
     when (x) {
-        else <!UNSUPPORTED_FEATURE!>if boolExpr<!> -> "hello"
+        else if boolExpr -> "hello"
         else -> "bye"
     }
 }
 
 fun elseAndAnd(x: Boolean, boolExpr: Boolean) {
     when (x) {
-        <!ELSE_MISPLACED_IN_WHEN!>else<!> <!SYNTAX!>!>&& boolExpr<!> -> "hello"
-        <!UNREACHABLE_CODE!>else -> "bye"<!>
+        else <!INCORRECT_GUARD_KEYWORD!>&&<!> boolExpr -> "hello"
+        else -> "bye"
     }
 }
 
 fun comma(x: Any, boolExpr: Boolean) {
     when (x) {
-        is String, is CharSequence <!UNSUPPORTED_FEATURE!>&& boolExpr<!> -> "hello"
+        is String, is CharSequence <!COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD!>&& boolExpr<!> -> "hello"
     }
 }
 

@@ -361,11 +361,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(whenBranch, "FirRegularWhenBranch") {
-            defaultFalse("hasGuard", withGetter = true)
+            defaultNull("guardKeyword", withGetter = true)
         }
-        impl(whenBranch, "FirGuardedWhenBranch") {
-            defaultTrue("hasGuard", withGetter = true)
-        }
+        impl(whenBranch, "FirGuardedWhenBranch")
 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")

@@ -21,11 +21,8 @@ internal class FirGuardedWhenBranch(
     override val source: KtSourceElement?,
     override var condition: FirExpression,
     override var result: FirBlock,
-    override val hasCorrectGuardKeyword: Boolean,
-    override val guardKeywordSource: KtSourceElement?,
+    override val guardKeyword: KtSourceElement?,
 ) : FirWhenBranch() {
-    override val hasGuard: Boolean
-        get() = true
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         condition.accept(visitor, data)

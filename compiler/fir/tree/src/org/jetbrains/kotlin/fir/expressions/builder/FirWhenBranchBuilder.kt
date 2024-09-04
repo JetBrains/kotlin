@@ -5,16 +5,22 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildWhenBranch(hasGuard: Boolean, init: FirAbstractWhenBranchBuilder.() -> Unit): FirWhenBranch {
+inline fun buildWhenBranch(guardKeywordSource: KtSourceElement?, init: FirAbstractWhenBranchBuilder.() -> Unit): FirWhenBranch {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    val builder = if (hasGuard) FirGuardedWhenBranchBuilder() else FirRegularWhenBranchBuilder()
-    return builder.apply(init).build()
+    return when (guardKeywordSource) {
+        null -> FirRegularWhenBranchBuilder().apply(init)
+        else -> FirGuardedWhenBranchBuilder().apply {
+            guardKeyword = guardKeywordSource
+            init()
+        }
+    }.build()
 }

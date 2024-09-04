@@ -34,7 +34,4 @@ data class WhenEntry(
             else -> buildBalancedOrExpressionTree(conditions)
         }
     }
-
-    val hasCorrectKeyword: Boolean
-        get() = guardKeyword == null || guardKeyword.tokenType == KtTokens.IF_KEYWORD
 }

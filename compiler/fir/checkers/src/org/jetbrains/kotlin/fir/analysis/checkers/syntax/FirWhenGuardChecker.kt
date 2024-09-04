@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.text
 
 object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
     override fun checkPsiOrLightTree(
@@ -39,7 +40,7 @@ object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiEl
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (!branch.hasGuard) return
+        if (branch.guardKeyword == null) return
         val source = branch.source ?: return
 
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.WhenGuards)) {
@@ -57,6 +58,8 @@ object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiEl
         } else {
             if (source.getChild(KtTokens.COMMA, depth = 1) != null) {
                 reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD, context)
+            } else if (branch.guardKeyword.text != "if") {
+                reporter.reportOn(branch.guardKeyword, FirErrors.INCORRECT_GUARD_KEYWORD, context)
             }
         }
     }
