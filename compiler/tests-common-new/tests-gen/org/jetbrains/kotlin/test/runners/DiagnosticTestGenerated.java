@@ -34455,6 +34455,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("starProjectionAndFunctionType.kt")
+      public void testStarProjectionAndFunctionType() {
+        runTest("compiler/testData/diagnostics/tests/resolve/starProjectionAndFunctionType.kt");
+      }
+
+      @Test
       @TestMetadata("superInvoke.kt")
       public void testSuperInvoke() {
         runTest("compiler/testData/diagnostics/tests/resolve/superInvoke.kt");
