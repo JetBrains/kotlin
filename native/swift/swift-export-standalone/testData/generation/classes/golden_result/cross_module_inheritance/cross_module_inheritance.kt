@@ -1,3 +1,5 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(CLASS_ACROSS_MODULES::class, "24cross_module_inheritance20CLASS_ACROSS_MODULESC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

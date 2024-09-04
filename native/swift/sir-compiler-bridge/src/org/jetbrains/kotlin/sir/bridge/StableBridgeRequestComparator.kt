@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.sir.bridge
 
+import org.jetbrains.kotlin.sir.util.swiftFqName
+
 public object StableBridgeRequestComparator : Comparator<BridgeRequest> {
     override fun compare(
         lhs: BridgeRequest,
@@ -13,6 +15,13 @@ public object StableBridgeRequestComparator : Comparator<BridgeRequest> {
         is FunctionBridgeRequest -> {
             when (rhs) {
                 is FunctionBridgeRequest -> lhs.bridgeName.compareTo(rhs.bridgeName)
+                is TypeBindingBridgeRequest -> 1
+            }
+        }
+        is TypeBindingBridgeRequest -> {
+            when (rhs) {
+                is FunctionBridgeRequest -> -1
+                is TypeBindingBridgeRequest -> lhs.sirClass.swiftFqName.compareTo(rhs.sirClass.swiftFqName)
             }
         }
     }

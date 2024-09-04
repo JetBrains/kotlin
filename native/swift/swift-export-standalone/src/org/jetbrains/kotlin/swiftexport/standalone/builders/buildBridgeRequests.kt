@@ -29,6 +29,11 @@ internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDecla
     )
     addAll(
         container
+            .allClasses()
+            .flatMap { it.constructTypeBindingBridgeRequests(generator) }
+    )
+    addAll(
+        container
             .allContainers()
             .flatMap { buildBridgeRequests(generator, it) }
     )

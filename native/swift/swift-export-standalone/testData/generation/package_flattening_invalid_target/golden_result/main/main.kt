@@ -1,3 +1,5 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.Foo::class, "22ExportedKotlinPackages3orgO6kotlinO4mainE3FooC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

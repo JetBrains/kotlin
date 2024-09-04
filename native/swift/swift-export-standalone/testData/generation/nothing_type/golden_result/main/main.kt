@@ -1,3 +1,5 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

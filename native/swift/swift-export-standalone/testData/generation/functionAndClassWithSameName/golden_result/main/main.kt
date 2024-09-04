@@ -1,3 +1,10 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.ClassWithFactoryInAPackage::class, "22ExportedKotlinPackages4testO7factoryO4mainE26ClassWithFactoryInAPackageC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.Outer::class, "22ExportedKotlinPackages4testO7factoryO4mainE5OuterC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(test.factory.Outer.Nested::class, "22ExportedKotlinPackages4testO7factoryO4mainE5OuterC6NestedC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ClassWithFactoryWithoutParameters::class, "4main33ClassWithFactoryWithoutParametersC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ObjectWithFactory::class, "4main17ObjectWithFactoryC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(UtcOffset::class, "4main9UtcOffsetC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

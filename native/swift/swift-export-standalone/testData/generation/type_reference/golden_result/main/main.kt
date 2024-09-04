@@ -1,3 +1,21 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_CLASS::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC11INNER_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Class_with_package.INNER_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE18Class_with_packageC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.DATA_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE11DATA_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package.INNER_CLASS::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC11INNER_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.deeper.Object_with_package.INNER_OBJECT::class, "22ExportedKotlinPackages9namespaceO6deeperO4mainE19Object_with_packageC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package::class, "4main21Class_without_packageC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_CLASS::class, "4main21Class_without_packageC11INNER_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Class_without_package.INNER_OBJECT::class, "4main21Class_without_packageC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Demo::class, "4main4DemoC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Demo.INNER_CLASS::class, "4main4DemoC11INNER_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Demo.INNER_OBJECT::class, "4main4DemoC12INNER_OBJECTC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OPEN_CLASS::class, "4main10OPEN_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Object_without_package::class, "4main22Object_without_packageC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Object_without_package.INNER_CLASS::class, "4main22Object_without_packageC11INNER_CLASSC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Object_without_package.INNER_OBJECT::class, "4main22Object_without_packageC12INNER_OBJECTC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

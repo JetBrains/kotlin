@@ -1,3 +1,6 @@
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo.Nested::class, "4main3FooC6NestedC")
+
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 

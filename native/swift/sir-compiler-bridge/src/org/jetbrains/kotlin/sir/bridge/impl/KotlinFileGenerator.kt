@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.sir.bridge.impl
 import org.jetbrains.kotlin.sir.bridge.BridgePrinter
 import org.jetbrains.kotlin.sir.bridge.FunctionBridge
 import org.jetbrains.kotlin.sir.bridge.GeneratedBridge
+import org.jetbrains.kotlin.sir.bridge.TypeBindingBridge
 
 internal class KotlinBridgePrinter : BridgePrinter {
 
     private val imports = mutableSetOf<String>()
     private val functions = mutableSetOf<List<String>>()
+    private val fileLevelAnnotations = mutableSetOf<String>()
 
     override fun add(bridge: GeneratedBridge) {
         when (bridge) {
             is FunctionBridge -> add(bridge)
+            is TypeBindingBridge -> add(bridge)
         }
     }
 
@@ -25,7 +28,17 @@ internal class KotlinBridgePrinter : BridgePrinter {
         imports += bridge.kotlinFunctionBridge.packageDependencies
     }
 
+    private fun add(bridge: TypeBindingBridge) {
+        fileLevelAnnotations += bridge.kotlinFileAnnotation
+    }
+
     override fun print(): Sequence<String> = sequence {
+        if (fileLevelAnnotations.isNotEmpty()) {
+            fileLevelAnnotations.forEach {
+                yield("@file:$it")
+            }
+            yield("")
+        }
         if (imports.isNotEmpty()) {
             imports.forEach {
                 yield("import $it")

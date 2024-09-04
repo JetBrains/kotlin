@@ -69,6 +69,25 @@ public class KotlinFunctionBridge(
 )
 
 /**
+ * A mapping from Kotlin class to a corresponding [Swift class][sirClass].
+ */
+public class TypeBindingBridgeRequest(
+    public val sirClass: SirClass,
+) : BridgeRequest
+
+/**
+ * Bridge that implements mapping from Kotlin type name to Swift type name.
+ *
+ * @see TypeBindingBridgeRequest
+ */
+public class TypeBindingBridge(
+    /**
+     * File-level annotation to be placed on the generated Kotlin bridge.
+     */
+    public val kotlinFileAnnotation: String,
+) : GeneratedBridge
+
+/**
  * Generates various [GeneratedBridge]s given various [BridgeRequest]s
  */
 public interface BridgeGenerator {
