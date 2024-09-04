@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -88,7 +88,8 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
-    final override val packageProvider = project.createPackageProvider(scope)
+    final override val packageExistenceChecker =
+        KotlinPackageExistenceCheckerFactory.getInstance(project).createPackageExistenceChecker(session.llFirModuleData.ktModule)
 
     /**
      * Computes the origin for the declarations coming from [file].
@@ -285,7 +286,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
+        fqName.takeIf { packageExistenceChecker.doesKotlinOnlyPackageExist(fqName) }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null

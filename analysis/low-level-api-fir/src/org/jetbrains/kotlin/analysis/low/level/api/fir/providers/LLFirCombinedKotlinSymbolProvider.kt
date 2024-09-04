@@ -9,9 +9,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders
-import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceChecker
+import org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageExistenceChecker
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  *
  * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
  *
- * [packageProviderForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
+ * [packageExistenceCheckerForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
  * [LLFirProvider.SymbolProvider.allowKotlinPackage]). It may be `null` if no such provider exists. See [getPackage] for a use case.
  */
 internal class LLFirCombinedKotlinSymbolProvider private constructor(
@@ -50,8 +50,8 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     project: Project,
     providers: List<LLFirKotlinSymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
-    private val packageProvider: KotlinPackageProvider,
-    private val packageProviderForKotlinPackages: KotlinPackageProvider?,
+    private val packageExistenceChecker: KotlinPackageExistenceChecker,
+    private val packageExistenceCheckerForKotlinPackages: KotlinPackageExistenceChecker?,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
@@ -126,9 +126,9 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
             // because calling that individual symbol provider directly would result in `null` (as it disallows `kotlin` packages). The
             // `packageProviderForKotlinPackages` solves this issue by including only scopes from symbol providers which allow `kotlin`
             // packages.
-            packageProviderForKotlinPackages?.doesKotlinOnlyPackageExist(fqName) == true
+            packageExistenceCheckerForKotlinPackages?.doesKotlinOnlyPackageExist(fqName) == true
         } else {
-            packageProvider.doesKotlinOnlyPackageExist(fqName)
+            packageExistenceChecker.doesKotlinOnlyPackageExist(fqName)
         }
 
         // Regarding caching `hasPackage`: The static (standalone) package provider precomputes its packages, while the IDE package provider
@@ -141,20 +141,20 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
             if (providers.size > 1) {
                 val declarationProvider = project.mergeDeclarationProviders(providers.map { it.declarationProvider })
 
-                val packageProvider = project.mergePackageProviders(providers.map { it.packageProvider })
+                val packageExistenceChecker = project.mergePackageExistenceChecker(providers.map { it.packageExistenceChecker })
 
                 val packageProviderForKotlinPackages = providers
                     .filter { it.allowKotlinPackage }
                     .takeIf { it.isNotEmpty() }
-                    ?.map { it.packageProvider }
-                    ?.let(project::mergePackageProviders)
+                    ?.map { it.packageExistenceChecker }
+                    ?.let(project::mergePackageExistenceChecker)
 
                 LLFirCombinedKotlinSymbolProvider(
                     session,
                     project,
                     providers,
                     declarationProvider,
-                    packageProvider,
+                    packageExistenceChecker,
                     packageProviderForKotlinPackages,
                 )
             } else providers.singleOrNull()

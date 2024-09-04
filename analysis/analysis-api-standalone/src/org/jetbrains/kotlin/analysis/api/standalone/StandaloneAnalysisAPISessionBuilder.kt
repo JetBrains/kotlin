@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibl
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerMerger
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
@@ -35,8 +36,9 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStan
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageExistenceCheckerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageExistenceCheckerMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiSimpleServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
@@ -164,7 +166,14 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinPackageProviderFactory::class.java,
                 KotlinStandalonePackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
             )
-            registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(this))
+            registerService(
+                KotlinPackageExistenceCheckerFactory::class.java,
+                KotlinStandalonePackageExistenceCheckerFactory(
+                    project,
+                    sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles()
+                )
+            )
+            registerService(KotlinPackageExistenceCheckerMerger::class.java, KotlinStandalonePackageExistenceCheckerMerger(this))
 
             registerService(
                 KotlinPackagePartProviderFactory::class.java,

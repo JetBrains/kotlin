@@ -28,20 +28,8 @@ public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
     }
 }
 
-/**
- * [KotlinPackageProviderMerger] allows merging multiple [KotlinPackageProvider]s into a more efficient package provider.
- *
- * Package providers should not be naively merged by combining scopes and calling [createPackageProvider], because there may be additional
- * package providers which do not operate based on scopes (e.g. resolve extension package providers).
- */
-public interface KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
-    public companion object {
-        public fun getInstance(project: Project): KotlinPackageProviderMerger = project.service()
-    }
-}
 
 public fun Project.createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider =
     KotlinPackageProviderFactory.getInstance(this).createPackageProvider(searchScope)
 
-public fun Project.mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider =
-    KotlinPackageProviderMerger.getInstance(this).merge(packageProviders)
+

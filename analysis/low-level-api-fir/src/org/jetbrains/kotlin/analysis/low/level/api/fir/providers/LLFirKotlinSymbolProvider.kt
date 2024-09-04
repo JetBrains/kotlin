@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceChecker
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
     abstract val declarationProvider: KotlinDeclarationProvider
 
-    abstract val packageProvider: KotlinPackageProvider
+    abstract val packageExistenceChecker: KotlinPackageExistenceChecker
 
     /**
      * Whether the [LLFirKotlinSymbolProvider] should be able to find symbols defined in `kotlin` packages. This is usually not the case for

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * [scope][com.intellij.psi.search.GlobalSearchScope], but the details depend on the kind of package provider.
  *
  * The main kind of package providers is created via [KotlinPackageProviderFactory] and it is scope-based, but there are other kinds of
- * package providers, such as those created by [KotlinForwardDeclarationsPackageProviderFactory].
+ * package providers, such as those created by [KotlinForwardDeclarationsPackageExistenceCheckerFactory].
  *
  * Package providers are critical for performance, so implementations should cache results.
  */

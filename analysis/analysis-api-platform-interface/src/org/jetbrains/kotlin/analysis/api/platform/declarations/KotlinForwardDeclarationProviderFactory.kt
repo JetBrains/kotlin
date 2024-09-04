@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * It is a responsibility of the implementor to make the source representation correct.
  * Symbol's properties are not affected by its source representation.
  *
- * Implementations should be consistent with their corresponding [KotlinForwardDeclarationsPackageProviderFactory][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory]
+ * Implementations should be consistent with their corresponding [KotlinForwardDeclarationsPackageProviderFactory][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageExistenceCheckerFactory]
  * implementation.
  */
 public interface KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {

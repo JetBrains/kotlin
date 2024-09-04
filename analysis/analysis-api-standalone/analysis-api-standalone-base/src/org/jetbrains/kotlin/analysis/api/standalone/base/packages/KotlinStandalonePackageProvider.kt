@@ -9,11 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderBase
-import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -53,16 +49,4 @@ class KotlinStandalonePackageProviderFactory(
     override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
         return KotlinStandalonePackageProvider(project, searchScope, files)
     }
-}
-
-class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger {
-    override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider =
-        providers.mergeSpecificProviders<_, KotlinStandalonePackageProvider>(KotlinCompositePackageProvider.factory) { targetProviders ->
-            val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
-            project.createPackageProvider(combinedScope).apply {
-                check(this is KotlinStandalonePackageProvider) {
-                    "`${KotlinStandalonePackageProvider::class.simpleName}` can only be merged into a combined package provider of the same type."
-                }
-            }
-        }
 }

@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceChecker
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerMerger
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -27,8 +29,9 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStan
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageExistenceCheckerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageExistenceCheckerMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
-import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
@@ -165,7 +168,11 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 KotlinPackageProviderFactory::class.java,
                 KotlinStandalonePackageProviderFactory(project, testKtFiles + ktFilesForBinaries)
             )
-            registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(project))
+            registerService(
+                KotlinPackageExistenceCheckerFactory::class.java,
+                KotlinStandalonePackageExistenceCheckerFactory(project, testKtFiles + ktFilesForBinaries)
+            )
+            registerService(KotlinPackageExistenceCheckerMerger::class.java, KotlinStandalonePackageExistenceCheckerMerger(project))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
         }
     }

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.createForwardDeclarationsPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.createForwardDeclarationsPackageExistenceChecker
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createForwardDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceChecker
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -44,7 +44,7 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     override val declarationProvider: KotlinDeclarationProvider,
-    override val packageProvider: KotlinPackageProvider,
+    override val packageExistenceChecker: KotlinPackageExistenceChecker,
 ) : LLFirKotlinSymbolProvider(
     session,
 ) {
@@ -67,7 +67,7 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
             }
         )
 
-    override fun getPackage(fqName: FqName): FqName? = fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
+    override fun getPackage(fqName: FqName): FqName? = fqName.takeIf { packageExistenceChecker.doesKotlinOnlyPackageExist(fqName) }
 
     @FirSymbolProviderInternals
     override fun getClassLikeSymbolByClassId(
@@ -136,16 +136,16 @@ fun createNativeForwardDeclarationsSymbolProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
 ): FirSymbolProvider? {
     val ktModule = session.llFirModuleData.ktModule
-    val packageProvider = project.createForwardDeclarationsPackageProvider(ktModule)
+    val packageExistenceChecker = project.createForwardDeclarationsPackageExistenceChecker(ktModule)
     val declarationProvider = project.createForwardDeclarationProvider(ktModule)
 
-    check((packageProvider == null) == (declarationProvider == null)) {
+    check((packageExistenceChecker == null) == (declarationProvider == null)) {
         "Inconsistency between package and declaration providers for forward declarations. Both should be either null or non-null," +
-                " but found: packageProvider $packageProvider; declarationProvider $declarationProvider"
+                " but found: packageProvider $packageExistenceChecker; declarationProvider $declarationProvider"
     }
-    if (packageProvider == null || declarationProvider == null) return null
+    if (packageExistenceChecker == null || declarationProvider == null) return null
 
     return LLFirNativeForwardDeclarationsSymbolProvider(
-        session, moduleDataProvider, kotlinScopeProvider, declarationProvider, packageProvider,
+        session, moduleDataProvider, kotlinScopeProvider, declarationProvider, packageExistenceChecker,
     )
 }

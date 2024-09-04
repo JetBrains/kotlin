@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageExistenceChecker
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceCheckerFactory
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -64,10 +64,10 @@ internal class LLFirProviderHelper(
         )
     )
 
-    val packageProvider = KotlinCompositePackageProvider.create(
+    val packageExistenceChecker = KotlinCompositePackageExistenceChecker.create(
         listOfNotNull(
-            firSession.project.createPackageProvider(searchScope),
-            extensionTool?.packageProvider,
+            KotlinPackageExistenceCheckerFactory.getInstance(firSession.project).createPackageExistenceChecker(listOf(firSession.ktModule))
+//            extensionTool?.packageProvider, TODO
         )
     )
 
@@ -229,7 +229,7 @@ internal class LLFirProviderHelper(
 
     fun getPackage(fqName: FqName): FqName? {
         if (!allowKotlinPackage && fqName.isKotlinPackage()) return null
-        return fqName.takeIf(packageProvider::doesKotlinOnlyPackageExist)
+        return fqName.takeIf(packageExistenceChecker::doesKotlinOnlyPackageExist)
     }
 }
 

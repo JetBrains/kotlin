@@ -9,6 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageExistenceChecker
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
@@ -110,7 +111,7 @@ internal class LLFirProvider(
     internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
         override val declarationProvider: KotlinDeclarationProvider get() = providerHelper.declarationProvider
 
-        override val packageProvider: KotlinPackageProvider get() = providerHelper.packageProvider
+        override val packageExistenceChecker: KotlinPackageExistenceChecker get() = providerHelper.packageExistenceChecker
 
         override val symbolNamesProvider: FirSymbolNamesProvider get() = providerHelper.symbolNameCache
 
