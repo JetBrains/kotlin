@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -58,9 +57,6 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir(), Fron
     private fun doTest(ktFilePath: String, aptMode: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
-
-        if (InTextDirectivesUtils.isDirectiveDefined(ktFile.readText(), "SKIP_APT") && aptMode) return
-
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
         val out = File(tmpdir, "out")
 
