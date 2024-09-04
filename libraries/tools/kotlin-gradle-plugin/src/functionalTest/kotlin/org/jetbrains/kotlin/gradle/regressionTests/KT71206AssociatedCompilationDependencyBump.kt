@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class KT71206AssociatedCompilationDependencyBump {
     @Test
-    @Ignore
     fun nativeDependencyBumpInTest() {
         val project = buildProject {
             enableDependencyVerification(false)
