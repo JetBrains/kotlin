@@ -19,10 +19,6 @@ import java.nio.file.Path
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
-
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.enableKmpIsolatedProjectSupport()
-
     @DisplayName("works in simple Kotlin project")
     @GradleTest
     @JvmGradlePluginTests
@@ -72,7 +68,10 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
+            val publishedTargets = mutableListOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
+            if (patchKmpSampleLibForIsolatedProjects()) {
+                publishedTargets.remove("nodeJs")
+            }
             testConfigurationCacheOf(
                 taskNames = publishedTargets
                     .map { ":publish${it.replaceFirstChar(Char::uppercaseChar)}PublicationToLocalRepoRepository" }
@@ -88,6 +87,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testAllMetadataJarWithConfigurationCache(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+            patchKmpSampleLibForIsolatedProjects()
             testConfigurationCacheOf(":allMetadataJar")
         }
     }
@@ -97,21 +97,25 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            build(":lib:cleanNativeDistributionCommonization")
+            val (commonizeNativeDistributionTask, cleanNativeDistributionCommonizationTask) = if (isolatedProjectsEnabled) {
+                ":lib:commonizeNativeDistribution" to ":lib:cleanNativeDistributionCommonization"
+            } else {
+                ":commonizeNativeDistribution" to ":cleanNativeDistributionCommonization"
+            }
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":lib:commonizeNativeDistribution")
+                assertTasksExecuted(commonizeNativeDistributionTask)
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheStored()
             }
 
-            build("clean", ":lib:cleanNativeDistributionCommonization") {
-                assertTasksExecuted(":lib:cleanNativeDistributionCommonization")
+            build("clean", cleanNativeDistributionCommonizationTask) {
+                assertTasksExecuted(cleanNativeDistributionCommonizationTask)
                 assertConfigurationCacheStored()
             }
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":lib:commonizeNativeDistribution")
+                assertTasksExecuted(commonizeNativeDistributionTask)
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheReused()
             }
@@ -365,10 +369,25 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 }
 
+/** @return true when the patch was applied */
+private fun TestProject.patchKmpSampleLibForIsolatedProjects() =
+    if (isolatedProjectsEnabled) {
+        // TODO: KT-70569 add support for JS/WASM JS. The current problem with buildModulesInfo for Incremental Compilation
+        buildGradle.replaceText(
+            "shouldBeJs = true",
+            "shouldBeJs = false",
+        )
+        true
+    } else {
+        false
+    }
+
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
+        super.defaultBuildOptions
+            .copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
+            .autoIsolatedProjects()
 
     protected fun TestProject.testConfigurationCacheOf(
         vararg taskNames: String,

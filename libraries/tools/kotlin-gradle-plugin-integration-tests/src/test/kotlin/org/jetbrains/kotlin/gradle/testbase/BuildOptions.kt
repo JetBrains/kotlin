@@ -385,5 +385,6 @@ fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSu
 fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)
 
 // TODO: KT-71130 flip projectIsolation by default to AUTO, as soon as KT-71130 is completely fixed
+fun BuildOptions.autoIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.AUTO)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
