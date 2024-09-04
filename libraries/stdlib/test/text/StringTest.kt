@@ -682,9 +682,35 @@ class StringTest {
         val string = arg1("first line\rsecond line\nthird line\r\nlast line")
         assertEquals(listOf("first line", "second line", "third line", "last line"), string.lines())
 
+        val singleLine = arg1("single line")
+        assertEquals(listOf("single line"), singleLine.lines())
+
+        val emptyLine = arg1("")
+        assertEquals(listOf(""), emptyLine.lines())
+
+        val multipleSeparators = arg1("\r\rfirst\r\n\rsecond\n\n\nthird\n\r\n\r")
+        assertEquals(listOf("", "", "first", "", "second", "", "", "third", "", "", ""), multipleSeparators.lines())
+
+        val onlySeparator = arg1("\n")
+        assertEquals(listOf("", ""), onlySeparator.lines())
+    }
+
+    @Test fun splitToLineSequence() = withOneCharSequenceArg { arg1 ->
+        val string = arg1("first line\rsecond line\nthird line\r\nlast line")
+        assertContentEquals(sequenceOf("first line", "second line", "third line", "last line"), string.lineSequence())
 
         val singleLine = arg1("single line")
-        assertEquals(listOf(singleLine.toString()), singleLine.lines())
+        assertContentEquals(sequenceOf("single line"), singleLine.lineSequence())
+
+        val emptyLine = arg1("")
+        assertContentEquals(sequenceOf(""), emptyLine.lineSequence())
+
+        val multipleSeparators = arg1("\r\rfirst\r\n\rsecond\n\n\nthird\n\r\n\r")
+        assertContentEquals(sequenceOf("", "", "first", "", "second", "", "", "third", "", "", ""),
+            multipleSeparators.lineSequence())
+
+        val onlySeparator = arg1("\n")
+        assertContentEquals(sequenceOf("", ""), onlySeparator.lineSequence())
     }
 
     @Test fun splitIllegalLimit() = withOneCharSequenceArg("test string") { string ->

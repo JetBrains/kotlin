@@ -1239,6 +1239,67 @@ private class DelimitedRangesSequence(
 }
 
 /**
+ * Iterates over [string] lines. Lines could be separated by either of `\n`, `\r`, `\r\n`.
+ * If the [string] ends with a line separator, this iterator will return an extra empty line.
+ */
+private class LinesIterator(private val string: CharSequence) : Iterator<String> {
+    private companion object State {
+        const val UNKNOWN = 0
+        const val HAS_NEXT = 1
+        const val EXHAUSTED = 2
+    }
+
+    private var state: Int = UNKNOWN
+    private var tokenStartIndex: Int = 0
+    private var delimiterStartIndex: Int = 0
+    private var delimiterLength: Int = 0 // serves as both a delimiter length and an end-of-input marker (with value < 0)
+
+    override fun hasNext(): Boolean {
+        if (state != UNKNOWN) {
+            return state == HAS_NEXT
+        }
+
+        if (delimiterLength < 0) {
+            state = EXHAUSTED
+            return false
+        }
+
+        var _delimiterLength = -1
+        var _delimiterStartIndex = string.length
+
+        for (idx in tokenStartIndex..<string.length) {
+            val c = string[idx]
+            if (c == '\n' || c == '\r') {
+                // If current character is `\n` then it's the only separator character,
+                // but for '\r' there are two options: the line ends either with `\r`, or with `\r\n`.
+                _delimiterLength = if (c == '\r' && idx + 1 < string.length && string[idx + 1] == '\n') 2 else 1
+                _delimiterStartIndex = idx
+                break
+            }
+        }
+
+        // Update fields after the main loop to avoid inconsistent iterator state in case of an exception.
+        state = HAS_NEXT
+        delimiterLength = _delimiterLength
+        delimiterStartIndex = _delimiterStartIndex
+
+        return true
+    }
+
+    override fun next(): String {
+        if (!hasNext()) {
+            throw NoSuchElementException()
+        }
+
+        state = UNKNOWN
+        val lastIndex = delimiterStartIndex
+        val firstIndex = tokenStartIndex
+        tokenStartIndex = delimiterStartIndex + delimiterLength
+        return string.substring(firstIndex, lastIndex)
+    }
+}
+
+/**
  * Returns a sequence of index ranges of substrings in this char sequence around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more characters to be used as delimiters.
@@ -1403,7 +1464,7 @@ public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Se
  *
  * The lines returned do not include terminating line separators.
  */
-public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
+public fun CharSequence.lineSequence(): Sequence<String> = Sequence { LinesIterator(this) }
 
 /**
  * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
