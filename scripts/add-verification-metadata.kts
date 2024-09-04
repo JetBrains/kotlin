@@ -16,9 +16,6 @@ if (args.size != 2) {
 
 val (repoPath, metadataPath) = args
 
-val checksumExtension = "md5"
-val componentsTag = "<components>"
-
 val repoFile = File(repoPath)
 val metadataFile = File(metadataPath)
 
@@ -38,6 +35,7 @@ data class MetadataItem(
         """.trimIndent()
 }
 
+val checksumExtension = "md5"
 val checksumFiles = repoFile.walkTopDown()
     .filter { it.name.endsWith(".$checksumExtension") }
     .filter {
@@ -63,6 +61,7 @@ val repoMetadataText = repoMetadata.joinToString("\n") {
     it.toXML().prependIndent("      ")
 }
 
+val componentsTag = "<components>"
 val originalMetadataText = metadataFile.readText()
 val componentsIndex = originalMetadataText.indexOf(componentsTag)
 if (componentsIndex == -1) {
