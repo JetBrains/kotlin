@@ -30,6 +30,7 @@ class FirDirectJavaActualDeclarationExtractor private constructor(
         fun initializeIfNeeded(platformComponents: Fir2IrComponents): FirDirectJavaActualDeclarationExtractor? {
             val javaSymbolProvider = platformComponents.session.javaSymbolProvider
             if (javaSymbolProvider != null &&
+                platformComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
                 platformComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.DirectJavaActualization)
             ) {
                 return FirDirectJavaActualDeclarationExtractor(javaSymbolProvider, platformComponents.classifierStorage)
