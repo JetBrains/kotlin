@@ -12,6 +12,7 @@ import kotlin.native.internal.*
 import kotlinx.cinterop.NativePtr
 import kotlinx.cinterop.*
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.NoInline
 
 /**
  * The marker interface for objects that have a cleanup action associated with them.
@@ -94,6 +95,7 @@ public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit):
 
 @ExperimentalNativeApi
 @OptIn(ObsoleteWorkersApi::class)
+@NoInline
 internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner {
     val clean = {
         // TODO: Maybe if this fails with exception, it should be (optionally) reported.

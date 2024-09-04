@@ -267,7 +267,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val enablePreCodegenInliner: Boolean by lazy {
-        configuration.get(BinaryOptions.enablePreCodegenInliner) ?: false
+        configuration.get(BinaryOptions.enablePreCodegenInliner) ?: true
     }
 
     init {

@@ -1,10 +1,12 @@
 // DISABLE_NATIVE: gcType=NOOP
 import kotlin.test.*
 import kotlin.native.ref.*
+import kotlin.native.NoInline
 
 data class Data(val s: String)
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@NoInline
 fun localWeak(): WeakReference<Data>  {
     val x = Data("Hello")
     val weak = WeakReference(x)
@@ -13,6 +15,7 @@ fun localWeak(): WeakReference<Data>  {
 }
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@NoInline
 fun multiWeak(): Array<WeakReference<Data>>  {
     val x = Data("Hello")
     val weaks = Array(100, { WeakReference(x) } )

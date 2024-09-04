@@ -9,6 +9,7 @@ import kt56402.*
 import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
 import kotlin.native.internal.test.testLauncherEntryPoint
+import kotlin.native.NoInline
 import kotlin.system.exitProcess
 import kotlin.test.*
 import kotlinx.cinterop.*
@@ -45,6 +46,7 @@ class OnDestroyHookSub(onDestroy: (ULong) -> Unit) : OnDestroyHook(onDestroy)
 
 val aliveObjectIds = LockedSet<ULong>()
 
+@NoInline
 fun alloc(ctor: ((ULong) -> Unit) -> ULong): ULong = autoreleasepool {
     val id = ctor {
         aliveObjectIds.remove(it)

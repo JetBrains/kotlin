@@ -1,5 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// FREE_COMPILER_ARGS: -Xdisable-phases=DCEPhase
 
 interface I1 {
     fun foo(): Int

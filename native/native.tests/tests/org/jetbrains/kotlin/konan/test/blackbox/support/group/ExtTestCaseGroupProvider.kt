@@ -190,6 +190,8 @@ private class ExtTestDataFile(
         }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
+        if (!args.contains("-Xbinary=enablePreCodegenInliner=true"))
+            args += "-Xbinary=enablePreCodegenInliner=false" // otherwise, the bitcode is too garbled.
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }

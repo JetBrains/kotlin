@@ -1,5 +1,5 @@
 // DISABLE_NATIVE: gcType=NOOP
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative,kotlin.native.runtime.NativeRuntimeApi,kotlin.experimental.ExperimentalNativeApi,kotlinx.cinterop.ExperimentalForeignApi
+// FREE_COMPILER_ARGS: -Xbinary=enablePreCodegenInliner=true -opt-in=kotlin.native.internal.InternalForKotlinNative,kotlin.native.runtime.NativeRuntimeApi,kotlin.experimental.ExperimentalNativeApi,kotlinx.cinterop.ExperimentalForeignApi
 
 import kotlin.test.*
 
@@ -11,6 +11,7 @@ import kotlin.native.ref.WeakReference
 import kotlin.native.ref.Cleaner
 import kotlin.native.ref.createCleaner
 import kotlin.native.runtime.GC
+import kotlin.native.NoInline
 
 class AtomicBoolean(initialValue: Boolean) {
     private val impl = AtomicInt(if (initialValue) 1 else 0)
@@ -128,13 +129,14 @@ val globalInt = AtomicInt(0)
 @Test
 fun testCleanerWithInt() {
     var cleanerWeak: WeakReference<Cleaner>? = null
-    {
+    @NoInline fun local() {
         val cleaner = createCleaner(42) {
             globalInt.value = it
         }
         cleanerWeak = WeakReference(cleaner)
         assertEquals(0, globalInt.value)
-    }()
+    }
+    local()
 
     GC.collect()
     performGCOnCleanerWorker()
@@ -168,7 +170,7 @@ fun testCleanerWithException() {
     val called = AtomicBoolean(false);
     var funBoxWeak: WeakReference<FunBox>? = null
     var cleanerWeak: WeakReference<Cleaner>? = null
-    {
+    @NoInline fun local() {
         val funBox = FunBox { called.value = true }
         funBoxWeak = WeakReference(funBox)
         val cleaner = createCleaner(funBox) {
@@ -176,7 +178,8 @@ fun testCleanerWithException() {
             error("Cleaner block failed")
         }
         cleanerWeak = WeakReference(cleaner)
-    }()
+    }
+    local()
 
     GC.collect()
     performGCOnCleanerWorker()
