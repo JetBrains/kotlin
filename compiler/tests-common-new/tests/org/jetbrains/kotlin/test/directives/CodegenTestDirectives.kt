@@ -278,7 +278,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         
         This directive is opt-in rather than opt-out (like $DISABLE_IR_VISIBILITY_CHECKS) because right now most test pass with
         visibility checks enabled before lowering, but enabling these checks after inlining by default will cause most tests to fail,
-        because some lowerings that are run before inlining generate calls to internal intrinsics (KT-67304), and inlining in general may
+        because some lowerings that are run before inlining generate calls to internal intrinsics (KT-70295), and inlining in general may
         cause visibility violations until we start generating synthetic accessors (KT-64865).
         """.trimIndent()
     )
