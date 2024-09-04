@@ -224,6 +224,14 @@ open annotation class kotlin/ExtensionFunctionType : kotlin/Annotation { // kotl
     constructor <init>() // kotlin/ExtensionFunctionType.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/IgnorableReturnValue : kotlin/Annotation { // kotlin/IgnorableReturnValue|null[0]
+    constructor <init>() // kotlin/IgnorableReturnValue.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin/MustUseReturnValue : kotlin/Annotation { // kotlin/MustUseReturnValue|null[0]
+    constructor <init>() // kotlin/MustUseReturnValue.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/OptIn : kotlin/Annotation { // kotlin/OptIn|null[0]
     constructor <init>(kotlin/Array<out kotlin.reflect/KClass<out kotlin/Annotation>>...) // kotlin/OptIn.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Annotation>>...){}[0]
 

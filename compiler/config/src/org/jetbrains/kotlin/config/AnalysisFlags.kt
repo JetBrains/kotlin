@@ -88,6 +88,9 @@ object AnalysisFlags {
     val expandTypeAliasesInTypeResolution by AnalysisFlag.Delegates.Boolean(defaultValue = true)
 
     val warningLevels by AnalysisFlag.Delegates.WarningLevelMap
+
+    @JvmStatic
+    val returnValueCheckerMode by AnalysisFlag.Delegates.ReturnValueCheckerDisabledByDefault
 }
 
 @Deprecated(

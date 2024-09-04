@@ -795,6 +795,7 @@ object FirErrors {
     val SENSELESS_COMPARISON: KtDiagnosticFactory1<Boolean> = KtDiagnosticFactory1("SENSELESS_COMPARISON", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val SENSELESS_NULL_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("SENSELESS_NULL_IN_WHEN", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
+    val RETURN_VALUE_NOT_USED: KtDiagnosticFactory0 = KtDiagnosticFactory0("RETURN_VALUE_NOT_USED", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // Nullability
     val UNSAFE_CALL: KtDiagnosticFactory2<ConeKotlinType, FirExpression?> = KtDiagnosticFactory2("UNSAFE_CALL", ERROR, SourceElementPositioningStrategies.DOT_BY_QUALIFIED, PsiElement::class)
