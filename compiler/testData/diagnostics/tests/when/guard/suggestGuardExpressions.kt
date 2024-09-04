@@ -37,7 +37,7 @@ fun elseOk(x: Boolean, boolExpr: Boolean) {
 
 fun elseAndAnd(x: Boolean, boolExpr: Boolean) {
     when (x) {
-        <!ELSE_MISPLACED_IN_WHEN!>else<!> <!SYNTAX!>!>&& boolExpr<!> -> "hello"
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> <!SYNTAX!>&& boolExpr<!> -> "hello"
         <!UNREACHABLE_CODE!>else -> "bye"<!>
     }
 }
