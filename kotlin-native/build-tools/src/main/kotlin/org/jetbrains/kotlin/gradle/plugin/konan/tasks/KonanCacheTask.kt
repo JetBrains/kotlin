@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.util.Logger
@@ -73,18 +74,9 @@ abstract class KonanCacheTask @Inject constructor(
 
     @TaskAction
     fun compile() {
-        // This code uses bootstrap version of util-klib and fails due to the older default ABI than library being used
-        // A possible solution is to read it manually from manifest file or this check should be done by the compiler itself
-//        check(klibUniqName == readKlibUniqNameFromManifest()) {
-//            "klibUniqName mismatch: configured '$klibUniqName', resolved '${readKlibUniqNameFromManifest()}'"
-//        }
-
         // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
-        if (cacheFile.exists()) {
-            val deleted = cacheFile.deleteRecursively()
-            check(deleted) { "Cannot delete stale cache: ${cacheFile.absolutePath}" }
-        }
-        cacheDirectory.mkdirs()
+        cacheFile.prepareAsOutput()
+
         val konanHome = compilerDistributionPath.get().absolutePath
         val additionalCacheFlags = PlatformManager(konanHome).let {
             it.targetByName(target).let(it::loader).additionalCacheFlags
