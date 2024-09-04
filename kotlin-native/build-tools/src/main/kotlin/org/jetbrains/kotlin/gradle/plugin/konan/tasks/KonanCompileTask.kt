@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.tasks
+package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
