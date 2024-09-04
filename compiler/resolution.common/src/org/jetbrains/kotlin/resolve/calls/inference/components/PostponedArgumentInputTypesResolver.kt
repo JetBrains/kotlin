@@ -303,7 +303,10 @@ class PostponedArgumentInputTypesResolver(
             return emptyList()
 
         for (i in 0 until type.argumentsCount()) {
-            val argumentType = type.getArgument(i).getType()
+            val argument = type.getArgument(i)
+            if (argument.isStarProjection()) continue
+
+            val argumentType = argument.getType()
 
             if (argumentType.typeConstructor() == targetVariable) {
                 return path.toList() + (typeConstructor to i)

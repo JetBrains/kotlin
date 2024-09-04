@@ -1,1 +1,0 @@
-org.jetbrains.kotlin.util.FileAnalysisException: While analysing /starProjectionAndFunctionType.fir.kt:4:10: java.lang.IllegalArgumentException: No type for StarProjection
