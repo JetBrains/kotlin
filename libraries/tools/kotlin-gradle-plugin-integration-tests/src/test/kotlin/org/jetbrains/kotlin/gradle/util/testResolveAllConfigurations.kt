@@ -65,7 +65,7 @@ private fun Project.registerResolveAllConfigurationsTask() {
                             val path = if (it.extension in setOf("jar", "klib")) {
                                 it.name
                             } else {
-                                it.relativeTo(project.rootDir).path
+                                it.relativeTo(project.rootDir).invariantSeparatorsPath
                             }
                             println(">> $configurationPath --> $path")
                         }
