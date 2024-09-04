@@ -3821,6 +3821,12 @@ internal class TypecheckerHasRunIntoRecursiveProblemImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.TypecheckerHasRunIntoRecursiveProblem
 
+internal class ReturnValueNotUsedImpl(
+    override val elementDescription: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ReturnValueNotUsed
+
 internal class UnsafeCallImpl(
     override val receiverType: KaType,
     override val receiverExpression: KtExpression?,

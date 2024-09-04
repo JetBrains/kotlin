@@ -227,6 +227,8 @@ where advanced options include:
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
+  -Xreturn-value-checker={check|full|disable}
+                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
   -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.

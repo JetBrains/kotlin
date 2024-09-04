@@ -91,6 +91,9 @@ object AnalysisFlags {
     val expandTypeAliasesInTypeResolution by AnalysisFlag.Delegates.Boolean(defaultValue = true)
 
     val globallySuppressedDiagnostics by AnalysisFlag.Delegates.ListOfStrings
+
+    @JvmStatic
+    val returnValueCheckerMode by AnalysisFlag.Delegates.ReturnValueCheckerDisabledByDefault
 }
 
 @Deprecated(

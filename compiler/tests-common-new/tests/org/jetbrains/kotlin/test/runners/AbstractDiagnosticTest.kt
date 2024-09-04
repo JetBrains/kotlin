@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
@@ -99,6 +101,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
             defaultDirectives {
                 EXPLICIT_API_MODE with ExplicitApiMode.STRICT
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/crv/*") {
+            defaultDirectives {
+                RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.FULL
             }
         }
 

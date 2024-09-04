@@ -1573,6 +1573,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val SENSELESS_NULL_IN_WHEN by warning<KtElement>()
         val TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM by error<KtExpression>()
+
+        val RETURN_VALUE_NOT_USED by warning<KtElement> {
+            parameter<String>("elementDescription")
+        }
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {

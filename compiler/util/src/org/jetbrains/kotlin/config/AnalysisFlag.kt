@@ -35,6 +35,10 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
 
+        object ReturnValueCheckerDisabledByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ReturnValueCheckerMode.DISABLED)
+        }
+
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
         }

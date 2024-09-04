@@ -3177,6 +3177,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = TypecheckerHasRunIntoRecursiveProblem::class
     }
 
+    interface ReturnValueNotUsed : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ReturnValueNotUsed::class
+        val elementDescription: String
+    }
+
     interface UnsafeCall : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnsafeCall::class
         val receiverType: KaType

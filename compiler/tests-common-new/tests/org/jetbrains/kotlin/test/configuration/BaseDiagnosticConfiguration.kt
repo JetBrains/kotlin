@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -207,6 +209,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitReturnTypes/*") {
         defaultDirectives {
             EXPLICIT_RETURN_TYPES_MODE with ExplicitApiMode.STRICT
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/crv/*") {
+        defaultDirectives {
+            RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.FULL
         }
     }
 
