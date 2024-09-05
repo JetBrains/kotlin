@@ -1,0 +1,16 @@
+public final class MainKt$main$my$1 {
+    // source: 'main.kt'
+    enclosing method MainKt.main()V
+    inner (anonymous) class MainKt$main$my$1
+    method <init>(): void
+    public method bar(): void
+    public method foo(): java.lang.String
+    public final inner class com/example/iface/MyInterface$DefaultImpls
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class MainKt$main$my$1
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}
