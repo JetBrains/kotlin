@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
@@ -60,7 +62,9 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
 
 internal inline fun <reified T : KaSymbol> KaSession.createOwnerPointer(symbol: KaSymbol): KaSymbolPointer<T> {
     val containingSymbol = symbol.containingDeclaration
-        ?: error("Non-null symbol is expected for a member declaration")
+        ?: errorWithAttachment("Non-null containingDeclaration is expected for a member declaration for `${symbol::class}`, expecting `${T::class}` type of owner") {
+            withSymbolAttachment("child", this@createOwnerPointer, symbol)
+        }
 
     requireIsInstance<T>(containingSymbol)
 
