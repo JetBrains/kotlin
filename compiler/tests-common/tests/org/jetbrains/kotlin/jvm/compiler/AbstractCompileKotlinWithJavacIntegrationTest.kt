@@ -45,7 +45,7 @@ import org.junit.Assert
 import java.io.File
 import java.lang.annotation.Retention
 
-abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
+abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
 
     protected fun doTestWithoutAPT(ktFilePath: String) {
         doTest(ktFilePath, aptMode = false)

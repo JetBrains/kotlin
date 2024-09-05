@@ -220,7 +220,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
 
 
-            testClass<AbstractCompileKotlinAgainstJavaTest> {
+            testClass<AbstractCompileKotlinWithJavacIntegrationTest> {
                 model(
                     "compileKotlinAgainstJava",
                     testClassName = "WithAPT",
@@ -334,7 +334,7 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
 
-            testClass<AbstractIrCompileKotlinAgainstJavaTest> {
+            testClass<AbstractIrCompileKotlinWithJavacIntegrationTest> {
                 model(
                     "compileKotlinAgainstJava",
                     testClassName = "WithAPT",

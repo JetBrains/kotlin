@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.jvm.compiler.ir
 
-import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinAgainstJavaTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileKotlinWithJavacIntegrationTest
 import org.jetbrains.kotlin.test.TargetBackend
 
-abstract class AbstractIrCompileKotlinAgainstJavaTest : AbstractCompileKotlinAgainstJavaTest() {
+abstract class AbstractIrCompileKotlinWithJavacIntegrationTest : AbstractCompileKotlinWithJavacIntegrationTest() {
     override val backend: TargetBackend
         get() = TargetBackend.JVM_IR
 }
