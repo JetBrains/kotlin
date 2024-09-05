@@ -1238,33 +1238,6 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionInMark) {
     }
 }
 
-
-TYPED_TEST_P(TracingGCTest, InvalidateObjCRefFromNativeState) {
-    RunInNewThread([] {
-        ObjHeader* obj = reinterpret_cast<ObjHeader*>(1);
-        ObjHolder holder(obj);
-        auto ref = mm::ObjCBackRef::create(obj);
-        {
-            ThreadStateGuard nativeScope(ThreadState::kNative);
-            ref.release();
-        }
-//        publish();
-        mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().publish();
-//
-//        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-//        EXPECT_THAT(all(obj), testing::UnorderedElementsAre(nullptr));
-        //EXPECT_FALSE(ref.tryRetainForTests());
-
-//        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-//        EXPECT_THAT(all(), testing::UnorderedElementsAre(nullptr));
-
-        std::move(ref).dispose();
-
-//        EXPECT_THAT(roots(), testing::UnorderedElementsAre());
-//        EXPECT_THAT(all(), testing::UnorderedElementsAre());
-    });
-}
-
 #define TRACING_GC_TEST_LIST \
     RootSet, \
     InterconnectedRootSet, \
@@ -1286,8 +1259,7 @@ TYPED_TEST_P(TracingGCTest, InvalidateObjCRefFromNativeState) {
     NewThreadsWhileRequestingCollection, \
     FreeObjectWithFreeWeakReversedOrder, \
     MutateBetweenSafePoints, \
-    WeakResurrectionInMark, \
-    InvalidateObjCRefFromNativeState
+    WeakResurrectionInMark
 
 template <typename FixtureImpl>
 class STWMarkGCTest : public TracingGCTest<FixtureImpl> {};
