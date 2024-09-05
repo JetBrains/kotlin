@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
@@ -15,16 +16,25 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
+
+/**
+ * This exception indicates that two or more inline functions reference each other. For example,
+ * ```
+ * inline fun a(): String = "Hi" + b()
+ * inline fun b(): String = "Hi" + c()
+ * inline fun c(): String = "Hi" + a()
+ * ```
+ * since we do not have a way to inline the above functions, we have to throw an exception.
+ */
+class CyclicInlineDependencyException(message: String) : IllegalStateException(message)
 
 /**
  * Processes the declaration, collecting files that would need to be submitted to the backend (or handled specially)
@@ -45,8 +55,20 @@ object CompilationPeerCollector {
 }
 
 class CompilationPeerData(
-    /** File with the original declaration and all files with called inline functions. */
-    val files: List<KtFile>,
+    /**
+     * File with the original declaration and all files with called inline functions. [CompilationPeerCollector.process]
+     * recursively collects them and keeps them in a post order. For example,
+     *  - A is main source module. A has dependency on source module libraries B and C.
+     *  - B contains an inline function. B has dependency on a source module library C.
+     *  - C contains an inline function.
+     *  - [filesInPostOrder] returned by [CompilationPeerCollector.process] will be {C, B, A}.
+     *
+     * More formally, i-th element of [filesInPostOrder] will not have inline-dependency on any j-th element of
+     * [filesInPostOrder], where j > i.
+     *
+     * This list does not contain duplicated files.
+     */
+    val filesInPostOrder: List<KtFile>,
 
     /** Local classes inlined as a part of inline functions. */
     val inlinedClasses: Set<KtClassOrObject>
@@ -54,36 +76,60 @@ class CompilationPeerData(
 
 private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
     private val processed = mutableSetOf<FirDeclaration>()
-    private val queue = ArrayDeque<FirDeclaration>()
 
-    private val collectedFiles = mutableSetOf<KtFile>()
+    /** The entry of this class must be [process]. In that case, [queue] will always be initialized by [process] */
+    private lateinit var queue: MutableSet<FirDeclaration>
+
+    private val collectedFiles = mutableListOf<KtFile>()
     private val collectedInlinedClasses = mutableSetOf<KtClassOrObject>()
     private var isInlineFunctionContext = false
 
     val files: List<KtFile>
-        get() = collectedFiles.toList()
+        get() = collectedFiles
 
     val inlinedClasses: Set<KtClassOrObject>
         get() = collectedInlinedClasses
 
     fun process(declaration: FirDeclaration) {
-        processSingle(declaration)
-
-        while (queue.isNotEmpty()) {
-            processSingle(queue.removeFirst())
-        }
-    }
-
-    private fun processSingle(declaration: FirDeclaration) {
         ProgressManager.checkCanceled()
 
-        if (processed.add(declaration)) {
-            val containingFile = declaration.psi?.containingFile
-            if (containingFile is KtFile && !containingFile.isCompiled) {
-                collectedFiles.add(containingFile)
-                declaration.accept(this)
-            }
+        val containingKtFile = declaration.psi?.containingFile as? KtFile ?: return
+        if (containingKtFile.isCompiled || containingKtFile in collectedFiles) return
+
+        if (!processed.add(declaration)) {
+            throw CyclicInlineDependencyException("Inline functions have a cyclic dependency:\n${
+                processed.map { fir ->
+                    "${fir.getContainingFile()?.let { "${it.packageFqName}/${it.name}" } ?: "(no containing file)"}:\n${fir.render()}"
+                }
+            }")
         }
+
+        val inlineFunctionsUsedByDeclaration = mutableSetOf<FirDeclaration>()
+        queue = inlineFunctionsUsedByDeclaration
+        declaration.accept(this)
+
+        for (dependency in inlineFunctionsUsedByDeclaration) {
+            process(dependency)
+        }
+
+        /* When we have FirDeclarations other than `declaration` in the same file, and they use inline functions,
+           we have to collect them as well. For example, if `foo.kt` has the following functions:
+           ```
+           inline fun inline1() = .. inlineFromOtherFile() ..
+           fun bar() = .. inline2() .. // where inline2() is another inline function
+           ```
+           When `declaration` is `inline1`, we have to collect `inline2` as well. Since file is the unit of JVM IR gen,
+           without `inline2`, the JVM IR gen filling inline functions causes an exception reporting that it's missing. */
+        val inlineFunctionsUsedInSameFile = mutableSetOf<FirDeclaration>()
+        queue = inlineFunctionsUsedInSameFile
+        declaration.getContainingFile()?.accept(this)
+        for (dependency in inlineFunctionsUsedInSameFile) {
+            if (dependency !in processed) process(dependency)
+        }
+
+        // Since we want to put a file into `collectedFiles` only when its all dependencies are already in `collectedFiles`,
+        // we have to use the post-order traversal.
+        if (containingKtFile !in collectedFiles) collectedFiles.add(containingKtFile)
     }
 
     override fun visitElement(element: FirElement) {
