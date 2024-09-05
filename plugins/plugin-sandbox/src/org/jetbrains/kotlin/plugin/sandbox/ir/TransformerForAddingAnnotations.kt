@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -29,6 +30,8 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
     companion object {
         private val markerAnnotationFqName = FqName("org.jetbrains.kotlin.plugin.sandbox.AddAnnotations")
         private val annotationToAddId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("AnnotationToAdd"))
+        private val simpleAnnotationId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("SimpleAnnotation"))
+        private val arrayAnnotationId = ClassId(FqName("org.jetbrains.kotlin.plugin.sandbox"), Name.identifier("ArrayAnnotation"))
         private val annotationToAddFqName = annotationToAddId.asSingleFqName()
         private const val prefixNameForClass = "VerySpecificName"
     }
@@ -51,6 +54,8 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
 
     private inner class AnnotationsAdder : IrElementVisitorVoid {
         val annotationClass = context.referenceClass(annotationToAddId)?.takeIf { it.owner.isAnnotationClass }
+        val simpleAnnotationClass = context.referenceClass(simpleAnnotationId)?.takeIf { it.owner.isAnnotationClass }
+        val arrayAnnotationClass = context.referenceClass(arrayAnnotationId)?.takeIf { it.owner.isAnnotationClass }
 
         override fun visitElement(element: IrElement, data: Nothing?) {}
 
@@ -67,6 +72,8 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
         private fun addAnnotation(declaration: IrDeclarationBase) {
             if (declaration.hasAnnotation(annotationToAddFqName)) return
             val annotationClass = annotationClass ?: return
+            val simpleAnnotationClass = simpleAnnotationClass ?: return
+            val arrayAnnotationClass = arrayAnnotationClass ?: return
             val annotationConstructor = annotationClass.owner.constructors.first()
             val annotationCall = IrConstructorCallImpl.fromSymbolOwner(
                 type = annotationClass.defaultType,
@@ -107,6 +114,46 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrElementV
                 it.putValueArgument(
                     8,
                     IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "OK")
+                )
+                it.putValueArgument(
+                    9,
+                    IrVarargImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        context.irBuiltIns.arrayClass.typeWith(arrayAnnotationClass.defaultType),
+                        arrayAnnotationClass.defaultType,
+                        0.rangeTo(2).map { i ->
+                            IrConstructorCallImpl.fromSymbolOwner(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                arrayAnnotationClass.defaultType,
+                                arrayAnnotationClass.constructors.first()
+                            ).apply {
+                                putValueArgument(
+                                    0,
+                                    IrVarargImpl(
+                                        UNDEFINED_OFFSET,
+                                        UNDEFINED_OFFSET,
+                                        context.irBuiltIns.arrayClass.typeWith(simpleAnnotationClass.defaultType),
+                                        simpleAnnotationClass.defaultType,
+                                        0.rangeUntil(i).map { j ->
+                                            IrConstructorCallImpl.fromSymbolOwner(
+                                                UNDEFINED_OFFSET,
+                                                UNDEFINED_OFFSET,
+                                                simpleAnnotationClass.defaultType,
+                                                simpleAnnotationClass.constructors.first()
+                                            ).apply {
+                                                putValueArgument(
+                                                    0,
+                                                    IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, i + j)
+                                                )
+                                            }
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                    )
                 )
             }
             context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(declaration, annotationCall)

@@ -46,6 +46,12 @@ annotation class AllPropertiesConstructor
 annotation class AddAnnotations
 
 @Retention(AnnotationRetention.RUNTIME)
+annotation class SimpleAnnotation(val x: Int)
+
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ArrayAnnotation(val annotations: Array<SimpleAnnotation>)
+
+@Retention(AnnotationRetention.RUNTIME)
 annotation class AnnotationToAdd(
     val booleanValue: Boolean,
     val byteValue: Byte,
@@ -55,7 +61,8 @@ annotation class AnnotationToAdd(
     val intValue: Int,
     val longValue: Long,
     val shortValue: Short,
-    val stringValue: String
+    val stringValue: String,
+    vararg val vararg: ArrayAnnotation
 )
 
 annotation class AddNestedClassesBasedOnArgument(val kClass: KClass<*>)
