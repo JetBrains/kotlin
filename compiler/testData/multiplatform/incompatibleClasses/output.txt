@@ -87,7 +87,7 @@ The following declaration is incompatible because class kinds are different (cla
 actual class PAnnotationClass
              ^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: 'actual object PublicObject : Any' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
+The following declaration is incompatible because visibility is different. Expect declaration visibility is 'public'. Actual declaration visibility is 'internal':
     expect object PublicObject : Any
 
 internal actual object PublicObject

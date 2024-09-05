@@ -54,7 +54,7 @@ The following declaration is incompatible because number of type parameters is d
 actual fun <K, V> f7() {}
                   ^^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:21: error: 'actual fun f10(): Unit' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
+The following declaration is incompatible because visibility is different. Expect declaration visibility is 'public'. Actual declaration visibility is 'internal':
     expect fun f10(): Unit
 
 internal actual fun f10() {}

@@ -51,7 +51,7 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
 sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibility<D> {
     sealed class Incompatible<out D>(override val reason: String?) : ExpectActualCheckingCompatibility<D>(),
         ExpectActualCompatibility.MismatchOrIncompatible<D> {
-        constructor(property: String, expect: String, actual: String) : this(
+        constructor(property: String, expect: String?, actual: String?) : this(
             "$property is different. " +
                     "Expect declaration $property is '$expect'. " +
                     "Actual declaration $property is '$actual'"
@@ -83,7 +83,10 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object PropertyKind : Incompatible<Nothing>("property kinds are different (val vs var)")
     object PropertyLateinitModifier : Incompatible<Nothing>("modifiers are different (lateinit)")
     object PropertyConstModifier : Incompatible<Nothing>("modifiers are different (const)")
-    object PropertySetterVisibility : Incompatible<Nothing>("setter visibility is different")
+    class PropertySetterVisibility(
+        expectVisibility: org.jetbrains.kotlin.descriptors.Visibility?,
+        actualVisibility: org.jetbrains.kotlin.descriptors.Visibility?,
+    ) : Incompatible<Nothing>("setter visibility", expectVisibility?.name, actualVisibility?.name)
 
     // Classifiers
     object ClassKind : Incompatible<Nothing>("class kinds are different (class, interface, object, enum, annotation)")
@@ -101,7 +104,10 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
         expectModality: org.jetbrains.kotlin.descriptors.Modality,
         actualModality: org.jetbrains.kotlin.descriptors.Modality,
     ) : Incompatible<Nothing>("modality", expectModality.toString().lowercase(), actualModality.toString().lowercase())
-    object Visibility : Incompatible<Nothing>("visibility is different")
+    class Visibility(
+        expectVisibility: org.jetbrains.kotlin.descriptors.Visibility,
+        actualVisibility: org.jetbrains.kotlin.descriptors.Visibility,
+    ) : Incompatible<Nothing>("visibility", expectVisibility.name, actualVisibility.name)
 
     object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
     object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different")
