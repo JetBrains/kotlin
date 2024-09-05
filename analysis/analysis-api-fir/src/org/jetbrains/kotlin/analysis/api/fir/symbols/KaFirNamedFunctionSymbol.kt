@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirDynamicFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
@@ -202,12 +203,15 @@ internal class KaFirNamedFunctionSymbol private constructor(
                 FirCallableSignature.createSignature(firSymbol),
             )
 
-            KaSymbolLocation.CLASS -> KaFirMemberFunctionSymbolPointer(
-                analysisSession.createOwnerPointer(this),
-                firSymbol.name,
-                FirCallableSignature.createSignature(firSymbol),
-                isStatic = firSymbol.isStatic,
-            )
+            KaSymbolLocation.CLASS -> when (origin) {
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name)
+                else -> KaFirMemberFunctionSymbolPointer(
+                    analysisSession.createOwnerPointer(this),
+                    firSymbol.name,
+                    FirCallableSignature.createSignature(firSymbol),
+                    isStatic = firSymbol.isStatic,
+                )
+            }
 
             KaSymbolLocation.LOCAL -> throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableId?.toString() ?: name.asString()
