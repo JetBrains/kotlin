@@ -87,25 +87,25 @@ The following declaration is incompatible because class kinds are different (cla
 actual class PAnnotationClass
              ^^^^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:7:24: error: 'actual object PublicObject : Any' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
+The following declaration is incompatible because visibility is different. Expect declaration visibility is 'public'. Actual declaration visibility is 'internal':
     expect object PublicObject : Any
 
 internal actual object PublicObject
                        ^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:10:20: error: 'actual class OpenClass : Any' has no corresponding expected declaration
-The following declaration is incompatible because modality is different:
+The following declaration is incompatible because modality is different. Expect declaration modality is 'open'. Actual declaration modality is 'final':
     expect class OpenClass : Any
 
 final actual class OpenClass
                    ^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:11:19: error: 'actual class AbstractClass : Any' has no corresponding expected declaration
-The following declaration is incompatible because modality is different:
+The following declaration is incompatible because modality is different. Expect declaration modality is 'abstract'. Actual declaration modality is 'open':
     expect class AbstractClass : Any
 
 open actual class AbstractClass
                   ^^^^^^^^^^^^^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:12:23: error: 'actual class FinalClass : Any' has no corresponding expected declaration
-The following declaration is incompatible because modality is different:
+The following declaration is incompatible because modality is different. Expect declaration modality is 'final'. Actual declaration modality is 'abstract':
     expect class FinalClass : Any
 
 abstract actual class FinalClass

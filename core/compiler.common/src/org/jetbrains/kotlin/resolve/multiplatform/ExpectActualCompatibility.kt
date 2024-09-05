@@ -77,7 +77,14 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object PropertyKind : Incompatible<Nothing>("property kinds are different (val vs var)")
     object PropertyLateinitModifier : Incompatible<Nothing>("modifiers are different (lateinit)")
     object PropertyConstModifier : Incompatible<Nothing>("modifiers are different (const)")
-    object PropertySetterVisibility : Incompatible<Nothing>("setter visibility is different")
+    class PropertySetterVisibility(
+        expectVisibility: org.jetbrains.kotlin.descriptors.Visibility?,
+        actualVisibility: org.jetbrains.kotlin.descriptors.Visibility?,
+    ) : Incompatible<Nothing>(
+        "setter visibility is different. " +
+                "Expect declaration setter visibility is '${expectVisibility?.name}'. " +
+                "Actual declaration setter visibility is '${actualVisibility?.name}'"
+    )
 
     // Classifiers
     object ClassKind : Incompatible<Nothing>("class kinds are different (class, interface, object, enum, annotation)")
@@ -91,8 +98,22 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
 
     // Common
-    object Modality : Incompatible<Nothing>("modality is different")
-    object Visibility : Incompatible<Nothing>("visibility is different")
+    class Modality(
+        expectModality: org.jetbrains.kotlin.descriptors.Modality?,
+        actualModality: org.jetbrains.kotlin.descriptors.Modality?,
+    ) : Incompatible<Nothing>(
+        "modality is different. " +
+                "Expect declaration modality is '${expectModality.toString().lowercase()}'. " +
+                "Actual declaration modality is '${actualModality.toString().lowercase()}'"
+    )
+    class Visibility(
+        expectVisibility: org.jetbrains.kotlin.descriptors.Visibility,
+        actualVisibility: org.jetbrains.kotlin.descriptors.Visibility,
+    ) : Incompatible<Nothing>(
+        "visibility is different. " +
+                "Expect declaration visibility is '${expectVisibility.name}'. " +
+                "Actual declaration visibility is '${actualVisibility.name}'"
+    )
 
     object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
     object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different")
