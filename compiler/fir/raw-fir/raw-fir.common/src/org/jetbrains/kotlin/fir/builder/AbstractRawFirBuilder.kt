@@ -1251,10 +1251,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
     // String literals folding helpers
 
-    fun getFoldedStringLiterals(): FirStatement {
-        val (str, source) = context.folder.release()
+    fun getFoldedStringLiterals(source: KtSourceElement? = null): FirStatement {
+        val (str, storedSource) = context.folder.release()
         return buildLiteralExpression(
-            source,
+            source ?: storedSource,
             ConstantValueKind.String,
             setType = false,
             value = str

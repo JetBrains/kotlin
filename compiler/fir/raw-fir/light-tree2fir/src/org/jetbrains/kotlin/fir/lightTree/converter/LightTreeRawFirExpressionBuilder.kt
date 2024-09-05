@@ -344,31 +344,31 @@ class LightTreeRawFirExpressionBuilder(
                 val checkpoint: StringLiteralsFolder.StringLiteralsFolderCheckpoint? =
                     if (context.folder.canFold()) context.folder.checkpoint() else null
 
-                lhs = leftArgNode.getAsFirExpressionWithFold("no left operand")
+                lhs = leftArgNode.getAsFirExpressionWithFold("No left operand")
 
                 val rhs = if (lhs != null) {
                     if (context.folder.canInitialize() && rightArg != null) {
                         val rightSource = rightArg!!.toFirSourceElement()
                         context.folder.initialize(rightSource)
-                        rightArg.getAsFirExpressionWithFold("no right operand", { rightSource })
+                        rightArg.getAsFirExpressionWithFold("No right operand", { rightSource })
                             ?: getFoldedStringLiterals()
                     } else {
                         context.folder.disable()
-                        rightArg.getAsFirExpressionWithFold("no right operand")
+                        rightArg.getAsFirExpressionWithFold("No right operand")
                     }
                 } else {
-                    rightArg.getAsFirExpressionWithFold("no right operand")
+                    rightArg.getAsFirExpressionWithFold("No right operand")
                 }
 
                 context.calleeNamesForLambda.removeLast()
 
                 if (rhs != null && lhs == null) {
                     if (checkpoint!!.isStart()) {
-                        lhs = getFoldedStringLiterals()
+                        lhs = getFoldedStringLiterals(source = leftArgNode!!.toFirSourceElement())
                     } else {
                         checkpoint.rollback(context.folder)
                         context.folder.disable()
-                        lhs = leftArgNode.getAsFirExpressionWithFold("no left operand")
+                        lhs = leftArgNode.getAsFirExpressionWithFold("No left operand")
                     }
                 }
 

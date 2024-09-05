@@ -14,9 +14,13 @@ FILE: binaryOperators.kt
         lval case10: R|kotlin/String| = R|<local>/case1|.R|kotlin/String.plus|(R|<local>/case1|).R|kotlin/String.plus|(R|<local>/case1|)
         lval case11: R|kotlin/String| = String(123456)
         lval case12: <ERROR TYPE REF: Unresolved name: minus (-)> = String(1).<Unresolved name: minus (-)>#(String(2))
-        lval case13: R|kotlin/String| = ERROR_EXPR(no left operand).R|kotlin/plus|(String(2)).R|kotlin/String.plus|(String(3))
+        lval case13: R|kotlin/String| = ERROR_EXPR(No left operand).R|kotlin/plus|(String(2)).R|kotlin/String.plus|(String(3))
         lval case14: R|kotlin/String| = String(12).R|kotlin/String.plus|(R|/f|(String(1).R|kotlin/String.plus|(String(2))))
+        lval case15: R|kotlin/String| = String(A).R|kotlin/String.plus|(R|/foo|())
     }
     public final fun f(item: R|kotlin/String|): R|kotlin/String| {
         ^f R|<local>/item|
+    }
+    public final fun foo(): R|kotlin/Nothing| {
+        ^foo throw R|java/lang/Exception.Exception|()
     }

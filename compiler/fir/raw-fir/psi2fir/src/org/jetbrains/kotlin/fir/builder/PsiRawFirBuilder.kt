@@ -2928,29 +2928,29 @@ open class PsiRawFirBuilder(
                     val checkpoint: StringLiteralsFolder.StringLiteralsFolderCheckpoint? =
                         if (context.folder.canFold()) context.folder.checkpoint() else null
 
-                    lhs = leftArgument.toFirExpressionWithFold("no left operand", DiagnosticKind.ExpressionExpected)
+                    lhs = leftArgument.toFirExpressionWithFold("No left operand", DiagnosticKind.ExpressionExpected)
 
                     val rhs = if (lhs != null) {
                         if (context.folder.canInitialize() && rightArgument != null) {
                             val rightSource = rightArgument.toFirSourceElement()
                             context.folder.initialize(rightSource)
-                            rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected, { rightSource })
+                            rightArgument.toFirExpressionWithFold("No right operand", DiagnosticKind.ExpressionExpected, { rightSource })
                                 ?: getFoldedStringLiterals()
                         } else {
                             context.folder.disable()
-                            rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected)
+                            rightArgument.toFirExpressionWithFold("No right operand", DiagnosticKind.ExpressionExpected)
                         }
                     } else {
-                        rightArgument.toFirExpressionWithFold("no right operand", DiagnosticKind.ExpressionExpected)
+                        rightArgument.toFirExpressionWithFold("No right operand", DiagnosticKind.ExpressionExpected)
                     }
 
                     if (rhs != null && lhs == null) {
                         if (checkpoint!!.isStart()) {
-                            lhs = getFoldedStringLiterals()
+                            lhs = getFoldedStringLiterals(source = leftArgument!!.toFirSourceElement())
                         } else {
                             checkpoint.rollback(context.folder)
                             context.folder.disable()
-                            lhs = leftArgument.toFirExpressionWithFold("no left operand", DiagnosticKind.ExpressionExpected)
+                            lhs = leftArgument.toFirExpressionWithFold("No left operand", DiagnosticKind.ExpressionExpected)
                         }
                     }
 

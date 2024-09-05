@@ -15,6 +15,9 @@ fun main() {
     val case12 = "1" <!UNRESOLVED_REFERENCE!>-<!> "2"
     val case13 = <!EXPRESSION_EXPECTED!>while(true) {}<!> + "2" + "3"
     val case14 = "1" + "2" + f("1" + "2")
+    val case15 = "A" + foo()
 }
 
 fun f(item: String): String = item
+
+fun foo(): Nothing = throw Exception()

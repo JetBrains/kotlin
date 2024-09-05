@@ -207,6 +207,19 @@ FirFileImpl
     FirDefaultPropertyBackingField
      FirResolvedTypeRefImpl
      FirResolvedDeclarationStatusImpl
+   FirPropertyImpl
+    FirResolvedDeclarationStatusImpl
+    FirResolvedTypeRefImpl
+    FirFunctionCallImpl
+     FirLiteralExpressionImpl
+     FirResolvedArgumentListImpl
+      FirFunctionCallImpl
+       FirResolvedArgumentListImpl
+       FirResolvedNamedReferenceImpl
+     FirResolvedNamedReferenceImpl
+    FirDefaultPropertyBackingField
+     FirResolvedTypeRefImpl
+     FirResolvedDeclarationStatusImpl
  FirSimpleFunctionImpl
   FirResolvedDeclarationStatusImpl
   FirResolvedTypeRefImpl
@@ -221,3 +234,16 @@ FirFileImpl
    FirReturnExpressionImpl
     FirPropertyAccessExpressionImpl
      FirResolvedNamedReferenceImpl
+ FirSimpleFunctionImpl
+  FirResolvedDeclarationStatusImpl
+  FirResolvedTypeRefImpl
+  FirControlFlowGraphReferenceImpl
+  FirSingleExpressionBlock
+  {
+   source.kind: SingleExpressionBlock
+  }
+   FirReturnExpressionImpl
+    FirThrowExpressionImpl
+     FirFunctionCallImpl
+      FirResolvedArgumentListImpl
+      FirResolvedNamedReferenceImpl
