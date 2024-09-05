@@ -15,11 +15,14 @@ class KlibIcData(incrementalData: IncrementalDataProvider) : MetadataLibrary {
     private val parts: Map<String, Map<String, ByteArray>> by lazy {
         val result = mutableMapOf<String, MutableMap<String, ByteArray>>()
 
-        incrementalData.compiledPackageParts.entries.forEach { (f, tv) ->
-            val proto = parsePackageFragment(tv.metadata)
-            val fqName = proto.getExtension(KlibMetadataProtoBuf.fqName)
-            result.getOrPut(fqName, ::mutableMapOf).put(f.name, tv.metadata)
-        }
+        incrementalData
+            .compiledPackageParts
+            .toSortedMap() // This is so that IC is more deterministic
+            .forEach { (file, translationResultValue) ->
+                val proto = parsePackageFragment(translationResultValue.metadata)
+                val fqName = proto.getExtension(KlibMetadataProtoBuf.fqName)
+                result.getOrPut(fqName, ::mutableMapOf).put(file.name, translationResultValue.metadata)
+            }
 
         result
     }
