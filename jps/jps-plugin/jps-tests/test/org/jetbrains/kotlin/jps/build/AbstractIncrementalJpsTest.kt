@@ -339,7 +339,7 @@ abstract class AbstractIncrementalJpsTest(
             val actual = excludeCompilerErrorMessagesFromLog(logs)
 
             if(expected.trimEnd() != actual.trimEnd()) {
-                UsefulTestCase.assertEquals(buildLog, logs)
+                assertSameLinesWithFile(it.absolutePath, logs)
             }
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)

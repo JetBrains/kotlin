@@ -212,6 +212,11 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
     }
 
+    @TestMetadata("differentFilesWithSameNameInSamePackage")
+    public void testDifferentFilesWithSameNameInSamePackage() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/differentFilesWithSameNameInSamePackage/");
+    }
+
     @TestMetadata("entriesMappings")
     public void testEntriesMappings() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/entriesMappings/");

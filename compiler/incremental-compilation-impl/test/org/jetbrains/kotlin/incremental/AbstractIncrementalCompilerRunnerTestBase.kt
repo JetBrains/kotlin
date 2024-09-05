@@ -72,7 +72,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             }
         }
         if (testPassed && failFile.exists()) {
-            fail("Test is successful and $FAIL_FILE_NAME can be removed")
+            fail("Test is successful and ${failFile.name} can be removed")
         }
     }
 

@@ -36,8 +36,6 @@ abstract class AbstractIncrementalK1JsKlibCompilerRunnerTest : AbstractIncrement
     }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
-
-    override fun failFile(testDir: File): File = testDir.resolve("fail_js_legacy.txt")
 }
 
 abstract class AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalK1JsKlibCompilerRunnerTest() {
@@ -53,4 +51,6 @@ abstract class AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest :
 
     override val buildLogFinder: BuildLogFinder
         get() = super.buildLogFinder.copy(isFirEnabled = true)
+
+    override fun failFile(testDir: File): File = testDir.resolve("fail_js_k2.txt")
 }
