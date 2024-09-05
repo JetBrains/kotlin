@@ -15,8 +15,8 @@ expect value <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class D<!>(val s: Stri
 
 @JvmInline
 actual value class C(actual val s: String) : B {
-    override fun toString(): String = s
+    override fun <!ACTUAL_WITHOUT_EXPECT!>toString<!>(): String = s
 }
 
 @JvmInline
-actual value class D(actual val s: String) : B
+actual value class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>(actual val s: String) : B

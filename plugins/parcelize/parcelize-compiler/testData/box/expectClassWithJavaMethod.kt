@@ -28,6 +28,6 @@ import android.os.Parcelable
 import kotlinx.parcelize.*
 
 @Parcelize
-actual data class OpenUrlScreen actual constructor(actual val url: String) : Screen
+actual data class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>OpenUrlScreen<!> actual constructor(actual val url: String) : Screen
 
 fun box() = "OK"

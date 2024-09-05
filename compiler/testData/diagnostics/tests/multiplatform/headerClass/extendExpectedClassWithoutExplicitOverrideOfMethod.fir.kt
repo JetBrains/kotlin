@@ -23,7 +23,7 @@ actual abstract class Base {
 }
 
 actual class DerivedImplicit : Base() {
-    override fun foo() {}
+    override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }
 
 actual class DerivedExplicit : Base() {

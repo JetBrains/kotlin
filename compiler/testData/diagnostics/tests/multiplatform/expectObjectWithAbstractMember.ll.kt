@@ -14,4 +14,4 @@ abstract class RealImplementation : Base {
     override fun foo() {}
 }
 
-actual object Implementation : RealImplementation(), Base
+actual object <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Implementation<!> : RealImplementation(), Base

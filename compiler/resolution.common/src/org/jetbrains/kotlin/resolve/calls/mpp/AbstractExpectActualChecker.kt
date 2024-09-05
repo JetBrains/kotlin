@@ -430,11 +430,11 @@ object AbstractExpectActualChecker {
     }
 
     /*
-     * If containing class is final then all declarations in it effectively final
+     * If containing class is final then open members inside it are effectively final
      */
     private fun effectiveModality(declarationModality: Modality?, containingClassModality: Modality?): Modality? {
-        return when (containingClassModality) {
-            Modality.FINAL -> Modality.FINAL
+        return when (containingClassModality == Modality.FINAL && declarationModality == Modality.OPEN) {
+            true -> Modality.FINAL
             else -> declarationModality
         }
     }

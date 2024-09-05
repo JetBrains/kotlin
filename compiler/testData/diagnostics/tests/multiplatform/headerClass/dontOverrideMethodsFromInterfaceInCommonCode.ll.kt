@@ -17,7 +17,7 @@ expect class ImplicitFooCheck : Foo
 // FILE: jvm.kt
 
 actual class ImplicitFoo : Foo {
-    override fun foo() {}
+    override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }
 
 actual class ExplicitFoo : Foo {
