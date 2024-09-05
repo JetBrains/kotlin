@@ -11352,6 +11352,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         runTest("compiler/testData/diagnostics/tests/delegation/kt8154.kt");
       }
 
+      @Test
+      @TestMetadata("multipleDelegationRegression.kt")
+      public void testMultipleDelegationRegression() {
+        runTest("compiler/testData/diagnostics/tests/delegation/multipleDelegationRegression.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/delegation/clashes")
       @TestDataPath("$PROJECT_ROOT")
