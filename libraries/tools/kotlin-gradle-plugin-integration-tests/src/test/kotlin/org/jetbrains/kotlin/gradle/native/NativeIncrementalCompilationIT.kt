@@ -41,7 +41,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
                 "-Xbackend-threads=4"
             )
 
-            val icCacheDir = projectPath.resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
+            val icCacheDir = projectPath.toRealPath().resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
             val incrementalCacheArgs = arrayOf(
                 "-Xenable-incremental-compilation",
                 "-Xic-cache-dir=${icCacheDir.toFile().absolutePath}"

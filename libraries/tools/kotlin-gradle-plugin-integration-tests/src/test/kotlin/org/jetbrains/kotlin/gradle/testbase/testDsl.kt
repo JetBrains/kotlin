@@ -247,7 +247,7 @@ fun TestProject.buildAndFail(
 }
 
 fun getGradleUserHome(): File {
-    return testKitDir.toAbsolutePath().toFile().absoluteFile
+    return testKitDir.toAbsolutePath().toFile().normalize().absoluteFile
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
