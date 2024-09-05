@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -20,17 +20,47 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.collections.map
 
-internal class CompilationContext(
-    val module: Module,
+internal class FrontendContextForSingleModulePsi(
+    module: Module,
     val allSources: List<KtFile>,
+    projectEnvironment: VfsBasedProjectEnvironment,
+    messageCollector: MessageCollector,
+    renderDiagnosticName: Boolean,
+    configuration: CompilerConfiguration,
+    targetIds: List<TargetId>?,
+    incrementalComponents: IncrementalCompilationComponents?,
+    extensionRegistrars: List<FirExtensionRegistrar>
+) : FrontendContextForSingleModule(
+    module, projectEnvironment, messageCollector, renderDiagnosticName,
+    configuration, targetIds, incrementalComponents,
+    extensionRegistrars
+)
+
+internal class FrontendContextForSingleModuleLightTree(
+    module: Module,
+    val groupedSources: GroupedKtSources,
+    projectEnvironment: VfsBasedProjectEnvironment,
+    messageCollector: MessageCollector,
+    renderDiagnosticName: Boolean,
+    configuration: CompilerConfiguration,
+    targetIds: List<TargetId>?,
+    incrementalComponents: IncrementalCompilationComponents?,
+    extensionRegistrars: List<FirExtensionRegistrar>
+) : FrontendContextForSingleModule(
+    module, projectEnvironment, messageCollector, renderDiagnosticName,
+    configuration, targetIds, incrementalComponents,
+    extensionRegistrars
+)
+
+internal abstract class FrontendContextForSingleModule(
+    val module: Module,
     override val projectEnvironment: VfsBasedProjectEnvironment,
     override val messageCollector: MessageCollector,
     val renderDiagnosticName: Boolean,
     override val configuration: CompilerConfiguration,
     override val targetIds: List<TargetId>?,
     override val incrementalComponents: IncrementalCompilationComponents?,
-    override val extensionRegistrars: List<FirExtensionRegistrar>,
-    val irGenerationExtensions: Collection<IrGenerationExtension>
+    override val extensionRegistrars: List<FirExtensionRegistrar>
 ) : FrontendContext
 
 class FrontendContextForMultiChunkMode private constructor(
@@ -63,6 +93,28 @@ class FrontendContextForMultiChunkMode private constructor(
         messageCollector,
         incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
         extensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
+        configuration = compilerConfiguration,
+        targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
+    )
+}
+
+class FrontendContextForIncrementalCompilation(
+    override val projectEnvironment: VfsBasedProjectEnvironment,
+    override val messageCollector: MessageCollector,
+    override val incrementalComponents: IncrementalCompilationComponents?,
+    override val extensionRegistrars: List<FirExtensionRegistrar>,
+    override val configuration: CompilerConfiguration,
+    override val targetIds: List<TargetId>?,
+) : FrontendContext {
+    constructor(
+        projectEnvironment: VfsBasedProjectEnvironment,
+        messageCollector: MessageCollector,
+        compilerConfiguration: CompilerConfiguration,
+    ) : this(
+        projectEnvironment,
+        messageCollector,
+        incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+        extensionRegistrars = projectEnvironment.project.let { FirExtensionRegistrar.getInstances(it) },
         configuration = compilerConfiguration,
         targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
     )

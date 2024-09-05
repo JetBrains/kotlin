@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.toLogger
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIRAndPsi
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSingleModuleUsingFrontendIrAndPsi
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
@@ -84,13 +84,14 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             if (chunk.size == 1) {
-                return compileModulesUsingFrontendIRAndPsi(
+                return compileSingleModuleUsingFrontendIrAndPsi(
+                    projectEnvironment.project,
                     projectEnvironment,
                     compilerConfiguration,
                     messageCollector,
-                    environment.getSourceFiles(),
                     buildFile,
-                    chunk.single()
+                    chunk.single(),
+                    environment.getSourceFiles(),
                 )
             }
 

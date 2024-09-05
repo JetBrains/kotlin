@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.CompilationContext
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.FrontendContextForSingleModulePsi
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSourceFilesToAnalyzedFirViaPsi
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -59,7 +59,7 @@ object FirKotlinToJvmBytecodeCompiler {
         sources: List<KtFile>,
         module: Module,
     ): FirResult {
-        val context = CompilationContext(
+        val context = FrontendContextForSingleModulePsi(
             module,
             sources,
             environment,
@@ -69,7 +69,6 @@ object FirKotlinToJvmBytecodeCompiler {
             configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId),
             configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
             extensionRegistrars = FirExtensionRegistrar.getInstances(environment.project),
-            irGenerationExtensions = emptyList(),
         )
         val diagnosticsReporter = createPendingReporter(messageCollector)
         return context.compileSourceFilesToAnalyzedFirViaPsi(

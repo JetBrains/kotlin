@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.createPendingReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.codegenFactoryWithJvmIrBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runCodegen
@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -253,87 +254,91 @@ private fun compileSingleModuleUsingFrontendIrAndLightTree(
     module: Module,
     groupedSources: GroupedKtSources,
 ): Boolean {
-    val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
-        put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
-    }
-    val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+    val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
 
-    val firResult = compileModuleToAnalyzedFirViaLightTree(
-        ModuleCompilerInput(TargetId(module), groupedSources, moduleConfiguration),
+    val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    val context = FrontendContextForSingleModuleLightTree(
+        module,
+        groupedSources,
         projectEnvironment,
-        diagnosticsReporter,
+        messageCollector,
+        renderDiagnosticNames,
+        moduleConfiguration,
+        targetIds = compilerConfiguration.get<MutableList<Module>>(JVMConfigurationKeys.MODULES)?.map<Module, TargetId>(::TargetId),
+        incrementalComponents = compilerConfiguration.get<IncrementalCompilationComponents>(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+        extensionRegistrars = FirExtensionRegistrar.getInstances(project)
     )
 
-    if (!checkKotlinPackageUsageForLightTree(moduleConfiguration, firResult.outputs.flatMap { it.fir })) {
-        return false
-    }
+    val (firResult, generationState) = context.compileModule() ?: return false
 
     val mainClassFqName = runIf(moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
         findMainClass(firResult.outputs.last().fir)
     }
 
-    if (diagnosticsReporter.hasErrors) {
-        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticNames)
-        return false
-    }
-
-    val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
-    val irInput = convertAnalyzedFirToIr(moduleConfiguration, TargetId(module), firResult, compilerEnvironment)
-
-    val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
-
-    diagnosticsReporter.reportToMessageCollector(
-        messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    )
-
     return writeOutputsIfNeeded(
         project,
         compilerConfiguration,
         messageCollector,
-        listOf(codegenOutput.generationState),
+        listOf(generationState),
         mainClassFqName
     )
 }
 
-private fun compileModuleToAnalyzedFirViaLightTree(
+private fun FrontendContextForSingleModuleLightTree.compileModule(): Pair<FirResult, GenerationState>? {
+    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+    val diagnosticsReporter = createPendingReporter(messageCollector)
+    val firResult = compileModuleToAnalyzedFirViaLightTree(
+        ModuleCompilerInput(TargetId(module), groupedSources, configuration),
+        diagnosticsReporter,
+        module.getFriendPaths(),
+    )
+    if (diagnosticsReporter.hasErrors) {
+        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+        return null
+    }
+
+    if (!checkKotlinPackageUsageForLightTree(configuration, firResult.outputs.flatMap { it.fir })) {
+        return null
+    }
+
+    return firResult to runBackend(firResult, diagnosticsReporter)
+}
+
+private fun FrontendContext.compileModuleToAnalyzedFirViaLightTree(
     input: ModuleCompilerInput,
-    projectEnvironment: VfsBasedProjectEnvironment,
     diagnosticsReporter: BaseDiagnosticsCollector,
+    friendPaths: List<String>,
 ): FirResult = compileModuleToAnalyzedFirViaLightTreeIncrementally(
-    input, projectEnvironment, emptyList(), null, diagnosticsReporter
+    input, diagnosticsReporter, emptyList(), null, friendPaths
 )
 
-fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
+fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     input: ModuleCompilerInput,
-    projectEnvironment: VfsBasedProjectEnvironment,
+    diagnosticsReporter: BaseDiagnosticsCollector,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
-    diagnosticsReporter: BaseDiagnosticsCollector,
+    friendPaths: List<String>,
 ): FirResult {
-    val moduleConfiguration = input.configuration
-    val performanceManager = moduleConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyAnalysisStarted()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     val rootModuleName = input.targetId.name
 
     val incrementalCompilationScope = createIncrementalCompilationScope(
-        moduleConfiguration,
+        configuration,
         projectEnvironment,
         incrementalExcludesScope
     )?.also { librariesScope -= it }
-
-    val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
 
     val allSources = mutableListOf<KtSourceFile>().apply {
         addAll(input.groupedSources.commonSources)
         addAll(input.groupedSources.platformSources)
     }
-    // TODO: handle friends paths
-    val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, friendPaths = emptyList())
+    val libraryList = createLibraryListForJvm(rootModuleName, configuration, friendPaths)
     val sessionsWithSources = prepareJvmSessions(
-        allSources, moduleConfiguration, projectEnvironment, Name.special("<$rootModuleName>"),
+        allSources, configuration, projectEnvironment, Name.special("<$rootModuleName>"),
         extensionRegistrars, librariesScope, libraryList,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
         isScript = { false },
@@ -341,7 +346,7 @@ fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
         createProviderAndScopeForIncrementalCompilation = { files ->
             val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
             createContextForIncrementalCompilation(
-                moduleConfiguration,
+                configuration,
                 projectEnvironment,
                 scope,
                 previousStepsSymbolProviders,

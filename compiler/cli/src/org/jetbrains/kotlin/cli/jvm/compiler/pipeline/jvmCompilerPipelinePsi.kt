@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -37,10 +38,10 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -55,44 +56,40 @@ import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 import kotlin.collections.map
 
-fun compileModulesUsingFrontendIRAndPsi(
+fun compileSingleModuleUsingFrontendIrAndPsi(
+    project: Project,
     projectEnvironment: VfsBasedProjectEnvironment,
     compilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector,
-    allSources: List<KtFile>,
     buildFile: File?,
     module: Module,
+    allSources: List<KtFile>,
 ): Boolean {
-    val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-    val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-
-    val project = projectEnvironment.project
     FirAnalysisHandlerExtension.analyze(project, compilerConfiguration)?.let { return it }
 
     val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
-    val context = CompilationContext(
+    val context = FrontendContextForSingleModulePsi(
         module,
         allSources,
         projectEnvironment,
         messageCollector,
         moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
         moduleConfiguration,
-        targetIds,
-        incrementalComponents,
-        extensionRegistrars = FirExtensionRegistrar.getInstances(project),
-        irGenerationExtensions = IrGenerationExtension.getInstances(project)
+        targetIds = compilerConfiguration.get<MutableList<Module>>(JVMConfigurationKeys.MODULES)?.map<Module, TargetId>(::TargetId),
+        incrementalComponents = compilerConfiguration.get<IncrementalCompilationComponents>(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+        extensionRegistrars = FirExtensionRegistrar.getInstances(project)
     )
-    val resultAndGenerationState = context.compileModule() ?: return false
+    val (firResult, generationState) = context.compileModule() ?: return false
 
     val mainClassFqName: FqName? = runIf(compilerConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-        findMainClass(resultAndGenerationState.first.outputs.last().fir)
+        findMainClass(firResult.outputs.last().fir)
     }
 
     return writeOutputsIfNeeded(
         project,
         compilerConfiguration,
         messageCollector,
-        listOf(resultAndGenerationState.second),
+        listOf(generationState),
         mainClassFqName
     )
 }
@@ -143,34 +140,21 @@ internal fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
     }
 }
 
-private fun CompilationContext.compileModule(): Pair<FirResult, GenerationState>? {
+private fun FrontendContextForSingleModulePsi.compileModule(): Pair<FirResult, GenerationState>? {
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-    if (!checkKotlinPackageUsageForPsi(configuration, allSources)) return null
-
     val diagnosticsReporter = createPendingReporter(messageCollector)
-
     val firResult = compileSourceFilesToAnalyzedFirViaPsi(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths())
     if (firResult == null) {
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticName)
         return null
     }
 
-    val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-    val fir2IrAndIrActualizerResult =
-        firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
+    if (!checkKotlinPackageUsageForPsi(configuration, allSources)) {
+        return null
+    }
 
-    val generationState = runBackend(
-        fir2IrExtensions,
-        fir2IrAndIrActualizerResult,
-        diagnosticsReporter
-    )
-
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticName)
-
-    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-    return firResult to generationState
+    return firResult to runBackend(firResult, diagnosticsReporter)
 }
 
 fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
@@ -221,41 +205,6 @@ fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
 
     performanceManager?.notifyAnalysisFinished()
     return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
-}
-
-private fun CompilationContext.runBackend(
-    fir2IrExtensions: JvmFir2IrExtensions,
-    fir2IrActualizedResult: Fir2IrActualizedResult,
-    diagnosticsReporter: BaseDiagnosticsCollector,
-): GenerationState {
-    val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = fir2IrActualizedResult
-    val irInput = ModuleCompilerIrBackendInput(
-        TargetId(module),
-        configuration,
-        fir2IrExtensions,
-        moduleFragment,
-        components,
-        pluginContext,
-        irActualizedResult,
-        symbolTable
-    )
-
-    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-    val generationState = generateCodeFromIr(
-        irInput, ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
-    ).generationState
-
-    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-    AnalyzerWithCompilerReport.reportDiagnostics(
-        generationState.collectedExtraJvmDiagnostics,
-        messageCollector,
-        renderDiagnosticName
-    )
-
-    ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-    return generationState
 }
 
 private fun FrontendContext.reportCommonScriptsError(ktFiles: List<KtFile>): Boolean {
