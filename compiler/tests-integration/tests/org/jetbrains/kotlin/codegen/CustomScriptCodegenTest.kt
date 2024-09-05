@@ -30,7 +30,7 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 open class IrCustomScriptCodegenTest : CustomScriptCodegenTest() {
     override val backend: TargetBackend
-        get() = TargetBackend.JVM
+        get() = TargetBackend.JVM_IR
 
     override fun testAnnotatedDefinition() {
         // Discussing
