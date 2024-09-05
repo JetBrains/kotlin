@@ -1,0 +1,268 @@
+KtFile: suggestGuardSyntax.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('wrongAnd')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Any')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('boolExpr')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Boolean')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('String')
+                PsiWhiteSpace(' ')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      PsiErrorElement:Type expected
+                        PsiElement(EXCL)('!')
+                  PsiErrorElement:Expecting a '>'
+                    <empty list>
+          PsiErrorElement:Expecting '->'
+            PsiElement(IDENTIFIER)('SYNTAX')
+          BINARY_EXPRESSION
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(EXCL)('!')
+              PsiErrorElement:Expecting an element
+                PsiElement(GT)('>')
+            OPERATION_REFERENCE
+              PsiElement(ANDAND)('&&')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('boolExpr')
+              OPERATION_REFERENCE
+                PsiElement(LT)('<')
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE
+                  PsiElement(EXCL)('!')
+                PsiErrorElement:Expecting an element
+                  PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('hello')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('comma')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Any')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('boolExpr')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Boolean')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('String')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+                PsiWhiteSpace(' ')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      PsiErrorElement:Type expected
+                        PsiElement(EXCL)('!')
+                  PsiErrorElement:Expecting a '>'
+                    <empty list>
+          PsiErrorElement:Expecting '->'
+            PsiElement(IDENTIFIER)('SYNTAX')
+          BINARY_EXPRESSION
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(EXCL)('!')
+              PsiErrorElement:Expecting an element
+                PsiElement(GT)('>')
+            OPERATION_REFERENCE
+              PsiElement(ANDAND)('&&')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('boolExpr')
+              OPERATION_REFERENCE
+                PsiElement(LT)('<')
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE
+                  PsiElement(EXCL)('!')
+                PsiErrorElement:Expecting an element
+                  PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('hello')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('elseAndAnd')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Boolean')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('boolExpr')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Boolean')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          PsiElement(else)('else')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting '->'
+            PsiElement(LT)('<')
+            PsiElement(EXCL)('!')
+            PsiElement(IDENTIFIER)('SYNTAX')
+            PsiElement(EXCL)('!')
+            PsiElement(GT)('>')
+            PsiElement(ANDAND)('&&')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('boolExpr')
+            PsiElement(LT)('<')
+            PsiElement(EXCL)('!')
+            PsiElement(GT)('>')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('hello')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

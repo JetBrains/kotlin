@@ -916,9 +916,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
-            if (at(IF_KEYWORD)) {
-                parseWhenEntryGuard();
-            }
+            parseWhenEntryGuardOrSuggest();
 
             if (!at(ARROW)) {
                 errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE, RBRACE, EOL_OR_SEMICOLON));
@@ -963,9 +961,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
         }
 
-        if (at(IF_KEYWORD)) {
-            parseWhenEntryGuard();
-        }
+        parseWhenEntryGuardOrSuggest();
 
         expect(ARROW, "Expecting '->'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
@@ -1028,6 +1024,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 break;
         }
         myBuilder.restoreNewlinesState();
+    }
+
+    private void parseWhenEntryGuardOrSuggest() {
+        if (at(ANDAND)) {
+            errorUntil("Unexpected '&&', use 'if' to introduce a guard", TokenSet.create(LBRACE, RBRACE, ARROW));
+        } else if (at(IF_KEYWORD)) {
+            parseWhenEntryGuard();
+        }
     }
 
     /*

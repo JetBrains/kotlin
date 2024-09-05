@@ -676,6 +676,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/StringTemplates.kt");
     }
 
+    @TestMetadata("suggestGuardSyntax.kt")
+    public void testSuggestGuardSyntax() {
+      runTest("compiler/testData/psi/suggestGuardSyntax.kt");
+    }
+
     @TestMetadata("Super.kt")
     public void testSuper() {
       runTest("compiler/testData/psi/Super.kt");

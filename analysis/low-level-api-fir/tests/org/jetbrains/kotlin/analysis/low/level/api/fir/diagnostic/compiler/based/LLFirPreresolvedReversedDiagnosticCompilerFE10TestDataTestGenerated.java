@@ -44608,6 +44608,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("suggestGuard.kt")
+        public void testSuggestGuard() {
+          runTest("compiler/testData/diagnostics/tests/when/guard/suggestGuard.kt");
+        }
+
+        @Test
         @TestMetadata("thisInSubject.kt")
         public void testThisInSubject() {
           runTest("compiler/testData/diagnostics/tests/when/guard/thisInSubject.kt");

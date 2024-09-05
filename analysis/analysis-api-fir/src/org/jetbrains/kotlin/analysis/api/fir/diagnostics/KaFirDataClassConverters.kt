@@ -4552,6 +4552,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.WRONG_CONDITION_SUGGEST_GUARD) { firDiagnostic ->
+        WrongConditionSuggestGuardImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD) { firDiagnostic ->
         CommaInWhenConditionWithWhenGuardImpl(
             firDiagnostic as KtPsiDiagnostic,
