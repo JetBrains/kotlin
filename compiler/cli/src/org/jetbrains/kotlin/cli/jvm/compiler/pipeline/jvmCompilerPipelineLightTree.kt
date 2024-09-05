@@ -129,7 +129,7 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
     }
 
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-    val frontendContext = FirKotlinToJvmBytecodeCompiler.FrontendContextForMultiChunkMode(
+    val frontendContext = FrontendContextForMultiChunkMode(
         projectEnvironment, messageCollector, compilerConfiguration, project
     )
 

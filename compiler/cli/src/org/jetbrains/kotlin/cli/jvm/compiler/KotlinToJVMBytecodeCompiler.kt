@@ -11,21 +11,18 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.toLogger
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.compileSourceFilesToAnalyzedFirViaPsi
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIRAndPsi
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -37,10 +34,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -89,7 +84,7 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             if (chunk.size == 1) {
-                return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIRAndPsi(
+                return compileModulesUsingFrontendIRAndPsi(
                     projectEnvironment,
                     compilerConfiguration,
                     messageCollector,
@@ -137,52 +132,6 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         return writeOutputsIfNeeded(project, compilerConfiguration, messageCollector, outputs, mainClassFqName)
-    }
-
-    private fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
-        environment: KotlinCoreEnvironment,
-        projectEnvironment: VfsBasedProjectEnvironment,
-        compilerConfiguration: CompilerConfiguration,
-        chunk: List<Module>,
-    ): BackendInputForMultiModuleChunk? {
-        val sourceFiles = environment.getSourceFiles()
-        val project = projectEnvironment.project
-        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-        val frontendContext = FirKotlinToJvmBytecodeCompiler.FrontendContextForMultiChunkMode(
-            projectEnvironment, environment, compilerConfiguration, project
-        )
-
-        with(frontendContext) {
-            // K2/PSI: frontend
-            val firResult = compileSourceFilesToAnalyzedFirViaPsi(
-                sourceFiles, diagnosticsReporter, chunk.joinToString(separator = "+") { it.getModuleName() },
-                chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
-            ) ?: run {
-                FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                    diagnosticsReporter, messageCollector,
-                    compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-                )
-                return null
-            }
-            // K2/PSI: FIR2IR
-            val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-            val irGenerationExtensions = IrGenerationExtension.getInstances(project)
-            val fir2IrAndIrActualizerResult =
-                firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
-            val (factory, input) = fir2IrAndIrActualizerResult.codegenFactoryWithJvmIrBackendInput(configuration)
-            return BackendInputForMultiModuleChunk(
-                factory,
-                input,
-                fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
-                NoScopeRecordCliBindingTrace(project).bindingContext,
-                FirJvmBackendClassResolver(fir2IrAndIrActualizerResult.components),
-                FirJvmBackendExtension(
-                    fir2IrAndIrActualizerResult.components,
-                    fir2IrAndIrActualizerResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
-                )
-            )
-        }
     }
 
     private fun runFrontendAndGenerateIrUsingClassicFrontend(
@@ -394,7 +343,7 @@ object KotlinToJVMBytecodeCompiler {
     class DirectoriesScope(
         project: Project,
         private val directories: Set<VirtualFile>
-    ) : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+    ) : DelegatingGlobalSearchScope(allScope(project)) {
         private val fileSystems = directories.mapTo(hashSetOf(), VirtualFile::getFileSystem)
 
         override fun contains(file: VirtualFile): Boolean {
