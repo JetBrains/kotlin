@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compil
 
 import com.intellij.openapi.extensions.LoadingOrder
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -63,7 +60,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
-import kotlin.test.assertFalse
+import kotlin.reflect.jvm.jvmName
 
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
     override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
@@ -116,7 +113,17 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val target = KaCompilerTarget.Jvm(ClassBuilderFactories.TEST)
             val allowedErrorFilter: (KaDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
-            val result = compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
+            val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)
+            val result = try {
+                compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
+            } catch (e: Throwable) {
+                if (exceptionExpected && e is KaCodeCompilationException) {
+                    e.cause?.message?.let { testServices.assertions.assertEqualsToTestDataFileSibling("CODE_COMPILATION_EXCEPTION:\n$it") }
+                        ?: throw e
+                    return
+                }
+                throw e
+            }
 
             val actualText = when (result) {
                 is KaCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
@@ -216,6 +223,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val CHECK_CALLS_WITH_ANNOTATION by stringDirective(
             "Check whether all functions of calls and getters of properties with a given annotation are listed in *.check_calls.txt or not"
         )
+
+        val CODE_COMPILATION_EXCEPTION by directive(
+            "An exception caused by CodeGen API i.e., ${KaCodeCompilationException::class.jvmName} is expected"
+        )
     }
 }
 
@@ -250,14 +261,11 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
 }
 
 private class CollectingIrGenerationExtension(private val annotationToCheckCalls: String?) : IrGenerationExtension {
-    lateinit var result: String
-        private set
+    var result: String = ""
 
     val functionsWithAnnotationToCheckCalls: MutableSet<String> = mutableSetOf()
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        assertFalse { ::result.isInitialized }
-
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
             stableOrder = true,
