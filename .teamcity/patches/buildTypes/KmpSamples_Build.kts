@@ -3,6 +3,7 @@ package patches.buildTypes
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.BuildType
 import jetbrains.buildServer.configs.kotlin.buildFeatures.perfmon
+import jetbrains.buildServer.configs.kotlin.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.ui.*
 
@@ -17,6 +18,14 @@ create(RelativeId("KmpSamples"), BuildType({
 
     vcs {
         root(RelativeId("KmpSamples_HttpsGithubComKotlinKmpBasicSampleGitRefsHeadsMaster"))
+    }
+
+    steps {
+        gradle {
+            id = "gradle_runner"
+            tasks = "clean build"
+            gradleWrapperPath = ""
+        }
     }
 
     triggers {
