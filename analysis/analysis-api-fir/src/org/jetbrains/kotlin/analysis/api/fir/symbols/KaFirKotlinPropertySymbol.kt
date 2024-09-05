@@ -143,7 +143,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
                 KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name)
                 else -> KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
-                    name = firSymbol.name,
+                    name = name,
                     signature = FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
                 )

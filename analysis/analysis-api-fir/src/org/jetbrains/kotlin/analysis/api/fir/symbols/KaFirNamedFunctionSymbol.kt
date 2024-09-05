@@ -207,7 +207,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
                 KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicFunctionSymbolPointer(name)
                 else -> KaFirMemberFunctionSymbolPointer(
                     analysisSession.createOwnerPointer(this),
-                    firSymbol.name,
+                    name,
                     FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
                 )

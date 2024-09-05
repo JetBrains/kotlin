@@ -23,7 +23,7 @@ internal class KaFirDynamicFunctionSymbolPointer(
         val dynamicScope =
             analysisSession.firSession.dynamicMembersStorage.getDynamicScopeFor(analysisSession.getScopeSessionFor(analysisSession.firSession))
         val functionSymbol = dynamicScope.getFunctions(name).single()
-        return analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(functionSymbol) as KaNamedFunctionSymbol
+        return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(functionSymbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
