@@ -50,7 +50,13 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
  */
 sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibility<D> {
     sealed class Incompatible<out D>(override val reason: String?) : ExpectActualCheckingCompatibility<D>(),
-        ExpectActualCompatibility.MismatchOrIncompatible<D>
+        ExpectActualCompatibility.MismatchOrIncompatible<D> {
+        constructor(property: String, expect: String, actual: String) : this(
+            "$property is different. " +
+                    "Expect declaration $property is '$expect'. " +
+                    "Actual declaration $property is '$actual'"
+        )
+    }
 
     object ClassTypeParameterCount : Incompatible<Nothing>(TYPE_PARAMETER_COUNT)
 
@@ -91,7 +97,10 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
 
     // Common
-    object Modality : Incompatible<Nothing>("modality is different")
+    class Modality(
+        expectModality: org.jetbrains.kotlin.descriptors.Modality,
+        actualModality: org.jetbrains.kotlin.descriptors.Modality,
+    ) : Incompatible<Nothing>("modality", expectModality.toString().lowercase(), actualModality.toString().lowercase())
     object Visibility : Incompatible<Nothing>("visibility is different")
 
     object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
