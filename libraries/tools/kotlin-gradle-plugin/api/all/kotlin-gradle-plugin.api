@@ -1410,9 +1410,17 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/util/Map;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclared : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclared;
+public abstract class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclared : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;)V
 	public final fun invoke (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclaredError : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclared {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclaredError;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclaredWarning : org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclared {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinTargetAlreadyDeclaredWarning;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$MissingResourcesConfigurationForTarget : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
