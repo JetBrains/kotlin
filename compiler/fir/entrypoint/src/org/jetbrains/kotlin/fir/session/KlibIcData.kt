@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.library.MetadataLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 class KlibIcData(incrementalData: IncrementalDataProvider) : MetadataLibrary {
 
@@ -21,7 +22,13 @@ class KlibIcData(incrementalData: IncrementalDataProvider) : MetadataLibrary {
             .forEach { (file, translationResultValue) ->
                 val proto = parsePackageFragment(translationResultValue.metadata)
                 val fqName = proto.getExtension(KlibMetadataProtoBuf.fqName)
-                result.getOrPut(fqName, ::mutableMapOf).put(file.name, translationResultValue.metadata)
+                val key = file.path
+                val existingValue = result.getOrPut(fqName, ::mutableMapOf).put(key, translationResultValue.metadata)
+                checkWithAttachment(existingValue == null, { "Duplicate metadata entry" }) {
+                    it.withAttachment("key", key)
+                    it.withAttachment("fqName", fqName)
+                    it.withAttachment("file", file)
+                }
             }
 
         result
