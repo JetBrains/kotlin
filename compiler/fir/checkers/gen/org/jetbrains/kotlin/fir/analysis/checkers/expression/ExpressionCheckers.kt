@@ -46,6 +46,7 @@ abstract class ExpressionCheckers {
     open val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = emptySet()
     open val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = emptySet()
     open val whileLoopCheckers: Set<FirWhileLoopChecker> = emptySet()
+    open val forLoopCheckers: Set<FirForLoopChecker> = emptySet()
     open val throwExpressionCheckers: Set<FirThrowExpressionChecker> = emptySet()
     open val doWhileLoopCheckers: Set<FirDoWhileLoopChecker> = emptySet()
     open val arrayLiteralCheckers: Set<FirArrayLiteralChecker> = emptySet()
@@ -81,6 +82,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allCallableReferenceAccessCheckers: Array<FirCallableReferenceAccessChecker> by lazy { (callableReferenceAccessCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allThisReceiverExpressionCheckers: Array<FirThisReceiverExpressionChecker> by lazy { (thisReceiverExpressionCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allWhileLoopCheckers: Array<FirWhileLoopChecker> by lazy { (whileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers).toTypedArray() }
+    @CheckersComponentInternal internal val allForLoopCheckers: Array<FirForLoopChecker> by lazy { (forLoopCheckers + basicExpressionCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allThrowExpressionCheckers: Array<FirThrowExpressionChecker> by lazy { (throwExpressionCheckers + basicExpressionCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allDoWhileLoopCheckers: Array<FirDoWhileLoopChecker> by lazy { (doWhileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers).toTypedArray() }
     @CheckersComponentInternal internal val allArrayLiteralCheckers: Array<FirArrayLiteralChecker> by lazy { (arrayLiteralCheckers + basicExpressionCheckers + callCheckers).toTypedArray() }

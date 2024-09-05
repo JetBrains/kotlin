@@ -75,6 +75,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _thisReceiverExpressionCheckers
     override val whileLoopCheckers: Set<FirWhileLoopChecker>
         get() = _whileLoopCheckers
+    override val forLoopCheckers: Set<FirForLoopChecker>
+        get() = _forLoopCheckers
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
         get() = _throwExpressionCheckers
     override val doWhileLoopCheckers: Set<FirDoWhileLoopChecker>
@@ -115,6 +117,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _callableReferenceAccessCheckers: MutableSet<FirCallableReferenceAccessChecker> = mutableSetOf()
     private val _thisReceiverExpressionCheckers: MutableSet<FirThisReceiverExpressionChecker> = mutableSetOf()
     private val _whileLoopCheckers: MutableSet<FirWhileLoopChecker> = mutableSetOf()
+    private val _forLoopCheckers: MutableSet<FirForLoopChecker> = mutableSetOf()
     private val _throwExpressionCheckers: MutableSet<FirThrowExpressionChecker> = mutableSetOf()
     private val _doWhileLoopCheckers: MutableSet<FirDoWhileLoopChecker> = mutableSetOf()
     private val _arrayLiteralCheckers: MutableSet<FirArrayLiteralChecker> = mutableSetOf()
@@ -152,6 +155,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.callableReferenceAccessCheckers.filterTo(_callableReferenceAccessCheckers, predicate)
         checkers.thisReceiverExpressionCheckers.filterTo(_thisReceiverExpressionCheckers, predicate)
         checkers.whileLoopCheckers.filterTo(_whileLoopCheckers, predicate)
+        checkers.forLoopCheckers.filterTo(_forLoopCheckers, predicate)
         checkers.throwExpressionCheckers.filterTo(_throwExpressionCheckers, predicate)
         checkers.doWhileLoopCheckers.filterTo(_doWhileLoopCheckers, predicate)
         checkers.arrayLiteralCheckers.filterTo(_arrayLiteralCheckers, predicate)

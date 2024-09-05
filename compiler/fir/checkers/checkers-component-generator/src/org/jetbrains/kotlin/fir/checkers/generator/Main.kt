@@ -182,6 +182,7 @@ fun main(args: Array<String>) {
             alias<FirCallableReferenceAccess>("CallableReferenceAccessChecker")
             alias<FirThisReceiverExpression>("ThisReceiverExpressionChecker")
             alias<FirWhileLoop>("WhileLoopChecker")
+            alias<FirForLoopWrapper>("FirForLoopChecker")
             alias<FirThrowExpression>("ThrowExpressionChecker")
             alias<FirDoWhileLoop>("DoWhileLoopChecker")
             alias<FirArrayLiteral>("ArrayLiteralChecker")

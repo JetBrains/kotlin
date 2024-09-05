@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirForLoopWrapper
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -39,14 +39,11 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
-
+object FirForLoopBasicChecker : FirForLoopChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirForLoopWrapper, context: CheckerContext, reporter: DiagnosticReporter) {
         val statements = expression.statements
         val iteratorDeclaration = statements[0] as? FirProperty ?: return
         val whileLoop = statements[1] as? FirWhileLoop ?: return
-        if (iteratorDeclaration.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
         val iteratorCall = iteratorDeclaration.initializer as FirFunctionCall
         val source = iteratorCall.explicitReceiver?.source ?: iteratorCall.source
         if (checkSpecialFunctionCall(
@@ -74,7 +71,6 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         )
 
         val loopParameter = whileLoop.block.statements.firstOrNull() as? FirProperty ?: return
-        if (loopParameter.initializer?.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
         val nextCall = loopParameter.initializer as FirFunctionCall
         checkSpecialFunctionCall(
             nextCall,

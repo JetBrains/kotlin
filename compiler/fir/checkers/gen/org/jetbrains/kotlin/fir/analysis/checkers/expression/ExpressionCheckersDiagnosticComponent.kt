@@ -143,6 +143,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allWhileLoopCheckers.check(whileLoop, data)
     }
 
+    override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: CheckerContext) {
+        checkers.allForLoopCheckers.check(forLoopWrapper, data)
+    }
+
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
         checkers.allThrowExpressionCheckers.check(throwExpression, data)
     }
