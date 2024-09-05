@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -598,8 +596,24 @@ class CallAndReferenceGenerator(
                     val backingFieldSymbol = declarationStorage.findBackingFieldOfProperty(irSymbol)
                     when {
                         getterSymbol != null -> {
+                            // In case the receiver is an intersection type containing a value class and the property is an intersection
+                            // override, the return type might be approximated to Any.
+                            // Native and Wasm are sensitive regarding the expression type of value class property access,
+                            // that's why we unwrap the intersection override and use the type of the value class property.
+                            // See compiler/testData/codegen/box/inlineClasses/kt70461.kt
+                            val finalIrType =
+                                if (firSymbol.isInlineClassProperty &&
+                                    property.isIntersectionOverride &&
+                                    property.dispatchReceiverType is ConeIntersectionType
+                                ) {
+                                    property.baseForIntersectionOverride!!.returnTypeRef.toIrType()
+                                } else {
+                                    irType
+                                }
+
                             IrCallImplWithShape(
-                                startOffset, endOffset, irType,
+                                startOffset, endOffset,
+                                finalIrType,
                                 getterSymbol,
                                 typeArgumentsCount = property.typeParameters.size,
                                 valueArgumentsCount = property.contextReceivers.size,

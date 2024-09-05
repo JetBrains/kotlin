@@ -1,7 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// IGNORE_BACKEND_K2: WASM, NATIVE
-// ^ #KT-71016
 
 interface Value2<out T> {
     val value: T

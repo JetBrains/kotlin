@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -159,3 +164,11 @@ val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
         arguments = emptyList(),
         annotations = emptyList()
     )
+
+val FirCallableSymbol<*>.isInlineClassProperty: Boolean
+    get() {
+        if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameter != null || resolvedContextReceivers.isNotEmpty()) return false
+        val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
+        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
+        return inlineClassRepresentation.underlyingPropertyName == this.name
+    }
