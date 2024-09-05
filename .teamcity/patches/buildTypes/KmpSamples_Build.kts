@@ -14,7 +14,7 @@ in the project with id = 'KmpSamples', and delete the patch script.
 */
 create(RelativeId("KmpSamples"), BuildType({
     id("KmpSamples_Build")
-    name = "[Project] KMP Basic Sample"
+    name = "🍏ᵐ [Project] KMP Basic Sample"
 
     vcs {
         root(RelativeId("KmpSamples_HttpsGithubComKotlinKmpBasicSampleGitRefsHeadsMaster"))
