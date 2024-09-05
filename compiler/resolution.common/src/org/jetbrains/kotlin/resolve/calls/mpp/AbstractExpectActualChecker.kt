@@ -125,12 +125,14 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.ClassTypeParameterCount
         }
 
-        if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
-            return ExpectActualCheckingCompatibility.Modality
+        val expectModality = expectClassSymbol.modality
+        val actualModality = actualClass.modality
+        if (expectModality != null && actualModality != null && !areCompatibleModalities(expectModality, actualModality)) {
+            return ExpectActualCheckingCompatibility.Modality(expectModality, actualModality)
         }
 
         if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
-            return ExpectActualCheckingCompatibility.Visibility
+            return ExpectActualCheckingCompatibility.Visibility(expectClassSymbol.visibility, actualClass.visibility)
         }
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
@@ -317,6 +319,8 @@ object AbstractExpectActualChecker {
         val expectModality = expectDeclaration.modality
         val actualModality = actualDeclaration.modality
         if (
+            expectModality != null &&
+            actualModality != null &&
             !areCompatibleModalities(
                 expectModality,
                 actualModality,
@@ -324,7 +328,7 @@ object AbstractExpectActualChecker {
                 actualContainingClass?.modality
             )
         ) {
-            return ExpectActualCheckingCompatibility.Modality
+            return ExpectActualCheckingCompatibility.Modality(expectModality, actualModality)
         }
 
         if (!areCompatibleCallableVisibilities(
@@ -335,7 +339,7 @@ object AbstractExpectActualChecker {
                 languageVersionSettings
             )
         ) {
-            return ExpectActualCheckingCompatibility.Visibility
+            return ExpectActualCheckingCompatibility.Visibility(expectDeclaration.visibility, actualDeclaration.visibility)
         }
 
         getTypeParametersVarianceOrReifiedIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
@@ -418,8 +422,8 @@ object AbstractExpectActualChecker {
     }
 
     private fun areCompatibleModalities(
-        expectModality: Modality?,
-        actualModality: Modality?,
+        expectModality: Modality,
+        actualModality: Modality,
         expectContainingClassModality: Modality? = null,
         actualContainingClassModality: Modality? = null,
     ): Boolean {
@@ -537,7 +541,7 @@ object AbstractExpectActualChecker {
             !equalBy(expected, actual) { p -> p.isLateinit } -> ExpectActualCheckingCompatibility.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCheckingCompatibility.PropertyConstModifier
             !arePropertySettersWithCompatibleVisibilities(expected, actual, expectContainingClass, languageVersionSettings) ->
-                ExpectActualCheckingCompatibility.PropertySetterVisibility
+                ExpectActualCheckingCompatibility.PropertySetterVisibility(expected.setter?.visibility, actual.setter?.visibility)
             else -> null
         }
     }
