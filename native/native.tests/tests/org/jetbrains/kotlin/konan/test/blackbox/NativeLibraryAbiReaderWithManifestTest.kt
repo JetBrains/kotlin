@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.library.abi.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
+@FirPipeline
+@Tag("frontend-fir")
 @Tag("klib")
 @OptIn(ExperimentalLibraryAbiReader::class)
 class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {

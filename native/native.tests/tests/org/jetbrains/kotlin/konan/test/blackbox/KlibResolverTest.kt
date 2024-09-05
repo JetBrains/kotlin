@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompi
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDENCY_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
@@ -40,6 +41,8 @@ import java.io.File
  *
  * The control over the working directory in performed in the [runWithCustomWorkingDir] function.
  */
+@FirPipeline
+@Tag("frontend-fir")
 @Tag("klib")
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
