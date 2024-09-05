@@ -6,12 +6,13 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
 
 internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
@@ -20,14 +21,21 @@ internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = selector ?: TODO()
+        val columns = selector ?: object : ColumnsResolver {
+            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                return df.flatten(includeFrames = false).filter {
+                    val column = it.column
+                    column is SimpleFrameColumn || column is SimpleDataColumn && column.type.isList()
+                }
+            }
+        }
         return receiver.explodeImpl(dropEmpty, columns.resolve(receiver).map { ColumnPathApproximation(it.path.path) })
     }
 }
 
-val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, selector: List<ColumnPathApproximation>?) -> PluginDataFrameSchema
+val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, selector: List<ColumnPathApproximation>) -> PluginDataFrameSchema
     get()  = { dropEmpty, selector ->
-    val columns = selector ?: TODO()
+    val columns = selector
 
     val selected: Set<List<String>> = columns.map { it.path }.toSet()
 
@@ -36,9 +44,7 @@ val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, sel
             is SimpleColumnGroup -> SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
             is SimpleFrameColumn -> column
             is SimpleDataColumn -> {
-//                val nullable = if (dropEmpty) (column.type as TypeApproximationImpl).nullable else true
-
-                column.changeType(type = column.type.changeNullability { nullable -> if (dropEmpty) nullable else true })
+                column.changeType(type = column.type.changeNullability { nullable -> selector.size > 1 || !dropEmpty || nullable })
             }
         }
     }
@@ -61,7 +67,7 @@ val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, sel
                     column.type.isList() -> column.type.typeArgument()
                     else -> column.type
                 }
-                SimpleDataColumn(column.name, newType)
+                makeNullable(simpleColumnOf(column.name, newType.type))
             } else {
                 column
             }
