@@ -110,9 +110,20 @@ internal class KtToFirMapping(firElement: FirDeclaration) {
             is KtConstructorDelegationCall,
                 // In case of type projection we are not recording the corresponding type reference
             is KtTypeProjection,
-                // If we have, say, A(), reference A is not recorded, while call A() is recorded
-            is KtCallExpression,
-            -> getElement(current as KtElement)
+                -> getElement(current as KtElement)
+            is KtCallExpression -> {
+                // Case 1:
+                // If we have, say, A(), reference A is not recorded, while call A() is recorded.
+                //
+                // Case 2:
+                // A<Ty> and B<Ty> in `A<Ty>.B<Ty>` are both calls, but neither A nor B nor B<Ty> are recorded.
+                // Only A<Ty> and the whole qualified expression (as FirResolvedQualifier) are recorded.
+                val parent = current.parent
+                if (current.valueArgumentList == null &&
+                    parent is KtQualifiedExpression &&
+                    parent.selectorExpression == current) getElement(parent)
+                else getElement(current)
+            }
             is KtBinaryExpression ->
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                 if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) getElement(current) else null

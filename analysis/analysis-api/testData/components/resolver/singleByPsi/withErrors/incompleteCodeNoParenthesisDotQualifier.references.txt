@@ -1,3 +1,3 @@
 KtNameReferenceExpression(36,40): 'List'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>

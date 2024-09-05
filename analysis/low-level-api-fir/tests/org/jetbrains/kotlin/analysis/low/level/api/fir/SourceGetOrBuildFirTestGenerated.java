@@ -1152,6 +1152,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public void testQualifiedPartOfQualifiedCallWithNestedClasses() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions/qualifiedPartOfQualifiedCallWithNestedClasses.kt");
     }
+
+    @Test
+    @TestMetadata("refPartOfQualifiedTypeCall.kt")
+    public void testRefPartOfQualifiedTypeCall() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions/refPartOfQualifiedTypeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("typedQualifiedPartOfQualifiedCall.kt")
+    public void testTypedQualifiedPartOfQualifiedCall() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions/typedQualifiedPartOfQualifiedCall.kt");
+    }
   }
 
   @Nested
