@@ -41,21 +41,31 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
             val defaultValue = if (inImplementation)
                 field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue
             else null
+            val shouldBeParameter = inConstructor && field.customSetter != null
             printPropertyDeclaration(
                 name = field.name,
                 type = actualTypeOfField(field),
-                kind = if (forceMutable(field) || field.isFinal && field.isMutable) VariableKind.VAR else VariableKind.VAL,
+                kind = when {
+                    shouldBeParameter -> VariableKind.PARAMETER
+                    forceMutable(field) || field.isFinal && field.isMutable -> VariableKind.VAR
+                    else -> VariableKind.VAL
+                },
                 inConstructor = inConstructor,
                 visibility = field.visibility,
-                modality = modality,
-                override = override,
-                isLateinit = (inImplementation || field.isFinal) && field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit,
-                isVolatile = (inImplementation || field.isFinal) && field.isVolatile,
+                modality = modality.takeUnless { shouldBeParameter },
+                override = override && !shouldBeParameter,
+                isLateinit = !shouldBeParameter && (inImplementation || field.isFinal) && field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit,
+                isVolatile = !shouldBeParameter && (inImplementation || field.isFinal) && field.isVolatile,
                 optInAnnotation = field.optInAnnotation,
                 printOptInWrapped = wrapOptInAnnotations && defaultValue != null,
                 deprecation = field.deprecation,
                 kDoc = field.kDoc.takeIf { !inImplementation },
-                initializer = defaultValue?.takeUnless { it.withGetter }?.defaultValue
+                initializer = when {
+                    defaultValue?.withGetter == true -> null
+                    defaultValue != null -> defaultValue.defaultValue
+                    !inConstructor && field.customSetter != null -> field.name
+                    else -> null
+                }
             )
             println()
 
@@ -65,11 +75,13 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
                 }
             }
 
-            field.customSetter?.let {
-                withIndent {
-                    print("set(value)")
-                    printBlock {
-                        println(it)
+            if (inImplementation && !inConstructor) {
+                field.customSetter?.let {
+                    withIndent {
+                        print("set(value)")
+                        printBlock {
+                            printlnMultiLine(it)
+                        }
                     }
                 }
             }

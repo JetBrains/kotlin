@@ -371,7 +371,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
             /**
              * Specifies the value of this field's setter.
              *
-             * If set to a non-null value, the generated property is automatically made mutable and computed.
+             * If set to a non-null value, the generated property is automatically made mutable.
              *
              * Can be arbitrary code. Use [additionalImports] if this code uses types/functions that are not otherwise imported.
              */
@@ -379,7 +379,6 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                 set(value) {
                     field = value
                     isMutable = true
-                    withGetter = true
                 }
 
             fun applyConfiguration() {

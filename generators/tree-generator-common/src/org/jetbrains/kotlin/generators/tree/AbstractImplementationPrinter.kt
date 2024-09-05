@@ -122,7 +122,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                             field,
                             inImplementation = true,
                             override = true,
-                            modality = Modality.ABSTRACT.takeIf { isAbstract }
+                            modality = Modality.ABSTRACT.takeIf { isAbstract },
                         )
                     }
 
