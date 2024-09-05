@@ -118,6 +118,7 @@ class SpecialRefRegistry : private Pinned {
 
         void retainRef() noexcept {
             auto rc = rc_.fetch_add(1, std::memory_order_relaxed);
+            RuntimeLogDebug({kTagGC}, "RETAIN %p rcBefore=%d", obj_, rc);
             RuntimeAssert(rc >= 0, "Retaining StableRef@%p with rc %d", this, rc);
             if (rc == 0) {
                 if (!objAtomic().load(std::memory_order_relaxed)) {
@@ -155,7 +156,9 @@ class SpecialRefRegistry : private Pinned {
         void releaseRef() noexcept {
             auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
             RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
+            RuntimeLogDebug({kTagGC}, "RELEASE %p rcBefore=%d", obj_, rcBefore);
             if (compiler::concurrentGlobalRootSet() && rcBefore == 1) {
+                CalledFromNativeGuard guard(true);
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
                 // Notify GC about the removal.

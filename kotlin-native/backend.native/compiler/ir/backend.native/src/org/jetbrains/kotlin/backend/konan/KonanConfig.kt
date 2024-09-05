@@ -170,7 +170,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val concurrentGlobalRootSet: Boolean
-        get() = configuration.get(BinaryOptions.concurrentGlobalRootSet) ?: false
+        get() = configuration.get(BinaryOptions.concurrentGlobalRootSet) ?: true
 
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
