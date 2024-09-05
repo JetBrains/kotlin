@@ -160,7 +160,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
                 // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
                 Assert.assertEquals(expectedSB.toString(), actualSB.toString())
             } else {
-                KtUsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
+                KtUsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, actualSB.toString(), false)
             }
         }
 

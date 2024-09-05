@@ -123,8 +123,8 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         }
         val args = arrayOf(
             "-cp", javaClasspath,
-            "-d", javaDestinationDir.canonicalPath,
-            *javaSources.map { it.canonicalPath }.toTypedArray()
+            "-d", javaDestinationDir.absolutePath,
+            *javaSources.map { it.absolutePath }.toTypedArray()
         )
 
         val err = ByteArrayOutputStream()
@@ -147,5 +147,5 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         listOf(
             kotlinStdlibJvm,
             KtTestUtil.getAnnotationsJar()
-        ).joinToString(File.pathSeparator) { it.canonicalPath }
+        ).joinToString(File.pathSeparator) { it.absolutePath }
 }

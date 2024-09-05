@@ -64,7 +64,7 @@ class RelocatableCachesTest {
 
         for (i in 0..10) {
             val newSymbol = LookupSymbol(name = "MyClass_$i", scope = "myscope_$i")
-            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").canonicalFile.invariantSeparatorsPath
+            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").absoluteFile.invariantSeparatorsPath
             symbols.add(newSymbol)
 
             for (lookedUpSymbol in symbols) {
