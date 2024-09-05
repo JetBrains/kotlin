@@ -1164,8 +1164,8 @@ class LightTreeRawFirExpressionBuilder(
 
         val calculatedRangeExpression =
             rangeExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No range in for loop"))
-        val source = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
-        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop) ?: source
+        val source = forLoop.toFirSourceElement()
+        val rangeSource = calculatedRangeExpression.source ?: source
         val target: FirLoopTarget
         // NB: FirForLoopChecker relies on this block existence and structure
         return buildForLoopWrapper {

@@ -2504,9 +2504,7 @@ open class PsiRawFirBuilder(
                 source = expression.toFirSourceElement(kind)
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
-                    val isForLoopBlock =
-                        firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
-                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
+                    if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
                         statements += firStatement
                     } else {
                         statements += firStatement.statements
@@ -2798,7 +2796,7 @@ open class PsiRawFirBuilder(
             val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val ktParameter = expression.loopParameter
             val source = expression.toFirSourceElement()
-            val rangeSource = expression.loopRange?.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop) ?: source
+            val rangeSource = expression.loopRange?.toFirSourceElement() ?: source
 
             val target: FirLoopTarget
             // NB: FirForLoopChecker relies on this block existence and structure

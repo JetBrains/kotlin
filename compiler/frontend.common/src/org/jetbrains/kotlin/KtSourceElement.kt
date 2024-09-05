@@ -159,20 +159,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     object WrappedDelegate : KtFakeSourceElementKind()
 
-    /**
-     *  `for (i in list) { println(i) }` is converted to
-     *  ```
-     *  val <iterator>: = list.iterator()
-     *  while(<iterator>.hasNext()) {
-     *    val i = <iterator>.next()
-     *    println(i)
-     *  }
-     *  ```
-     *  where the generated WHILE loop has source element of initial FOR loop,
-     *  other generated elements are marked as fake ones
-     */
-    object DesugaredForLoop : KtFakeSourceElementKind()
-
     object ImplicitInvokeCall : KtFakeSourceElementKind()
 
     /**
