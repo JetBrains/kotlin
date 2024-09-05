@@ -61,11 +61,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON = FlavorConfig(TargetBackend.ANDROID,"common", 4)
-    private val REFLECT = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
-
     private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 4)
-    private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR,"reflect_ir", 1)
+    private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR, "reflect_ir", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
 
@@ -160,25 +157,12 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             File("compiler/testData/codegen/boxInline")
         )
 
-        generateTestMethodsForDirectories(
-            TargetBackend.ANDROID,
-            COMMON,
-            REFLECT,
-            *folders
-        )
-
-        generateTestMethodsForDirectories(
-            TargetBackend.ANDROID_IR,
-            COMMON_IR,
-            REFLECT_IR,
-            *folders
-        )
+        generateTestMethodsForDirectories(COMMON_IR, REFLECT_IR, *folders)
 
         pendingUnitTestGenerators.values.forEach { it.generate() }
     }
 
     private fun generateTestMethodsForDirectories(
-        backend: TargetBackend,
         commonFlavor: FlavorConfig,
         reflectionFlavor: FlavorConfig,
         vararg dirs: File
@@ -187,7 +171,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         for (dir in dirs) {
             val files = dir.listFiles() ?: error("Folder with testData is empty: ${dir.absolutePath}")
-            processFiles(files, holders, backend, commonFlavor, reflectionFlavor)
+            processFiles(files, holders, commonFlavor, reflectionFlavor)
         }
 
         holders.values.forEach {
@@ -286,8 +270,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun processFiles(
         files: Array<File>,
         holders: MutableMap<ConfigurationKey, FilesWriter>,
-        backend: TargetBackend,
-        commmonFlavor: FlavorConfig,
+        commonFlavor: FlavorConfig,
         reflectionFlavor: FlavorConfig
     ) {
         holders.values.forEach {
@@ -298,7 +281,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             if (file.isDirectory) {
                 val listFiles = file.listFiles()
                 if (listFiles != null) {
-                    processFiles(listFiles, holders, backend, commmonFlavor, reflectionFlavor)
+                    processFiles(listFiles, holders, commonFlavor, reflectionFlavor)
                 }
             } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.EXTENSION) {
                 // skip non kotlin files
@@ -307,7 +290,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                if (!InTextDirectivesUtils.isPassingTarget(backend.compatibleWith, file) ||
+                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM_IR, file) ||
                     InTextDirectivesUtils.isIgnoredTarget(
                         TargetBackend.ANDROID, file, /*includeAny=*/ true, *IGNORE_BACKEND_DIRECTIVE_PREFIXES
                     )
@@ -341,7 +324,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
-                    val testConfiguration = createTestConfiguration(file, backend)
+                    val testConfiguration = createTestConfiguration(file)
                     val services = testConfiguration.testServices
 
                     val moduleStructure = try {
@@ -377,7 +360,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     )
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
-                    val compiler = if (kind.withReflection) reflectionFlavor else commmonFlavor
+                    val compiler = if (kind.withReflection) reflectionFlavor else commonFlavor
                     val compilerConfigurationProvider = services.compilerConfigurationProvider as CompilerConfigurationProviderImpl
                     val filesHolder = holders.getOrPut(key) {
                         FilesWriter(compiler, compilerConfigurationProvider.createCompilerConfiguration(module)).also {
@@ -391,9 +374,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun createTestConfiguration(testDataFile: File, backend: TargetBackend): TestConfiguration {
+    private fun createTestConfiguration(testDataFile: File): TestConfiguration {
         return TestConfigurationBuilder().apply {
-            configure(backend)
+            configure()
             testInfo = KotlinTestInfo(
                 "org.jetbrains.kotlin.android.tests.AndroidRunner",
                 "test${testDataFile.nameWithoutExtension.replaceFirstChar(Char::uppercaseChar)}",
@@ -403,10 +386,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }.build(testDataFile.path)
     }
 
-    private fun TestConfigurationBuilder.configure(backend: TargetBackend) {
+    private fun TestConfigurationBuilder.configure() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            targetBackend = backend
+            targetBackend = TargetBackend.ANDROID_IR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
