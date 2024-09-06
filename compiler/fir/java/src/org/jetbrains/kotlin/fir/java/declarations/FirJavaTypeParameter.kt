@@ -44,7 +44,7 @@ class FirJavaTypeParameter(
     private var initialBounds: List<FirTypeRef>?,
     private val annotationList: FirJavaAnnotationList,
 ) : FirTypeParameter() {
-    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
+    override val annotations: List<FirAnnotation> get() = annotationList
 
     private enum class BoundsEnhancementState {
         NOT_STARTED,

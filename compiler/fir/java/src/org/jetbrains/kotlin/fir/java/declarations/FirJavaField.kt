@@ -70,7 +70,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val backingField: FirBackingField? = null
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
-    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
+    override val annotations: List<FirAnnotation> get() = annotationList
 
     override val initializer: FirExpression?
         get() = lazyInitializer.value

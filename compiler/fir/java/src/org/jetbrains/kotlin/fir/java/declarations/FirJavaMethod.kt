@@ -77,7 +77,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
-    override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
+    override val annotations: List<FirAnnotation> get() = annotationList
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val status: FirDeclarationStatus by lazy {
