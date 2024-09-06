@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.properties.Delegates
 
 class FirJavaClass @FirImplementationDetail internal constructor(
@@ -78,6 +80,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val deprecationsProvider: DeprecationsProvider by lazy {
         getDeprecationsProvider(moduleData.session)
+    }
+
+    private val typeParameterBoundsResolveLock = ReentrantLock()
+
+    internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
+        // TODO: KT-68587
+        typeParameterBoundsResolveLock.withLock(f)
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

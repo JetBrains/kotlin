@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -236,8 +235,8 @@ class FirSignatureEnhancement(
 
         val firMethod = original.fir
         when (firMethod) {
-            is FirJavaMethod -> enhanceTypeParameterBounds(firMethod, firMethod.source, firMethod::withTypeParameterBoundsResolveLock)
-            is FirJavaConstructor -> enhanceTypeParameterBounds(firMethod, firMethod.source, firMethod::withTypeParameterBoundsResolveLock)
+            is FirJavaMethod -> enhanceTypeParameterBounds(firMethod, firMethod::withTypeParameterBoundsResolveLock)
+            is FirJavaConstructor -> enhanceTypeParameterBounds(firMethod, firMethod::withTypeParameterBoundsResolveLock)
             else -> {}
         }
 
@@ -528,19 +527,20 @@ class FirSignatureEnhancement(
         function.replaceStatus(newStatus)
     }
 
-    fun performBoundsResolutionForClassTypeParameters(facade: FirJavaFacade, klass: FirJavaClass, source: KtSourceElement?) {
-        enhanceTypeParameterBounds(klass, source, facade::withClassTypeParameterBoundsResolveLock)
+    fun performBoundsResolutionForClassTypeParameters(klass: FirJavaClass) {
+        enhanceTypeParameterBounds(klass, klass::withTypeParameterBoundsResolveLock)
     }
 
-    private fun enhanceTypeParameterBounds(owner: FirTypeParameterRefsOwner, source: KtSourceElement?, lock: (() -> Unit) -> Unit) {
+    private fun enhanceTypeParameterBounds(owner: FirTypeParameterRefsOwner, lock: (() -> Unit) -> Unit) {
         val typeParameters = owner.typeParameters
         if (typeParameters.isEmpty()) return
-        val newBoundsSuccessfullyPublished = enhanceTypeParameterBoundsFirstRound(typeParameters, source, lock)
+        val fakeSource = owner.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        val newBoundsSuccessfullyPublished = enhanceTypeParameterBoundsFirstRound(typeParameters, fakeSource, lock)
         if (!newBoundsSuccessfullyPublished) {
             return
         }
 
-        enhanceTypeParameterBoundsSecondRound(typeParameters, source, lock)
+        enhanceTypeParameterBoundsSecondRound(typeParameters, fakeSource, lock)
     }
 
     private inline fun enhanceTypeParameterBounds(

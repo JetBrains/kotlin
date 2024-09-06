@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.name.*
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class FirJavaFacadeForSource(
     session: FirSession,
@@ -80,13 +78,6 @@ abstract class FirJavaFacade(
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, MutableJavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
     private val statusExtensions = session.extensionService.statusTransformerExtensions
-
-    private val classTypeParameterBoundsResolveLock = ReentrantLock()
-
-    internal fun withClassTypeParameterBoundsResolveLock(f: () -> Unit) {
-        // TODO: KT-68587
-        classTypeParameterBoundsResolveLock.withLock(f)
-    }
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))?.takeUnless(JavaClass::hasMetadataAnnotation)
@@ -187,8 +178,7 @@ abstract class FirJavaFacade(
          * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
          */
         val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
-        val fakeSource = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-        enhancement.performBoundsResolutionForClassTypeParameters(this, firJavaClass, fakeSource)
+        enhancement.performBoundsResolutionForClassTypeParameters(firJavaClass)
 
         updateStatuses(firJavaClass, parentClassSymbol)
 
