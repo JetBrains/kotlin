@@ -19,7 +19,7 @@ function foldedListHeader({ value: { start, end }}) {
 export function foldedListBody({ value: { start, end, elementAt }}) {
     let elements;
     const length = end - start;
-    const foldsDepth = Math.ceil(Math.ceil(Math.log10(length) / POWER_OF_TEN_FOR_MAX_ELEMENTS)) - 1;
+    const foldsDepth = Math.ceil(Math.log10(length) / POWER_OF_TEN_FOR_MAX_ELEMENTS) - 1;
     if (foldsDepth <= 0) {
         elements = new Array(length);
         for (let i = 0; i < length; i++) {
