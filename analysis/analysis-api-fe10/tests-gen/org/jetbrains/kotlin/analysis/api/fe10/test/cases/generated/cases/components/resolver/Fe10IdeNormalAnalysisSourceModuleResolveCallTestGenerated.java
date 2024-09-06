@@ -2914,6 +2914,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("JavaSameSourceLibrary.kt")
+    public void testJavaSameSourceLibrary() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/JavaSameSourceLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/java/JavaStaticMethod.kt");

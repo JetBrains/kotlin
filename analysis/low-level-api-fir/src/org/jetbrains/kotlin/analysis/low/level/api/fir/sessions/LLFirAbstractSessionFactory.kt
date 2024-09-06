@@ -404,8 +404,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
+            val contentScope = (binaryModule as? KaLibraryModule)?.contentScope ?: firProvider.searchScope
+
             // We need FirRegisteredPluginAnnotations during extensions' registration process
-            val annotationsResolver = project.createAnnotationResolver(firProvider.searchScope)
+            val annotationsResolver = project.createAnnotationResolver(contentScope)
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
@@ -450,7 +452,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
-            val context = LibrarySessionCreationContext(moduleData, firProvider.searchScope, firProvider, dependencyProvider)
+            val context = LibrarySessionCreationContext(moduleData, contentScope, firProvider, dependencyProvider)
             additionalSessionConfiguration(context)
 
             LLFirSessionConfigurator.configure(this)

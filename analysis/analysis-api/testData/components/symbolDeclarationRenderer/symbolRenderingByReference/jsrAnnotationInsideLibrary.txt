@@ -1,1 +1,1 @@
-open fun test(annotations: kotlin.Array<out kotlin.Annotation?>)
+open fun test(p0: kotlin.Array<out kotlin.Annotation?>)

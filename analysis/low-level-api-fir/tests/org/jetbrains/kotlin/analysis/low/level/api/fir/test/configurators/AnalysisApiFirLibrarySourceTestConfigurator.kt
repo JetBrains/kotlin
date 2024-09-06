@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
+    override val testPrefix: String get() = "librarySource"
 
     override fun configureTest(
         builder: TestConfigurationBuilder,
