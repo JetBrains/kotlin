@@ -190,7 +190,7 @@ class FunctionCallTransformer(
             val tokenFir = token.toClassSymbol(session)!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
 
-            return buildLetCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir))
+            return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir))
         }
     }
 
@@ -253,7 +253,7 @@ class FunctionCallTransformer(
             val keyToken = groupMarker.toClassSymbol(session)!!.fir
             keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
 
-            return buildLetCall(call, originalSymbol, keyApis + groupApis, additionalDeclarations = listOf(groupToken, keyToken))
+            return buildScopeFunctionCall(call, originalSymbol, keyApis + groupApis, additionalDeclarations = listOf(groupToken, keyToken))
         }
     }
 
@@ -305,18 +305,17 @@ class FunctionCallTransformer(
     private fun Name.asTokenName() = identifierOrNullIfSpecial?.titleCase() ?: DEFAULT_NAME
 
     @OptIn(SymbolInternals::class)
-    private fun buildLetCall(
+    private fun buildScopeFunctionCall(
         call: FirFunctionCall,
         originalSymbol: FirNamedFunctionSymbol,
         dataSchemaApis: List<DataSchemaApi>,
         additionalDeclarations: List<FirClass>
     ): FirFunctionCall {
 
-        val explicitReceiver = call.explicitReceiver ?: return call
-        val receiverType = explicitReceiver.resolvedType
+        val explicitReceiver = call.explicitReceiver
+        val receiverType = explicitReceiver?.resolvedType
         val returnType = call.resolvedType
-        val resolvedLet = findLet()
-        val parameter = resolvedLet.valueParameterSymbols[0]
+        val scopeFunction = if (explicitReceiver != null) findLet() else findRun()
 
         // original call is inserted later
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
@@ -350,20 +349,23 @@ class FunctionCallTransformer(
                 returnTypeRef = buildResolvedTypeRef {
                     type = returnType
                 }
-                val itName = Name.identifier("it")
-                val parameterSymbol = FirValueParameterSymbol(itName)
-                valueParameters += buildValueParameter {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Source
-                    returnTypeRef = buildResolvedTypeRef {
-                        type = receiverType
+                val parameterSymbol = receiverType?.let {
+                    val itName = Name.identifier("it")
+                    val parameterSymbol = FirValueParameterSymbol(itName)
+                    valueParameters += buildValueParameter {
+                        moduleData = session.moduleData
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = buildResolvedTypeRef {
+                            type = receiverType
+                        }
+                        this.name = itName
+                        this.symbol = parameterSymbol
+                        containingFunctionSymbol = fSymbol
+                        isCrossinline = false
+                        isNoinline = false
+                        isVararg = false
                     }
-                    this.name = itName
-                    this.symbol = parameterSymbol
-                    containingFunctionSymbol = fSymbol
-                    isCrossinline = false
-                    isNoinline = false
-                    isVararg = false
+                    parameterSymbol
                 }
                 body = buildBlock {
                     this.coneTypeOrNull = returnType
@@ -375,20 +377,23 @@ class FunctionCallTransformer(
                     statements += additionalDeclarations
 
                     statements += buildReturnExpression {
-                        val itPropertyAccess = buildPropertyAccessExpression {
-                            coneTypeOrNull = receiverType
-                            calleeReference = buildResolvedNamedReference {
-                                name = itName
-                                resolvedSymbol = parameterSymbol
+                        if (parameterSymbol != null) {
+                            val itPropertyAccess = buildPropertyAccessExpression {
+                                coneTypeOrNull = receiverType
+                                calleeReference = buildResolvedNamedReference {
+                                    name = parameterSymbol.name
+                                    resolvedSymbol = parameterSymbol
+                                }
+                            }
+                            if (callDispatchReceiver != null) {
+                                call.replaceDispatchReceiver(itPropertyAccess)
+                            }
+                            call.replaceExplicitReceiver(itPropertyAccess)
+                            if (callExtensionReceiver != null) {
+                                call.replaceExtensionReceiver(itPropertyAccess)
                             }
                         }
-                        if (callDispatchReceiver != null) {
-                            call.replaceDispatchReceiver(itPropertyAccess)
-                        }
-                        call.replaceExplicitReceiver(itPropertyAccess)
-                        if (callExtensionReceiver != null) {
-                            call.replaceExtensionReceiver(itPropertyAccess)
-                        }
+
                         result = call
                         this.target = target
                     }
@@ -397,11 +402,19 @@ class FunctionCallTransformer(
                 isLambda = true
                 hasExplicitParameterList = false
                 typeRef = buildResolvedTypeRef {
-                    type = ConeClassLikeTypeImpl(
-                        ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
-                        typeArguments = arrayOf(receiverType, returnType),
-                        isNullable = false
-                    )
+                    type = if (receiverType != null) {
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
+                            typeArguments = arrayOf(receiverType, returnType),
+                            isNullable = false
+                        )
+                    } else {
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function0"))),
+                            typeArguments = arrayOf(returnType),
+                            isNullable = false
+                        )
+                    }
                 }
                 invocationKind = EventOccurrencesRange.EXACTLY_ONCE
                 inlineStatus = InlineStatus.Inline
@@ -413,11 +426,13 @@ class FunctionCallTransformer(
         val newCall1 = buildFunctionCall {
             source = call.source
             this.coneTypeOrNull = returnType
-            typeArguments += buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef {
-                    type = receiverType
+            if (receiverType != null) {
+                typeArguments += buildTypeProjectionWithVariance {
+                    typeRef = buildResolvedTypeRef {
+                        type = receiverType
+                    }
+                    variance = Variance.INVARIANT
                 }
-                variance = Variance.INVARIANT
             }
 
             typeArguments += buildTypeProjectionWithVariance {
@@ -429,11 +444,14 @@ class FunctionCallTransformer(
             dispatchReceiver = null
             this.explicitReceiver = callExplicitReceiver
             extensionReceiver = callExtensionReceiver ?: callDispatchReceiver
-            argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to parameter.fir))
+            argumentList = buildResolvedArgumentList(
+                original = null,
+                linkedMapOf(argument to scopeFunction.valueParameterSymbols[0].fir)
+            )
             calleeReference = buildResolvedNamedReference {
                 source = call.calleeReference.source
-                this.name = Name.identifier("let")
-                resolvedSymbol = resolvedLet
+                this.name = scopeFunction.name
+                resolvedSymbol = scopeFunction
             }
         }
         return newCall1
@@ -563,6 +581,10 @@ class FunctionCallTransformer(
 
     private fun findLet(): FirFunctionSymbol<*> {
         return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("let")).single()
+    }
+
+    private fun findRun(): FirFunctionSymbol<*> {
+        return session.symbolProvider.getTopLevelFunctionSymbols(FqName("kotlin"), Name.identifier("run")).single { it.typeParameterSymbols.size == 1 }
     }
 
     private fun String.titleCase() = replaceFirstChar { it.uppercaseChar() }
