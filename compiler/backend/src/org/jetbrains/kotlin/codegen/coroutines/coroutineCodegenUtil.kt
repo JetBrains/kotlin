@@ -90,6 +90,9 @@ const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 private val DEBUG_PROBES_INTERNAL_NAME =
     COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("DebugProbesKt")).topLevelClassInternalName()
 
+private val SPILLING_INTERNAL_NAME =
+    COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("SpillingKt")).topLevelClassInternalName()
+
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createJvmSuspendFunctionView` and it's usages for clarification
@@ -456,7 +459,7 @@ fun FunctionDescriptor.isInvokeSuspendOfLambda(): Boolean {
 
 fun InstructionAdapter.invokeNullOutSpilledVariable() {
     invokestatic(
-        DEBUG_PROBES_INTERNAL_NAME,
+        SPILLING_INTERNAL_NAME,
         "nullOutSpilledVariable",
         "($OBJECT_TYPE)$OBJECT_TYPE",
         false

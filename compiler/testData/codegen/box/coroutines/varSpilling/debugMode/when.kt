@@ -1,8 +1,17 @@
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: ANDROID
+// TARGET_BACKEND: JVM
+// PREFER_IN_TEST_OVER_STDLIB
+
+// FILE: Spilling.kt
+
+package kotlin.coroutines.jvm.internal
+
+@Suppress("UNUSED_PARAMETER", "unused")
+internal fun nullOutSpilledVariable(value: Any?): Any? = value
+
+// FILE: test.kt
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -48,6 +57,7 @@ suspend fun test(check: Int) {
             blackhole(a, b, c)
         }
     }
+    // Varables are not visible here - cleanup
     saveSpilledVariables()
 }
 
@@ -65,10 +75,10 @@ fun box(): String {
     if (spilledVariables != setOf("label" to "1", "I$0" to "0", "I$1" to "0", "L$0" to "a0", "L$1" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "a0", "L$1" to "null"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "null", "L$1" to "null"))
         return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "a0", "L$1" to "null"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "null", "L$1" to "null"))
         return "FAIL 3: $spilledVariables"
 
     builder {
@@ -78,10 +88,10 @@ fun box(): String {
     if (spilledVariables != setOf("label" to "2", "I$0" to "1", "I$1" to "0", "L$0" to "a1", "L$1" to "b1"))
         return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "a1", "L$1" to "b1"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "null", "L$1" to "null"))
         return "FAIL 5: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "a1", "L$1" to "b1"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "null", "L$1" to "null"))
         return "FAIL 6: $spilledVariables"
 
     builder {
@@ -91,10 +101,10 @@ fun box(): String {
     if (spilledVariables != setOf("label" to "3", "I$0" to "2", "I$1" to "1", "L$0" to "a2", "L$1" to "b2"))
         return "FAIL 7: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "a2", "L$1" to "b2"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "null", "L$1" to "null"))
         return "FAIL 8: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "a2", "L$1" to "b2"))
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "null", "L$1" to "null"))
         return "FAIL 9: $spilledVariables"
 
     return "OK"

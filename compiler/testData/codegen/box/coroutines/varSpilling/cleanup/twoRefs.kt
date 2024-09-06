@@ -41,7 +41,7 @@ fun box(): String {
     }
     if (spilledVariables != setOf("label" to "1", "L$0" to "a", "L$1" to "b")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "2", "L$0" to "b", "L$1" to "null")) return "FAIL 2: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2", "L$0" to "null", "L$1" to "b")) return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null")) return "FAIL 3: $spilledVariables"
     c?.resume(Unit)

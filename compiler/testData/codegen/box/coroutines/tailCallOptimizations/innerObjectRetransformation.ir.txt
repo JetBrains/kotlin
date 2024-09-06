@@ -57,6 +57,8 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 
 final class flow/InnerObjectRetransformationKt$check$1 {
     // source: 'innerObjectRetransformation.kt'
     enclosing method flow/InnerObjectRetransformationKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    field I$0: int
+    field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$1

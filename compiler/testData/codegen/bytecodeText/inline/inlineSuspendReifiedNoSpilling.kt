@@ -18,7 +18,7 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
 }
 
 // JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
-// 5 ISTORE 3
+// 2 ISTORE 3
 // 1 ISTORE 2
 // 0 ILOAD 3
 // 0 ILOAD 2
@@ -26,9 +26,9 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
 // 2 \$i\$f\$respond I .* 3
 
 // JVM_IR_TEMPLATES
-// 5 ISTORE 3
+// 2 ISTORE 3
 // 1 ISTORE 2
 // 0 ILOAD 3
 // 0 ILOAD 2
 // 1 \$i\$f\$receiveJSON I .* 2
-// 3 \$i\$f\$respond I .* 3
+// 2 \$i\$f\$respond I .* 3

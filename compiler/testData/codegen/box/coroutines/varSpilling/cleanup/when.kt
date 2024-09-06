@@ -56,29 +56,29 @@ fun box(): String {
     builder {
         test(0)
     }
-    if (spilledVariables != setOf("label" to "1", "I$0" to "0", "L$0" to "a0", "L$1" to "null")) return "FAIL 1: $spilledVariables"
+    if (spilledVariables != setOf("label" to "1", "I$0" to "0", "I$1" to "0", "L$0" to "a0", "L$1" to "null")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 2: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 3: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "I$1" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 3: $spilledVariables"
 
     builder {
         test(1)
     }
-    if (spilledVariables != setOf("label" to "2", "I$0" to "0", "L$0" to "a1", "L$1" to "b1")) return "FAIL 4: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2", "I$0" to "1", "I$1" to "0", "L$0" to "a1", "L$1" to "b1")) return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 5: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 5: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 6: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "I$1" to "0", "L$0" to "null", "L$1" to "null")) return "FAIL 6: $spilledVariables"
 
     builder {
         test(2)
     }
-    if (spilledVariables != setOf("label" to "3", "I$0" to "1", "L$0" to "a2", "L$1" to "b2")) return "FAIL 7: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "I$0" to "2", "I$1" to "1", "L$0" to "a2", "L$1" to "b2")) return "FAIL 7: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "L$0" to "null", "L$1" to "null")) return "FAIL 8: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "null", "L$1" to "null")) return "FAIL 8: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "4", "I$0" to "1", "L$0" to "null", "L$1" to "null")) return "FAIL 9: $spilledVariables"
+    if (spilledVariables != setOf("label" to "4", "I$0" to "2", "I$1" to "1", "L$0" to "null", "L$1" to "null")) return "FAIL 9: $spilledVariables"
 
     return "OK"
 }

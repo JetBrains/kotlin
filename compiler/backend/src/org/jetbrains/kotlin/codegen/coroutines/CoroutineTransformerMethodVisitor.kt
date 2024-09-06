@@ -21,7 +21,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import java.util.ArrayList
 import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
@@ -91,7 +90,7 @@ class CoroutineTransformerMethodVisitor(
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
         // First instruction in the method node may change in case of named function
-        val actualCoroutineStart = methodNode.instructions.first
+        var actualCoroutineStart = methodNode.instructions.first
 
         if (isForNamedFunction) {
             if (putContinuationParameterToLvt) {
@@ -109,6 +108,8 @@ class CoroutineTransformerMethodVisitor(
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
+        } else {
+            actualCoroutineStart = methodNode.instructions.findLast { isSuspendLambdaParameterMarker(it) }?.next ?: actualCoroutineStart
         }
 
         for (suspensionPoint in suspensionPoints) {
@@ -207,6 +208,9 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode)
         dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
+        methodNode.extendParameterRanges()
+        methodNode.extendSuspendLambdaParameterRanges()
+        dropSuspendLambdaParameterMarkers(methodNode)
 
         writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
     }
@@ -606,6 +610,12 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
+    private fun dropSuspendLambdaParameterMarkers(methodNode: MethodNode) {
+        for (marker in methodNode.instructions.asSequence().filter { isSuspendLambdaParameterMarker(it) }.toList()) {
+            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+        }
+    }
+
     /**
      * Main logic here: A variable can be either alive or dead, and it can be visible by debugger or invisible
      *
@@ -615,6 +625,8 @@ class CoroutineTransformerMethodVisitor(
      */
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+
+        val suspendLambdaParameters = methodNode.collectSuspendLambdaParameterSlots()
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         var initialSpilledVariablesCount = 0
@@ -675,9 +687,9 @@ class CoroutineTransformerMethodVisitor(
             val suspension = suspensionPoints[suspensionPointIndex]
             // First, we spill and unspill alive variables as usual
             // Also, we spill and unspill null for visible dead variables
-            // `generateSpillAndUnspill` calls the prove from stdlib for us.
+            // `generateSpillAndUnspill` calls the probe from stdlib for us.
             for (referenceToSpill in referencesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
-                generateSpillAndUnspill(methodNode, suspension, referenceToSpill)
+                generateSpillAndUnspill(methodNode, suspension, referenceToSpill, suspendLambdaParameters)
             }
 
             // Then, we cleanup invisible dead variables
@@ -689,7 +701,7 @@ class CoroutineTransformerMethodVisitor(
             }
 
             for (primitiveToSpill in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
-                generateSpillAndUnspill(methodNode, suspension, primitiveToSpill)
+                generateSpillAndUnspill(methodNode, suspension, primitiveToSpill, suspendLambdaParameters)
             }
         }
 
@@ -709,36 +721,33 @@ class CoroutineTransformerMethodVisitor(
     private fun generateSpillAndUnspill(
         methodNode: MethodNode,
         suspension: SuspensionPoint,
-        spillableVariable: SpillableVariable
+        spillableVariable: SpillableVariable,
+        suspendLambdaParameters: List<Int>
     ) {
-        // Find and remove the local variable node, if any, in the local variable table corresponding to the slot that is spilled.
-        var local: LocalVariableNode? = null
-        val iterator = methodNode.localVariables.listIterator()
-        while (iterator.hasNext()) {
-            val node = iterator.next()
-            if (node.index == spillableVariable.slot &&
-                methodNode.instructions.indexOf(node.start) <= methodNode.instructions.indexOf(suspension.suspensionCallBegin) &&
-                methodNode.instructions.indexOf(node.end) > methodNode.instructions.indexOf(suspension.tryCatchBlockEndLabelAfterSuspensionCall)
-            ) {
-                local = node
-                iterator.remove()
-                break
-            }
-        }
+        val local: LocalVariableNode? =
+            findLocalCorrespondingToSpillableVariable(
+                methodNode,
+                spillableVariable,
+                suspension,
+                suspension.tryCatchBlockEndLabelAfterSuspensionCall
+            )
+
+        val localRestart = LabelNode().linkWithLabel()
 
         if (spillableVariable.isNull) {
             with(methodNode.instructions) {
                 insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
                     aconst(null)
                     store(spillableVariable.slot, AsmTypes.OBJECT_TYPE)
+                    if (local != null) {
+                        visitLabel(localRestart.label)
+                    }
                 })
             }
-            val newStart = suspension.tryCatchBlocksContinuationLabel.findNextOrNull { it is LabelNode } as? LabelNode ?: return
-            splitLvtRecord(methodNode, suspension, local, newStart)
+            splitLvtRecord(methodNode, suspension, local, localRestart)
             return
         }
 
-        val localRestart = LabelNode().linkWithLabel()
         with(methodNode.instructions) {
             // store variable before suspension call
             insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
@@ -755,23 +764,45 @@ class CoroutineTransformerMethodVisitor(
                 )
             })
 
-            // restore variable after suspension call
-            insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
-                load(continuationIndex, AsmTypes.OBJECT_TYPE)
-                getfield(
-                    classBuilderForCoroutineState.thisName,
-                    spillableVariable.fieldName,
-                    spillableVariable.normalizedType.descriptor
-                )
-                StackValue.coerce(spillableVariable.normalizedType, spillableVariable.type, this)
-                store(spillableVariable.slot, spillableVariable.type)
-                if (local != null) {
-                    visitLabel(localRestart.label)
-                }
-            })
-        }
+            if (spillableVariable.slot !in suspendLambdaParameters) {
+                // restore variable after suspension call
+                insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                    load(continuationIndex, AsmTypes.OBJECT_TYPE)
+                    getfield(
+                        classBuilderForCoroutineState.thisName,
+                        spillableVariable.fieldName,
+                        spillableVariable.normalizedType.descriptor
+                    )
+                    StackValue.coerce(spillableVariable.normalizedType, spillableVariable.type, this)
+                    store(spillableVariable.slot, spillableVariable.type)
+                    if (local != null) {
+                        visitLabel(localRestart.label)
+                    }
+                })
 
-        splitLvtRecord(methodNode, suspension, local, localRestart)
+                splitLvtRecord(methodNode, suspension, local, localRestart)
+            }
+        }
+    }
+
+    private fun findLocalCorrespondingToSpillableVariable(
+        methodNode: MethodNode,
+        spillableVariable: SpillableVariable,
+        suspension: SuspensionPoint,
+        tryCatchBlockEndLabelAfterSuspensionCall: LabelNode,
+    ): LocalVariableNode? {
+        // Find and remove the local variable node, if any, in the local variable table corresponding to the slot that is spilled.
+        val iterator = methodNode.localVariables.listIterator()
+        while (iterator.hasNext()) {
+            val node = iterator.next()
+            if (node.index == spillableVariable.slot &&
+                methodNode.instructions.indexOf(node.start) <= methodNode.instructions.indexOf(suspension.suspensionCallBegin) &&
+                methodNode.instructions.indexOf(node.end) > methodNode.instructions.indexOf(tryCatchBlockEndLabelAfterSuspensionCall)
+            ) {
+                return node
+            }
+        }
+        return null
     }
 
     private fun splitLvtRecord(
@@ -785,8 +816,6 @@ class CoroutineTransformerMethodVisitor(
         if (local != null) {
             val previousEnd = local.end
             local.end = suspension.stateLabel
-            // Add the local back, but end it at the next state label.
-            methodNode.localVariables.add(local)
             // Add a new entry that starts after the local variable is restored from the continuation.
             methodNode.localVariables.add(
                 LocalVariableNode(
@@ -857,7 +886,10 @@ class CoroutineTransformerMethodVisitor(
                         suspensionCallBeginIndex < methodNode.instructions.indexOf(it.end)
             }
 
-            val needToSpill = livenessFrame.isAlive(slot) || !shouldOptimiseUnusedVariables && visibleByDebugger
+            val willBeVisibleByDebugger = !livenessFrame.isAlive(slot) && !visibleByDebugger &&
+                    checkWhetherVariableWillBeVisible(methodNode, slot, suspensionCallBeginIndex)
+
+            val needToSpill = livenessFrame.isAlive(slot) || visibleByDebugger || willBeVisibleByDebugger
             if (!needToSpill) continue
 
             if (value === StrictBasicValue.NULL_VALUE) {
@@ -879,6 +911,28 @@ class CoroutineTransformerMethodVisitor(
             )
         }
         return variablesToSpill
+    }
+
+    // When suspension point is inside finally block, its LVT record is split, but there is no store for the second half
+    // in that case, we need to spill the variable, since it will be visible by the debugger
+    private fun checkWhetherVariableWillBeVisible(
+        methodNode: MethodNode,
+        slot: Int,
+        suspensionCallBeginIndex: Int
+    ): Boolean {
+        val local =
+            methodNode.localVariables.filter { it.index == slot && suspensionCallBeginIndex < methodNode.instructions.indexOf(it.start)}
+                .minByOrNull { methodNode.instructions.indexOf(it.start) } ?: return false
+        // Check, that we indeed reuse the variable and not introduce it
+        var cursor: AbstractInsnNode? = methodNode.instructions[suspensionCallBeginIndex]
+        while (cursor != null && cursor != local.start) {
+            if (cursor.isStoreOperation() && (cursor as VarInsnNode).`var` == slot) {
+                // This is indeed new variable, no need to spill
+                return false
+            }
+            cursor = cursor.next
+        }
+        return true
     }
 
     private fun mapFieldNameToVariable(
@@ -1175,6 +1229,25 @@ class CoroutineTransformerMethodVisitor(
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
 
+private fun MethodNode.collectSuspendLambdaParameterSlots(): List<Int> =
+    instructions.filter { isSuspendLambdaParameterMarker(it) }
+        .mapNotNull { (it?.previous?.previous as? VarInsnNode)?.`var` }.toList()
+
+private fun MethodNode.extendSuspendLambdaParameterRanges() {
+    val slots = collectSuspendLambdaParameterSlots()
+    if (slots.isEmpty()) return
+    val startLabel = instructions.findLast { isSuspendLambdaParameterMarker(it) }
+        ?.findNextOrNull { it is LabelNode } as? LabelNode ?: return
+    for (slot in slots) {
+        val duplicates = localVariables.filter { it.index == slot }
+        val toExtend = duplicates.firstOrNull() ?: continue
+        localVariables.removeAll(duplicates)
+        toExtend.start = startLabel
+        toExtend.end = getOrCreateEndingLabel()
+        localVariables.add(toExtend)
+    }
+}
+
 private class SpillableVariable(
     val value: BasicValue,
     val type: Type,
@@ -1340,21 +1413,37 @@ internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, contin
 
 // Handy debugging routine
 @Suppress("unused")
+fun MethodNode.nodeTextWithVisibleVariables(): String {
+    fun visibleVariables(i: Int): String {
+        val res = CharArray(maxLocals)
+        for (slot in 0 until maxLocals) {
+            val count = localVariables.count { it.index == slot && instructions.indexOf(it.start) <= i && i < instructions.indexOf(it.end) }
+            res[slot] = if (count == 0) ' ' else "$count"[0]
+        }
+        return String(res) + "|"
+    }
+    return instructions.withIndex().joinToString("\n") { (i, insn) -> "${visibleVariables(i)}${insn.insnText}" }
+}
+
+// Handy debugging routine
+@Suppress("unused")
 private fun MethodNode.nodeTextWithLiveness(liveness: List<VariableLivenessFrame>): String =
     liveness.zip(this.instructions.asSequence().toList()).joinToString("\n") { (a, b) -> "$a|${b.insnText}" }
 
-// $completion should behave like ordinary parameter - span the whole function,
-// unlike other parameters, it is safe to do so, since it always will have some value
-// either completion (when there was no suspension) or continuation, when there was suspension.
-// It is OK to have this discrepancy, since debugger walks through completion chain and to them
-// there is no difference whether there is an additional link in the chain.
-//
-// The same applies for suspend lambdas and `this`, but there is no additional link in the chain.
-private fun MethodNode.extendCompletionsRange(completion: LocalVariableNode, slot: Int) {
-    completion.start = getOrCreateStartingLabel()
-    completion.end = getOrCreateEndingLabel()
-    completion.index = slot
-    localVariables.add(completion)
+// Parameters should behave like ordinary parameter - span the whole function,
+// however, building a state-machine changes starting and ending labels.
+// Fix them up.
+private fun MethodNode.extendParameterRanges() {
+    val toDelete = mutableSetOf<LocalVariableNode>()
+    val startingLabel = getOrCreateStartingLabel()
+    val endingLabel = getOrCreateEndingLabel()
+    for (slot in 0..getLastParameterIndex(desc, access)) {
+        val variable = localVariables.firstOrNull { it.index == slot } ?: continue
+        variable.start = startingLabel
+        variable.end = endingLabel
+        toDelete += localVariables.filter { it.index == slot && it != variable }
+    }
+    localVariables.removeAll(toDelete)
 }
 
 fun MethodNode.getOrCreateStartingLabel(): LabelNode {
