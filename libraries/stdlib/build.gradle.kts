@@ -791,24 +791,29 @@ tasks {
 
         inputs.file(patchedFile)
         inputs.file(outputTestFile)
+        inputs.property("isInIdeaSync", kotlinBuildProperties.isInIdeaSync)
 
-        doLast {
-            /*
-            Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
-            This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
-             */
-            // TODO: uncomment after fixing KT-71050
-//            run {
-//                val outputFileText = resultFile.readText().trim()
-//                val expectedFileContent = outputTestFile.readText().trim()
-//                if (outputFileText != expectedFileContent)
-//                    error(
-//                        "${resultFile.path} file content does not match expected content\n\n" +
-//                                "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
-//                    )
-//            }
+        // overwrite kotlin-project-structure-metadata when building the artifact,
+        // but use automatically generated one when importing the project
+        // because of the different source set structure
+        if (!kotlinBuildProperties.isInIdeaSync) {
+            doLast {
+                /*
+                    Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
+                    This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
+                     */
+                run {
+                    val outputFileText = resultFile.readText().trim()
+                    val expectedFileContent = outputTestFile.readText().trim()
+                    if (outputFileText != expectedFileContent)
+                        error(
+                            "${resultFile.path} file content does not match expected content\n\n" +
+                                    "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
+                        )
+                }
 
-            patchedFile.copyTo(resultFile, overwrite = true)
+                patchedFile.copyTo(resultFile, overwrite = true)
+            }
         }
     }
 
