@@ -148,7 +148,7 @@ private fun TypeSystemCommonBackendContext.typeReferencesParameterWithRecursiveB
     } else {
         for (i in 0 until type.argumentsCount()) {
             val argument = type.getArgument(i)
-            if (!argument.isStarProjection() && typeReferencesParameterWithRecursiveBound(argument.getType(), used)) return true
+            if (argument.getType().let { it != null && typeReferencesParameterWithRecursiveBound(it, used) }) return true
         }
     }
     return false

@@ -199,9 +199,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun RigidTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): RigidTypeMarker {
         return replaceArguments {
-            if (it.isStarProjection()) return@replaceArguments it
-
-            val type = it.getType()
+            val type = it.getType() ?: return@replaceArguments it
             val newProjection = if (type.argumentsCount() > 0) {
                 it.replaceType(type.replaceArgumentsDeeply(replacement))
             } else it
@@ -280,9 +278,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         for (i in 0 until argumentsCount()) {
             val argument = getArgument(i)
 
-            if (argument.isStarProjection()) continue
-
-            val argumentType = argument.getType()
+            val argumentType = argument.getType() ?: continue
             val argumentTypeConstructor = argumentType.typeConstructor()
             val argumentToAdd = getIfApplicable(argumentTypeConstructor)
 
@@ -338,7 +334,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
-                    val constructor = it.getType().typeConstructor()
+                    val constructor = it.getType()?.typeConstructor()
                     if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
                 }
             }
@@ -443,7 +439,11 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeArgumentMarker.isStarProjection(): Boolean
     fun TypeArgumentMarker.getVariance(): TypeVariance
-    fun TypeArgumentMarker.getType(): KotlinTypeMarker
+
+    /**
+     * Returns the type of the [TypeArgumentMarker] or `null` if it's a star projection.
+     */
+    fun TypeArgumentMarker.getType(): KotlinTypeMarker?
     fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker
 
     fun TypeConstructorMarker.parametersCount(): Int
@@ -489,9 +489,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
     fun KotlinTypeMarker.isCapturedDynamic(): Boolean =
-        asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless {
-            it.isStarProjection()
-        }?.getType()?.isDynamic() == true
+        asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.getType()?.isDynamic() == true
 
     fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asRigidType()?.asDefinitelyNotNullType() != null
     fun RigidTypeMarker.isDefinitelyNotNullType(): Boolean = asDefinitelyNotNullType() != null

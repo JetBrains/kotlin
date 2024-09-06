@@ -43,7 +43,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             return when {
                 isMyTypeVariable(subType) -> {
                     val projection = superType.typeConstructorProjection()
-                    val type = projection.getType().asRigidType()
+                    val type = projection.getType()?.asRigidType()
                     if (projection.getVariance() == TypeVariance.IN && type != null && isMyTypeVariable(type)) {
                         LowerCapturedTypePolicy.CHECK_ONLY_LOWER
                     } else {
@@ -152,7 +152,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             val projection = typeMarker.typeConstructorProjection()
             if (projection.isStarProjection()) return null
             if (projection.getVariance() == TypeVariance.IN) {
-                val type = projection.getType().asRigidType() ?: return null
+                val type = projection.getType()?.asRigidType() ?: return null
                 if (isMyTypeVariable(type)) {
                     simplifyLowerConstraint(type, superType)
                     if (isMyTypeVariable(superType.asRigidType() ?: return null)) {

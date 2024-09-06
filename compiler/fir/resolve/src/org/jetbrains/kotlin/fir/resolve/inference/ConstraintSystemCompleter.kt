@@ -356,7 +356,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         fun PostponedAtomWithRevisableExpectedType.collectNotFixedVariables() {
             revisedExpectedType?.lowerBoundIfFlexible()?.asArgumentList()?.let { typeArgumentList ->
                 for (typeArgument in typeArgumentList) {
-                    val constructor = typeArgument.getType().typeConstructor()
+                    val constructor = typeArgument.getType()?.typeConstructor() ?: continue
                     if (constructor in notFixedTypeVariables) {
                         result.add(constructor)
                     }

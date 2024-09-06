@@ -302,7 +302,7 @@ class ConstraintIncorporator(
         otherConstraint: Constraint,
     ): Boolean {
         return getNestedArguments(newConstraint).any {
-            it.getType().typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
+            it.getType()?.typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
         }
     }
 
@@ -323,7 +323,7 @@ class ConstraintIncorporator(
 
     private fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
         getNestedArguments(type).mapNotNullTo(SmartList()) {
-            getTypeVariable(it.getType().typeConstructor().unwrapStubTypeVariableConstructor())
+            it.getType()?.let { getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
         }
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
@@ -359,11 +359,11 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
 
     while (!stack.isEmpty()) {
         val typeProjection = stack.pop()
-        if (typeProjection.isStarProjection()) continue
+        val typeProjectionType = typeProjection.getType() ?: continue
 
         result.add(typeProjection)
 
-        when (val projectedType = typeProjection.getType()) {
+        when (val projectedType = typeProjectionType) {
             is FlexibleTypeMarker -> {
                 addArgumentsToStack(projectedType.lowerBound())
                 addArgumentsToStack(projectedType.upperBound())

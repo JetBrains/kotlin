@@ -213,10 +213,10 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
             if (skipRawTypeArguments && it.type?.isRawType() == true) return@flattenTree null
 
             it.type?.typeConstructor()?.getParameters()?.zip(it.type.getArguments()) { parameter, arg ->
-                if (arg.isStarProjection()) {
+                val type = arg.getType()
+                if (type == null) {
                     TypeAndDefaultQualifiers(null, it.defaultQualifiers, parameter)
                 } else {
-                    val type = arg.getType()
                     TypeAndDefaultQualifiers(type, type.extractAndMergeDefaultQualifiers(it.defaultQualifiers), parameter)
                 }
             }

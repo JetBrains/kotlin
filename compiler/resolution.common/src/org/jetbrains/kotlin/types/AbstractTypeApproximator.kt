@@ -391,7 +391,7 @@ abstract class AbstractTypeApproximator(
             else -> {
                 val projection = capturedType.typeConstructorProjection()
                 if (projection.isStarProjection()) intersectTypes(supertypes.map { it.replaceRecursionWithStarProjection(capturedType) })
-                else projection.getType()
+                else projection.getType()!!
             }
         }
         val baseSubType = capturedType.lowerType() ?: nothingType()
@@ -457,8 +457,7 @@ abstract class AbstractTypeApproximator(
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
 
         fun TypeArgumentMarker.unwrapForComparison(): CapturedTypeMarker? {
-            if (this.isStarProjection()) return null
-            return getType().lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
+            return getType()?.lowerBoundIfFlexible()?.asCapturedTypeUnwrappingDnn()
         }
 
         return if (isK2 && getArguments().any { it.unwrapForComparison() == capturedType }) {
@@ -596,11 +595,9 @@ abstract class AbstractTypeApproximator(
             val parameter = typeConstructor.getParameter(index)
             val argument = type.getArgument(index)
 
-            if (argument.isStarProjection()) continue
+            val argumentType = argument.getType() ?: continue
 
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-
-            val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
             val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
 

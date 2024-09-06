@@ -131,7 +131,7 @@ class TypeVariableDirectionCalculator(
         for (index in 0 until constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             val argument = getArgument(index)
-            if (argument.isStarProjection()) continue
+            val type = argument.getType() ?: continue
 
             val variance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance()) ?: TypeVariance.INV
             val innerDirection = when (variance) {
@@ -140,7 +140,7 @@ class TypeVariableDirectionCalculator(
                 TypeVariance.IN -> startDirection.opposite()
             }
 
-            argument.getType().visitType(innerDirection, action)
+            type.visitType(innerDirection, action)
         }
     }
 

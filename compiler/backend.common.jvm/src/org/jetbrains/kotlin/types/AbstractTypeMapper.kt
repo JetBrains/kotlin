@@ -154,12 +154,13 @@ object AbstractTypeMapper {
         val variance: Variance
         val memberType: KotlinTypeMarker
 
-        if (typeArgument.isStarProjection()) {
+        val type = typeArgument.getType()
+        if (type == null) {
             variance = Variance.OUT_VARIANCE
             memberType = nullableAnyType()
         } else {
             variance = typeArgument.getVariance().toVariance()
-            memberType = typeArgument.getType()
+            memberType = type
         }
 
         val arrayElementType: Type

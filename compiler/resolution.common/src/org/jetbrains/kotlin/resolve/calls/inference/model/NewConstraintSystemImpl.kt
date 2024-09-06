@@ -413,7 +413,7 @@ class NewConstraintSystemImpl(
             val capturedType = it.asRigidType()?.asCapturedTypeUnwrappingDnn()
 
             val typeToCheck = if (capturedType is CapturedTypeMarker && capturedType.captureStatus() == CaptureStatus.FROM_EXPRESSION)
-                capturedType.typeConstructorProjection().takeUnless { projection -> projection.isStarProjection() }?.getType()
+                capturedType.typeConstructorProjection().getType()
             else
                 it
 

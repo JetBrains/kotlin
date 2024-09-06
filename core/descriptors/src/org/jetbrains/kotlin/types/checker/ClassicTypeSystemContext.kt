@@ -236,7 +236,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.replaceType(newType)
     }
 
-    override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
+    override fun TypeArgumentMarker.getType(): KotlinTypeMarker? {
+        if (isStarProjection()) return null
         require(this is TypeProjection, this::errorMessage)
         return this.type.unwrap()
     }

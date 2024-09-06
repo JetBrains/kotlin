@@ -399,7 +399,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val substitutor by lazy(LazyThreadSafetyMode.NONE) { substitutorByMap(typeParameterErasureMap, session) }
         val typeWithErasedTypeParameters = if (argumentsCount() != 0) {
             replaceArgumentsDeeply {
-                val type = it.getType()
+                val type = it.getType() ?: return@replaceArgumentsDeeply it
                 val typeParameter =
                     (type.typeConstructor().getTypeParameterClassifier() as? ConeTypeParameterLookupTag)?.typeParameterSymbol
                 if (typeParameter != null) {

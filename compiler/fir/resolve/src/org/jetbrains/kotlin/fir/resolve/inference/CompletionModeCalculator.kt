@@ -158,11 +158,8 @@ private class CalculatorForNestedCall(
                 val argument = unwrappedType.getArgument(position)
                 val parameter = unwrappedType.typeConstructor().getParameter(position)
 
-                if (argument.isStarProjection())
-                    continue
-
                 collectRequiredDirectionsForVariables(
-                    argument.getType(),
+                    argument.getType() ?: continue,
                     compositeVariance(outerVariance, argument, parameter),
                     fixationDirectionsCollector
                 )

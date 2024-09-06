@@ -207,9 +207,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
-    override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
+    override fun TypeArgumentMarker.getType(): KotlinTypeMarker? {
         require(this is ConeTypeProjection)
-        require(this is ConeKotlinTypeProjection) { "No type for StarProjection" }
         return this.type
     }
 

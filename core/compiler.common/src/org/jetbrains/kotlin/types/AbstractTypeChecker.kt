@@ -324,7 +324,7 @@ object AbstractTypeChecker {
         fun isCapturedIntegerLiteralType(type: RigidTypeMarker): Boolean {
             if (type !is CapturedTypeMarker) return false
             val projection = type.typeConstructor().projection()
-            return !projection.isStarProjection() && projection.getType().upperBoundIfFlexible().isIntegerLiteralType()
+            return projection.getType()?.upperBoundIfFlexible()?.isIntegerLiteralType() == true
         }
 
         fun isIntegerLiteralTypeOrCapturedOne(type: RigidTypeMarker) = type.isIntegerLiteralType() || isCapturedIntegerLiteralType(type)
@@ -476,12 +476,11 @@ object AbstractTypeChecker {
         for (index in 0 until parametersCount) {
             val superProjection = superType.getArgument(index) // todo error index
 
-            if (superProjection.isStarProjection()) continue // A<B> <: A<*>
-
-            val superArgumentType = superProjection.getType()
+            val superArgumentType = superProjection.getType() ?: continue // A<B> <: A<*>
             val subArgumentType = capturedSubArguments[index].let {
                 assert(it.getVariance() == TypeVariance.INV) { "Incorrect sub argument: $it" }
-                it.getType()
+                // it.getVariance() == TypeVariance.INV means it's not a star projection
+                it.getType()!!
             }
 
             val variance = effectiveVariance(superTypeConstructor.getParameter(index).getVariance(), superProjection.getVariance())
@@ -692,7 +691,7 @@ object AbstractTypeChecker {
         if (supertypes.size < 2) return supertypes
 
         val allPureSupertypes = supertypes.filter {
-            it.asArgumentList().all(this) { it.getType().asFlexibleType() == null }
+            it.asArgumentList().all(this) { it.getType()?.asFlexibleType() == null }
         }
         return if (allPureSupertypes.isNotEmpty()) allPureSupertypes else supertypes
     }
@@ -843,7 +842,7 @@ object AbstractFlexibilityChecker {
 
         for (i in 0 until types.first().argumentsCount()) {
             val typeArgumentForOtherTypes = types.mapNotNull {
-                if (it.argumentsCount() > i && !it.getArgument(i).isStarProjection()) it.getArgument(i).getType() else null
+                if (it.argumentsCount() > i) it.getArgument(i).getType() else null
             }
 
             if (hasDifferentFlexibilityAtDepth(typeArgumentForOtherTypes)) return true

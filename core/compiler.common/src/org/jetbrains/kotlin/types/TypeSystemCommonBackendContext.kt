@@ -67,8 +67,7 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
     }
 
     fun TypeArgumentMarker.adjustedType(): KotlinTypeMarker {
-        if (this.isStarProjection()) return nullableAnyType()
-        return getType()
+        return getType() ?: nullableAnyType()
     }
 
     fun TypeParameterMarker.representativeUpperBound(): KotlinTypeMarker

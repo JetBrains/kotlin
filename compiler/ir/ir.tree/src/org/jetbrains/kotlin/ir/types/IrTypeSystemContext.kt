@@ -148,7 +148,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         }
     }
 
-    override fun TypeArgumentMarker.getType() = (this as IrTypeProjection).type
+    override fun TypeArgumentMarker.getType(): KotlinTypeMarker? = (this as? IrTypeProjection)?.type
 
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<IrTypeParameter> {
         return when (typeConstructor) {
@@ -199,8 +199,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         if (this.typeConstructor() == constructor) return true
 
         for (i in 0 until this.argumentsCount()) {
-            val typeArgument = this.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
-            if (typeArgument.getType().containsTypeConstructor(constructor)) return true
+            val type = getArgument(i).getType() ?: continue
+            if (type.containsTypeConstructor(constructor)) return true
         }
 
         return false
@@ -374,7 +374,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun RigidTypeMarker.typeDepth(): Int {
         val maxInArguments = (this as IrSimpleType).arguments.maxOfOrNull {
-            if (it is IrStarProjection) 1 else it.getType().typeDepth()
+            it.getType()?.typeDepth() ?: 1
         } ?: 0
 
         return maxInArguments + 1

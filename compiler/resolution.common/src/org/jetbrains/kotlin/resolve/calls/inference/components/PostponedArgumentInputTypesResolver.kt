@@ -304,9 +304,7 @@ class PostponedArgumentInputTypesResolver(
 
         for (i in 0 until type.argumentsCount()) {
             val argument = type.getArgument(i)
-            if (argument.isStarProjection()) continue
-
-            val argumentType = argument.getType()
+            val argumentType = argument.getType() ?: continue
 
             if (argumentType.typeConstructor() == targetVariable) {
                 return path.toList() + (typeConstructor to i)
@@ -505,8 +503,9 @@ class PostponedArgumentInputTypesResolver(
             }
             type.argumentsCount() > 0 -> {
                 for (typeArgument in type.lowerBoundIfFlexible().asArgumentList()) {
-                    if (!typeArgument.isStarProjection()) {
-                        getAllDeeplyRelatedTypeVariables(typeArgument.getType(), variableDependencyProvider, typeVariableCollector)
+                    val argumentType = typeArgument.getType()
+                    if (argumentType != null) {
+                        getAllDeeplyRelatedTypeVariables(argumentType, variableDependencyProvider, typeVariableCollector)
                     }
                 }
             }

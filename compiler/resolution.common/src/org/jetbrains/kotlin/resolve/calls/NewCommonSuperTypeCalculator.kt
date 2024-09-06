@@ -343,13 +343,14 @@ object NewCommonSuperTypeCalculator {
                 // to check subtyping. It'll be fixed but for a while we do this uncapturing here
                 val typeArgument = uncaptureFromSubtyping(typeArgumentFromSupertype)
 
+                val type = typeArgument.getType()
                 when {
-                    typeArgument.isStarProjection() -> {
+                    type == null -> {
                         thereIsStar = true
                         null
                     }
 
-                    typeArgument.getType().lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
+                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
 
                     else -> typeArgument
                 }
@@ -357,9 +358,8 @@ object NewCommonSuperTypeCalculator {
 
             // This is used for folding recursive types like Inv<Inv<*>> into Inv<*>
             fun collapseRecursiveArgumentIfPossible(argument: TypeArgumentMarker): TypeArgumentMarker {
-                if (argument.isStarProjection()) return argument
-                val argumentType = argument.getType().asRigidType()
-                val argumentConstructor = argumentType?.typeConstructor()
+                val argumentType = argument.getType()?.asRigidType() ?: return argument
+                val argumentConstructor = argumentType.typeConstructor()
                 return if (argument.getVariance() == TypeVariance.OUT && argumentConstructor == constructor && argumentType.asArgumentList()[index].isStarProjection()) {
                     createStarProjection(parameter)
                 } else {
@@ -380,7 +380,7 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
-        val capturedType = typeArgument.getType().asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
+        val capturedType = typeArgument.getType()?.asRigidType()?.asCapturedTypeUnwrappingDnn() ?: return typeArgument
         if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
 
         return capturedType.typeConstructor().projection()
@@ -413,7 +413,8 @@ object NewCommonSuperTypeCalculator {
 
         val originalTypesSet = originalTypesForCst.mapTo(mutableSetOf()) { it.originalIfDefinitelyNotNullable() }
         val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.mapTo(mutableSetOf()) {
-            it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
+            // star projections shouldn't happen because we checked in superTypeWithGivenConstructor.
+            it.getType()!!.lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
         }
 
         if (originalTypesSet.size != typeArgumentsTypeSet.size)
@@ -501,7 +502,7 @@ object NewCommonSuperTypeCalculator {
         //                     Inv<CS(X, Y)>     if CS(X, Y) == X == Y with stubTypesEqualToAnything = true and ImprovedVarianceInCst is enabled
         //                     Inv<out CS(X, Y)> otherwise
         if (asOut) {
-            val argumentTypes = arguments.map { it.getType() }
+            val argumentTypes = arguments.map { it.getType()!! }
             val parameterIsNotInv = parameter.getVariance() != TypeVariance.INV
 
             if (parameterIsNotInv) {
@@ -510,7 +511,7 @@ object NewCommonSuperTypeCalculator {
 
             val equalToEachOtherType = arguments.firstOrNull { potentialSuperType ->
                 arguments.all {
-                    AbstractTypeChecker.equalTypes(this, it.getType(), potentialSuperType.getType(), stubTypesEqualToAnything = false)
+                    AbstractTypeChecker.equalTypes(this, it.getType()!!, potentialSuperType.getType()!!, stubTypesEqualToAnything = false)
                 }
             }
 
@@ -532,10 +533,10 @@ object NewCommonSuperTypeCalculator {
                 createTypeArgument(cst, variance)
             } else {
                 val thereIsNotInv = arguments.any { it.getVariance() != TypeVariance.INV }
-                createTypeArgument(equalToEachOtherType.getType(), if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
+                createTypeArgument(equalToEachOtherType.getType()!!, if (thereIsNotInv) TypeVariance.OUT else TypeVariance.INV)
             }
         } else {
-            val type = intersectTypes(arguments.map { it.getType() })
+            val type = intersectTypes(arguments.map { it.getType()!! })
 
             return if (parameter.getVariance() != TypeVariance.INV) type.asTypeArgument() else createTypeArgument(
                 type,

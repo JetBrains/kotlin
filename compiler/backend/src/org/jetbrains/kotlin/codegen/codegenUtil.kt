@@ -390,8 +390,7 @@ fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: Kotli
         arrayDepth++
         // TODO: warn that nullability info on argument will be lost?
         val argument = type.getArgument(0)
-        if (argument.isStarProjection()) return null
-        type = argument.getType()
+        type = argument.getType() ?: return null
     }
 
     val typeParameter = type.typeConstructor().getTypeParameterClassifier() ?: return null
@@ -405,9 +404,7 @@ fun TypeSystemCommonBackendContext.extractUsedReifiedParameters(type: KotlinType
             val typeParameter = typeConstructor().getTypeParameterClassifier()
             if (typeParameter == null) {
                 for (argument in getArguments()) {
-                    if (!argument.isStarProjection()) {
-                        argument.getType().visit()
-                    }
+                    argument.getType()?.visit()
                 }
             } else if (typeParameter.isReified()) {
                 addUsedReifiedParameter(typeParameter.getName().asString())

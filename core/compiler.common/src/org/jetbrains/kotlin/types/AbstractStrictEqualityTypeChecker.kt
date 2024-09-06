@@ -56,7 +56,7 @@ object AbstractStrictEqualityTypeChecker {
             // both non-star
             if (!aArg.isStarProjection()) {
                 if (aArg.getVariance() != bArg.getVariance()) return false
-                if (!strictEqualTypesInternal(aArg.getType(), bArg.getType())) return false
+                if (!strictEqualTypesInternal(aArg.getType()!!, bArg.getType()!!)) return false
             }
         }
         return true

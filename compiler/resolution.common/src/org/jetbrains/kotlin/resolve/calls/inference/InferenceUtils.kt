@@ -60,15 +60,15 @@ fun TypeSystemInferenceExtensionContext.extractTypeForGivenRecursiveTypeParamete
     typeParameter: TypeParameterMarker
 ): KotlinTypeMarker? {
     for (argument in type.getArguments()) {
-        if (argument.isStarProjection()) continue
-        val typeConstructor = argument.getType().typeConstructor()
+        val argumentType = argument.getType() ?: continue
+        val typeConstructor = argumentType.typeConstructor()
         if (typeConstructor is TypeVariableTypeConstructorMarker
             && typeConstructor.typeParameter == typeParameter
             && typeConstructor.typeParameter?.hasRecursiveBounds(type.typeConstructor()) == true
         ) {
             return type
         }
-        extractTypeForGivenRecursiveTypeParameter(argument.getType(), typeParameter)?.let { return it }
+        extractTypeForGivenRecursiveTypeParameter(argumentType, typeParameter)?.let { return it }
     }
 
     return null

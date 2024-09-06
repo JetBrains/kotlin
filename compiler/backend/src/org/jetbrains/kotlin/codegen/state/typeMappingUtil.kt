@@ -54,10 +54,9 @@ private fun TypeSystemCommonBackendContext.canHaveSubtypesIgnoringNullability(ko
     for (i in 0 until constructor.parametersCount()) {
         val parameter = constructor.getParameter(i)
         val argument = kotlinType.getArgument(i)
-        if (argument.isStarProjection()) return true
 
+        val type = argument.getType() ?: return true
         val projectionKind = argument.getVariance().convertVariance()
-        val type = argument.getType()
 
         val effectiveVariance = getEffectiveVariance(parameter.getVariance().convertVariance(), projectionKind)
         if (effectiveVariance == Variance.OUT_VARIANCE && !isMostPreciseCovariantArgument(type)) return true

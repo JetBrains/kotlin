@@ -427,8 +427,8 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
             )
         }
 
-        if (oldArgument.kind == ProjectionKind.OUT) {
-            upperBounds += oldArgument.getType()
+        if (oldArgument is ConeKotlinTypeProjectionOut) {
+            upperBounds += oldArgument.type
         }
 
         require(newArgument is ConeCapturedType)
@@ -724,10 +724,8 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
     mode: EraseUpperBoundMode,
 ): ConeKotlinType = with(typeContext) {
     replaceArgumentsDeeply { typeArgument ->
-        if (typeArgument.isStarProjection())
-            return@replaceArgumentsDeeply typeArgument
-
-        val typeConstructor = typeArgument.getType().typeConstructor().takeIf { it.isTypeParameterTypeConstructor() }
+        val type = typeArgument.getType() ?: return@replaceArgumentsDeeply typeArgument
+        val typeConstructor = type.typeConstructor().takeIf { it.isTypeParameterTypeConstructor() }
             ?: return@replaceArgumentsDeeply typeArgument
 
         typeConstructor as ConeTypeParameterLookupTag
