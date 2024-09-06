@@ -60,6 +60,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("interfaceDefaultImplsForTooltipState.kt")
+  public void testInterfaceDefaultImplsForTooltipState() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceDefaultImplsForTooltipState.kt");
+  }
+
+  @Test
   @TestMetadata("interfaceDelegation.kt")
   public void testInterfaceDelegation() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceDelegation.kt");
