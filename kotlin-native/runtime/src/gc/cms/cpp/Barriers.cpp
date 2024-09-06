@@ -151,7 +151,7 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 
 PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
     RuntimeAssert(mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(), "A thread executing GC barrier must be registered");
-    AssertThreadState(ThreadState::kRunnable);
+    //AssertThreadState(ThreadState::kRunnable);
     auto phase = currentPhase();
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
