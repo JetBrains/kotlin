@@ -50,41 +50,12 @@ KtFile: suggestGuardSyntax.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('String')
-                PsiWhiteSpace(' ')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      PsiErrorElement:Type expected
-                        PsiElement(EXCL)('!')
-                  PsiErrorElement:Expecting a '>'
-                    <empty list>
-          PsiErrorElement:Expecting '->'
-            PsiElement(IDENTIFIER)('SYNTAX')
-          BINARY_EXPRESSION
-            PREFIX_EXPRESSION
-              OPERATION_REFERENCE
-                PsiElement(EXCL)('!')
-              PsiErrorElement:Expecting an element
-                PsiElement(GT)('>')
-            OPERATION_REFERENCE
-              PsiElement(ANDAND)('&&')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
+            PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('boolExpr')
-              OPERATION_REFERENCE
-                PsiElement(LT)('<')
-              PREFIX_EXPRESSION
-                OPERATION_REFERENCE
-                  PsiElement(EXCL)('!')
-                PsiErrorElement:Expecting an element
-                  PsiElement(GT)('>')
-        PsiWhiteSpace(' ')
-        WHEN_ENTRY
-          WHEN_CONDITION_WITH_EXPRESSION
-            PsiErrorElement:Expecting an expression, is-condition or in-condition
-              <empty list>
+            PsiElement(IDENTIFIER)('boolExpr')
+          PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           STRING_TEMPLATE
@@ -153,41 +124,12 @@ KtFile: suggestGuardSyntax.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
-                PsiWhiteSpace(' ')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      PsiErrorElement:Type expected
-                        PsiElement(EXCL)('!')
-                  PsiErrorElement:Expecting a '>'
-                    <empty list>
-          PsiErrorElement:Expecting '->'
-            PsiElement(IDENTIFIER)('SYNTAX')
-          BINARY_EXPRESSION
-            PREFIX_EXPRESSION
-              OPERATION_REFERENCE
-                PsiElement(EXCL)('!')
-              PsiErrorElement:Expecting an element
-                PsiElement(GT)('>')
-            OPERATION_REFERENCE
-              PsiElement(ANDAND)('&&')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
+            PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
-            BINARY_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('boolExpr')
-              OPERATION_REFERENCE
-                PsiElement(LT)('<')
-              PREFIX_EXPRESSION
-                OPERATION_REFERENCE
-                  PsiElement(EXCL)('!')
-                PsiErrorElement:Expecting an element
-                  PsiElement(GT)('>')
-        PsiWhiteSpace(' ')
-        WHEN_ENTRY
-          WHEN_CONDITION_WITH_EXPRESSION
-            PsiErrorElement:Expecting an expression, is-condition or in-condition
-              <empty list>
+            PsiElement(IDENTIFIER)('boolExpr')
+          PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           STRING_TEMPLATE
@@ -242,18 +184,10 @@ KtFile: suggestGuardSyntax.kt
         WHEN_ENTRY
           PsiElement(else)('else')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting '->'
-            PsiElement(LT)('<')
-            PsiElement(EXCL)('!')
-            PsiElement(IDENTIFIER)('SYNTAX')
-            PsiElement(EXCL)('!')
-            PsiElement(GT)('>')
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
             PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('boolExpr')
-            PsiElement(LT)('<')
-            PsiElement(EXCL)('!')
-            PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
