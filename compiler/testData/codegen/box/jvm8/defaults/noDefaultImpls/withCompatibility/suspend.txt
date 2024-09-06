@@ -5,6 +5,7 @@ final class SuspendKt$box$1 {
     enclosing method SuspendKt.box()Ljava/lang/String;
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
+    field L$1: java.lang.Object
     field label: int
     inner (anonymous) class SuspendKt$box$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void

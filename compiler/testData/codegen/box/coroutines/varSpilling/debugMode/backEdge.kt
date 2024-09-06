@@ -1,8 +1,18 @@
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: ANDROID
+// PREFER_IN_TEST_OVER_STDLIB
+
+// FILE: Spilling.kt
+
+package kotlin.coroutines.jvm.internal
+
+@Suppress("UNUSED_PARAMETER", "unused")
+internal fun nullOutSpilledVariable(value: Any?): Any? = value
+
+// FILE: test.kt
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -47,7 +57,7 @@ fun box(): String {
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "I$0" to "0", "L$0" to "a")) return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "1", "I$0" to "1", "L$0" to "a")) return "FAIL 3: $spilledVariables"
+    if (spilledVariables != setOf("label" to "1", "I$0" to "1", "L$0" to "null")) return "FAIL 3: $spilledVariables"
     c?.resume(Unit)
     if (spilledVariables != setOf("label" to "2", "I$0" to "1", "L$0" to "a")) return "FAIL 4: $spilledVariables"
     c?.resume(Unit)

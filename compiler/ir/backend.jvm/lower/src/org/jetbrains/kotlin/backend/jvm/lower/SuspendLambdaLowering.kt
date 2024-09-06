@@ -229,7 +229,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         parent = this,
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
-                        origin = param.origin,
+                        origin = JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA_PARAMETER,
                         name = param.name,
                         type = param.type
                     ).apply {

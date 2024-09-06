@@ -47,6 +47,7 @@ object JvmLoweredDeclarationOrigin {
     val FOR_INLINE_STATE_MACHINE_TEMPLATE by IrDeclarationOriginImpl
     val FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE by IrDeclarationOriginImpl
     val CONTINUATION_CLASS_RESULT_FIELD by IrDeclarationOriginImpl.Synthetic
+    val SUSPEND_LAMBDA_PARAMETER by IrDeclarationOriginImpl
     val COMPANION_PROPERTY_BACKING_FIELD by IrDeclarationOriginImpl
     val FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE by IrDeclarationOriginImpl
     val ABSTRACT_BRIDGE_STUB by IrDeclarationOriginImpl

@@ -1,8 +1,17 @@
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: ANDROID
+// TARGET_BACKEND: JVM
+// PREFER_IN_TEST_OVER_STDLIB
+
+// FILE: Spilling.kt
+
+package kotlin.coroutines.jvm.internal
+
+@Suppress("UNUSED_PARAMETER", "unused")
+internal fun nullOutSpilledVariable(value: Any?): Any? = value
+
+// FILE: test.kt
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

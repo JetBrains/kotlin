@@ -46,20 +46,20 @@ fun box(): String {
     builder {
         test(true)
     }
-    if (spilledVariables != setOf("label" to "1", "L$0" to "a1", "L$1" to "null")) return "FAIL 1: $spilledVariables"
+    if (spilledVariables != setOf("label" to "1", "L$0" to "a1", "L$1" to "null", "Z$0" to "true")) return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null")) return "FAIL 2: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null", "Z$0" to "true")) return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null")) return "FAIL 3: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null", "Z$0" to "true")) return "FAIL 3: $spilledVariables"
 
     builder {
         test(false)
     }
-    if (spilledVariables != setOf("label" to "2", "L$0" to "a2", "L$1" to "b2")) return "FAIL 4: $spilledVariables"
+    if (spilledVariables != setOf("label" to "2", "L$0" to "a2", "L$1" to "b2", "Z$0" to "false")) return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null")) return "FAIL 5: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null", "Z$0" to "false")) return "FAIL 5: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null")) return "FAIL 6: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "L$0" to "null", "L$1" to "null", "Z$0" to "false")) return "FAIL 6: $spilledVariables"
 
     return "OK"
 }

@@ -81,6 +81,7 @@ private const val INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID = 6
 private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
 private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
 private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
+private const val INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER = 10
 
 internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method) -> Boolean): SMAPAndMethodNode? {
     var node: MethodNode? = null
@@ -564,6 +565,12 @@ private fun addBeforeUnboxInlineClassMarker(v: InstructionAdapter) {
 private fun addAfterUnboxInlineClassMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS)
 }
+
+fun addSuspendLambdaParameterMarker(v: InstructionAdapter) {
+    v.emitInlineMarker(INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER)
+}
+
+fun isSuspendLambdaParameterMarker(insn: AbstractInsnNode): Boolean = isSuspendMarker(insn, INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER)
 
 internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall: ResolvedCall<*>) {
     val wrapperDescriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return

@@ -1,8 +1,17 @@
 // WITH_STDLIB
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: ANDROID
+// TARGET_BACKEND: JVM
+// PREFER_IN_TEST_OVER_STDLIB
+
+// FILE: Spilling.kt
+
+package kotlin.coroutines.jvm.internal
+
+@Suppress("UNUSED_PARAMETER", "unused")
+internal fun nullOutSpilledVariable(value: Any?): Any? = value
+
+// FILE: test.kt
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -38,6 +47,7 @@ suspend fun test(check: Boolean) {
         saveSpilledVariables()
         blackhole(a, b)
     }
+    // No variable visible - cleanup
     saveSpilledVariables()
 }
 
@@ -55,10 +65,10 @@ fun box(): String {
     if (spilledVariables != setOf("label" to "1", "Z$0" to "true", "L$0" to "a1", "L$1" to "null"))
         return "FAIL 1: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to "a1", "L$1" to "null"))
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to "null", "L$1" to "null"))
         return "FAIL 2: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to "a1", "L$1" to "null"))
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "true", "L$0" to "null", "L$1" to "null"))
         return "FAIL 3: $spilledVariables"
 
     builder {
@@ -67,9 +77,9 @@ fun box(): String {
 
     if (spilledVariables != setOf("label" to "2", "Z$0" to "false", "L$0" to "a2", "L$1" to "b2")) return "FAIL 4: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "false", "L$0" to "a2", "L$1" to "b2")) return "FAIL 5: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "false", "L$0" to "null", "L$1" to "null")) return "FAIL 5: $spilledVariables"
     c?.resume(Unit)
-    if (spilledVariables != setOf("label" to "3", "Z$0" to "false", "L$0" to "a2", "L$1" to "b2")) return "FAIL 6: $spilledVariables"
+    if (spilledVariables != setOf("label" to "3", "Z$0" to "false", "L$0" to "null", "L$1" to "null")) return "FAIL 6: $spilledVariables"
 
     return "OK"
 }

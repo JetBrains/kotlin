@@ -48,15 +48,15 @@ fun box(): String {
 /* 1 load in VarValueConflictsWithTableSameSortKt$box$1 <init> ($completion) */
 // 1 ALOAD 2\s+INVOKESPECIAL kotlin/coroutines/jvm/internal/SuspendLambda\.\<init\>
 /* 1 load in the catch (e: Throwable) { throw e } block which is implicitly wrapped around try/finally */
-// 1 ALOAD 2\s+ATHROW
+// 1 ALOAD 3\s+ATHROW
 /* 1 load in result = s */
-// 1 ALOAD 2\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
+// 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
 /* 1 load in spill */
-// 1 ALOAD 2\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\.L\$0 : Ljava/lang/Object;
+// 1 ALOAD 3\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\.L\$1 : Ljava/lang/Object;
 /* 2 loads in println(s) */
-// 2 ALOAD 2\s+INVOKEVIRTUAL java/io/PrintStream.println \(Ljava/lang/Object;\)V
+// 2 ALOAD 3\s+INVOKEVIRTUAL java/io/PrintStream.println \(Ljava/lang/Object;\)V
 /* But no further load when spilling 's' to the continuation */
-// 6 ALOAD 2
-// 1 LOCALVARIABLE i Ljava/lang/String; L.* 2
-// 3 LOCALVARIABLE s Ljava/lang/String; L.* 2
+// 5 ALOAD 3
+// 1 LOCALVARIABLE i Ljava/lang/String; L.* 3
+// 2 LOCALVARIABLE s Ljava/lang/String; L.* 3
 // 1 LOCALVARIABLE \$completion Lkotlin/coroutines/Continuation; L.* 2
