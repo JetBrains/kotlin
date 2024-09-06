@@ -101,6 +101,10 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
                 add("-Wno-#warnings")
                 // Workaround KT-69507
                 add("-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS")
+                // llvm 11 doesn't support "__attribute__((__using_if_exists__))", so we stub these manually
+                listOf("mbrtoc16", "c16rtomb", "mbrtoc32", "c32rtomb").forEach {
+                    add("-D$it=printf")
+                }
             }
         }
         addAll(additionalClangFlags)
