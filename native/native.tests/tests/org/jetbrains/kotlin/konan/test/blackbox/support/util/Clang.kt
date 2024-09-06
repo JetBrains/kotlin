@@ -99,6 +99,10 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
             add("-Wno-unused-command-line-argument")
             addAll(configurables.linkerKonanFlags)
         }
+        if (configurables.target.family.isAppleFamily && clangDistribution == ClangDistribution.Llvm && clangMode == ClangMode.CXX) {
+            // Prevent KT-70603 by removing llvm-dev C++ stdlib from the search path
+            addAll(listOf("-stdlib++-isystem", "${configurables.absoluteTargetSysRoot}/usr/include/c++/v1"))
+        }
         addAll(additionalClangFlags)
         add("-o")
         add(outputFile.absolutePath)
