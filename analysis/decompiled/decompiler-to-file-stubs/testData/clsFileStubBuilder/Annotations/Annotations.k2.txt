@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Annotations, fqName=Annotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
+  CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE
@@ -347,7 +347,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+      CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
           MODIFIER_LIST[private]
@@ -358,7 +358,7 @@ PsiJetFileStubImpl[package=]
                     REFERENCE_EXPRESSION[referencedName=a]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[classId=/Annotations.En, fqName=Annotations.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
+      CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
         MODIFIER_LIST[enum public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=En]
           MODIFIER_LIST[private]
@@ -378,15 +378,15 @@ PsiJetFileStubImpl[package=]
                           REFERENCE_EXPRESSION[referencedName=Annotations]
                         REFERENCE_EXPRESSION[referencedName=En]
         CLASS_BODY
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=a]
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -398,7 +398,7 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=c]
-      CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
+      CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
           MODIFIER_LIST[public]

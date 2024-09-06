@@ -132,6 +132,12 @@ public class ClsStubBuilderK2CompilerTestGenerated extends AbstractClsStubBuilde
   }
 
   @Test
+  @TestMetadata("DefaultImplsInInterface")
+  public void testDefaultImplsInInterface() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefaultImplsInInterface/");
+  }
+
+  @Test
   @TestMetadata("DefinitelyNotNullTypes")
   public void testDefinitelyNotNullTypes() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/DefinitelyNotNullTypes/");

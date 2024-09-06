@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
+  CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=DependencyOnNestedClasses]
       MODIFIER_LIST[public]

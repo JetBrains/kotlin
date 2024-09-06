@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/AnnotationsOnParenthesizedTypes, fqName=AnnotationsOnParenthesizedTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnParenthesizedTypes, superNames=[]]
+  CLASS[classId=/AnnotationsOnParenthesizedTypes, fqName=AnnotationsOnParenthesizedTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnParenthesizedTypes, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotationsOnParenthesizedTypes]
       MODIFIER_LIST[public]

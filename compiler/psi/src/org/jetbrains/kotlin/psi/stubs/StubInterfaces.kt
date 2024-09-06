@@ -58,6 +58,12 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, K
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
     fun isInterface(): Boolean
     fun isEnumEntry(): Boolean
+
+    /**
+     * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
+     * the binary class was compiled with `-Xjvm-default={all|all-compatibility}` option or not.
+     */
+    fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
