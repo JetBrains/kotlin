@@ -50,12 +50,10 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
         boolean isEnumEntry = psi instanceof KtEnumEntry;
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
         ClassId classId = StubUtils.createNestedClassId(parentStub, psi);
-        return new KotlinClassStubImpl(
-                getStubType(isEnumEntry), (StubElement<?>) parentStub,
-                StringRef.fromString(fqName != null ? fqName.asString() : null), classId,
-                StringRef.fromString(psi.getName()),
-                Utils.INSTANCE.wrapStrings(superNames),
-                psi.isInterface(), isEnumEntry, psi.isLocal(), psi.isTopLevel()
+        return new KotlinClassStubImpl(getStubType(isEnumEntry), (StubElement<?>) parentStub,
+                                       StringRef.fromString(fqName != null ? fqName.asString() : null), classId,
+                                       StringRef.fromString(psi.getName()), Utils.INSTANCE.wrapStrings(superNames), psi.isInterface(),
+                                       isEnumEntry, false,psi.isLocal(), psi.isTopLevel()
         );
     }
 
@@ -70,6 +68,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
 
         dataStream.writeBoolean(stub.isInterface());
         dataStream.writeBoolean(stub.isEnumEntry());
+        dataStream.writeBoolean(stub.isClsStubCompiledToJvmDefaultImplementation());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isTopLevel());
 
@@ -90,6 +89,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
 
         boolean isTrait = dataStream.readBoolean();
         boolean isEnumEntry = dataStream.readBoolean();
+        boolean isNewPlaceForBodyGeneration = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
 
@@ -101,7 +101,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
 
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), (StubElement<?>) parentStub, qualifiedName,classId, name, superNames,
-                isTrait, isEnumEntry, isLocal, isTopLevel
+                isTrait, isEnumEntry, isNewPlaceForBodyGeneration, isLocal, isTopLevel
         );
     }
 

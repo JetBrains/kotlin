@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/RepeatableAnnotationClass, fqName=RepeatableAnnotationClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotationClass, superNames=[Annotation]]
+  CLASS[classId=/RepeatableAnnotationClass, fqName=RepeatableAnnotationClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotationClass, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
         CONSTRUCTOR_CALLEE

@@ -2,10 +2,10 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/SealedInterface, fqName=test.SealedInterface, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SealedInterface, superNames=[]]
+  CLASS[classId=test/SealedInterface, fqName=test.SealedInterface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SealedInterface, superNames=[]]
     MODIFIER_LIST[public sealed]
     CLASS_BODY
-      CLASS[classId=test/SealedInterface.Nested, fqName=test.SealedInterface.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[SealedInterface]]
+      CLASS[classId=test/SealedInterface.Nested, fqName=test.SealedInterface.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[SealedInterface]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
           MODIFIER_LIST[public]

@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -59,6 +61,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
+import java.util.jar.JarFile
 import kotlin.reflect.jvm.jvmName
 
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
@@ -84,6 +87,20 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             FirErrors.UNEXPECTED_SAFE_CALL,
             FirErrors.DSL_SCOPE_VIOLATION,
         ).map { it.name }
+    }
+
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        if (mainFile == null) {
+            assert(mainModule.moduleKind == TestModuleKind.LibraryBinary)
+
+            val binaryMainModule = mainModule.ktModule as KaLibraryModule
+            val binaryMainModuleAsFile =
+                binaryMainModule.binaryRoots.singleOrNull()?.toFile() ?: error("The binary main module must have a single Jar file")
+            val actualText = dumpClassesFromJar(binaryMainModuleAsFile)
+            testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
+            return
+        }
+        super.doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -179,14 +196,35 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun dumpClassFiles(outputFiles: List<KaCompiledFile>): String {
-        val classes = outputFiles
-            .filter { it.path.endsWith(".class", ignoreCase = true) }
-            .also { check(it.isNotEmpty()) }
-            .sortedBy { it.path }
-            .map { outputFile ->
-                val classReader = ClassReader(outputFile.content)
-                ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, ClassReader.SKIP_CODE) }
+        val classReaders =
+            outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }.also { check(it.isNotEmpty()) }.sortedBy { it.path }
+                .map { ClassReader(it.content) }
+        return dumpClassFromClassReaders(classReaders)
+    }
+
+    private fun dumpClassesFromJar(jar: File): String {
+        val jarFile = JarFile(jar)
+        val entries = jarFile.entries()
+        val classInputStreamList = buildList {
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                if (entry.name.endsWith(".class")) {
+                    add(entry)
+                }
             }
+        }.sortedBy { it.name }.map { jarFile.getInputStream(it) }
+
+        val result = dumpClassFromClassReaders(classInputStreamList.map { ClassReader(it) })
+        classInputStreamList.forEach { it.close() }
+        jarFile.close()
+
+        return result
+    }
+
+    private fun dumpClassFromClassReaders(classReaders: List<ClassReader>): String {
+        val classes = classReaders.map { classReader ->
+            ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, ClassReader.SKIP_CODE) }
+        }
 
         val allClasses = classes.associateBy { Type.getObjectType(it.name) }
 

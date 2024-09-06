@@ -2,13 +2,13 @@ PsiJetFileStubImpl[package=test]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
+KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
   KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotationValues]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
           valueArguments: (ia = [1, 2, 3], la = [1.toLong()], fa = [], da = [2.2.toDouble()], ca = [\u0061 ('a')], ba = [true, false])
@@ -22,7 +22,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
           valueArguments: (c1 = NormalClass(value=test/AnnotationValues.WithClassLiteral), c2 = NormalClass(value=kotlin/String))
@@ -38,7 +38,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
           valueArguments: (e1 = E.E1, e2 = E.E2, e3 = E.E2)
@@ -52,7 +52,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
           valueArguments: (some = "value", nested = Value(classId=test/Nested, argumentsMapping={i=12, s="nested value"}))
@@ -66,7 +66,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
           valueArguments: (i = 12, l = 12.toLong(), b = 12.toByte(), d = 3.3.toDouble(), f = 3.3.toFloat(), c = \u0061 ('a'), b1 = true, b2 = false)
@@ -80,7 +80,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
           valueArguments: (s1 = "some", s2 = "", s3 = "H12")
@@ -94,7 +94,7 @@ KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, is
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY
-    KotlinStub$CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
         KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
           valueArguments: (v = [1, 2, 3])

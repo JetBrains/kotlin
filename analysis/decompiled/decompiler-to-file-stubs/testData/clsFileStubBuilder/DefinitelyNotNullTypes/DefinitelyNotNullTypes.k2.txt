@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/DefinitelyNotNullTypes, fqName=DefinitelyNotNullTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DefinitelyNotNullTypes, superNames=[]]
+  CLASS[classId=/DefinitelyNotNullTypes, fqName=DefinitelyNotNullTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DefinitelyNotNullTypes, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]

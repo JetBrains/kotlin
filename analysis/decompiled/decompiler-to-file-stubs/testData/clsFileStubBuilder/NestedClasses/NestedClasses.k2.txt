@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/NestedClasses, fqName=test.NestedClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedClasses, superNames=[]]
+  CLASS[classId=test/NestedClasses, fqName=test.NestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedClasses, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TOuter]
@@ -25,7 +25,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+      CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[private final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TN]
@@ -52,7 +52,7 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-          CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
+          CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
             MODIFIER_LIST[public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TNN]
@@ -79,7 +79,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
-          CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
+          CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
             MODIFIER_LIST[inner public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TNI]
@@ -106,7 +106,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+      CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[inner public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TI]
@@ -129,7 +129,7 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
-          CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
+          CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
             MODIFIER_LIST[inner private final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TII]

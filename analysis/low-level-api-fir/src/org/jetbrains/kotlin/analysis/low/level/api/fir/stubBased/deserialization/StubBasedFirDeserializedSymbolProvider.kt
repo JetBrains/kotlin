@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -29,8 +30,9 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -154,6 +156,12 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                 deserializeNestedClass = this::getClass,
                 initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(classLikeDeclaration.containingKtFile)
             )
+
+            val classStub = classLikeDeclaration.stub as? KotlinClassStub
+                ?: loadStubByElement<KotlinClassOrObjectStub<KtClassOrObject>?, KtClassOrObject>(
+                    classLikeDeclaration
+                ) as? KotlinClassStub
+            symbol.fir.isNewPlaceForBodyGeneration = classStub?.isClsStubCompiledToJvmDefaultImplementation()
 
             return symbol
         }

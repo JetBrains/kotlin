@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class TopLevelClass : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
