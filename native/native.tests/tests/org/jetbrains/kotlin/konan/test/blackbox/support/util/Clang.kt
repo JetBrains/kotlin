@@ -94,6 +94,14 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         }
         if (configurables.target.family.isAppleFamily && clangDistribution == ClangDistribution.Llvm) {
             addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+            if (clangMode == ClangMode.CXX) {
+                // Prevent KT-70603 by removing llvm-dev C++ stdlib from the search path
+                addAll(listOf("-stdlib++-isystem", "${configurables.absoluteTargetSysRoot}/usr/include/c++/v1"))
+                // Silence minimum clang 16 warnings in llvm 11
+                add("-Wno-#warnings")
+                // Workaround KT-69507
+                add("-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS")
+            }
         }
         addAll(additionalClangFlags)
         add("-o")
