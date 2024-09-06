@@ -38,7 +38,7 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         }
 
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
-            if (expression.operator == IrTypeOperator.IMPLICIT_CAST) {
+            if (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
                 expression.acceptChildren(this, data)
             } else {
                 super.visitTypeOperator(expression, data)

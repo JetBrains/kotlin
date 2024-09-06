@@ -261,7 +261,11 @@ open class FunctionInlining(
                         expression.transformChildrenVoid(this)
 
                         if (expression.returnTargetSymbol == copiedCallee.symbol) {
-                            val expr = expression.value.doImplicitCastIfNeededTo(callSite.type)
+                            val expr = if (callSite.type.isUnit()) {
+                                expression.value.coerceToUnit(context.irBuiltIns, context.typeSystem)
+                            } else {
+                                expression.value.doImplicitCastIfNeededTo(callSite.type)
+                            }
                             return irBuilder.at(expression).irReturn(expr)
                         }
                         return expression
