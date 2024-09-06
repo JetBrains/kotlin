@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -144,10 +144,10 @@ private fun compileImpl(
         return failure(messageCollector)
     }
 
-    val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+    val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->
         val refinedConfiguration =
-            dependenciesProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)
+            configurationsProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)
                 ?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration
         refinedConfiguration.with {
             _languageVersion(context.environment.configuration.languageVersionSettings.languageVersion.versionString)
@@ -360,7 +360,7 @@ private fun doCompileWithK2(
 
     scriptDefinitionProviderService?.run {
         definitionProvider = ScriptDefinitionProvider.getInstance(context.environment.project)
-        configurationProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+        configurationProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
     }
 
     val rawFir = session.buildFirFromKtFiles(sourceFiles) //.reversed()

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -15,7 +15,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
-class CliScriptDependenciesProvider(project: Project) : ScriptDependenciesProvider(project) {
+class CliScriptConfigurationsProvider(project: Project) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()

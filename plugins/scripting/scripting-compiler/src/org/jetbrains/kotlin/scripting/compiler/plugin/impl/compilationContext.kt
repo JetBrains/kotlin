@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompil
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
@@ -349,9 +349,9 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
     sourceFiles: List<KtFile>,
     messageCollector: ScriptDiagnosticsMessageCollector
 ) {
-    val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+    val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
     val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf<String>()) {
-        dependenciesProvider?.getScriptConfiguration(it)?.configuration?.get(
+        configurationsProvider?.getScriptConfiguration(it)?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         ) ?: emptyList()
     }

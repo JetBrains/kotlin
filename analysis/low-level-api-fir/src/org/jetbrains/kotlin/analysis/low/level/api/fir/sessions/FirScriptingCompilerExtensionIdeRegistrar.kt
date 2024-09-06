@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResoluti
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 /**
@@ -35,7 +35,7 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
             +FirScriptDefinitionProviderService.getFactory(
                 definitions, definitionSources,
                 ScriptDefinitionProvider.getInstance(project),
-                ScriptDependenciesProvider.getInstance(project)
+                ScriptConfigurationsProvider.getInstance(project)
             )
         }
 

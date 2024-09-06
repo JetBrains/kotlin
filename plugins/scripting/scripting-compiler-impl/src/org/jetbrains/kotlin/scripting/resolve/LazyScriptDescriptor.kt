@@ -121,7 +121,7 @@ class LazyScriptDescriptor(
     val scriptCompilationConfiguration: () -> ScriptCompilationConfiguration = resolveSession.storageManager.createLazyValue {
         run {
             val containingFile = scriptInfo.script.containingKtFile
-            val provider = ScriptDependenciesProvider.getInstance(containingFile.project)
+            val provider = ScriptConfigurationsProvider.getInstance(containingFile.project)
             provider?.getScriptConfiguration(containingFile)?.configuration
                 ?: containingFile.findScriptDefinition()?.compilationConfiguration
         }
@@ -212,7 +212,7 @@ class LazyScriptDescriptor(
     private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
         val res = ArrayList<ClassDescriptor>()
 
-        val importedScriptsFiles = ScriptDependenciesProvider.getInstance(scriptInfo.script.project)
+        val importedScriptsFiles = ScriptConfigurationsProvider.getInstance(scriptInfo.script.project)
             ?.getScriptConfiguration(scriptInfo.script.containingKtFile)?.importedScripts
         if (importedScriptsFiles != null) {
             val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()

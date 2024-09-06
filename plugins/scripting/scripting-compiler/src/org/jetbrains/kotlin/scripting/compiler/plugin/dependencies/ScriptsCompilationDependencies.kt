@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.asSuccess
-import kotlin.script.experimental.host.FileBasedScriptSource
 
 data class ScriptsCompilationDependencies(
     val classpath: List<File>,
@@ -46,7 +43,7 @@ fun collectScriptsCompilationDependencies(
     val collectedSourceDependencies = ArrayList<ScriptsCompilationDependencies.SourceDependencies>()
     var remainingSources = initialSources
     val knownSourcePaths = initialSources.mapNotNullTo(HashSet()) { it.virtualFile?.path }
-    val importsProvider = ScriptDependenciesProvider.getInstance(project)
+    val importsProvider = ScriptConfigurationsProvider.getInstance(project)
     val psiManager by lazy(LazyThreadSafetyMode.NONE) { PsiManager.getInstance(project) }
     if (importsProvider != null) {
         while (true) {

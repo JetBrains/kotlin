@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
@@ -67,7 +67,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
             project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
-            project.registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(project))
+            project.registerService(ScriptConfigurationsProvider::class.java, CliScriptConfigurationsProvider(project))
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 

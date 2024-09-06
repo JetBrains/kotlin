@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
@@ -223,8 +223,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             files.addAll(additionalDependencies);
         }
 
-        ScriptDependenciesProvider externalImportsProvider =
-                ScriptDependenciesProvider.Companion.getInstance(myEnvironment.getProject());
+        ScriptConfigurationsProvider externalImportsProvider =
+                ScriptConfigurationsProvider.Companion.getInstance(myEnvironment.getProject());
         if (externalImportsProvider != null) {
             myEnvironment.getSourceFiles().forEach(
                     file -> {

@@ -9,18 +9,17 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 
 class FirScriptDefinitionProviderService(
     session: FirSession,
     private val makeDefaultDefinitionProvider: () -> ScriptDefinitionProvider,
-    private val makeDefaultConfigurationProvider: () -> ScriptDependenciesProvider
+    private val makeDefaultConfigurationProvider: () -> ScriptConfigurationsProvider
 ) : FirExtensionSessionComponent(session) {
 
     // TODO: get rid of project-based implementation, write and use own singleton in K2
@@ -33,8 +32,8 @@ class FirScriptDefinitionProviderService(
         }
         set(value) { synchronized(this) { _definitionProvider = value} }
 
-    private var _configurationProvider: ScriptDependenciesProvider? = null
-    var configurationProvider: ScriptDependenciesProvider?
+    private var _configurationProvider: ScriptConfigurationsProvider? = null
+    var configurationProvider: ScriptConfigurationsProvider?
         get() = synchronized(this) {
             if (_configurationProvider == null) _configurationProvider = makeDefaultConfigurationProvider()
             _configurationProvider
@@ -46,7 +45,7 @@ class FirScriptDefinitionProviderService(
             definitions: List<ScriptDefinition>,
             definitionSources: List<ScriptDefinitionsSource>,
             definitionProvider: ScriptDefinitionProvider? = null,
-            configurationProvider: ScriptDependenciesProvider? = null
+            configurationProvider: ScriptConfigurationsProvider? = null
         ): Factory {
             val makeDefinitionsProvider = definitionProvider?.let { { it } }
                 ?: {
@@ -59,11 +58,11 @@ class FirScriptDefinitionProviderService(
             val makeConfigurationProvider = configurationProvider?.let { { it } }
                 ?: {
                     // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
-                    CliScriptDependenciesProvider(
+                    CliScriptConfigurationsProvider(
                         MockProject(
                             null,
                             Disposer.newDisposable(
-                                "Disposable for project of ${CliScriptDependenciesProvider::class.simpleName} created by" +
+                                "Disposable for project of ${CliScriptConfigurationsProvider::class.simpleName} created by" +
                                         " ${FirScriptDefinitionProviderService::class.simpleName}"
                             ),
                         ),

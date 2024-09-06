@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
 import kotlin.script.experimental.api.*
@@ -103,7 +103,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
-                    val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
+                    val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
                         ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
@@ -161,14 +161,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 state.history.push(lineId, scriptDescriptor)
 
-                val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+                val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
                 makeCompiledScript(
                     generationState,
                     snippet,
                     sourceFiles.first(),
                     sourceDependencies
                 ) { ktFile ->
-                    dependenciesProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
+                    configurationsProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }.onSuccess { compiledScript ->
 
