@@ -21,6 +21,7 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.util.PropertiesCollection
 
+@Suppress("DEPRECATION")
 class ScriptCompilationConfigurationFromDefinition(
     hostConfiguration: ScriptingHostConfiguration,
     scriptDefinition: KotlinScriptDefinition

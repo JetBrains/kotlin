@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable

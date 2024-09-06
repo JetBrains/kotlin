@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
-import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -17,10 +15,10 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
 // Transitional class/implementation - migrating to the new API
-// TODO: deprecate KotlinScriptDefinition
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
 abstract class ScriptDefinition : UserDataHolderBase() {
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use configurations instead")
     abstract val legacyDefinition: KotlinScriptDefinition
     abstract val hostConfiguration: ScriptingHostConfiguration
@@ -109,21 +107,6 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
         override fun hashCode(): Int = legacyDefinition.hashCode()
     }
-
-    open class FromLegacyTemplate(
-        hostConfiguration: ScriptingHostConfiguration,
-        template: KClass<*>,
-        templateClasspath: List<File> = emptyList(),
-        defaultCompilerOptions: Iterable<String> = emptyList()
-    ) : FromLegacy(
-        hostConfiguration,
-        KotlinScriptDefinitionFromAnnotatedTemplate(
-            template,
-            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke(),
-            templateClasspath
-        ),
-        defaultCompilerOptions
-    )
 
     abstract class FromConfigurationsBase() : ScriptDefinition() {
 

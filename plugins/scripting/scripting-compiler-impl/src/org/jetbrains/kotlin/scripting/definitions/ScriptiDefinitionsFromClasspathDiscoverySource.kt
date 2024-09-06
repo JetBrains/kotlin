@@ -335,12 +335,7 @@ private fun loadScriptDefinition(
 ): ScriptDefinition? {
     try {
         val cls = classLoader.loadClass(template)
-        val def =
-            if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
-                ScriptDefinition.FromTemplate(hostConfiguration, cls.kotlin, ScriptDefinition::class)
-            } else {
-                ScriptDefinition.FromLegacyTemplate(hostConfiguration, cls.kotlin)
-            }
+        val def = ScriptDefinition.FromTemplate(hostConfiguration, cls.kotlin, ScriptDefinition::class)
         messageReporter(
             ScriptDiagnostic.Severity.DEBUG,
             "Added script definition $template to configuration: name = ${def.name}"
