@@ -209,9 +209,8 @@ tasks.test {
     description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
 }
 
-val memoryPerGradleTestWorkerMb = 6000
-val maxParallelTestForks =
-    (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
+//val memoryPerGradleTestWorkerMb = 6000
+val maxParallelTestForks = 1
 
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
