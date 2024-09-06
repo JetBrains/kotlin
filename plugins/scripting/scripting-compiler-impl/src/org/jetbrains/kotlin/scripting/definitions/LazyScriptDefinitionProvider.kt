@@ -79,21 +79,10 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
             cachedDefinitions.firstOrNull { it.isScript(script) }
         }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =
-        if (nonScriptId(fileName)) {
-            null
-        } else {
-            cachedDefinitions.map { it.legacyDefinition }.firstOrNull { it.isScript(fileName) }
-        }
-
     override fun isScript(script: SourceCode): Boolean = findDefinition(script) != null
 
     override fun getKnownFilenameExtensions(): Sequence<String> =
         cachedDefinitions.map { it.fileExtension }
-
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = getDefaultDefinition().legacyDefinition
 
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere

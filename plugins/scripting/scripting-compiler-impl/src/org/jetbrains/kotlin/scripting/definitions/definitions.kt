@@ -41,9 +41,7 @@ fun PsiFile.isScript(): Boolean {
     // Sometimes - i.e. when event system is disabled for a view provider - requesting
     // virtual file directly from the viewProvider is the only way of obtaining it
     val virtualFile = virtualFile ?: originalFile.virtualFile ?: viewProvider.virtualFile
-    if (virtualFile.isNonScript()) return false
-
-    return true
+    return !virtualFile.isNonScript()
 }
 
 fun PsiFile.findScriptDefinition(): ScriptDefinition? {

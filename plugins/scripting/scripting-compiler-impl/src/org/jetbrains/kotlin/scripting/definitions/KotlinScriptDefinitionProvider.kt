@@ -9,12 +9,6 @@ import com.intellij.openapi.project.Project
 import kotlin.script.experimental.api.SourceCode
 
 interface ScriptDefinitionProvider {
-    @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
-    fun findScriptDefinition(fileName: String): KotlinScriptDefinition?
-
-    @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
-    fun getDefaultScriptDefinition(): KotlinScriptDefinition
-
     fun isScript(script: SourceCode): Boolean
 
     fun findDefinition(script: SourceCode): ScriptDefinition?
