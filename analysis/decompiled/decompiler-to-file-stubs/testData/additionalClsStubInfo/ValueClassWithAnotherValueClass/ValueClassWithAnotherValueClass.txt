@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=pack]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=pack]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=pack/ValueClassWithAnotherValueClass, fqName=pack.ValueClassWithAnotherValueClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithAnotherValueClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
+KotlinStub$CLASS[classId=pack/ValueClassWithAnotherValueClass, fqName=pack.ValueClassWithAnotherValueClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithAnotherValueClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
   KotlinStub$MODIFIER_LIST[public final value]
     KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
       valueArguments: ()

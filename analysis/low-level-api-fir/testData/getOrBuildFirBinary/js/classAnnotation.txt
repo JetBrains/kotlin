@@ -6,7 +6,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Y|() public final [ResolvedTo(BODY_RESOLVE)] class Cls : R|kotlin/Any| {
+@R|Y|() public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Cls : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Cls] constructor(): R|Cls|
 
 }

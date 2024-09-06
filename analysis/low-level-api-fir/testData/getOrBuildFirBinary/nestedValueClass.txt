@@ -15,8 +15,8 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] class LibraryClass : R|kotlin/Any| {
-    @R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryClass)] class LibraryNestedValueClass : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class LibraryClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryClass), IsNewPlaceForBodyGeneration=false] class LibraryNestedValueClass : R|kotlin/Any| {
         public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
         public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

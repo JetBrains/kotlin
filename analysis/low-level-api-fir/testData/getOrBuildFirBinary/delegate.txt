@@ -19,7 +19,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] class I : R|A| {
+public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class I : R|A| {
     public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Int|.smth(): R|kotlin/Short|

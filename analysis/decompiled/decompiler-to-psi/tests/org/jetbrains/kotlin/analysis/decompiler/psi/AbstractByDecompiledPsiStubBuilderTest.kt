@@ -34,4 +34,6 @@ abstract class AbstractByDecompiledPsiStubBuilderTest : AbstractStubBuilderTest(
             ?: error("No decompiled file was found for $classFile")
         return KtFileStubBuilder().buildStubTree(decompiledFile) as PsiFileStub<*>
     }
+
+    override fun skipBinaryStubOnlyTest(): Boolean = true
 }

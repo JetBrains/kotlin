@@ -65,6 +65,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
   }
 
   @Test
+  @TestMetadata("defaultImpls.kt")
+  public void testDefaultImpls() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/defaultImpls.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultImplsCLIOnly.kt")
+  public void testDefaultImplsCLIOnly() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/defaultImplsCLIOnly.kt");
+  }
+
+  @Test
   @TestMetadata("defaultParameterValue.kt")
   public void testDefaultParameterValue() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/defaultParameterValue.kt");

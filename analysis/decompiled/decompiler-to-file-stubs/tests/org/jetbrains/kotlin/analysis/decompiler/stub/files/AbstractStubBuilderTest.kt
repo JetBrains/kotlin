@@ -16,9 +16,12 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Paths
 
 abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
+    open fun skipBinaryStubOnlyTest(): Boolean = false
+
     fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
+        if (skipBinaryStubOnlyTest() && testData.containsDirective("BINARY_STUB_ONLY_TEST")) return
         testData.withFirIgnoreDirective {
             doTest(testData, useStringTable = true)
             doTest(testData, useStringTable = false)

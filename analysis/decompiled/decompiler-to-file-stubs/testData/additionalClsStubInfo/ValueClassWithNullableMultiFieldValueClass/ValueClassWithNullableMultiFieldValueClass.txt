@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=test/ValueClassWithNullableMultiFieldValueClass, fqName=test.ValueClassWithNullableMultiFieldValueClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithNullableMultiFieldValueClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
+KotlinStub$CLASS[classId=test/ValueClassWithNullableMultiFieldValueClass, fqName=test.ValueClassWithNullableMultiFieldValueClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithNullableMultiFieldValueClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
   KotlinStub$MODIFIER_LIST[public final value]
     KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
       valueArguments: ()

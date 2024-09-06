@@ -6,7 +6,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/js/JsModule|(import = String(jquery)) @R|kotlin/js/JsNonModule|() @R|kotlin/js/JsName|(name = String($)) public abstract external [ResolvedTo(BODY_RESOLVE)] class JQuery : R|kotlin/Any| {
+@R|kotlin/js/JsModule|(import = String(jquery)) @R|kotlin/js/JsNonModule|() @R|kotlin/js/JsName|(name = String($)) public abstract external [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class JQuery : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JQuery] constructor(): R|JQuery|
 
 }

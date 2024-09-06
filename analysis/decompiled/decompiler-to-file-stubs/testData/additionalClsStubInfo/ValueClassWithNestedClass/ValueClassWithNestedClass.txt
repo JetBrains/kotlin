@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassWithNestedClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithNestedClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
+KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassWithNestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ValueClassWithNestedClass, superNames=[]]   valueClassRepresentation: INLINE_CLASS
   KotlinStub$MODIFIER_LIST[public final value]
     KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
       valueArguments: ()
@@ -66,7 +66,7 @@ KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassW
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
-    KotlinStub$CLASS[classId=test/ValueClassWithNestedClass.NestedClass, fqName=test.ValueClassWithNestedClass.NestedClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
+    KotlinStub$CLASS[classId=test/ValueClassWithNestedClass.NestedClass, fqName=test.ValueClassWithNestedClass.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NestedClass]
         KotlinStub$MODIFIER_LIST[public]

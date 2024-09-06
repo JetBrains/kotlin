@@ -24,14 +24,14 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public open [ResolvedTo(BODY_RESOLVE)] class Outer<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
-    public final inner [ResolvedTo(BODY_RESOLVE)] class Inner<[ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+public open [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Outer<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final inner [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Inner<[ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] Outer<T>.constructor(): R|Outer.Inner<T>|
 
     }
 
-    public final inner [ResolvedTo(BODY_RESOLVE)] class Nested2<[ResolvedTo(BODY_RESOLVE)] U, [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
-        public final inner [ResolvedTo(BODY_RESOLVE)] class Inner2<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U), [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+    public final inner [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Nested2<[ResolvedTo(BODY_RESOLVE)] U, [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+        public final inner [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Inner2<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U), [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner2] Outer.Nested2<U, T>.constructor<[ResolvedTo(BODY_RESOLVE)] V>(): R|Outer.Nested2.Inner2<V, U, T>|
 
         }
@@ -40,8 +40,8 @@ public open [ResolvedTo(BODY_RESOLVE)] class Outer<[ResolvedTo(BODY_RESOLVE)] T>
 
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] class Nested3<[ResolvedTo(BODY_RESOLVE)] U> : R|kotlin/Any| {
-        public final inner [ResolvedTo(BODY_RESOLVE)] class Inner3<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U)> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Nested3<[ResolvedTo(BODY_RESOLVE)] U> : R|kotlin/Any| {
+        public final inner [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Inner3<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U)> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner3] Outer.Nested3<U>.constructor<[ResolvedTo(BODY_RESOLVE)] V>(): R|Outer.Nested3.Inner3<V, U>|
 
         }

@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=pack]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=pack]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.MultiFieldValueClassWithTypeAlias, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MultiFieldValueClassWithTypeAlias, superNames=[]]   valueClassRepresentation: MULTI_FIELD_VALUE_CLASS
+KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.MultiFieldValueClassWithTypeAlias, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MultiFieldValueClassWithTypeAlias, superNames=[]]   valueClassRepresentation: MULTI_FIELD_VALUE_CLASS
   KotlinStub$MODIFIER_LIST[public final value]
     KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
       valueArguments: ()

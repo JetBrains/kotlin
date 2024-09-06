@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-TARGET: @R|library/Anno|(name = String(WithFoo)) public final [ResolvedTo(BODY_RESOLVE)] class WithAnno : R|kotlin/Any| {
+TARGET: @R|library/Anno|(name = String(WithFoo)) public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class WithAnno : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithAnno] constructor(): R|library/WithAnno|
 
 }

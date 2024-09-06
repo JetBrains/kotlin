@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
@@ -149,6 +150,7 @@ private class ClassClsStubBuilder(
                     superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
+                    isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                     isLocal = false,
                     isTopLevel = !this.classId.isNestedClass,
                     valueClassRepresentation = valueClassRepresentation(),
@@ -218,6 +220,7 @@ private class ClassClsStubBuilder(
                 superNames = arrayOf(),
                 isInterface = false,
                 isEnumEntry = true,
+                isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                 isLocal = false,
                 isTopLevel = false,
                 valueClassRepresentation = null,

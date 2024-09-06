@@ -1,13 +1,13 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/RepeatableAnnotation, fqName=RepeatableAnnotation, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotation, superNames=[]]
+  CLASS[classId=/RepeatableAnnotation, fqName=RepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotation, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=RepeatableAnnotation]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      CLASS[classId=/RepeatableAnnotation.ClassWithOneRepeatableAnnotation, fqName=RepeatableAnnotation.ClassWithOneRepeatableAnnotation, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithOneRepeatableAnnotation, superNames=[]]
+      CLASS[classId=/RepeatableAnnotation.ClassWithOneRepeatableAnnotation, fqName=RepeatableAnnotation.ClassWithOneRepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithOneRepeatableAnnotation, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
             CONSTRUCTOR_CALLEE
@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[classId=/RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithTwoRepeatableAnnotations, superNames=[]]
+      CLASS[classId=/RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithTwoRepeatableAnnotations, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
             CONSTRUCTOR_CALLEE
@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      CLASS[classId=/RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithThreeRepeatableAnnotations, superNames=[]]
+      CLASS[classId=/RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithThreeRepeatableAnnotations, superNames=[]]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
             CONSTRUCTOR_CALLEE
