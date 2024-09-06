@@ -70,8 +70,7 @@ internal fun MethodNode.acceptWithStateMachine(
                 || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION),
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
-        initialVarsCountByType = varsCountByType,
-        shouldOptimiseUnusedVariables = !context.config.enableDebugMode
+        initialVarsCountByType = varsCountByType
     )
     accept(visitor)
 }
