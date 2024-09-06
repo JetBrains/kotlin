@@ -151,6 +151,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
                     spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
                 }
+                configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
+                    spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
+                }
                 spawnedConfiguration.setupConfiguration()
                 val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
