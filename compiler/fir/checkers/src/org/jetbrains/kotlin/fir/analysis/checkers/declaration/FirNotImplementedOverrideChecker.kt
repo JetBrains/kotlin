@@ -82,12 +82,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides().symbol
 
                 if (symbol.multipleDelegatesWithTheSameSignature == true) {
-                    if (directOverriddenMembersWithBaseScope.isNotEmpty() &&
-                        // We should report here if either 2+ members or single member with non-enhancement origin
-                        directOverriddenMembersWithBaseScope.singleOrNull()?.member?.origin != FirDeclarationOrigin.Enhancement
-                    ) {
-                        manyImplementationsDelegationSymbols.add(symbol)
-                    }
+                    manyImplementationsDelegationSymbols.add(symbol)
                 }
 
                 val firstFinal = filteredOverriddenMembers.firstOrNull { it.isFinal }
