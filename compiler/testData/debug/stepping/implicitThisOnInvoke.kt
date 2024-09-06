@@ -40,6 +40,7 @@ fun test(b: B) {
 // test.kt:10 <init>
 // test.kt:10 <init>
 // test.kt:5 box
+// test.kt:16 test
 // test.kt:11 invoke
 // test.kt:18 test
 // test.kt:6 box

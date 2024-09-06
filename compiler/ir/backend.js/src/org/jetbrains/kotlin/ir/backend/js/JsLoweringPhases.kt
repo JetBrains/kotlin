@@ -266,6 +266,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
             context,
             JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = true),
             produceOuterThisFields = false,
+            insertAdditionalImplicitCasts = true,
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -314,6 +315,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
             context,
             JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false),
             produceOuterThisFields = false,
+            insertAdditionalImplicitCasts = true,
         )
     },
     name = "InlineAllFunctions",
