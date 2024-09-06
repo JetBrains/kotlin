@@ -9,9 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -60,9 +64,18 @@ class KtTestModuleStructure(
 
     val allSourceFiles: List<PsiFileSystemItem>
         get() = buildList {
-            val files = mainModules.flatMap { it.files }
+            val files = mainModules
+                .filter { it.ktModule.canContainSourceFiles }
+                .flatMap { it.files }
+
             addAll(files)
             addAll(findJvmRootsForJavaFiles(files.filterIsInstance<PsiJavaFile>()))
+        }
+
+    private val KaModule.canContainSourceFiles: Boolean
+        get() = when (this) {
+            is KaSourceModule, is KaScriptModule, is KaDanglingFileModule, is KaNotUnderContentRootModule -> true
+            else -> false
         }
 
     fun getKtTestModule(moduleName: String): KtTestModule {

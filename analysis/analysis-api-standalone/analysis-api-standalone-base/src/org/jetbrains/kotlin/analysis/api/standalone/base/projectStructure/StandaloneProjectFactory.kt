@@ -340,12 +340,19 @@ object StandaloneProjectFactory {
         return result.toList()
     }
 
-    fun getAllBinaryRoots(
-        modules: List<KaModule>,
-        environment: KotlinCoreProjectEnvironment,
-    ): List<JavaRoot> = withAllTransitiveDependencies(modules)
-        .filterIsInstance<KaLibraryModule>()
-        .flatMap { it.getJavaRoots(environment) }
+    fun getAllBinaryRoots(modules: List<KaModule>, environment: KotlinCoreProjectEnvironment): List<JavaRoot> {
+        return buildList {
+            for (module in withAllTransitiveDependencies(modules)) {
+                val roots = when (module) {
+                    is KaLibraryModule -> module.getJavaRoots(environment)
+                    is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots(environment)
+                    else -> emptyList()
+                }
+
+                addAll(roots)
+            }
+        }
+    }
 
     fun createSearchScopeByLibraryRoots(
         binaryRoots: Collection<Path>,
