@@ -9,9 +9,8 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
-class ScriptEvaluationConfigurationFromDefinition(
-    val hostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinition: KotlinScriptDefinition
+class ScriptEvaluationConfigurationFromHostConfiguration(
+    val hostConfiguration: ScriptingHostConfiguration
 ) : ScriptEvaluationConfiguration(
     {
         hostConfiguration(hostConfiguration)

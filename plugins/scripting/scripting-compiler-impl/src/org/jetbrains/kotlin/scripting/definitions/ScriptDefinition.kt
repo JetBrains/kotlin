@@ -74,9 +74,8 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         }
 
         override val evaluationConfiguration by lazy {
-            ScriptEvaluationConfigurationFromDefinition(
-                hostConfiguration,
-                legacyDefinition
+            ScriptEvaluationConfigurationFromHostConfiguration(
+                hostConfiguration
             )
         }
 
@@ -211,7 +210,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             object : FromConfigurations(
                 hostConfiguration,
                 ScriptCompilationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition),
-                ScriptEvaluationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition)
+                ScriptEvaluationConfigurationFromHostConfiguration(hostConfiguration)
             ) {
                 override val isDefault = true
             }

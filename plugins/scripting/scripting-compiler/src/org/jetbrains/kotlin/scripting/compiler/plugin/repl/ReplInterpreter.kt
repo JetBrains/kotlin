@@ -71,9 +71,10 @@ class ReplInterpreter(
             )
 
         compilationConfiguration = context.baseScriptCompilationConfiguration
-        evaluationConfiguration = ScriptEvaluationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION).with {
-            scriptExecutionWrapper<Any> { replConfiguration.executionInterceptor.execute(it) }
-        }
+        evaluationConfiguration =
+            ScriptEvaluationConfigurationFromHostConfiguration(hostConfiguration).with {
+                scriptExecutionWrapper<Any> { replConfiguration.executionInterceptor.execute(it) }
+            }
 
         replState = JvmReplCompilerState(
             {
