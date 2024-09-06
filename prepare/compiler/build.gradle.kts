@@ -1,6 +1,8 @@
 @file:Suppress("HasPlatformType")
 
 import org.gradle.internal.jvm.Jvm
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -250,7 +252,11 @@ dependencies {
 val librariesKotlinTestFiles = files(
     listOf(null, "junit", "junit5", "testng", "js").map { suffix ->
         listOf(null, "sources").map { classifier ->
-            configurations.detachedConfiguration(dependencies.create(kotlinTest(suffix, classifier))).apply { isTransitive = false }
+            configurations.detachedConfiguration(dependencies.create(kotlinTest(suffix, classifier))).apply {
+                isTransitive = false
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                attributes.attribute(KlibPackaging.ATTRIBUTE, objects.named(KlibPackaging.PACKED))
+            }
         }
     }
 )
