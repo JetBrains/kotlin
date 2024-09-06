@@ -125,10 +125,8 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.ClassTypeParameterCount
         }
 
-        val expectModality = expectClassSymbol.modality
-        val actualModality = actualClass.modality
-        if (expectModality != null && actualModality != null && !areCompatibleModalities(expectModality, actualModality)) {
-            return ExpectActualCheckingCompatibility.Modality(expectModality, actualModality)
+        if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
+            return ExpectActualCheckingCompatibility.Modality(expectClassSymbol.modality, actualClass.modality)
         }
 
         if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
@@ -319,8 +317,6 @@ object AbstractExpectActualChecker {
         val expectModality = expectDeclaration.modality
         val actualModality = actualDeclaration.modality
         if (
-            expectModality != null &&
-            actualModality != null &&
             !areCompatibleModalities(
                 expectModality,
                 actualModality,
@@ -422,8 +418,8 @@ object AbstractExpectActualChecker {
     }
 
     private fun areCompatibleModalities(
-        expectModality: Modality,
-        actualModality: Modality,
+        expectModality: Modality?,
+        actualModality: Modality?,
         expectContainingClassModality: Modality? = null,
         actualContainingClassModality: Modality? = null,
     ): Boolean {

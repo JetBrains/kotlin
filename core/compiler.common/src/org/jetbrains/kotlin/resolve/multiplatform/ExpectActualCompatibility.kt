@@ -99,8 +99,8 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
 
     // Common
     class Modality(
-        expectModality: org.jetbrains.kotlin.descriptors.Modality,
-        actualModality: org.jetbrains.kotlin.descriptors.Modality,
+        expectModality: org.jetbrains.kotlin.descriptors.Modality?,
+        actualModality: org.jetbrains.kotlin.descriptors.Modality?,
     ) : Incompatible<Nothing>(
         "modality is different. " +
                 "Expect declaration modality is '${expectModality.toString().lowercase()}'. " +
