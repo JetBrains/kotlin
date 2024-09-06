@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -67,11 +70,26 @@ class FirJavaTypeParameter(
         get() {
             enhancedBounds?.let { return it }
             if (containingDeclarationSymbol is FirClassSymbol) {
-                error(
-                    "Attempt to access Java type parameter bounds before their enhancement!" +
-                            " ownerSymbol = $containingDeclarationSymbol typeParameter = $name"
-                )
+                val firJavaClass = containingDeclarationSymbol.fir
+                checkWithAttachment(
+                    firJavaClass is FirJavaClass,
+                    { "Unexpected containing declaration: ${firJavaClass::class.simpleName}" }
+                ) {
+                    withFirEntry("class", firJavaClass)
+                }
+
+                // Explicitly call type parameters which will trigger enhancement
+                firJavaClass.typeParameters
+
+                // Second attempt after enhancement
+                enhancedBounds?.let { return it }
+
+                errorWithAttachment("Attempt to access Java type parameter bounds before their enhancement!") {
+                    withFirEntry("class", firJavaClass)
+                    withEntry("name", name.asString())
+                }
             }
+
             // It's possible to get here for FirJavaMethod via JavaOverrideChecker
             // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
             // buildTypeParametersSubstitutorIfCompatible -> buildErasure

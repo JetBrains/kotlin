@@ -47,7 +47,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
     private val nonEnhancedSuperTypes: List<FirTypeRef>,
-    override val typeParameters: MutableList<FirTypeParameterRef>,
+    val nonEnhancedTypeParameters: List<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
@@ -70,7 +70,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val superTypeRefs: List<FirTypeRef> by lazy {
-        val enhancement = FirSignatureEnhancement(this@FirJavaClass, moduleData.session, overridden = { emptyList() })
+        val enhancement = FirSignatureEnhancement(this, moduleData.session, overridden = { emptyList() })
         enhancement.enhanceSuperTypes(nonEnhancedSuperTypes)
     }
 
@@ -82,11 +82,20 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         getDeprecationsProvider(moduleData.session)
     }
 
+    // TODO: KT-68587
     private val typeParameterBoundsResolveLock = ReentrantLock()
 
-    internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
-        // TODO: KT-68587
-        typeParameterBoundsResolveLock.withLock(f)
+    /**
+     * It is crucial to have [LazyThreadSafetyMode.PUBLICATION] here as [typeParameters] can be
+     * accessible recursively via [FirSignatureEnhancement.enhanceTypeParameterBounds] from different threads,
+     * so we may avoid deadlock.
+     *
+     * TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
+     */
+    override val typeParameters: List<FirTypeParameterRef> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val enhancement = FirSignatureEnhancement(this, moduleData.session, overridden = { emptyList() })
+        enhancement.enhanceTypeParameterBounds(this, nonEnhancedTypeParameters, typeParameterBoundsResolveLock::withLock)
+        nonEnhancedTypeParameters
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
@@ -144,7 +153,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 

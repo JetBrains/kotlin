@@ -386,7 +386,7 @@ fun FirClassSymbol<*>.createJavaClass(
         javaTypeParameterStack = containingClass.javaTypeParameterStack
         scopeProvider = JavaScopeProvider
         if (!isStatic) {
-            typeParameters += containingClass.typeParameters.map {
+            typeParameters += containingClass.nonEnhancedTypeParameters.map {
                 buildOuterClassTypeParameterRef { symbol = it.symbol }
             }
         }

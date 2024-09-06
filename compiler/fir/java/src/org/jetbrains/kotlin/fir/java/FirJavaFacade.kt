@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
-import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -174,12 +173,12 @@ abstract class FirJavaFacade(
          * where [FirResolvedTypeRef] is expected.
          *
          * 1. (will happen lazily in [FirJavaClass.annotations]]) Resolve annotations
-         * 2. Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
+         * 2. (will happen lazily in [FirJavaClass.typeParameters]) Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
          * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
          */
-        val enhancement = FirSignatureEnhancement(firJavaClass, session) { emptyList() }
-        enhancement.performBoundsResolutionForClassTypeParameters(firJavaClass)
 
+        // Note: in the current state it is illegal to call annotations,
+        // type parameters and super type refs from compiler plugins for Java classes
         updateStatuses(firJavaClass, parentClassSymbol)
 
         return firJavaClass
@@ -259,12 +258,14 @@ abstract class FirJavaFacade(
             val classTypeParameters = javaClass.typeParameters.convertTypeParameters(
                 javaTypeParameterStack, classSymbol, moduleData, fakeSource
             )
+
             typeParameters += classTypeParameters
             if (!isStatic && parentClassSymbol != null) {
-                typeParameters += parentClassSymbol.fir.typeParameters.map {
+                typeParameters += (parentClassSymbol.fir as FirJavaClass).nonEnhancedTypeParameters.map {
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
                 }
             }
+
             javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session, fakeSource) }
             if (superTypeRefs.isEmpty()) {
                 superTypeRefs.add(
@@ -654,7 +655,17 @@ abstract class FirJavaFacade(
             returnTypeRef = buildResolvedTypeRef {
                 coneType = ownerClassBuilder.buildSelfTypeRef()
             }
-            dispatchReceiverType = if (isThisInner) outerClassSymbol?.defaultType() else null
+
+            dispatchReceiverType = if (isThisInner)
+                outerClassSymbol?.fir?.let { outerFirJavaClass ->
+                    outerFirJavaClass as FirJavaClass
+
+                    // to avoid type parameter enhancement
+                    outerClassSymbol.classId.defaultType(outerFirJavaClass.nonEnhancedTypeParameters.map { it.symbol })
+                }
+            else
+                null
+
             typeParameters += classTypeParameters.toRefs()
 
             val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)

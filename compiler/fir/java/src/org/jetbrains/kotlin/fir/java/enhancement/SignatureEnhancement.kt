@@ -527,12 +527,15 @@ class FirSignatureEnhancement(
         function.replaceStatus(newStatus)
     }
 
-    fun performBoundsResolutionForClassTypeParameters(klass: FirJavaClass) {
-        enhanceTypeParameterBounds(klass, klass::withTypeParameterBoundsResolveLock)
+    private fun enhanceTypeParameterBounds(owner: FirTypeParameterRefsOwner, lock: (() -> Unit) -> Unit) {
+        enhanceTypeParameterBounds(owner, owner.typeParameters, lock)
     }
 
-    private fun enhanceTypeParameterBounds(owner: FirTypeParameterRefsOwner, lock: (() -> Unit) -> Unit) {
-        val typeParameters = owner.typeParameters
+    fun enhanceTypeParameterBounds(
+        owner: FirTypeParameterRefsOwner,
+        typeParameters: List<FirTypeParameterRef>,
+        lock: (() -> Unit) -> Unit,
+    ) {
         if (typeParameters.isEmpty()) return
         val fakeSource = owner.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         val newBoundsSuccessfullyPublished = enhanceTypeParameterBoundsFirstRound(typeParameters, fakeSource, lock)
@@ -731,7 +734,8 @@ class FirSignatureEnhancement(
             typeParameterCount == supertypeParameterCount ->
                 typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
             typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
-                val projection = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
+                val projection =
+                    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
                 (1..supertypeParameterCount).map { projection }
             }
             else -> return null
