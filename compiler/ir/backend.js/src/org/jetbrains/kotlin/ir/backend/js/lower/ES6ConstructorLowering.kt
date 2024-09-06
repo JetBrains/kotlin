@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,6 +90,40 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
     }
 
+    /**
+     * Generates a static "init" function for this constructor.
+     * The function doesn't create a new instance but initializes an existing one.
+     *
+     * For example, transforms this:
+     * ```kotlin
+     * package com.example
+     *
+     * class Foo<T> {
+     *   val prop: Int
+     *
+     *   constructor(arg: Int, $box: Foo<T>?) {
+     *       super()
+     *       this.prop = arg
+     *   }
+     * }
+     * ```
+     * to this:
+     * ```kotlin
+     * package com.example
+     *
+     * class Foo<T> {
+     *   val prop: Int
+     *
+     *   private /*static*/ fun <T> Foo<T>.init_com_example_Foo(
+     *     <this>: Foo<T>,
+     *     arg: Int,
+     *     $box: Foo<T>?,
+     *   ): Unit {
+     *     <this>.prop = arg
+     *   }
+     * }
+     * ```
+     */
     private fun IrConstructor.generateInitFunction(): IrSimpleFunction {
         val constructor = this
         val irClass = parentAsClass
@@ -116,6 +150,41 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }
     }
 
+    /**
+     * Generates a "create" function to act as a constructor for an ES6 class.
+     *
+     * Note: although the generated function is not static in the IR,
+     * it will become static during code generation.
+     *
+     * For example, transforms this:
+     * ```kotlin
+     * package com.example
+     *
+     * class Foo<T> {
+     *   val prop: Int
+     *
+     *   constructor(arg: Int, $box: Foo<T>?) {
+     *       super()
+     *       this.prop = arg
+     *   }
+     * }
+     * ```
+     *
+     * into this:
+     * ```kotlin
+     * package com.example
+     *
+     * class Foo<T> {
+     *   val prop: Int
+     *
+     *   fun <T> new_com_example_Foo(arg: Int, $box: Foo<T>?): Foo<T> {
+     *     val $this = createThis(this, $box)
+     *     $this.prop = arg
+     *     return $this
+     *   }
+     * }
+     * ```
+     */
     private fun IrConstructor.generateCreateFunction(): IrSimpleFunction {
         val constructor = this
         val irClass = parentAsClass
