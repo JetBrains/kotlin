@@ -176,18 +176,20 @@ internal object FirReferenceResolveHelper {
         return refs
     }
 
-    private fun KtSimpleNameExpression.isPartOfQualifiedExpression(): Boolean {
-        var parent = parent
-        while (parent is KtDotQualifiedExpression) {
-            if (parent.selectorExpression !== this) return true
-            parent = parent.parent
-        }
-        return false
-    }
-
+    /**
+     * Returns `false` when [this] points to the last qualifier in a [KtUserType]
+     * expression, and `true` otherwise.
+     *
+     * For example, if the type is `First.Second.Third`, it will yield `false` for `Third`, and `true` for `First` and `Second`.
+     *
+     * N.B. If the type is incomplete and looks like `First.Second.Third.` (note the last dot),
+     * then this function yields `false` for `Third`.
+     */
     private fun KtSimpleNameExpression.isPartOfUserTypeRefQualifier(): Boolean {
         var parent = parent
         while (parent is KtUserType) {
+            if (parent.referenceExpression == null) break
+
             if (parent.referenceExpression !== this) return true
             parent = parent.parent
         }

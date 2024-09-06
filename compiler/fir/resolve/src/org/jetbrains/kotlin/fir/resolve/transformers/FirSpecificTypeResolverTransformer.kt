@@ -249,6 +249,9 @@ class FirSpecificTypeResolverTransformer(
      *
      * This is useful for providing better IDE support when resolving partially incorrect types.
      *
+     * When trying to resolve the qualifying types, we use [withBareTypes] to ignore the required type arguments in them,
+     * because a type qualifier might not need them at all (e.g. `Map` in `Map.Entry<...>`).
+     *
      * @param typeRef The type reference for which to try to calculate a partially resolved type reference.
      * @param data The scope class declaration containing relevant information for resolving the reference.
      * @return A partially resolved type reference if it was resolved, or `null` otherwise.
@@ -267,8 +270,10 @@ class FirSpecificTypeResolverTransformer(
                 isMarkedNullable = false
                 source = typeRef.source
             }
-            val (resolvedType, diagnostic) = resolveType(typeRefToTry, data)
+
+            val (resolvedType, diagnostic) = withBareTypes { resolveType(typeRefToTry, data) }
             if (resolvedType is ConeErrorType || diagnostic != null) continue
+
             return buildResolvedTypeRef {
                 source = qualifiersToTry.last().source
                 coneType = resolvedType
