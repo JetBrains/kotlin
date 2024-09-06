@@ -73,6 +73,7 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 return@mapNotNull null
             }
             val function = buildJavaMethod {
+                containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = if (accessors.chain) {
                     buildResolvedTypeRef {

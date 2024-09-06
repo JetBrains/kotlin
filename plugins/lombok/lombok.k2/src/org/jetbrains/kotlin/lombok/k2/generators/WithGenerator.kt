@@ -57,6 +57,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         return fieldsWithWith.mapNotNull { (field, withInfo) ->
             val withName = computeWithName(field, withInfo) ?: return@mapNotNull null
             val function = buildJavaMethod {
+                containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = classSymbol.defaultType()

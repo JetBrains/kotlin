@@ -49,6 +49,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         val constructorSymbol: FirFunctionSymbol<*>
         val builder = if (staticName == null) {
             FirJavaConstructorBuilder().apply {
+                containingClassSymbol = classSymbol
                 symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor()).also { constructorSymbol = it }
                 classSymbol.fir.typeParameters.mapTo(typeParameters) {
                     buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
@@ -63,6 +64,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             }
         } else {
             FirJavaMethodBuilder().apply {
+                containingClassSymbol = classSymbol
                 name = staticName
                 val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName)).also { constructorSymbol = it }
                 symbol = methodSymbol

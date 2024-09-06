@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -38,7 +40,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val name: Name,
     resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
-    override var status: FirDeclarationStatus,
+    private val originalStatus: FirResolvedDeclarationStatusImpl,
     override val isVar: Boolean,
     private val annotationList: FirJavaAnnotationList,
     override val typeParameters: MutableList<FirTypeParameterRef>,
@@ -46,6 +48,7 @@ class FirJavaField @FirImplementationDetail constructor(
     lazyHasConstantInitializer: Lazy<Boolean>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
+    private val containingClassSymbol: FirClassSymbol<*>,
 ) : FirField() {
     internal var lazyInitializer: Lazy<FirExpression?> = lazyInitializer
         private set
@@ -78,6 +81,13 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
         annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
+    }
+
+    // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val status: FirDeclarationStatus by lazy {
+        applyStatusTransformerExtensions(this, originalStatus) {
+            transformStatus(it, this@FirJavaField, containingClassSymbol, isLocal = false)
+        }
     }
 
     override val contextReceivers: List<FirContextReceiver>
@@ -125,7 +135,6 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaField {
-        status = status.transformSingle(transformer, data)
         return this
     }
 
@@ -178,7 +187,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        status = newStatus
+        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
     }
 }
 
@@ -190,6 +199,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     lateinit var lazyHasConstantInitializer: Lazy<Boolean>
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+    lateinit var containingClassSymbol: FirClassSymbol<*>
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaField {
@@ -201,7 +211,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             name,
             resolvePhase,
             returnTypeRef,
-            status,
+            status as FirResolvedDeclarationStatusImpl,
             isVar,
             annotationList,
             typeParameters,
@@ -209,6 +219,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             lazyHasConstantInitializer,
             dispatchReceiverType,
             attributes,
+            containingClassSymbol,
         )
     }
 

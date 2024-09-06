@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -40,9 +42,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val valueParameters: MutableList<FirValueParameter>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     private val annotationList: FirJavaAnnotationList,
-    override var status: FirDeclarationStatus,
+    private val originalStatus: FirResolvedDeclarationStatusImpl,
     resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    private val containingClassSymbol: FirClassSymbol<*>,
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -69,6 +72,13 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
     override val annotations: List<FirAnnotation> get() = annotationList.getAnnotations()
+
+    // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val status: FirDeclarationStatus by lazy {
+        applyStatusTransformerExtensions(this, originalStatus) {
+            transformStatus(it, this@FirJavaConstructor, containingClassSymbol, isLocal = false)
+        }
+    }
 
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
@@ -101,7 +111,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformValueParameters(transformer, data)
-        status = status.transformSingle(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -115,7 +124,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        status = status.transformSingle(transformer, data)
         return this
     }
 
@@ -175,7 +183,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        status = newStatus
+        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
     }
 }
 
@@ -185,6 +193,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     var isPrimary: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
+    lateinit var containingClassSymbol: FirClassSymbol<*>
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaConstructor {
@@ -198,9 +207,10 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             valueParameters,
             typeParameters,
             annotationList,
-            status,
+            status as FirResolvedDeclarationStatusImpl,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             dispatchReceiverType,
+            containingClassSymbol,
         )
     }
 

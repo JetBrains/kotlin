@@ -64,6 +64,7 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 return@mapNotNull null
             }
             val function = buildJavaMethod {
+                containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = field.returnTypeRef
                 dispatchReceiverType = classSymbol.defaultType()

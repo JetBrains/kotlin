@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
@@ -22,12 +23,12 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.locks.ReentrantLock
@@ -41,7 +42,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val annotationList: FirJavaAnnotationList,
-    override var status: FirDeclarationStatus,
+    private val originalStatus: FirResolvedDeclarationStatusImpl,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
@@ -51,6 +52,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
+    private val containingClassSymbol: FirClassSymbol<*>?,
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
@@ -98,6 +100,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         nonEnhancedTypeParameters
     }
 
+    // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val status: FirDeclarationStatus by lazy {
+        applyStatusTransformerExtensions(this, originalStatus) {
+            transformStatus(it, this@FirJavaClass, containingClassSymbol, isLocal = false)
+        }
+    }
+
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
     }
@@ -124,7 +133,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
         transformTypeParameters(transformer, data)
         transformDeclarations(transformer, data)
-        status = status.transformSingle(transformer, data)
         transformSuperTypeRefs(transformer, data)
         transformAnnotations(transformer, data)
         return this
@@ -135,7 +143,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        status = status.transformSingle(transformer, data)
         return this
     }
 
@@ -157,7 +164,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        status = newStatus
+        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
     }
 }
 
@@ -179,6 +186,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
 
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    var containingClassSymbol: FirClassSymbol<*>? = null
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
@@ -189,7 +197,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             name,
             origin = javaOrigin(isFromSource),
             annotationList,
-            status,
+            status as FirResolvedDeclarationStatusImpl,
             classKind,
             declarations,
             scopeProvider,
@@ -199,6 +207,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             javaPackage,
             javaTypeParameterStack.copy(),
             existingNestedClassifierNames,
+            containingClassSymbol,
         )
     }
 

@@ -307,6 +307,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     isStatic: Boolean = false,
 ): FirJavaMethod {
     return buildJavaMethod {
+        containingClassSymbol = this@createJavaMethod
         moduleData = this@createJavaMethod.moduleData
         this.returnTypeRef = returnTypeRef
         this.dispatchReceiverType = dispatchReceiverType
@@ -338,6 +339,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
 ): FirJavaConstructor {
     val outerClassSymbol = this
     return buildJavaConstructor {
+        containingClassSymbol = outerClassSymbol
         moduleData = outerClassSymbol.moduleData
         isFromSource = true
         symbol = FirConstructorSymbol(classId)
@@ -375,6 +377,7 @@ fun FirClassSymbol<*>.createJavaClass(
     val containingClass = this.fir as? FirJavaClass ?: return null
     val classId = containingClass.classId.createNestedClassId(name)
     return buildJavaClass {
+        containingClassSymbol = containingClass.symbol
         moduleData = containingClass.moduleData
         symbol = FirRegularClassSymbol(classId)
         this.name = name

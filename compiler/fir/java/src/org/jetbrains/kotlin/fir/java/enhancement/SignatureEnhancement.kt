@@ -167,6 +167,7 @@ class FirSignatureEnhancement(
 
                 val symbol = FirFieldSymbol(original.callableId)
                 buildJavaField {
+                    this.containingClassSymbol = owner.symbol
                     source = firElement.source
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.symbol = symbol
