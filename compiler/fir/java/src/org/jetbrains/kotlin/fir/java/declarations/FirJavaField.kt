@@ -38,7 +38,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin.Java,
     override val symbol: FirFieldSymbol,
     override val name: Name,
-    resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     private val originalStatus: FirResolvedDeclarationStatusImpl,
     override val isVar: Boolean,
@@ -61,7 +60,7 @@ class FirJavaField @FirImplementationDetail constructor(
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)
-        this.resolveState = resolvePhase.asResolveState()
+        this.resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     }
 
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -111,8 +110,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
-        transformAnnotations(transformer, data)
-        replaceInitializer(initializer?.transformSingle(transformer, data))
+        transformInitializer(transformer, data)
         return this
     }
 
@@ -143,7 +141,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Mutating annotations for FirJava* is not supported")
+        shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
@@ -166,6 +164,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override var containerSource: DeserializedContainerSource? = null
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField {
+        replaceInitializer(initializer?.transformSingle(transformer, data))
         return this
     }
 
@@ -187,7 +186,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
 
@@ -197,8 +196,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var lazyInitializer: Lazy<FirExpression?>? = null
     lateinit var lazyHasConstantInitializer: Lazy<Boolean>
-
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     lateinit var containingClassSymbol: FirClassSymbol<*>
 
     @OptIn(FirImplementationDetail::class)
@@ -209,7 +206,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             origin = javaOrigin(isFromSource),
             symbol,
             name,
-            resolvePhase,
             returnTypeRef,
             status as FirResolvedDeclarationStatusImpl,
             isVar,

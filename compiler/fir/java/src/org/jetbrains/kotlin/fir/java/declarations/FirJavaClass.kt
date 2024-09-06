@@ -38,7 +38,6 @@ import kotlin.properties.Delegates
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
-    resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val annotationList: FirJavaAnnotationList,
@@ -65,7 +64,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)
-        this.resolveState = resolvePhase.asResolveState()
+        this.resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     }
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -108,11 +107,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
+        shouldNotBeCalled(::replaceSuperTypeRefs, ::superTypeRefs)
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
-        error("${::replaceDeprecationsProvider.name} should not be called for ${this::class.simpleName}, ${deprecationsProvider::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceDeprecationsProvider, ::deprecationsProvider)
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
@@ -131,10 +130,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        transformTypeParameters(transformer, data)
         transformDeclarations(transformer, data)
-        transformSuperTypeRefs(transformer, data)
-        transformAnnotations(transformer, data)
         return this
     }
 
@@ -147,7 +143,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        error("${::replaceAnnotations.name} should not be called for ${this::class.simpleName}, ${annotations::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
@@ -164,7 +160,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
 
@@ -180,7 +176,6 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
 
     override var source: KtSourceElement? = null
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
@@ -193,7 +188,6 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
         return FirJavaClass(
             source,
             moduleData,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             origin = javaOrigin(isFromSource),
             annotationList,

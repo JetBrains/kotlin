@@ -43,7 +43,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     private val annotationList: FirJavaAnnotationList,
     private val originalStatus: FirResolvedDeclarationStatusImpl,
-    resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     private val containingClassSymbol: FirClassSymbol<*>,
 ) : FirConstructor() {
@@ -56,7 +55,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)
-        this.resolveState = resolvePhase.asResolveState()
+        this.resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     }
 
     private val typeParameterBoundsResolveLock = ReentrantLock()
@@ -111,7 +110,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         transformReturnTypeRef(transformer, data)
         transformTypeParameters(transformer, data)
         transformValueParameters(transformer, data)
-        transformAnnotations(transformer, data)
         return this
     }
 
@@ -128,7 +126,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Mutating annotations for FirJava* is not supported")
+        shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
@@ -183,7 +181,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
 
@@ -208,7 +206,6 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             typeParameters,
             annotationList,
             status as FirResolvedDeclarationStatusImpl,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             dispatchReceiverType,
             containingClassSymbol,
         )

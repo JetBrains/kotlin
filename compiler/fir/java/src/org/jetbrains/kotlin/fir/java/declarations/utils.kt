@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import kotlin.reflect.KCallable
 
 internal fun javaOrigin(isFromSource: Boolean): FirDeclarationOrigin.Java {
     return if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
@@ -40,4 +42,8 @@ internal inline fun applyStatusTransformerExtensions(
         newStatus.modality ?: originalStatus.modality,
         originalStatus.effectiveVisibility
     )
+}
+
+internal fun FirDeclaration.shouldNotBeCalled(mutator: KCallable<*>, reader: KCallable<*>): Nothing {
+    error("${mutator.name} should not be called for ${this::class.simpleName}, ${reader.name} is lazily calculated")
 }

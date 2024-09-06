@@ -42,7 +42,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
-    resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -59,7 +58,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
         symbol.bind(this)
 
         @OptIn(ResolveStateAccess::class)
-        this.resolveState = resolvePhase.asResolveState()
+        this.resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     }
 
     private val typeParameterBoundsResolveLock = ReentrantLock()
@@ -111,13 +110,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
         transformReturnTypeRef(transformer, data)
-        transformReceiverParameter(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
-        transformBody(transformer, data)
-        transformStatus(transformer, data)
-        transformContractDescription(transformer, data)
-        transformAnnotations(transformer, data)
         transformTypeParameters(transformer, data)
         return this
     }
@@ -149,7 +143,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Mutating annotations for FirJava* is not supported")
+        shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
@@ -192,7 +186,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        error("${::replaceStatus.name} should not be called for ${this::class.simpleName}, ${status::class.simpleName} is lazily calculated")
+        shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
 
@@ -247,7 +241,6 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
             source,
             moduleData,
             origin = javaOrigin(isFromSource),
-            resolvePhase,
             attributes,
             returnTypeRef,
             typeParameters,
@@ -274,7 +267,6 @@ inline fun buildJavaMethodCopy(original: FirJavaMethod, init: FirJavaMethodBuild
     val copyBuilder = FirJavaMethodBuilder()
     copyBuilder.source = original.source
     copyBuilder.moduleData = original.moduleData
-    copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.valueParameters.addAll(original.valueParameters)
