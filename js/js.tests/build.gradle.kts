@@ -206,10 +206,12 @@ val generateTypeScriptJsExportOnFileTests by parallel(
 )
 
 fun Test.setupNodeJs() {
-    systemProperty("javascript.engine.path.NodeJs", com.github.gradle.node.variant.VariantComputer()
-        .let { variantComputer ->
-            computeNodeExec(node, variantComputer.computeNodeBinDir(node.resolvedNodeDir, node.resolvedPlatform)).get()
-        }
+    systemProperty(
+        "javascript.engine.path.NodeJs",
+        com.github.gradle.node.variant.VariantComputer()
+            .let { variantComputer ->
+                computeNodeExec(node, variantComputer.computeNodeBinDir(node.resolvedNodeDir, node.resolvedPlatform)).get()
+            }
     )
 }
 
@@ -305,6 +307,7 @@ fun Test.setUpBoxTests() {
     forwardProperties()
 }
 
+@Suppress("unused")
 val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(k1Es5Enabled = true, k1Es6Enabled = true, k2Es5Enabled = true, k2Es6Enabled = true)
 
@@ -342,6 +345,7 @@ projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
 
 testsJar {}
 
+@Suppress("unused")
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
     dependsOn(":compiler:generateTestData")
     dependsOn(generateTypeScriptJsExportOnFileTests)
