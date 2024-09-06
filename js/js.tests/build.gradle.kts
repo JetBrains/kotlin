@@ -239,12 +239,16 @@ fun Test.setUpJsBoxTests(firEnabled: Boolean, es6Enabled: Boolean) {
     systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib")
     inputs.file(rootDir.resolve("libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib"))
 
+    fun includeTestOld() {
+        include("org/jetbrains/kotlin/js/testOld/*")
+        include("org/jetbrains/kotlin/js/testOld/klib/*")
+        include("org/jetbrains/kotlin/js/testOld/optimizer/*")
+    }
+
     when {
         firEnabled && !es6Enabled -> {
             include("org/jetbrains/kotlin/js/test/fir/*")
-            include("org/jetbrains/kotlin/js/testOld/*")
-            include("org/jetbrains/kotlin/js/testOld/klib/*")
-            include("org/jetbrains/kotlin/js/testOld/optimizer/*")
+            includeTestOld()
 
             exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class")
             exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class")
@@ -271,9 +275,7 @@ fun Test.setUpJsBoxTests(firEnabled: Boolean, es6Enabled: Boolean) {
 
             include("org/jetbrains/kotlin/incremental/*")
             include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
-            include("org/jetbrains/kotlin/js/testOld/*")
-            include("org/jetbrains/kotlin/js/testOld/klib/*")
-            include("org/jetbrains/kotlin/js/testOld/optimizer/*")
+            includeTestOld()
             include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
             include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
 
