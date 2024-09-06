@@ -136,7 +136,11 @@ fun <T> KotlinTypeFacade.interpret(
                                 is FirCallableReferenceAccess -> {
                                     toKPropertyApproximation(it, session)
                                 }
-
+                                is FirFunctionCall -> {
+                                    it.loadInterpreter()?.let { processor ->
+                                        interpret(it, processor, emptyMap(), reporter)
+                                    }
+                                }
                                 else -> null
                             }
 
