@@ -54700,6 +54700,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("reifiedNullableNothing3.kt")
+    public void testReifiedNullableNothing3() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing3.kt");
+    }
+
+    @Test
+    @TestMetadata("reifiedNullableNothing4.kt")
+    public void testReifiedNullableNothing4() {
+      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing4.kt");
+    }
+
+    @Test
     @TestMetadata("reifiedTypeArgumentWithIntersectionTypeAsTypeArgument.kt")
     public void testReifiedTypeArgumentWithIntersectionTypeAsTypeArgument() {
       runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithIntersectionTypeAsTypeArgument.kt");
