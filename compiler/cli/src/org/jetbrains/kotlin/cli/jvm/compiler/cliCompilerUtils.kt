@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -197,11 +196,12 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
 
 fun createContextForIncrementalCompilation(
     projectEnvironment: AbstractProjectEnvironment,
-    incrementalComponents: IncrementalCompilationComponents?,
     moduleConfiguration: CompilerConfiguration,
-    targetIds: List<TargetId>?,
     sourceScope: AbstractProjectFileSearchScope,
 ): IncrementalCompilationContext? {
+    val incrementalComponents = moduleConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+    val targetIds = moduleConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
+
     if (targetIds == null || incrementalComponents == null) return null
     val directoryWithIncrementalPartsFromPreviousCompilation =
         moduleConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]

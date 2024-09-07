@@ -200,19 +200,14 @@ open class IncrementalFirJvmCompilerRunner(
                         sourcesByModuleName = dirtySourcesByModuleName
                     )
 
-                    val context = FrontendContextForIncrementalCompilation(
-                        projectEnvironment,
-                        messageCollector,
-                        configuration,
-                    )
-
                     val analysisResults =
-                        context.compileModuleToAnalyzedFirViaLightTreeIncrementally(
+                        @OptIn(IncrementalCompilationApi::class) compileModuleToAnalyzedFirViaLightTreeIncrementally(
+                            projectEnvironment,
+                            messageCollector,
+                            configuration,
                             ModuleCompilerInput(targetId, groupedSources, configuration),
                             diagnosticsReporter,
-                            previousStepsSymbolProviders = emptyList(),
                             incrementalExcludesScope,
-                            friendPaths = emptyList(),
                         )
 
                     // TODO: consider what to do if many compilations find a main class

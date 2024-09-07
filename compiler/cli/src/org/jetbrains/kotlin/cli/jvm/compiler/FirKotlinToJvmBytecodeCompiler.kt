@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.FrontendContextForSingleModulePsi
@@ -16,13 +15,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSourceFilesToAnalyz
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 
 object FirKotlinToJvmBytecodeCompiler {
@@ -64,11 +60,7 @@ object FirKotlinToJvmBytecodeCompiler {
             sources,
             environment,
             messageCollector,
-            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
             configuration,
-            configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId),
-            configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-            extensionRegistrars = FirExtensionRegistrar.getInstances(environment.project),
         )
         val diagnosticsReporter = createPendingReporter(messageCollector)
         return context.compileSourceFilesToAnalyzedFirViaPsi(

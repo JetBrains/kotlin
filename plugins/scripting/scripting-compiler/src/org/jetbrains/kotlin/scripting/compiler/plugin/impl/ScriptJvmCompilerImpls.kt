@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
@@ -338,20 +336,15 @@ private fun doCompileWithK2(
         projectEnvironment,
         incrementalExcludesScope = null
     )?.also { librariesScope -= it }
-    val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
-        ?.let { FirExtensionRegistrar.getInstances(it.project) }
-        .orEmpty()
 
-    val rootModuleName = targetId.name
-    val libraryList = createLibraryListForJvm(
-        rootModuleName,
+    val session = prepareJvmSessionsForScripting(
+        projectEnvironment,
         configuration,
-        friendPaths = emptyList()
-    )
-    val session = prepareJvmSessions(
-        sourceFiles, configuration, projectEnvironment, Name.special("<$rootModuleName>"), extensionRegistrars,
-        librariesScope, libraryList, isCommonSourceForPsi, { false },
-        fileBelongsToModuleForPsi,
+        sourceFiles,
+        rootModuleNameAsString = targetId.name,
+        friendPaths = emptyList(),
+        librariesScope,
+        isScript = { false },
         createProviderAndScopeForIncrementalCompilation = { files ->
             createContextForIncrementalCompilation(
                 configuration,

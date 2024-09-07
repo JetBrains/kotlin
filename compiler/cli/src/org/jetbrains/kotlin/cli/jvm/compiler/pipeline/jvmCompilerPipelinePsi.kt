@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -37,15 +36,11 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
@@ -73,11 +68,7 @@ fun compileSingleModuleUsingFrontendIrAndPsi(
         allSources,
         projectEnvironment,
         messageCollector,
-        moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
-        moduleConfiguration,
-        targetIds = compilerConfiguration.get<MutableList<Module>>(JVMConfigurationKeys.MODULES)?.map<Module, TargetId>(::TargetId),
-        incrementalComponents = compilerConfiguration.get<IncrementalCompilationComponents>(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-        extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+        moduleConfiguration
     )
     val (firResult, generationState) = context.compileModule() ?: return false
 
@@ -104,8 +95,8 @@ internal fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
     val project = projectEnvironment.project
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-    val frontendContext = FrontendContextForMultiChunkMode(
-        projectEnvironment, environment, compilerConfiguration, project
+    val frontendContext = createFrontendContextForMultiChunkMode(
+        projectEnvironment, messageCollector, compilerConfiguration, project
     )
 
     with(frontendContext) {
@@ -157,7 +148,7 @@ private fun FrontendContextForSingleModulePsi.compileModule(): Pair<FirResult, G
     return firResult to runBackend(firResult, diagnosticsReporter)
 }
 
-fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
+internal fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
     ktFiles: List<KtFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
     rootModuleName: String,
@@ -173,25 +164,21 @@ fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
 
     val scriptsInCommonSourcesErrors = reportCommonScriptsError(ktFiles)
 
-    val sourceScope = projectEnvironment.getSearchScopeByPsiFiles(ktFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
+    val sourceScope = (projectEnvironment as VfsBasedProjectEnvironment).getSearchScopeByPsiFiles(ktFiles) +
+            projectEnvironment.getSearchScopeForProjectJavaSources()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
-    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
-        projectEnvironment,
-        incrementalComponents,
-        configuration,
-        targetIds,
-        sourceScope
-    )
+    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(projectEnvironment, configuration, sourceScope)
 
     providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
         librariesScope -= it
     }
-    val libraryList = createLibraryListForJvm(rootModuleName, configuration, friendPaths)
     val sessionsWithSources = prepareJvmSessions(
-        ktFiles, configuration, projectEnvironment, Name.special("<$rootModuleName>"),
-        extensionRegistrars, librariesScope, libraryList,
+        ktFiles,
+        rootModuleName,
+        friendPaths,
+        librariesScope,
         isCommonSource = { it.isCommonSource == true },
         isScript = { it.isScript() },
         fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },

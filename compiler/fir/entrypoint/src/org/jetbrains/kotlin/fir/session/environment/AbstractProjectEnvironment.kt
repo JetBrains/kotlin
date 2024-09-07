@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session.environment
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession

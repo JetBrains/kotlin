@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
-import org.jetbrains.kotlin.cli.common.prepareJvmSessions
+import org.jetbrains.kotlin.cli.common.prepareJvmSessionsWithoutFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -75,17 +75,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        return prepareJvmSessions(
-            files = emptyList(),
-            configuration, environment, moduleName,
-            extensionRegistrars = emptyList(),
-            environment.getSearchScopeForProjectLibraries(),
-            libraryList,
-            isCommonSource = { false },
-            isScript = { false },
-            fileBelongsToModule = { _, _ -> false },
-            createProviderAndScopeForIncrementalCompilation = { null }
-        )
+        return prepareJvmSessionsWithoutFiles(configuration, environment, moduleName, libraryList)
     }
 }
 

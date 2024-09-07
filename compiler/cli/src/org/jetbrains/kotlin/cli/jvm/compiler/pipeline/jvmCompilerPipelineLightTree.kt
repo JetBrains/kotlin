@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBack
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
-import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -48,10 +47,8 @@ import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -126,7 +123,7 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
     }
 
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-    val frontendContext = FrontendContextForMultiChunkMode(
+    val frontendContext = createFrontendContextForMultiChunkMode(
         projectEnvironment, messageCollector, compilerConfiguration, project
     )
 
@@ -140,16 +137,15 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
             projectEnvironment,
             null,
         )?.also { librariesScope -= it }
-        val libraryList = createLibraryListForJvm(
-            targetDescription, configuration, chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
-        )
         val allSources = mutableListOf<KtSourceFile>().apply {
             addAll(groupedSources.commonSources)
             addAll(groupedSources.platformSources)
         }
         val sessionsWithSources = prepareJvmSessions(
-            allSources, configuration, this.projectEnvironment, Name.special("<$targetDescription>"),
-            extensionRegistrars, librariesScope, libraryList,
+            allSources,
+            targetDescription,
+            friendPaths = chunk.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() },
+            librariesScope,
             isCommonSource = groupedSources.isCommonSourceForLt,
             isScript = { false },
             fileBelongsToModule = groupedSources.fileBelongsToModuleForLt,
@@ -224,17 +220,12 @@ private fun compileSingleModuleUsingFrontendIrAndLightTree(
 ): Boolean {
     val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
 
-    val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val context = FrontendContextForSingleModuleLightTree(
         module,
         groupedSources,
         projectEnvironment,
         messageCollector,
-        renderDiagnosticNames,
-        moduleConfiguration,
-        targetIds = compilerConfiguration.get<MutableList<Module>>(JVMConfigurationKeys.MODULES)?.map<Module, TargetId>(::TargetId),
-        incrementalComponents = compilerConfiguration.get<IncrementalCompilationComponents>(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-        extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+        moduleConfiguration
     )
 
     val (firResult, generationState) = context.compileModule() ?: return false
@@ -281,7 +272,33 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTree(
     input, diagnosticsReporter, emptyList(), null, friendPaths
 )
 
-fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
+@RequiresOptIn(message = "In compiler:cli, please use FrontendContext extensions instead")
+annotation class IncrementalCompilationApi
+
+@IncrementalCompilationApi
+fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    messageCollector: MessageCollector,
+    compilerConfiguration: CompilerConfiguration,
+    input: ModuleCompilerInput,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    incrementalExcludesScope: AbstractProjectFileSearchScope?,
+): FirResult {
+    return MinimizedFrontendContext(
+        projectEnvironment,
+        messageCollector,
+        FirExtensionRegistrar.getInstances(projectEnvironment.project),
+        compilerConfiguration
+    ).compileModuleToAnalyzedFirViaLightTreeIncrementally(
+        input,
+        diagnosticsReporter,
+        previousStepsSymbolProviders = emptyList(),
+        incrementalExcludesScope,
+        friendPaths = emptyList()
+    )
+}
+
+internal fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     input: ModuleCompilerInput,
     diagnosticsReporter: BaseDiagnosticsCollector,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
@@ -292,7 +309,6 @@ fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     performanceManager?.notifyAnalysisStarted()
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val rootModuleName = input.targetId.name
 
     val incrementalCompilationScope = createIncrementalCompilationScope(
         configuration,
@@ -304,10 +320,11 @@ fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
         addAll(input.groupedSources.commonSources)
         addAll(input.groupedSources.platformSources)
     }
-    val libraryList = createLibraryListForJvm(rootModuleName, configuration, friendPaths)
     val sessionsWithSources = prepareJvmSessions(
-        allSources, configuration, projectEnvironment, Name.special("<$rootModuleName>"),
-        extensionRegistrars, librariesScope, libraryList,
+        allSources,
+        rootModuleNameAsString = input.targetId.name,
+        friendPaths,
+        librariesScope,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
         isScript = { false },
         fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
