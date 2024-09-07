@@ -1,40 +1,37 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- *
- *
- * Copyright 2019 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package org.jetbrains.kotlin.test.services.configuration
 
-package org.jetbrains.kotlin.codegen.ir
-
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -42,26 +39,27 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
+import kotlin.collections.get
 
-class ComposeLikeExtensionRegistrar : ComponentRegistrar {
-    companion object {
-        fun registerComponents(project: Project) {
-            IrGenerationExtension.registerExtension(project, ComposeLikeGenerationExtension())
-        }
-    }
-
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        registerComponents(project)
+class ComposeLikeConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        IrGenerationExtension.registerExtension(ComposeLikeGenerationExtension())
     }
 }
 
-class ComposeLikeGenerationExtension : IrGenerationExtension {
+private class ComposeLikeGenerationExtension : IrGenerationExtension {
     private val rewrittenFunctions = mutableSetOf<IrFunction>()
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
@@ -70,7 +68,7 @@ class ComposeLikeGenerationExtension : IrGenerationExtension {
     }
 }
 
-class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext, private val rewrittenFunctions: Set<IrFunction>) :
+private class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext, private val rewrittenFunctions: Set<IrFunction>) :
     IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
@@ -123,7 +121,7 @@ class ComposeLikeDefaultMethodCallRewriter(private val context: IrPluginContext,
     }
 }
 
-class ComposeLikeDefaultArgumentRewriter(
+private class ComposeLikeDefaultArgumentRewriter(
     private val context: IrPluginContext,
     private val rewrittenFunctions: MutableSet<IrFunction>
 ) : IrElementTransformerVoid() {

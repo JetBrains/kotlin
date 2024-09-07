@@ -280,14 +280,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("lexer/kotlin")
             }
 
-            testClass<AbstractComposeLikeIrBlackBoxCodegenTest> {
-                model("codegen/composeLike", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractComposeLikeIrBytecodeTextTest> {
-                model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractIrCompileJavaAgainstKotlinTest> {
                 model(
                     "compileJavaAgainstKotlin",

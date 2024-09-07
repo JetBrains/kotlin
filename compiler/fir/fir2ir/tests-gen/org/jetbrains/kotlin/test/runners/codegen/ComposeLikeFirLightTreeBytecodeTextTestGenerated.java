@@ -3,15 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen.ir;
+package org.jetbrains.kotlin.test.runners.codegen;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,26 +18,25 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/composeLikeBytecodeText")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
-public class ComposeLikeIrBytecodeTextTestGenerated extends AbstractComposeLikeIrBytecodeTextTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-  }
-
+public class ComposeLikeFirLightTreeBytecodeTextTestGenerated extends AbstractComposeLikeFirLightTreeBytecodeTextTest {
+  @Test
   public void testAllFilesPresentInComposeLikeBytecodeText() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLikeBytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
+  @Test
   @TestMetadata("default.kt")
   public void testDefault() {
     runTest("compiler/testData/codegen/composeLikeBytecodeText/default.kt");
   }
 
+  @Test
   @TestMetadata("defaultInline.kt")
   public void testDefaultInline() {
     runTest("compiler/testData/codegen/composeLikeBytecodeText/defaultInline.kt");
   }
 
+  @Test
   @TestMetadata("defaultLocal.kt")
   public void testDefaultLocal() {
     runTest("compiler/testData/codegen/composeLikeBytecodeText/defaultLocal.kt");
