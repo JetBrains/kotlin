@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
@@ -25,15 +24,13 @@ import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.createPendingReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.codegenFactoryWithJvmIrBackendInput
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runCodegen
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runLowerings
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBackend
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -50,7 +47,6 @@ import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -191,7 +187,7 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
         firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, compilerConfiguration, diagnosticsReporter, irGenerationExtensions)
     val (factory, input) = fir2IrAndIrActualizerResult.codegenFactoryWithJvmIrBackendInput(compilerConfiguration)
 
-    val (codegenFactory, wholeBackendInput, moduleDescriptor, bindingContext, firJvmBackendResolver, firJvmBackendExtension, mainClassFqName) = BackendInputForMultiModuleChunk(
+    val backendInputForMultiModuleChunk = BackendInputForMultiModuleChunk(
         factory,
         input,
         fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
@@ -203,46 +199,18 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
         )
     )
 
-    /**
-     * This part is similar to [org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.compileModules],
-     * see "K1/K2 common multi-chunk part"
-     */
-    val codegenInputs = ArrayList<CodegenFactory.CodegenInput>(chunk.size)
     val firFiles = firResult.outputs.flatMap { it.fir }
     if (!checkKotlinPackageUsageForLightTree(compilerConfiguration, firFiles)) return false
-    for (module in chunk) {
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
-        val wholeModule = (wholeBackendInput as JvmIrCodegenFactory.JvmIrBackendInput).irModuleFragment
-        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
-        wholeModule.files.filterTo(moduleCopy.files) { file ->
-            file.fileEntry.name in module.getSourceFiles()
-        }
-        val backendInput = wholeBackendInput.copy(moduleCopy).let {
-            if (firJvmBackendExtension != null) {
-                it.copy(backendExtension = firJvmBackendExtension)
-            } else it
-        }
-        // Lowerings (per module)
-        codegenInputs += runLowerings(
-            project, moduleConfiguration, moduleDescriptor, bindingContext,
-            sourceFiles = null, module, codegenFactory, backendInput, diagnosticsReporter,
-            firJvmBackendResolver
-        )
-    }
 
-    val outputs = ArrayList<GenerationState>(chunk.size)
-
-    for (input in codegenInputs) {
-        // Codegen (per module)
-        outputs += runCodegen(input, input.state, codegenFactory, diagnosticsReporter, compilerConfiguration)
-    }
-
-    diagnosticsReporter.reportToMessageCollector(
-        messageCollector, compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    return backendInputForMultiModuleChunk.runBackend(
+        project,
+        chunk,
+        compilerConfiguration,
+        messageCollector,
+        diagnosticsReporter,
+        buildFile,
+        allSourceFiles = null,
     )
-
-    return writeOutputsIfNeeded(project, compilerConfiguration, messageCollector, outputs, mainClassFqName)
 }
 
 private fun compileSingleModuleUsingFrontendIrAndLightTree(

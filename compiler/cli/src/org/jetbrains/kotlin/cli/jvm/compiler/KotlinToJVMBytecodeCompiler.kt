@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSingleModuleUsingFrontendIrAndPsi
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.FqName
@@ -71,7 +73,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val useFrontendIR = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)
         val messageCollector = environment.messageCollector
-        val (codegenFactory, wholeBackendInput, moduleDescriptor, bindingContext, firJvmBackendResolver, firJvmBackendExtension, mainClassFqName) = if (useFrontendIR) {
+        val backendInputForMultiModuleChunk = if (useFrontendIR) {
             // K2/PSI: base checks
             val projectEnvironment =
                 VfsBasedProjectEnvironment(
@@ -99,29 +101,60 @@ object KotlinToJVMBytecodeCompiler {
         } else {
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
         } ?: return true
-        // K1/K2 common multi-chunk part
-        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
+        return backendInputForMultiModuleChunk.runBackend(
+            project,
+            chunk,
+            compilerConfiguration,
+            messageCollector,
+            diagnosticsReporter,
+            buildFile,
+            allSourceFiles = environment.getSourceFiles(),
+        )
+    }
 
+    internal fun BackendInputForMultiModuleChunk.runBackend(
+        project: Project,
+        chunk: List<Module>,
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector,
+        diagnosticsReporter: BaseDiagnosticsCollector,
+        buildFile: File?,
+        allSourceFiles: List<KtFile>?,
+    ): Boolean {
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val codegenInputs = ArrayList<CodegenFactory.CodegenInput>(chunk.size)
-
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val ktFiles = module.getSourceFiles(environment.getSourceFiles(), localFileSystem, chunk.size > 1, buildFile)
-            if (!checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)) return false
-            val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+            val ktFiles = if (allSourceFiles != null) {
+                val sourceFiles = module.getSourceFiles(allSourceFiles, localFileSystem, chunk.size > 1, buildFile)
+                if (!checkKotlinPackageUsageForPsi(compilerConfiguration, sourceFiles)) return false
+                sourceFiles
+            } else null
 
-            val backendInput = codegenFactory.getModuleChunkBackendInput(wholeBackendInput, ktFiles).let {
+            val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+            val backendInput = (if (ktFiles != null) {
+                codegenFactory.getModuleChunkBackendInput(backendInput, ktFiles)
+            } else {
+                // K2/LT only, backend is always JVM-based
+                val wholeModule = (backendInput as JvmIrCodegenFactory.JvmIrBackendInput).irModuleFragment
+                val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
+                wholeModule.files.filterTo(moduleCopy.files) { file ->
+                    file.fileEntry.name in module.getSourceFiles()
+                }
+                backendInput.copy(moduleCopy)
+            }).let {
                 if (it is JvmIrCodegenFactory.JvmIrBackendInput && firJvmBackendExtension != null) {
                     it.copy(backendExtension = firJvmBackendExtension)
                 } else it
             }
             // Lowerings (per module)
             codegenInputs += runLowerings(
-                environment.project, moduleConfiguration, moduleDescriptor, bindingContext,
-                ktFiles, module, codegenFactory, backendInput, diagnosticsReporter, firJvmBackendResolver
+                project, moduleConfiguration, moduleDescriptor, bindingContext,
+                sourceFiles = null, module, codegenFactory, backendInput, diagnosticsReporter,
+                firJvmBackendClassResolver
             )
         }
 
