@@ -81,17 +81,6 @@ internal class MetadataDependencyTransformationTaskInputs(
         }
     }
 
-    @Suppress("unused") // Gradle input
-    @get:Input
-    val inputCompilationDependencies: Map<String, Set<List<String?>>> by lazy {
-        participatingSourceSets.flatMap { it.internal.compilations }.associate {
-            it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
-                .allDependencies
-                .applyIf(!keepProjectDependencies) { filterNot { it is ProjectDependency } }
-                .map { listOf(it.group, it.name, it.version) }.toSet()
-        }
-    }
-
     private fun Configuration.withoutProjectDependencies(): FileCollection {
         return incoming.artifactView { view ->
             view.componentFilter { componentIdentifier -> componentIdentifier !in currentBuild }

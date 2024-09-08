@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.result.*
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.tooling.core.withClosure
 
@@ -26,12 +27,17 @@ internal class LazyResolvedConfiguration private constructor(
     private val artifactCollection: ArtifactCollection,
     private val configurationName: String,
 ) {
-    constructor(configuration: Configuration) : this(
+    /**
+     * Creates [LazyResolvedConfiguration] from given [configuration].
+     *
+     * Pass [artifactType] to select different artifacts if available.
+     */
+    constructor(configuration: Configuration, artifactType: String? = null) : this(
         // Calling resolutionResult doesn't actually trigger resolution. But accessing its root ResolvedComponentResult
         // via ResolutionResult::root does. ResolutionResult can't be serialised for Configuration Cache
         // but ResolvedComponentResult can. Wrapping it in `lazy` makes it resolve upon serialisation.
         resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
-        artifactCollection = configuration.incoming.artifactView { view -> view.isLenient = true }.artifacts, // lazy ArtifactCollection
+        artifactCollection = configuration.lazyArtifactCollection(artifactType),
         configurationName = configuration.name
     )
 
@@ -72,6 +78,14 @@ internal class LazyResolvedConfiguration private constructor(
 
     override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
 }
+
+private fun Configuration.lazyArtifactCollection(artifactType: String?): ArtifactCollection =
+    incoming.artifactView { view ->
+        view.isLenient = true
+        if (artifactType != null) {
+            view.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, artifactType)
+        }
+    }.artifacts
 
 
 /**
