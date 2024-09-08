@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 private typealias SourceSetName = String
@@ -102,15 +104,18 @@ private fun Configuration.addSecondaryOutgoingVariant(project: Project) {
 internal fun GenerateProjectStructureMetadata.addMetadataSourceSetsToOutput(project: Project) {
     val generateTask = this
     project.launch {
+        val dependencies = mutableMapOf<String, LazyResolvedConfiguration>()
         val sourceSetOutputs =
             project.multiplatformExtension.kotlinMetadataCompilations()
                 .map {
+                    dependencies[it.defaultSourceSet.name] = it.defaultSourceSet.internal.sharedProjectDataConfiguration()
                     GenerateProjectStructureMetadata.SourceSetMetadataOutput(
                         sourceSetName = it.defaultSourceSet.name,
                         metadataOutput = project.provider { it.output.classesDirs.singleFile }
                     )
                 }
         generateTask.sourceSetOutputs.set(sourceSetOutputs)
+        generateTask.sourceSetDependencies.set(dependencies)
     }
 }
 

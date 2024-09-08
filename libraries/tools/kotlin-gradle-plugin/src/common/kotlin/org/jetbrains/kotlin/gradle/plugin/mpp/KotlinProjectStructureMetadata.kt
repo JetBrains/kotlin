@@ -16,8 +16,10 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -36,7 +38,10 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 // FIXME support module classifiers for PM2.0 or drop this class in favor of KotlinModuleIdentifier
 open class ModuleDependencyIdentifier(
+    @get:Input
     open val groupId: String?,
+
+    @get:Input
     open val moduleId: String,
 ) : Serializable {
     override fun equals(other: Any?): Boolean {
@@ -176,28 +181,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         sourceSetsDependsOnRelation = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to sourceSet.dependsOn.filter { it in sourceSetsWithMetadataCompilations }.map { it.name }.toSet()
         },
-        sourceSetModuleDependencies = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
-            /**
-             * Currently, Kotlin/Native dependencies must include the implementation dependencies, too. These dependencies must also be
-             * published as API dependencies of the metadata module to get into the resolution result, see
-             * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
-             */
-            val isNativeSharedSourceSet = sourceSet.isNativeSourceSet.getOrThrow()
-            val scopes = listOfNotNull(
-                KotlinDependencyScope.API_SCOPE,
-                KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
-            )
-            val sourceSetsToIncludeDependencies =
-                if (isNativeSharedSourceSet)
-                    dependsOnClosureWithInterCompilationDependencies(sourceSet).plus(sourceSet)
-                else listOf(sourceSet)
-            val sourceSetExportedDependencies = scopes.flatMap { scope ->
-                sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
-                    project.configurations.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
-                }
-            }
-            sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
-        },
+        sourceSetModuleDependencies = project.sourceSetModuleDependencies(sourceSetsWithMetadataCompilations),
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
             .filter { it.isNativeSourceSet.getOrThrow() }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
@@ -210,6 +194,38 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         isPublishedAsRoot = true,
         sourceSetNames = sourceSetsWithMetadataCompilations.keys.map { it.name }.toSet(),
     )
+}
+
+private fun Project.sourceSetModuleDependencies(
+    sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>>,
+): Map<String, Set<ModuleDependencyIdentifier>> {
+    /**
+     * When PI is enabled, calling [ModuleIds.fromDependency] is not PI friendly
+     * So Sources Set Dependencies will be populated in the [GenerateProjectStructureMetadata] task.
+     * */
+    if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyMap()
+    return sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
+        /**
+         * Currently, Kotlin/Native dependencies must include the implementation dependencies, too. These dependencies must also be
+         * published as API dependencies of the metadata module to get into the resolution result, see
+         * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
+         */
+        val isNativeSharedSourceSet = sourceSet.isNativeSourceSet.getOrThrow()
+        val scopes = listOfNotNull(
+            KotlinDependencyScope.API_SCOPE,
+            KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
+        )
+        val sourceSetsToIncludeDependencies =
+            if (isNativeSharedSourceSet)
+                dependsOnClosureWithInterCompilationDependencies(sourceSet).plus(sourceSet)
+            else listOf(sourceSet)
+        val sourceSetExportedDependencies = scopes.flatMap { scope ->
+            sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
+                configurations.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
+            }
+        }
+        sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
+    }
 }
 
 internal fun <Serializer> KotlinProjectStructureMetadata.serialize(
