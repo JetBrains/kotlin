@@ -33,6 +33,8 @@ internal object IrActualizationErrors {
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val KOTLIN_ACTUAL_ANNOTATION_MISSING by error1<PsiElement, IrSymbol>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultIrActualizationErrorMessages)
@@ -75,11 +77,20 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
             IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY,
         )
-
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
             "Parameter ''{0}'' has conflicting values in expected and actual annotations.",
             IrDiagnosticRenderers.DECLARATION_NAME,
+        )
+        map.put(
+            IrActualizationErrors.JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT,
+            "Java direct actual ''{0}'' has no corresponding expected declaration",
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+        )
+        map.put(
+            IrActualizationErrors.KOTLIN_ACTUAL_ANNOTATION_MISSING,
+            "Respective Java declaration ''{0}'' must be marked with '@kotlin.jvm.KotlinActual'",
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
         )
     }
 }

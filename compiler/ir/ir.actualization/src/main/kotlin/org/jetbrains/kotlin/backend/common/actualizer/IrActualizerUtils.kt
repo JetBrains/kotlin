@@ -26,7 +26,7 @@ internal fun recordActualForExpectDeclaration(
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = expectActualMap.expectToActual.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.putRegular(expectSymbol, actualSymbol)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
@@ -39,7 +39,7 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.getter?.let { expectGetter ->
             val actualGetter = actualDeclaration.getter
             if (actualGetter != null) {
-                expectActualMap.expectToActual[expectGetter.symbol] = actualGetter.symbol
+                expectActualMap.putRegular(expectGetter.symbol, actualGetter.symbol)
                 recordTypeParametersMapping(expectActualMap, expectGetter, actualGetter)
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no getter.
@@ -53,7 +53,7 @@ internal fun recordActualForExpectDeclaration(
         expectDeclaration.setter?.let { expectSetter ->
             val actualSetter = actualDeclaration.setter
             if (actualSetter != null) {
-                expectActualMap.expectToActual[expectSetter.symbol] = actualSetter.symbol
+                expectActualMap.putRegular(expectSetter.symbol, actualSetter.symbol)
             } else if (actualDeclaration.isPropertyForJavaField()) {
                 // In the case when expect property is actualized by a Java field, there is no setter.
                 // So, record it in `IrExpectActualMap.propertyAccessorsActualizedByFields`.
@@ -68,12 +68,12 @@ internal fun recordActualForExpectDeclaration(
 private fun recordTypeParametersMapping(
     expectActualMap: IrExpectActualMap,
     expectTypeParametersContainer: IrTypeParametersContainer,
-    actualTypeParametersContainer: IrTypeParametersContainer
+    actualTypeParametersContainer: IrTypeParametersContainer,
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            expectActualMap.expectToActual[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.putRegular(expectTypeParameter.symbol, actualTypeParameter.symbol)
         }
 }
 
@@ -140,6 +140,20 @@ internal fun IrDiagnosticReporter.reportActualAnnotationsNotMatchExpect(
         expectSymbol,
         actualSymbol,
         incompatibilityType,
+    )
+}
+
+internal fun IrDiagnosticReporter.reportJavaDirectActualWithoutExpect(actual: IrDeclaration, reportOn: IrSymbol) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT,
+        actual.symbol
+    )
+}
+
+internal fun IrDiagnosticReporter.reportKotlinActualAnnotationMissing(actual: IrDeclaration, reportOn: IrSymbol) {
+    at(reportOn.owner as IrDeclaration).report(
+        IrActualizationErrors.KOTLIN_ACTUAL_ANNOTATION_MISSING,
+        actual.symbol
     )
 }
 
