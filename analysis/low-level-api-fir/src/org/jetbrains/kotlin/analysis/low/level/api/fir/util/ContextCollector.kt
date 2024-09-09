@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Fil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -276,7 +278,10 @@ private class ContextCollectorVisitor(
         if (cfgNode != null) {
             val flow = cfgNode.flow
 
-            for (realVariable in flow.knownVariables) {
+            val realVariables = flow.knownVariables
+                .sortedBy { it.symbol.memberDeclarationNameOrNull?.asString() }
+
+            for (realVariable in realVariables) {
                 val typeStatement = flow.getTypeStatement(realVariable) ?: continue
                 val stability = realVariable.getStability(flow, bodyHolder.session)
                 if (stability != SmartcastStability.STABLE_VALUE && stability != SmartcastStability.CAPTURED_VARIABLE) {
