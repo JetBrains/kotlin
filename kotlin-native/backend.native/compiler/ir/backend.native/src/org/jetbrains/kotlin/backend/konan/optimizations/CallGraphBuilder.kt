@@ -57,7 +57,6 @@ internal class CallGraphBuilder(
         val context: Context,
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
-        val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
         val devirtualizedCallSitesUnfoldFactor: Int,
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
@@ -173,7 +172,7 @@ internal class CallGraphBuilder(
                 else -> {
                     // Callsite has not been devirtualized - conservatively assume the worst:
                     // any inheritor of the receiver type is possible here.
-                    val typeHierarchy = devirtualizationAnalysisResult.typeHierarchy
+                    val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
                     val allPossibleCallees = mutableListOf<DataFlowIR.FunctionSymbol>()
                     typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
                         val receiverType = typeHierarchy.allTypes[it]

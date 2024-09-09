@@ -22,13 +22,11 @@ internal fun dce(
         context: Context,
         irModule: IrModuleFragment,
         moduleDFG: ModuleDFG,
-        devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
 ): Set<IrSimpleFunction> {
     val callGraph = CallGraphBuilder(
             context,
             irModule,
             moduleDFG,
-            devirtualizationAnalysisResult,
             // Do not devirtualize anything to keep the graph smaller (albeit less precise which is fine for DCE).
             devirtualizedCallSitesUnfoldFactor = -1,
             nonDevirtualizedCallSitesUnfoldFactor = -1,

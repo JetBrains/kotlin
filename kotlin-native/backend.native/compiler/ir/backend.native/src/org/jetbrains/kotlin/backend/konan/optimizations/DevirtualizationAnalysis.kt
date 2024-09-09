@@ -226,52 +226,6 @@ internal object DevirtualizationAnalysis {
         private fun IntArray.getEdge(v: Int, id: Int) = this[this[v] + id]
         private fun IntArray.edgeCount(v: Int) = this[v + 1] - this[v]
 
-        interface TypeHierarchy {
-            val allTypes: Array<DataFlowIR.Type>
-
-            fun inheritorsOf(type: DataFlowIR.Type): BitSet
-        }
-
-        object EmptyTypeHierarchy : TypeHierarchy {
-            override val allTypes: Array<DataFlowIR.Type> = emptyArray()
-
-            override fun inheritorsOf(type: DataFlowIR.Type): BitSet {
-                return BitSet()
-            }
-        }
-
-        inner class TypeHierarchyImpl(override val allTypes: Array<DataFlowIR.Type>) : TypeHierarchy {
-            private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type>() }
-            private val allInheritors = Array(allTypes.size) { BitSet() }
-
-            init {
-                val visited = BitSet()
-
-                fun processType(type: DataFlowIR.Type) {
-                    if (visited[type.index]) return
-                    visited.set(type.index)
-                    type.superTypes
-                            .forEach { superType ->
-                                val subTypes = typesSubTypes[superType.index]
-                                subTypes += type
-                                processType(superType)
-                            }
-                }
-
-                allTypes.forEach { processType(it) }
-            }
-
-            override fun inheritorsOf(type: DataFlowIR.Type): BitSet {
-                val typeId = type.index
-                val inheritors = allInheritors[typeId]
-                if (!inheritors.isEmpty || type == DataFlowIR.Type.Virtual) return inheritors
-                inheritors.set(typeId)
-                for (subType in typesSubTypes[typeId])
-                    inheritors.or(inheritorsOf(subType))
-                return inheritors
-            }
-        }
-
         private fun DataFlowIR.Type.calleeAt(callSite: DataFlowIR.Node.VirtualCall) = when (callSite) {
             is DataFlowIR.Node.VtableCall ->
                 vtable[callSite.calleeVtableIndex]
@@ -425,23 +379,18 @@ internal object DevirtualizationAnalysis {
         private fun DataFlowIR.Node.VirtualCall.debugString() =
                 irCallSite?.let { ir2stringWhole(it).trimEnd() } ?: this.toString()
 
-        fun analyze(): AnalysisResult {
+        fun analyze() {
             val functions = moduleDFG.functions
             assert(DataFlowIR.Type.Virtual !in symbolTable.classMap.values) {
                 "DataFlowIR.Type.Virtual cannot be in symbolTable.classMap"
             }
-            val allDeclaredTypes = listOf(DataFlowIR.Type.Virtual) +
-                    symbolTable.classMap.values +
-                    symbolTable.primitiveMap.values
-            val allTypes = Array<DataFlowIR.Type>(allDeclaredTypes.size) { DataFlowIR.Type.Virtual }
-            for (type in allDeclaredTypes)
-                allTypes[type.index] = type
-            val typeHierarchy = TypeHierarchyImpl(allTypes)
+            val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
+            val allTypes = typeHierarchy.allTypes
             val rootSet = computeRootSet(context, irModule, moduleDFG)
 
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
 
-            val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(nodesMap, functions, typeHierarchy, rootSet)
+            val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(nodesMap, functions, rootSet)
 
             context.logMultiple {
                 +"FULL CONSTRAINT GRAPH"
@@ -691,8 +640,6 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             }
-
-            return AnalysisResult(typeHierarchy)
         }
 
         /*
@@ -751,10 +698,9 @@ internal object DevirtualizationAnalysis {
         // and by that we're only holding references to two out of three of them.
         private fun buildConstraintGraph(nodesMap: MutableMap<DataFlowIR.Node, Node>,
                                          functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                         typeHierarchy: TypeHierarchyImpl,
                                          rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphBuildResult {
-            val precursor = buildConstraintGraphPrecursor(nodesMap, functions, typeHierarchy, rootSet)
+            val precursor = buildConstraintGraphPrecursor(nodesMap, functions, rootSet)
             return ConstraintGraphBuildResult(precursor.instantiatingClasses, precursor.directEdges,
                     buildReversedEdges(precursor.directEdges, precursor.reversedEdgesCount))
         }
@@ -784,10 +730,9 @@ internal object DevirtualizationAnalysis {
 
         private fun buildConstraintGraphPrecursor(nodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                   functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                  typeHierarchy: TypeHierarchyImpl,
                                                   rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphPrecursor {
-            val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, typeHierarchy, rootSet, true)
+            val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, rootSet, true)
             constraintGraphBuilder.build()
             val bagOfEdges = constraintGraphBuilder.bagOfEdges
             val directEdgesCount = constraintGraphBuilder.directEdgesCount
@@ -821,10 +766,10 @@ internal object DevirtualizationAnalysis {
 
         private inner class ConstraintGraphBuilder(val functionNodesMap: MutableMap<DataFlowIR.Node, Node>,
                                                    val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                   val typeHierarchy: TypeHierarchyImpl,
                                                    val rootSet: List<DataFlowIR.FunctionSymbol>,
                                                    val useTypes: Boolean) {
 
+            private val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
             private val allTypes = typeHierarchy.allTypes
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
             private val typesVirtualCallSites = Array(allTypes.size) { mutableListOf<ConstraintGraphVirtualCall>() }
@@ -1339,8 +1284,6 @@ internal object DevirtualizationAnalysis {
     class DevirtualizedCallee(val receiverType: DataFlowIR.Type, val callee: DataFlowIR.FunctionSymbol)
 
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
-
-    class AnalysisResult(val typeHierarchy: DevirtualizationAnalysisImpl.TypeHierarchy)
 
     fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
