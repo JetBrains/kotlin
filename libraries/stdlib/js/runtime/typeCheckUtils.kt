@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,9 +76,6 @@ private fun isJsArray(obj: Any): Boolean {
 internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
-
-// TODO: Remove after the next bootstrap
-internal fun isObject(o: dynamic): Boolean = o != null
 
 internal fun isArrayish(o: dynamic) = isJsArray(o) || arrayBufferIsView(o)
 
