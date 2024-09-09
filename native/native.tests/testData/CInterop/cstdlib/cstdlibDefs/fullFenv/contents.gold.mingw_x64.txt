@@ -1,0 +1,643 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/anonymousStruct1
+    // class name: pod1/anonymousStruct1.Companion
+    // class name: pod1/fenv_t
+    // class name: pod1/fenv_t.Companion
+    // class name: pod1/localeinfo_struct
+    // class name: pod1/localeinfo_struct.Companion
+    // class name: pod1/tagLC_ID
+    // class name: pod1/tagLC_ID.Companion
+    // class name: pod1/threadlocaleinfostruct
+    // class name: pod1/threadlocaleinfostruct.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { void* locale; void* wlocale; void* refcount; void* wrefcount; }")
+    public final class pod1/anonymousStruct1 : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var locale: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>?)
+
+      public final var refcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      public final var wlocale: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/wchar_tVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/wchar_tVar^ */>?)
+
+      public final var wrefcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 32L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/anonymousStruct1.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned short __control_word; unsigned short __unused0; unsigned short __status_word; unsigned short __unused1; unsigned short __tag_word; unsigned short __unused2; unsigned int __ip_offset; unsigned short __ip_selector; unsigned short __opcode; unsigned int __data_offset; unsigned short __data_selector; unsigned short __unused3; unsigned int __mxcsr; }")
+    public final class pod1/fenv_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __control_word: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __data_offset: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 20L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 20L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var __data_selector: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 24L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __ip_offset: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 12L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 12L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var __ip_selector: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __mxcsr: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var __opcode: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 18L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 18L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __status_word: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __tag_word: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __unused0: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 2L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 2L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __unused1: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 6L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 6L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __unused2: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 10L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 10L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var __unused3: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 26L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 26L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 32L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/fenv_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { void* locinfo; void* mbcinfo; }")
+    public final class pod1/localeinfo_struct : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var locinfo: kotlinx/cinterop/CPointer<pod1/threadlocaleinfostruct>? /* = pod1/pthreadlocinfo^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<pod1/threadlocaleinfostruct>? /* = pod1/pthreadlocinfo^? */)
+
+      public final var mbcinfo: kotlinx/cinterop/CPointer<cnames/structs/threadmbcinfostruct>? /* = pod1/pthreadmbcinfo^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<cnames/structs/threadmbcinfostruct>? /* = pod1/pthreadmbcinfo^? */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 16L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/localeinfo_struct.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned short wLanguage; unsigned short wCountry; unsigned short wCodePage; }")
+    public final class pod1/tagLC_ID : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var wCodePage: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var wCountry: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 2L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 2L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      public final var wLanguage: kotlin/UShort
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UShort)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 6L, align = 2)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/tagLC_ID.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int refcount; unsigned int lc_codepage; unsigned int lc_collate_cp; unsigned long lc_handle[6]; struct  { unsigned short wLanguage; unsigned short wCountry; unsigned short wCodePage; } lc_id[6]; struct  { void* locale; void* wlocale; void* refcount; void* wrefcount; } lc_category[6]; int lc_clike; int mb_cur_max; void* lconv_intl_refcount; void* lconv_num_refcount; void* lconv_mon_refcount; void* lconv; void* ctype1_refcount; void* ctype1; void* pctype; void* pclmap; void* pcumap; void* lc_time_curr; }")
+    public final class pod1/threadlocaleinfostruct : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var ctype1: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = kotlinx/cinterop/UShortVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 312L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 312L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = kotlinx/cinterop/UShortVar^ */>?)
+
+      public final var ctype1_refcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 304L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 304L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      public final val lc_category: kotlinx/cinterop/CPointer<pod1/anonymousStruct1> /* = kotlinx/cinterop/CArrayPointer^<pod1/anonymousStruct1> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 72L)
+        public final /* non-default */ external get
+
+      public final var lc_clike: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 264L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 264L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var lc_codepage: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var lc_collate_cp: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final val lc_handle: kotlinx/cinterop/CPointer<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = kotlinx/cinterop/UIntVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = kotlinx/cinterop/UIntVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 12L)
+        public final /* non-default */ external get
+
+      public final val lc_id: kotlinx/cinterop/CPointer<pod1/tagLC_ID /* = pod1/LC_ID^ */> /* = kotlinx/cinterop/CArrayPointer^<pod1/tagLC_ID /* = pod1/LC_ID^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 36L)
+        public final /* non-default */ external get
+
+      public final var lc_time_curr: kotlinx/cinterop/CPointer<cnames/structs/__lc_time_data>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 344L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 344L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<cnames/structs/__lc_time_data>?)
+
+      public final var lconv: kotlinx/cinterop/CPointer<cnames/structs/lconv>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 296L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 296L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<cnames/structs/lconv>?)
+
+      public final var lconv_intl_refcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 272L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 272L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      public final var lconv_mon_refcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 288L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 288L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      public final var lconv_num_refcount: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 280L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 280L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */>?)
+
+      public final var mb_cur_max: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 268L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 268L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var pclmap: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 328L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 328L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */>?)
+
+      public final var pctype: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = kotlinx/cinterop/UShortVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 320L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 320L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = kotlinx/cinterop/UShortVar^ */>?)
+
+      public final var pcumap: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */>?
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 336L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 336L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */>?)
+
+      public final var refcount: kotlin/Int
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 352L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/threadlocaleinfostruct.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10___debugbreak")
+      public final external fun __debugbreak(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11___mingw_get_crt_info")
+      public final external fun __mingw_get_crt_info(): kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>?
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_feclearexcept")
+      public final external /* non-stable parameter names */ fun feclearexcept(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_fegetenv")
+      public final external fun fegetenv(envp: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_fegetexceptflag")
+      public final external fun fegetexceptflag(flagp: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/fexcept_tVar^ */>?, excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_fegetround")
+      public final external fun fegetround(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod112_feholdexcept")
+      public final external /* non-stable parameter names */ fun feholdexcept(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_feraiseexcept")
+      public final external fun feraiseexcept(excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod110_fesetenv")
+      public final external /* non-stable parameter names */ fun fesetenv(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_fesetexceptflag")
+      public final external /* non-stable parameter names */ fun fesetexceptflag(arg0: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/fexcept_tVar^ */>?, arg1: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_fesetround")
+      public final external fun fesetround(mode: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_fetestexcept")
+      public final external fun fetestexcept(excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod111_feupdateenv")
+      public final external /* non-stable parameter names */ fun feupdateenv(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      public final const val FE_ALL_EXCEPT: kotlin/Int /* = 63 */
+        public final get
+
+      public final const val FE_DENORMAL: kotlin/Int /* = 2 */
+        public final get
+
+      public final val FE_DFL_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod115_FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val FE_DIVBYZERO: kotlin/Int /* = 4 */
+        public final get
+
+      public final const val FE_DOWNWARD: kotlin/Int /* = 1024 */
+        public final get
+
+      public final const val FE_INEXACT: kotlin/Int /* = 32 */
+        public final get
+
+      public final const val FE_INVALID: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val FE_OVERFLOW: kotlin/Int /* = 8 */
+        public final get
+
+      public final val FE_PC53_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod114_FE_PC53_ENV_getter")
+        public final /* non-default */ external get
+
+      public final val FE_PC64_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod113_FE_PC64_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val FE_TONEAREST: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val FE_TOWARDZERO: kotlin/Int /* = 3072 */
+        public final get
+
+      public final const val FE_UNDERFLOW: kotlin/Int /* = 16 */
+        public final get
+
+      public final const val FE_UPWARD: kotlin/Int /* = 2048 */
+        public final get
+
+      public final const val MINGW_DDRAW_VERSION: kotlin/Int /* = 7 */
+        public final get
+
+      public final const val MINGW_HAS_DDK_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val MINGW_HAS_DDRAW_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val MINGW_HAS_SECURE_API: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val USE___UUIDOF: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _ARGMAX: kotlin/Int /* = 100 */
+        public final get
+
+      public final const val _CRT_PACKING: kotlin/Int /* = 8 */
+        public final get
+
+      public final const val _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES_MEMORY: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val _M_AMD64: kotlin/Int /* = 100 */
+        public final get
+
+      public final const val _M_X64: kotlin/Int /* = 100 */
+        public final get
+
+      public final const val _SECURECRT_FILL_BUFFER_PATTERN: kotlin/Int /* = 253 */
+        public final get
+
+      public final const val _TRUNCATE: kotlin/ULong /* = pod1/size_t^ */ /* = 18446744073709551615uL */
+        public final get
+
+      public final const val _WIN32_WINNT: kotlin/Int /* = 1537 */
+        public final get
+
+      public final const val __GOT_SECURE_LIB__: kotlin/Int /* = 200411 */
+        public final get
+
+      public final const val __MINGW32_MAJOR_VERSION: kotlin/Int /* = 3 */
+        public final get
+
+      public final const val __MINGW32_MINOR_VERSION: kotlin/Int /* = 11 */
+        public final get
+
+      public final const val __MINGW64_VERSION_BUGFIX: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __MINGW64_VERSION_MAJOR: kotlin/Int /* = 7 */
+        public final get
+
+      public final const val __MINGW64_VERSION_MINOR: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __MINGW64_VERSION_RC: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __MINGW64_VERSION_STATE: kotlin/String /* = "alpha" */
+        public final get
+
+      public final const val __MINGW64_VERSION_STR: kotlin/String /* = "7.0.0" */
+        public final get
+
+      public final const val __MINGW_DEBUGBREAK_IMPL: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_GCC_VERSION: kotlin/Int /* = 40201 */
+        public final get
+
+      public final const val __MINGW_HAS_DXSDK: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_HAVE_ANSI_C99_PRINTF: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_HAVE_ANSI_C99_SCANF: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_HAVE_WIDE_C99_PRINTF: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_HAVE_WIDE_C99_SCANF: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __MINGW_MSVC2005_DEPREC_STR: kotlin/String /* = "This POSIX function is deprecated beginning in Visual C++ 2005, use _CRT_NONSTDC_NO_DEPRECATE to disable deprecation" */
+        public final get
+
+      public final const val __MINGW_SEC_WARN_STR: kotlin/String /* = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation" */
+        public final get
+
+      public final const val __MINGW_USE_UNDERSCORE_PREFIX: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __MSVCRT_VERSION__: kotlin/Int /* = 1792 */
+        public final get
+
+      public final const val __MXCSR_EXCEPT_FLAG_SHIFT: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __MXCSR_EXCEPT_MASK_SHIFT: kotlin/Int /* = 7 */
+        public final get
+
+      public final const val __MXCSR_ROUND_FLAG_SHIFT: kotlin/Int /* = 3 */
+        public final get
+
+      public final const val __STDC_SECURE_LIB__: kotlin/Int /* = 200411 */
+        public final get
+
+      public final const val __USE_CRTIMP: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_MINGW_ANSI_STDIO: kotlin/Int /* = 0 */
+        public final get
+
+      public typealias LC_ID = pod1/tagLC_ID /* = pod1/tagLC_ID */
+
+      public typealias LPLC_ID = kotlinx/cinterop/CPointer<pod1/tagLC_ID> /* = kotlinx/cinterop/CPointer<pod1/tagLC_ID> */
+
+      public typealias LPLC_IDVar = kotlinx/cinterop/CPointerVarOf<pod1/LPLC_ID^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<pod1/tagLC_ID> /* = pod1/LPLC_ID^ */> */
+
+      public typealias __builtin_va_list = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+
+      public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */> */
+
+      public typealias __gnuc_va_list = pod1/__builtin_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */ */
+
+      public typealias __gnuc_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__gnuc_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__gnuc_va_list^ */> */
+
+      public typealias __time32_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __time32_tVar = kotlinx/cinterop/IntVarOf<pod1/__time32_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__time32_t^ */> */
+
+      public typealias __time64_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias __time64_tVar = kotlinx/cinterop/LongVarOf<pod1/__time64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/__time64_t^ */> */
+
+      public typealias _locale_t = kotlinx/cinterop/CPointer<pod1/localeinfo_struct> /* = kotlinx/cinterop/CPointer<pod1/localeinfo_struct> */
+
+      public typealias _locale_tVar = kotlinx/cinterop/CPointerVarOf<pod1/_locale_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<pod1/localeinfo_struct> /* = pod1/_locale_t^ */> */
+
+      public typealias _locale_tstruct = pod1/localeinfo_struct /* = pod1/localeinfo_struct */
+
+      public typealias errno_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias errno_tVar = kotlinx/cinterop/IntVarOf<pod1/errno_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/errno_t^ */> */
+
+      public typealias fexcept_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias fexcept_tVar = kotlinx/cinterop/UShortVarOf<pod1/fexcept_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/fexcept_t^ */> */
+
+      public typealias intptr_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias intptr_tVar = kotlinx/cinterop/LongVarOf<pod1/intptr_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/intptr_t^ */> */
+
+      public typealias pthreadlocinfo = kotlinx/cinterop/CPointer<pod1/threadlocaleinfostruct> /* = kotlinx/cinterop/CPointer<pod1/threadlocaleinfostruct> */
+
+      public typealias pthreadlocinfoVar = kotlinx/cinterop/CPointerVarOf<pod1/pthreadlocinfo^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<pod1/threadlocaleinfostruct> /* = pod1/pthreadlocinfo^ */> */
+
+      public typealias pthreadmbcinfo = kotlinx/cinterop/CPointer<cnames/structs/threadmbcinfostruct> /* = kotlinx/cinterop/CPointer<cnames/structs/threadmbcinfostruct> */
+
+      public typealias pthreadmbcinfoVar = kotlinx/cinterop/CPointerVarOf<pod1/pthreadmbcinfo^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<cnames/structs/threadmbcinfostruct> /* = pod1/pthreadmbcinfo^ */> */
+
+      public typealias ptrdiff_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias ptrdiff_tVar = kotlinx/cinterop/LongVarOf<pod1/ptrdiff_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/ptrdiff_t^ */> */
+
+      public typealias rsize_t = pod1/size_t^ /* = kotlin/ULong /* = pod1/size_t^ */ */
+
+      public typealias rsize_tVar = kotlinx/cinterop/ULongVarOf<pod1/rsize_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/rsize_t^ */> */
+
+      public typealias size_t = kotlin/ULong /* = kotlin/ULong */
+
+      public typealias size_tVar = kotlinx/cinterop/ULongVarOf<pod1/size_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/size_t^ */> */
+
+      public typealias ssize_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias ssize_tVar = kotlinx/cinterop/LongVarOf<pod1/ssize_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/ssize_t^ */> */
+
+      public typealias threadlocinfo = pod1/threadlocaleinfostruct /* = pod1/threadlocaleinfostruct */
+
+      public typealias time_t = pod1/__time64_t^ /* = kotlin/Long /* = pod1/__time64_t^ */ */
+
+      public typealias time_tVar = kotlinx/cinterop/LongVarOf<pod1/time_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/time_t^ */> */
+
+      public typealias uintptr_t = kotlin/ULong /* = kotlin/ULong */
+
+      public typealias uintptr_tVar = kotlinx/cinterop/ULongVarOf<pod1/uintptr_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/uintptr_t^ */> */
+
+      public typealias va_list = pod1/__gnuc_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__gnuc_va_list^ */ */
+
+      public typealias va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/va_list^ */> */
+
+      public typealias wchar_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias wchar_tVar = kotlinx/cinterop/UShortVarOf<pod1/wchar_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/wchar_t^ */> */
+
+      public typealias wctype_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias wctype_tVar = kotlinx/cinterop/UShortVarOf<pod1/wctype_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/wctype_t^ */> */
+
+      public typealias wint_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias wint_tVar = kotlinx/cinterop/UShortVarOf<pod1/wint_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/wint_t^ */> */
+    }
+  }
+}

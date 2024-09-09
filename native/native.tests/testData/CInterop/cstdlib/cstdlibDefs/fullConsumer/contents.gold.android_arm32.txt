@@ -1,0 +1,1147 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/__kernel_fd_set
+    // class name: pod1/__kernel_fd_set.Companion
+    // class name: pod1/__kernel_fsid_t
+    // class name: pod1/__kernel_fsid_t.Companion
+    // class name: pod1/__va_listStruct
+    // class name: pod1/__va_listStruct.Companion
+    // class name: pod1/max_align_t
+    // class name: pod1/max_align_t.Companion
+    // class name: pod1/pthread_attr_t
+    // class name: pod1/pthread_attr_t.Companion
+    // class name: pod1/pthread_cond_t
+    // class name: pod1/pthread_cond_t.Companion
+    // class name: pod1/pthread_mutex_t
+    // class name: pod1/pthread_mutex_t.Companion
+    // class name: pod1/pthread_rwlock_t
+    // class name: pod1/pthread_rwlock_t.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned long fds_bits[32]; }")
+    public final class pod1/__kernel_fd_set : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final val fds_bits: kotlinx/cinterop/CPointer<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = kotlinx/cinterop/UIntVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = kotlinx/cinterop/UIntVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 128L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/__kernel_fd_set.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int val[2]; }")
+    public final class pod1/__kernel_fsid_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final val val: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = kotlinx/cinterop/IntVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 8L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/__kernel_fsid_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { void* __ap; }")
+    public final class pod1/__va_listStruct : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __ap: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/__va_listStruct.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    public final class pod1/max_align_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __clang_max_align_nonce1: kotlin/Long
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/Long)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 16L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/max_align_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned int flags; void* stack_base; unsigned int stack_size; unsigned int guard_size; int sched_policy; int sched_priority; }")
+    public final class pod1/pthread_attr_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var flags: kotlin/UInt /* = pod1/uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/uint32_t^ */)
+
+      public final var guard_size: kotlin/UInt /* = pod1/size_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 12L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 12L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/size_t^ */)
+
+      public final var sched_policy: kotlin/Int /* = pod1/int32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 16L)
+        public final /* non-default */ external set(value: kotlin/Int /* = pod1/int32_t^ */)
+
+      public final var sched_priority: kotlin/Int /* = pod1/int32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 20L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 20L)
+        public final /* non-default */ external set(value: kotlin/Int /* = pod1/int32_t^ */)
+
+      public final var stack_base: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      public final var stack_size: kotlin/UInt /* = pod1/size_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/size_t^ */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 24L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/pthread_attr_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int __private[1]; }")
+    public final class pod1/pthread_cond_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final val __private: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/pthread_cond_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int __private[1]; }")
+    public final class pod1/pthread_mutex_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final val __private: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/pthread_mutex_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { int __private[10]; }")
+    public final class pod1/pthread_rwlock_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final val __private: kotlinx/cinterop/CPointer<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/IntVarOf<kotlin/Int> /* = pod1/int32_tVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 40L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/pthread_rwlock_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10___system_property_get")
+      public final external fun __system_property_get(@kotlinx/cinterop/internal/CCall.CString __name: kotlin/String?, __value: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_android_get_device_api_level")
+      public final external fun android_get_device_api_level(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_atoi")
+      public final external fun atoi(@kotlinx/cinterop/internal/CCall.CString __s: kotlin/String?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_feclearexcept")
+      public final external fun feclearexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod115_fedisableexcept")
+      public final external fun fedisableexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod114_feenableexcept")
+      public final external fun feenableexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod110_fegetenv")
+      public final external fun fegetenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod116_fegetexcept")
+      public final external fun fegetexcept(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_fegetexceptflag")
+      public final external fun fegetexceptflag(__flag_ptr: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_fegetround")
+      public final external fun fegetround(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod111_feholdexcept")
+      public final external fun feholdexcept(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_feraiseexcept")
+      public final external fun feraiseexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod112_fesetenv")
+      public final external fun fesetenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_fesetexceptflag")
+      public final external fun fesetexceptflag(__flag_ptr: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_fesetround")
+      public final external fun fesetround(__rounding_mode: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_fetestexcept")
+      public final external fun fetestexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod113_feupdateenv")
+      public final external fun feupdateenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      public final const val FE_ALL_EXCEPT: kotlin/Int /* = 159 */
+        public final get
+
+      public final const val FE_DENORMAL: kotlin/Int /* = 128 */
+        public final get
+
+      public final val FE_DFL_ENV: kotlinx/cinterop/CPointer<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod121_FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val FE_DIVBYZERO: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val FE_DOWNWARD: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val FE_INEXACT: kotlin/Int /* = 16 */
+        public final get
+
+      public final const val FE_INVALID: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val FE_OVERFLOW: kotlin/Int /* = 4 */
+        public final get
+
+      public final const val FE_TONEAREST: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val FE_TOWARDZERO: kotlin/Int /* = 3 */
+        public final get
+
+      public final const val FE_UNDERFLOW: kotlin/Int /* = 8 */
+        public final get
+
+      public final const val FE_UPWARD: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val INT16_MAX: kotlin/Int /* = 32767 */
+        public final get
+
+      public final const val INT16_MIN: kotlin/Int /* = -32768 */
+        public final get
+
+      public final const val INT32_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val INT32_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val INT64_MAX: kotlin/Long /* = 9223372036854775807L */
+        public final get
+
+      public final const val INT64_MIN: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val INT8_MAX: kotlin/Int /* = 127 */
+        public final get
+
+      public final const val INT8_MIN: kotlin/Int /* = -128 */
+        public final get
+
+      public final const val INTMAX_MAX: kotlin/Long /* = 9223372036854775807L */
+        public final get
+
+      public final const val INTMAX_MIN: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val INTPTR_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val INTPTR_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val INT_FAST16_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val INT_FAST16_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val INT_FAST32_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val INT_FAST32_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val INT_FAST64_MAX: kotlin/Long /* = 9223372036854775807L */
+        public final get
+
+      public final const val INT_FAST64_MIN: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val INT_FAST8_MAX: kotlin/Int /* = 127 */
+        public final get
+
+      public final const val INT_FAST8_MIN: kotlin/Int /* = -128 */
+        public final get
+
+      public final const val INT_LEAST16_MAX: kotlin/Int /* = 32767 */
+        public final get
+
+      public final const val INT_LEAST16_MIN: kotlin/Int /* = -32768 */
+        public final get
+
+      public final const val INT_LEAST32_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val INT_LEAST32_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val INT_LEAST64_MAX: kotlin/Long /* = 9223372036854775807L */
+        public final get
+
+      public final const val INT_LEAST64_MIN: kotlin/Long /* = -9223372036854775808L */
+        public final get
+
+      public final const val INT_LEAST8_MAX: kotlin/Int /* = 127 */
+        public final get
+
+      public final const val INT_LEAST8_MIN: kotlin/Int /* = -128 */
+        public final get
+
+      public final val NULL: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod120_NULL_getter")
+        public final /* non-default */ external get
+
+      public final const val PTRDIFF_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val PTRDIFF_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val SIG_ATOMIC_MAX: kotlin/Int /* = 2147483647 */
+        public final get
+
+      public final const val SIG_ATOMIC_MIN: kotlin/Int /* = -2147483648 */
+        public final get
+
+      public final const val SIZE_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT16_MAX: kotlin/Int /* = 65535 */
+        public final get
+
+      public final const val UINT32_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT64_MAX: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val UINT8_MAX: kotlin/Int /* = 255 */
+        public final get
+
+      public final const val UINTMAX_MAX: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val UINTPTR_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT_FAST16_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT_FAST32_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT_FAST64_MAX: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val UINT_FAST8_MAX: kotlin/Int /* = 255 */
+        public final get
+
+      public final const val UINT_LEAST16_MAX: kotlin/Int /* = 65535 */
+        public final get
+
+      public final const val UINT_LEAST32_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val UINT_LEAST64_MAX: kotlin/ULong /* = 18446744073709551615uL */
+        public final get
+
+      public final const val UINT_LEAST8_MAX: kotlin/Int /* = 255 */
+        public final get
+
+      public final const val WCHAR_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val WCHAR_MIN: kotlin/UInt /* = 0u */
+        public final get
+
+      public final const val WINT_MAX: kotlin/UInt /* = 4294967295u */
+        public final get
+
+      public final const val WINT_MIN: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __ANDROID_API_FUTURE__: kotlin/Int /* = 10000 */
+        public final get
+
+      public final const val __ANDROID_API_G__: kotlin/Int /* = 9 */
+        public final get
+
+      public final const val __ANDROID_API_I__: kotlin/Int /* = 14 */
+        public final get
+
+      public final const val __ANDROID_API_J_MR1__: kotlin/Int /* = 17 */
+        public final get
+
+      public final const val __ANDROID_API_J_MR2__: kotlin/Int /* = 18 */
+        public final get
+
+      public final const val __ANDROID_API_J__: kotlin/Int /* = 16 */
+        public final get
+
+      public final const val __ANDROID_API_K__: kotlin/Int /* = 19 */
+        public final get
+
+      public final const val __ANDROID_API_L_MR1__: kotlin/Int /* = 22 */
+        public final get
+
+      public final const val __ANDROID_API_L__: kotlin/Int /* = 21 */
+        public final get
+
+      public final const val __ANDROID_API_M__: kotlin/Int /* = 23 */
+        public final get
+
+      public final const val __ANDROID_API_N_MR1__: kotlin/Int /* = 25 */
+        public final get
+
+      public final const val __ANDROID_API_N__: kotlin/Int /* = 24 */
+        public final get
+
+      public final const val __ANDROID_API_O_MR1__: kotlin/Int /* = 27 */
+        public final get
+
+      public final const val __ANDROID_API_O__: kotlin/Int /* = 26 */
+        public final get
+
+      public final const val __ANDROID_API_P__: kotlin/Int /* = 28 */
+        public final get
+
+      public final const val __ANDROID_API_Q__: kotlin/Int /* = 29 */
+        public final get
+
+      public final const val __BIONIC_FORTIFY_UNKNOWN_SIZE: kotlin/UInt /* = pod1/size_t^ */ /* = 4294967295u */
+        public final get
+
+      public final const val __BIONIC__: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __BITS_PER_LONG: kotlin/Int /* = 32 */
+        public final get
+
+      public final const val __FD_SETSIZE: kotlin/Int /* = 1024 */
+        public final get
+
+      public final const val __WORDSIZE: kotlin/Int /* = 32 */
+        public final get
+
+      public final const val __bos_level: kotlin/Int /* = 0 */
+        public final get
+
+      public final val __fe_dfl_env: kotlin/UInt /* = pod1/fenv_t^ */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod117___fe_dfl_env_getter")
+        public final /* non-default */ external get
+
+      public final var useFenvType: kotlin/UInt /* = pod1/fenv_t^ */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod118_useFenvType_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod119_useFenvType_setter")
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/fenv_t^ */)
+
+      public typealias __be16 = pod1/__u16^ /* = kotlin/UShort /* = pod1/__u16^ */ */
+
+      public typealias __be16Var = kotlinx/cinterop/UShortVarOf<pod1/__be16^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__be16^ */> */
+
+      public typealias __be32 = pod1/__u32^ /* = kotlin/UInt /* = pod1/__u32^ */ */
+
+      public typealias __be32Var = kotlinx/cinterop/UIntVarOf<pod1/__be32^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__be32^ */> */
+
+      public typealias __be64 = pod1/__u64^ /* = kotlin/ULong /* = pod1/__u64^ */ */
+
+      public typealias __be64Var = kotlinx/cinterop/ULongVarOf<pod1/__be64^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/__be64^ */> */
+
+      public typealias __builtin_va_list = pod1/__va_listStruct /* = pod1/__va_listStruct */
+
+      public typealias __clockid_t = pod1/__kernel_clockid_t^ /* = kotlin/Int /* = pod1/__kernel_clockid_t^ */ */
+
+      public typealias __clockid_tVar = kotlinx/cinterop/IntVarOf<pod1/__clockid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__clockid_t^ */> */
+
+      public typealias __gid_t = pod1/__kernel_gid32_t^ /* = kotlin/UInt /* = pod1/__kernel_gid32_t^ */ */
+
+      public typealias __gid_tVar = kotlinx/cinterop/UIntVarOf<pod1/__gid_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__gid_t^ */> */
+
+      public typealias __id_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias __id_tVar = kotlinx/cinterop/UIntVarOf<pod1/__id_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__id_t^ */> */
+
+      public typealias __ino_t = pod1/__kernel_ino_t^ /* = kotlin/UInt /* = pod1/__kernel_ino_t^ */ */
+
+      public typealias __ino_tVar = kotlinx/cinterop/UIntVarOf<pod1/__ino_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__ino_t^ */> */
+
+      public typealias __int16_t = kotlin/Short /* = kotlin/Short */
+
+      public typealias __int16_tVar = kotlinx/cinterop/ShortVarOf<pod1/__int16_t^> /* = kotlinx/cinterop/ShortVarOf<kotlin/Short /* = pod1/__int16_t^ */> */
+
+      public typealias __int32_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __int32_tVar = kotlinx/cinterop/IntVarOf<pod1/__int32_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__int32_t^ */> */
+
+      public typealias __int64_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias __int64_tVar = kotlinx/cinterop/LongVarOf<pod1/__int64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/__int64_t^ */> */
+
+      public typealias __int8_t = kotlin/Byte /* = kotlin/Byte */
+
+      public typealias __int8_tVar = kotlinx/cinterop/ByteVarOf<pod1/__int8_t^> /* = kotlinx/cinterop/ByteVarOf<kotlin/Byte /* = pod1/__int8_t^ */> */
+
+      public typealias __intptr_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __intptr_tVar = kotlinx/cinterop/IntVarOf<pod1/__intptr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__intptr_t^ */> */
+
+      public typealias __kernel_caddr_t = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+
+      public typealias __kernel_caddr_tVar = kotlinx/cinterop/CPointerVarOf<pod1/__kernel_caddr_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__kernel_caddr_t^ */> */
+
+      public typealias __kernel_clock_t = pod1/__kernel_long_t^ /* = kotlin/Int /* = pod1/__kernel_long_t^ */ */
+
+      public typealias __kernel_clock_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_clock_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_clock_t^ */> */
+
+      public typealias __kernel_clockid_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_clockid_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_clockid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_clockid_t^ */> */
+
+      public typealias __kernel_daddr_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_daddr_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_daddr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_daddr_t^ */> */
+
+      public typealias __kernel_gid16_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_gid16_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_gid16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_gid16_t^ */> */
+
+      public typealias __kernel_gid32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __kernel_gid32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__kernel_gid32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__kernel_gid32_t^ */> */
+
+      public typealias __kernel_gid_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_gid_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_gid_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_gid_t^ */> */
+
+      public typealias __kernel_ino_t = pod1/__kernel_ulong_t^ /* = kotlin/UInt /* = pod1/__kernel_ulong_t^ */ */
+
+      public typealias __kernel_ino_tVar = kotlinx/cinterop/UIntVarOf<pod1/__kernel_ino_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__kernel_ino_t^ */> */
+
+      public typealias __kernel_ipc_pid_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_ipc_pid_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_ipc_pid_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_ipc_pid_t^ */> */
+
+      public typealias __kernel_key_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_key_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_key_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_key_t^ */> */
+
+      public typealias __kernel_loff_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias __kernel_loff_tVar = kotlinx/cinterop/LongVarOf<pod1/__kernel_loff_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/__kernel_loff_t^ */> */
+
+      public typealias __kernel_long_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_long_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_long_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_long_t^ */> */
+
+      public typealias __kernel_mode_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_mode_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_mode_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_mode_t^ */> */
+
+      public typealias __kernel_mqd_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_mqd_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_mqd_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_mqd_t^ */> */
+
+      public typealias __kernel_off_t = pod1/__kernel_long_t^ /* = kotlin/Int /* = pod1/__kernel_long_t^ */ */
+
+      public typealias __kernel_off_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_off_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_off_t^ */> */
+
+      public typealias __kernel_old_dev_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_old_dev_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_old_dev_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_old_dev_t^ */> */
+
+      public typealias __kernel_old_gid_t = pod1/__kernel_gid_t^ /* = kotlin/UShort /* = pod1/__kernel_gid_t^ */ */
+
+      public typealias __kernel_old_gid_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_old_gid_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_old_gid_t^ */> */
+
+      public typealias __kernel_old_uid_t = pod1/__kernel_uid_t^ /* = kotlin/UShort /* = pod1/__kernel_uid_t^ */ */
+
+      public typealias __kernel_old_uid_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_old_uid_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_old_uid_t^ */> */
+
+      public typealias __kernel_pid_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_pid_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_pid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_pid_t^ */> */
+
+      public typealias __kernel_ptrdiff_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_ptrdiff_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_ptrdiff_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_ptrdiff_t^ */> */
+
+      public typealias __kernel_sighandler_t = kotlinx/cinterop/CPointer<kotlinx/cinterop/CFunction<kotlin/Function1<kotlin/Int, kotlin/Unit>>> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/CFunction<kotlin/Function1<kotlin/Int, kotlin/Unit>>> */
+
+      public typealias __kernel_sighandler_tVar = kotlinx/cinterop/CPointerVarOf<pod1/__kernel_sighandler_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/CFunction<kotlin/Function1<kotlin/Int, kotlin/Unit>>> /* = pod1/__kernel_sighandler_t^ */> */
+
+      public typealias __kernel_size_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __kernel_size_tVar = kotlinx/cinterop/UIntVarOf<pod1/__kernel_size_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__kernel_size_t^ */> */
+
+      public typealias __kernel_ssize_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_ssize_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_ssize_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_ssize_t^ */> */
+
+      public typealias __kernel_suseconds_t = pod1/__kernel_long_t^ /* = kotlin/Int /* = pod1/__kernel_long_t^ */ */
+
+      public typealias __kernel_suseconds_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_suseconds_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_suseconds_t^ */> */
+
+      public typealias __kernel_time64_t = kotlin/Long /* = kotlin/Long */
+
+      public typealias __kernel_time64_tVar = kotlinx/cinterop/LongVarOf<pod1/__kernel_time64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/__kernel_time64_t^ */> */
+
+      public typealias __kernel_time_t = pod1/__kernel_long_t^ /* = kotlin/Int /* = pod1/__kernel_long_t^ */ */
+
+      public typealias __kernel_time_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_time_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_time_t^ */> */
+
+      public typealias __kernel_timer_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias __kernel_timer_tVar = kotlinx/cinterop/IntVarOf<pod1/__kernel_timer_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__kernel_timer_t^ */> */
+
+      public typealias __kernel_uid16_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_uid16_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_uid16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_uid16_t^ */> */
+
+      public typealias __kernel_uid32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __kernel_uid32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__kernel_uid32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__kernel_uid32_t^ */> */
+
+      public typealias __kernel_uid_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __kernel_uid_tVar = kotlinx/cinterop/UShortVarOf<pod1/__kernel_uid_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__kernel_uid_t^ */> */
+
+      public typealias __kernel_ulong_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __kernel_ulong_tVar = kotlinx/cinterop/UIntVarOf<pod1/__kernel_ulong_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__kernel_ulong_t^ */> */
+
+      public typealias __key_t = pod1/__kernel_key_t^ /* = kotlin/Int /* = pod1/__kernel_key_t^ */ */
+
+      public typealias __key_tVar = kotlinx/cinterop/IntVarOf<pod1/__key_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__key_t^ */> */
+
+      public typealias __le16 = pod1/__u16^ /* = kotlin/UShort /* = pod1/__u16^ */ */
+
+      public typealias __le16Var = kotlinx/cinterop/UShortVarOf<pod1/__le16^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__le16^ */> */
+
+      public typealias __le32 = pod1/__u32^ /* = kotlin/UInt /* = pod1/__u32^ */ */
+
+      public typealias __le32Var = kotlinx/cinterop/UIntVarOf<pod1/__le32^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__le32^ */> */
+
+      public typealias __le64 = pod1/__u64^ /* = kotlin/ULong /* = pod1/__u64^ */ */
+
+      public typealias __le64Var = kotlinx/cinterop/ULongVarOf<pod1/__le64^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/__le64^ */> */
+
+      public typealias __mode_t = pod1/__kernel_mode_t^ /* = kotlin/UShort /* = pod1/__kernel_mode_t^ */ */
+
+      public typealias __mode_tVar = kotlinx/cinterop/UShortVarOf<pod1/__mode_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__mode_t^ */> */
+
+      public typealias __nlink_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias __nlink_tVar = kotlinx/cinterop/UIntVarOf<pod1/__nlink_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__nlink_t^ */> */
+
+      public typealias __pid_t = pod1/__kernel_pid_t^ /* = kotlin/Int /* = pod1/__kernel_pid_t^ */ */
+
+      public typealias __pid_tVar = kotlinx/cinterop/IntVarOf<pod1/__pid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__pid_t^ */> */
+
+      public typealias __poll_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __poll_tVar = kotlinx/cinterop/UIntVarOf<pod1/__poll_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__poll_t^ */> */
+
+      public typealias __s16 = kotlin/Short /* = kotlin/Short */
+
+      public typealias __s16Var = kotlinx/cinterop/ShortVarOf<pod1/__s16^> /* = kotlinx/cinterop/ShortVarOf<kotlin/Short /* = pod1/__s16^ */> */
+
+      public typealias __s32 = kotlin/Int /* = kotlin/Int */
+
+      public typealias __s32Var = kotlinx/cinterop/IntVarOf<pod1/__s32^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__s32^ */> */
+
+      public typealias __s64 = kotlin/Long /* = kotlin/Long */
+
+      public typealias __s64Var = kotlinx/cinterop/LongVarOf<pod1/__s64^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/__s64^ */> */
+
+      public typealias __s8 = kotlin/Byte /* = kotlin/Byte */
+
+      public typealias __s8Var = kotlinx/cinterop/ByteVarOf<pod1/__s8^> /* = kotlinx/cinterop/ByteVarOf<kotlin/Byte /* = pod1/__s8^ */> */
+
+      public typealias __socklen_t = pod1/int32_t^ /* = kotlin/Int /* = pod1/int32_t^ */ */
+
+      public typealias __socklen_tVar = kotlinx/cinterop/IntVarOf<pod1/__socklen_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__socklen_t^ */> */
+
+      public typealias __sum16 = pod1/__u16^ /* = kotlin/UShort /* = pod1/__u16^ */ */
+
+      public typealias __sum16Var = kotlinx/cinterop/UShortVarOf<pod1/__sum16^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__sum16^ */> */
+
+      public typealias __suseconds_t = pod1/__kernel_suseconds_t^ /* = kotlin/Int /* = pod1/__kernel_suseconds_t^ */ */
+
+      public typealias __suseconds_tVar = kotlinx/cinterop/IntVarOf<pod1/__suseconds_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__suseconds_t^ */> */
+
+      public typealias __time_t = pod1/__kernel_time_t^ /* = kotlin/Int /* = pod1/__kernel_time_t^ */ */
+
+      public typealias __time_tVar = kotlinx/cinterop/IntVarOf<pod1/__time_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/__time_t^ */> */
+
+      public typealias __timer_t = kotlinx/cinterop/COpaquePointer^ /* = kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = kotlinx/cinterop/COpaquePointer^ */ */
+
+      public typealias __timer_tVar = kotlinx/cinterop/CPointerVarOf<pod1/__timer_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = pod1/__timer_t^ */> */
+
+      public typealias __u16 = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __u16Var = kotlinx/cinterop/UShortVarOf<pod1/__u16^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__u16^ */> */
+
+      public typealias __u32 = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __u32Var = kotlinx/cinterop/UIntVarOf<pod1/__u32^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__u32^ */> */
+
+      public typealias __u64 = kotlin/ULong /* = kotlin/ULong */
+
+      public typealias __u64Var = kotlinx/cinterop/ULongVarOf<pod1/__u64^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/__u64^ */> */
+
+      public typealias __u8 = kotlin/UByte /* = kotlin/UByte */
+
+      public typealias __u8Var = kotlinx/cinterop/UByteVarOf<pod1/__u8^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/__u8^ */> */
+
+      public typealias __uid_t = pod1/__kernel_uid32_t^ /* = kotlin/UInt /* = pod1/__kernel_uid32_t^ */ */
+
+      public typealias __uid_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uid_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uid_t^ */> */
+
+      public typealias __uint16_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias __uint16_tVar = kotlinx/cinterop/UShortVarOf<pod1/__uint16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/__uint16_t^ */> */
+
+      public typealias __uint32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __uint32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uint32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uint32_t^ */> */
+
+      public typealias __uint64_t = kotlin/ULong /* = kotlin/ULong */
+
+      public typealias __uint64_tVar = kotlinx/cinterop/ULongVarOf<pod1/__uint64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/__uint64_t^ */> */
+
+      public typealias __uint8_t = kotlin/UByte /* = kotlin/UByte */
+
+      public typealias __uint8_tVar = kotlinx/cinterop/UByteVarOf<pod1/__uint8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/__uint8_t^ */> */
+
+      public typealias __uintptr_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __uintptr_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uintptr_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uintptr_t^ */> */
+
+      public typealias __useconds_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias __useconds_tVar = kotlinx/cinterop/UIntVarOf<pod1/__useconds_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__useconds_t^ */> */
+
+      public typealias __va_list = pod1/__builtin_va_list^ /* = pod1/__va_listStruct /* = pod1/__builtin_va_list^ */ */
+
+      public typealias __wsum = pod1/__u32^ /* = kotlin/UInt /* = pod1/__u32^ */ */
+
+      public typealias __wsumVar = kotlinx/cinterop/UIntVarOf<pod1/__wsum^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__wsum^ */> */
+
+      public typealias blkcnt_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias blkcnt_tVar = kotlinx/cinterop/UIntVarOf<pod1/blkcnt_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/blkcnt_t^ */> */
+
+      public typealias blksize_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias blksize_tVar = kotlinx/cinterop/UIntVarOf<pod1/blksize_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/blksize_t^ */> */
+
+      public typealias caddr_t = pod1/__kernel_caddr_t^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__kernel_caddr_t^ */ */
+
+      public typealias caddr_tVar = kotlinx/cinterop/CPointerVarOf<pod1/caddr_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/caddr_t^ */> */
+
+      public typealias clock_t = pod1/__kernel_clock_t^ /* = kotlin/Int /* = pod1/__kernel_clock_t^ */ */
+
+      public typealias clock_tVar = kotlinx/cinterop/IntVarOf<pod1/clock_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/clock_t^ */> */
+
+      public typealias clockid_t = pod1/__clockid_t^ /* = kotlin/Int /* = pod1/__clockid_t^ */ */
+
+      public typealias clockid_tVar = kotlinx/cinterop/IntVarOf<pod1/clockid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/clockid_t^ */> */
+
+      public typealias daddr_t = pod1/__kernel_daddr_t^ /* = kotlin/Int /* = pod1/__kernel_daddr_t^ */ */
+
+      public typealias daddr_tVar = kotlinx/cinterop/IntVarOf<pod1/daddr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/daddr_t^ */> */
+
+      public typealias dev_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias dev_tVar = kotlinx/cinterop/UIntVarOf<pod1/dev_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/dev_t^ */> */
+
+      public typealias fenv_t = pod1/__uint32_t^ /* = kotlin/UInt /* = pod1/__uint32_t^ */ */
+
+      public typealias fenv_tVar = kotlinx/cinterop/UIntVarOf<pod1/fenv_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fenv_t^ */> */
+
+      public typealias fexcept_t = pod1/__uint32_t^ /* = kotlin/UInt /* = pod1/__uint32_t^ */ */
+
+      public typealias fexcept_tVar = kotlinx/cinterop/UIntVarOf<pod1/fexcept_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fexcept_t^ */> */
+
+      public typealias fsblkcnt_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias fsblkcnt_tVar = kotlinx/cinterop/UIntVarOf<pod1/fsblkcnt_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fsblkcnt_t^ */> */
+
+      public typealias fsfilcnt_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias fsfilcnt_tVar = kotlinx/cinterop/UIntVarOf<pod1/fsfilcnt_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fsfilcnt_t^ */> */
+
+      public typealias gid_t = pod1/__gid_t^ /* = kotlin/UInt /* = pod1/__gid_t^ */ */
+
+      public typealias gid_tVar = kotlinx/cinterop/UIntVarOf<pod1/gid_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/gid_t^ */> */
+
+      public typealias id_t = pod1/__id_t^ /* = kotlin/UInt /* = pod1/__id_t^ */ */
+
+      public typealias id_tVar = kotlinx/cinterop/UIntVarOf<pod1/id_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/id_t^ */> */
+
+      public typealias ino64_t = pod1/uint64_t^ /* = kotlin/ULong /* = pod1/uint64_t^ */ */
+
+      public typealias ino64_tVar = kotlinx/cinterop/ULongVarOf<pod1/ino64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/ino64_t^ */> */
+
+      public typealias ino_t = pod1/__ino_t^ /* = kotlin/UInt /* = pod1/__ino_t^ */ */
+
+      public typealias ino_tVar = kotlinx/cinterop/UIntVarOf<pod1/ino_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/ino_t^ */> */
+
+      public typealias int16_t = pod1/__int16_t^ /* = kotlin/Short /* = pod1/__int16_t^ */ */
+
+      public typealias int16_tVar = kotlinx/cinterop/ShortVarOf<pod1/int16_t^> /* = kotlinx/cinterop/ShortVarOf<kotlin/Short /* = pod1/int16_t^ */> */
+
+      public typealias int32_t = pod1/__int32_t^ /* = kotlin/Int /* = pod1/__int32_t^ */ */
+
+      public typealias int32_tVar = kotlinx/cinterop/IntVarOf<pod1/int32_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/int32_t^ */> */
+
+      public typealias int64_t = pod1/__int64_t^ /* = kotlin/Long /* = pod1/__int64_t^ */ */
+
+      public typealias int64_tVar = kotlinx/cinterop/LongVarOf<pod1/int64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/int64_t^ */> */
+
+      public typealias int8_t = pod1/__int8_t^ /* = kotlin/Byte /* = pod1/__int8_t^ */ */
+
+      public typealias int8_tVar = kotlinx/cinterop/ByteVarOf<pod1/int8_t^> /* = kotlinx/cinterop/ByteVarOf<kotlin/Byte /* = pod1/int8_t^ */> */
+
+      public typealias int_fast16_t = pod1/int32_t^ /* = kotlin/Int /* = pod1/int32_t^ */ */
+
+      public typealias int_fast16_tVar = kotlinx/cinterop/IntVarOf<pod1/int_fast16_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/int_fast16_t^ */> */
+
+      public typealias int_fast32_t = pod1/int32_t^ /* = kotlin/Int /* = pod1/int32_t^ */ */
+
+      public typealias int_fast32_tVar = kotlinx/cinterop/IntVarOf<pod1/int_fast32_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/int_fast32_t^ */> */
+
+      public typealias int_fast64_t = pod1/int64_t^ /* = kotlin/Long /* = pod1/int64_t^ */ */
+
+      public typealias int_fast64_tVar = kotlinx/cinterop/LongVarOf<pod1/int_fast64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/int_fast64_t^ */> */
+
+      public typealias int_fast8_t = pod1/int8_t^ /* = kotlin/Byte /* = pod1/int8_t^ */ */
+
+      public typealias int_fast8_tVar = kotlinx/cinterop/ByteVarOf<pod1/int_fast8_t^> /* = kotlinx/cinterop/ByteVarOf<kotlin/Byte /* = pod1/int_fast8_t^ */> */
+
+      public typealias int_least16_t = pod1/int16_t^ /* = kotlin/Short /* = pod1/int16_t^ */ */
+
+      public typealias int_least16_tVar = kotlinx/cinterop/ShortVarOf<pod1/int_least16_t^> /* = kotlinx/cinterop/ShortVarOf<kotlin/Short /* = pod1/int_least16_t^ */> */
+
+      public typealias int_least32_t = pod1/int32_t^ /* = kotlin/Int /* = pod1/int32_t^ */ */
+
+      public typealias int_least32_tVar = kotlinx/cinterop/IntVarOf<pod1/int_least32_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/int_least32_t^ */> */
+
+      public typealias int_least64_t = pod1/int64_t^ /* = kotlin/Long /* = pod1/int64_t^ */ */
+
+      public typealias int_least64_tVar = kotlinx/cinterop/LongVarOf<pod1/int_least64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/int_least64_t^ */> */
+
+      public typealias int_least8_t = pod1/int8_t^ /* = kotlin/Byte /* = pod1/int8_t^ */ */
+
+      public typealias int_least8_tVar = kotlinx/cinterop/ByteVarOf<pod1/int_least8_t^> /* = kotlinx/cinterop/ByteVarOf<kotlin/Byte /* = pod1/int_least8_t^ */> */
+
+      public typealias intmax_t = pod1/int64_t^ /* = kotlin/Long /* = pod1/int64_t^ */ */
+
+      public typealias intmax_tVar = kotlinx/cinterop/LongVarOf<pod1/intmax_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/intmax_t^ */> */
+
+      public typealias intptr_t = pod1/__intptr_t^ /* = kotlin/Int /* = pod1/__intptr_t^ */ */
+
+      public typealias intptr_tVar = kotlinx/cinterop/IntVarOf<pod1/intptr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/intptr_t^ */> */
+
+      public typealias key_t = pod1/__key_t^ /* = kotlin/Int /* = pod1/__key_t^ */ */
+
+      public typealias key_tVar = kotlinx/cinterop/IntVarOf<pod1/key_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/key_t^ */> */
+
+      public typealias loff_t = pod1/__kernel_loff_t^ /* = kotlin/Long /* = pod1/__kernel_loff_t^ */ */
+
+      public typealias loff_tVar = kotlinx/cinterop/LongVarOf<pod1/loff_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/loff_t^ */> */
+
+      public typealias mode_t = pod1/__mode_t^ /* = kotlin/UShort /* = pod1/__mode_t^ */ */
+
+      public typealias mode_tVar = kotlinx/cinterop/UShortVarOf<pod1/mode_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/mode_t^ */> */
+
+      public typealias nlink_t = pod1/__nlink_t^ /* = kotlin/UInt /* = pod1/__nlink_t^ */ */
+
+      public typealias nlink_tVar = kotlinx/cinterop/UIntVarOf<pod1/nlink_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/nlink_t^ */> */
+
+      public typealias off64_t = pod1/loff_t^ /* = kotlin/Long /* = pod1/loff_t^ */ */
+
+      public typealias off64_tVar = kotlinx/cinterop/LongVarOf<pod1/off64_t^> /* = kotlinx/cinterop/LongVarOf<kotlin/Long /* = pod1/off64_t^ */> */
+
+      public typealias off_t = pod1/__kernel_off_t^ /* = kotlin/Int /* = pod1/__kernel_off_t^ */ */
+
+      public typealias off_tVar = kotlinx/cinterop/IntVarOf<pod1/off_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/off_t^ */> */
+
+      public typealias pid_t = pod1/__pid_t^ /* = kotlin/Int /* = pod1/__pid_t^ */ */
+
+      public typealias pid_tVar = kotlinx/cinterop/IntVarOf<pod1/pid_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pid_t^ */> */
+
+      public typealias pthread_condattr_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_condattr_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_condattr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_condattr_t^ */> */
+
+      public typealias pthread_key_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_key_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_key_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_key_t^ */> */
+
+      public typealias pthread_mutexattr_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_mutexattr_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_mutexattr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_mutexattr_t^ */> */
+
+      public typealias pthread_once_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_once_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_once_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_once_t^ */> */
+
+      public typealias pthread_rwlockattr_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_rwlockattr_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_rwlockattr_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_rwlockattr_t^ */> */
+
+      public typealias pthread_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias pthread_tVar = kotlinx/cinterop/IntVarOf<pod1/pthread_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/pthread_t^ */> */
+
+      public typealias ptrdiff_t = kotlin/Int /* = kotlin/Int */
+
+      public typealias ptrdiff_tVar = kotlinx/cinterop/IntVarOf<pod1/ptrdiff_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/ptrdiff_t^ */> */
+
+      public typealias size_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias size_tVar = kotlinx/cinterop/UIntVarOf<pod1/size_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/size_t^ */> */
+
+      public typealias socklen_t = pod1/__socklen_t^ /* = kotlin/Int /* = pod1/__socklen_t^ */ */
+
+      public typealias socklen_tVar = kotlinx/cinterop/IntVarOf<pod1/socklen_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/socklen_t^ */> */
+
+      public typealias ssize_t = pod1/__kernel_ssize_t^ /* = kotlin/Int /* = pod1/__kernel_ssize_t^ */ */
+
+      public typealias ssize_tVar = kotlinx/cinterop/IntVarOf<pod1/ssize_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/ssize_t^ */> */
+
+      public typealias suseconds_t = pod1/__suseconds_t^ /* = kotlin/Int /* = pod1/__suseconds_t^ */ */
+
+      public typealias suseconds_tVar = kotlinx/cinterop/IntVarOf<pod1/suseconds_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/suseconds_t^ */> */
+
+      public typealias time_t = pod1/__time_t^ /* = kotlin/Int /* = pod1/__time_t^ */ */
+
+      public typealias time_tVar = kotlinx/cinterop/IntVarOf<pod1/time_t^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = pod1/time_t^ */> */
+
+      public typealias timer_t = pod1/__timer_t^ /* = kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = pod1/__timer_t^ */ */
+
+      public typealias timer_tVar = kotlinx/cinterop/CPointerVarOf<pod1/timer_t^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = pod1/timer_t^ */> */
+
+      public typealias u_char = kotlin/UByte /* = kotlin/UByte */
+
+      public typealias u_charVar = kotlinx/cinterop/UByteVarOf<pod1/u_char^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/u_char^ */> */
+
+      public typealias u_int = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias u_int16_t = pod1/uint16_t^ /* = kotlin/UShort /* = pod1/uint16_t^ */ */
+
+      public typealias u_int16_tVar = kotlinx/cinterop/UShortVarOf<pod1/u_int16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/u_int16_t^ */> */
+
+      public typealias u_int32_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias u_int32_tVar = kotlinx/cinterop/UIntVarOf<pod1/u_int32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/u_int32_t^ */> */
+
+      public typealias u_int64_t = pod1/uint64_t^ /* = kotlin/ULong /* = pod1/uint64_t^ */ */
+
+      public typealias u_int64_tVar = kotlinx/cinterop/ULongVarOf<pod1/u_int64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/u_int64_t^ */> */
+
+      public typealias u_int8_t = pod1/uint8_t^ /* = kotlin/UByte /* = pod1/uint8_t^ */ */
+
+      public typealias u_int8_tVar = kotlinx/cinterop/UByteVarOf<pod1/u_int8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/u_int8_t^ */> */
+
+      public typealias u_intVar = kotlinx/cinterop/UIntVarOf<pod1/u_int^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/u_int^ */> */
+
+      public typealias u_long = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias u_longVar = kotlinx/cinterop/UIntVarOf<pod1/u_long^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/u_long^ */> */
+
+      public typealias u_short = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias u_shortVar = kotlinx/cinterop/UShortVarOf<pod1/u_short^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/u_short^ */> */
+
+      public typealias uid_t = pod1/__uid_t^ /* = kotlin/UInt /* = pod1/__uid_t^ */ */
+
+      public typealias uid_tVar = kotlinx/cinterop/UIntVarOf<pod1/uid_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uid_t^ */> */
+
+      public typealias uint = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias uint16_t = pod1/__uint16_t^ /* = kotlin/UShort /* = pod1/__uint16_t^ */ */
+
+      public typealias uint16_tVar = kotlinx/cinterop/UShortVarOf<pod1/uint16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/uint16_t^ */> */
+
+      public typealias uint32_t = pod1/__uint32_t^ /* = kotlin/UInt /* = pod1/__uint32_t^ */ */
+
+      public typealias uint32_tVar = kotlinx/cinterop/UIntVarOf<pod1/uint32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint32_t^ */> */
+
+      public typealias uint64_t = pod1/__uint64_t^ /* = kotlin/ULong /* = pod1/__uint64_t^ */ */
+
+      public typealias uint64_tVar = kotlinx/cinterop/ULongVarOf<pod1/uint64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/uint64_t^ */> */
+
+      public typealias uint8_t = pod1/__uint8_t^ /* = kotlin/UByte /* = pod1/__uint8_t^ */ */
+
+      public typealias uint8_tVar = kotlinx/cinterop/UByteVarOf<pod1/uint8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/uint8_t^ */> */
+
+      public typealias uintVar = kotlinx/cinterop/UIntVarOf<pod1/uint^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint^ */> */
+
+      public typealias uint_fast16_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias uint_fast16_tVar = kotlinx/cinterop/UIntVarOf<pod1/uint_fast16_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint_fast16_t^ */> */
+
+      public typealias uint_fast32_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias uint_fast32_tVar = kotlinx/cinterop/UIntVarOf<pod1/uint_fast32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint_fast32_t^ */> */
+
+      public typealias uint_fast64_t = pod1/uint64_t^ /* = kotlin/ULong /* = pod1/uint64_t^ */ */
+
+      public typealias uint_fast64_tVar = kotlinx/cinterop/ULongVarOf<pod1/uint_fast64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/uint_fast64_t^ */> */
+
+      public typealias uint_fast8_t = pod1/uint8_t^ /* = kotlin/UByte /* = pod1/uint8_t^ */ */
+
+      public typealias uint_fast8_tVar = kotlinx/cinterop/UByteVarOf<pod1/uint_fast8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/uint_fast8_t^ */> */
+
+      public typealias uint_least16_t = pod1/uint16_t^ /* = kotlin/UShort /* = pod1/uint16_t^ */ */
+
+      public typealias uint_least16_tVar = kotlinx/cinterop/UShortVarOf<pod1/uint_least16_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/uint_least16_t^ */> */
+
+      public typealias uint_least32_t = pod1/uint32_t^ /* = kotlin/UInt /* = pod1/uint32_t^ */ */
+
+      public typealias uint_least32_tVar = kotlinx/cinterop/UIntVarOf<pod1/uint_least32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint_least32_t^ */> */
+
+      public typealias uint_least64_t = pod1/uint64_t^ /* = kotlin/ULong /* = pod1/uint64_t^ */ */
+
+      public typealias uint_least64_tVar = kotlinx/cinterop/ULongVarOf<pod1/uint_least64_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/uint_least64_t^ */> */
+
+      public typealias uint_least8_t = pod1/uint8_t^ /* = kotlin/UByte /* = pod1/uint8_t^ */ */
+
+      public typealias uint_least8_tVar = kotlinx/cinterop/UByteVarOf<pod1/uint_least8_t^> /* = kotlinx/cinterop/UByteVarOf<kotlin/UByte /* = pod1/uint_least8_t^ */> */
+
+      public typealias uint_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias uint_tVar = kotlinx/cinterop/UIntVarOf<pod1/uint_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uint_t^ */> */
+
+      public typealias uintmax_t = pod1/uint64_t^ /* = kotlin/ULong /* = pod1/uint64_t^ */ */
+
+      public typealias uintmax_tVar = kotlinx/cinterop/ULongVarOf<pod1/uintmax_t^> /* = kotlinx/cinterop/ULongVarOf<kotlin/ULong /* = pod1/uintmax_t^ */> */
+
+      public typealias uintptr_t = pod1/__uintptr_t^ /* = kotlin/UInt /* = pod1/__uintptr_t^ */ */
+
+      public typealias uintptr_tVar = kotlinx/cinterop/UIntVarOf<pod1/uintptr_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/uintptr_t^ */> */
+
+      public typealias useconds_t = pod1/__useconds_t^ /* = kotlin/UInt /* = pod1/__useconds_t^ */ */
+
+      public typealias useconds_tVar = kotlinx/cinterop/UIntVarOf<pod1/useconds_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/useconds_t^ */> */
+
+      public typealias wchar_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias wchar_tVar = kotlinx/cinterop/UIntVarOf<pod1/wchar_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/wchar_t^ */> */
+    }
+  }
+}

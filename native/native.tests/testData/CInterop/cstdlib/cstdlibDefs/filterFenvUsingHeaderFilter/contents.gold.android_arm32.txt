@@ -1,0 +1,72 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_feclearexcept")
+      public final external fun feclearexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod112_fedisableexcept")
+      public final external fun fedisableexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod111_feenableexcept")
+      public final external fun feenableexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_fegetenv")
+      public final external fun fegetenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod113_fegetexcept")
+      public final external fun fegetexcept(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_fegetexceptflag")
+      public final external fun fegetexceptflag(__flag_ptr: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_fegetround")
+      public final external fun fegetround(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_feholdexcept")
+      public final external fun feholdexcept(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_feraiseexcept")
+      public final external fun feraiseexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_fesetenv")
+      public final external fun fesetenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_fesetexceptflag")
+      public final external fun fesetexceptflag(__flag_ptr: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_fesetround")
+      public final external fun fesetround(__rounding_mode: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_fetestexcept")
+      public final external fun fetestexcept(__exceptions: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod110_feupdateenv")
+      public final external fun feupdateenv(__env: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?): kotlin/Int
+
+      public final val FE_DFL_ENV: kotlinx/cinterop/CPointer<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fenv_tVar^ */>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod115_FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final val __fe_dfl_env: kotlin/UInt /* = pod1/fenv_t^ */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod114___fe_dfl_env_getter")
+        public final /* non-default */ external get
+
+      public typealias __uint32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __uint32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uint32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uint32_t^ */> */
+
+      public typealias fenv_t = pod1/__uint32_t^ /* = kotlin/UInt /* = pod1/__uint32_t^ */ */
+
+      public typealias fenv_tVar = kotlinx/cinterop/UIntVarOf<pod1/fenv_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fenv_t^ */> */
+
+      public typealias fexcept_t = pod1/__uint32_t^ /* = kotlin/UInt /* = pod1/__uint32_t^ */ */
+
+      public typealias fexcept_tVar = kotlinx/cinterop/UIntVarOf<pod1/fexcept_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fexcept_t^ */> */
+    }
+  }
+}

@@ -1,0 +1,3 @@
+# Expect fenv.h and transitive includes
+language = C
+headers = fenv.h

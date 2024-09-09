@@ -1,0 +1,4 @@
+# Expect fenv.h and any types leaking from included headers
+language = C
+headers = fenv.h
+headerFilter = fenv.h

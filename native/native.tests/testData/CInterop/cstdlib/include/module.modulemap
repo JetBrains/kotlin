@@ -1,0 +1,9 @@
+module CStdlibConsumer {
+    header "CStdlibConsumer.h"
+    export *
+}
+
+module OnlyIncludeFenv {
+    header "OnlyIncludeFenv.h"
+    export *
+}

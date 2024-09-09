@@ -1,0 +1,221 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/fenv_t
+    // class name: pod1/fenv_t.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned int __fpcr; unsigned int __fpsr; }")
+    public final class pod1/fenv_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __fpcr: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      public final var __fpsr: kotlin/UInt
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UInt)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 8L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/fenv_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_feclearexcept")
+      public final external fun feclearexcept(__excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_fegetenv")
+      public final external fun fegetenv(__envp: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_fegetexceptflag")
+      public final external fun fegetexceptflag(__flagp: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_fegetround")
+      public final external fun fegetround(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_feholdexcept")
+      public final external fun feholdexcept(__envp: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_feraiseexcept")
+      public final external fun feraiseexcept(__excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_fesetenv")
+      public final external fun fesetenv(__envp: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_fesetexceptflag")
+      public final external fun fesetexceptflag(__flagp: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/fexcept_tVar^ */>?, __excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_fesetround")
+      public final external fun fesetround(__rounding_direction: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_fetestexcept")
+      public final external fun fetestexcept(__excepts: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod110_feupdateenv")
+      public final external fun feupdateenv(__envp: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      public final const val FE_ALL_EXCEPT: kotlin/Int /* = 31 */
+        public final get
+
+      public final val FE_DFL_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod111_FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val FE_DIVBYZERO: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val FE_DOWNWARD: kotlin/Int /* = 8388608 */
+        public final get
+
+      public final const val FE_EXCEPT_SHIFT: kotlin/Int /* = 8 */
+        public final get
+
+      public final const val FE_INEXACT: kotlin/Int /* = 16 */
+        public final get
+
+      public final const val FE_INVALID: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val FE_OVERFLOW: kotlin/Int /* = 4 */
+        public final get
+
+      public final const val FE_TONEAREST: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val FE_TOWARDZERO: kotlin/Int /* = 12582912 */
+        public final get
+
+      public final const val FE_UNDERFLOW: kotlin/Int /* = 8 */
+        public final get
+
+      public final const val FE_UPWARD: kotlin/Int /* = 4194304 */
+        public final get
+
+      public final const val _ATFILE_SOURCE: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _DEFAULT_SOURCE: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _FEATURES_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _FENV_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _POSIX_C_SOURCE: kotlin/Long /* = 200809L */
+        public final get
+
+      public final const val _POSIX_SOURCE: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _STDC_PREDEF_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val _SYS_CDEFS_H: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __GLIBC_MINOR__: kotlin/Int /* = 25 */
+        public final get
+
+      public final const val __GLIBC_USE_IEC_60559_BFP_EXT: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __GLIBC_USE_IEC_60559_FUNCS_EXT: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __GLIBC_USE_LIB_EXT2: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __GLIBC__: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val __GNU_LIBRARY__: kotlin/Int /* = 6 */
+        public final get
+
+      public final const val __STDC_IEC_559_COMPLEX__: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __STDC_IEC_559__: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __STDC_ISO_10646__: kotlin/Long /* = 201505L */
+        public final get
+
+      public final const val __STDC_NO_THREADS__: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_ATFILE: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_EXTERN_INLINES: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_FORTIFY_LEVEL: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __USE_ISOC11: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_ISOC95: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_ISOC99: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_MISC: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_POSIX: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_POSIX199309: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_POSIX199506: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_POSIX2: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_POSIX_IMPLICITLY: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_XOPEN2K: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __USE_XOPEN2K8: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val __WORDSIZE: kotlin/Int /* = 64 */
+        public final get
+
+      public final const val __WORDSIZE_TIME64_COMPAT32: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val __glibc_c99_flexarr_available: kotlin/Int /* = 1 */
+        public final get
+
+      public typealias fexcept_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias fexcept_tVar = kotlinx/cinterop/UIntVarOf<pod1/fexcept_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/fexcept_t^ */> */
+    }
+  }
+}

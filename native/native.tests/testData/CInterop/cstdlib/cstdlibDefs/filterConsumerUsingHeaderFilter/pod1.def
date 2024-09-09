@@ -1,0 +1,4 @@
+# Expect CStdlibConsumer.h and only the leaking types included from fenv.h
+language = C
+headers = CStdlibConsumer.h
+headerFilter = CStdlibConsumer.h

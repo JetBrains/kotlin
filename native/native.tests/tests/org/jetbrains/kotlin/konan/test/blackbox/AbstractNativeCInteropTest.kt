@@ -90,6 +90,8 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
 
         val goldenFile = if (testDataDir.name == "builtins")
             getBuiltinsGoldenFile(testPathFull)
+        else if (testDataDir.name == "cstdlib")
+            getCstdlibGoldenFile(testPathFull)
         else
             getGoldenFile(testPathFull)
         val fmodulesArgs = if (fmodules) TestCInteropArgs("-compiler-option", "-fmodules") else TestCompilerArgs.EMPTY
@@ -153,6 +155,35 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.WATCHOS_DEVICE_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_X64 -> "X64"
+        }
+        return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
+    }
+
+    private fun getCstdlibGoldenFile(testPathFull: File): File {
+        val goldenFilePart = when (targets.testTarget) {
+            KonanTarget.ANDROID_ARM32,
+            KonanTarget.ANDROID_ARM64,
+            KonanTarget.ANDROID_X64,
+            KonanTarget.ANDROID_X86,
+            KonanTarget.LINUX_ARM32_HFP,
+            KonanTarget.LINUX_ARM64,
+            KonanTarget.LINUX_X64,
+            KonanTarget.MINGW_X64,
+            KonanTarget.WATCHOS_ARM32 -> targets.testTarget.name
+
+            KonanTarget.MACOS_ARM64,
+            KonanTarget.IOS_ARM64,
+            KonanTarget.IOS_SIMULATOR_ARM64,
+            KonanTarget.TVOS_ARM64,
+            KonanTarget.TVOS_SIMULATOR_ARM64,
+            KonanTarget.WATCHOS_ARM64,
+            KonanTarget.WATCHOS_DEVICE_ARM64,
+            KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "apple_arm64"
+
+            KonanTarget.MACOS_X64,
+            KonanTarget.IOS_X64,
+            KonanTarget.TVOS_X64,
+            KonanTarget.WATCHOS_X64 -> "apple_x64"
         }
         return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
     }

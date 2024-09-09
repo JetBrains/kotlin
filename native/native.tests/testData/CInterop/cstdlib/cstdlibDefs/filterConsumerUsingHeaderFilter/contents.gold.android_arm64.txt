@@ -1,0 +1,50 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/fenv_t
+    // class name: pod1/fenv_t.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned int __control; unsigned int __status; }")
+    public final class pod1/fenv_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __control: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      public final var __status: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 8L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/fenv_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      public final val useFenvType: pod1/fenv_t
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_useFenvType_getter")
+        public final /* non-default */ external get
+
+      public typealias __uint32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __uint32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uint32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uint32_t^ */> */
+    }
+  }
+}

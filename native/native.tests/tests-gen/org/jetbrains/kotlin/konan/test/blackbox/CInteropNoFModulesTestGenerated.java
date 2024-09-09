@@ -272,4 +272,50 @@ public class CInteropNoFModulesTestGenerated extends AbstractNativeCInteropNoFMo
       runTest("native/native.tests/testData/CInterop/builtins/builtinsDefs/modulesA/");
     }
   }
+
+  @Nested
+  @TestMetadata("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CstdlibDefs {
+    @Test
+    public void testAllFilesPresentInCstdlibDefs() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs"), Pattern.compile("^([^_](.+))$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("filterConsumerUsingHeaderFilter")
+    public void testFilterConsumerUsingHeaderFilter() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/filterConsumerUsingHeaderFilter/");
+    }
+
+    @Test
+    @TestMetadata("filterConsumerUsingModules")
+    public void testFilterConsumerUsingModules() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/filterConsumerUsingModules/");
+    }
+
+    @Test
+    @TestMetadata("filterFenvUsingHeaderFilter")
+    public void testFilterFenvUsingHeaderFilter() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/filterFenvUsingHeaderFilter/");
+    }
+
+    @Test
+    @TestMetadata("filterOnlyIncludeFenvUsingModules")
+    public void testFilterOnlyIncludeFenvUsingModules() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/filterOnlyIncludeFenvUsingModules/");
+    }
+
+    @Test
+    @TestMetadata("fullConsumer")
+    public void testFullConsumer() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/fullConsumer/");
+    }
+
+    @Test
+    @TestMetadata("fullFenv")
+    public void testFullFenv() {
+      runTest("native/native.tests/testData/CInterop/cstdlib/cstdlibDefs/fullFenv/");
+    }
+  }
 }

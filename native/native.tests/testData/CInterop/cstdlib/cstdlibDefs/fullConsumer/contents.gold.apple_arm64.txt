@@ -1,0 +1,156 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/fenv_t
+    // class name: pod1/fenv_t.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned long long __fpsr; unsigned long long __fpcr; }")
+    public final class pod1/fenv_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __fpcr: kotlin/ULong
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlin/ULong)
+
+      public final var __fpsr: kotlin/ULong
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/ULong)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 16L, align = 8)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/fenv_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_feclearexcept")
+      public final external /* non-stable parameter names */ fun feclearexcept(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod17_fegetenv")
+      public final external /* non-stable parameter names */ fun fegetenv(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_fegetexceptflag")
+      public final external /* non-stable parameter names */ fun fegetexceptflag(arg0: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/fexcept_tVar^ */>?, arg1: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_fegetround")
+      public final external fun fegetround(): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod18_feholdexcept")
+      public final external /* non-stable parameter names */ fun feholdexcept(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_feraiseexcept")
+      public final external /* non-stable parameter names */ fun feraiseexcept(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod19_fesetenv")
+      public final external /* non-stable parameter names */ fun fesetenv(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_fesetexceptflag")
+      public final external /* non-stable parameter names */ fun fesetexceptflag(arg0: kotlinx/cinterop/CValuesRef<kotlinx/cinterop/UShortVarOf<kotlin/UShort> /* = pod1/fexcept_tVar^ */>?, arg1: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod16_fesetround")
+      public final external /* non-stable parameter names */ fun fesetround(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_fetestexcept")
+      public final external /* non-stable parameter names */ fun fetestexcept(arg0: kotlin/Int): kotlin/Int
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod110_feupdateenv")
+      public final external /* non-stable parameter names */ fun feupdateenv(arg0: kotlinx/cinterop/CValuesRef<pod1/fenv_t>?): kotlin/Int
+
+      public final const val FE_ALL_EXCEPT: kotlin/Int /* = 159 */
+        public final get
+
+      public final val FE_DFL_DISABLE_DENORMS_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod115_FE_DFL_DISABLE_DENORMS_ENV_getter")
+        public final /* non-default */ external get
+
+      public final val FE_DFL_ENV: kotlinx/cinterop/CPointer<pod1/fenv_t>?
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod114_FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val FE_DIVBYZERO: kotlin/Int /* = 2 */
+        public final get
+
+      public final const val FE_DOWNWARD: kotlin/Int /* = 8388608 */
+        public final get
+
+      public final const val FE_FLUSHTOZERO: kotlin/Int /* = 128 */
+        public final get
+
+      public final const val FE_INEXACT: kotlin/Int /* = 16 */
+        public final get
+
+      public final const val FE_INVALID: kotlin/Int /* = 1 */
+        public final get
+
+      public final const val FE_OVERFLOW: kotlin/Int /* = 4 */
+        public final get
+
+      public final const val FE_TONEAREST: kotlin/Int /* = 0 */
+        public final get
+
+      public final const val FE_TOWARDZERO: kotlin/Int /* = 12582912 */
+        public final get
+
+      public final const val FE_UNDERFLOW: kotlin/Int /* = 8 */
+        public final get
+
+      public final const val FE_UPWARD: kotlin/Int /* = 4194304 */
+        public final get
+
+      public final val _FE_DFL_DISABLE_DENORMS_ENV: pod1/fenv_t
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod111__FE_DFL_DISABLE_DENORMS_ENV_getter")
+        public final /* non-default */ external get
+
+      public final val _FE_DFL_ENV: pod1/fenv_t
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod112__FE_DFL_ENV_getter")
+        public final /* non-default */ external get
+
+      public final const val __fpcr_flush_to_zero: kotlin/UInt /* = 16777216u */
+        public final get
+
+      public final const val __fpcr_trap_denormal: kotlin/UInt /* = 32768u */
+        public final get
+
+      public final const val __fpcr_trap_divbyzero: kotlin/UInt /* = 512u */
+        public final get
+
+      public final const val __fpcr_trap_inexact: kotlin/UInt /* = 4096u */
+        public final get
+
+      public final const val __fpcr_trap_invalid: kotlin/UInt /* = 256u */
+        public final get
+
+      public final const val __fpcr_trap_overflow: kotlin/UInt /* = 1024u */
+        public final get
+
+      public final const val __fpcr_trap_underflow: kotlin/UInt /* = 2048u */
+        public final get
+
+      public final const val __fpsr_saturation: kotlin/UInt /* = 134217728u */
+        public final get
+
+      public final val useFenvType: pod1/fenv_t
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod113_useFenvType_getter")
+        public final /* non-default */ external get
+
+      public typealias fexcept_t = kotlin/UShort /* = kotlin/UShort */
+
+      public typealias fexcept_tVar = kotlinx/cinterop/UShortVarOf<pod1/fexcept_t^> /* = kotlinx/cinterop/UShortVarOf<kotlin/UShort /* = pod1/fexcept_t^ */> */
+    }
+  }
+}

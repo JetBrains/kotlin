@@ -1,0 +1,89 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/anonymousStruct1
+    // class name: pod1/anonymousStruct1.Companion
+    // class name: pod1/fenv_t
+    // class name: pod1/fenv_t.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { unsigned int __control; unsigned int __status; unsigned int __tag; unsigned int __others[4]; }")
+    public final class pod1/anonymousStruct1 : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __control: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      public final val __others: kotlinx/cinterop/CPointer<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/__uint32_tVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/UIntVarOf<kotlin/UInt> /* = pod1/__uint32_tVar^ */> */
+        @kotlinx/cinterop/internal/CStruct.ArrayMemberAt(offset = 12L)
+        public final /* non-default */ external get
+
+      public final var __status: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 4L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      public final var __tag: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 8L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 28L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/anonymousStruct1.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { struct  { unsigned int __control; unsigned int __status; unsigned int __tag; unsigned int __others[4]; } __x87; unsigned int __mxcsr; }")
+    public final class pod1/fenv_t : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var __mxcsr: kotlin/UInt /* = pod1/__uint32_t^ */
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 28L)
+        public final /* non-default */ external set(value: kotlin/UInt /* = pod1/__uint32_t^ */)
+
+      public final val __x87: pod1/anonymousStruct1
+        @kotlinx/cinterop/internal/CStruct.MemberAt(offset = 0L)
+        public final /* non-default */ external get
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 32L, align = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object pod1/fenv_t.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      public final val useFenvType: pod1/fenv_t
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_useFenvType_getter")
+        public final /* non-default */ external get
+
+      public typealias __uint32_t = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias __uint32_tVar = kotlinx/cinterop/UIntVarOf<pod1/__uint32_t^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = pod1/__uint32_t^ */> */
+    }
+  }
+}

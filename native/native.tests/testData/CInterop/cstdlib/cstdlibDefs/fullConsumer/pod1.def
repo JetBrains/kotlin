@@ -1,0 +1,3 @@
+# Expect full contents of fullFenv + declarations in CStdlibConsumer.h
+language = C
+headers = CStdlibConsumer.h

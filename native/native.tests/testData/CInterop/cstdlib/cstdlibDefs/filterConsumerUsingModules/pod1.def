@@ -1,0 +1,3 @@
+# Expect CStdlibConsumer.pcm and only the leaking types included from modules included from fenv.h
+language = Objective-C
+modules = CStdlibConsumer
