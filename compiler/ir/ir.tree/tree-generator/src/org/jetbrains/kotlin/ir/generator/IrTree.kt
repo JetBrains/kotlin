@@ -673,8 +673,6 @@ object IrTree : AbstractTreeBuilder() {
         transformerReturnType = rootElement
 
         parent(memberAccessExpression.withArgs("S" to functionSymbol))
-
-        +field("contextReceiversCount", int)
     }
     val constructorCall: Element by element(Expression) {
         transformerReturnType = rootElement

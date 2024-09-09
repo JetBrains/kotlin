@@ -166,7 +166,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 putTypeArguments(call.typeArguments) { it.toIrType() }
                 this.dispatchReceiver = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
-                contextReceiversCount = contextReceivers.size
             }
             addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType, contextReceivers.map { it.load() })
         }
@@ -249,7 +248,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                             dispatchReceiver = dispatchReceiverValue?.load()
                             extensionReceiver = extensionReceiverValue?.load()
                             val contextReceivers = contextReceiverValues.map { it.load() }
-                            contextReceiversCount = contextReceivers.size
                             addParametersToCall(startOffset, endOffset, call, this, irType, contextReceivers)
                         }
                     }
@@ -327,7 +325,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                     dispatchReceiver = dispatchReceiverValue?.load()
                     extensionReceiver = extensionReceiverValue?.load()
                     val contextReceivers = contextReceiverValues.map { it.load() }
-                    contextReceiversCount = contextReceivers.size
                     addParametersToCall(startOffset, endOffset, call, this, type, contextReceivers)
                 }
             }

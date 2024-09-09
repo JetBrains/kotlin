@@ -121,7 +121,6 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                     it.putValueArgument(0, irCall(generatorFunction.symbol).apply {
                         dispatchReceiver = function.dispatchReceiverParameter?.let(::irGet)
                         extensionReceiver = function.extensionReceiverParameter?.let(::irGet)
-                        contextReceiversCount = function.contextReceiverParametersCount
                         function.valueParameters.forEachIndexed { i, v -> putValueArgument(i, irGet(v)) }
                     })
                     it.putValueArgument(1, irCall(getContinuationSymbol))

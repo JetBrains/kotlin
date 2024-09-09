@@ -358,10 +358,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             defaultNull("dispatchReceiver", "extensionReceiver")
         }
 
-        allImplOf(functionAccessExpression) {
-            default("contextReceiversCount", "0")
-        }
-
         impl(call) {
             implementation.generationCallback = {
                 println()
