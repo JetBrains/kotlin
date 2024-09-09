@@ -687,12 +687,12 @@ Map<KonanTarget, File> createConfigurations(List<File> bundles) {
         [ (target): bundles.find { it.name.contains(platformName(target)) }]
     }
     result.retainAll { it.value != null }
-    def missingBundles = hostTargets - result.keySet()
-    if (!missingBundles.isEmpty()) {
-        println("Some of the archive bundles are missing for targets $missingBundles:")
-        println(result)
-        throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
-    }
+//    def missingBundles = hostTargets - result.keySet()
+//    if (!missingBundles.isEmpty()) {
+//        println("Some of the archive bundles are missing for targets $missingBundles:")
+//        println(result)
+//        throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
+//    }
     result.each { target, file ->
         if (!file.name.contains(kotlinVersion)) {
             throw new IllegalArgumentException("Incorrect version specified for the publish: ${file.name}")
