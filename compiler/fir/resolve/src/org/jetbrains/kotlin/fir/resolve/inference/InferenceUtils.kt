@@ -31,20 +31,8 @@ fun extractLambdaInfoFromFunctionType(
     sourceForFunctionExpression: KtSourceElement?,
 ): ConeResolvedLambdaAtom? {
     val session = components.session
-    if (expectedType == null) return null
-    if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionType(
-            expectedType.lowerBound,
-            argument,
-            lambda,
-            returnTypeVariable,
-            components,
-            candidate,
-            allowCoercionToExtensionReceiver,
-            sourceForFunctionExpression,
-        )
-    }
-    val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
+    val expectedClassLikeType = expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
+    val expectedFunctionKind = expectedClassLikeType.functionTypeKind(session) ?: return null
 
     val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(lambda.symbol)
         ?: runIf(!lambda.isLambda) {
@@ -53,17 +41,17 @@ fun extractLambdaInfoFromFunctionType(
             FunctionTypeKind.Function
         }
 
-    val returnType = lambda.returnType ?: expectedType.returnType(session)
+    val returnType = lambda.returnType ?: expectedClassLikeType.returnType(session)
 
     // `fun (x: T) = ...` and `fun T.() = ...` are both instances of `T.() -> V` and `(T) -> V`; `fun () = ...` is not.
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
-    val receiverType = if (lambda.isLambda) expectedType.receiverType(session) else lambda.receiverType
+    val receiverType = if (lambda.isLambda) expectedClassLikeType.receiverType(session) else lambda.receiverType
     val contextReceiversNumber =
-        if (lambda.isLambda) expectedType.contextReceiversNumberForFunctionType else lambda.contextReceivers.size
+        if (lambda.isLambda) expectedClassLikeType.contextReceiversNumberForFunctionType else lambda.contextReceivers.size
 
-    val valueParametersTypesIncludingReceiver = expectedType.valueParameterTypesIncludingReceiver(session)
-    val isExtensionFunctionType = expectedType.isExtensionFunctionType(session)
+    val valueParametersTypesIncludingReceiver = expectedClassLikeType.valueParameterTypesIncludingReceiver(session)
+    val isExtensionFunctionType = expectedClassLikeType.isExtensionFunctionType(session)
     val expectedParameters = valueParametersTypesIncludingReceiver.let {
         val forExtension = if (receiverType != null && isExtensionFunctionType) 1 else 0
         val toDrop = forExtension + contextReceiversNumber
@@ -114,7 +102,7 @@ fun extractLambdaInfoFromFunctionType(
 
     return ConeResolvedLambdaAtom(
         argument,
-        expectedType,
+        expectedClassLikeType,
         actualFunctionKind ?: expectedFunctionKind,
         receiverType,
         contextReceivers,

@@ -961,7 +961,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
             ?: runIf(returnExpressions.any { it.expression.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
             { session.builtinTypes.unitType.coneType }
-            ?: expectedType?.returnType(session) as? ConeClassLikeType
+            ?: (expectedType as? ConeClassLikeType)?.returnType(session) as? ConeClassLikeType
             ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
 
         val newData = expectedReturnType?.toExpectedType()

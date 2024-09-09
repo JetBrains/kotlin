@@ -5286,6 +5286,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         public void testSpecialCalls() {
           runTest("compiler/testData/diagnostics/tests/callableReference/generic/specialCalls.kt");
         }
+
+        @Test
+        @TestMetadata("withExpectedGenericJavaFunction.kt")
+        public void testWithExpectedGenericJavaFunction() {
+          runTest("compiler/testData/diagnostics/tests/callableReference/generic/withExpectedGenericJavaFunction.kt");
+        }
       }
 
       @Nested

@@ -297,29 +297,11 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
     expectedType: ConeKotlinType?,
     session: FirSession
 ): InputOutputTypes? {
-    if (expectedType == null) return null
+    val expectedClassLikeType = expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
 
     return when {
-        expectedType.isSomeFunctionType(session) ->
-            InputOutputTypes(expectedType.valueParameterTypesIncludingReceiver(session), expectedType.returnType(session))
-
-//        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
-//            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
-//
-//        ReflectionTypes.isNumberedKFunction(expectedType) -> {
-//            val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
-//            extractInputOutputTypesFromFunctionType(functionFromSupertype)
-//        }
-//
-//        ReflectionTypes.isNumberedKSuspendFunction(expectedType) -> {
-//            val kSuspendFunctionType = expectedType.immediateSupertypes().first { it.isSuspendFunctionType }.unwrap()
-//            extractInputOutputTypesFromFunctionType(kSuspendFunctionType)
-//        }
-//
-//        ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(expectedType) -> {
-//            val functionFromSupertype = expectedType.supertypes().first { it.isFunctionType }.unwrap()
-//            extractInputOutputTypesFromFunctionType(functionFromSupertype)
-//        }
+        expectedClassLikeType.isSomeFunctionType(session) ->
+            InputOutputTypes(expectedClassLikeType.valueParameterTypesIncludingReceiver(session), expectedClassLikeType.returnType(session))
 
         else -> null
     }

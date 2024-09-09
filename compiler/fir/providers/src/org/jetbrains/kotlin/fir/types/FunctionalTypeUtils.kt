@@ -289,14 +289,12 @@ fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     }
 }
 
-fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.returnType(session: FirSession): ConeKotlinType {
     // TODO: add requirement
     return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.coneType)
 }
 
-fun ConeKotlinType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {
     // TODO: add requirement
     val expandedType = fullyExpandedType(session)
 
@@ -306,8 +304,7 @@ fun ConeKotlinType.valueParameterTypesWithoutReceivers(session: FirSession): Lis
     return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
 
-fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
-    require(this is ConeClassLikeType)
+fun ConeClassLikeType.valueParameterTypesIncludingReceiver(session: FirSession): List<ConeKotlinType> {
     // TODO: add requirement
     return fullyExpandedType(session).typeArguments.dropLast(1).map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
 }
