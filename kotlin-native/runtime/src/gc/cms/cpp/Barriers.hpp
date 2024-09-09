@@ -34,7 +34,7 @@ void enableBarriers(int64_t epoch) noexcept;
 void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 
-void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept;
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic, bool registeredThread) noexcept;
 
 ObjHeader* weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 

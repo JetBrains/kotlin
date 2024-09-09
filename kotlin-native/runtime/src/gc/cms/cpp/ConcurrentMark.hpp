@@ -131,6 +131,10 @@ public:
         return markTerminationGuard;
     }
 
+    auto createMutatorQueue() noexcept {
+        return MutatorQueue(*parallelProcessor_);
+    }
+
 private:
     GCHandle& gcHandle();
 

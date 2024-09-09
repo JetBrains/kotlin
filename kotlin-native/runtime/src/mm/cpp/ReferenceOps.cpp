@@ -17,7 +17,7 @@ template<> ALWAYS_INLINE void mm::RefAccessor<true>::afterLoad() noexcept {}
 
 // on heap
 template<> ALWAYS_INLINE void mm::RefAccessor<false>::beforeStore(ObjHeader* value) noexcept {
-    gc::beforeHeapRefUpdate(direct(), value, false);
+    gc::beforeHeapRefUpdate(direct(), value, false, true);
 }
 template<> ALWAYS_INLINE void mm::RefAccessor<false>::afterStore(ObjHeader*) noexcept {}
 template<> ALWAYS_INLINE void mm::RefAccessor<false>::beforeLoad() noexcept {}

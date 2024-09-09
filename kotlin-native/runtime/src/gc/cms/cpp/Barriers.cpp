@@ -126,7 +126,8 @@ void gc::barriers::disableBarriers() noexcept {
 namespace {
 
 // TODO decide whether it's really beneficial to NO_INLINE the slow path
-NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
+NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value,
+                                           bool loadAtomic, bool registeredThread) noexcept {
     ObjHeader* prev;
     if (loadAtomic) {
         prev = ref.loadAtomic(std::memory_order_relaxed);
@@ -138,10 +139,14 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
         // TODO Redundant if the object containing ref is black.
         //      Yet at the moment there is no efficient way to distinguish black and gray objects.
 
-        // TODO perhaps it would be better to pass the thread data from outside
-        auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
-        auto& markQueue = *threadData.gc().impl().gc().mark().markQueue();
-        gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, prev);
+        if (registeredThread) {
+            auto& threadData = *mm::ThreadRegistry::Instance().CurrentThreadData();
+            auto& markQueue = *threadData.gc().impl().gc().mark().markQueue();
+            gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, prev);
+        } else {
+            gc::mark::ConcurrentMark::MutatorQueue markQueue(mm::GlobalData::Instance().gc().impl().gc().mark().createMutatorQueue());
+            gc::mark::ConcurrentMark::MarkTraits::tryEnqueue(markQueue, prev);
+        }
         // No need to add the marked object in statistics here.
         // Objects will be counted on dequeue.
     }
@@ -149,13 +154,13 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 
 } // namespace
 
-PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
-    RuntimeAssert(mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(), "A thread executing GC barrier must be registered");
-    //AssertThreadState(ThreadState::kRunnable);
+PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value,
+                                                          bool loadAtomic, bool registeredThread) noexcept {
+    RuntimeAssert(!registeredThread || mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(), "TODO");
     auto phase = currentPhase();
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
-        beforeHeapRefUpdateSlowPath(ref, value, loadAtomic);
+        beforeHeapRefUpdateSlowPath(ref, value, loadAtomic, registeredThread);
     }
 }
 

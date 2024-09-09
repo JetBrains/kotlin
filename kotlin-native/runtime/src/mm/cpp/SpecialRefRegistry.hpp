@@ -158,14 +158,11 @@ class SpecialRefRegistry : private Pinned {
             RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
             RuntimeLogDebug({kTagGC}, "RELEASE %p rcBefore=%d", obj_, rcBefore);
             if (compiler::concurrentGlobalRootSet() && rcBefore == 1) {
-                if (!mm::ThreadRegistry::IsCurrentThreadRegistered()) {
-                    Kotlin_initRuntimeIfNeeded();
-                }
                 //ThreadStateGuard guard(ThreadState::kRunnable);
                 // It's potentially a removal from global root set.
                 // The CMS GC scans global root set concurrently.
                 // Notify GC about the removal.
-                gc::beforeHeapRefUpdate(mm::DirectRefAccessor(obj_), nullptr, true);
+                gc::beforeHeapRefUpdate(mm::DirectRefAccessor(obj_), nullptr, true, mm::ThreadRegistry::IsCurrentThreadRegistered());
             }
         }
 

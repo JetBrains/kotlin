@@ -75,7 +75,7 @@ private:
         std::size_t elemsCount_ = 0;
     };
 
-    class LocalQueue : private Pinned {
+    class LocalQueue : private MoveOnly {
     public:
         PERFORMANCE_INLINE bool localEmpty() const noexcept {
             return localQueue_.empty();
