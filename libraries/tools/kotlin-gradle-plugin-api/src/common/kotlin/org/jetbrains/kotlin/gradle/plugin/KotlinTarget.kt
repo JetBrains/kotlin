@@ -19,13 +19,14 @@ import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventions
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 /**
  * @suppress TODO: KT-58858 add documentation
  */
 @KotlinGradlePluginDsl
-interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
+interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras, KotlinMultiplatformSourceSetConventions {
     val targetName: String
     val disambiguationClassifier: String? get() = targetName
 
