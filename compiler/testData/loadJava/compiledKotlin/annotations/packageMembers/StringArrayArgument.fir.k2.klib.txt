@@ -1,4 +1,4 @@
-public final val bar: R|kotlin/Int|
+field:@FIELD:R|test/Anno|(t = <implicitArrayOf>(String(prosper))) public final val bar: R|kotlin/Int|
     public get(): R|kotlin/Int|
 
 @R|test/Anno|(t = <implicitArrayOf>()) @R|test/Anno2|(t = <implicitArrayOf>()) @R|test/Anno3|(t = <implicitArrayOf>()) @R|test/Anno4|(t = <implicitArrayOf>()) @R|test/Anno5|(t = <implicitArrayOf>()) @R|test/Anno6|(t = <implicitArrayOf>()) public final fun baz(): R|kotlin/Unit|

@@ -90,18 +90,24 @@ abstract class AbstractAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): List<FirAnnotation> {
-        return emptyList()
+        return propertyProto.loadAnnotations(
+            protocol.propertyBackingFieldAnnotation, propertyProto.flags, nameResolver,
+            AnnotationUseSiteTarget.FIELD
+        )
     }
 
     open fun loadPropertyDelegatedFieldAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): List<FirAnnotation> {
-        return emptyList()
+        return propertyProto.loadAnnotations(
+            protocol.propertyDelegatedFieldAnnotation, propertyProto.flags, nameResolver,
+            AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+        )
     }
 
     open fun loadPropertyGetterAnnotations(
@@ -157,9 +163,17 @@ abstract class AbstractAnnotationDeserializer(
         callableProto: MessageLite,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-        kind: CallableKind
+        kind: CallableKind,
     ): List<FirAnnotation> {
-        return emptyList()
+        return when (callableProto) {
+            is ProtoBuf.Property -> callableProto.loadAnnotations(
+                protocol.propertyExtensionReceiverAnnotation, callableProto.flags, nameResolver,
+            )
+            is ProtoBuf.Function -> callableProto.loadAnnotations(
+                protocol.functionExtensionReceiverAnnotation, callableProto.flags, nameResolver,
+            )
+            else -> emptyList()
+        }
     }
 
     open fun loadAnnotationPropertyDefaultValue(

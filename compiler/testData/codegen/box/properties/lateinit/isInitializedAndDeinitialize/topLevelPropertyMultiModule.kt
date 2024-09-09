@@ -1,4 +1,6 @@
 // TARGET_BACKEND: NATIVE
+// In K2, isInitialized on a property from another file is forbidden for all backends.
+// IGNORE_BACKEND_K2: NATIVE
 // LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 

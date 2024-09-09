@@ -1,4 +1,5 @@
 // FILE: OK.kt
+@Suppress("LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION", "LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY")
 class OK {
     private lateinit var x: String // never leaked
     lateinit var y: String // never leaked

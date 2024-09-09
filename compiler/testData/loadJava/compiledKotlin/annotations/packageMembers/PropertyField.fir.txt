@@ -6,4 +6,3 @@ public final annotation class Anno : R|kotlin/Annotation| {
     public constructor(): R|test/Anno|
 
 }
-
