@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import java.util.*
 
 internal object DataFlowIR {
     abstract class Type(
@@ -422,22 +423,59 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val module: Module) {
+    class TypeHierarchy(val allTypes: Array<Type>) {
+        private val typesSubTypes = Array(allTypes.size) { mutableListOf<Type>() }
+        private val allInheritors = Array(allTypes.size) { BitSet() }
 
+        init {
+            val visited = BitSet()
+
+            fun processType(type: Type) {
+                if (visited[type.index]) return
+                visited.set(type.index)
+                type.superTypes
+                        .forEach { superType ->
+                            val subTypes = typesSubTypes[superType.index]
+                            subTypes += type
+                            processType(superType)
+                        }
+            }
+
+            allTypes.forEach { processType(it) }
+        }
+
+        fun inheritorsOf(type: Type): BitSet {
+            val typeId = type.index
+            val inheritors = allInheritors[typeId]
+            if (!inheritors.isEmpty || type == Type.Virtual) return inheritors
+            inheritors.set(typeId)
+            for (subType in typesSubTypes[typeId])
+                inheritors.or(inheritorsOf(subType))
+            return inheritors
+        }
+    }
+
+    class SymbolTable(val context: Context, val module: Module) {
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
+        private var sealed = false
         val classMap = mutableMapOf<IrClass, Type>()
         val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
         val fieldMap = mutableMapOf<IrField, Field>()
+        val typeHierarchy by lazy {
+            val allDeclaredTypes = listOf(Type.Virtual) + classMap.values + primitiveMap.values
+            val allTypes = Array<Type>(allDeclaredTypes.size) { Type.Virtual }
+            for (type in allDeclaredTypes)
+                allTypes[type.index] = type
 
-        private val getContinuationSymbol = context.ir.symbols.getContinuation
-        private val continuationType = getContinuationSymbol.owner.returnType
+            TypeHierarchy(allTypes)
+        }
 
-        var privateTypeIndex = 1 // 0 for [Virtual]
-        var privateFunIndex = 0
+        private var privateTypeIndex = 1 // 0 for [Virtual]
+        private var privateFunIndex = 0
 
         fun populateWith(irModule: IrModuleFragment) {
             irModule.accept(object : IrElementVisitorVoid {
@@ -462,6 +500,8 @@ internal object DataFlowIR {
                     mapClassReferenceType(declaration)
                 }
             }, data = null)
+
+            sealed = true
         }
 
         fun mapField(field: IrField): Field = fieldMap.getOrPut(field) {
@@ -484,6 +524,7 @@ internal object DataFlowIR {
             val name = irClass.fqNameForIrSerialization.asString()
             classMap[irClass]?.let { return it }
 
+            require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (irClass.isExported())
@@ -543,6 +584,7 @@ internal object DataFlowIR {
 
         private fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
                 primitiveMap.getOrPut(primitiveBinaryType) {
+                    require(!sealed) { "The symbol table has been sealed. primitiveBinaryType = $primitiveBinaryType" }
                     Type.Public(
                             primitiveBinaryType.ordinal.toLong(),
                             privateTypeIndex++,
