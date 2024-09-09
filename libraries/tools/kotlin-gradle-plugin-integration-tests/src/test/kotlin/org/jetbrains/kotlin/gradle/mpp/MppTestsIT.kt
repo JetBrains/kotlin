@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
@@ -97,6 +98,15 @@ class MppTestsIT : KGPBaseTest() {
             )
             // no build failure is expected
             build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}
+        }
+    }
+
+    @DisplayName("KT-62911: Project Isolation and Project 2 Project Dependencies")
+    @GradleTest
+    fun testKt62911ProjectIsolationWithP2PDependencies(gradleVersion: GradleVersion) {
+        val buildOptions = defaultBuildOptions.enableIsolatedProjects()
+        project("kt-62911-project-isolation-with-p2p-dependencies", gradleVersion, buildOptions = buildOptions) {
+            build("assemble")
         }
     }
 }
