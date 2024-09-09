@@ -2,6 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
+import java.time.Instant
+import java.util.concurrent.ConcurrentLinkedQueue
 
 plugins {
     kotlin("jvm")
@@ -433,7 +435,7 @@ tasks.withType<Test>().configureEach {
 
     testLogging {
         // set options for log level LIFECYCLE
-        events("passed", "skipped", "failed", "standardOut")
+        events("started", "passed", "skipped", "failed", "standardOut")
         showExceptions = true
         exceptionFormat = TestExceptionFormat.FULL
         showCauses = true
@@ -447,7 +449,19 @@ tasks.withType<Test>().configureEach {
         info.events = debug.events
         info.exceptionFormat = debug.exceptionFormat
 
-        addTestListener(object : TestListener {
+        data class TestEvent(val name: String, val time: Long, val done: String)
+        class TestListenerImpl : TestListener {
+            @Transient
+            private var _queue: ConcurrentLinkedQueue<TestEvent>? = null
+            @get:Synchronized
+            private val queue: ConcurrentLinkedQueue<TestEvent>
+                get() {
+                    if (_queue == null) {
+                        _queue = ConcurrentLinkedQueue()
+                    }
+                    return _queue!!
+                }
+
             override fun afterSuite(desc: TestDescriptor, result: TestResult) {
                 if (desc.parent == null) { // will match the outermost suite
                     val output =
@@ -456,12 +470,20 @@ tasks.withType<Test>().configureEach {
                     val endItem = "  |"
                     val repeatLength = startItem.length + output.length + endItem.length
                     println("\n" + ("-".repeat(repeatLength)) + "\n" + startItem + output + endItem + "\n" + ("-".repeat(repeatLength)))
+                    println(queue.map { "${it.name}|${it.time}|${it.done}" }.joinToString("\n"))
                 }
             }
 
             override fun beforeSuite(suite: TestDescriptor) {}
-            override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {}
-            override fun beforeTest(testDescriptor: TestDescriptor) {}
-        })
+            override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                queue.add(TestEvent(testDescriptor.displayName, Instant.now().toEpochMilli(), "End"))
+            }
+            override fun beforeTest(testDescriptor: TestDescriptor) {
+                queue.add(TestEvent(testDescriptor.displayName, Instant.now().toEpochMilli(), "Start"))
+            }
+        }
+
+
+        addTestListener(TestListenerImpl())
     }
 }
