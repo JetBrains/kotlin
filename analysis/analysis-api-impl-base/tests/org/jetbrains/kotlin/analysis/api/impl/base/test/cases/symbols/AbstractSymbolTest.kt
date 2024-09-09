@@ -230,7 +230,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         if (!disablePsiBasedLogic) {
             assertions.assertEqualsToTestDataFileSibling(actual = actual, extension = extension)
         } else {
-            val expectedFile = getTestDataFileSiblingPath(extension).toFile()
+            val expectedFile = getTestDataSibling(extension).toFile()
             if (!assertions.doesEqualToFile(expectedFile, actual)) {
                 throw AssertionFailedError(
                     /* message = */ "Non-PSI version doesn't equal to the PSI-based variation",
@@ -276,7 +276,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
 
             val actual = restored.renderAsDeclarations()
-            val expectedFile = getTestDataFileSiblingPath().toFile()
+            val expectedFile = getTestDataSibling().toFile()
             if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
                 error("Restored content is not the same. Actual:\n$actual")
             }

@@ -35,7 +35,7 @@ open class AbstractSymbolLightClassesStructureTestBase(
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override val currentExtension: String get() = throw UnsupportedOperationException()
     protected fun doTestInheritors(ktFiles: List<KtFile>, testServices: TestServices) {
-        val testData = getTestDataFileSiblingPath(extension = INHERITORS_EXTENSION, testPrefix = testPrefix)
+        val testData = getTestDataSibling(extension = INHERITORS_EXTENSION, testPrefix = testPrefix)
         if (testData.notExists()) return
         val project = ktFiles.first().project
 

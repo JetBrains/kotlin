@@ -235,37 +235,82 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
                 file.virtualFile.nameWithoutExtension == ktTestModule.testModule.mainFileName
     }
 
+    /**
+     * Checks whether the [actual] string matches the content of the test output file.
+     *
+     * Check the [assertEqualsToTestDataFileSibling] overload accepting a prefix list for more information.
+     */
     protected fun AssertionsService.assertEqualsToTestDataFileSibling(
         actual: String,
         extension: String = ".txt",
         testPrefix: String? = configurator.testPrefix,
     ) {
-        val expectedFile = getTestDataFileSiblingPath(extension, testPrefix = testPrefix)
-        assertEqualsToFile(expectedFile, actual)
+        assertEqualsToTestDataFileSibling(actual, extension, listOfNotNull(testPrefix))
+    }
 
-        if (testPrefix != null) {
-            val expectedFileWithoutPrefix = getTestDataFileSiblingPath(extension, testPrefix = null)
-            if (expectedFile != expectedFileWithoutPrefix) {
-                if (!doesEqualToFile(expectedFileWithoutPrefix.toFile(), actual)) {
-                    return
-                }
+    /**
+     * Checks whether the [actual] string matches the content of the test output file.
+     *
+     * If a non-empty list of [testPrefixes] is specified, the function will firstly check whether test output file with any of the
+     * specified prefixes exist. If so, it will check the [actual] content against that file (the first prefix has the highest priority).
+     * Also, if files with latter prefixes, or if the non-prefixed file contains the same output, an assertion error is raised.
+     *
+     * If no prefixes are specified, or if no prefixed files exist, the function compares [actual] against the non-prefixed (default)
+     * test output file.
+     *
+     * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
+     * an exception.
+     */
+    protected fun AssertionsService.assertEqualsToTestDataFileSibling(
+        actual: String,
+        extension: String = ".txt",
+        testPrefixes: List<String>,
+    ) {
+        val expectedFiles = buildList {
+            testPrefixes.mapNotNullTo(this) { findPrefixedTestDataSibling(extension, it) }
+            add(getDefaultTestDataSibling(extension))
+        }
 
-                throw AssertionError("\"$expectedFile\" has the same content as \"$expectedFileWithoutPrefix\". Delete the prefixed file.")
+        val mainExpectedFile = expectedFiles.first()
+        val otherExpectedFiles = expectedFiles.drop(1)
+
+        assertEqualsToFile(mainExpectedFile, actual)
+
+        for (otherExpectedFile in otherExpectedFiles) {
+            if (doesEqualToFile(otherExpectedFile.toFile(), actual)) {
+                throw AssertionError("\"$mainExpectedFile\" has the same content as \"$otherExpectedFile\". Delete the prefixed file.")
             }
         }
     }
 
-    protected fun getTestDataFileSiblingPath(extension: String = "txt", testPrefix: String? = configurator.testPrefix): Path {
+    /**
+     * Returns the test output file with a [testPrefix] if it exists, of the non-prefixed (default) test output file.
+     */
+    protected fun getTestDataSibling(extension: String = "txt", testPrefix: String? = configurator.testPrefix): Path {
+        if (testPrefix != null) {
+            findPrefixedTestDataSibling(extension, testPrefix)?.let { return it }
+        }
+
+        return getDefaultTestDataSibling(extension)
+    }
+
+    /**
+     * Returns the test output file with a [testPrefix] if it exists, or `null` otherwise.
+     */
+    private fun findPrefixedTestDataSibling(extension: String = "txt", testPrefix: String): Path? {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
 
-        if (testPrefix != null) {
-            val prefixedFile = testDataPath.resolveSibling("$baseName.$testPrefix$extensionWithDot")
-            if (prefixedFile.exists()) {
-                return prefixedFile
-            }
-        }
+        val prefixedFile = testDataPath.resolveSibling("$baseName.$testPrefix$extensionWithDot")
+        return prefixedFile.takeIf { it.exists() }
+    }
 
+    /**
+     * Returns the non-prefixed the test output file, even if it does not exist.
+     */
+    private fun getDefaultTestDataSibling(extension: String = "txt"): Path {
+        val extensionWithDot = "." + extension.removePrefix(".")
+        val baseName = testDataPath.nameWithoutExtension
         return testDataPath.resolveSibling(baseName + extensionWithDot)
     }
 
