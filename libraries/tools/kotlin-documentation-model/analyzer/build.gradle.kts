@@ -4,6 +4,7 @@
 
 plugins {
     id("dokkabuild.base")
+    idea
 }
 
 val publishedIncludedBuilds = listOf("runner-cli", "dokka-gradle-plugin", "runner-maven-plugin")
@@ -102,6 +103,23 @@ tasks.wrapper {
                     "https\\://services.gradle.org/",
                     "https\\://cache-redirector.jetbrains.com/services.gradle.org/",
                 )
+        )
+    }
+}
+
+idea {
+    module {
+        // Mark directories as excluded so that they don't appear in IntelliJ's global search.
+        excludeDirs.addAll(
+            files(
+                ".idea",
+                ".husky",
+                ".kotlin",
+                "dokka-runners/dokka-gradle-plugin/.kotlin",
+                "dokka-runners/runner-cli/.kotlin",
+                "dokka-runners/runner-maven-plugin/.kotlin",
+                "dokka-runners/dokka-gradle-plugin/src/testFunctional/resources/KotlinDslAccessorsTest/",
+            )
         )
     }
 }
