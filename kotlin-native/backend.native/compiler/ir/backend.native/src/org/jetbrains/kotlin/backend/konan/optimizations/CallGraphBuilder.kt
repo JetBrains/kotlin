@@ -61,9 +61,6 @@ internal class CallGraphBuilder(
         val devirtualizedCallSitesUnfoldFactor: Int,
         val nonDevirtualizedCallSitesUnfoldFactor: Int
 ) {
-
-    private val devirtualizedCallSites = devirtualizationAnalysisResult.devirtualizedCallSites
-
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
     private val externalRootFunctions = mutableListOf<DataFlowIR.FunctionSymbol>()
@@ -151,7 +148,7 @@ internal class CallGraphBuilder(
     private fun handleFunction(symbol: DataFlowIR.FunctionSymbol.Declared, function: DataFlowIR.Function) {
         val body = function.body
         body.forEachCallSite { call, node ->
-            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let { devirtualizedCallSites[it] }
+            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
             when {
                 call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, call, node, call.callee)
 
