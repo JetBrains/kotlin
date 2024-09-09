@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
+        requireNonDumbMode()
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteElement, token)
@@ -27,6 +28,7 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        requireNonDumbMode()
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteModule, token)

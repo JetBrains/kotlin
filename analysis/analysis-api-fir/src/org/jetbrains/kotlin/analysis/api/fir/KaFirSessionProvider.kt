@@ -56,11 +56,13 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
+        requireNonDumbMode()
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return getAnalysisSession(module)
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        requireNonDumbMode()
         if (useSiteModule is KaDanglingFileModule && !useSiteModule.isStable) {
             return createAnalysisSession(useSiteModule)
         }

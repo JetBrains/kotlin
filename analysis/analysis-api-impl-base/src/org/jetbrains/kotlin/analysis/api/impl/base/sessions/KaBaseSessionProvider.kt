@@ -56,16 +56,18 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
         }
 
-        /**
-         * The Analysis API is not supposed to work in the dumb mode.
-         * See [KaSession] KDoc for more details.
-         */
+        lifetimeTracker.beforeEnteringAnalysis(session)
+        writeActionStartedChecker.beforeEnteringAnalysis()
+    }
+
+    /**
+     * The Analysis API is not supposed to work in the dumb mode.
+     * See [KaSession] KDoc for more details.
+     */
+    protected fun requireNonDumbMode() {
         if (DumbService.isDumb(project)) {
             throw IndexNotReadyException.create()
         }
-
-        lifetimeTracker.beforeEnteringAnalysis(session)
-        writeActionStartedChecker.beforeEnteringAnalysis()
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
