@@ -6438,6 +6438,18 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("delegationInJJKHierarchy.kt")
+    public void testDelegationInJJKHierarchy() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationInJJKHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationInKJJHierarchy.kt")
+    public void testDelegationInKJJHierarchy() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationInKJJHierarchy.kt");
+    }
+
+    @Test
     @TestMetadata("delegationToInOutTypeParameters.kt")
     public void testDelegationToInOutTypeParameters() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
@@ -6453,6 +6465,24 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     @TestMetadata("delegationToJavaImplementation.kt")
     public void testDelegationToJavaImplementation() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaImplementation.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToJavaWithInheritance.kt")
+    public void testDelegationToJavaWithInheritance() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithInheritance.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToJavaWithIntersection.kt")
+    public void testDelegationToJavaWithIntersection() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithIntersection.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationToJavaWithTypeParameter.kt")
+    public void testDelegationToJavaWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithTypeParameter.kt");
     }
 
     @Test

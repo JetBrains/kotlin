@@ -5602,6 +5602,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/classDelegation/delegationAndJavaInterfaceWithDefault.kt");
     }
 
+    @TestMetadata("delegationInJJKHierarchy.kt")
+    public void testDelegationInJJKHierarchy() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationInJJKHierarchy.kt");
+    }
+
+    @TestMetadata("delegationInKJJHierarchy.kt")
+    public void testDelegationInKJJHierarchy() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationInKJJHierarchy.kt");
+    }
+
     @TestMetadata("delegationToInOutTypeParameters.kt")
     public void testDelegationToInOutTypeParameters() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
@@ -5615,6 +5625,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("delegationToJavaImplementation.kt")
     public void testDelegationToJavaImplementation() {
       runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaImplementation.kt");
+    }
+
+    @TestMetadata("delegationToJavaWithInheritance.kt")
+    public void testDelegationToJavaWithInheritance() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithInheritance.kt");
+    }
+
+    @TestMetadata("delegationToJavaWithIntersection.kt")
+    public void testDelegationToJavaWithIntersection() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithIntersection.kt");
+    }
+
+    @TestMetadata("delegationToJavaWithTypeParameter.kt")
+    public void testDelegationToJavaWithTypeParameter() {
+      runTest("compiler/testData/codegen/box/classDelegation/delegationToJavaWithTypeParameter.kt");
     }
 
     @TestMetadata("delegationToOutTypeParameter.kt")

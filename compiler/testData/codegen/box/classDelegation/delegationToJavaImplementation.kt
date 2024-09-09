@@ -4,13 +4,20 @@
 // FILE: Base.java
 public interface Base {
     String method();
+    String getA();
+    default void fun1() { }
+    static void fun2() { }
 }
 
 // FILE: SimpleDerived.java
 public class SimpleDerived implements Derived {
     @Override
     public String method() {
-        return "OK";
+        return "O";
+    }
+    @Override
+    public String getA() {
+        return "K";
     }
 }
 
@@ -20,5 +27,5 @@ interface Derived : Base
 class DerivedImpl(private val delegate: SimpleDerived) : Derived by delegate
 
 fun box(): String {
-    return DerivedImpl(SimpleDerived()).method()
+    return DerivedImpl(SimpleDerived()).method()+DerivedImpl(SimpleDerived()).a
 }
