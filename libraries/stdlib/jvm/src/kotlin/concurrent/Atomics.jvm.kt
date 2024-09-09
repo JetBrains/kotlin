@@ -20,6 +20,8 @@ public actual class AtomicInt public actual constructor(value: Int) {
 
     public actual fun compareAndSet(expected: Int, newValue: Int): Boolean = TODO()
 
+    public fun compareAndExchange(expected: Int, newValue: Int): Int = TODO()
+
     public actual fun fetchAndAdd(delta: Int): Int = TODO()
 
     public actual fun addAndFetch(delta: Int): Int = TODO()
