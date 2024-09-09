@@ -544,8 +544,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
     }
 
-    // Requires public access, because it is used by serialization plugin to generate initializer in synthetic constructor
-    public void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
+    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
@@ -581,7 +580,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
     }
 
-    // Public accessible for serialization plugin to check whether call to initializeProperty(..) is legal.
     public boolean shouldInitializeProperty(@NotNull KtProperty property) {
         if (!property.hasDelegateExpressionOrInitializer()) return false;
 

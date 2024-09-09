@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -74,7 +73,6 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
             SyntheticResolveExtension.registerExtension(SerializationResolveExtension(serializationDescriptorSerializer))
 
-            ExpressionCodegenExtension.registerExtension(SerializationCodegenExtension(serializationDescriptorSerializer))
             JsSyntheticTranslateExtension.registerExtension(SerializationJsExtension(serializationDescriptorSerializer))
             IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, intrinsicsState))
 

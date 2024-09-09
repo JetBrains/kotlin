@@ -23,7 +23,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.analyzeSpecia
 
 class SerializableProperty(
     val descriptor: PropertyDescriptor,
-    override val isConstructorParameterWithDefault: Boolean,
     hasBackingField: Boolean,
     declaresDefaultValue: Boolean
 ) : ISerializableProperty {
@@ -36,4 +35,3 @@ class SerializableProperty(
     override val optional = !descriptor.annotations.serialRequired && declaresDefaultValue
     override val transient = descriptor.annotations.serialTransient || !hasBackingField
 }
-

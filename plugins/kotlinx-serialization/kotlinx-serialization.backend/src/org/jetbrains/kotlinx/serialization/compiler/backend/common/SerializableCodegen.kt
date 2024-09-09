@@ -48,13 +48,8 @@ abstract class SerializableCodegen(
                             function.modality == Modality.FINAL &&
                             function.returnType?.isUnit() ?: false
                 } ?: return
-            generateWriteSelfMethod(func)
         }
     }
 
     protected abstract fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor)
-
-    protected open fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
-
-    }
 }

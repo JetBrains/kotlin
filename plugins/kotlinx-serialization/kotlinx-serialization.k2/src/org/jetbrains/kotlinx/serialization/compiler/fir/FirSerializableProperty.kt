@@ -20,7 +20,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.ISerializablePropert
 class FirSerializableProperty(
     session: FirSession,
     val propertySymbol: FirPropertySymbol,
-    override val isConstructorParameterWithDefault: Boolean,
     declaresDefaultValue: Boolean
 ) : ISerializableProperty {
     override val name: String = propertySymbol.getSerialNameValue(session) ?: propertySymbol.name.asString()

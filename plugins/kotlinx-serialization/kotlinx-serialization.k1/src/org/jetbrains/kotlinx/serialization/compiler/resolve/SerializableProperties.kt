@@ -53,7 +53,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                 val declaresDefaultValue = prop.declaresDefaultValue()
                 SerializableProperty(
                     prop,
-                    primaryConstructorProperties[prop] ?: false,
                     prop.hasBackingField(bindingContext) || (prop is DeserializedPropertyDescriptor && prop.backingField != null) // workaround for TODO in .hasBackingField
                             // workaround for overridden getter (val) and getter+setter (var) - in this case hasBackingField returning false
                             // but initializer presents only for property with backing field

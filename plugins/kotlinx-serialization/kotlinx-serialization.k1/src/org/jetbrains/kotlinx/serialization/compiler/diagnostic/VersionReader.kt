@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -27,12 +26,7 @@ object VersionReader {
         return versions
     }
 
-    fun getVersionsForCurrentModuleFromContext(module: ModuleDescriptor, context: BindingContext?): RuntimeVersions? {
-        context?.get(VERSIONS_SLICE, module)?.let { return it }
-        return getVersionsForCurrentModule(module)
-    }
-
-    fun getVersionsForCurrentModule(module: ModuleDescriptor): RuntimeVersions? {
+    private fun getVersionsForCurrentModule(module: ModuleDescriptor): RuntimeVersions? {
         val markerClass = module.findClassAcrossModuleDependencies(
             ClassId(
                 SerializationPackages.packageFqName,

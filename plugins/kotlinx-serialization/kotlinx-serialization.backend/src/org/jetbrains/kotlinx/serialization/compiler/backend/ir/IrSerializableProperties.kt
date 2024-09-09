@@ -23,7 +23,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class IrSerializableProperty(
     val ir: IrProperty,
-    override val isConstructorParameterWithDefault: Boolean,
     hasBackingField: Boolean,
     declaresDefaultValue: Boolean,
     val type: IrSimpleType
@@ -130,7 +129,6 @@ internal fun serializablePropertiesForIrBackend(
             }
             IrSerializableProperty(
                 it,
-                isConstructorParameterWithDefault,
                 hasBackingField,
                 it.backingField?.initializer.let { init -> init != null && !init.expression.isInitializePropertyFromParameter() } || isConstructorParameterWithDefault
                         || isPropertyFromAnotherModuleDeclaresDefaultValue,

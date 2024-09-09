@@ -19,30 +19,21 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.IMPL_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 
 object KSerializerDescriptorResolver {
-
     fun createDeprecatedHiddenAnnotation(module: ModuleDescriptor): AnnotationDescriptor {
         return module.builtIns.createDeprecatedAnnotation(
             "This synthesized declaration should not be used directly",
             level = "HIDDEN"
         )
-    }
-
-    fun isSerialInfoImpl(thisDescriptor: ClassDescriptor): Boolean {
-        return thisDescriptor.name == IMPL_NAME
-                && thisDescriptor.containingDeclaration is LazyClassDescriptor
-                && (thisDescriptor.containingDeclaration as ClassDescriptor).isSerialInfoAnnotation
     }
 
     fun addSerializerFactorySuperType(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
@@ -57,7 +48,7 @@ object KSerializerDescriptorResolver {
         if (supertypes.any(::isKSerializer)) return
 
         // Add GeneratedSerializer as superinterface for generated $serializer class, and KSerializer to all others
-        val fqName = if (classDescriptor.name == SerialEntityNames.SERIALIZER_CLASS_NAME)
+        val fqName = if (classDescriptor.name == SERIALIZER_CLASS_NAME)
             SerialEntityNames.GENERATED_SERIALIZER_FQ
         else
             SerialEntityNames.KSERIALIZER_NAME_FQ
@@ -264,41 +255,6 @@ object KSerializerDescriptorResolver {
         )
 
         return functionDescriptor
-    }
-
-    fun createValPropertyDescriptor(
-        name: Name,
-        containingClassDescriptor: ClassDescriptor,
-        type: KotlinType,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
-        createGetter: Boolean = false
-    ): PropertyDescriptor {
-        val propertyDescriptor = PropertyDescriptorImpl.create(
-            containingClassDescriptor,
-            Annotations.create(listOfNotNull(containingClassDescriptor.jsExportIgnore())), Modality.FINAL, visibility, false, name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED, containingClassDescriptor.source, false, false, false, false, false, false
-        )
-        val extensionReceiverParameter: ReceiverParameterDescriptor? = null // kludge to disambiguate call
-        propertyDescriptor.setType(
-            type,
-            emptyList(), // no need type parameters?
-            containingClassDescriptor.thisAsReceiverParameter,
-            extensionReceiverParameter,
-            emptyList()
-        )
-
-        val propertyGetter: PropertyGetterDescriptorImpl? = if (createGetter) {
-            PropertyGetterDescriptorImpl(
-                propertyDescriptor, Annotations.create(listOfNotNull(containingClassDescriptor.jsExportIgnore())), Modality.FINAL, visibility, false, false, false,
-                CallableMemberDescriptor.Kind.SYNTHESIZED, null, containingClassDescriptor.source
-            ).apply { initialize(type) }
-        } else {
-            null
-        }
-
-        propertyDescriptor.initialize(propertyGetter, null)
-
-        return propertyDescriptor
     }
 
     fun createLoadConstructorDescriptor(
@@ -509,7 +465,7 @@ object KSerializerDescriptorResolver {
         if (KotlinBuiltIns.isPrimitiveType(this)) this
         else this.makeNullable()
 
-    fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): SimpleFunctionDescriptor {
+    private fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): SimpleFunctionDescriptor {
         val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(JvmStandardClassIds.Annotations.JvmStatic)!!
         val jvmStaticAnnotation = AnnotationDescriptorImpl(jvmStaticClass.defaultType, mapOf(), jvmStaticClass.source)
         val annotations = Annotations.create(listOfNotNull(jvmStaticAnnotation, thisClass.jsExportIgnore()))

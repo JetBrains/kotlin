@@ -152,10 +152,6 @@ class SerializableJsTranslator(
         return superProperties.size
     }
 
-    override fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
-        // no-op yet
-    }
-
     companion object {
         fun translate(
             declaration: KtPureClassOrObject,

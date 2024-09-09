@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberToGenerate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializationDescriptorUtils.getSyntheticLoadMember
@@ -72,20 +71,8 @@ abstract class SerializerCodegen(
         serializerDescriptor::checkSerializableClassPropertyResult
     ) { true }
 
-    var localSerializersFieldsDescriptors: List<Pair<PropertyDescriptor, IrProperty>> = emptyList()
-        protected set
-
     // Can be false if user specified inheritance from KSerializer explicitly
     protected val isGeneratedSerializer = serializerDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer)
-
-    protected fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
-        val count = serializableDescriptor.declaredTypeParameters.size
-        if (count == 0) return emptyList()
-        val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
-        return propNames.mapNotNull { name ->
-            getPropertyToGenerate(serializerDescriptor, name) { isKSerializer(it.returnType) }
-        }
-    }
 
     protected abstract fun generateSerialDesc()
 

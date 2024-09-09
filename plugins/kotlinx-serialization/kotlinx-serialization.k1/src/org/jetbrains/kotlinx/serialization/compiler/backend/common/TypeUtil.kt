@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
 
 open class SerialTypeInfo(
     val property: SerializableProperty,
@@ -100,8 +100,6 @@ fun KotlinType.serialName(): String {
 fun ClassDescriptor.serialName(): String {
     return annotations.serialNameValue ?: fqNameUnsafe.asString()
 }
-
-val ClassDescriptor.isStaticSerializable: Boolean get() = this.declaredTypeParameters.isEmpty()
 
 /**
  * Returns class descriptor for ContextSerializer or PolymorphicSerializer

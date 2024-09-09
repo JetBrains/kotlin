@@ -19,12 +19,11 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.superClassNotAny
-import org.jetbrains.kotlinx.serialization.compiler.fir.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.resolve.ISerializableProperty
 
 class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessionComponent(session) {
@@ -65,15 +64,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
 
         val serializableProperties: List<FirSerializableProperty> = allPropertySymbols.asSequence()
             .filter { isPropertySerializable(it) }
-            .map {
-                val declaresDefaultValue = it.declaresDefaultValue()
-                FirSerializableProperty(
-                    session,
-                    it,
-                    primaryConstructorProperties.getValue(it),
-                    declaresDefaultValue
-                )
-            }
+            .map { FirSerializableProperty(session, it, it.declaresDefaultValue()) }
             .filterNot { it.transient }
             .partition { it.propertySymbol in primaryConstructorProperties }
             .let { (fromConstructor, standalone) ->
