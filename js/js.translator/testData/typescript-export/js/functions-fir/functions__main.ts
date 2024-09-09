@@ -15,6 +15,7 @@ import formatList = JS_TESTS.foo.formatList;
 import createList = JS_TESTS.foo.createList;
 import defaultParametersAtTheBegining = JS_TESTS.foo.defaultParametersAtTheBegining;
 import nonDefaultParametersInBetween = JS_TESTS.foo.nonDefaultParameterInBetween;
+import someSuspendFunction = JS_TESTS.foo.someSuspendFunction;
 function assert(condition: boolean) {
     if (!condition) {
         throw "Assertion failed";
@@ -66,6 +67,8 @@ async function box(): Promise<string> {
     assert(nonDefaultParametersInBetween("A",  "B") == "A and B and Default C")
     assert(nonDefaultParametersInBetween(undefined,  "B", "C") == "Default A and B and C")
     assert(nonDefaultParametersInBetween(undefined,  "B") == "Default A and B and Default C")
+
+    assert(await someSuspendFunction("JS") === `Suspend 'JS'`)
 
     return "OK";
 }

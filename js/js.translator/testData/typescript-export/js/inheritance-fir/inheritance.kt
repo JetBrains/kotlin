@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: JS_IR_ES6
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
@@ -213,3 +214,26 @@ fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Second {}
 
 @JsExport
 val fifth = Fifth<Boolean>()
+
+
+@JsExport
+interface FirstSuspendOwner {
+   suspend fun first(): String
+}
+
+@JsExport
+open class SecondSuspendOwner : FirstSuspendOwner {
+    override suspend fun first() = "First"
+    open suspend fun second() = "Second"
+}
+
+@JsExport
+class ThirdSuspendOwner : SecondSuspendOwner() {
+    override suspend fun first() = "patched first"
+    override suspend fun second() = "patched second"
+    suspend fun third() = "third"
+}
+
+@JsExport
+suspend fun acceptSecondSuspendOwner(owner: SecondSuspendOwner): String =
+    "First is '${owner.first()}' and second is '${owner.second()}'"

@@ -335,6 +335,38 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/functions-fir")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Functions_fir {
+    @Test
+    public void testAllFilesPresentInFunctions_fir() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/functions-fir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("functions.kt")
+    public void testFunctions() {
+      runTest("js/js.translator/testData/typescript-export/js/functions-fir/functions.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/functions-fir-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Functions_fir_in_exported_file {
+    @Test
+    public void testAllFilesPresentInFunctions_fir_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/functions-fir-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("functions.kt")
+    public void testFunctions() {
+      runTest("js/js.translator/testData/typescript-export/js/functions-fir-in-exported-file/functions.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/functions-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
@@ -385,6 +417,22 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("js/js.translator/testData/typescript-export/js/inheritance/inheritance.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/inheritance-fir")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Inheritance_fir {
+    @Test
+    public void testAllFilesPresentInInheritance_fir() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/inheritance-fir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("inheritance.kt")
+    public void testInheritance() {
+      runTest("js/js.translator/testData/typescript-export/js/inheritance-fir/inheritance.kt");
     }
   }
 

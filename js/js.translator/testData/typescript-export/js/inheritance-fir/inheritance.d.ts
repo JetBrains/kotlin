@@ -127,5 +127,24 @@ declare namespace JS_TESTS {
         }
         function acceptForthLike<T extends (foo.Third<string> & foo.IA)/* foo.Forth<string> */>(forth: T): void;
         function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.First/* foo.Second */>(forth: T): void;
+        interface FirstSuspendOwner {
+            first(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.FirstSuspendOwner": unique symbol;
+            };
+        }
+        class SecondSuspendOwner implements foo.FirstSuspendOwner {
+            constructor();
+            first(): Promise<string>;
+            second(): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.FirstSuspendOwner["__doNotUseOrImplementIt"];
+        }
+        class ThirdSuspendOwner extends foo.SecondSuspendOwner {
+            constructor();
+            first(): Promise<string>;
+            second(): Promise<string>;
+            third(): Promise<string>;
+        }
+        function acceptSecondSuspendOwner(owner: foo.SecondSuspendOwner): Promise<string>;
     }
 }

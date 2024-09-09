@@ -1,7 +1,9 @@
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
+// LANGUAGE: +JsExportSuspendFunctions
 // MODULE: JS_TESTS
 // WITH_STDLIB
 // FILE: functions.kt
@@ -74,3 +76,6 @@ fun defaultParametersAtTheBegining(a: String = "Default Value", b: String) = "$a
 
 @JsExport
 fun nonDefaultParameterInBetween(a: String = "Default A", b: String, c: String = "Default C") = "$a and $b and $c"
+
+@JsExport
+suspend fun someSuspendFunction(value: String) = "Suspend '$value'"

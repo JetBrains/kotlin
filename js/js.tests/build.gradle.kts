@@ -198,6 +198,7 @@ val generateTypeScriptJsExportOnFileTests by parallel(
                     !it.path.endsWith("selective-export") &&
                     !it.path.endsWith("implicit-export") &&
                     !it.path.endsWith("inheritance") &&
+                    !it.path.endsWith("inheritance-fir") &&
                     !it.path.endsWith("strict-implicit-export") &&
                     !it.path.endsWith("private-primary-constructor") &&
                     !it.path.endsWith(exportFileDirPostfix)

@@ -33,6 +33,5 @@ declare namespace JS_TESTS {
         function createList(): kotlin.collections.KtMutableList<any /*UnknownType **/>;
         function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
         function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
-        function someSuspendFunction(value: string): Promise<string>;
     }
 }
