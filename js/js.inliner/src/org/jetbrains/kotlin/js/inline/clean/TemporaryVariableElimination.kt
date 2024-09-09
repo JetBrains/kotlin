@@ -258,7 +258,8 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             }
 
             private fun handleDefinition(name: JsName, value: JsExpression, node: JsNode) {
-                val sideEffects = handleExpression(value) || name !in localVariables
+                val isAssigment = node is JsExpressionStatement && JsAstUtils.decomposeAssignment(node.expression) != null
+                val sideEffects = handleExpression(value) || name !in localVariables || isAssigment
                 if (shouldConsiderTemporary(name)) {
                     if (isTrivial(value)) {
                         statementsToRemove += node
