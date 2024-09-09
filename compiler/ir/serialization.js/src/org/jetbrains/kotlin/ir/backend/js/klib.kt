@@ -706,7 +706,6 @@ fun serializeModuleIntoKlib(
         linkDependencies = serializerOutput.neededLibraries,
         ir = fullSerializedIr,
         metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
-        dataFlowGraph = null,
         manifestProperties = properties,
         moduleName = moduleName,
         nopack = nopack,

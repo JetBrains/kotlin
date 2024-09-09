@@ -20,7 +20,6 @@ interface MetadataWriter {
 
 interface IrWriter {
     fun addIr(ir: SerializedIrModule)
-    fun addDataFlowGraph(dataFlowGraph: ByteArray)
 }
 
 interface KotlinLibraryWriter : MetadataWriter, BaseWriter, IrWriter

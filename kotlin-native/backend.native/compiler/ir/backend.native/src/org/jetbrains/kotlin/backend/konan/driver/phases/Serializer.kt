@@ -29,7 +29,7 @@ typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.S
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
         "Serializer", "IR serializer",
-        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
+        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
     val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -62,7 +62,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     )
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
-    SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
+    SerializerOutput(serializedMetadata, serializedIr, neededLibraries)
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(

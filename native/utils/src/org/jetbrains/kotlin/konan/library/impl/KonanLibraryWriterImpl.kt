@@ -51,7 +51,6 @@ fun buildLibrary(
     nopack: Boolean,
     shortName: String?,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
     /**
      * This property affects *only* the property of 'native_targets' written in manifest
      */
@@ -84,7 +83,6 @@ fun buildLibrary(
     }
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
-    dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
     library.commit()
     return library.layout

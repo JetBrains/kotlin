@@ -80,7 +80,6 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
             nopack = nopack,
             shortName = shortLibraryName,
             manifestProperties = manifestProperties,
-            dataFlowGraph = input.serializerOutput.dataFlowGraph
     )
 }
 

@@ -78,7 +78,6 @@ abstract class AbstractNativeKlibSerializerFacade(
             nopack = true,
             shortName = null,
             manifestProperties = null,
-            dataFlowGraph = null
         )
 
         updateTestConfiguration(configuration, dependencyPaths, module, outputArtifact)
@@ -141,8 +140,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         return SerializerOutput(
             serializedMetadata,
             serializerIr,
-            dataFlowGraph = null,
-            neededLibraries = dependencies
+            neededLibraries = dependencies,
         )
     }
 

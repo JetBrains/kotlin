@@ -92,12 +92,6 @@ abstract class IrLibraryImpl(
             it.irDir.exists
         }
     }
-
-    override val dataFlowGraph by lazy {
-        access.inPlace { it: IrKotlinLibraryLayout ->
-            it.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null }
-        }
-    }
 }
 
 class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibraryImpl(_access) {

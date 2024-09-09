@@ -33,7 +33,6 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
         nopack = true,
         perFile = false,
         manifestProperties = null,
-        dataFlowGraph = null,
         builtInsPlatform = BuiltInsPlatform.COMMON,
         nativeTargets = emptyList()
     )

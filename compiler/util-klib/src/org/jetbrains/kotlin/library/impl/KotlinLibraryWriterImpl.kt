@@ -118,7 +118,6 @@ fun buildKotlinLibrary(
     nopack: Boolean,
     perFile: Boolean,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?, // TODO (KT-66218): remove this property
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
@@ -145,7 +144,6 @@ fun buildKotlinLibrary(
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
-    dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
     library.commit()
     return library.layout

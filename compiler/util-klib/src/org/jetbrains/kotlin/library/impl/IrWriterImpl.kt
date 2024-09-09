@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.library.IrWriter
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
-    override fun addDataFlowGraph(dataFlowGraph: ByteArray) {
-        irLayout.dataFlowGraphFile.writeBytes(dataFlowGraph)
-    }
-}
+abstract class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter
 
 class IrMonoliticWriterImpl(_irLayout: IrKotlinLibraryLayout) : IrWriterImpl(_irLayout) {
 
