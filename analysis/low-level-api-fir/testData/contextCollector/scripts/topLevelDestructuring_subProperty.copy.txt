@@ -41,7 +41,7 @@ Tower Data Context:
                     public get(): <implicit>
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
+FILE: [ResolvedTo(RAW_FIR)] topLevelDestructuring_subProperty.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevelDestructuring_subProperty.kts>
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -65,9 +65,9 @@ FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
 
         }
 
-        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval <destruct>: R|TwoValues| = R|/TwoValues.TwoValues|(Int(1), Int(2))
-        public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int| = R|<local>/<destruct>|.R|/TwoValues.component1|()
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        [ResolvedTo(RAW_FIR)] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(RAW_FIR)] val one: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] val two: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>

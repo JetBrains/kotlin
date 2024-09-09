@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol n: R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] classFunction.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| {
+            this@R|/Foo|.R|/Foo.bar|(R|<local>/n|)
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| {
+        }
+
+    }

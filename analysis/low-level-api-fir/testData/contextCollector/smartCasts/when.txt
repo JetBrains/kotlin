@@ -17,8 +17,6 @@ Tower Data Context:
                 FirValueParameterSymbol obj: R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
-    Element 8
-        Scope: FirLocalScope
 Smart Casts:
     FirValueParameterSymbol obj: R|kotlin/Any|
     Types:

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -31,14 +30,16 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import java.lang.IllegalArgumentException
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        performTestByMainFile(mainFile, mainModule, testServices, testPrefix = null)
+        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = emptyList(), useBodyElement = false)
+        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = listOf("body"), useBodyElement = true)
 
         val fakeFile = createFileCopy(mainFile)
-        performTestByMainFile(fakeFile, mainModule, testServices, testPrefix = "copy")
+
+        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy"), useBodyElement = false)
+        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("body.copy", "copy"), useBodyElement = true)
     }
 
     private fun createFileCopy(file: KtFile): KtFile {
@@ -51,7 +52,13 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         return fakeFile
     }
 
-    private fun performTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices, testPrefix: String?) {
+    private fun performTestByMainFile(
+        mainFile: KtFile,
+        mainModule: KtTestModule,
+        testServices: TestServices,
+        testPrefixes: List<String>,
+        useBodyElement: Boolean
+    ) {
         val resolveSession = mainModule.ktModule.getFirResolveSession(mainFile.project)
         val session = resolveSession.useSiteFirSession
         val sessionHolder = SessionHolderImpl(session, session.getScopeSession())
@@ -61,7 +68,9 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         val targetElement = testServices.expressionMarkerProvider
             .getBottommostSelectedElementOfType(mainFile, KtElement::class.java)
 
-        val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement)
+        val bodyElement = if (useBodyElement) targetElement else null
+
+        val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement, bodyElement)
             ?: error("Context not found for element $targetElement")
 
         val firRenderer = FirRenderer.withResolvePhase()
@@ -72,7 +81,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
             append(firRenderer.renderElementAsString(firFile, trim = true))
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualText, testPrefix = testPrefix)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actualText, testPrefixes = testPrefixes)
     }
 }
 

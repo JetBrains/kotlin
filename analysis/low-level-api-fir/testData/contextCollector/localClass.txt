@@ -15,12 +15,6 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Scope: FirLocalScope
-            Classifiers:
-                FirRegularClassSymbol local final class Local : R|kotlin/Any|
-    Element 8
-        Implicit receiver:
-            FirRegularClassSymbol local final class Local : R|kotlin/Any|
-                Type: <local>.Local
 
 FILE: [ResolvedTo(IMPORTS)] localClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {

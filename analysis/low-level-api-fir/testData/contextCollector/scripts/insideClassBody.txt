@@ -35,8 +35,6 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 12
-        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-insideClassBody.kts>
@@ -51,7 +49,6 @@ FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
             public final [ResolvedTo(STATUS)] val x: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] get(): <implicit>
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }

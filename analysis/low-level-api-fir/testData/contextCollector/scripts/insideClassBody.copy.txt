@@ -35,10 +35,8 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 12
-        Scope: FirLocalScope
 
-FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
+FILE: [ResolvedTo(RAW_FIR)] insideClassBody.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideClassBody.kts>
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -51,7 +49,6 @@ FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
             public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }

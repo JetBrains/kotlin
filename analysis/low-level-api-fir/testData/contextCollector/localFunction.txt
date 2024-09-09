@@ -15,10 +15,6 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 7
         Scope: FirLocalScope
-            Functions
-                FirNamedFunctionSymbol local final fun local(): R|kotlin/Unit|
-    Element 8
-        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {

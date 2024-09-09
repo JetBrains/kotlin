@@ -13,12 +13,12 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 6
         Implicit receiver:
-            FirRegularClassSymbol public final companion object Companion : R|test/MyInterface|
+            FirRegularClassSymbol public final? companion object Companion : MyInterface
                 Type: test.MyClass.Companion
     Element 7
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
-                FirRegularClassSymbol public final companion object Companion : R|test/MyInterface|
+                FirRegularClassSymbol public final? companion object Companion : MyInterface
     Element 8
         Scope: FirLocalScope
 
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedToCompanion.kt
 
         private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = Q|test/MyClass.Companion|
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|test/MyInterface| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : MyInterface {
             private [ResolvedTo(RAW_FIR)] constructor(): R|test/MyClass.Companion| {
                 LAZY_super<<implicit>>
             }

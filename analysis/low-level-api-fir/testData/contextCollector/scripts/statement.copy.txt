@@ -44,8 +44,6 @@ Tower Data Context:
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
     Element 11
         Scope: FirLocalScope
-    Element 12
-        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement.kts>

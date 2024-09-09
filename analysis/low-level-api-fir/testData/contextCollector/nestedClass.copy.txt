@@ -17,13 +17,17 @@ Tower Data Context:
                 FirRegularClassSymbol public final? class Bar<B> : R|kotlin/Any|
                 FirRegularClassSymbol public final class Baz : R|kotlin/Any|
     Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol A
+    Element 8
         Implicit receiver:
-            FirRegularClassSymbol public final class Baz : R|kotlin/Any|
-                Type: Foo.Baz
+            FirRegularClassSymbol public final class Foo<A> : R|kotlin/Any|
+                Type: Foo<A>
 
-FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(SUPER_TYPES)] A>(): R|Foo<A>| {
+FILE: [ResolvedTo(RAW_FIR)] nestedClass.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] A>(): R|Foo<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -34,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
         }
 
-        public final [ResolvedTo(STATUS)] class Baz : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] class Baz : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo.Baz| {
                 LAZY_super<R|kotlin/Any|>
             }

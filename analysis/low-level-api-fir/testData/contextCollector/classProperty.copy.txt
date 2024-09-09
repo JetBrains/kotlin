@@ -16,7 +16,7 @@ Tower Data Context:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
 
-FILE: [ResolvedTo(IMPORTS)] classProperty.kt
+FILE: [ResolvedTo(RAW_FIR)] classProperty.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] classProperty.kt
         public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = this@R|/Foo|.R|/Foo.x|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }

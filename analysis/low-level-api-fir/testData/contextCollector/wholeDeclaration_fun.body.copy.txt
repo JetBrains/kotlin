@@ -1,0 +1,49 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol param: R|kotlin/String|
+    Element 8
+        Context receivers:
+            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
+            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+                Type: test.ContextReceiver
+                Label: ContextReceiver
+    Element 9
+        Implicit receiver:
+            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
+            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+                Type: test.Receiver
+
+FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_fun.kt
+    public final? [ResolvedTo(RAW_FIR)] class ContextReceiver : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/ContextReceiver| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Receiver : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Receiver| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context(R|test/ContextReceiver|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> R|test/Receiver|.test([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|T| {
+    }

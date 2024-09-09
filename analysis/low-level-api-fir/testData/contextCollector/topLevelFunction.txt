@@ -11,12 +11,7 @@ Tower Data Context:
         Scope: FirPackageMemberScope
     Element 5
         Scope: FirExplicitSimpleImportingScope
-    Element 6
-        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] topLevelFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        R|/bar|()
-    }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| {
-    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

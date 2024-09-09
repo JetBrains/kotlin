@@ -15,10 +15,6 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 7
-        Scope: FirLocalScope
-            Properties:
-                FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] propertyAccessor.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {

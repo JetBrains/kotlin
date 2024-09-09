@@ -12,8 +12,8 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
 
-FILE: [ResolvedTo(IMPORTS)] topLevelProperty.kt
+FILE: [ResolvedTo(RAW_FIR)] topLevelProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|/x|
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>

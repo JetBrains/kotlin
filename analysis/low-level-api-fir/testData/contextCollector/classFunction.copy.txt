@@ -15,20 +15,14 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 7
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol n: R|kotlin/Int|
 
-FILE: [ResolvedTo(IMPORTS)] classFunction.kt
+FILE: [ResolvedTo(RAW_FIR)] classFunction.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| {
-            this@R|/Foo|.R|/Foo.bar|(R|<local>/n|)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] n: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] obj: Any?): R|kotlin/Unit| { LAZY_BLOCK }
 

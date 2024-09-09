@@ -33,8 +33,6 @@ Tower Data Context:
         Implicit receiver:
             FirAnonymousObjectSymbol object : R|Foo|
                 Type: <anonymous>
-    Element 10
-        Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] enumValueFunction.kt
     public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {

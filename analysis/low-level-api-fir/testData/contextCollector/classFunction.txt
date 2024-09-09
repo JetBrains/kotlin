@@ -15,10 +15,6 @@ Tower Data Context:
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 7
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol n: R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] classFunction.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
@@ -26,11 +22,8 @@ FILE: [ResolvedTo(IMPORTS)] classFunction.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] n: R|kotlin/Int|): R|kotlin/Unit| {
-            this@R|/Foo|.R|/Foo.bar|(R|<local>/n|)
-        }
+        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] obj: R|kotlin/Any?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
