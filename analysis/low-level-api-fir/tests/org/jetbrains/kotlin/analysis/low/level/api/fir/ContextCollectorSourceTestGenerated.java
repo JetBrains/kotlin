@@ -466,6 +466,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("onSmartCastExpression.kt")
+    public void testOnSmartCastExpression() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onSmartCastExpression.kt");
+    }
+
+    @Test
     @TestMetadata("onType.kt")
     public void testOnType() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onType.kt");
