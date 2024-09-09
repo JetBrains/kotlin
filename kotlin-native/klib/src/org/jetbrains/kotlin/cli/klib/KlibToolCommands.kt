@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.konan.library.BitcodeLibrary
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
-import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -67,13 +66,17 @@ internal sealed class KlibToolCommand(
         }
     }
 
-    protected fun libraryInCurrentDir(name: String): KotlinLibrary =
-        resolverByName(logger = KlibToolLogger(output)).resolve(name)
+    /**
+     * Note that [libraryPath] can be either absolute, or relative to the current working directory.
+     * Other options are not supported.
+     */
+    protected fun resolveKlib(libraryPath: String): KotlinLibrary =
+        klibResolver(distributionKlib = null, skipCurrentDir = false, KlibToolLogger(output)).resolve(libraryPath)
 }
 
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = libraryInCurrentDir(args.libraryNameOrPath)
+        val library = resolveKlib(args.libraryPath)
         val metadataHeader = parseModuleHeader(library.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
@@ -139,7 +142,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun execute() {
-        val library = libraryInCurrentDir(args.libraryNameOrPath)
+        val library = resolveKlib(args.libraryPath)
 
         if (!checkLibraryHasIr(library)) return
 
@@ -171,7 +174,7 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
 internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     @OptIn(ExperimentalLibraryAbiReader::class)
     override fun execute() {
-        val library = libraryInCurrentDir(args.libraryNameOrPath)
+        val library = resolveKlib(args.libraryPath)
 
         if (!checkLibraryHasIr(library)) return
 
@@ -229,7 +232,7 @@ internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : K
         val idSignatureRenderer: IdSignatureRenderer? = runIf(args.printSignatures) {
             args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
         }
-        KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(libraryInCurrentDir(args.libraryNameOrPath), args.testMode)
+        KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(resolveKlib(args.libraryPath), args.testMode)
     }
 }
 
@@ -239,7 +242,7 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val module = ModuleDescriptorLoader(output).load(libraryInCurrentDir(args.libraryNameOrPath))
+        val module = ModuleDescriptorLoader(output).load(resolveKlib(args.libraryPath))
 
         DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
     }
@@ -247,7 +250,7 @@ internal class DumpMetadataSignatures(output: KlibToolOutput, args: KlibToolArgu
 
 internal class DumpIrSignatures(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val library = libraryInCurrentDir(args.libraryNameOrPath)
+        val library = resolveKlib(args.libraryPath)
 
         if (!checkLibraryHasIr(library) || !args.signatureVersion.checkSupportedInLibrary(library)) return
 

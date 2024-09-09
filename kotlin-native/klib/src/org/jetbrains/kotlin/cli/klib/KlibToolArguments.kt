@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 
 internal class KlibToolArguments(
         val commandName: String,
-        val libraryNameOrPath: String,
+        val libraryPath: String,
         val printSignatures: Boolean,
         val signatureVersion: KotlinIrSignatureVersion?,
         val testMode: Boolean,

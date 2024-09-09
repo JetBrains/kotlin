@@ -27,23 +27,6 @@ fun defaultResolver(
         logger
 )
 
-fun resolverByName(
-    directLibs: List<String> = emptyList(),
-    distributionKlib: String? = null,
-    localKotlinDir: String? = null,
-    skipCurrentDir: Boolean = false,
-    logger: Logger
-): SearchPathResolver<KotlinLibrary> =
-    object : KotlinLibrarySearchPathResolver<KotlinLibrary>(
-        directLibs,
-        distributionKlib,
-        localKotlinDir,
-        skipCurrentDir,
-        logger
-    ) {
-        override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKonanLibraryComponents(file, null, isDefault)
-    }
-
 internal class KonanLibraryProperResolver(
     directLibs: List<String>,
     override val target: KonanTarget,

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -29,13 +28,19 @@ internal class ModuleDescriptorLoader(output: KlibToolOutput) {
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isNativeStdlib()) {
-            val resolver = resolverByName(
-                    distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
-                    skipCurrentDir = true,
-                    logger = logger
+            val resolver = klibResolver(
+                distributionKlib = Distribution(KotlinNativePaths.homePath.absolutePath).klib,
+                skipCurrentDir = true,
+                logger = logger
             )
-            resolver.defaultLinks(noStdLib = false, noDefaultLibs = true, noEndorsedLibs = true).mapTo(defaultModules) {
-                KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(it, languageVersionSettings, storageManager, module.builtIns, null)
+            resolver.defaultLinks(noStdLib = false, noDefaultLibs = true, noEndorsedLibs = true).mapTo(defaultModules) { library ->
+                KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
+                    library,
+                    languageVersionSettings,
+                    storageManager,
+                    module.builtIns,
+                    null
+                )
             }
         }
 

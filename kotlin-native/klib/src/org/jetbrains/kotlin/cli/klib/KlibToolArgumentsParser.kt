@@ -39,11 +39,11 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         }
 
         return KlibToolArguments(
-                commandName = rawArgs[0],
-                libraryNameOrPath = rawArgs[1],
-                printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
-                signatureVersion,
-                testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true
+            commandName = rawArgs[0],
+            libraryPath = rawArgs[1],
+            printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
+            signatureVersion,
+            testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true
         )
     }
 
@@ -68,7 +68,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
     private fun printUsage() {
         output.stderr.appendLine(
                 """
-                Usage: klib <command> <library> [<option>]
+                Usage: klib <command> <library path> [<option>]
 
                 where the commands are:
                    info                      General information about the library
