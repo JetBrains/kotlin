@@ -57,6 +57,14 @@ public final class Foo : KotlinRuntime.KotlinBase {
         return switch Foo_produce(self.__externalRCRef()) { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
     }
 }
+public var str: Swift.String? {
+    get {
+        return switch __root___str_get() { case .none: .none; case let res: res; }
+    }
+    set {
+        return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue)
+    }
+}
 public func foo(
     a: main.Bar
 ) -> Swift.Void {
@@ -95,4 +103,12 @@ public func p_opt_opt_in(
 }
 public func p_opt_opt_out() -> main.OptOptRef {
     return switch __root___p_opt_opt_out() { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
+}
+public func string_in(
+    a: Swift.String?
+) -> Swift.Void {
+    return __root___string_in__TypesOfArguments__Swift_String_opt___(a)
+}
+public func string_out() -> Swift.String? {
+    return switch __root___string_out() { case .none: .none; case let res: res; }
 }

@@ -213,10 +213,12 @@ private fun bridgeType(type: SirType): Bridge {
 
         SirSwiftModule.utf16CodeUnit -> Bridge.AsIs(type, KotlinType.Char, CType.UInt16)
 
-        SirSwiftModule.optional -> Bridge.AsOptionalWrapper(
-            obj = bridgeType(type.typeArguments.first()) as? Bridge.AsObject
-                ?: error("Optional can only wrap objects currently. See KT-66875")
-        )
+        SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
+            is Bridge.AsObject,
+            is Bridge.AsObjCBridged
+                -> Bridge.AsOptionalWrapper(bridge)
+            else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
+        }
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -304,7 +306,16 @@ private interface ValueConversion {
     fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String
 }
 
+private interface NilRepresentable {
+    fun renderNil(): String
+}
+
 private object IdentityValueConversion : ValueConversion {
+    override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
+    override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
+}
+
+private interface NilableIdentityValueConversion : Bridge.InSwiftSourcesConversion {
     override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
@@ -316,7 +327,9 @@ private sealed class Bridge(
 ) {
     class AsIs(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = IdentityValueConversion
-        override val inSwiftSources = IdentityValueConversion
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = "nil"
+        }
     }
 
     class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
@@ -328,12 +341,13 @@ private sealed class Bridge(
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
-        override val inSwiftSources = object : ValueConversion {
+        override val inSwiftSources = object : InSwiftSourcesConversion {
+            override fun renderNil(): String = "0"
+
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "${typeNamer.swiftFqName(swiftType)}(__externalRCRef: $valueExpression)"
-
         }
     }
 
@@ -346,7 +360,9 @@ private sealed class Bridge(
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
         }
 
-        override val inSwiftSources = IdentityValueConversion
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = TODO("Not yet implemented")
+        }
     }
 
     class AsObjCBridged(
@@ -362,38 +378,54 @@ private sealed class Bridge(
                 "$valueExpression.objcPtr()"
         }
 
-        override val inSwiftSources = IdentityValueConversion
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = ".none"
+        }
     }
 
     class AsOptionalWrapper(
-        val obj: AsObject,
-    ) : Bridge(obj.swiftType, obj.kotlinType, obj.cType) {
+        val wrappedObject: Bridge,
+    ) : Bridge(wrappedObject.swiftType, wrappedObject.kotlinType, wrappedObject.cType) {
+
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return "if ($valueExpression == kotlin.native.internal.NativePtr.NULL) null else ${
-                        obj.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
+                        wrappedObject.inKotlinSources.swiftToKotlin(typeNamer, valueExpression)
                     }"
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return "if ($valueExpression == null) return kotlin.native.internal.NativePtr.NULL else return ${
-                        obj.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
+                        wrappedObject.inKotlinSources.kotlinToSwift(typeNamer, valueExpression)
                     }"
                 }
 
             }
-        override val inSwiftSources: ValueConversion
-            get() = object : ValueConversion {
-                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return obj.inSwiftSources.swiftToKotlin(typeNamer, "$valueExpression?") + " ?? 0"
+        override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return when (wrappedObject) {
+                    is AsObjCBridged -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+                    is AsObject -> wrappedObject.inSwiftSources.swiftToKotlin(
+                        typeNamer = typeNamer,
+                        valueExpression = "$valueExpression?"
+                    ) + " ?? ${wrappedObject.inSwiftSources.renderNil()}"
+                    is AsIs,
+                    is AsOpaqueObject
+                        -> TODO("yet unsupported")
+                    is AsOptionalWrapper -> error("there is not optional wrappers for optional")
                 }
-
-                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "switch $valueExpression { case 0: .none; case let res: ${obj.inSwiftSources.kotlinToSwift(typeNamer, "res")}; }"
-                }
-
             }
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
+                    wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
+                }; }"
+            }
+
+            override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
+
+        }
     }
 
     /**
@@ -404,5 +436,8 @@ private sealed class Bridge(
     /**
      * [ValueConversion] to be used when generating Swift sources.
      */
-    abstract val inSwiftSources: ValueConversion
+    abstract val inSwiftSources: InSwiftSourcesConversion
+
+    interface InSwiftSourcesConversion : ValueConversion, NilRepresentable
 }
+

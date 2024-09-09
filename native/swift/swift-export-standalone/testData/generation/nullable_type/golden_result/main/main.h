@@ -39,3 +39,11 @@ void __root___p_opt_opt_in__TypesOfArguments__main_Bar_opt___(uintptr_t input);
 
 uintptr_t __root___p_opt_opt_out();
 
+NSString * __root___str_get();
+
+void __root___str_set__TypesOfArguments__Swift_String_opt___(NSString * newValue);
+
+void __root___string_in__TypesOfArguments__Swift_String_opt___(NSString * a);
+
+NSString * __root___string_out();
+

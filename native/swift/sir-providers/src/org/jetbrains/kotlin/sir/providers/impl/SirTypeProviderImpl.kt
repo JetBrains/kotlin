@@ -59,7 +59,6 @@ public class SirTypeProviderImpl(
                 ktType.isFloatType -> SirNominalType(SirSwiftModule.float)
                 ktType.isNothingType -> SirNominalType(SirSwiftModule.never)
 
-                ktType.isStringType -> SirNominalType(SirSwiftModule.string)
                 else -> null
             }
         }
@@ -69,7 +68,7 @@ public class SirTypeProviderImpl(
                 is KaUsualClassType -> with(sirSession) {
                     when {
                         kaType.isNothingType -> null // TODO: KT-71087
-                        kaType.isStringType -> null // TODO: KT-71086
+                        kaType.isStringType -> SirSwiftModule.string
                         kaType.isAnyType -> KotlinRuntimeModule.kotlinBase
                         else -> {
                             val classSymbol = kaType.symbol

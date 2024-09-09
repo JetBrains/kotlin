@@ -38,6 +38,26 @@ func null_type() throws {
     try assertEquals(actual: p_opt_typealias(input: nil), expected: nil)
 }
 
+func null_strings() throws {
+    try assertEquals(actual: optionalString, expected: nil)
+    try assertEquals(actual: strIdentity(str: nil), expected: nil)
+    try assertEquals(actual: strIdentity(str: "string"), expected: "string")
+
+    var str = optionalString
+    str = strIdentity(str: "123")
+    optionalString = str
+    try assertEquals(actual: optionalString, expected: "123")
+
+    optionalString = "nonoptional string"
+    try assertEquals(actual: optionalString, expected: "nonoptional string")
+
+    optionalString = Optional<String>.some("optional string")
+    try assertEquals(actual: optionalString, expected: "optional string")
+
+    optionalString = nil
+    try assertEquals(actual: optionalString, expected: nil)
+}
+
 class Null_typeTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -45,6 +65,7 @@ class Null_typeTests : TestProvider {
         providers.append(self)
         tests = [
             TestCase(name: "null_type", method: withAutorelease(null_type)),
+            TestCase(name: "null_strings", method: withAutorelease(null_strings)),
         ]
     }
 }

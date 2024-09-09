@@ -122,3 +122,27 @@ public fun __root___p_opt_opt_out(): kotlin.native.internal.NativePtr {
     return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___str_get")
+public fun __root___str_get(): kotlin.native.internal.NativePtr {
+    val _result = str
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+}
+
+@ExportedBridge("__root___str_set__TypesOfArguments__Swift_String_opt___")
+public fun __root___str_set__TypesOfArguments__Swift_String_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<String>(newValue)
+    str = __newValue
+}
+
+@ExportedBridge("__root___string_in__TypesOfArguments__Swift_String_opt___")
+public fun __root___string_in__TypesOfArguments__Swift_String_opt___(a: kotlin.native.internal.NativePtr): Unit {
+    val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<String>(a)
+    string_in(__a)
+}
+
+@ExportedBridge("__root___string_out")
+public fun __root___string_out(): kotlin.native.internal.NativePtr {
+    val _result = string_out()
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+}
+

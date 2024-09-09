@@ -31,3 +31,7 @@ typealias OptOptRef = OptionalRef?
 
 fun p_opt_opt_out(): OptOptRef? = null
 fun p_opt_opt_in(input: OptOptRef?) = Unit
+
+fun string_in(a: String?): Unit = TODO()
+fun string_out(): String? = null
+var str: String? = null

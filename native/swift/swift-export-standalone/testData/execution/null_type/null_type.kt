@@ -20,3 +20,6 @@ fun p_opt_typealias(input: OptOptRef): OptOptRef = input
 var nullableAny: Any? = null
 fun foo_any(a: Any): String = "nonoptional"
 fun foo_any(a: Any?): String = "optional"
+
+var optionalString: String? = null
+fun strIdentity(str: String?): String? = str
