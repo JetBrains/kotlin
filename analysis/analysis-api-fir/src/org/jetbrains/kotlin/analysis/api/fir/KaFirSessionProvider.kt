@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.Scheduler
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirNoOpCacheCleaner
@@ -32,31 +33,26 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationTopics
 import org.jetbrains.kotlin.psi.KtElement
-import java.time.Duration
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 /**
  * [KaFirSessionProvider] keeps [KaFirSession]s in a cache, which are actively invalidated with their associated underlying
  * [LLFirSession][LLFirSession]s.
  */
-internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(project) {
+internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(project), Disposable {
     /**
      * [KaFirSession]s must be weakly referenced to allow simultaneous garbage collection of an unused [KaFirSession] together with its
      * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession].
      *
-     * The cache automatically evicts unused [KaFirSession]s when they haven't been accessed for 10 seconds. The configured scheduler
-     * ensures that cleanup happens even when the cache is not accessed. This allows deterministic cleanup of the cache's entries. While the
-     * [KaFirSession] can be garbage-collected without this, it also frees up the strong [KaModule] key, which can hold references to PSI.
-     *
-     * This behavior may lead to duplicate [KaFirSession]s for the same [KaModule] existing in the world (if a thread is using a single
-     * [KaFirSession] for >10 seconds). However, there is no uniqueness requirement for [KaSession]s, so the behavior is legal.
+     * The cache is deterministically cleaned up by a scheduled maintenance task, ensuring that cache entries for already garbage-collected
+     * [KaFirSession]s will be removed even when the cache is not accessed. While the [KaFirSession] will have been garbage-collected, the
+     * maintenance also frees up the strong [KaModule] key, which can hold references to PSI.
      */
-    private val cache: Cache<KaModule, KaSession> =
-        Caffeine.newBuilder()
-            .weakValues()
-            .expireAfterAccess(Duration.ofSeconds(10))
-            .scheduler(Scheduler.systemScheduler())
-            .build()
+    private val cache: Cache<KaModule, KaSession> = Caffeine.newBuilder().weakValues().build()
+
+    private val scheduledCacheMaintenance: Future<*>
 
     private val cacheCleaner: KaFirCacheCleaner by lazy {
         if (Registry.`is`("kotlin.analysis.lowMemoryCacheCleanup", false)) {
@@ -68,6 +64,20 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     init {
         LowMemoryWatcher.register(::handleLowMemoryEvent, project)
+        scheduledCacheMaintenance = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(
+            Runnable { performCacheMaintenance() },
+            10,
+            10,
+            TimeUnit.SECONDS,
+        )
+
+        LowMemoryWatcher.register(::handleLowMemoryEvent, project)
+    }
+
+    private fun performCacheMaintenance() {
+        // This does NOT perform any invalidation, but rather removes cache entries for already garbage-collected sessions even when the
+        // cache is not accessed for a while.
+        cache.cleanUp()
     }
 
     override fun getAnalysisSession(useSiteElement: KtElement): KaSession {
@@ -138,20 +148,21 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     /**
      * Schedules cache removal on a low-memory event.
      *
-     * First of all, here we clean up the [KaSession] caches right away. This alone is not very effective as underlying [LLFirSession]s
-     * are still cached by the [LLFirSessionCache]. However, we still can free some memory from unclaimed [KaSession] components right away.
-     *
-     * Then, we ask the cache cleaner to schedule a global cache cleanup. It has to wait until there is no ongoing analysis as
+     * We ask the cache cleaner to schedule a global cache cleanup. It has to wait until there is no ongoing analysis as
      * [LLFirSessionCleaner][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCleaner] called from [LLFirSessionCache]
-     * marks sessions invalid (and analyses in progress will be very surprised).
+     * marks sessions invalid (and analyses in progress will be very surprised). [KaFirSession]s will also be invalidated during this step.
      */
     private fun handleLowMemoryEvent() {
-        clearCaches()
+        performCacheMaintenance()
         cacheCleaner.scheduleCleanup()
     }
 
     override fun clearCaches() {
         cache.invalidateAll()
+    }
+
+    override fun dispose() {
+        scheduledCacheMaintenance.cancel(false)
     }
 
     /**
