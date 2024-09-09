@@ -68,6 +68,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
   }
 
   @Test
+  @TestMetadata("isInitializedInInline.kt")
+  public void testIsInitializedInInline() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/isInitializedInInline.kt");
+  }
+
+  @Test
   @TestMetadata("jsExternalArgument.kt")
   public void testJsExternalArgument() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalArgument.kt");
