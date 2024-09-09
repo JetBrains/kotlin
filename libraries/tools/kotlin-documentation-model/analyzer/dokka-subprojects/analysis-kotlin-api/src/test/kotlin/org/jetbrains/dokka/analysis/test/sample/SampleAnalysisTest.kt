@@ -8,6 +8,7 @@ import org.jetbrains.dokka.DelicateDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.sample.SampleSnippet
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.mixedJvmTestProject
+import org.jetbrains.dokka.analysis.test.api.parse
 import org.jetbrains.dokka.analysis.test.api.useServices
 import org.jetbrains.dokka.analysis.test.api.util.CollectingDokkaConsoleLogger
 import org.jetbrains.dokka.analysis.test.api.util.singleSourceSet
@@ -474,6 +475,25 @@ class SampleAnalysisTest {
             "Unable to resolve non-Kotlin @sample links: \"org.jetbrains.test.sample.JavaClass\""
         )
         assertTrue(containsNonKotlinSampleLinkLog)
+    }
+
+    @Test
+    fun `should not duplicate a warning about unresolved samples during analyzing`() {
+        val testProject = kotlinJvmTestProject {
+                ktFile("org/jetbrains/test/sample/KotlinFile.kt") {
+                    +"""
+                        /**
+                        * @sample org.jetbrains.test.sample.Unresolved
+                        */
+                        fun foo() {}
+                    """
+                }
+        }
+
+        val collectingLogger = CollectingDokkaConsoleLogger()
+        testProject.parse(collectingLogger)
+        assertEquals(0, collectingLogger.errorsCount)
+        assertEquals(0, collectingLogger.warningsCount)
     }
 
     @Test

@@ -34,12 +34,12 @@ internal fun parseFromKDocTag(
             listOf(kDocTag) + if (kDocTag.canHaveParent() && parseWithChildren) getAllKDocTags(findParent(kDocTag)) else emptyList()
         DocumentationNode(
             allTags.map { tag ->
-                val links = mutableMapOf<String, DRI?>()
+                val links = mutableMapOf<String, KDocLink>()
                 tag.forEachDescendantOfType<KDocLink>{
-                    links[it.getLinkText()] = externalDri(it)
+                    links[it.getLinkText()] = it
                 }
 
-                val externalDRIProvider = { linkText: String -> links[linkText] }
+                val externalDRIProvider = { linkText: String -> links[linkText]?.let { externalDri(it) } }
 
                 when (tag.knownTag) {
                     null -> if (tag.name == null) Description(parseStringToDocNode(tag.getContent(), externalDRIProvider)) else CustomTagWrapper(
@@ -84,7 +84,11 @@ internal fun parseFromKDocTag(
                         tag.getSubjectName().orEmpty()
                     )
                     KDocKnownTag.SAMPLE -> Sample(
-                        parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                        /**
+                         * All links should be left unresolved in a @sample doc section
+                         * Further they should be resolved by DefaultSamplesTransformer
+                         */
+                        parseStringToDocNode(tag.getContent()) { null },
                         tag.getSubjectName().orEmpty()
                     )
                     KDocKnownTag.SUPPRESS -> Suppress(parseStringToDocNode(tag.getContent(), externalDRIProvider))
