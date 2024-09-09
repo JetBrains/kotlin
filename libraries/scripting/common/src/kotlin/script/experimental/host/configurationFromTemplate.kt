@@ -199,6 +199,12 @@ private inline fun <reified T : Annotation> KClass<*>.findAnnotation(): T? =
 private inline fun <reified T : PropertiesCollection> scriptConfigInstance(kclass: KClass<out T>): T? =
     kclass.objectInstance ?: run {
         val noArgsConstructor = kclass.java.constructors.singleOrNull { it.parameters.isEmpty() }
-        noArgsConstructor?.let { it.newInstance() as T }
+        noArgsConstructor?.let {
+            try {
+                it.isAccessible = true
+            } catch (_: RuntimeException) {
+            }
+            it.newInstance() as T
+        }
     }
 
