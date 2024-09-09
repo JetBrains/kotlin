@@ -93,10 +93,10 @@ interface TestVersions {
         const val SHADOW_PLUGIN_VERSION = "8.3.0"
         const val GOOGLE_DAGGER = "2.24"
         const val GRADLE_ENTERPRISE_PLUGIN_VERSION = "3.13.4"
-        const val KOTLINX_ATOMICFU = "0.23.2"
+        const val GRADLE_DEVELOCITY_PLUGIN_VERSION = "3.18"
+        const val KOTLINX_ATOMICFU = "0.25.0"
+        const val KOTLINX_KOVER = "0.9.0-RC"
+        const val KOTLINX_BINARY_COMPATIBILITY_VALIDATOR = "0.16.3"
     }
 
-    object DevelocityPlugin {
-        const val VERSION = "3.18"
-    }
 }

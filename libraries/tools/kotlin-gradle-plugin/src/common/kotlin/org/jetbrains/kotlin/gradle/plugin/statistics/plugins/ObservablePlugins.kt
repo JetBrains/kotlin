@@ -21,5 +21,9 @@ enum class ObservablePlugins(
 ) {
     DOKKA_PLUGIN("org.jetbrains.dokka", BooleanMetrics.ENABLED_DOKKA),
     KOTLIN_JS_PLUGIN("org.jetbrains.kotlin.js", BooleanMetrics.KOTLIN_JS_PLUGIN_ENABLED),
-    COCOAPODS_PLUGIN("org.jetbrains.kotlin.native.cocoapods", BooleanMetrics.COCOAPODS_PLUGIN_ENABLED)
+    COCOAPODS_PLUGIN("org.jetbrains.kotlin.native.cocoapods", BooleanMetrics.COCOAPODS_PLUGIN_ENABLED),
+    KOVER_PLUGIN("org.jetbrains.kotlinx.kover", BooleanMetrics.KOTLINX_KOVER_GRADLE_PLUGIN_ENABLED),
+    SERIALIZATION_PLUGIN("org.jetbrains.kotlin.plugin.serialization", BooleanMetrics.KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED),
+    ATOMICFU_PLUGIN("org.jetbrains.kotlinx.atomicfu", BooleanMetrics.KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED),
+    BINARY_COMPATIBILITY_VALIDATOR_PLUGIN("org.jetbrains.kotlinx.binary-compatibility-validator", BooleanMetrics.KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED),
 }

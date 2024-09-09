@@ -2727,9 +2727,13 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/NonSynchronized
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins : java/lang/Enum {
+	public static final field ATOMICFU_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
+	public static final field BINARY_COMPATIBILITY_VALIDATOR_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field COCOAPODS_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field DOKKA_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field KOTLIN_JS_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
+	public static final field KOVER_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
+	public static final field SERIALIZATION_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public final fun getMetric ()Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;
 	public final fun getTitle ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;

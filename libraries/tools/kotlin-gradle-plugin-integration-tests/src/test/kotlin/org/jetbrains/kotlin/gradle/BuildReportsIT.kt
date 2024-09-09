@@ -697,7 +697,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "id(\"org.jetbrains.kotlin.test.gradle-warnings-detector\")",
                         """
                                id("org.jetbrains.kotlin.test.gradle-warnings-detector")
-                               id "com.gradle.develocity" version "${TestVersions.DevelocityPlugin.VERSION}"
+                               id "com.gradle.develocity" version "${TestVersions.ThirdPartyDependencies.GRADLE_DEVELOCITY_PLUGIN_VERSION}"
                         """.trimIndent()
                     )
                 }

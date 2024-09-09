@@ -336,6 +336,40 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
+    fun testKotlinxPlugins(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_8_2,
+                gradleVersion,
+                "Kover produces Gradle deprecation"
+            )
+        ) {
+            buildGradle.replaceText(
+                "plugins {",
+                """
+                    plugins {
+                        id("org.jetbrains.kotlinx.atomicfu") version "${TestVersions.ThirdPartyDependencies.KOTLINX_ATOMICFU}"
+                        id("org.jetbrains.kotlinx.kover") version "${TestVersions.ThirdPartyDependencies.KOTLINX_KOVER}"
+                        id("org.jetbrains.kotlinx.binary-compatibility-validator") version "${TestVersions.ThirdPartyDependencies.KOTLINX_BINARY_COMPATIBILITY_VALIDATOR}"
+                        id("org.jetbrains.kotlin.plugin.serialization") version "${'$'}kotlin_version"
+                    """.trimIndent()
+            )
+            build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertFileContains(
+                    fusStatisticsPath,
+                    "KOTLINX_KOVER_GRADLE_PLUGIN_ENABLED=true",
+                    "KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED=true",
+                    "KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED=true",
+                    "KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED=true",
+                )
+            }
+        }
+    }
+
     private fun TestProject.applyDokka() {
         buildGradle.replaceText(
             "plugins {",

@@ -85,9 +85,14 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     // Other plugins enabled
     KOTLIN_JS_PLUGIN_ENABLED(OR, SAFE),
-    COCOAPODS_PLUGIN_ENABLED(OR, SAFE);
+    COCOAPODS_PLUGIN_ENABLED(OR, SAFE),
+    KOTLINX_KOVER_GRADLE_PLUGIN_ENABLED(OR, SAFE),
+    KOTLINX_SERIALIZATION_GRADLE_PLUGIN_ENABLED(OR, SAFE),
+    KOTLINX_ATOMICFU_GRADLE_PLUGIN_ENABLED(OR, SAFE),
+    KOTLINX_BINARY_COMPATIBILITY_GRADLE_PLUGIN_ENABLED(OR, SAFE),
+    ;
 
     companion object {
-        const val VERSION = 9
+        const val VERSION = 10
     }
 }
