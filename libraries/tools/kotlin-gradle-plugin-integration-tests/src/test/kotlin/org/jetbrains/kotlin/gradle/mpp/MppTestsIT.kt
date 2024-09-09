@@ -68,7 +68,7 @@ class MppTestsIT : KGPBaseTest() {
                                 }
                             }
                         }
-                        
+
                         gradle.taskGraph.whenReady { taskGraph ->
                             taskGraph.allTasks.forEach { task ->
                                 // to not execute, just check configuration
@@ -97,6 +97,19 @@ class MppTestsIT : KGPBaseTest() {
             )
             // no build failure is expected
             build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}
+        }
+    }
+
+    @DisplayName("KT-62911: Project Isolation and Project 2 Project Dependencies")
+    @GradleTest
+    fun testKt62911ProjectIsolationWithP2PDependencies(gradleVersion: GradleVersion) {
+        val enableProjectIsolation = gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+        val buildOptions = defaultBuildOptions.copy(
+            projectIsolation = enableProjectIsolation,
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
+        )
+        project("kt-62911-project-isolation-with-p2p-dependencies", gradleVersion, buildOptions = buildOptions) {
+            build("assemble")
         }
     }
 }
