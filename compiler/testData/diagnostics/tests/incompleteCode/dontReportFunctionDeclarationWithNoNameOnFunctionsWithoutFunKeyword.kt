@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-13741
 
 class Foo {

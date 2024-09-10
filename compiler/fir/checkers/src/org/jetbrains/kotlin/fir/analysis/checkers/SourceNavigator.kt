@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -62,6 +63,8 @@ interface SourceNavigator {
      * Reason of implementing this in [SourceNavigator] and not in FIR is same as in [hasBody] method.
      */
     fun FirEnumEntry.hasInitializer(): Boolean?
+
+    fun FirSimpleFunction.hasFunKeyword(): Boolean
 
     companion object {
 
@@ -142,6 +145,11 @@ private open class LightTreeSourceNavigator : SourceNavigator {
         val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
         return childNodes.any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
     }
+
+    override fun FirSimpleFunction.hasFunKeyword(): Boolean {
+        val source = source ?: return false
+        return source.lighterASTNode.getChildren(source.treeStructure).any { it.tokenType == KtTokens.FUN_KEYWORD }
+    }
 }
 
 //by default psi tree can reuse light tree manipulations
@@ -193,5 +201,9 @@ private object PsiSourceNavigator : LightTreeSourceNavigator() {
     override fun FirEnumEntry.hasInitializer(): Boolean? {
         val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
         return enumEntryPsi.initializerList != null
+    }
+
+    override fun FirSimpleFunction.hasFunKeyword(): Boolean {
+        return (source?.psi as? KtNamedFunction)?.funKeyword != null
     }
 }
