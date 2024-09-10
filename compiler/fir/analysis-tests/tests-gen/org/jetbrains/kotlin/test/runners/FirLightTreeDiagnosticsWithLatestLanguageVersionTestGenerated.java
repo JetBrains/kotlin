@@ -639,6 +639,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Test
+    @TestMetadata("signatureEnhancementOuterClassBoundsToInner.kt")
+    public void testSignatureEnhancementOuterClassBoundsToInner() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/signatureEnhancementOuterClassBoundsToInner.kt");
+    }
+
+    @Test
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/simpleClass.kt");
