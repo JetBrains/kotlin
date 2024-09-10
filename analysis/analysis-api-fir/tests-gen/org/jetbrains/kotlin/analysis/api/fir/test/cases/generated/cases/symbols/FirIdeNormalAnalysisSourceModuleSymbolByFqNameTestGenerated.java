@@ -143,6 +143,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   }
 
   @Test
+  @TestMetadata("signatureEnhancementOuterClassBoundsToInner.kt")
+  public void testSignatureEnhancementOuterClassBoundsToInner() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/signatureEnhancementOuterClassBoundsToInner.kt");
+  }
+
+  @Test
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
