@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
-import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
@@ -35,7 +34,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(
         declaration: FirFunction,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val isComposable = declaration.hasComposableAnnotation(context.session)
 

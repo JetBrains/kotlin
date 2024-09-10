@@ -26,7 +26,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.*

@@ -27,7 +27,7 @@ abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransfo
     @OptIn(ExperimentalCompilerApi::class)
     private fun verifyMetrics(
         source: String,
-        verify: ModuleMetrics.() -> Unit
+        verify: ModuleMetrics.() -> Unit,
     ) {
         val files = listOf(SourceFile("Test.kt", source))
         lateinit var extension: ComposeIrGenerationExtension

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 class K1AnalysisResult(
     override val files: List<KtFile>,
     val moduleDescriptor: ModuleDescriptor,
-    val bindingContext: BindingContext
+    val bindingContext: BindingContext,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
         get() = bindingContext.diagnostics.all().groupBy(
@@ -47,20 +47,20 @@ class K1AnalysisResult(
 private class K1FrontendResult(
     val state: GenerationState,
     val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
-    val codegenFactory: JvmIrCodegenFactory
+    val codegenFactory: JvmIrCodegenFactory,
 )
 
 class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacade(environment) {
     override fun analyze(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): K1AnalysisResult {
         val allKtFiles = platformFiles.map { it.toKtFile(environment.project) } +
-            commonFiles.map {
-                it.toKtFile(environment.project).also { ktFile ->
-                    ktFile.isCommonSource = true
+                commonFiles.map {
+                    it.toKtFile(environment.project).also { ktFile ->
+                        ktFile.isCommonSource = true
+                    }
                 }
-            }
 
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             environment.project,
@@ -81,7 +81,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     private fun frontend(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): K1FrontendResult {
         val analysisResult = analyze(platformFiles, commonFiles)
 
@@ -134,7 +134,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     override fun compile(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): GenerationState = try {
         frontend(platformFiles, commonFiles).apply {
             codegenFactory.generateModule(state, backendInput)

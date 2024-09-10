@@ -17,12 +17,11 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.util.keyFMap.KeyFMap
-import java.util.WeakHashMap
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import java.util.Collections
+import java.util.*
 
 /**
  * This class is meant to have the shape of a BindingTrace object that could exist and flow

@@ -37,7 +37,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
         @Language("kotlin")
         source: String,
         validator: (element: IrElement) -> Unit = { },
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             @file:OptIn(
@@ -407,7 +407,8 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     if (expression.symbol.owner.name.asString() == "hashCode") {
                         assertEquals(
                             "kotlin.Function${expectedArity[i]}.hashCode",
-                            expression.symbol.owner.fqNameForIrSerialization.asString())
+                            expression.symbol.owner.fqNameForIrSerialization.asString()
+                        )
                         i++
                     }
                 }

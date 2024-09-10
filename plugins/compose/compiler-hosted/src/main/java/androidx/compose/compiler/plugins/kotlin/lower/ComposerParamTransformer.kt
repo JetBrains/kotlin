@@ -61,25 +61,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.collections.MutableMap
-import kotlin.collections.any
-import kotlin.collections.emptyList
-import kotlin.collections.get
-import kotlin.collections.indices
-import kotlin.collections.lastOrNull
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
-import kotlin.collections.plus
-import kotlin.collections.plusAssign
 import kotlin.collections.set
-import kotlin.collections.sliceArray
-import kotlin.collections.toBooleanArray
-import kotlin.collections.toList
-import kotlin.collections.toMap
-import kotlin.collections.zip
 import kotlin.math.min
 
 class ComposerParamTransformer(
@@ -142,7 +124,7 @@ class ComposerParamTransformer(
         super.visitSimpleFunction(declaration.withComposerParamIfNeeded())
 
     override fun visitLocalDelegatedPropertyReference(
-        expression: IrLocalDelegatedPropertyReference
+        expression: IrLocalDelegatedPropertyReference,
     ): IrExpression {
         val transformedGetter = expression.getter.owner.withComposerParamIfNeeded()
         return super.visitLocalDelegatedPropertyReference(
@@ -287,7 +269,7 @@ class ComposerParamTransformer(
     //  itself and hope that it gets lowered properly.
     private fun IrType.defaultValue(
         startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrExpression {
         val classSymbol = classOrNull
         if (this !is IrSimpleType || isMarkedNullable() || !isInlineClassType()) {
@@ -447,8 +429,8 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.requiresDefaultParameter(): Boolean =
-        // we only add a default mask parameter if one of the parameters has a default
-        // expression. Note that if this is a "fake override" method, then only the overridden
+    // we only add a default mask parameter if one of the parameters has a default
+    // expression. Note that if this is a "fake override" method, then only the overridden
         // symbols will have the default value expressions
         valueParameters.any { it.defaultValue != null } ||
                 overriddenSymbols.any { it.owner.requiresDefaultParameter() }
@@ -598,8 +580,8 @@ class ComposerParamTransformer(
                         // we don't want to pass the composer parameter in to composable calls
                         // inside of nested scopes.... *unless* the scope was inlined.
                         isNestedScope = wasNested ||
-                            !inlineLambdaInfo.isInlineLambda(declaration) ||
-                            declaration.hasComposableAnnotation()
+                                !inlineLambdaInfo.isInlineLambda(declaration) ||
+                                declaration.hasComposableAnnotation()
                         return super.visitFunction(declaration)
                     } finally {
                         isNestedScope = wasNested
@@ -619,12 +601,12 @@ class ComposerParamTransformer(
 
     private fun defaultParameterType(
         param: IrValueParameter,
-        hasDefaultValue: Boolean
+        hasDefaultValue: Boolean,
     ): IrType {
         val type = param.type
         if (!hasDefaultValue) return type
         val constructorAccessible = !type.isPrimitiveType() &&
-            type.classOrNull?.owner?.primaryConstructor != null
+                type.classOrNull?.owner?.primaryConstructor != null
         return when {
             type.isPrimitiveType() -> type
             type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
@@ -667,11 +649,11 @@ class ComposerParamTransformer(
             val param = valueParameters[i]
             if (
                 hasDefaultExpressionDefinedForValueParameter(i) &&
-                    param.type.isInlineClassType() &&
-                    !param.type.isNullable() &&
-                    param.type.unboxInlineClass().let {
-                        !it.isPrimitiveType() && !it.isNullable()
-                    }
+                param.type.isInlineClassType() &&
+                !param.type.isNullable() &&
+                param.type.unboxInlineClass().let {
+                    !it.isPrimitiveType() && !it.isNullable()
+                }
             ) {
                 makeStub = true
                 break

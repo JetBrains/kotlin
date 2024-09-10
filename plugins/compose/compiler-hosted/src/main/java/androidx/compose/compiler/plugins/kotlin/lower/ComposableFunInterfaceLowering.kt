@@ -82,8 +82,8 @@ internal fun IrTypeOperatorCall.findSamFunctionExpr(): IrFunctionExpression? {
     val functionClass = type.classOrNull
 
     val isFunInterfaceConversion = operator == SAM_CONVERSION &&
-        functionClass != null &&
-        functionClass.owner.isFun
+            functionClass != null &&
+            functionClass.owner.isFun
 
     return if (isFunInterfaceConversion) {
         // if you modify this logic, make sure to update wrapping of type operators

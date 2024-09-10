@@ -43,11 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -165,7 +161,7 @@ class DurableFunctionKeyTransformer(
         getTopLevelClassOrNull(ComposeClassIds.FunctionKeyMetaClass)
 
     private fun irKeyMetaAnnotation(
-        key: KeyInfo
+        key: KeyInfo,
     ): IrConstructorCall = IrConstructorCallImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
@@ -180,7 +176,7 @@ class DurableFunctionKeyTransformer(
     }
 
     private fun irMetaClassAnnotation(
-        file: String
+        file: String,
     ): IrConstructorCall = IrConstructorCallImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,

@@ -60,12 +60,16 @@ fun AnonymousFunctionDescriptor.annotateAsComposable(module: ModuleDescriptor) =
 
 fun KotlinType.hasComposableAnnotation(): Boolean =
     !isSpecialType && annotations.findAnnotation(ComposeFqNames.Composable) != null
+
 fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
+
 fun Annotated.hasReadonlyComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.ReadOnlyComposable) != null
+
 fun Annotated.hasDisallowComposableCallsAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.DisallowComposableCalls) != null
+
 fun Annotated.compositionTarget(): String? =
     annotations.map { it.compositionTarget() }.firstOrNull { it != null }
 
@@ -93,7 +97,8 @@ fun Annotated.compositionOpenTarget(): Int? =
         it[ComposeFqNames.ComposableOpenTargetIndexArgument]?.value as Int
     }
 
-internal val KotlinType.isSpecialType: Boolean get() =
-    this === TypeUtils.NO_EXPECTED_TYPE || this === TypeUtils.UNIT_EXPECTED_TYPE
+internal val KotlinType.isSpecialType: Boolean
+    get() =
+        this === TypeUtils.NO_EXPECTED_TYPE || this === TypeUtils.UNIT_EXPECTED_TYPE
 
 val AnnotationDescriptor.isComposableAnnotation: Boolean get() = fqName == ComposeFqNames.Composable

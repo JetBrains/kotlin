@@ -104,7 +104,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "generateFunctionKeyMetaClasses",
             "<true|false>",
             "Generate function key meta classes with annotations indicating the " +
-                "functions and their group keys. Generally used for tooling.",
+                    "functions and their group keys. Generally used for tooling.",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -149,9 +149,9 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             optionName = "nonSkippingGroupOptimization",
             valueDescription = "<true|false>",
             description = "Remove groups around non-skipping composable functions. " +
-                "Deprecated. ${
-                    useFeatureFlagInsteadMessage(FeatureFlag.OptimizeNonSkippingGroups)
-                }",
+                    "Deprecated. ${
+                        useFeatureFlagInsteadMessage(FeatureFlag.OptimizeNonSkippingGroups)
+                    }",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -173,7 +173,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "strongSkipping",
             "<true|false>",
             "Enable strong skipping mode. " +
-                "Deprecated. ${useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)}",
+                    "Deprecated. ${useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)}",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -232,7 +232,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     override fun processOption(
         option: AbstractCliOption,
         value: String,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
     ) = when (option) {
         LIVE_LITERALS_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
@@ -425,7 +425,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
     }
 
     fun isEnabled(feature: FeatureFlag) = feature in enabledFeatures || (feature.default &&
-        feature !in disabledFeatures)
+            feature !in disabledFeatures)
 
     private fun processConfigurationList(featuresNames: List<String>) {
         for (featureName in featuresNames) {
@@ -449,14 +449,15 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
                     )
                 }
             }
+
             val configured = enabledFeatures + disabledFeatures
             val oldAndNewSet = setForCompatibility.intersect(configured)
             for (feature in oldAndNewSet) {
                 report(
                     feature,
                     "Feature ${featureFlagName()}=${feature.featureName} is using featureFlags " +
-                        "and is set using the deprecated option. It is recommended to only use " +
-                        "featureFlag. ${currentState(feature)}"
+                            "and is set using the deprecated option. It is recommended to only use " +
+                            "featureFlag. ${currentState(feature)}"
                 )
             }
             for (feature in duplicate) {
@@ -464,7 +465,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
                     report(
                         feature,
                         "Feature ${featureFlagName()}=${feature.featureName} was both enabled " +
-                            "and disabled. ${currentState(feature)}"
+                                "and disabled. ${currentState(feature)}"
                     )
                 }
             }
@@ -473,7 +474,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
                     report(
                         feature,
                         "The feature ${featureFlagName()}=${feature.featureName} is disabled " +
-                        "by default and specifying this option explicitly is not necessary."
+                                "by default and specifying this option explicitly is not necessary."
                     )
                 }
             }
@@ -482,7 +483,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
                     report(
                         feature,
                         "The feature ${featureFlagName()}=${feature.featureName} is enabled " +
-                        "by default and specifying this option explicitly is not necessary."
+                                "by default and specifying this option explicitly is not necessary."
                     )
                 }
             }
@@ -501,12 +502,12 @@ fun featureFlagName() =
     }"
 
 fun useFeatureFlagInsteadMessage(feature: FeatureFlag) = "Use " +
-    "${featureFlagName()}=${feature.featureName} instead"
+        "${featureFlagName()}=${feature.featureName} instead"
 
 fun oldOptionDeprecationWarning(
     configuration: CompilerConfiguration,
     oldOption: AbstractCliOption,
-    feature: FeatureFlag
+    feature: FeatureFlag,
 ) {
     configuration.messageCollector.report(
         CompilerMessageSeverity.WARNING,
@@ -516,7 +517,7 @@ fun oldOptionDeprecationWarning(
 
 fun validateFeatureFlag(
     configuration: CompilerConfiguration,
-    value: String
+    value: String,
 ) {
     val (feature, _) = FeatureFlag.fromString(value)
     if (feature == null) {
@@ -578,7 +579,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         }
 
         fun ExtensionStorage.registerCommonExtensions(
-            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext? = null
+            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
         ) {
             StorageComponentContainerContributor.registerExtension(
                 ComposableCallChecker()
@@ -603,7 +604,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         }
 
         fun ExtensionStorage.registerNativeExtensions(
-            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext
+            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext,
         ) {
             DescriptorSerializerPlugin.registerExtension(
                 AddHiddenFromObjCSerializationPlugin(
@@ -615,7 +616,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         fun createComposeIrExtension(
             configuration: CompilerConfiguration,
             descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
-            moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null
+            moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
         ): ComposeIrGenerationExtension {
             val liveLiteralsEnabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,

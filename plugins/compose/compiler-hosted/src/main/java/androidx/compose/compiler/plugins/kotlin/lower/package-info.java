@@ -20,7 +20,7 @@
  * The entry-point for this package is ComponentClassLowering, which will generate all supporting
  * synthetics.
  * Each synthetic class of type [ClassName] lives in a file called [ClassName]Generator.
- *
+ * <p>
  * Anything beginning with the token `lower` may modify IR
  * Anything beginning with the token `generate` may only produce (return) IR
  */

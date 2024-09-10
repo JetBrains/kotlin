@@ -29,7 +29,7 @@ abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompile
         expectedText: String,
         commonText: String? = null,
         ignoreParseErrors: Boolean = false,
-        additionalPaths: List<File> = emptyList()
+        additionalPaths: List<File> = emptyList(),
     ) {
         val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, mutableListOf())
         val clearCommonText = commonText?.let {
@@ -51,7 +51,7 @@ abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompile
     private fun checkDiagnostics(
         expectedText: String,
         clearText: String,
-        allDiagnostics: List<AnalysisResult.Diagnostic>?
+        allDiagnostics: List<AnalysisResult.Diagnostic>?,
     ) {
         val annotatedText = if (allDiagnostics != null) {
             val rangeToDiagnostics = allDiagnostics

@@ -30,13 +30,13 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ComposeErrors.COMPOSABLE_EXPECTED,
             "Functions which invoke @Composable functions must be marked with the @Composable " +
-                "annotation"
+                    "annotation"
         )
 
         map.put(
             ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE,
             "Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable " +
-                "composables"
+                    "composables"
         )
 
         map.put(
@@ -54,7 +54,7 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION,
             "Parameter {0} cannot be inlined inside of lambda argument {1} of {2} " +
-                "without also being annotated with @DisallowComposableCalls",
+                    "without also being annotated with @DisallowComposableCalls",
             FirDiagnosticRenderers.VARIABLE_NAME,
             FirDiagnosticRenderers.VARIABLE_NAME,
             FirDiagnosticRenderers.DECLARATION_NAME,

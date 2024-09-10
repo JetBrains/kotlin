@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractIrTransformTest(useFir) {
     protected fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
@@ -54,7 +54,7 @@ abstract class FunctionBodySkippingTransformTestsBase(
 }
 
 class FunctionBodySkippingTransformTests(
-    useFir: Boolean
+    useFir: Boolean,
 ) : FunctionBodySkippingTransformTestsBase(useFir) {
     @Test
     fun testIfInLambda(): Unit = comparisonPropagation(
@@ -1315,7 +1315,7 @@ class FunctionBodySkippingTransformTests(
 }
 
 class FunctionBodySkippingTransformTestsNoSource(
-    useFir: Boolean
+    useFir: Boolean,
 ) : FunctionBodySkippingTransformTestsBase(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)

@@ -33,7 +33,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
     protected fun checkApi(
         @Language("kotlin") src: String,
         dumpClasses: Boolean = false,
-        additionalPaths: List<File> = emptyList()
+        additionalPaths: List<File> = emptyList(),
     ) {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
@@ -64,7 +64,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
     protected fun codegen(
         @Language("kotlin") text: String,
         dumpClasses: Boolean = false,
-        additionalPaths: List<File> = emptyList()
+        additionalPaths: List<File> = emptyList(),
     ) {
         codegenNoImports(
             """
@@ -82,7 +82,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
     private fun codegenNoImports(
         @Language("kotlin") text: String,
         dumpClasses: Boolean = false,
-        additionalPaths: List<File> = emptyList()
+        additionalPaths: List<File> = emptyList(),
     ) {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"

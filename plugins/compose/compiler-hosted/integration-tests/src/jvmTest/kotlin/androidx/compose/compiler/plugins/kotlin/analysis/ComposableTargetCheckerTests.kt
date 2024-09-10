@@ -468,7 +468,8 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
             N()
           }
         }
-        """)
+        """
+    )
 
     @Test
     fun testIndirectRecursiveCall() = check(

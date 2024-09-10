@@ -28,12 +28,13 @@ object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(
         declaration: FirProperty,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         // `@Composable` is only applicable to property getters, but in K1 we were also checking
         // properties with the annotation on the setter.
         if (declaration.getter?.hasComposableAnnotation(context.session) != true &&
-            declaration.setter?.hasComposableAnnotation(context.session) != true) {
+            declaration.setter?.hasComposableAnnotation(context.session) != true
+        ) {
             return
         }
 

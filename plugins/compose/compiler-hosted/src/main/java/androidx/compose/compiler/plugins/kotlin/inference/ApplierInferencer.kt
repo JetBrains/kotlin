@@ -115,7 +115,7 @@ interface LazySchemeStorage<Node> {
 
 private inline fun <Node> LazySchemeStorage<Node>.getOrPut(
     node: Node,
-    value: () -> LazyScheme
+    value: () -> LazyScheme,
 ): LazyScheme = getLazyScheme(node) ?: run {
     val result = value()
     storeLazyScheme(node, result)
@@ -168,7 +168,7 @@ class ApplierInferencer<Type, Node>(
     private val typeAdapter: TypeAdapter<Type>,
     private val nodeAdapter: NodeAdapter<Type, Node>,
     private val lazySchemeStorage: LazySchemeStorage<Node>,
-    private val errorReporter: ErrorReporter<Node>
+    private val errorReporter: ErrorReporter<Node>,
 ) {
     // A set of nodes that are currently being evaluated to prevent recursive evaluations.
     private val inProgress = mutableSetOf<Node>()
@@ -196,6 +196,7 @@ class ApplierInferencer<Type, Node>(
                     }
                 }
             }
+
             val referencedContainer = nodeAdapter.referencedContainerOf(this)
             if (referencedContainer != null) {
                 lazySchemeStorage.getOrPut(referencedContainer) {
@@ -211,7 +212,7 @@ class ApplierInferencer<Type, Node>(
     // scheme only has bindings that it owns.
     private fun Scheme.toCallBindings(
         bindings: Bindings,
-        context: MutableList<Binding> = mutableListOf()
+        context: MutableList<Binding> = mutableListOf(),
     ): CallBindings =
         CallBindings(
             target = target.toBinding(bindings, context),
@@ -287,8 +288,8 @@ class ApplierInferencer<Type, Node>(
         block: (
             Bindings,
             Binding,
-            (Node) -> CallBindings?
-        ) -> Unit
+            (Node) -> CallBindings?,
+        ) -> Unit,
     ): Boolean {
         if (node in inProgress) return false
         inProgress.add(node)

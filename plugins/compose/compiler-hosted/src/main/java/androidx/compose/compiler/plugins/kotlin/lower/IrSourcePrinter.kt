@@ -20,110 +20,47 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
-import java.util.Locale
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBranch
-import org.jetbrains.kotlin.ir.expressions.IrBreak
-import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrCatch
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrContinue
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
-import org.jetbrains.kotlin.ir.expressions.IrElseBranch
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrSetValue
-import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.expressions.IrThrow
-import org.jetbrains.kotlin.ir.expressions.IrTry
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrStarProjection
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isInt
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.isSetter
-import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
+import java.util.*
+import kotlin.collections.HashSet
+import kotlin.collections.List
+import kotlin.collections.all
+import kotlin.collections.any
+import kotlin.collections.contains
+import kotlin.collections.filter
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.hashSetOf
+import kotlin.collections.isNotEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.last
+import kotlin.collections.lastOrNull
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.set
+import kotlin.collections.zip
 
 fun IrElement.dumpSrc(useFir: Boolean = false): String {
     val sb = StringBuilder()
@@ -145,7 +82,7 @@ fun IrElement.dumpSrc(useFir: Boolean = false): String {
 
 class Scope(
     val owner: IrFunction? = null,
-    val localValues: HashSet<IrValueDeclaration> = hashSetOf()
+    val localValues: HashSet<IrValueDeclaration> = hashSetOf(),
 )
 
 class IrSourcePrinterVisitor(
@@ -159,6 +96,7 @@ class IrSourcePrinterVisitor(
     private fun IrElement.print() {
         accept(this@IrSourcePrinterVisitor, null)
     }
+
     private fun print(obj: Any?) = printer.print(obj)
     private fun println(obj: Any?) = printer.println(obj)
     private fun println() = printer.println()
@@ -317,7 +255,8 @@ class IrSourcePrinterVisitor(
                         when (fn.name.asString()) {
                             "equals",
                             "EQEQ",
-                            "EQEQEQ" -> {
+                            "EQEQEQ",
+                            -> {
                                 val prevIsInNotCall = isInNotCall
                                 isInNotCall = true
                                 arg.print()
@@ -358,7 +297,8 @@ class IrSourcePrinterVisitor(
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next", "getValue", "setValue",
-                "noWhenBranchMatchedException" -> name
+                "noWhenBranchMatchedException",
+                -> name
                 "CHECK_NOT_NULL" -> "!!"
                 else -> {
                     if (name.startsWith("component")) name
@@ -369,11 +309,12 @@ class IrSourcePrinterVisitor(
             val printBinary = when (name) {
                 "equals",
                 "EQEQ",
-                "EQEQEQ" -> when {
+                "EQEQEQ",
+                -> when {
                     expression.dispatchReceiver?.type?.isInt() == true -> true
                     expression.extensionReceiver?.type?.isInt() == true -> true
                     expression.valueArgumentsCount > 0 &&
-                        expression.getValueArgument(0)?.type?.isInt() == true -> true
+                            expression.getValueArgument(0)?.type?.isInt() == true -> true
                     else -> false
                 }
                 else -> false
@@ -425,13 +366,15 @@ class IrSourcePrinterVisitor(
                 }
                 // builtin static operators
                 "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
-                "ieee754equals" -> {
+                "ieee754equals",
+                -> {
                     expression.getValueArgument(0)?.print()
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
                 "iterator", "hasNext", "next",
-                "noWhenBranchMatchedException" -> {
+                "noWhenBranchMatchedException",
+                -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
@@ -495,7 +438,7 @@ class IrSourcePrinterVisitor(
 
     private fun IrMemberAccessExpression<*>.printExplicitReceiver(
         suffix: String? = null,
-        superQualifierSymbol: IrClassSymbol? = null
+        superQualifierSymbol: IrClassSymbol? = null,
     ) {
         val dispatchReceiver = dispatchReceiver
         val extensionReceiver = extensionReceiver
@@ -520,7 +463,7 @@ class IrSourcePrinterVisitor(
 
     private fun IrFunctionAccessExpression.printArgumentList(
         forceParameterNames: Boolean = false,
-        forceSingleLine: Boolean = false
+        forceSingleLine: Boolean = false,
     ) {
         val arguments = mutableListOf<IrExpression>()
         val paramNames = mutableListOf<String>()
@@ -531,8 +474,8 @@ class IrSourcePrinterVisitor(
             if (arg != null) {
                 val param = symbol.owner.valueParameters[i]
                 val isLambda = arg is IrFunctionExpression ||
-                    (arg is IrBlock &&
-                        (arg.origin == IrStatementOrigin.LAMBDA))
+                        (arg is IrBlock &&
+                                (arg.origin == IrStatementOrigin.LAMBDA))
                 if (isLambda) {
                     arg.unwrapLambda()?.let {
                         returnTargetToCall[it] = this
@@ -574,7 +517,7 @@ class IrSourcePrinterVisitor(
                     }
                     when {
                         name.startsWith(ComposeNames.DEFAULT_PARAMETER.identifier) ||
-                            name.startsWith(ComposeNames.CHANGED_PARAMETER.identifier) -> {
+                                name.startsWith(ComposeNames.CHANGED_PARAMETER.identifier) -> {
                             withIntsAsBinaryLiterals {
                                 arg.print()
                             }
@@ -759,7 +702,7 @@ class IrSourcePrinterVisitor(
                 }
                 expression.branches.forEachIndexed { index, branch ->
                     val isElse = index == expression.branches.size - 1 &&
-                        (branch.condition as? IrConst)?.value == true
+                            (branch.condition as? IrConst)?.value == true
                     when {
                         index == 0 -> {
                             print("if (")
@@ -840,7 +783,7 @@ class IrSourcePrinterVisitor(
 
     private val IrFunction.isLambda: Boolean
         get() = name.asString() == SpecialNames.ANONYMOUS_STRING ||
-            origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+                origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
 
     private val IrFunction.isDelegatedPropertySetter: Boolean
         get() = isSetter && origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
@@ -864,7 +807,8 @@ class IrSourcePrinterVisitor(
         val returnTarget = expression.returnTargetSymbol.owner
         if (returnTarget !is IrFunction ||
             (!returnTarget.isLambda && (useFir || !returnTarget.isDelegatedPropertySetter)) ||
-            !expression.isLastStatementIn(returnTarget)) {
+            !expression.isLastStatementIn(returnTarget)
+        ) {
             val suffix = returnTargetToCall[returnTarget.symbol]?.let {
                 "@${it.symbol.owner.name}"
             } ?: ""
@@ -1007,6 +951,7 @@ class IrSourcePrinterVisitor(
         print(".")
         print(owner.name)
     }
+
     override fun visitSetField(expression: IrSetField) {
         expression.receiver?.print()
         print(".")
@@ -1256,7 +1201,7 @@ class IrSourcePrinterVisitor(
     override fun visitTypeParameter(declaration: IrTypeParameter) {
         print(declaration.name)
         val isNonEmpty = declaration.superTypes.isNotEmpty() &&
-            !declaration.superTypes[0].isNullableAny()
+                !declaration.superTypes[0].isNullableAny()
         if (isNonEmpty) {
             print(": ")
             print(declaration.superTypes.joinToString(", ") { it.renderSrc() })
@@ -1370,7 +1315,7 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitLocalDelegatedPropertyReference(
-        expression: IrLocalDelegatedPropertyReference
+        expression: IrLocalDelegatedPropertyReference,
     ) {
         print("::")
         print(expression.delegate.owner.name)
@@ -1625,7 +1570,7 @@ private inline fun <T> StringBuilder.appendListWith(
     prefix: String,
     postfix: String,
     separator: String,
-    renderItem: StringBuilder.(T) -> Unit
+    renderItem: StringBuilder.(T) -> Unit,
 ) {
     append(prefix)
     var isFirst = true

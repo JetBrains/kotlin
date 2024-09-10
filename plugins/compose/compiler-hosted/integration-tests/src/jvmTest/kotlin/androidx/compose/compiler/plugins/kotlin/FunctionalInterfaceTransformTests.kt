@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Test
 
 class FunctionalInterfaceTransformTests(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractControlFlowTransformTests(useFir) {
     @Test
     fun testFunctionalInterfaceWithExtensionReceiverTransformation() {

@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
  * synthesize the annotation on, even if the source of the class didn't have any annotations.
  */
 class ClassStabilityFieldSerializationPlugin(
-    val classStabilityInferredCollection: ClassStabilityInferredCollection? = null
+    val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
 ) : DescriptorSerializerPlugin {
     private val hasAnnotationFlag = HAS_ANNOTATIONS.toFlags(true)
 
     private fun createAnnotationProto(
         extension: SerializerExtension,
-        value: Int
+        value: Int,
     ): ProtoBuf.Annotation {
         return ProtoBuf.Annotation.newBuilder().apply {
             id = extension.stringTable.getQualifiedClassNameIndex(StabilityInferred)
@@ -67,7 +67,7 @@ class ClassStabilityFieldSerializationPlugin(
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (
             descriptor.visibility != DescriptorVisibilities.PUBLIC ||

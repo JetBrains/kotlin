@@ -44,13 +44,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -141,16 +135,16 @@ class WrapJsComposableLambdaLowering(
 
     private fun functionReferenceForComposableLambda(
         lambda: IrFunctionExpression,
-        dispatchReceiver: IrExpression
+        dispatchReceiver: IrExpression,
     ): IrFunctionReferenceImpl {
         val argumentsCount = lambda.function.valueParameters.size +
-            if (lambda.function.extensionReceiverParameter != null) 1 else 0
+                if (lambda.function.extensionReceiverParameter != null) 1 else 0
 
         val invokeSymbol = symbolRemapper.getReferencedClass(
             getTopLevelClass(ComposeClassIds.ComposableLambda)
         ).functions.single {
             it.owner.name.asString() == "invoke" &&
-                argumentsCount == it.owner.valueParameters.size
+                    argumentsCount == it.owner.valueParameters.size
         }
 
         return IrFunctionReferenceImpl(
@@ -168,7 +162,7 @@ class WrapJsComposableLambdaLowering(
     private fun transformComposableLambdaCall(
         originalCall: IrCall,
         currentComposer: IrExpression?,
-        lambda: IrFunctionExpression
+        lambda: IrFunctionExpression,
     ): IrExpression {
         val composableLambdaVar = irTemporary(originalCall, "dispatchReceiver")
         // create dispatchReceiver::invoke function reference
@@ -213,7 +207,7 @@ class WrapJsComposableLambdaLowering(
 
     private fun transformComposableLambdaInstanceCall(originalCall: IrCall): IrExpression {
         val lambda = originalCall.getValueArgument(originalCall.valueArgumentsCount - 1)
-            as IrFunctionExpression
+                as IrFunctionExpression
 
         // create composableLambdaInstance::invoke function reference
         return functionReferenceForComposableLambda(lambda, originalCall)
@@ -239,7 +233,7 @@ class WrapJsComposableLambdaLowering(
     private fun createLambda0(
         returnType: IrType,
         functionSymbol: IrSimpleFunctionSymbol = IrSimpleFunctionSymbolImpl(),
-        statements: List<IrStatement>
+        statements: List<IrStatement>,
     ): IrFunctionExpressionImpl {
         return IrFunctionExpressionImpl(
             startOffset = SYNTHETIC_OFFSET,

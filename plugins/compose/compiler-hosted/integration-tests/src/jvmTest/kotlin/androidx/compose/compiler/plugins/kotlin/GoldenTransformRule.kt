@@ -16,13 +16,13 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import java.io.File
-import java.io.FileNotFoundException
 import org.junit.Assert
 import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import java.io.File
+import java.io.FileNotFoundException
 import java.nio.file.Files
 
 private const val ENV_GENERATE_GOLDEN = "GENERATE_GOLDEN"
@@ -47,7 +47,7 @@ class GoldenTransformRule(
     private val pathToGoldens: String = "$TEST_RESOURCES_ROOT/golden",
     private val generateGoldens: Boolean = env(ENV_GENERATE_GOLDEN),
     private val generateGoldenFiles: Set<String> = envList(ENV_GENERATE_GOLDEN).toSet(),
-    private val generateMissingGoldens: Boolean = true
+    private val generateMissingGoldens: Boolean = true,
 ) : TestRule {
     private lateinit var goldenFile: File
     private lateinit var testIdentifier: String
@@ -62,7 +62,7 @@ class GoldenTransformRule(
 
     private fun getGoldenFilePath(
         className: String,
-        methodName: String
+        methodName: String,
     ) = "$pathToGoldens/$className/$methodName.$GOLDEN_FILE_TYPE"
 
     override fun apply(base: Statement, description: Description): Statement {
@@ -96,12 +96,13 @@ class GoldenTransformRule(
         // Use absolute path in the assert error so studio shows it as a link
         Assert.assertEquals(
             "Transformed source does not match golden file:" +
-                "\n${goldenFile.absolutePath}\n" +
-                "To regenerate golden files, set GENERATE_GOLDEN=\"${
-                    goldenFile.nameWithoutExtension}\" as an env variable (or set it to 'true' " +
-                "to generate all the files).\n" +
-                "The environment variable can be a comma delimited list of names (the quotes are " +
-                "optional)",
+                    "\n${goldenFile.absolutePath}\n" +
+                    "To regenerate golden files, set GENERATE_GOLDEN=\"${
+                        goldenFile.nameWithoutExtension
+                    }\" as an env variable (or set it to 'true' " +
+                    "to generate all the files).\n" +
+                    "The environment variable can be a comma delimited list of names (the quotes are " +
+                    "optional)",
             loadedTestInfo.transformed,
             testInfo.transformed
         )
@@ -123,7 +124,7 @@ class GoldenTransformRule(
  */
 data class GoldenTransformTestInfo(
     val source: String,
-    val transformed: String
+    val transformed: String,
 ) {
     fun encodeToString(): String =
         buildString {
@@ -155,8 +156,10 @@ data class GoldenTransformTestInfo(
         fun fromEncodedString(encoded: String): GoldenTransformTestInfo {
             val split = encoded.removePrefix(SOURCE_HEADER).split(TRANSFORM_HEADER)
             if (split.size != 2) {
-                error("Could not parse encoded golden string. " +
-                    "Expected 2 sections but was ${split.size}.")
+                error(
+                    "Could not parse encoded golden string. " +
+                            "Expected 2 sections but was ${split.size}."
+                )
             }
             return GoldenTransformTestInfo(split[0].trim(), split[1].trim())
         }

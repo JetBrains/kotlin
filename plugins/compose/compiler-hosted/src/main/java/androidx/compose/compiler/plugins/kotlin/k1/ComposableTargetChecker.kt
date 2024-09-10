@@ -17,47 +17,20 @@
 package androidx.compose.compiler.plugins.kotlin.k1
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
-import androidx.compose.compiler.plugins.kotlin.inference.ApplierInferencer
-import androidx.compose.compiler.plugins.kotlin.inference.ErrorReporter
-import androidx.compose.compiler.plugins.kotlin.inference.Item
-import androidx.compose.compiler.plugins.kotlin.inference.LazyScheme
-import androidx.compose.compiler.plugins.kotlin.inference.LazySchemeStorage
-import androidx.compose.compiler.plugins.kotlin.inference.NodeAdapter
-import androidx.compose.compiler.plugins.kotlin.inference.NodeKind
-import androidx.compose.compiler.plugins.kotlin.inference.Open
-import androidx.compose.compiler.plugins.kotlin.inference.Scheme
-import androidx.compose.compiler.plugins.kotlin.inference.Token
-import androidx.compose.compiler.plugins.kotlin.inference.TypeAdapter
-import androidx.compose.compiler.plugins.kotlin.inference.deserializeScheme
-import androidx.compose.compiler.plugins.kotlin.inference.mergeWith
+import androidx.compose.compiler.plugins.kotlin.inference.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLabeledExpression
-import org.jetbrains.kotlin.psi.KtLambdaArgument
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -70,11 +43,12 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 private sealed class InferenceNode(val element: PsiElement) {
-    open val kind: NodeKind get() = when (element) {
-        is KtLambdaExpression, is KtFunctionLiteral -> NodeKind.Lambda
-        is KtFunction -> NodeKind.Function
-        else -> NodeKind.Expression
-    }
+    open val kind: NodeKind
+        get() = when (element) {
+            is KtLambdaExpression, is KtFunctionLiteral -> NodeKind.Lambda
+            is KtFunction -> NodeKind.Function
+            else -> NodeKind.Expression
+        }
     abstract val type: InferenceNodeType
     override fun hashCode(): Int = 31 * element.hashCode()
     override fun equals(other: Any?): Boolean = other is InferenceNode && other.element == element
@@ -88,6 +62,7 @@ private sealed class InferenceNodeType {
 private class InferenceDescriptorType(val descriptor: CallableDescriptor) : InferenceNodeType() {
     override fun toScheme(callContext: CallCheckerContext): Scheme =
         descriptor.toScheme(callContext)
+
     override fun isTypeFor(descriptor: CallableDescriptor) = this.descriptor == descriptor
     override fun hashCode(): Int = 31 * descriptor.original.hashCode()
     override fun equals(other: Any?): Boolean =
@@ -111,7 +86,7 @@ private class InferenceUnknownType : InferenceNodeType() {
 
 private class PsiElementNode(
     element: PsiElement,
-    val bindingContext: BindingContext
+    val bindingContext: BindingContext,
 ) : InferenceNode(element) {
     override val type: InferenceNodeType = when (element) {
         is KtLambdaExpression -> descriptorTypeOf(element.functionLiteral)
@@ -143,7 +118,7 @@ private class ResolvedPsiParameterReference(
     element: PsiElement,
     override val type: InferenceNodeType,
     val index: Int,
-    val container: PsiElement
+    val container: PsiElement,
 ) : InferenceNode(element) {
     override val kind: NodeKind get() = NodeKind.ParameterReference
 }
@@ -175,8 +150,9 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
         typeAdapter = object : TypeAdapter<InferenceNodeType> {
             override fun declaredSchemaOf(type: InferenceNodeType): Scheme =
                 type.toScheme(callContext)
+
             override fun currentInferredSchemeOf(type: InferenceNodeType): Scheme? = null
-            override fun updatedInferredScheme(type: InferenceNodeType, scheme: Scheme) { }
+            override fun updatedInferredScheme(type: InferenceNodeType, scheme: Scheme) {}
         },
         nodeAdapter = object : NodeAdapter<InferenceNodeType, InferenceNode> {
             override fun containerOf(node: InferenceNode): InferenceNode =
@@ -186,7 +162,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
 
             override fun schemeParameterIndexOf(
                 node: InferenceNode,
-                container: InferenceNode
+                container: InferenceNode,
             ): Int = (node as? ResolvedPsiParameterReference)?.let {
                 if (it.container == container.element) it.index else -1
             } ?: -1
@@ -213,15 +189,15 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
                     it.annotations.findAnnotation(
                         ComposeFqNames.ComposableTargetMarker
                     )?.let { marker ->
-                      marker.allValueArguments.firstNotNullOfOrNull { entry ->
-                          val name = entry.key
-                          if (
-                              !name.isSpecial &&
-                              name.identifier == ComposeFqNames.ComposableTargetMarkerDescription
-                          ) {
-                              (entry.value as? StringValue)?.value
-                          } else null
-                      }
+                        marker.allValueArguments.firstNotNullOfOrNull { entry ->
+                            val name = entry.key
+                            if (
+                                !name.isSpecial &&
+                                name.identifier == ComposeFqNames.ComposableTargetMarkerDescription
+                            ) {
+                                (entry.value as? StringValue)?.value
+                            } else null
+                        }
                     }
                 } ?: token
             }
@@ -244,7 +220,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
                 node: InferenceNode,
                 index: Int,
                 expected: String,
-                received: String
+                received: String,
             ) {
                 if (expected != received) {
                     val expectedDescription = descriptionFrom(expected)
@@ -283,7 +259,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
     override fun registerModuleComponents(
         container: StorageComponentContainer,
         platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
     ) {
         container.useInstance(this)
     }
@@ -291,7 +267,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
     override fun check(
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
-        context: CallCheckerContext
+        context: CallCheckerContext,
     ) {
         if (!resolvedCall.isComposableInvocation()) return
         callContext = context
@@ -332,7 +308,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
                 val candidate = referenceExpression?.let { r ->
                     val callableReference =
                         callContext.trace[BindingContext.REFERENCE_TARGET, r] as?
-                            CallableDescriptor
+                                CallableDescriptor
                     callableReference?.let { reference ->
                         descriptorToInferenceNode(reference, resolvedCall.call.callElement)
                     }
@@ -346,7 +322,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
 
     private fun argumentToInferenceNode(
         descriptor: ValueParameterDescriptor,
-        element: PsiElement
+        element: PsiElement,
     ): InferenceNode {
         val bindingContext = callContext.trace.bindingContext
         val lambda = lambdaOrNull(element)
@@ -371,7 +347,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
 
     private fun descriptorToInferenceNode(
         descriptor: CallableDescriptor,
-        element: PsiElement
+        element: PsiElement,
     ): InferenceNode = when (descriptor) {
         is ValueParameterDescriptor -> parameterDescriptorToInferenceNode(descriptor, element)
         else -> {
@@ -385,7 +361,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
 
     private fun parameterDescriptorToInferenceNode(
         descriptor: ValueParameterDescriptor,
-        element: PsiElement
+        element: PsiElement,
     ): InferenceNode {
         val parameter = findParameterReferenceOrNull(descriptor, element)
         return parameter ?: PsiElementNode(element, callContext.trace.bindingContext)
@@ -393,7 +369,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
 
     private fun findParameterReferenceOrNull(
         descriptor: ValueParameterDescriptor,
-        element: PsiElement
+        element: PsiElement,
     ): InferenceNode? {
         val bindingContext = callContext.trace.bindingContext
         val declaration = descriptor.containingDeclaration
@@ -404,7 +380,7 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
                 val index =
                     declaration.valueParameters.filter {
                         it.isComposableCallable(bindingContext) ||
-                            it.isSamComposable()
+                                it.isSamComposable()
                     }.indexOf(descriptor)
                 return ResolvedPsiParameterReference(
                     element,

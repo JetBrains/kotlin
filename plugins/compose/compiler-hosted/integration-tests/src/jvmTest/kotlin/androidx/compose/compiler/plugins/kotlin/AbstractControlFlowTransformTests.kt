@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 
 abstract class AbstractControlFlowTransformTests(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractIrTransformTest(useFir) {
     protected fun controlFlow(
         @Language("kotlin")

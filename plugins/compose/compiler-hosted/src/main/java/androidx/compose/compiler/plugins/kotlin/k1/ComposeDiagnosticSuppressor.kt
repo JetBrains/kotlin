@@ -33,7 +33,7 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean {
         if (diagnostic.factory == Errors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION) {
             for (
-                entry in (
+            entry in (
                     diagnostic.psiElement.parent as KtAnnotatedExpression
                     ).annotationEntries
             ) {

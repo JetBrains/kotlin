@@ -88,7 +88,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
         forcedFirSetting: Boolean? = null,
-        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
+        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
         updateConfiguration = {
@@ -136,14 +136,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     protected fun analyze(
         platformSources: List<SourceFile>,
         commonSources: List<SourceFile> = listOf(),
-        additionalPaths: List<File> = emptyList()
+        additionalPaths: List<File> = emptyList(),
     ): AnalysisResult =
         createCompilerFacade(additionalPaths).analyze(platformSources, commonSources)
 
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
         additionalPaths: List<File> = listOf(),
-        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
+        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ): IrModuleFragment =
         createCompilerFacade(additionalPaths, registerExtensions = registerExtensions)
             .compileToIr(sourceFiles)
@@ -152,7 +152,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         platformSourceFiles: List<SourceFile>,
         commonSourceFiles: List<SourceFile> = listOf(),
         additionalPaths: List<File> = listOf(),
-        forcedFirSetting: Boolean? = null
+        forcedFirSetting: Boolean? = null,
     ): GeneratedClassLoader {
         val classLoader = if (additionalPaths.isNotEmpty()) {
             URLClassLoader(

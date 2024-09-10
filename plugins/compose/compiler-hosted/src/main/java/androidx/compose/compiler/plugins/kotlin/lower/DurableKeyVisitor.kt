@@ -22,7 +22,7 @@ class PathPartInfo(val key: String) {
     fun print(
         builder: StringBuilder,
         pathSeparator: String = "/",
-        siblingSeparator: String = ":"
+        siblingSeparator: String = ":",
     ) = with(builder) {
         var node = this@PathPartInfo
         if (node == ROOT) {
@@ -137,7 +137,7 @@ class DurableKeyVisitor(private var keys: MutableSet<String> = mutableSetOf()) {
      */
     fun <T> root(
         keys: MutableSet<String> = mutableSetOf(),
-        block: () -> T
+        block: () -> T,
     ): T {
         val prevKeys = this.keys
         val prevCurrent = current
@@ -174,7 +174,7 @@ class DurableKeyVisitor(private var keys: MutableSet<String> = mutableSetOf()) {
     fun buildPath(
         prefix: String,
         pathSeparator: String = "/",
-        siblingSeparator: String = ":"
+        siblingSeparator: String = ":",
     ): Pair<String, Boolean> {
         return buildString {
             append(prefix)

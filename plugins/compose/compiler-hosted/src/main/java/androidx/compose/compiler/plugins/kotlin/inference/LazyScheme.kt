@@ -31,8 +31,9 @@ class LazyScheme(
     val anyParameters = scheme.anyParameters
     val parameters = scheme.parameters.map { LazyScheme(it, context, bindings) }
     val result = scheme.result?.let { LazyScheme(it, context, bindings) }
-    val closed: Boolean get() = target.token != null &&
-        (result == null || result.closed) && parameters.all { it.closed }
+    val closed: Boolean
+        get() = target.token != null &&
+                (result == null || result.closed) && parameters.all { it.closed }
 
     /**
      * Create a [Scheme] from the current state of this.
@@ -54,8 +55,10 @@ class LazyScheme(
             scheme.parameters.forEach { mapValues(it) }
             scheme.result?.let { mapValues(it) }
         }
+
         fun itemOf(binding: Binding) = binding.token?.let { Token(it) }
             ?: context[binding.value]?.let { Open(it) } ?: Open(-1)
+
         fun schemeOf(lazyScheme: LazyScheme): Scheme = Scheme(
             itemOf(lazyScheme.target),
             lazyScheme.parameters.map { schemeOf(it) },
@@ -93,12 +96,14 @@ class LazyScheme(
     override fun toString(): String =
         "[$targetStr$parametersStr$resultStr]"
 
-    private val targetStr get() =
-        target.token ?: target.value.index.toString()
+    private val targetStr
+        get() =
+            target.token ?: target.value.index.toString()
 
-    private val parametersStr get() =
-        if (parameters.isNotEmpty()) ", ${parameters.joinToString(", ")}"
-        else ""
+    private val parametersStr
+        get() =
+            if (parameters.isNotEmpty()) ", ${parameters.joinToString(", ")}"
+            else ""
 
     private val resultStr get() = result?.let { ":$it" } ?: ""
 

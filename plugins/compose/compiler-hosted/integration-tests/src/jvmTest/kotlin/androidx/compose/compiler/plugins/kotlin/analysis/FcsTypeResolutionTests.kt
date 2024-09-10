@@ -556,7 +556,8 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                         println(x + y + z)
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         } else {
             check(
                 """
@@ -586,7 +587,8 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                         println(x + y + z)
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
     }
 }

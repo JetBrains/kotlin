@@ -24,24 +24,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCatch
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -58,7 +43,7 @@ object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionCh
     override fun check(
         expression: FirPropertyAccessExpression,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
@@ -72,7 +57,7 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
     override fun check(
         expression: FirFunctionCall,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
@@ -108,7 +93,7 @@ private fun checkComposableCall(
     expression: FirQualifiedAccessExpression,
     calleeFunction: FirCallableSymbol<*>,
     context: CheckerContext,
-    reporter: DiagnosticReporter
+    reporter: DiagnosticReporter,
 ) {
     context.visitCurrentScope(
         visitInlineLambdaParameter = { parameter ->
@@ -254,7 +239,7 @@ private fun checkComposableFunction(
 private fun checkInvoke(
     expression: FirQualifiedAccessExpression,
     context: CheckerContext,
-    reporter: DiagnosticReporter
+    reporter: DiagnosticReporter,
 ) {
     // Check that we're invoking a value parameter of an inline function
     val param = (expression.dispatchReceiver as? FirPropertyAccessExpression)
@@ -262,7 +247,8 @@ private fun checkInvoke(
         ?.toResolvedValueParameterSymbol()
         ?: return
     if (param.resolvedReturnTypeRef.hasDisallowComposableCallsAnnotation(context.session) ||
-        !param.containingFunctionSymbol.isInline) {
+        !param.containingFunctionSymbol.isInline
+    ) {
         return
     }
 
@@ -290,7 +276,7 @@ private inline fun CheckerContext.visitCurrentScope(
     visitInlineLambdaParameter: (FirValueParameter) -> Unit,
     visitAnonymousFunction: (FirAnonymousFunction) -> Unit = {},
     visitFunction: (FirFunction) -> Unit = {},
-    visitTryExpression: (FirTryExpression, FirElement) -> Unit = { _, _ -> }
+    visitTryExpression: (FirTryExpression, FirElement) -> Unit = { _, _ -> },
 ) {
     for ((elementIndex, element) in containingElements.withIndex().reversed()) {
         when (element) {
@@ -341,7 +327,7 @@ private inline fun CheckerContext.visitCurrentScope(
 }
 
 private fun CheckerContext.findValueParameterForLambdaAtIndex(
-    elementIndex: Int
+    elementIndex: Int,
 ): FirValueParameter? {
     val function = containingElements.getOrNull(elementIndex) as? FirAnonymousFunction ?: return null
     val argumentList = containingElements.getOrNull(elementIndex - 1) as? FirResolvedArgumentList ?: return null

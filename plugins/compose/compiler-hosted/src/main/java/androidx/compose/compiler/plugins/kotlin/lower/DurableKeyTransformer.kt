@@ -23,38 +23,8 @@ import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrBranch
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrElseBranch
-import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.IrSetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.expressions.IrTry
-import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.IrVarargElement
-import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
@@ -78,7 +48,7 @@ open class DurableKeyTransformer(
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
     featureFlags: FeatureFlags,
-    ) :
+) :
     AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
@@ -89,11 +59,12 @@ open class DurableKeyTransformer(
     protected fun buildKey(
         prefix: String,
         pathSeparator: String = "/",
-        siblingSeparator: String = ":"
+        siblingSeparator: String = ":",
     ): Pair<String, Boolean> = keyVisitor.buildPath(prefix, pathSeparator, siblingSeparator)
 
     protected fun <T> root(keys: MutableSet<String>, block: () -> T): T =
         keyVisitor.root(keys, block)
+
     protected fun <T> enter(key: String, block: () -> T) = keyVisitor.enter(key, block)
     protected fun <T> siblings(key: String, block: () -> T) = keyVisitor.siblings(key, block)
     protected fun <T> siblings(block: () -> T) = keyVisitor.siblings(block)
@@ -144,7 +115,7 @@ open class DurableKeyTransformer(
     }
 
     override fun visitDelegatingConstructorCall(
-        expression: IrDelegatingConstructorCall
+        expression: IrDelegatingConstructorCall,
     ): IrExpression {
         val owner = expression.symbol.owner
 
@@ -302,7 +273,8 @@ open class DurableKeyTransformer(
             // in these cases, the compiler relies on a certain structure for the condition
             // expression, so we only touch the body
             IrStatementOrigin.WHILE_LOOP,
-            IrStatementOrigin.FOR_LOOP_INNER_WHILE -> enter("loop") {
+            IrStatementOrigin.FOR_LOOP_INNER_WHILE,
+            -> enter("loop") {
                 loop.body = enter("body") { loop.body?.transform(this, null) }
                 loop
             }
@@ -399,7 +371,8 @@ open class DurableKeyTransformer(
             // The compiler relies on a certain structure for the "iterator" instantiation in For
             // loops, so we avoid transforming the first statement in this case
             IrStatementOrigin.FOR_LOOP,
-            IrStatementOrigin.FOR_LOOP_INNER_WHILE -> {
+            IrStatementOrigin.FOR_LOOP_INNER_WHILE,
+            -> {
                 expression.statements[1] =
                     expression.statements[1].transform(this, null) as IrStatement
                 expression

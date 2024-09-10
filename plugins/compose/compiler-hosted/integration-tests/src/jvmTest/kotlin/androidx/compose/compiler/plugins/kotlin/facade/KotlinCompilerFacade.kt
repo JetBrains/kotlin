@@ -42,7 +42,7 @@ class SourceFile(
     val name: String,
     val source: String,
     private val ignoreParseErrors: Boolean = false,
-    val path: String = ""
+    val path: String = "",
 ) {
     fun toKtFile(project: Project): KtFile {
         val shortName = name.substring(name.lastIndexOf('/') + 1).let {
@@ -77,7 +77,7 @@ class SourceFile(
 interface AnalysisResult {
     data class Diagnostic(
         val factoryName: String,
-        val textRanges: List<TextRange>
+        val textRanges: List<TextRange>,
     )
 
     val files: List<KtFile>
@@ -87,12 +87,13 @@ interface AnalysisResult {
 abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
     abstract fun analyze(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): AnalysisResult
+
     abstract fun compileToIr(files: List<SourceFile>): IrModuleFragment
     abstract fun compile(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): GenerationState
 
     companion object {
@@ -137,7 +138,7 @@ private object TestMessageCollector : MessageCollector {
     override fun report(
         severity: CompilerMessageSeverity,
         message: String,
-        location: CompilerMessageSourceLocation?
+        location: CompilerMessageSourceLocation?,
     ) {
         if (severity === CompilerMessageSeverity.ERROR) {
             throw AssertionError(

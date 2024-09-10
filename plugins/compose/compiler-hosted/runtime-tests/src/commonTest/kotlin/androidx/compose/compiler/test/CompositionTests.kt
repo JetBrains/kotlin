@@ -265,7 +265,7 @@ value class Data(val string: String)
 
 @Composable
 fun DefaultValueClass(
-    data: Data = Data("Hello")
+    data: Data = Data("Hello"),
 ) {
     println(data)
 }

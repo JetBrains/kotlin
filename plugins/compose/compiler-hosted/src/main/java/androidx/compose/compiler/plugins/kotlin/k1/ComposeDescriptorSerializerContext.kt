@@ -22,5 +22,5 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.HideFromObj
 class ComposeDescriptorSerializerContext(
     val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet = HideFromObjCDeclarationsSet(),
     val classStabilityInferredCollection: ClassStabilityInferredCollection =
-        ClassStabilityInferredCollection()
+        ClassStabilityInferredCollection(),
 )

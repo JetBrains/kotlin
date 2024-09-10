@@ -795,7 +795,7 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
     )
 
     @Test
-        fun testComposableFunInterfacesInVariance() = checkApi(
+    fun testComposableFunInterfacesInVariance() = checkApi(
         """
            import androidx.compose.runtime.*
 

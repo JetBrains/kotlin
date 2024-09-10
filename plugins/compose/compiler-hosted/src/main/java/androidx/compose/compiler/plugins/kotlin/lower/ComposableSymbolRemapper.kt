@@ -51,45 +51,45 @@ import org.jetbrains.kotlin.types.StarProjectionImpl
 class ComposableSymbolRemapper : DeepCopySymbolRemapper(
     object : DescriptorsRemapper {
         override fun remapDeclaredConstructor(
-            descriptor: ClassConstructorDescriptor
+            descriptor: ClassConstructorDescriptor,
         ): ClassConstructorDescriptor? =
             descriptor.takeUnless { it.isTransformed() }
 
         override fun remapDeclaredSimpleFunction(
-            descriptor: FunctionDescriptor
+            descriptor: FunctionDescriptor,
         ): FunctionDescriptor? =
             descriptor.takeUnless { it.isTransformed() }
 
         override fun remapDeclaredValueParameter(
-            descriptor: ParameterDescriptor
+            descriptor: ParameterDescriptor,
         ): ParameterDescriptor? =
             descriptor.takeUnless { it.isTransformed() }
 
         override fun remapDeclaredTypeParameter(
-            descriptor: TypeParameterDescriptor
+            descriptor: TypeParameterDescriptor,
         ): TypeParameterDescriptor? =
             descriptor.takeUnless { it.isTransformed() }
 
         private fun ClassConstructorDescriptor.isTransformed(): Boolean =
             this is IrBasedDeclarationDescriptor<*> ||
-                valueParameters.any { it.type.containsComposable() }
+                    valueParameters.any { it.type.containsComposable() }
 
         private fun FunctionDescriptor.isTransformed(): Boolean =
             this is IrBasedDeclarationDescriptor<*> ||
-                valueParameters.any { it.type.containsComposable() } ||
-                returnType?.containsComposable() == true
+                    valueParameters.any { it.type.containsComposable() } ||
+                    returnType?.containsComposable() == true
 
         private fun ParameterDescriptor.isTransformed(): Boolean =
             this is IrBasedDeclarationDescriptor<*> ||
-                type.containsComposable() ||
-                containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
+                    type.containsComposable() ||
+                    containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
 
         private fun TypeParameterDescriptor.isTransformed(): Boolean =
             this is IrBasedDeclarationDescriptor<*> ||
-                containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
+                    containingDeclaration.let { it is FunctionDescriptor && it.isTransformed() }
 
         private fun KotlinType.containsComposable(): Boolean =
             hasComposableAnnotation() ||
-                arguments.any { it !is StarProjectionImpl && it.type.containsComposable() }
+                    arguments.any { it !is StarProjectionImpl && it.type.containsComposable() }
     }
 )

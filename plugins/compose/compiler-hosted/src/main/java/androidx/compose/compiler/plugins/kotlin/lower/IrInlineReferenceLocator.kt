@@ -26,26 +26,22 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isLambda
-import org.jetbrains.kotlin.ir.util.isSuspendFunction
-import org.jetbrains.kotlin.ir.util.packageFqName
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import kotlin.collections.contains
+import kotlin.collections.lastOrNull
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.plusAssign
+import kotlin.collections.set
 
 class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
     private val inlineLambdaToParameter = mutableMapOf<IrFunctionSymbol, IrValueParameter>()
@@ -76,7 +72,8 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 declaration.acceptChildrenVoid(this)
                 val parent = declaration.parent as? IrFunction
                 if (parent?.isInlineFunctionCall(context) == true &&
-                    declaration.isInlinedFunction()) {
+                    declaration.isInlinedFunction()
+                ) {
                     declaration.defaultValue?.expression?.unwrapLambda()?.let {
                         inlineLambdaToParameter[it] = declaration
                     }
@@ -110,7 +107,7 @@ private fun IrFunction.isInlineFunctionCall(context: IrPluginContext) =
 private fun IrFunction.isInlineArrayConstructor(context: IrPluginContext): Boolean =
     this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.let {
         it == context.irBuiltIns.arrayClass ||
-            it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
+                it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
     }
 
 fun IrExpression.unwrapLambda(): IrFunctionSymbol? = when {
@@ -126,20 +123,20 @@ fun IrExpression.unwrapLambda(): IrFunctionSymbol? = when {
 
 private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
-        this == IrStatementOrigin.SUSPEND_CONVERSION
+            this == IrStatementOrigin.SUSPEND_CONVERSION
 
 // This is copied from JvmIrInlineUtils.kt in the Kotlin compiler, since we
 // need to check for synthetic composable functions.
 private fun IrValueParameter.isInlinedFunction(): Boolean =
     index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction() ||
-        type.isSyntheticComposableFunction()) &&
-        // Parameters with default values are always nullable, so check the expression too.
-        // Note that the frontend has a diagnostic for nullable inline parameters, so actually
-        // making this return `false` requires using `@Suppress`.
-        (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
+            type.isSyntheticComposableFunction()) &&
+            // Parameters with default values are always nullable, so check the expression too.
+            // Note that the frontend has a diagnostic for nullable inline parameters, so actually
+            // making this return `false` requires using `@Suppress`.
+            (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
 fun IrType.isSyntheticComposableFunction() =
     classOrNull?.owner?.let {
         it.name.asString().startsWith("ComposableFunction") &&
-            it.packageFqName == InternalPackage
+                it.packageFqName == InternalPackage
     } ?: false

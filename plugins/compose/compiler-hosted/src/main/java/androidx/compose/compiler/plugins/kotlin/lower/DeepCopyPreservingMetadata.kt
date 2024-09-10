@@ -16,13 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeRemapper
@@ -62,7 +56,7 @@ internal open class DeepCopyPreservingMetadata(
         }
 
     override fun visitLocalDelegatedProperty(
-        declaration: IrLocalDelegatedProperty
+        declaration: IrLocalDelegatedProperty,
     ): IrLocalDelegatedProperty =
         super.visitLocalDelegatedProperty(declaration).apply {
             metadata = declaration.metadata

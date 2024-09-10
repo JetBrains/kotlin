@@ -21,13 +21,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -46,7 +40,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     override fun registerModuleComponents(
         container: StorageComponentContainer,
         platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
     ) {
         container.useInstance(this)
     }
@@ -54,7 +48,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     override fun check(
         declaration: KtDeclaration,
         descriptor: DeclarationDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         when {
             declaration is KtProperty &&
@@ -73,7 +67,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     private fun checkFunction(
         declaration: KtFunction,
         descriptor: FunctionDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val hasComposableAnnotation = descriptor.hasComposableAnnotation()
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
@@ -132,7 +126,8 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         if (descriptor.isActual) {
             val expectDescriptor = descriptor.findCompatibleExpectsForActual().singleOrNull()
             if (expectDescriptor != null &&
-                expectDescriptor.hasComposableAnnotation() != hasComposableAnnotation) {
+                expectDescriptor.hasComposableAnnotation() != hasComposableAnnotation
+            ) {
                 context.trace.report(
                     ComposeErrors.MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL.on(
                         declaration.nameIdentifier ?: declaration
@@ -195,7 +190,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     private fun checkType(
         type: KotlinType,
         element: PsiElement,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         if (type.hasComposableAnnotation() && type.isSuspendFunctionType) {
             context.trace.report(
@@ -207,7 +202,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     private fun checkProperty(
         declaration: KtProperty,
         descriptor: PropertyDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val hasComposableAnnotation = descriptor
             .getter
@@ -215,7 +210,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
             val override = descriptor.overriddenDescriptors.first()
             val overrideIsComposable = override.hasComposableAnnotation() ||
-                override.getter?.hasComposableAnnotation() == true
+                    override.getter?.hasComposableAnnotation() == true
             if (overrideIsComposable != hasComposableAnnotation) {
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
@@ -239,7 +234,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     private fun checkPropertyAccessor(
         declaration: KtPropertyAccessor,
         descriptor: PropertyAccessorDescriptor,
-        context: DeclarationCheckerContext
+        context: DeclarationCheckerContext,
     ) {
         val propertyDescriptor = descriptor.correspondingProperty
         val propertyPsi = declaration.parent as? KtProperty ?: return
@@ -267,7 +262,8 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         }
     }
 
-    private val FunctionDescriptor.arity get(): Int =
+    private val FunctionDescriptor.arity
+        get(): Int =
             if (extensionReceiverParameter != null) 1 else 0 +
                     contextReceiverParameters.size +
                     valueParameters.size

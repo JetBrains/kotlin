@@ -36,7 +36,7 @@ open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptor
     override fun interceptFunctionLiteralDescriptor(
         expression: KtLambdaExpression,
         context: ExpressionTypingContext,
-        descriptor: AnonymousFunctionDescriptor
+        descriptor: AnonymousFunctionDescriptor,
     ): AnonymousFunctionDescriptor =
         if (
             !descriptor.isSuspend &&
@@ -59,7 +59,7 @@ open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptor
     override fun interceptType(
         element: KtElement,
         context: ExpressionTypingContext,
-        resultType: KotlinType
+        resultType: KotlinType,
     ): KotlinType {
         if (resultType === TypeUtils.NO_EXPECTED_TYPE) return resultType
         if (resultType === TypeUtils.UNIT_EXPECTED_TYPE) return resultType

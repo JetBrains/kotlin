@@ -190,7 +190,8 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     @Test
     fun testGenericComposableInference1() {
         assumeTrue(useFir)
-        check("""
+        check(
+            """
         import androidx.compose.runtime.Composable
 
         fun <T> identity(value: T): T = value
@@ -198,13 +199,15 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         // We should infer `ComposableFunction0<Unit>` for `T`
         val cl = identity(@Composable {})
         val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
-        """)
+        """
+        )
     }
 
     @Test
     fun testGenericComposableInference2() {
         assumeTrue(useFir)
-        check("""
+        check(
+            """
         import androidx.compose.runtime.Composable
 
         @Composable fun A() {}
@@ -213,13 +216,15 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         // Explicitly instantiate `T` with `ComposableFunction0<Unit>`
         val cl = identity<@Composable () -> Unit> { A() }
         val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
-        """)
+        """
+        )
     }
 
     @Test
     fun testGenericComposableInference3() {
         assumeTrue(useFir)
-        check("""
+        check(
+            """
         import androidx.compose.runtime.Composable
 
         @Composable fun A() {}
@@ -228,13 +233,15 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         // We should infer `T` as `ComposableFunction0<Unit>` from the context and then
         // infer that the argument to `identity` is a composable lambda.
         val cl: @Composable () -> Unit = identity { A() }
-        """)
+        """
+        )
     }
 
     @Test
     fun testGenericComposableInference4() {
         assumeTrue(useFir)
-        check("""
+        check(
+            """
         import androidx.compose.runtime.Composable
 
         fun <T> identity(value: T): T = value
@@ -242,20 +249,23 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         // We should infer `T` as `Function0<Unit>` from the context and
         // reject the lambda which is explicitly typed as `ComposableFunction...`.
         val cl: () -> Unit = identity(@Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)
-        """)
+        """
+        )
     }
 
     @Test
     fun testGenericComposableInference5() {
         assumeTrue(useFir)
-        check("""
+        check(
+            """
         import androidx.compose.runtime.Composable
 
         fun <T> identity(value: T): T = value
 
         // We should infer `Function0<Unit>` for `T`
         val lambda = identity<() -> Unit>(@Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)
-        """)
+        """
+        )
     }
 
     @Test
@@ -1410,7 +1420,8 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     )
 
     @Test
-    fun testNothingAsAValidComposableFunctionBody() = check("""
+    fun testNothingAsAValidComposableFunctionBody() = check(
+        """
         import androidx.compose.runtime.*
 
         val test1: @Composable () -> Unit = TODO()
@@ -1427,7 +1438,8 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 TODO()
             }
         }
-    """)
+    """
+    )
 
     @Test
     fun testComposableValueOperator() {
