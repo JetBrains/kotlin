@@ -178,5 +178,5 @@ public annotation class ExperimentalSubclassOptIn
 @SinceKotlin("2.1")
 @WasExperimental(ExperimentalSubclassOptIn::class)
 public annotation class SubclassOptInRequired(
-    val markerClass: KClass<out Annotation>
+    vararg val markerClass: KClass<out Annotation>,
 )
