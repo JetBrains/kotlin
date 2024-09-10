@@ -24,7 +24,7 @@ val myProperty: () -> Unit @Composable get() {
 val myProperty: Function0<Unit>
   @Composable @JvmName(name = "getMyProperty")
   get() {
-    sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C(<get-myProperty>):Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

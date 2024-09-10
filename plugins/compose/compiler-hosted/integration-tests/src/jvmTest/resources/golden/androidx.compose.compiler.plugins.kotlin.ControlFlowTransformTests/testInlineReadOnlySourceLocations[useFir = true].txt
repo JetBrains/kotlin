@@ -32,7 +32,7 @@ fun Test() {
 val current: Int
   @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
   get() {
-    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+    sourceInformationMarkerStart(%composer, <>, "C(<get-current>):Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, "<get-current> (Test.kt:7)")
     }
