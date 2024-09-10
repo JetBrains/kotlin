@@ -16063,6 +16063,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("dontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword.kt")
+      public void testDontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/dontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword.kt");
+      }
+
+      @Test
       @TestMetadata("illegalSelectorCallableReference.kt")
       public void testIllegalSelectorCallableReference() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/illegalSelectorCallableReference.kt");
@@ -28695,6 +28701,16 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("kt61340_platformCode.kt")
         public void testKt61340_platformCode() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/kt61340_platformCode.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/stdlib")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Stdlib {
+        @Test
+        public void testAllFilesPresentInStdlib() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/stdlib"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
         }
       }
 

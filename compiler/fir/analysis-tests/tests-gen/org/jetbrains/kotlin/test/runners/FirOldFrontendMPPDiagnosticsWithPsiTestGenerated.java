@@ -2416,6 +2416,16 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/stdlib")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Stdlib {
+    @Test
+    public void testAllFilesPresentInStdlib() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/stdlib"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/topLevelFun")
   @TestDataPath("$PROJECT_ROOT")
   public class TopLevelFun {

@@ -16057,6 +16057,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("dontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword.kt")
+      public void testDontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/dontReportFunctionDeclarationWithNoNameOnFunctionsWithoutFunKeyword.kt");
+      }
+
+      @Test
       @TestMetadata("illegalSelectorCallableReference.kt")
       public void testIllegalSelectorCallableReference() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/illegalSelectorCallableReference.kt");
