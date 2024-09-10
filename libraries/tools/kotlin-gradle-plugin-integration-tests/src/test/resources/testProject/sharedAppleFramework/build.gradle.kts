@@ -9,11 +9,3 @@ buildscript {
         classpath(kotlin("gradle-plugin:${property("kotlin_version")}"))
     }
 }
-
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        mavenCentral()
-    }
-}
