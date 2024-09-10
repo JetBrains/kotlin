@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -15,6 +13,8 @@ import org.jetbrains.kotlin.fir.java.DeprecatedInJavaDocAnnotation
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
+import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
+import org.jetbrains.kotlin.toKtPsiSourceElement
 import java.util.*
 import kotlin.collections.AbstractList
 
@@ -38,14 +38,14 @@ class FirDelegatedJavaAnnotationList(annotationsOwner: FirAnnotationContainer) :
 class FirLazyJavaAnnotationList(
     private val annotationOwner: JavaAnnotationOwner,
     private val ownerModuleData: FirModuleData,
-    private val source: KtSourceElement?,
 ) : FirJavaAnnotationList {
     private val javaAnnotations: Collection<JavaAnnotation> get() = annotationOwner.annotations
 
     private val firAnnotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val fakeSource = (annotationOwner as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(KtFakeSourceElementKind.Enhancement)
         javaAnnotations.convertAnnotationsToFir(
             ownerModuleData.session,
-            source?.fakeElement(KtFakeSourceElementKind.Enhancement),
+            fakeSource,
             annotationOwner.isDeprecatedInJavaDoc,
         )
     }

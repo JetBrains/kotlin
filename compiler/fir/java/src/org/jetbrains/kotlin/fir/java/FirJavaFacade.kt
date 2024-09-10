@@ -113,7 +113,7 @@ abstract class FirJavaFacade(
             }
         }
 
-        annotationList = FirLazyJavaAnnotationList(this@toFirTypeParameter, moduleData, source)
+        annotationList = FirLazyJavaAnnotationList(this@toFirTypeParameter, moduleData)
     }
 
     private fun List<JavaTypeParameter>.convertTypeParameters(
@@ -187,7 +187,7 @@ abstract class FirJavaFacade(
         return buildJavaClass {
             containingClassSymbol = parentClassSymbol
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            annotationList = FirLazyJavaAnnotationList(javaClass, moduleData, fakeSource)
+            annotationList = FirLazyJavaAnnotationList(javaClass, moduleData)
             source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol
@@ -505,7 +505,7 @@ abstract class FirJavaFacade(
                 }
                 returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
                 isVar = !javaField.isFinal
-                annotationList = FirLazyJavaAnnotationList(javaField, moduleData, fakeSource)
+                annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
 
                 lazyInitializer = lazy {
                     // NB: null should be converted to null
@@ -555,7 +555,7 @@ abstract class FirJavaFacade(
                 valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
             }
 
-            annotationList = FirLazyJavaAnnotationList(javaMethod, moduleData, fakeSource)
+            annotationList = FirLazyJavaAnnotationList(javaMethod, moduleData)
 
             status = FirResolvedDeclarationStatusImpl(
                 javaMethod.visibility,
@@ -646,7 +646,7 @@ abstract class FirJavaFacade(
                     javaTypeParameterStack, constructorSymbol, moduleData, fakeSource
                 )
 
-                annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData, fakeSource)
+                annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index)
                 }

@@ -163,7 +163,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     name = this@toFirValueParameter.name ?: Name.identifier("p$index")
     returnTypeRef = type.toFirJavaTypeRef(session, source)
     isVararg = this@toFirValueParameter.isVararg
-    annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData, source)
+    annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData)
 }
 
 internal fun JavaAnnotationArgument.toFirExpression(
