@@ -855,8 +855,7 @@ fun IrClass.addSimpleDelegatingConstructor(
             listOf(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
-                    superConstructor.symbol, 0,
-                    superConstructor.valueParameters.size
+                    superConstructor.symbol, 0
                 ).apply {
                     constructor.valueParameters.forEachIndexed { idx, parameter ->
                         putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol))

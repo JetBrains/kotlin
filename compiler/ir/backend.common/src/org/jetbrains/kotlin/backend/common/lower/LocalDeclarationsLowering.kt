@@ -450,7 +450,6 @@ open class LocalDeclarationsLowering(
                     context.irBuiltIns.unitType,
                     newCallee.symbol,
                     typeArgumentsCount = expression.typeArgumentsCount,
-                    valueArgumentsCount = newCallee.valueParameters.size
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.copyTypeArgumentsFrom(expression)

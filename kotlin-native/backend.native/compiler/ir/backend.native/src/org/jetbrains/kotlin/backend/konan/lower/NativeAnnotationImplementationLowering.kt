@@ -85,7 +85,7 @@ private class NativeAnnotationImplementationTransformer(context: Context, irFile
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
                 IrDelegatingConstructorCallImpl(
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, delegate.symbol,
-                        typeArgumentsCount = 0, valueArgumentsCount = delegate.valueParameters.size
+                        typeArgumentsCount = 0,
                 ).apply {
                     constructor.valueParameters.forEach { param ->
                         putArgument(delegate.valueParameters.single { it.name == param.name },

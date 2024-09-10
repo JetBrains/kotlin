@@ -76,7 +76,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                 listOf(
                     IrDelegatingConstructorCallImpl(
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
-                        superConstructor.symbol, 0, superConstructor.valueParameters.size
+                        superConstructor.symbol, 0,
                     ).apply {
                         ctor.valueParameters.take(overriddenProperties.size).forEachIndexed { index, parameter ->
                             putValueArgument(

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImplWithShape
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
@@ -274,12 +275,12 @@ class Fir2IrConverter(
                 val firAnyConstructor = session.builtinTypes.anyType.toRegularClassSymbol(session)!!.fir.primaryConstructorIfAny(session)!!
                 val irAnyConstructor = declarationStorage.getIrConstructorSymbol(firAnyConstructor)
                 body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
-                    statements += IrDelegatingConstructorCallImpl(
+                    statements += IrDelegatingConstructorCallImplWithShape(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         builtins.unitType,
                         irAnyConstructor,
                         typeArgumentsCount = 0,
-                        valueArgumentsCount = 0
+                        valueArgumentsCount = 0,
                     )
                 }
             }

@@ -25,7 +25,6 @@ fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor
         irBuiltIns.anyType,
         irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null,
         typeArgumentsCount = 0,
-        valueArgumentsCount = 0
     )
 
     val initializerCall = IrInstanceInitializerCallImpl(

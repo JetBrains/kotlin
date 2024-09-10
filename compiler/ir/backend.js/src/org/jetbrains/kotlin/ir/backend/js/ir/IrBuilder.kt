@@ -65,7 +65,6 @@ object JsIrBuilder {
             owner.returnType,
             target,
             typeArgumentsCount = irClass.typeParameters.size,
-            valueArgumentsCount = owner.valueParameters.size,
         ).apply {
             typeArguments?.let {
                 assert(it.size == typeArgumentsCount)

@@ -245,7 +245,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
                     IrDelegatingConstructorCallImpl(
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.unitType, irBuiltIns.anyClass.constructors.single(),
-                        typeArgumentsCount = 0, valueArgumentsCount = 0
+                        typeArgumentsCount = 0,
                     )
                 )
             )

@@ -112,7 +112,6 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
                             context.irBuiltIns.anyType,
                             anyConstructor,
                             0,
-                            0
                         ),
                         expressionReplacement
                     )

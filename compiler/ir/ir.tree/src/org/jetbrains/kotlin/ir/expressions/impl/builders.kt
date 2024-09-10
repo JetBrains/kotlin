@@ -883,14 +883,13 @@ fun IrDelegatingConstructorCallImpl(
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
-    valueArgumentsCount: Int = symbol.owner.valueParameters.size,
 ): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImplWithShape(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
     typeArgumentsCount = typeArgumentsCount,
-    valueArgumentsCount = valueArgumentsCount
+    valueArgumentsCount = symbol.owner.valueParameters.size
 )
 
 fun IrDelegatingConstructorCallImplWithShape(

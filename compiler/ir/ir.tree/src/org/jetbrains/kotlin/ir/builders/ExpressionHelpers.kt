@@ -299,7 +299,7 @@ fun IrBuilderWithScope.irCallWithSubstitutedType(callee: IrFunctionSymbol, typeA
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
     IrDelegatingConstructorCallImpl(
         startOffset, endOffset, context.irBuiltIns.unitType, callee.symbol,
-        callee.parentAsClass.typeParameters.size, callee.valueParameters.size
+        callee.parentAsClass.typeParameters.size
     )
 
 fun IrBuilderWithScope.irCallOp(

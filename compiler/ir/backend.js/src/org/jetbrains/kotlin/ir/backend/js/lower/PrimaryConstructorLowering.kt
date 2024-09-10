@@ -77,7 +77,6 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
                         IrDelegatingConstructorCallImpl(
                             startOffset, endOffset, type,
                             primary.symbol,
-                            valueArgumentsCount = primary.valueParameters.size,
                             typeArgumentsCount = primary.typeParameters.size
                         )
                     }

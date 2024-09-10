@@ -77,7 +77,7 @@ private class NoArgIrTransformer(
                 listOfNotNull(
                     IrDelegatingConstructorCallImpl(
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
-                        superConstructor.symbol, 0, superConstructor.valueParameters.size
+                        superConstructor.symbol, 0,
                     ),
                     IrInstanceInitializerCallImpl(
                         ctor.startOffset, ctor.endOffset, klass.symbol, context.irBuiltIns.unitType
