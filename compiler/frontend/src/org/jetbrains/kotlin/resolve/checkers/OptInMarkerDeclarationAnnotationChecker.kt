@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -42,14 +41,12 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
             val annotation = trace.bindingContext.get(BindingContext.ANNOTATION, entry) ?: continue
             when (annotation.fqName) {
                 OptInNames.OPT_IN_FQ_NAME -> {
-                    val annotationClasses = (annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS] as? ArrayValue)
-                        ?.value.orEmpty()
+                    val annotationClasses = getOptInAnnotationArgs(annotation)
                     checkOptInUsage(annotationClasses, trace, entry)
                 }
                 OptInNames.SUBCLASS_OPT_IN_REQUIRED_FQ_NAME -> {
-                    val annotationClass =
-                        annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]
-                    checkSubclassOptInUsage(annotated, listOfNotNull(annotationClass), trace, entry)
+                    val annotationClasses = getOptInAnnotationArgs(annotation)
+                    checkSubclassOptInUsage(annotated, annotationClasses, trace, entry)
                 }
                 OptInNames.REQUIRES_OPT_IN_FQ_NAME -> {
                     hasOptIn = true
