@@ -143,6 +143,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/compiler-tests-convention/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
                 "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
+                "repo/gradle-build-conventions/gradle-plugins-documentation/build/generated-sources",
                 "wasm/wasm.debug.browsers/node_modules",
                 "wasm/wasm.debug.browsers/.gradle",
                 ".gradle/expanded",
