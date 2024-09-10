@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class IrExpectActualMap() {
     private val _expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
@@ -27,8 +28,8 @@ class IrExpectActualMap() {
         val expect = expectSymbol.owner
         val actual = actualSymbol.owner
         if (expect is IrDeclaration && actual is IrDeclaration &&
-            expect.parentsWithSelf.filterIsInstance<IrClass>().firstOrNull()?.classId ==
-            actual.parentsWithSelf.filterIsInstance<IrClass>().firstOrNull()?.classId
+            expect.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId ==
+            actual.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId
         ) _actualToDirectExpect.put(actualSymbol, expectSymbol)
         return registeredActual
     }
