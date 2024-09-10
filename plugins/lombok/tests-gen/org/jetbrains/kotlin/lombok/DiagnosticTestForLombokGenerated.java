@@ -82,4 +82,10 @@ public class DiagnosticTestForLombokGenerated extends AbstractDiagnosticTestForL
   public void testSettersClassLevel() {
     runTest("plugins/lombok/testData/diagnostics/settersClassLevel.kt");
   }
+
+  @Test
+  @TestMetadata("superBuilderConfig.kt")
+  public void testSuperBuilderConfig() {
+    runTest("plugins/lombok/testData/diagnostics/superBuilderConfig.kt");
+  }
 }

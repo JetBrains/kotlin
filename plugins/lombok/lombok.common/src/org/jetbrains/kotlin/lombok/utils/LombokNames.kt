@@ -21,6 +21,7 @@ object LombokNames {
     val ALL_ARGS_CONSTRUCTOR = FqName("lombok.AllArgsConstructor")
     val REQUIRED_ARGS_CONSTRUCTOR = FqName("lombok.RequiredArgsConstructor")
     val BUILDER = FqName("lombok.Builder")
+    val SUPER_BUILDER = FqName("lombok.experimental.SuperBuilder")
     val SINGULAR = FqName("lombok.Singular")
 
     val TABLE = FqName("Table".guavaPackage())
@@ -32,6 +33,7 @@ object LombokNames {
     val DATA_ID = ClassId.topLevel(DATA)
     val VALUE_ID = ClassId.topLevel(VALUE)
     val BUILDER_ID = ClassId.topLevel(BUILDER)
+    val SUPER_BUILDER_ID = ClassId.topLevel(SUPER_BUILDER)
     val SINGULAR_ID = ClassId.topLevel(SINGULAR)
     val NO_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(NO_ARGS_CONSTRUCTOR)
     val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
