@@ -354,7 +354,13 @@ private val functionReferencePhase = createFileLoweringPhase(
         lowering = ::FunctionReferenceLowering,
         name = "FunctionReference",
         description = "Function references lowering",
-        prerequisite = setOf(localFunctionsPhase)
+)
+
+private val buildNamesForFunctionReferenceImpls = createFileLoweringPhase(
+        lowering = ::FunctionReferenceImplNamesBuilder,
+        name = "BuildNamesForFunctionReferenceImpls",
+        description = "Build names for function reference impls",
+        prerequisite = setOf(functionReferencePhase, localFunctionsPhase)
 )
 
 private val staticFunctionReferenceOptimizationPhase = createFileLoweringPhase(
@@ -652,6 +658,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         assertionRemoverPhase,
         constEvaluationPhase,
         provisionalFunctionExpressionPhase,
+        inventNamesForLocalClasses,
+        functionReferencePhase,
         postInlinePhase,
         contractsDslRemovePhase,
         annotationImplementationPhase,
@@ -662,9 +670,8 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         stringConcatenationTypeNarrowingPhase.takeIf { context.config.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
-        inventNamesForLocalClasses,
         localFunctionsPhase,
-        functionReferencePhase,
+        buildNamesForFunctionReferenceImpls,
         volatilePhase,
         tailrecPhase,
         defaultParameterExtentPhase,

@@ -163,8 +163,22 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
     }
 }
 
+private fun IrStatement.isConst(): Boolean = when (this) {
+    is IrConst, is IrConstantValue -> true
+    is IrBlock -> {
+        if (statements.isEmpty())
+            true
+        else {
+            // This might happen after the local declarations lowering where local declarations are replaced with an empty composite.
+            statements.take(statements.size - 1).all { it is IrComposite && it.statements.isEmpty() }
+                    && statements.last().isConst()
+        }
+    }
+    else -> false
+}
+
 val IrField.hasNonConstInitializer: Boolean
-    get() = initializer?.expression.let { it != null && it !is IrConst && it !is IrConstantValue }
+    get() = initializer?.expression?.isConst() == false
 
 fun IrExpression.isNullConst() = this is IrConst && this.kind == IrConstKind.Null
 

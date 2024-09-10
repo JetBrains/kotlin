@@ -66,8 +66,8 @@ fun box(): String {
 // CHECK-LABEL: define internal void @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.<init>#internal"
 // CHECK-SAME: (ptr {{%[0-9]+}})
 
-// CHECK-DEBUG: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<1:0>){}kotlin.Int#internal"
-// CHECK-OPT: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<1:0>){}kotlin.Int#internal"
+// CHECK-DEBUG: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<-1:0>){}kotlin.Int#internal"
+// CHECK-OPT: define internal ptr @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.$<bridge-UNNN>invoke(kotlin.Array<-1:0>){}kotlin.Int#internal"
 // CHECK-SAME: (ptr [[this:%[0-9]+]], ptr [[array:%[0-9]+]], ptr {{%[0-9]+}})
 // CHECK-OPT: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(ptr [[this]], ptr {{%[0-9]+}})
 // CHECK-DEBUG: call i32 @"kfun:$stringifyArray$lambda$0$FUNCTION_REFERENCE$0.invoke#internal"(ptr {{%[0-9]+}}, ptr {{%[0-9]+}})

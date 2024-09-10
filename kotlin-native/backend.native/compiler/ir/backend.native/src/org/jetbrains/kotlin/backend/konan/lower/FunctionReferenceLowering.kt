@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,13 +21,48 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
+
+internal var IrClass.functionReferenceImplMethod: IrFunction? by irAttribute(followAttributeOwner = false)
+
+internal class FunctionReferenceImplNamesBuilder(val generationState: NativeGenerationState) : FileLoweringPass {
+    private val fileLowerState = generationState.fileLowerState
+
+    override fun lower(irFile: IrFile) {
+        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+
+                if (isLoweredFunctionReference(declaration)) {
+                    val functionReferenceImplMethod = declaration.functionReferenceImplMethod
+                            ?: error("functionReferenceImplMethod is not set for ${declaration.render()}")
+                    val singleStatement = (functionReferenceImplMethod.body as? IrBlockBody)?.statements?.singleOrNull()
+                            ?: error("Expected a single statement for the body of ${functionReferenceImplMethod.render()}")
+                    require(singleStatement is IrReturn) {
+                        "Expected a return statement: ${singleStatement.render()}"
+                    }
+                    val delegatingCall = singleStatement.value as? IrFunctionAccessExpression
+                            ?: error("Expected IrFunctionAccessExpression: ${singleStatement.value.render()}")
+                    declaration.name = fileLowerState.getFunctionReferenceImplUniqueName(delegatingCall.symbol.owner).synthesizedName
+                }
+            }
+        })
+    }
+}
 
 /**
  * Transforms a function reference into a subclass of `kotlin.native.internal.KFunctionImpl` and `kotlin.FunctionN`,
@@ -68,44 +104,30 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
     }
 
     override fun lower(irFile: IrFile) {
-        var generatedClasses = mutableListOf<IrClass>()
-        irFile.transform(object : IrElementTransformerVoidWithContext() {
-
+        irFile.transform(object : IrElementTransformer<IrDeclarationParent> {
             private val stack = mutableListOf<IrElement>()
 
-            override fun visitElement(element: IrElement): IrElement {
+            override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
                 stack.push(element)
-                val result = super.visitElement(element)
+                val result = super.visitElement(element, data)
                 stack.pop()
                 return result
             }
 
-            override fun visitExpression(expression: IrExpression): IrExpression {
+            override fun visitExpression(expression: IrExpression, data: IrDeclarationParent): IrExpression {
                 stack.push(expression)
-                val result = super.visitExpression(expression)
+                val result = super.visitExpression(expression, data)
                 stack.pop()
                 return result
             }
 
-            override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
-                lateinit var tempGeneratedClasses: MutableList<IrClass>
-                if (declaration is IrClass) {
-                    tempGeneratedClasses = generatedClasses
-                    generatedClasses = mutableListOf()
-                }
-                stack.push(declaration)
-                val result = super.visitDeclaration(declaration)
-                stack.pop()
-                if (declaration is IrClass) {
-                    declaration.declarations += generatedClasses
-                    generatedClasses = tempGeneratedClasses
-                }
-                return result
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
+                return super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
             }
 
-            override fun visitSpreadElement(spread: IrSpreadElement): IrSpreadElement {
+            override fun visitSpreadElement(spread: IrSpreadElement, data: IrDeclarationParent): IrSpreadElement {
                 stack.push(spread)
-                val result = super.visitSpreadElement(spread)
+                val result = super.visitSpreadElement(spread, data)
                 stack.pop()
                 return result
             }
@@ -116,29 +138,28 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             // This avoids materializing an invokable KFunction representing, thus producing one less class.
             // This is actually very common, as `Interface { something }` is a local function + a SAM-conversion
             // of a reference to it into an implementation.
-            override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+            override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclarationParent): IrExpression {
                 if (expression.operator == IrTypeOperator.SAM_CONVERSION) {
                     val invokable = expression.argument
-                    val reference = if (invokable is IrFunctionReference) {
-                        invokable
-                    } else if (invokable is IrBlock && (invokable.origin.isLambda)
-                            && invokable.statements.last() is IrFunctionReference) {
-                        // By this point the lambda's function has been replaced with empty IrComposite by LocalDeclarationsLowering.
-                        val statements = invokable.statements
-                        require(statements.size == 2)
-                        require((statements[0] as? IrComposite)?.statements?.isEmpty() == true)
-                        statements[1] as IrFunctionReference
-                    } else {
-                        return super.visitTypeOperator(expression)
+                    if (invokable is IrFunctionReference) {
+                        invokable.transformChildren(this, data)
+                        return transformFunctionReference(invokable, data, expression.typeOperand)
                     }
-                    reference.transformChildrenVoid()
-                    return transformFunctionReference(reference, expression.typeOperand)
+                    if (invokable is IrBlock && invokable.origin.isLambda
+                            && invokable.statements.last() is IrFunctionReference) {
+                        invokable.statements.dropLast(1).forEach { it.transform(this, data) }
+                        val reference = invokable.statements.last() as IrFunctionReference
+                        reference.transformChildren(this, data)
+                        invokable.statements[invokable.statements.lastIndex] = transformFunctionReference(reference, data, expression.typeOperand)
+                        invokable.type = expression.type
+                        return invokable
+                    }
                 }
-                return super.visitTypeOperator(expression)
+                return super.visitTypeOperator(expression, data)
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                expression.transformChildrenVoid(this)
+            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
+                expression.transformChildren(this, data)
 
                 for (i in stack.size - 1 downTo 0) {
                     val cur = stack[i]
@@ -162,20 +183,19 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     return expression
                 }
 
-                return transformFunctionReference(expression)
+                return transformFunctionReference(expression, data)
             }
 
-            fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
-                val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val irBuilder = generationState.context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
+            fun transformFunctionReference(expression: IrFunctionReference, parent: IrDeclarationParent, samSuperType: IrType? = null): IrExpression {
+                val irBuilder = generationState.context.createIrBuilder((parent as IrSymbolOwner).symbol,
                         expression.startOffset, expression.endOffset)
                 val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, generationState, irBuilder, samSuperType).build()
-                generatedClasses.add(clazz)
-                return newExpression
+                return irBuilder.irBlock {
+                    +clazz
+                    +newExpression
+                }
             }
-        }, data = null)
-
-        irFile.declarations += generatedClasses
+        }, data = irFile)
     }
 
     private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
@@ -194,7 +214,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
         private val irFactory = context.irFactory
-        private val fileLowerState = generationState.fileLowerState
 
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
@@ -234,8 +253,8 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             startOffset = this@FunctionReferenceBuilder.startOffset
             endOffset = this@FunctionReferenceBuilder.endOffset
             origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
-            name = fileLowerState.getFunctionReferenceImplUniqueName(functionReferenceTarget).synthesizedName
-            visibility = DescriptorVisibilities.PRIVATE
+            name = SpecialNames.NO_NAME_PROVIDED
+            visibility = DescriptorVisibilities.LOCAL
         }.apply {
             parent = this@FunctionReferenceBuilder.parent
 
@@ -359,7 +378,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 }
             }
             val originalSuperMethod = transformedSuperMethod.suspendFunction ?: transformedSuperMethod
-            buildInvokeMethod(originalSuperMethod)
+            functionReferenceClass.functionReferenceImplMethod = buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
             if (!isLambda) {
