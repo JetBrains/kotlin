@@ -90,6 +90,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val genericSafeCasts by booleanOption()
 
     val smallBinary by booleanOption()
+
+    val preCodegenInlineThreshold by uintOption()
 }
 
 open class BinaryOption<T : Any>(

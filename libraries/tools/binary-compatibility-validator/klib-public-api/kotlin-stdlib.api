@@ -9564,6 +9564,11 @@ open annotation class kotlin.native/HidesFromObjC : kotlin/Annotation { // kotli
 }
 
 // Targets: [native]
+open annotation class kotlin.native/NoInline : kotlin/Annotation { // kotlin.native/NoInline|null[0]
+    constructor <init>() // kotlin.native/NoInline.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native/ObjCName : kotlin/Annotation { // kotlin.native/ObjCName|null[0]
     constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/Boolean = ...) // kotlin.native/ObjCName.<init>|<init>(kotlin.String;kotlin.String;kotlin.Boolean){}[0]
 

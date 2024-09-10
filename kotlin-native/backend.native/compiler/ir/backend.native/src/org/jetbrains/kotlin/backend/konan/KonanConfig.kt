@@ -266,6 +266,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
     }
 
+    val preCodegenInlineThreshold: UInt by lazy {
+        configuration.get(BinaryOptions.preCodegenInlineThreshold) ?: 0U
+    }
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
