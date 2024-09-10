@@ -25,12 +25,10 @@ inline fun Test(active: Boolean, content: @Composable () -> Unit) {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Test(active: Boolean, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer.startReusableGroup(1, null)
-  %composer.startReplaceGroup(<>)
   if (active) {
     content(%composer, 0b1110 and %changed shr 0b0011)
   } else {
     %composer.deactivateToEndGroup(false)
   }
-  %composer.endReplaceGroup()
   %composer.endReusableGroup()
 }

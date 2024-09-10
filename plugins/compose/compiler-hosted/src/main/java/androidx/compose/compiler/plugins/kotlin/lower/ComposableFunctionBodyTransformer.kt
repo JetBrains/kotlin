@@ -768,8 +768,7 @@ class ComposableFunctionBodyTransformer(
         val body = declaration.body!!
 
         val hasExplicitGroups = declaration.hasExplicitGroups
-        val isReadOnly = declaration.hasReadOnlyAnnotation ||
-                declaration.isComposableDelegatedAccessor()
+        val isReadOnly = declaration.hasReadOnlyAnnotation || declaration.isComposableDelegatedAccessor()
 
         // An outer group is required if we are a lambda or dynamic method or the runtime doesn't
         // support remember after call. A outer group is explicitly elided by readonly and has
@@ -842,7 +841,7 @@ class ComposableFunctionBodyTransformer(
                                 scope,
                                 irFunctionSourceKey()
                             )
-                        collectSourceInformation && !hasExplicitGroups ->
+                        collectSourceInformation ->
                             irSourceInformationMarkerStart(
                                 body,
                                 scope,
@@ -855,7 +854,7 @@ class ComposableFunctionBodyTransformer(
                     *transformed.statements.toTypedArray(),
                     when {
                         outerGroupRequired -> irEndReplaceGroup(scope = scope)
-                        collectSourceInformation && !hasExplicitGroups ->
+                        collectSourceInformation ->
                             irSourceInformationMarkerEnd(body, scope)
                         else -> null
                     },
@@ -864,7 +863,7 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
-        if (!outerGroupRequired && !hasExplicitGroups) {
+        if (!outerGroupRequired) {
             scope.realizeEndCalls {
                 irComposite(
                     statements = listOfNotNull(
@@ -3749,8 +3748,9 @@ class ComposableFunctionBodyTransformer(
 
     override fun visitWhen(expression: IrWhen): IrExpression {
         if (!isInComposableScope) return super.visitWhen(expression)
+        if (currentFunctionScope.function.hasExplicitGroups) return super.visitWhen(expression)
 
-        val optimizeGroups = FeatureFlag.OptimizeNonSkippingGroups.enabled && !currentFunctionScope.function.hasExplicitGroups
+        val optimizeGroups = FeatureFlag.OptimizeNonSkippingGroups.enabled
 
         // Composable calls in conditions are more expensive than composable calls in the different
         // result branches of the when clause. This is because if we have N branches of a when
