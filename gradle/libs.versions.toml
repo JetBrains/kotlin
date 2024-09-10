@@ -50,6 +50,7 @@ vavr = "0.10.4"
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
+dokka-multiModulePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "dokka" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }

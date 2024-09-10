@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaMultiModuleFileLayout
+
 plugins {
     id("org.jetbrains.dokka")
     base
@@ -6,7 +8,8 @@ plugins {
 val documentationExtension = extensions.create<PluginsApiDocumentationExtension>("pluginsApiDocumentation")
 
 dependencies {
-    dokkaHtmlPlugin(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
+    dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
+    dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-multiModulePlugin").get())
 }
 
 tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlangDocumentation") {
@@ -29,11 +32,19 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
     )
 
     pluginsMapConfiguration.put(
+        "org.jetbrains.dokka.base.DokkaBase",
+        "{ \"templatesDir\": \"${documentationExtension.templates.map { it.asFile }.get()}\" }"
+    )
+    pluginsMapConfiguration.put(
         "org.jetbrains.dokka.versioning.VersioningPlugin",
         documentationExtension.documentationOldVersions.map { olderVersionsDir ->
             "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile}\" }"
         }
     )
+
+    fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
+        parent.outputDirectory.dir(child.project.name)
+    })
 
     @Suppress("DEPRECATION")
     addChildTasks(
