@@ -1,4 +1,4 @@
-/* MODULE name=<lib> */
+/* MODULE name=<main> */
 
 /* FILE package=<root> fileName=A.kt */
 

@@ -1,4 +1,3 @@
-// MODULE: lib
 // FILE: A.kt
 class A {
     class Nested{
@@ -13,7 +12,6 @@ class A {
 @Suppress("INVISIBLE_REFERENCE")
 internal inline fun internalInlineMethodOutsideOfOuterClass() = A.Nested().privateMethod()
 
-// MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
     var result = 0

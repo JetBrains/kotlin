@@ -614,6 +614,12 @@ public class NativeKlibSyntheticAccessorInPhase1TestGenerated extends AbstractNa
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateFunInterfaceFromInlineFun.kt")
+      public void testUsePrivateFunInterfaceFromInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateFunInterfaceFromInlineFun.kt");
+      }
     }
 
     @Nested
@@ -923,6 +929,12 @@ public class NativeKlibSyntheticAccessorInPhase1TestGenerated extends AbstractNa
       public void testUsePrivateConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
       }
+
+      @Test
+      @TestMetadata("usePrivateFunInterfaceFromInlineFun.kt")
+      public void testUsePrivateFunInterfaceFromInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateFunInterfaceFromInlineFun.kt");
+      }
     }
 
     @Nested
@@ -997,6 +1009,12 @@ public class NativeKlibSyntheticAccessorInPhase1TestGenerated extends AbstractNa
       @TestMetadata("usePrivateExtensionFromInternalInline.kt")
       public void testUsePrivateExtensionFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateExtensionFromInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateFunInterfaceFromInternalFun.kt")
+      public void testUsePrivateFunInterfaceFromInternalFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateFunInterfaceFromInternalFun.kt");
       }
 
       @Test
