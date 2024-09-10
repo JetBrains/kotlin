@@ -209,37 +209,6 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.transformAnnotations(declaration)
         }
 
-    // FIXME(KT-67752): This is copied verbatim from DeepCopyIrTreeWithSymbols
-    // We could make the method in DeepCopyIrTreeWithSymbols protected instead of private, but that will break compilation of
-    // the Compose plugin
-    private fun <T : IrMemberAccessExpression<*>> T.transformReceiverArguments(original: T): T =
-        apply {
-            dispatchReceiver = original.dispatchReceiver?.transform()
-            extensionReceiver = original.extensionReceiver?.transform()
-        }
-
-    // FIXME(KT-67752): This is copied verbatim from DeepCopyIrTreeWithSymbols
-    // We could make the method in DeepCopyIrTreeWithSymbols protected instead of private, but that will break compilation of
-    // the Compose plugin
-    private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
-        assert(typeArgumentsCount == other.typeArgumentsCount) {
-            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
-        }
-        for (i in 0 until typeArgumentsCount) {
-            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
-        }
-    }
-
-    // FIXME(KT-67752): This is copied verbatim from DeepCopyIrTreeWithSymbols
-    // We could make the method in DeepCopyIrTreeWithSymbols protected instead of private, but that will break compilation of
-    // the Compose plugin
-    private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
-        transformReceiverArguments(original)
-        for (i in 0 until original.valueArgumentsCount) {
-            putValueArgument(i, original.getValueArgument(i)?.transform())
-        }
-    }
-
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
 
