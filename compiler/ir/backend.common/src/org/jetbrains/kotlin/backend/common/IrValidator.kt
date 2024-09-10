@@ -31,6 +31,7 @@ data class IrValidatorConfig(
     val checkValueScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
     val checkCrossFileFieldUsage: Boolean = false,
+    val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
@@ -70,8 +71,8 @@ private class IrValidator(
         if (config.checkTypeParameterScopes) {
             IrTypeParameterScopeValidator(this::error, parentChain).check(declaration)
         }
-        if (config.checkCrossFileFieldUsage) {
-            declaration.acceptVoid(IrFieldCrossFileAccessValidator(declaration, reportError))
+        if (config.checkCrossFileFieldUsage || config.checkAllKotlinFieldsArePrivate) {
+            declaration.acceptVoid(IrFieldValidator(declaration, config, reportError))
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))

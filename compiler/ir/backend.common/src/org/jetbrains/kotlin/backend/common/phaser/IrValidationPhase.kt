@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
@@ -37,6 +39,10 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
             checkValueScopes = true,
             checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             checkCrossFileFieldUsage = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+            // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
+            //  non-private visibilities for fields.
+            checkAllKotlinFieldsArePrivate = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
+                    !context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
         )
 }

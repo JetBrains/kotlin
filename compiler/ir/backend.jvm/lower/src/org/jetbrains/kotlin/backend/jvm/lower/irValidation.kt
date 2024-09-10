@@ -32,6 +32,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
         get() = super.defaultValidationConfig.copy(
             checkProperties = true,
             checkCrossFileFieldUsage = false,
+            checkAllKotlinFieldsArePrivate = false,
         )
 }
 
@@ -46,6 +47,7 @@ internal class JvmIrValidationAfterLoweringPhase(
         get() = super.defaultValidationConfig.copy(
             checkProperties = true,
             checkCrossFileFieldUsage = false,
+            checkAllKotlinFieldsArePrivate = false,
         )
 
     override fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {
