@@ -108,7 +108,7 @@ internal fun GenerateProjectStructureMetadata.addMetadataSourceSetsToOutput(proj
         val sourceSetOutputs =
             project.multiplatformExtension.kotlinMetadataCompilations()
                 .map {
-                    dependencies[it.defaultSourceSet.name] = it.defaultSourceSet.internal.sharedProjectDataConfiguration()
+                    dependencies[it.defaultSourceSet.name] = it.defaultSourceSet.internal.projectCoordinatesConfiguration()
                     GenerateProjectStructureMetadata.SourceSetMetadataOutput(
                         sourceSetName = it.defaultSourceSet.name,
                         metadataOutput = project.provider { it.output.classesDirs.singleFile }

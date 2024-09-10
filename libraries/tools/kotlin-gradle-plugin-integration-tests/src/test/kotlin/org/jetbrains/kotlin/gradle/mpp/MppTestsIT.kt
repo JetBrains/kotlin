@@ -110,6 +110,10 @@ class MppTestsIT : KGPBaseTest() {
         )
         project("kt-62911-project-isolation-with-p2p-dependencies", gradleVersion, buildOptions = buildOptions) {
             build("assemble")
+            assertFileContains(
+                projectPath.resolve("shared/build/kotlinProjectStructureMetadata/kotlin-project-structure-metadata.json"),
+                """"my-custom-group:my-custom-id""""
+            )
         }
     }
 }
