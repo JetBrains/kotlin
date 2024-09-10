@@ -19,16 +19,25 @@ class KotlinpCompilerTestDataTest(private val file: File) {
         override fun dispose() {}
     }
 
-    @Test
-    fun doTest() {
+    private fun doTest(useK2: Boolean) {
         val tmpdir = KtTestUtil.tmpDirForTest(this::class.java.simpleName, file.nameWithoutExtension)
 
         val disposable = TestDisposable()
         try {
-            compareAllFiles(file, disposable, tmpdir, compareWithTxt = false, readWriteAndCompare = true, useK2 = false)
+            compareAllFiles(file, disposable, tmpdir, compareWithTxt = false, readWriteAndCompare = true, useK2 = useK2)
         } finally {
             Disposer.dispose(disposable)
         }
+    }
+
+    @Test
+    fun doTestK1() {
+        doTest(useK2 = false)
+    }
+
+    @Test
+    fun doTestK2() {
+        doTest(useK2 = true)
     }
 
     companion object {
