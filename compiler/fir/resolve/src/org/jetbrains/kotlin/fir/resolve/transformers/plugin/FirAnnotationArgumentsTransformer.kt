@@ -340,4 +340,8 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
         return script
     }
+
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: ResolutionMode): FirReplSnippet {
+        return replSnippet
+    }
 }

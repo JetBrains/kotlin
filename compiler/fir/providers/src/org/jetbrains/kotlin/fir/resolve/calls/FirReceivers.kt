@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -325,24 +326,23 @@ class ContextReceiverValueForClass(
     }
 }
 
-class ImplicitReceiverValueForScript(
-    boundSymbol: FirScriptSymbol,
+class ImplicitReceiverValueForScriptOrSnippet(
+    boundSymbol: FirBasedSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
     receiverNumber: Int,
-) : ImplicitReceiverValue<FirScriptSymbol>(boundSymbol, type, useSiteSession, scopeSession, mutable, receiverNumber) {
+) : ImplicitReceiverValue<FirBasedSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable, receiverNumber) {
 
     override val isContextReceiver: Boolean
         get() = false
 
-    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirScriptSymbol> =
-        ImplicitReceiverValueForScript(boundSymbol, type, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirBasedSymbol<*>> =
+        ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
 
     @DelicateScopeAPI
-    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScript {
-        return ImplicitReceiverValueForScript(boundSymbol, type, newSession, newScopeSession, mutable, contextReceiverNumber)
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScriptOrSnippet {
+        return ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, newSession, newScopeSession, mutable, contextReceiverNumber)
     }
-
 }

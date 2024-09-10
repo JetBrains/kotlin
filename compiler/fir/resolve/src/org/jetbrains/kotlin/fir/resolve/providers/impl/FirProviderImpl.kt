@@ -201,6 +201,14 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data.file.sourceFile?.path?.let { data.state.scriptByFilePathMap[it] = symbol }
             script.acceptChildren(this, data)
         }
+
+        override fun visitReplSnippet(
+            replSnippet: FirReplSnippet,
+            data: FirRecorderData,
+        ) {
+            replSnippet.body.acceptChildren(this, data)
+            super.visitReplSnippet(replSnippet, data)
+        }
     }
 
     private val state = State()

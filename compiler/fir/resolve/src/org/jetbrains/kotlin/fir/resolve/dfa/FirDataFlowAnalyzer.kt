@@ -305,6 +305,20 @@ abstract class FirDataFlowAnalyzer(
         graph.completePostponedNodes()
         return graph
     }
+
+    // ----------------------------------- REPL Snippet ------------------------------------------
+
+    fun enterReplSnippet(snippet: FirReplSnippet, buildGraph: Boolean) {
+        graphBuilder.enterReplSnippet(snippet, buildGraph)?.mergeIncomingFlow()
+    }
+
+    fun exitReplSnippet(): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitReplSnippet()
+        node?.mergeIncomingFlow()
+        graph?.completePostponedNodes()
+        return graph
+    }
+
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
 
     fun enterValueParameter(valueParameter: FirValueParameter) {

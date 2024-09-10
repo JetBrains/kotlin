@@ -114,6 +114,16 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    // ----------------------------------- REPL Snippets -------------------------------------------
+
+    open fun visitReplSnippetEnterNode(node: ReplSnippetEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitReplSnippetExitNode(node: ReplSnippetExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Property -----------------------------------
 
     open fun visitPropertyInitializerEnterNode(node: PropertyInitializerEnterNode, data: D): R {

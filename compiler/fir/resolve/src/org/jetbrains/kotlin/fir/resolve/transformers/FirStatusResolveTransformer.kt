@@ -326,6 +326,14 @@ abstract class AbstractFirStatusResolveTransformer(
         firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
     }
 
+    override fun transformReplSnippet(
+        replSnippet: FirReplSnippet,
+        data: FirResolvedDeclarationStatus?,
+    ): FirReplSnippet {
+        replSnippet.body.transformChildren(this, data)
+        return super.transformReplSnippet(replSnippet, data)
+    }
+
     open fun forceResolveStatusesOfSupertypes(regularClass: FirClass) {
         for (superTypeRef in regularClass.superTypeRefs) {
             for (classifierSymbol in superTypeToSymbols(superTypeRef)) {
