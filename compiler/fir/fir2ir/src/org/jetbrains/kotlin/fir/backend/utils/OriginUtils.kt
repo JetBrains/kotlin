@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 // ----------------------------------- declaration origins -----------------------------------
 
 fun FirClass.irOrigin(c: Fir2IrComponents): IrDeclarationOrigin = when {
+    // In Kmp scenario, it's possible to find a non-null containing file even for a Java class,
+    // in case it's an actualization of a Kotlin expect class
     isJava -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     c.firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
     else -> when (val origin = origin) {
