@@ -36,9 +36,6 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
-import org.jetbrains.dokka.DokkaVersion
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -47,7 +44,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
-import java.net.URL
 
 /**
  * We have to handle the returned provider lazily, because the publication's artifactId
@@ -667,134 +663,6 @@ fun Project.addBomCheckTask() {
 
     tasks.named("check") {
         dependsOn(checkBomTask)
-    }
-}
-
-fun Project.configureDokkaPublication(
-    shouldLinkGradleApi: Boolean = false,
-    configurePublishingToKotlinlang: Boolean = false,
-    additionalDokkaTaskConfiguration: DokkaTask.() -> Unit = {},
-) {
-
-    val dokkaVersioningPluginVersion = "1.8.10"
-
-    dependencies {
-        implicitDependencies("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
-        implicitDependencies("org.jetbrains.dokka:versioning-plugin:$dokkaVersioningPluginVersion")
-    }
-
-    if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
-
-    plugins.apply("org.jetbrains.dokka")
-    plugins.withId("org.jetbrains.dokka") {
-        val commonSourceSet = sourceSets.getByName(commonSourceSetName)
-
-        GradlePluginVariant.values().forEach { pluginVariant ->
-            val variantSourceSet = sourceSets.getByName(pluginVariant.sourceSetName)
-            val dokkaTaskName = "dokka${variantSourceSet.javadocTaskName.replaceFirstChar { it.uppercase() }}"
-
-            val dokkaTask = if (tasks.names.contains(dokkaTaskName)) {
-                tasks.named<DokkaTask>(dokkaTaskName)
-            } else {
-                tasks.register<DokkaTask>(dokkaTaskName)
-            }
-
-            val javaDocDokkaDependency = project.dependencies.create("org.jetbrains.dokka:javadoc-plugin:${DokkaVersion.version}")
-            dokkaTask.configure {
-                description = "Generates documentation in 'javadoc' format for '${variantSourceSet.javadocTaskName}' variant"
-                notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
-
-                plugins.dependencies.add(javaDocDokkaDependency)
-
-                dokkaSourceSets {
-                    named(commonSourceSet.name) {
-                        suppress.set(false)
-                        jdkVersion.set(8)
-                    }
-
-                    named(variantSourceSet.name) {
-                        dependsOn(commonSourceSet)
-                        suppress.set(false)
-                        jdkVersion.set(8)
-
-                        if (shouldLinkGradleApi) {
-                            externalDocumentationLink {
-                                url.set(URL(pluginVariant.gradleApiJavadocUrl))
-
-                                addWorkaroundForElementList(pluginVariant)
-                            }
-                        }
-                    }
-                }
-
-                additionalDokkaTaskConfiguration()
-            }
-
-            tasks.named<Jar>(variantSourceSet.javadocJarTaskName) {
-                from(dokkaTask.flatMap { it.outputDirectory })
-            }
-        }
-
-        if (configurePublishingToKotlinlang) {
-            val latestVariant = GradlePluginVariant.values().last()
-            val olderVersionsDir = layout.buildDirectory.dir("dokka/kotlinlangDocumentationOld")
-
-            project.dependencies {
-                // Version is required due to https://github.com/Kotlin/dokka/issues/2812
-                "dokkaHtmlPlugin"("org.jetbrains.dokka:versioning-plugin:$dokkaVersioningPluginVersion")
-            }
-
-            tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
-                description = "Generates documentation reference for Kotlinlang"
-                notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
-
-                dokkaSourceSets {
-                    pluginsMapConfiguration.put(
-                        "org.jetbrains.dokka.base.DokkaBase",
-                        "{ \"templatesDir\": \"${layout.projectDirectory.dir("dokka-template")}\" }"
-                    )
-                    pluginsMapConfiguration.put(
-                        "org.jetbrains.dokka.versioning.VersioningPlugin",
-                        olderVersionsDir.map { olderVersionsDir ->
-                            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile}\" }"
-                        }
-                    )
-
-                    named(commonSourceSet.name) {
-                        suppress.set(false)
-                        jdkVersion.set(8)
-                    }
-
-                    named(latestVariant.sourceSetName) {
-                        dependsOn(commonSourceSet)
-                        suppress.set(false)
-                        jdkVersion.set(8)
-
-                        if (shouldLinkGradleApi) {
-                            externalDocumentationLink {
-                                url.set(URL(latestVariant.gradleApiJavadocUrl))
-
-                                addWorkaroundForElementList(latestVariant)
-                            }
-                        }
-                    }
-
-                    additionalDokkaTaskConfiguration()
-                }
-            }
-        }
-    }
-}
-
-// Workaround for https://github.com/Kotlin/dokka/issues/2097
-// Gradle 7.6 javadoc does not have published 'package-list' file
-private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
-    if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
-        pluginVariant == GradlePluginVariant.GRADLE_80 ||
-        pluginVariant == GradlePluginVariant.GRADLE_81 ||
-        pluginVariant == GradlePluginVariant.GRADLE_82
-    ) {
-        packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
 }
 

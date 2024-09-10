@@ -1,16 +1,18 @@
+import gradle.GradlePluginVariant
+
 plugins {
     id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("gradle-plugin-api-reference")
 }
 
-configureDokkaPublication(
-    shouldLinkGradleApi = true,
-    configurePublishingToKotlinlang = true,
-) {
-    dokkaSourceSets.configureEach {
+pluginApiReference {
+    enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    failOnWarning = true
+
+    additionalDokkaConfiguration {
         reportUndocumented.set(true)
-        failOnWarning.set(true)
 
         perPackageOption {
             matchingRegex.set("org\\.jetbrains\\.kotlin\\.gradle\\.plugin\\.mpp.*")

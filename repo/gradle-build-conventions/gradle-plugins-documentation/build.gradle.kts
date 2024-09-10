@@ -23,6 +23,8 @@ repositories {
 }
 
 dependencies {
+    api(project(":gradle-plugins-common"))
+
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     implementation(libs.dokka.gradlePlugin)
 }
