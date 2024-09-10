@@ -1729,7 +1729,10 @@ internal class CodeGeneratorVisitor(
         context.log{"evaluateSetField               : ${ir2string(value)}"}
         if (value.origin == IrStatementOrigin.INITIALIZE_FIELD
                 && isZeroConstValue(value.value)) {
-            check(value.receiver is IrGetValue) { "Only IrGetValue expected for receiver of a field initializer" }
+            var receiver = value.receiver
+            while (receiver is IrTypeOperatorCall && receiver.operator == IrTypeOperator.IMPLICIT_CAST)
+                receiver = receiver.argument
+            check(receiver is IrGetValue) { "Only IrGetValue expected for receiver of a field initializer" }
             // All newly allocated objects are zeroed out, so it is redundant to initialize their
             // fields with the default values. This is also aligned with the Kotlin/JVM behavior.
             // See https://youtrack.jetbrains.com/issue/KT-39100 for details.

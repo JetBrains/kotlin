@@ -899,6 +899,7 @@ internal abstract class FunctionGenerationContext(
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
         return if (lifetime == Lifetime.STACK) {
+            require(LLVMIsConstant(count) != 0) { "Expected a constant for the size of a stack-allocated array" }
             stackLocalsManager.allocArray(irClass, count)
         } else {
             call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)

@@ -80,6 +80,13 @@ public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 public annotation class EagerInitialization
 
 /**
+ * Forbids inlining of this function/property with the K/N inliner. It's still could be inlined by the LLVM inliner though.
+ */
+@ExperimentalNativeApi
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+public annotation class NoInline
+
+/**
  * Makes top level function available from C/C++ code with the given name.
  *
  * [externName] controls the name of top level function, [shortName] controls the short name.
