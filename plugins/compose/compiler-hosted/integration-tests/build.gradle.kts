@@ -99,6 +99,7 @@ tasks.withType(Test::class.java).configureEach {
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
     // ensure that debugger tests don't launch a separate window
     this.systemProperty("java.awt.headless", "true")
+    this.environment("CI", kotlinBuildProperties.isTeamcityBuild)
     // runtime tests are executed in this module with compiler built from source (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
     this.inputs.dir(File(rootDir, "plugins/compose/compiler-hosted/runtime-tests/src")).withPathSensitivity(PathSensitivity.RELATIVE)
 }
