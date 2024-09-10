@@ -283,10 +283,10 @@ open annotation class kotlin/SinceKotlin : kotlin/Annotation { // kotlin/SinceKo
 }
 
 open annotation class kotlin/SubclassOptInRequired : kotlin/Annotation { // kotlin/SubclassOptInRequired|null[0]
-    constructor <init>(kotlin.reflect/KClass<out kotlin/Annotation>) // kotlin/SubclassOptInRequired.<init>|<init>(kotlin.reflect.KClass<out|kotlin.Annotation>){}[0]
+    constructor <init>(kotlin/Array<out kotlin.reflect/KClass<out kotlin/Annotation>>...) // kotlin/SubclassOptInRequired.<init>|<init>(kotlin.Array<out|kotlin.reflect.KClass<out|kotlin.Annotation>>...){}[0]
 
     final val markerClass // kotlin/SubclassOptInRequired.markerClass|{}markerClass[0]
-        final fun <get-markerClass>(): kotlin.reflect/KClass<out kotlin/Annotation> // kotlin/SubclassOptInRequired.markerClass.<get-markerClass>|<get-markerClass>(){}[0]
+        final fun <get-markerClass>(): kotlin/Array<out kotlin.reflect/KClass<out kotlin/Annotation>> // kotlin/SubclassOptInRequired.markerClass.<get-markerClass>|<get-markerClass>(){}[0]
 }
 
 open annotation class kotlin/Suppress : kotlin/Annotation { // kotlin/Suppress|null[0]
