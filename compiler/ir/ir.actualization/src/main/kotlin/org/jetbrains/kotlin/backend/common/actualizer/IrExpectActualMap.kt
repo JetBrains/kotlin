@@ -15,11 +15,17 @@ import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class IrExpectActualMap() {
-    private val _expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
     val expectToActual: Map<IrSymbol, IrSymbol> get() = _expectToActual
+    private val _expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
 
-    private val _actualToDirectExpect: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
+    /**
+     * Direct means "not through typealias".
+     * ClassId of expect and actual symbols are the same.
+     * For every actual, it's possible to have multiple expects (because of `actual typealias`).
+     * But only a single "direct" expect is possible.
+     */
     val actualToDirectExpect: Map<IrSymbol, IrSymbol> get() = _actualToDirectExpect
+    private val _actualToDirectExpect: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
 
     val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol> = mutableMapOf()
 
