@@ -19,8 +19,6 @@ public actual class AtomicInt(value: Int) {
 
     public actual fun compareAndSet(expected: Int, newValue: Int): Boolean
 
-    public fun mycompareAndExchange(expected: Int, newValue: Int): Int
-
     public actual fun fetchAndAdd(delta: Int): Int
 
     public actual fun addAndFetch(delta: Int): Int

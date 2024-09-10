@@ -20,8 +20,6 @@ public actual class AtomicInt public actual constructor(value: Int) {
 
     public actual fun compareAndSet(expected: Int, newValue: Int): Boolean = TODO()
 
-    public fun mycompareAndExchange(expected: Int, newValue: Int): Int = TODO()
-
     public actual fun fetchAndAdd(delta: Int): Int = TODO()
 
     public actual fun addAndFetch(delta: Int): Int = TODO()
@@ -42,6 +40,14 @@ public fun AtomicInt.asJavaAtomic(): AtomicInteger = this as AtomicInteger
 
 @Suppress("UNCHECKED_CAST")
 public fun AtomicInteger.asKotlinAtomic(): AtomicInt = this as AtomicInt
+
+public fun AtomicInt.compareAndExchange(expected: Int, newValue: Int): Int {
+    while (true) {
+        if (compareAndSet(expected, newValue)) return expected
+        val currentValue = load()
+        if (currentValue != expected) return currentValue
+    }
+}
 
 public actual class AtomicLong public actual constructor(value: Long) {
 
