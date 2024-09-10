@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.cpp
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.process.ExecOperations
@@ -21,6 +27,7 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import javax.inject.Inject
 
 private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
@@ -46,29 +53,42 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
 /**
  * Run `llvm-link` on [inputFiles] with extra [arguments] and produce [outputFile]
  */
-abstract class LlvmLink : DefaultTask() {
+@CacheableTask
+open class LlvmLink @Inject constructor(
+        objectFactory: ObjectFactory,
+        private val workerExecutor: WorkerExecutor,
+) : DefaultTask() {
     /**
      * Bitcode files to link together.
      */
     @get:InputFiles
-    abstract val inputFiles: ConfigurableFileCollection
+    @get:PathSensitive(PathSensitivity.NONE)
+    val inputFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
     /**
      * Output file.
      */
     @get:OutputFile
-    abstract val outputFile: RegularFileProperty
+    val outputFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Extra arguments for `llvm-link`.
      */
     @get:Input
-    abstract val arguments: ListProperty<String>
+    val arguments: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
-    @get:Inject
-    protected abstract val workerExecutor: WorkerExecutor
-
+    // Marked as input via [konanProperties], [konanDataDir].
     private val platformManager = project.extensions.getByType<PlatformManager>()
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val konanProperties = project.nativeProtoDistribution.konanProperties
+
+    @get:Input
+    @get:Optional
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val konanDataDir = project.providers.gradleProperty("konan.data.dir")
 
     @TaskAction
     fun link() {

@@ -283,19 +283,17 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         /**
          * Links bitcode files together.
          */
-        val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
-            configure {
-                notCompatibleWithConfigurationCache("When GoogleTest are not downloaded llvm-link is missing arguments")
-                this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
-                this.inputFiles.from(compileTask)
-                this.outputFile.set(this@SourceSet.outputFile)
-                this.arguments.set(module.linkerArgs)
-                val specs = this@SourceSet.onlyIf
-                val target = target
-                onlyIf {
-                    specs.get().all { it.isSatisfiedBy(target) }
-                }
+        val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}") {
+            this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
+            this.inputFiles.from(compileTask)
+            this.outputFile.set(this@SourceSet.outputFile)
+            this.arguments.set(module.linkerArgs)
+            val specs = this@SourceSet.onlyIf
+            val target = target
+            onlyIf {
+                specs.get().all { it.isSatisfiedBy(target) }
             }
+        }.apply {
             project.compileBitcodeElements(this@SourceSet.name).targetVariant(_target).artifact(this)
             project.moduleCompileBitcodeElements(module.name, this@SourceSet.name).targetVariant(_target).artifact(this)
         }
