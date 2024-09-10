@@ -1370,10 +1370,10 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 }
 
 @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.1)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalSubclassOptIn|)))) public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
-    public final val markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|
-        public get(): R|kotlin/reflect/KClass<out kotlin/Annotation>|
+    public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
+        public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 
-    public constructor(markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|): R|kotlin/SubclassOptInRequired|
+    public constructor(vararg markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|): R|kotlin/SubclassOptInRequired|
 
 }
 

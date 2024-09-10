@@ -809,9 +809,9 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "2.1") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalSubclassOptIn::class}) public final annotation class SubclassOptInRequired : kotlin.Annotation {
-    /*primary*/ public constructor SubclassOptInRequired(/*0*/ markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)
-    public final val markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
-        public final fun `<get-markerClass>`(): kotlin.reflect.KClass<out kotlin.Annotation>
+    /*primary*/ public constructor SubclassOptInRequired(/*0*/ vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
+    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+        public final fun `<get-markerClass>`(): kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Suppress : kotlin.Annotation {
