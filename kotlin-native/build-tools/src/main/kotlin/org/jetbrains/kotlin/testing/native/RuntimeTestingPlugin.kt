@@ -65,6 +65,10 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                                     googleTestRoot.dir("googletest/include"),
                                     googleTestRoot.dir("googletest")
                             )
+                            // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                            compileTask.configure {
+                                inputFiles.setFrom(googleTestRoot.dir("googletest/src/gtest-all.cc"))
+                            }
                         }
                     }
                     compilerArgs.set(listOf("-std=c++17", "-O2"))
@@ -82,6 +86,10 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                                     googleTestRoot.dir("googlemock/include"),
                                     googleTestRoot.dir("googletest/include"),
                             )
+                            // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                            compileTask.configure {
+                                inputFiles.setFrom(googleTestRoot.dir("googlemock/src/gmock-all.cc"))
+                            }
                         }
                     }
                     compilerArgs.set(listOf("-std=c++17", "-O2"))
