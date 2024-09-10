@@ -604,10 +604,6 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.llvmLinkFirstStageOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName-firstStage.bc"))
                 this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))
                 this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
-                val allModules = listOf(testsGroup.testLauncherModule.get()) + testsGroup.testSupportModules.get() + testsGroup.testedModules.get()
-                // TODO: Superwrong. Module should carry dependencies to system libraries that are passed to the linker.
-                val mimallocEnabled = allModules.contains("mimalloc")
-                this.mimallocEnabled.set(mimallocEnabled)
                 val mainFileConfiguration = testLauncherConfiguration.incoming.artifactView {
                     attributes {
                         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
