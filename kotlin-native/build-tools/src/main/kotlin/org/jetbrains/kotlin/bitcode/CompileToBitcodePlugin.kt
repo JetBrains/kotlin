@@ -227,41 +227,47 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val execClang = ExecClang.create(project.objects, platformManager)
         private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
+        private val allCompilerArgs = module.compilerArgs.map {
+            it + when (sanitizer) {
+                null -> emptyList()
+                SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
+                SanitizerKind.THREAD -> listOf("-fsanitize=thread")
+            }
+        }
+
         /**
          * Compiles source files into bitcode files.
          */
-        val compileTask = project.tasks.register<ClangFrontend>("clangFrontend${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
-            configure {
-                this.description = "Compiles '${module.name}' (${this@SourceSet.name} sources) to bitcode for $_target"
-                this.outputDirectory.set(this@SourceSet.outputDirectory)
-                this.targetName.set(target.name)
-                this.compiler.set(module.compiler)
-                this.arguments.set(module.compilerArgs)
-                this.arguments.addAll(when (sanitizer) {
-                    null -> emptyList()
-                    SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
-                    SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-                })
-                this.headersDirs.from(this@SourceSet.headersDirs)
-                this.inputFiles.from(this@SourceSet.inputFiles)
-                this.workingDirectory.set(module.compilerWorkingDirectory)
-                dependsOn(nativeDependencies.llvmDependency)
-                dependsOn(nativeDependencies.targetDependency(_target))
-                dependsOn(this@SourceSet.dependencies)
-                val specs = this@SourceSet.onlyIf
-                val target = target
-                onlyIf {
-                    specs.get().all { it.isSatisfiedBy(target) }
-                }
+        val compileTask = project.tasks.register<ClangFrontend>("clangFrontend${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}") {
+            this.description = "Compiles '${module.name}' (${this@SourceSet.name} sources) to bitcode for $_target"
+            this.outputDirectory.set(this@SourceSet.outputDirectory)
+            this.targetName.set(target.name)
+            this.compiler.set(module.compiler)
+            this.arguments.set(allCompilerArgs)
+            this.headersDirs.from(this@SourceSet.headersDirs)
+            this.inputFiles.from(this@SourceSet.inputFiles)
+            this.workingDirectory.set(module.compilerWorkingDirectory)
+            dependsOn(nativeDependencies.llvmDependency)
+            dependsOn(nativeDependencies.targetDependency(_target))
+            dependsOn(this@SourceSet.dependencies)
+            val specs = this@SourceSet.onlyIf
+            val target = target
+            onlyIf {
+                specs.get().all { it.isSatisfiedBy(target) }
             }
+        }
+
+        // Add the corresponding entry to the compilation database.
+        init {
             compilationDatabase.target(_target) {
                 entry {
-                    val compileTask: TaskProvider<ClangFrontend> = this@apply
-                    directory.set(compileTask.flatMap { it.workingDirectory })
-                    files.setFrom(compileTask.map { it.inputFiles })
-                    arguments.set(compileTask.map { listOf(execClang.resolveExecutable(it.compiler.get())) + it.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name) })
-                    // Only the location of output file matters, compdb does not depend on the compilation result.
-                    output.set(compileTask.flatMap { it.outputDirectory.locationOnly.map { it.asFile.absolutePath }})
+                    directory.set(module.compilerWorkingDirectory)
+                    files.setFrom(this@SourceSet.inputFiles)
+                    arguments.set(listOf(execClang.resolveExecutable(module.compiler.get())))
+                    arguments.addAll(ClangFrontend.defaultCompilerFlags(this@SourceSet.headersDirs))
+                    arguments.addAll(allCompilerArgs)
+                    arguments.addAll(execClang.clangArgsForCppRuntime(target.name))
+                    output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
                     // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
