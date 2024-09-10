@@ -68,10 +68,10 @@ KBoolean g_forceCheckedShutdown = false;
 constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
-
-PERFORMANCE_INLINE inline bool isValidRuntime() {
-  return ::runtimeState != kInvalidRuntime;
-}
+//
+//PERFORMANCE_INLINE inline bool isValidRuntime() {
+//  return ::runtimeState != kInvalidRuntime;
+//}
 
 std::atomic<int> aliveRuntimesCount = 0;
 
@@ -83,15 +83,16 @@ enum GlobalRuntimeStatus {
 
 std::atomic<GlobalRuntimeStatus> globalRuntimeStatus = kGlobalRuntimeUninitialized;
 
-void Kotlin_deinitRuntimeCallback(void* argument);
+//void Kotlin_deinitRuntimeCallback(void* argument);
 
-NO_INLINE RuntimeState* initRuntime() {
+NO_INLINE RuntimeState* initRuntime(RuntimeState* state) {
   SetKonanTerminateHandler();
   initObjectPool();
-  RuntimeState* result = new RuntimeState();
-  if (!result) return kInvalidRuntime;
-  RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
-  ::runtimeState = result;
+//  RuntimeState* result = new RuntimeState();
+//  if (!result) return kInvalidRuntime;
+//  RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
+//  ::runtimeState = result;
+    RuntimeState* result = state;
 
   // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
   // runtime shutdown, which does it the other way around.
@@ -115,18 +116,19 @@ NO_INLINE RuntimeState* initRuntime() {
   result->status = RuntimeStatus::kRunning;
 
   // Register runtime deinit function at thread cleanup.
-  konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
+  //konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
 
   return result;
 }
 
 void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
+  RuntimeAssert(mm::IsCurrentThreadRegistered(), "");
   AssertThreadState(state->memoryState, kotlin::ThreadState::kRunnable);
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
   // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
-  ::runtimeState = state;
+  //::runtimeState = state;
   --aliveRuntimesCount;
   ClearTLS(state->memoryState);
   if (destroyRuntime)
@@ -140,17 +142,34 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
   DeinitMemory(state->memoryState, destroyRuntime);
+  // TODO maybe clear currentThreadDataNode_?
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
-  ::runtimeState = kInvalidRuntime;
+  //::runtimeState = kInvalidRuntime;
 }
 
-void Kotlin_deinitRuntimeCallback(void* argument) {
-  auto* state = reinterpret_cast<RuntimeState*>(argument);
-  // This callback may be called from any state, make sure it runs in the runnable state.
-  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
-  deinitRuntime(state, false);
-}
+class RuntimeInitializer {
+public:
+    RuntimeInitializer() {
+        ::runtimeState = &state_;
+        initRuntime(&state_);
+    }
+
+    ~RuntimeInitializer() {
+        deinitRuntime(&state_, false);
+        ::runtimeState = kInvalidRuntime;
+    }
+
+private:
+    RuntimeState state_;
+};
+
+//void Kotlin_deinitRuntimeCallback(void* argument) {
+//  auto* state = reinterpret_cast<RuntimeState*>(argument);
+//  // This callback may be called from any state, make sure it runs in the runnable state.
+//  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
+//  deinitRuntime(state, false);
+//}
 
 }  // namespace
 
@@ -184,15 +203,17 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
 }
 
 PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
-  if (!isValidRuntime()) {
-    initRuntime();
-  }
+    static thread_local RuntimeInitializer initializer{};
+//  if (!isValidRuntime()) {
+//    initRuntime();
+//  }
 }
 
 void deinitRuntimeIfNeeded() {
-  if (isValidRuntime()) {
-    deinitRuntime(::runtimeState, false);
-  }
+    // TODO
+//  if (isValidRuntime()) {
+//    deinitRuntime(::runtimeState, false);
+//  }
 }
 
 // TODO: Consider exporting it to interop API.
