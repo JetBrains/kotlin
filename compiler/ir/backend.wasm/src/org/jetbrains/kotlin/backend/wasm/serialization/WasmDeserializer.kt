@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.ReferencableElements
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
@@ -61,7 +62,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val type = deserializeSymbol(::deserializeFunctionType)
             withTag { tag ->
                 when (tag) {
-                    0 -> {
+                    FunctionTags.DEFINED -> {
                         val locals = deserializeList(::deserializeLocal)
                         val instructions = deserializeList(::deserializeInstr)
                         WasmFunction.Defined(
@@ -71,7 +72,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                             instructions
                         )
                     }
-                    1 -> WasmFunction.Imported(
+                    FunctionTags.IMPORTED -> WasmFunction.Imported(
                         name,
                         type,
                         deserializeImportDescriptor()
@@ -86,7 +87,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val type = deserializeType()
             val isMutable = flags.consume()
             val init = deserializeList(::deserializeInstr)
-            val importPair = if (flags.consume()) null else deserializeImportDescriptor()
+            val importPair = runIf(!flags.consume(), ::deserializeImportDescriptor)
             WasmGlobal(name, type, isMutable, init, importPair)
         }
 
@@ -100,9 +101,9 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeTypeDeclaration(): WasmTypeDeclaration =
         withTag { tag ->
             when (tag) {
-                0 -> deserializeFunctionType()
-                1 -> deserializeStructDeclaration()
-                2 -> deserializeArrayDeclaration()
+                TypeDeclarationTags.FUNCTION -> deserializeFunctionType()
+                TypeDeclarationTags.STRUCT -> deserializeStructDeclaration()
+                TypeDeclarationTags.ARRAY -> deserializeArrayDeclaration()
                 else -> tagError(tag)
             }
         }
@@ -159,23 +160,41 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeType() =
         withTag { tag ->
             when (tag) {
-                0 -> WasmRefType(deserializeHeapType())
-                1 -> WasmRefNullType(deserializeHeapType())
-                else -> WASM_TYPE_OBJECTS.getOrElse(tag - 2) { tagError(tag) }
+                TypeTags.REF -> WasmRefType(deserializeHeapType())
+                TypeTags.REF_NULL -> WasmRefNullType(deserializeHeapType())
+                TypeTags.ANYREF -> WasmAnyRef
+                TypeTags.EQREF -> WasmEqRef
+                TypeTags.EXTERN_REF_TYPE -> WasmExnRefType
+                TypeTags.EXTERN_REF -> WasmExternRef
+                TypeTags.F32 -> WasmF32
+                TypeTags.F64 -> WasmF64
+                TypeTags.FUNC_REF -> WasmFuncRef
+                TypeTags.I16 -> WasmI16
+                TypeTags.I31_REF -> WasmI31Ref
+                TypeTags.I32 -> WasmI32
+                TypeTags.I64 -> WasmI64
+                TypeTags.I8 -> WasmI8
+                TypeTags.NULL_EXTERN_REF_TYPE -> WasmNullExnRefType
+                TypeTags.REF_NULL_EXTERN_REF_TYPE -> WasmRefNullExternrefType
+                TypeTags.REF_NULL_REF_TYPE -> WasmRefNullrefType
+                TypeTags.STRUCT_REF -> WasmStructRef
+                TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
+                TypeTags.V12 -> WasmV128
+                else -> tagError(tag)
             }
         }
 
     private fun deserializeHeapType() =
         withTag { tag ->
             when (tag) {
-                0 -> WasmHeapType.Simple.Any
-                1 -> WasmHeapType.Simple.Eq
-                2 -> WasmHeapType.Simple.Extern
-                3 -> WasmHeapType.Simple.Func
-                4 -> WasmHeapType.Simple.NoExtern
-                5 -> WasmHeapType.Simple.None
-                6 -> WasmHeapType.Simple.Struct
-                7 -> WasmHeapType.Type(deserializeSymbol(::deserializeTypeDeclaration))
+                HeapTypeTags.ANY -> WasmHeapType.Simple.Any
+                HeapTypeTags.EQ -> WasmHeapType.Simple.Eq
+                HeapTypeTags.EXTERN -> WasmHeapType.Simple.Extern
+                HeapTypeTags.FUNC -> WasmHeapType.Simple.Func
+                HeapTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
+                HeapTypeTags.NONE -> WasmHeapType.Simple.None
+                HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct
+                HeapTypeTags.HEAP_TYPE -> WasmHeapType.Type(deserializeSymbol(::deserializeTypeDeclaration))
                 else -> tagError(tag)
             }
         }
@@ -211,8 +230,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             }
             val immediates = deserializeList(::deserializeImmediate)
             when (tag) {
-                0 -> WasmInstrWithLocation(op, immediates, deserializeSourceLocation())
-                1 -> WasmInstrWithoutLocation(op, immediates)
+                InstructionTags.WITH_LOCATION -> WasmInstrWithLocation(op, immediates, deserializeSourceLocation())
+                InstructionTags.WITHOUT_LOCATION -> WasmInstrWithoutLocation(op, immediates)
                 else -> tagError(tag)
             }
         }
@@ -221,45 +240,47 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeImmediate(): WasmImmediate =
         withTag { tag ->
             when (tag) {
-                0  -> WasmImmediate.BlockType.Function(deserializeFunctionType())
-                1  -> WasmImmediate.BlockType.Value(deserializeType())
-                2  -> deserializeImmediateCatch()
-                3  -> WasmImmediate.ConstF32(b.readUInt32())
-                4  -> WasmImmediate.ConstF64(b.readUInt64())
-                5  -> WasmImmediate.ConstI32(b.readUInt32().toInt())
-                6  -> WasmImmediate.ConstI64(b.readUInt64().toLong())
-                7  -> WasmImmediate.ConstString(deserializeString())
-                8  -> WasmImmediate.ConstU8(b.readUByte())
-                9  -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
-                10 -> WasmImmediate.ElemIdx(deserializeElement())
-                11 -> WasmImmediate.FuncIdx(deserializeSymbol(::deserializeFunction))
-                12 -> WasmImmediate.GcType(deserializeSymbol(::deserializeTypeDeclaration))
-                13 -> WasmImmediate.GlobalIdx(deserializeSymbol(::deserializeGlobal))
-                14 -> WasmImmediate.HeapType(deserializeHeapType())
-                15 -> WasmImmediate.LabelIdx(deserializeInt())
-                16 -> WasmImmediate.LabelIdxVector(deserializeList(::deserializeInt))
-                17 -> WasmImmediate.LocalIdx(deserializeSymbol(::deserializeLocal))
-                18 -> { val align = b.readUInt32(); val offset = b.readUInt32(); WasmImmediate.MemArg(align, offset) }
-                19 -> WasmImmediate.MemoryIdx(deserializeInt())
-                20 -> WasmImmediate.StructFieldIdx(deserializeSymbol(::deserializeInt))
-                21 -> WasmImmediate.SymbolI32(deserializeSymbol(::deserializeInt))
-                22 -> WasmImmediate.TableIdx(deserializeSymbol(::deserializeInt))
-                23 -> WasmImmediate.TagIdx(deserializeSymbol(::deserializeInt))
-                24 -> WasmImmediate.TypeIdx(deserializeSymbol(::deserializeTypeDeclaration))
-                25 -> WasmImmediate.ValTypeVector(deserializeList(::deserializeType))
+                ImmediateTags.BLOCK_TYPE_FUNCTION -> WasmImmediate.BlockType.Function(deserializeFunctionType())
+                ImmediateTags.BLOCK_TYPE_VALUE -> WasmImmediate.BlockType.Value(deserializeType())
+                ImmediateTags.CATCH -> deserializeImmediateCatch()
+                ImmediateTags.CONST_F32 -> WasmImmediate.ConstF32(b.readUInt32())
+                ImmediateTags.CONST_F64 -> WasmImmediate.ConstF64(b.readUInt64())
+                ImmediateTags.CONST_I32 -> WasmImmediate.ConstI32(b.readUInt32().toInt())
+                ImmediateTags.CONST_I64 -> WasmImmediate.ConstI64(b.readUInt64().toLong())
+                ImmediateTags.CONST_STRING -> WasmImmediate.ConstString(deserializeString())
+                ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
+                ImmediateTags.DATA_INDEX -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
+                ImmediateTags.ELEMENT_INDEX -> WasmImmediate.ElemIdx(deserializeElement())
+                ImmediateTags.FUNC_INDEX -> WasmImmediate.FuncIdx(deserializeSymbol(::deserializeFunction))
+                ImmediateTags.GC_TYPE -> WasmImmediate.GcType(deserializeSymbol(::deserializeTypeDeclaration))
+                ImmediateTags.GLOBAL_INDEX -> WasmImmediate.GlobalIdx(deserializeSymbol(::deserializeGlobal))
+                ImmediateTags.HEAP_TYPE -> WasmImmediate.HeapType(deserializeHeapType())
+                ImmediateTags.LABEL_INDEX -> WasmImmediate.LabelIdx(deserializeInt())
+                ImmediateTags.LABEL_INDEX_VECTOR -> WasmImmediate.LabelIdxVector(deserializeList(::deserializeInt))
+                ImmediateTags.LOCAL_INDEX -> WasmImmediate.LocalIdx(deserializeSymbol(::deserializeLocal))
+                ImmediateTags.MEM_ARG -> { val align = b.readUInt32(); val offset = b.readUInt32(); WasmImmediate.MemArg(align, offset) }
+                ImmediateTags.MEMORY_INDEX -> WasmImmediate.MemoryIdx(deserializeInt())
+                ImmediateTags.STRUCT_FIELD_INDEX -> WasmImmediate.StructFieldIdx(deserializeSymbol(::deserializeInt))
+                ImmediateTags.SYMBOL_I32 -> WasmImmediate.SymbolI32(deserializeSymbol(::deserializeInt))
+                ImmediateTags.TABLE_INDEX -> WasmImmediate.TableIdx(deserializeSymbol(::deserializeInt))
+                ImmediateTags.TAG_INDEX -> WasmImmediate.TagIdx(deserializeSymbol(::deserializeInt))
+                ImmediateTags.TYPE_INDEX -> WasmImmediate.TypeIdx(deserializeSymbol(::deserializeTypeDeclaration))
+                ImmediateTags.VALUE_TYPE_VECTOR -> WasmImmediate.ValTypeVector(deserializeList(::deserializeType))
                 // This is the special case of BlockType.Value, which accepts a nullable WasmType. If is null, MSB is set to 1.
-                129 -> WasmImmediate.BlockType.Value(null)
+                ImmediateTags.BLOCK_TYPE_NULL_VALUE -> WasmImmediate.BlockType.Value(null)
                 else -> tagError(tag)
             }
         }
 
     private fun deserializeImmediateCatch(): WasmImmediate.Catch {
-        val type = when (val tag = b.readByte().toInt()) {
-            0 -> WasmImmediate.Catch.CatchType.CATCH
-            1 -> WasmImmediate.Catch.CatchType.CATCH_REF
-            2 -> WasmImmediate.Catch.CatchType.CATCH_ALL
-            3 -> WasmImmediate.Catch.CatchType.CATCH_ALL_REF
-            else -> tagError(tag)
+        val type = withTag { tag ->
+            when (tag) {
+                ImmediateCatchTags.CATCH -> WasmImmediate.Catch.CatchType.CATCH
+                ImmediateCatchTags.CATCH_REF -> WasmImmediate.Catch.CatchType.CATCH_REF
+                ImmediateCatchTags.CATCH_ALL -> WasmImmediate.Catch.CatchType.CATCH_ALL
+                ImmediateCatchTags.CATCH_ALL_REF -> WasmImmediate.Catch.CatchType.CATCH_ALL_REF
+                else -> tagError(tag)
+            }
         }
         val immediates = deserializeList(::deserializeImmediate)
         return WasmImmediate.Catch(type, immediates)
@@ -277,8 +298,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeTableValue(): WasmTable.Value =
         withTag { tag ->
             when (tag) {
-                0 -> WasmTable.Value.Expression(deserializeList(::deserializeInstr))
-                1 -> WasmTable.Value.Function(deserializeSymbol(::deserializeFunction))
+                TableValueTags.EXPRESSION -> WasmTable.Value.Expression(deserializeList(::deserializeInstr))
+                TableValueTags.FUNCTION -> WasmTable.Value.Function(deserializeSymbol(::deserializeFunction))
                 else -> tagError(tag)
             }
         }
@@ -294,13 +315,13 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeElementMode(): WasmElement.Mode =
         withTag { tag ->
             when (tag) {
-                0 -> {
+                ElementModeTags.ACTIVE -> {
                     val table = deserializeTable()
                     val offset = deserializeList(::deserializeInstr)
                     WasmElement.Mode.Active(table, offset)
                 }
-                1 -> WasmElement.Mode.Declarative
-                2 -> WasmElement.Mode.Passive
+                ElementModeTags.DECLARATIVE -> WasmElement.Mode.Declarative
+                ElementModeTags.PASSIVE -> WasmElement.Mode.Passive
                 else -> tagError(tag)
             }
         }
@@ -310,11 +331,11 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         val name = deserializeString()
         return withTag { tag ->
             when (tag) {
-                0 -> WasmExport.Function(name, deserializeFunction())
-                1 -> WasmExport.Table(name, deserializeTable())
-                2 -> WasmExport.Memory(name, deserializeMemory())
-                3 -> WasmExport.Global(name, deserializeGlobal())
-                4 -> WasmExport.Tag(name, deserializeTag())
+                ExportTags.FUNCTION -> WasmExport.Function(name, deserializeFunction())
+                ExportTags.TABLE -> WasmExport.Table(name, deserializeTable())
+                ExportTags.MEMORY -> WasmExport.Memory(name, deserializeMemory())
+                ExportTags.GLOBAL -> WasmExport.Global(name, deserializeGlobal())
+                ExportTags.TAG -> WasmExport.Tag(name, deserializeTag())
                 else -> tagError(tag)
             }
         }
@@ -371,7 +392,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeSourceLocation() =
         withTag { tag ->
             when (tag) {
-                0 -> SourceLocation.NoLocation
+                LocationTags.NO_LOCATION -> SourceLocation.NoLocation
                 else -> {
                     if (skipSourceLocations) {
                         skipString()
@@ -385,8 +406,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                         val line = deserializeInt()
                         val column = deserializeInt()
                         when (tag) {
-                            1 -> SourceLocation.Location(module, file, line, column)
-                            2 -> SourceLocation.IgnoredLocation(module, file, line, column)
+                            LocationTags.LOCATION -> SourceLocation.Location(module, file, line, column)
+                            LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation(module, file, line, column)
                             else -> tagError(tag)
                         }
                     }
@@ -396,8 +417,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private inline fun <T> deserializeNullable(crossinline deserializeFunc: () -> T): T? = withTag {
         when (it) {
-            0 -> null
-            1 -> deserializeFunc()
+            NullableTags.NULL -> null
+            NullableTags.NOT_NULL -> deserializeFunc()
             else -> tagError(it)
         }
     }
@@ -405,15 +426,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeIdSignature(): IdSignature =
         withTag { tag ->
             when (tag) {
-                0 -> deserializeAccessorSignature()
-                1 -> deserializeCommonSignature()
-                2 -> deserializeCompositeSignature()
-                3 -> deserializeFileLocalSignature()
-                4 -> deserializeLocalSignature()
-                5 -> deserializeLoweredDeclarationSignature()
-                6 -> deserializeScopeLocalDeclaration()
-                7 -> deserializeSpecialFakeOverrideSignature()
-                8 -> deserializeString().let { IdSignature.FileSignature(it, FqName.ROOT, it) }
+                IdSignatureTags.ACCESSOR -> deserializeAccessorSignature()
+                IdSignatureTags.COMMON -> deserializeCommonSignature()
+                IdSignatureTags.COMPOSITE -> deserializeCompositeSignature()
+                IdSignatureTags.FILE_LOCAL -> deserializeFileLocalSignature()
+                IdSignatureTags.LOCAL -> deserializeLocalSignature()
+                IdSignatureTags.LOWERED_DECLARATION -> deserializeLoweredDeclarationSignature()
+                IdSignatureTags.SCOPE_LOCAL_DECLARATION -> deserializeScopeLocalDeclaration()
+                IdSignatureTags.SPECIAL_FAKE_OVERRIDE -> deserializeSpecialFakeOverrideSignature()
+                IdSignatureTags.FILE -> deserializeString().let { IdSignature.FileSignature(it, FqName.ROOT, it) }
                 else -> tagError(tag)
             }
         }
@@ -479,12 +500,12 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeConstantDataElement(): ConstantDataElement =
         withTag { tag ->
             when (tag) {
-                0 -> deserializeConstantDataCharArray()
-                1 -> deserializeConstantDataCharField()
-                2 -> deserializeConstantDataIntArray()
-                3 -> deserializeConstantDataIntField()
-                4 -> deserializeConstantDataIntegerArray()
-                5 -> deserializeConstantDataStruct()
+                ConstantDataElementTags.CHAR_ARRAY -> deserializeConstantDataCharArray()
+                ConstantDataElementTags.CHAR_FIELD -> deserializeConstantDataCharField()
+                ConstantDataElementTags.INT_ARRAY -> deserializeConstantDataIntArray()
+                ConstantDataElementTags.INT_FIELD -> deserializeConstantDataIntField()
+                ConstantDataElementTags.INTEGER_ARRAY -> deserializeConstantDataIntegerArray()
+                ConstantDataElementTags.STRUCT -> deserializeConstantDataStruct()
                 else -> tagError(tag)
             }
         }
@@ -698,8 +719,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             }
         }
 
-    private inline fun <T> withTag(deserializeFunc: (Int) -> T) =
-        deserializeFunc(b.readUByte().toInt())
+    private inline fun <T> withTag(deserializeFunc: (UInt) -> T) =
+        deserializeFunc(b.readUByte().toUInt())
 
     private inline fun <T> withFlags(deserializeFunc: (Flags) -> T) =
         deserializeFunc(Flags(b.readUByte().toUInt()))
@@ -717,7 +738,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun UByte.toBoolean(): Boolean = this == 1.toUByte()
 
-    private fun tagError(tag: Int): Nothing = error("Invalid tag: $tag")
+    private fun tagError(tag: UInt): Nothing = error("Invalid tag: $tag")
 
     /**
      * Convenience wrapper class around a bitset byte

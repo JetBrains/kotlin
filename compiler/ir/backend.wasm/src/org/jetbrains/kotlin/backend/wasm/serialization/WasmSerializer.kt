@@ -159,11 +159,11 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeNamedModuleField(func) {
             serialize(func.type, ::serialize)
             when (func) {
-                is WasmFunction.Defined -> withTag(0U) {
+                is WasmFunction.Defined -> withTag(FunctionTags.DEFINED) {
                     serialize(func.locals, ::serialize)
                     serialize(func.instructions, ::serialize)
                 }
-                is WasmFunction.Imported -> withTag(1U) {
+                is WasmFunction.Imported -> withTag(FunctionTags.IMPORTED) {
                     serialize(func.importPair)
                 }
             }
@@ -184,9 +184,9 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(typeDecl: WasmTypeDeclaration): Unit =
         when (typeDecl) {
-            is WasmFunctionType -> withTag(0U) { serialize(typeDecl) }
-            is WasmStructDeclaration -> withTag(1U) { serialize(typeDecl) }
-            is WasmArrayDeclaration -> withTag(2U) { serialize(typeDecl) }
+            is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serialize(typeDecl) }
+            is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serialize(typeDecl) }
+            is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serialize(typeDecl) }
         }
 
     private fun serialize(structDecl: WasmStructDeclaration) {
@@ -222,25 +222,38 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(type: WasmType) =
         when (type) {
-            is WasmRefType -> withTag(0U) { serialize(type.heapType) }
-            is WasmRefNullType -> withTag(1U) { serialize(type.heapType) }
-            else -> {
-                val tag = WASM_TYPE_OBJECTS.indexOf(type)
-                check(tag != -1) { "Not supported type: ${type::class}" }
-                withTag((tag + 2).toUByte()) { }
-            }
+            is WasmRefType -> withTag(TypeTags.REF) { serialize(type.heapType) }
+            is WasmRefNullType -> withTag(TypeTags.REF_NULL) { serialize(type.heapType) }
+            WasmAnyRef -> setTag(TypeTags.ANYREF)
+            WasmEqRef -> setTag(TypeTags.EQREF)
+            WasmExnRefType -> setTag(TypeTags.EXTERN_REF_TYPE)
+            WasmExternRef -> setTag(TypeTags.EXTERN_REF)
+            WasmF32 -> setTag(TypeTags.F32)
+            WasmF64 -> setTag(TypeTags.F64)
+            WasmFuncRef -> setTag(TypeTags.FUNC_REF)
+            WasmI16 -> setTag(TypeTags.I16)
+            WasmI31Ref -> setTag(TypeTags.I31_REF)
+            WasmI32 -> setTag(TypeTags.I32)
+            WasmI64 -> setTag(TypeTags.I64)
+            WasmI8 -> setTag(TypeTags.I8)
+            WasmNullExnRefType -> setTag(TypeTags.NULL_EXTERN_REF_TYPE)
+            WasmRefNullExternrefType -> setTag(TypeTags.REF_NULL_EXTERN_REF_TYPE)
+            WasmRefNullrefType -> setTag(TypeTags.REF_NULL_REF_TYPE)
+            WasmStructRef -> setTag(TypeTags.STRUCT_REF)
+            WasmUnreachableType -> setTag(TypeTags.UNREACHABLE_TYPE)
+            WasmV128 -> setTag(TypeTags.V12)
         }
 
     private fun serialize(type: WasmHeapType) =
         when (type) {
-            WasmHeapType.Simple.Any -> withTag(0U) { }
-            WasmHeapType.Simple.Eq -> withTag(1U) { }
-            WasmHeapType.Simple.Extern -> withTag(2U) { }
-            WasmHeapType.Simple.Func -> withTag(3U) { }
-            WasmHeapType.Simple.NoExtern -> withTag(4U) { }
-            WasmHeapType.Simple.None -> withTag(5U) { }
-            WasmHeapType.Simple.Struct -> withTag(6U) { }
-            is WasmHeapType.Type -> withTag(7U) { serialize(type.type) { serialize(it) } }
+            WasmHeapType.Simple.Any -> setTag(HeapTypeTags.ANY)
+            WasmHeapType.Simple.Eq -> setTag(HeapTypeTags.EQ)
+            WasmHeapType.Simple.Extern -> setTag(HeapTypeTags.EXTERN)
+            WasmHeapType.Simple.Func -> setTag(HeapTypeTags.FUNC)
+            WasmHeapType.Simple.NoExtern -> setTag(HeapTypeTags.NO_EXTERN)
+            WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
+            WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
+            is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serialize(type.type) { serialize(it) } }
         }
 
     private fun serialize(local: WasmLocal) {
@@ -268,50 +281,51 @@ class WasmSerializer(outputStream: OutputStream) {
         }
         b.writeUInt16(opcode.toUShort())
         when (instr) {
-            is WasmInstrWithLocation -> withTag(0U) { serialize(instr.immediates, ::serialize); serialize(instr.location) }
-            is WasmInstrWithoutLocation -> withTag(1U) { serialize(instr.immediates, ::serialize); }
+            is WasmInstrWithLocation -> withTag(InstructionTags.WITH_LOCATION) { serialize(instr.immediates, ::serialize); serialize(instr.location) }
+            is WasmInstrWithoutLocation -> withTag(InstructionTags.WITHOUT_LOCATION) { serialize(instr.immediates, ::serialize); }
         }
     }
 
     private fun serialize(i: WasmImmediate): Unit =
         when (i) {
-            is WasmImmediate.BlockType.Function -> withTag(0U) { serialize(i.type) }
-            is WasmImmediate.BlockType.Value -> withTagNullable(1U, i.type) { serialize(i.type!!) }
-            is WasmImmediate.Catch -> withTag(2U) { serialize(i) }
-            is WasmImmediate.ConstF32 -> withTag(3U) { b.writeUInt32(i.rawBits) }
-            is WasmImmediate.ConstF64 -> withTag(4U) { b.writeUInt64(i.rawBits) }
-            is WasmImmediate.ConstI32 -> withTag(5U) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.ConstI64 -> withTag(6U) { b.writeUInt64(i.value.toULong()) }
-            is WasmImmediate.ConstString -> withTag(7U) { serialize(i.value) }
-            is WasmImmediate.ConstU8 -> withTag(8U) { b.writeUByte(i.value) }
-            is WasmImmediate.DataIdx -> withTag(9U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.ElemIdx -> withTag(10U) { serialize(i.value) }
-            is WasmImmediate.FuncIdx -> withTag(11U) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.GcType -> withTag(12U) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.GlobalIdx -> withTag(13U) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.HeapType -> withTag(14U) { serialize(i.value) }
-            is WasmImmediate.LabelIdx -> withTag(15U) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.LabelIdxVector -> withTag(16U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.LocalIdx -> withTag(17U) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.MemArg -> withTag(18U) { b.writeUInt32(i.align); b.writeUInt32(i.offset) }
-            is WasmImmediate.MemoryIdx -> withTag(19U) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.StructFieldIdx -> withTag(20U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.SymbolI32 -> withTag(21U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TableIdx -> withTag(22U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TagIdx -> withTag(23U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TypeIdx -> withTag(24U) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.ValTypeVector -> withTag(25U) { serialize(i.value, ::serialize) }
+            is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serialize(i.type) }
+            is WasmImmediate.BlockType.Value -> withTagNullable(ImmediateTags.BLOCK_TYPE_VALUE, i.type) { serialize(i.type!!) }
+            is WasmImmediate.Catch -> withTag(ImmediateTags.CATCH) { serialize(i) }
+            is WasmImmediate.ConstF32 -> withTag(ImmediateTags.CONST_F32) { b.writeUInt32(i.rawBits) }
+            is WasmImmediate.ConstF64 -> withTag(ImmediateTags.CONST_F64) { b.writeUInt64(i.rawBits) }
+            is WasmImmediate.ConstI32 -> withTag(ImmediateTags.CONST_I32) { b.writeUInt32(i.value.toUInt()) }
+            is WasmImmediate.ConstI64 -> withTag(ImmediateTags.CONST_I64) { b.writeUInt64(i.value.toULong()) }
+            is WasmImmediate.ConstString -> withTag(ImmediateTags.CONST_STRING) { serialize(i.value) }
+            is WasmImmediate.ConstU8 -> withTag(ImmediateTags.CONST_U8) { b.writeUByte(i.value) }
+            is WasmImmediate.DataIdx -> withTag(ImmediateTags.DATA_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.ElemIdx -> withTag(ImmediateTags.ELEMENT_INDEX) { serialize(i.value) }
+            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.GcType -> withTag(ImmediateTags.GC_TYPE) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.GlobalIdx -> withTag(ImmediateTags.GLOBAL_INDEX) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.HeapType -> withTag(ImmediateTags.HEAP_TYPE) { serialize(i.value) }
+            is WasmImmediate.LabelIdx -> withTag(ImmediateTags.LABEL_INDEX) { b.writeUInt32(i.value.toUInt()) }
+            is WasmImmediate.LabelIdxVector -> withTag(ImmediateTags.LABEL_INDEX_VECTOR) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.LocalIdx -> withTag(ImmediateTags.LOCAL_INDEX) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.MemArg -> withTag(ImmediateTags.MEM_ARG) { b.writeUInt32(i.align); b.writeUInt32(i.offset) }
+            is WasmImmediate.MemoryIdx -> withTag(ImmediateTags.MEMORY_INDEX) { b.writeUInt32(i.value.toUInt()) }
+            is WasmImmediate.StructFieldIdx -> withTag(ImmediateTags.STRUCT_FIELD_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.SymbolI32 -> withTag(ImmediateTags.SYMBOL_I32) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TypeIdx -> withTag(ImmediateTags.TYPE_INDEX) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serialize(i.value, ::serialize) }
         }
 
     private fun serialize(catch: WasmImmediate.Catch) {
         val type = when (catch.type) {
-            WasmImmediate.Catch.CatchType.CATCH -> 0
-            WasmImmediate.Catch.CatchType.CATCH_REF -> 1
-            WasmImmediate.Catch.CatchType.CATCH_ALL -> 2
-            WasmImmediate.Catch.CatchType.CATCH_ALL_REF -> 3
-        }.toByte()
-        b.writeByte(type)
-        serialize(catch.immediates, ::serialize)
+            WasmImmediate.Catch.CatchType.CATCH -> ImmediateCatchTags.CATCH
+            WasmImmediate.Catch.CatchType.CATCH_REF -> ImmediateCatchTags.CATCH_REF
+            WasmImmediate.Catch.CatchType.CATCH_ALL -> ImmediateCatchTags.CATCH_ALL
+            WasmImmediate.Catch.CatchType.CATCH_ALL_REF -> ImmediateCatchTags.CATCH_ALL_REF
+        }
+        withTag(type) {
+            serialize(catch.immediates, ::serialize)
+        }
     }
 
     private fun serialize(table: WasmTable) {
@@ -327,8 +341,8 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(value: WasmTable.Value): Unit =
         when (value) {
-            is WasmTable.Value.Expression -> withTag(0U) { serialize(value.expr, ::serialize) }
-            is WasmTable.Value.Function -> withTag(1U) { serialize(value.function) { serialize(it) } }
+            is WasmTable.Value.Expression -> withTag(TableValueTags.EXPRESSION) { serialize(value.expr, ::serialize) }
+            is WasmTable.Value.Function -> withTag(TableValueTags.FUNCTION) { serialize(value.function) { serialize(it) } }
         }
 
     private fun serialize(element: WasmElement): Unit =
@@ -340,23 +354,23 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(mode: WasmElement.Mode) =
         when (mode) {
-            is WasmElement.Mode.Active -> withTag(0U) {
+            is WasmElement.Mode.Active -> withTag(ElementModeTags.ACTIVE) {
                 serialize(mode.table)
                 serialize(mode.offset, ::serialize)
             }
-            WasmElement.Mode.Declarative -> withTag(1U) { }
-            WasmElement.Mode.Passive -> withTag(2U) { }
+            WasmElement.Mode.Declarative -> setTag(ElementModeTags.DECLARATIVE)
+            WasmElement.Mode.Passive -> setTag(ElementModeTags.PASSIVE)
         }
 
     private fun serialize(export: WasmExport<*>) {
         // The name is serialized before the tag.
         serialize(export.name)
         when (export) {
-            is WasmExport.Function -> withTag(0U) { serialize(export.field) }
-            is WasmExport.Table -> withTag(1U) { serialize(export.field) }
-            is WasmExport.Memory -> withTag(2U) { serialize(export.field) }
-            is WasmExport.Global -> withTag(3U) { serialize(export.field) }
-            is WasmExport.Tag -> withTag(4U) { serialize(export.field) }
+            is WasmExport.Function -> withTag(ExportTags.FUNCTION) { serialize(export.field) }
+            is WasmExport.Table -> withTag(ExportTags.TABLE) { serialize(export.field) }
+            is WasmExport.Memory -> withTag(ExportTags.MEMORY) { serialize(export.field) }
+            is WasmExport.Global -> withTag(ExportTags.GLOBAL) { serialize(export.field) }
+            is WasmExport.Tag -> withTag(ExportTags.TAG) { serialize(export.field) }
         }
     }
 
@@ -396,14 +410,14 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(sl: SourceLocation) =
         when (sl) {
-            SourceLocation.NoLocation -> withTag(0U) { }
-            is SourceLocation.Location -> withTag(1U) {
+            SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
+            is SourceLocation.Location -> withTag(LocationTags.LOCATION) {
                 serialize(sl.module)
                 serialize(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())
             }
-            is SourceLocation.IgnoredLocation -> withTag(1U) {
+            is SourceLocation.IgnoredLocation -> withTag(LocationTags.IGNORED_LOCATION) {
                 serialize(sl.module)
                 serialize(sl.file)
                 b.writeUInt32(sl.line.toUInt())
@@ -413,23 +427,23 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun <T> serializeNullable(value: T?, serializeFunc: (T) -> Unit) {
         if (value != null) {
-            withTag(1U) { serializeFunc(value) }
+            withTag(NullableTags.NOT_NULL) { serializeFunc(value) }
         } else {
-            withTag(0U) { }
+            setTag(NullableTags.NULL)
         }
     }
 
     private fun serialize(idSignature: IdSignature) =
         when (idSignature) {
-            is IdSignature.AccessorSignature -> withTag(0U) { serialize(idSignature) }
-            is IdSignature.CommonSignature -> withTag(1U) { serialize(idSignature) }
-            is IdSignature.CompositeSignature -> withTag(2U) { serialize(idSignature) }
-            is IdSignature.FileLocalSignature -> withTag(3U) { serialize(idSignature) }
-            is IdSignature.LocalSignature -> withTag(4U) { serialize(idSignature) }
-            is IdSignature.LoweredDeclarationSignature -> withTag(5U) { serialize(idSignature) }
-            is IdSignature.ScopeLocalDeclaration -> withTag(6U) { serialize(idSignature) }
-            is IdSignature.SpecialFakeOverrideSignature -> withTag(7U) { serialize(idSignature) }
-            is IdSignature.FileSignature -> withTag(8U) { serialize(idSignature.fileName) }
+            is IdSignature.AccessorSignature -> withTag(IdSignatureTags.ACCESSOR) { serialize(idSignature) }
+            is IdSignature.CommonSignature -> withTag(IdSignatureTags.COMMON) { serialize(idSignature) }
+            is IdSignature.CompositeSignature -> withTag(IdSignatureTags.COMPOSITE) { serialize(idSignature) }
+            is IdSignature.FileLocalSignature -> withTag(IdSignatureTags.FILE_LOCAL) { serialize(idSignature) }
+            is IdSignature.LocalSignature -> withTag(IdSignatureTags.LOCAL) { serialize(idSignature) }
+            is IdSignature.LoweredDeclarationSignature -> withTag(IdSignatureTags.LOWERED_DECLARATION) { serialize(idSignature) }
+            is IdSignature.ScopeLocalDeclaration -> withTag(IdSignatureTags.SCOPE_LOCAL_DECLARATION) { serialize(idSignature) }
+            is IdSignature.SpecialFakeOverrideSignature -> withTag(IdSignatureTags.SPECIAL_FAKE_OVERRIDE) { serialize(idSignature) }
+            is IdSignature.FileSignature -> withTag(IdSignatureTags.FILE) { serialize(idSignature.fileName) }
         }
 
     private fun serialize(accessor: IdSignature.AccessorSignature) {
@@ -504,12 +518,12 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serialize(constantDataElement: ConstantDataElement) {
         when (constantDataElement) {
-            is ConstantDataCharArray -> withTag(0U) { serialize(constantDataElement) }
-            is ConstantDataCharField -> withTag(1U) { serialize(constantDataElement) }
-            is ConstantDataIntArray -> withTag(2U) { serialize(constantDataElement) }
-            is ConstantDataIntField -> withTag(3U) { serialize(constantDataElement) }
-            is ConstantDataIntegerArray -> withTag(4U) { serialize(constantDataElement) }
-            is ConstantDataStruct -> withTag(5U) { serialize(constantDataElement) }
+            is ConstantDataCharArray -> withTag(ConstantDataElementTags.CHAR_ARRAY) { serialize(constantDataElement) }
+            is ConstantDataCharField -> withTag(ConstantDataElementTags.CHAR_FIELD) { serialize(constantDataElement) }
+            is ConstantDataIntArray -> withTag(ConstantDataElementTags.INT_ARRAY) { serialize(constantDataElement) }
+            is ConstantDataIntField -> withTag(ConstantDataElementTags.INT_FIELD) { serialize(constantDataElement) }
+            is ConstantDataIntegerArray -> withTag(ConstantDataElementTags.INTEGER_ARRAY) { serialize(constantDataElement) }
+            is ConstantDataStruct -> withTag(ConstantDataElementTags.STRUCT) { serialize(constantDataElement) }
         }
     }
 
@@ -680,16 +694,20 @@ class WasmSerializer(outputStream: OutputStream) {
             }
         }
 
-    private fun withTagNullable(tag: UByte, obj: Any?, serializeFunc: () -> Unit) {
+    private fun withTagNullable(tag: UInt, obj: Any?, serializeFunc: () -> Unit) {
         // Use the MSB of the tag as a flag
         val isNull = if (obj == null) 1U else 0U
-        val newId = (tag.toUInt() or (isNull shl 7)).toUByte()
+        val newId = (tag or (isNull shl 7)).toUByte()
         b.writeUByte(newId)
         if (isNull != 1U) serializeFunc()
     }
 
-    private fun withTag(tag: UByte, serializeFunc: () -> Unit) {
-        b.writeUByte(tag)
+    private fun setTag(tag: UInt) {
+        b.writeUByte(tag.toUByte())
+    }
+
+    private fun withTag(tag: UInt, serializeFunc: () -> Unit) {
+        b.writeUByte(tag.toUByte())
         serializeFunc()
     }
 
@@ -726,24 +744,3 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun Boolean.toByte(): Byte = (if (this) 1 else 0).toByte()
 }
-
-val WASM_TYPE_OBJECTS = listOf(
-    WasmAnyRef,
-    WasmEqRef,
-    WasmExnRefType,
-    WasmExternRef,
-    WasmF32,
-    WasmF64,
-    WasmFuncRef,
-    WasmI16,
-    WasmI31Ref,
-    WasmI32,
-    WasmI64,
-    WasmI8,
-    WasmNullExnRefType,
-    WasmRefNullExternrefType,
-    WasmRefNullrefType,
-    WasmStructRef,
-    WasmUnreachableType,
-    WasmV128
-)
