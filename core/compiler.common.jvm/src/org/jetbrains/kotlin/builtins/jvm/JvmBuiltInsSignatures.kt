@@ -17,7 +17,7 @@ object JvmBuiltInsSignatures {
         SignatureBuildingComponents.inJavaUtil(
             "Collection",
             "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
-        ) + "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;"
+        ) + "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;" + "java/util/concurrent/atomic/AtomicInteger.compareAndExchange(II)I"
 
     val HIDDEN_METHOD_SIGNATURES: Set<String> =
         signatures {

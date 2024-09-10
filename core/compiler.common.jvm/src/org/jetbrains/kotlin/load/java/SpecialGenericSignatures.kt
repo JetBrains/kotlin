@@ -125,7 +125,6 @@ open class SpecialGenericSignatures {
                 javaUtilConcurrentAtomic("AtomicInteger").method("load", "", "I") to Name.identifier("get"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("store", "I", "V") to Name.identifier("set"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("exchange", "I", "I") to Name.identifier("getAndSet"),
-                javaUtilConcurrentAtomic("AtomicInteger").method("compareAndExchange", "II", "I") to Name.identifier("myCompareAndExchange"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndAdd", "I", "I") to Name.identifier("getAndAdd"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("addAndFetch", "I", "I") to Name.identifier("addAndGet"),
                 javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndIncrement", "", "I") to Name.identifier("getAndIncrement"),
