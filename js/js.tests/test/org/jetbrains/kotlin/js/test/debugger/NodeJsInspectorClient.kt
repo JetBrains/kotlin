@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.js.test.debugger
@@ -9,11 +9,14 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.channels.getOrElse
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.util.logging.ConsoleHandler
+import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.coroutines.*
 
@@ -113,7 +116,10 @@ private const val V8_MAX_OLD_SPACE_SIZE_MB = 4096
  */
 private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : NodeJsInspectorClientContext, CDPRequestEvaluator {
 
-    private val logger = Logger.getLogger(this::class.java.name)
+    private val logger = Logger.getLogger(this::class.java.name).apply {
+        level = Level.FINER
+        addHandler(ConsoleHandler().apply { level = Level.FINER })
+    }
 
     val nodeProcess: Process = ProcessBuilder(
         System.getProperty("javascript.engine.path.NodeJs"),
@@ -191,7 +197,11 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
     suspend fun listenForMessages(receiveMessage: (String) -> Boolean) {
         val session = webSocketSession ?: error("Session closed")
         do {
-            val message = when (val frame = session.incoming.receive()) {
+            val frame = session.incoming.receiveCatching().getOrElse {
+                logger.fine { "Session closed: ${it?.stackTraceToString()}" }
+                return
+            }
+            val message = when (frame) {
                 is Frame.Text -> frame.readText()
                 else -> error("Unexpected frame kind: $frame")
             }
