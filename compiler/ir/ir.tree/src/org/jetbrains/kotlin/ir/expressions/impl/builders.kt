@@ -801,14 +801,13 @@ fun IrCallImpl(
     typeArgumentsCount: Int = symbol.getRealOwner().typeParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
-    valueArgumentsCount: Int = symbol.getRealOwner().valueParameters.size,
 ): IrCallImpl = IrCallImplWithShape(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
     typeArgumentsCount = typeArgumentsCount,
-    valueArgumentsCount = valueArgumentsCount,
+    valueArgumentsCount = symbol.getRealOwner().valueParameters.size,
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 )
