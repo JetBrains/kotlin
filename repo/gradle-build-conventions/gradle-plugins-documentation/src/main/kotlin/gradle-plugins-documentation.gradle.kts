@@ -5,6 +5,10 @@ plugins {
 
 val documentationExtension = extensions.create<PluginsApiDocumentationExtension>("pluginsApiDocumentation")
 
+dependencies {
+    dokkaHtmlPlugin(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
+}
+
 tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlangDocumentation") {
     description = "Generates documentation for Kotlin Gradle plugins API reference"
     group = "Documentation"
@@ -22,6 +26,13 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
         documentationExtension.documentationOutput.orElse(
             layout.buildDirectory.dir("dokka/kotlinlangDocumentation")
         )
+    )
+
+    pluginsMapConfiguration.put(
+        "org.jetbrains.dokka.versioning.VersioningPlugin",
+        documentationExtension.documentationOldVersions.map { olderVersionsDir ->
+            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile}\" }"
+        }
     )
 
     @Suppress("DEPRECATION")

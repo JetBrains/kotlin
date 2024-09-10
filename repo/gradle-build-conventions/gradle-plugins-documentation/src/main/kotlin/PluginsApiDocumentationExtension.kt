@@ -9,5 +9,6 @@ import org.gradle.api.provider.SetProperty
 
 abstract class PluginsApiDocumentationExtension() {
     abstract val documentationOutput: DirectoryProperty
+    abstract val documentationOldVersions: DirectoryProperty
     abstract val gradlePluginsProjects: SetProperty<Project>
 }
