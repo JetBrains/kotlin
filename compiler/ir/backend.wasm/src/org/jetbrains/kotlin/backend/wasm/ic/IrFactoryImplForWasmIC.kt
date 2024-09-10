@@ -20,7 +20,6 @@ import java.util.*
 open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean = false,
-    protected val skipSourceLocations: Boolean = false,
     private val safeFragmentTags: Boolean
 ) : PlatformDependentICContext {
     override fun createIrFactory(): IrFactory =
@@ -30,7 +29,7 @@ open class WasmICContext(
         WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames, skipSourceLocations)
+        WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
 
     override fun createModuleArtifact(
         moduleName: String,
@@ -45,9 +44,8 @@ open class WasmICContext(
 class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
-    skipSourceLocations: Boolean = false,
     safeFragmentTags: Boolean = false,
-) : WasmICContext(allowIncompleteImplementations, skipLocalNames, skipSourceLocations, safeFragmentTags) {
+) : WasmICContext(allowIncompleteImplementations, skipLocalNames, safeFragmentTags) {
     override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
         WasmCompilerWithICForTesting(mainModule, configuration, allowIncompleteImplementations)
 }

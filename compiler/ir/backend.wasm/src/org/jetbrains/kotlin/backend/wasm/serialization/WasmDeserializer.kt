@@ -30,7 +30,7 @@ import kotlin.collections.LinkedHashSet
  *  use [deserializeReference]
  */
 
-class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boolean = false, private val skipSourceLocations: Boolean) {
+class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boolean = false) {
 
     private val input: MyByteReader = MyByteReader(inputStream)
 
@@ -394,22 +394,14 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             when (tag) {
                 LocationTags.NO_LOCATION -> SourceLocation.NoLocation
                 else -> {
-                    if (skipSourceLocations) {
-                        skipString()
-                        skipString()
-                        skipInt()
-                        skipInt()
-                        SourceLocation.NoLocation
-                    } else {
-                        val module = deserializeString()
-                        val file = deserializeString()
-                        val line = deserializeInt()
-                        val column = deserializeInt()
-                        when (tag) {
-                            LocationTags.LOCATION -> SourceLocation.Location(module, file, line, column)
-                            LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation(module, file, line, column)
-                            else -> tagError(tag)
-                        }
+                    val module = deserializeString()
+                    val file = deserializeString()
+                    val line = deserializeInt()
+                    val column = deserializeInt()
+                    when (tag) {
+                        LocationTags.LOCATION -> SourceLocation.Location(module, file, line, column)
+                        LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation(module, file, line, column)
+                        else -> tagError(tag)
                     }
                 }
             }
