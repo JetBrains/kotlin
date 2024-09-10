@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.lower.isStaticInitializer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -31,7 +30,6 @@ internal fun dce(
             devirtualizedCallSitesUnfoldFactor = -1,
             nonDevirtualizedCallSitesUnfoldFactor = -1,
     ).build()
-
     val referencedFunctions = mutableSetOf<IrSimpleFunction>()
     callGraph.rootExternalFunctions.forEach {
         referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
@@ -39,6 +37,7 @@ internal fun dce(
     for (node in callGraph.directEdges.values) {
         if (!node.symbol.isStaticFieldInitializer)
             referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
+
         node.callSites.forEach {
             if (!it.isVirtual)
                 referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
@@ -56,6 +55,8 @@ internal fun dce(
                     && declaration.parent.let { it is IrClass && it.defaultType.isFunction() }) {
                 referencedFunctions.add(declaration)
             }
+            if (declaration.isStaticInitializer)
+                referencedFunctions.add(declaration)
             super.visitFunction(declaration)
         }
     })

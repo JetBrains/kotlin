@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -265,6 +264,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val llvmLTOPasses: String? by lazy {
         configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
+    }
+
+    val enablePreCodegenInliner: Boolean by lazy {
+        configuration.get(BinaryOptions.enablePreCodegenInliner) ?: false
     }
 
     init {
