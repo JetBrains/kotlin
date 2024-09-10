@@ -25,7 +25,7 @@ interface B {
     @Composable @JvmName(name = "getProperty")
     get() {
       %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "C:Test.kt")
+      sourceInformation(%composer, "C(<get-property>):Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

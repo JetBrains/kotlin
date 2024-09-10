@@ -4761,12 +4761,16 @@ private fun mutableStatementContainer(context: IrPluginContext): IrContainerExpr
     )
 }
 
-private fun IrFunction.callInformation(): String {
-    val inlineMarker = if (isInline) "C" else ""
-    return if (!name.isSpecial)
-        "${inlineMarker}C(${name.asString()})"
-    else "${inlineMarker}C"
-}
+private fun IrFunction.callInformation(): String =
+    buildString {
+        append('C')
+        if (isInline) append('C')
+        if (!isLambda()) {
+            append('(')
+            append(name.asString())
+            append(')')
+        }
+    }
 
 // Parameter information is an index from the sorted order of the parameters to the
 // actual order. This is used to reorder the fields of the lambda class generated for
