@@ -842,7 +842,6 @@ fun IrConstructorCallImpl(
     constructorTypeArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
     source: SourceElement = SourceElement.NO_SOURCE,
-    valueArgumentsCount: Int = symbol.owner.valueParameters.size,
 ): IrConstructorCallImpl = IrConstructorCallImplWithShape(
     startOffset = startOffset,
     endOffset = endOffset,
@@ -850,7 +849,7 @@ fun IrConstructorCallImpl(
     symbol = symbol,
     typeArgumentsCount = typeArgumentsCount,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
-    valueArgumentsCount = valueArgumentsCount,
+    valueArgumentsCount = symbol.owner.valueParameters.size,
     origin = origin,
     source = source
 )
