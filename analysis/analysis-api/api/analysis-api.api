@@ -914,7 +914,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/session/KaSessionProvide
 	public fun <init> (Lcom/intellij/openapi/project/Project;)V
 	public final fun analyze (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun analyze (Lorg/jetbrains/kotlin/psi/KtElement;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-	public abstract fun clearCaches ()V
 	public fun dispose ()V
 	public abstract fun getAnalysisSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/KaSession;
 	public abstract fun getAnalysisSession (Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/KaSession;
