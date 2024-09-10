@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-internal var IrCall.devirtualizedCallSite: DevirtualizationAnalysis.DevirtualizedCallSite? by irAttribute(followAttributeOwner = false)
+internal var IrCall.devirtualizedCallSite: DevirtualizationAnalysis.DevirtualizedCallSite? by irAttribute(followAttributeOwner = true)
 
 object DevirtualizationUnfoldFactors {
     /**
@@ -379,7 +379,24 @@ internal object DevirtualizationAnalysis {
         private fun DataFlowIR.Node.VirtualCall.debugString() =
                 irCallSite?.let { ir2stringWhole(it).trimEnd() } ?: this.toString()
 
+        // To properly place devirtualized call sites to IR call sites and use them after inlining.
+        private fun resetCallSitesAttributeOwnerIds() {
+            irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitCall(expression: IrCall) {
+                    expression.acceptChildrenVoid(this)
+
+                    expression.attributeOwnerId = expression
+                }
+            })
+        }
+
         fun analyze() {
+            resetCallSitesAttributeOwnerIds()
+
             val functions = moduleDFG.functions
             assert(DataFlowIR.Type.Virtual !in symbolTable.classMap.values) {
                 "DataFlowIR.Type.Virtual cannot be in symbolTable.classMap"

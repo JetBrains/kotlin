@@ -441,6 +441,8 @@ internal class KonanSymbols(
 
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 
+    val noInline = topLevelClass(KonanFqNames.noInline)
+
     val enumVarConstructorSymbol = lookup.findPrimaryConstructor(interopClass(InteropFqNames.cEnumVarName))!!
     val primitiveVarPrimaryConstructor = lookup.findPrimaryConstructor(lookup.findNestedClass(interopClass(InteropFqNames.cPrimitiveVarName), Name.identifier(InteropFqNames.TypeName))!!)!!
 
