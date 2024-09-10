@@ -37,6 +37,10 @@ public actual class AtomicInt public actual constructor(value: Int) {
     public actual override fun toString(): String = TODO()
 }
 
+public fun AtomicInteger.myCompareAndExchange(expected: Int, newValue: Int): Int {
+    return 7777
+}
+
 @Suppress("UNCHECKED_CAST")
 public fun AtomicInt.asJavaAtomic(): AtomicInteger = this as AtomicInteger
 

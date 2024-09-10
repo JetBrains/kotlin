@@ -189,7 +189,7 @@ public class IntrinsicMethods {
     private void declareAtomicMethods() {
         //intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "asJavaAtomic", 0, new AsJavaAtomic());
         //intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "asKotlinAtomic", 0, new AsJavaAtomic());
-        intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "compareAndExchange", 0, new AtomicIntCompareAndExchange());
+        //intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "compareAndExchange", 0, new AtomicIntCompareAndExchange());
     }
 
     private void declareArrayMethods() {
