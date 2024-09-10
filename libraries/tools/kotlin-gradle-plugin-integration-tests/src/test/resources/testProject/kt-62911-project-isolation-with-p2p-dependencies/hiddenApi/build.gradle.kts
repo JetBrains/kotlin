@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
+    `maven-publish`
 }
 
 kotlin {
@@ -40,5 +41,15 @@ kotlin {
             implementation(kotlin("test"))
         }
 
+    }
+}
+
+publishing {
+    publications.configureEach {
+        if (name == "kotlinMultiplatform") {
+            this as MavenPublication
+            groupId = "my-custom-group"
+            artifactId = "my-custom-id"
+        }
     }
 }
