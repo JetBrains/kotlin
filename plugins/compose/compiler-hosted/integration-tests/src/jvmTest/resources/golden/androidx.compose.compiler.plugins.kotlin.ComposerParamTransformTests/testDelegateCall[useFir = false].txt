@@ -82,7 +82,7 @@ class Bar {
   val foo: Foo = Foo()
     @Composable @JvmName(name = "getFoo")
     get() {
-      sourceInformationMarkerStart(%composer, <>, "C<Foo()>:Test.kt#2487m")
+      sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>:Test.kt#2487m")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
@@ -107,7 +107,7 @@ fun test(%composer: Composer?, %changed: Int) {
       val foo%delegate = Foo()
       @Composable
       get(%composer: Composer?, %changed: Int) {
-        sourceInformationMarkerStart(%composer, <>, "C<Foo()>:Test.kt#2487m")
+        sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>:Test.kt#2487m")
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
@@ -123,7 +123,7 @@ fun test(%composer: Composer?, %changed: Int) {
       val fooDelegate%delegate = FooDelegate()
       @Composable
       get(%composer: Composer?, %changed: Int) {
-        sourceInformationMarkerStart(%composer, <>, "C<FooDel...>:Test.kt#2487m")
+        sourceInformationMarkerStart(%composer, <>, "C(<get-fooDelegate>)<FooDel...>:Test.kt#2487m")
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }

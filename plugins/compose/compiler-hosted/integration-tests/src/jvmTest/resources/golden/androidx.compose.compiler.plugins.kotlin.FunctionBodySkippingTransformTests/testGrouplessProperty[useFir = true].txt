@@ -32,7 +32,7 @@ open class Foo {
   val current: Int
     @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
     get() {
-      sourceInformationMarkerStart(%composer, <>, "CC:Test.kt")
+      sourceInformationMarkerStart(%composer, <>, "CC(<get-current>):Test.kt")
       val tmp0 = %composer.hashCode()
       sourceInformationMarkerEnd(%composer)
       return tmp0
