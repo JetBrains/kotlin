@@ -344,9 +344,8 @@ abstract class FirJavaFacade(
             }
         }.apply {
             if (modality == Modality.SEALED) {
-                val permittedTypes = javaClass.permittedTypes
                 setSealedClassInheritors {
-                    permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
+                    javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
                         val classifier = classifierType.classifier as? JavaClass
                         classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) ?: it.classId }
                     }
