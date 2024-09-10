@@ -135,7 +135,6 @@ internal class CEnumClassGenerator(
                             type = irBuiltIns.unitType,
                             symbol = constructorSymbol,
                             typeArgumentsCount = 0,
-                            valueArgumentsCount = constructorSymbol.owner.valueParameters.size,
                     ).also {
                         it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
                     },
@@ -171,7 +170,6 @@ internal class CEnumClassGenerator(
                                 context.irBuiltIns.unitType,
                                 constructorSymbol,
                                 typeArgumentsCount = 1, // kotlin.Enum<T> has a single type parameter.
-                                valueArgumentsCount = constructorSymbol.owner.valueParameters.size
                         ).apply {
                             putTypeArgument(0, type)
                         }

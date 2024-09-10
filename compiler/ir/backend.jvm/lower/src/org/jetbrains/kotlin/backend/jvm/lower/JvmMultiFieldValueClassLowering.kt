@@ -920,7 +920,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     is IrEnumConstructorCall -> { constructorSymbol ->
                         IrEnumConstructorCallImpl(
                             expression.startOffset, expression.endOffset, expression.type, constructorSymbol,
-                            expression.typeArgumentsCount, expression.valueArgumentsCount
+                            expression.typeArgumentsCount,
                         )
                     }
                     else -> error("Unknown constructor call type:\n${expression.dump()}")

@@ -916,14 +916,13 @@ fun IrEnumConstructorCallImpl(
     type: IrType,
     symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
-    valueArgumentsCount: Int = symbol.owner.valueParameters.size,
 ): IrEnumConstructorCallImpl = IrEnumConstructorCallImplWithShape(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
     symbol = symbol,
     typeArgumentsCount = typeArgumentsCount,
-    valueArgumentsCount = valueArgumentsCount
+    valueArgumentsCount = symbol.owner.valueParameters.size
 )
 
 fun IrEnumConstructorCallImplWithShape(

@@ -349,7 +349,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset, type, it as IrConstructorSymbol,
                     typeArgumentsCount = typeArgumentsCount,
-                    valueArgumentsCount = it.owner.valueParameters.size
                 )
             }
         }

@@ -154,7 +154,6 @@ class Fir2IrVisitor(
                         startOffset, endOffset, irType,
                         constructor.symbol,
                         typeArgumentsCount = constructor.typeParameters.size,
-                        valueArgumentsCount = constructor.valueParameters.size
                     )
                 )
             }
@@ -180,7 +179,6 @@ class Fir2IrVisitor(
                 irEnumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(
                     IrEnumConstructorCallImpl(
                         startOffset, endOffset, irType, constructor.symbol,
-                        valueArgumentsCount = constructor.valueParameters.size,
                         typeArgumentsCount = constructor.typeParameters.size
                     )
                 )
