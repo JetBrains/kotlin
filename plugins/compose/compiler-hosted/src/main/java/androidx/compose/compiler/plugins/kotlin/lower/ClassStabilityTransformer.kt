@@ -19,12 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
-import androidx.compose.compiler.plugins.kotlin.analysis.Stability
-import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.analysis.forEach
-import androidx.compose.compiler.plugins.kotlin.analysis.hasStableMarker
-import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
-import androidx.compose.compiler.plugins.kotlin.analysis.normalize
+import androidx.compose.compiler.plugins.kotlin.analysis.*
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
@@ -42,15 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isEnumEntry
-import org.jetbrains.kotlin.ir.util.isFileClass
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -58,6 +45,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 enum class StabilityBits(val bits: Int) {
     UNSTABLE(0b100),
     STABLE(0b000);
+
     fun bitsForSlot(slot: Int): Int = bits shl (1 + slot * 3)
 }
 
@@ -73,7 +61,7 @@ class ClassStabilityTransformer(
     stabilityInferencer: StabilityInferencer,
     private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
     featureFlags: FeatureFlags,
-    private val messageCollector: MessageCollector
+    private val messageCollector: MessageCollector,
 ) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
     ClassLoweringPass,
     ModuleLoweringPass {
@@ -115,11 +103,11 @@ class ClassStabilityTransformer(
 
         if (
             (
-                // Including public AND internal to support incremental compilation, which
-                // is separated by file.
-                cls.visibility != DescriptorVisibilities.PUBLIC &&
-                    cls.visibility != DescriptorVisibilities.INTERNAL
-            ) ||
+                    // Including public AND internal to support incremental compilation, which
+                    // is separated by file.
+                    cls.visibility != DescriptorVisibilities.PUBLIC &&
+                            cls.visibility != DescriptorVisibilities.INTERNAL
+                    ) ||
             cls.isEnumClass ||
             cls.isEnumEntry ||
             cls.isInterface ||

@@ -144,7 +144,7 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     }
 }
 
-class  SanityCheckGroupOptimizationCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class SanityCheckGroupOptimizationCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,

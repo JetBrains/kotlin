@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
-import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
@@ -25,10 +24,11 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runners.Parameterized
+import java.io.File
 
 class StrongSkippingModeTransformTests(
     useFir: Boolean,
-    private val intrinsicRememberEnabled: Boolean
+    private val intrinsicRememberEnabled: Boolean,
 ) : AbstractIrTransformTest(useFir) {
     companion object {
         @JvmStatic
@@ -416,7 +416,7 @@ class StrongSkippingModeTransformTests(
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) {
         val source = """
             import androidx.compose.runtime.Composable

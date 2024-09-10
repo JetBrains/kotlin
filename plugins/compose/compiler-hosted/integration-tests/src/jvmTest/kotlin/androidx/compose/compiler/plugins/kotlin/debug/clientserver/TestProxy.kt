@@ -28,7 +28,7 @@ class TestProxy(
     serverPort: Int,
     private val testClass: String,
     private val methodName: String,
-    private val classPath: List<URL>
+    private val classPath: List<URL>,
 ) {
     private val clientSocket = Socket("localhost", serverPort)
     private val output = ObjectOutputStream(clientSocket.getOutputStream())

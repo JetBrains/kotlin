@@ -56,7 +56,7 @@ class ComposeIrGenerationExtension(
 
     override fun generate(
         moduleFragment: IrModuleFragment,
-        pluginContext: IrPluginContext
+        pluginContext: IrPluginContext,
     ) {
         val isKlibTarget = !pluginContext.platform.isJvm()
         if (VersionChecker(pluginContext, messageCollector).check(skipIfRuntimeNotFound) == VersionCheckerResult.NOT_FOUND) {

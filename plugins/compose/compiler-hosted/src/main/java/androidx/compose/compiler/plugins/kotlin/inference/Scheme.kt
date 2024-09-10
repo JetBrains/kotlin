@@ -16,8 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin.inference
 
-import java.lang.NumberFormatException
-
 /**
  * A part of a [Scheme].
  */
@@ -35,10 +33,13 @@ class Token(val value: String) : Item() {
     override val isAnonymous: Boolean get() = false
     override fun toBinding(bindings: Bindings, context: MutableList<Binding>): Binding =
         bindings.closed(value)
+
     override fun toString() = value
     override fun equals(other: Any?) = other is Token && other.value == value
     override fun hashCode(): Int = value.hashCode() * 31
-    override fun serializeTo(writer: SchemeStringSerializationWriter) { writer.writeToken(value) }
+    override fun serializeTo(writer: SchemeStringSerializationWriter) {
+        writer.writeToken(value)
+    }
 }
 
 /**
@@ -59,8 +60,11 @@ class Open(val index: Int, override val isUnspecified: Boolean = false) : Item()
     override fun toString() = if (index < 0) "_" else "$index"
     override fun equals(other: Any?) =
         other is Open && (other.index == index || (other.index < 0 && index < 0))
+
     override fun hashCode(): Int = if (index < 0) -31 else index * 31
-    override fun serializeTo(writer: SchemeStringSerializationWriter) { writer.writeNumber(index) }
+    override fun serializeTo(writer: SchemeStringSerializationWriter) {
+        writer.writeNumber(index)
+    }
 }
 
 /**
@@ -79,7 +83,7 @@ class Scheme(
     val target: Item,
     val parameters: List<Scheme> = emptyList(),
     val result: Scheme? = null,
-    val anyParameters: Boolean = false
+    val anyParameters: Boolean = false,
 ) {
     init {
         check(!anyParameters || parameters.isEmpty()) {
@@ -95,9 +99,10 @@ class Scheme(
 
     override fun toString(): String = "[$target$parametersStr$resultStr]"
 
-    private val parametersStr get() =
-        if (parameters.isEmpty()) ""
-        else ", ${parameters.joinToString(", ") { it.toString() }}"
+    private val parametersStr
+        get() =
+            if (parameters.isEmpty()) ""
+            else ", ${parameters.joinToString(", ") { it.toString() }}"
 
     private val resultStr get() = result?.let { ": $it" } ?: ""
 
@@ -122,15 +127,15 @@ class Scheme(
         } else {
             target.isUnspecified || target == other.target
         } && parameters.zip(other.parameters).all { (a, b) -> a.simpleCanOverride(b) } &&
-            (
-                result == other.result ||
-                    (other.result != null && result != null && result.canOverride((other.result)))
-            )
+                (
+                        result == other.result ||
+                                (other.result != null && result != null && result.canOverride((other.result)))
+                        )
     }
 
     private fun simpleEquals(other: Scheme) =
         target == other.target && parameters.zip(other.parameters).all { (a, b) -> a == b } &&
-            result == result
+                result == result
 
     private fun simpleHashCode(): Int =
         target.hashCode() * 31 + parameters.hashOfElements() + (result?.hashCode() ?: 0)
@@ -209,7 +214,9 @@ class Scheme(
 
 private class SchemeParseError : Exception("Internal scheme parse error")
 
-private fun schemeParseError(): Nothing { throw SchemeParseError() }
+private fun schemeParseError(): Nothing {
+    throw SchemeParseError()
+}
 
 /**
  * Given a string produce a [Scheme] if the string is a valid serialization of a [Scheme] or null
@@ -236,7 +243,7 @@ fun deserializeScheme(value: String): Scheme? {
     fun <T> delimited(
         prefix: ItemKind,
         postfix: ItemKind,
-        content: () -> T
+        content: () -> T,
     ) = run {
         reader.expect(prefix)
         content().also {
@@ -247,7 +254,7 @@ fun deserializeScheme(value: String): Scheme? {
     fun <T> optional(
         prefix: ItemKind,
         postfix: ItemKind = ItemKind.Invalid,
-        content: () -> T
+        content: () -> T,
     ): T? =
         if (reader.kind == prefix) {
             delimited(prefix, postfix, content)
@@ -295,10 +302,21 @@ internal class SchemeStringSerializationWriter(private val builder: StringBuilde
         }
     }
 
-    fun writeOpen() { builder.append('[') }
-    fun writeClose() { builder.append(']') }
-    fun writeResultPrefix() { builder.append(':') }
-    fun writeAnyParameters() { builder.append('*') }
+    fun writeOpen() {
+        builder.append('[')
+    }
+
+    fun writeClose() {
+        builder.append(']')
+    }
+
+    fun writeResultPrefix() {
+        builder.append(':')
+    }
+
+    fun writeAnyParameters() {
+        builder.append('*')
+    }
 
     override fun toString(): String = builder.toString()
 
@@ -321,23 +339,24 @@ private const val eos = '\u0000'
 private class SchemeStringSerializationReader(private val value: String) {
     private var current = 0
 
-    val kind: ItemKind get() =
-        when (val ch = ch) {
-            '_' -> ItemKind.Number
-            '[' -> ItemKind.Open
-            ']' -> ItemKind.Close
-            ':' -> ItemKind.ResultPrefix
-            '*' -> ItemKind.AnyParameters
-            '"' -> ItemKind.Token
-            else -> {
-                when {
-                    ch.isLetter() -> ItemKind.Token
-                    ch.isDigit() -> ItemKind.Number
-                    ch == eos -> ItemKind.End
-                    else -> ItemKind.Invalid
+    val kind: ItemKind
+        get() =
+            when (val ch = ch) {
+                '_' -> ItemKind.Number
+                '[' -> ItemKind.Open
+                ']' -> ItemKind.Close
+                ':' -> ItemKind.ResultPrefix
+                '*' -> ItemKind.AnyParameters
+                '"' -> ItemKind.Token
+                else -> {
+                    when {
+                        ch.isLetter() -> ItemKind.Token
+                        ch.isDigit() -> ItemKind.Number
+                        ch == eos -> ItemKind.End
+                        else -> ItemKind.Invalid
+                    }
                 }
             }
-        }
 
     fun end() {
         if (kind != ItemKind.End)

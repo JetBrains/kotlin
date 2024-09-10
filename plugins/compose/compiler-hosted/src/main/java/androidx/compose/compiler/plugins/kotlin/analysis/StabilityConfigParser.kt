@@ -38,7 +38,7 @@ interface StabilityConfigParser {
 private const val COMMENT_DELIMITER = "//"
 
 private class StabilityConfigParserImpl(
-    lines: List<String>
+    lines: List<String>,
 ) : StabilityConfigParser {
     override val stableTypeMatchers: Set<FqNameMatcher>
 

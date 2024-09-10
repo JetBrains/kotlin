@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import kotlin.test.assertFalse
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -26,6 +25,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Ignore
+import kotlin.test.assertFalse
 
 @RunWith(Parameterized::class)
 class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -220,12 +220,12 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             )
             assert(
                 !it.contains(
-                "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function0;"
+                    "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function0;"
                 )
             )
             assert(
                 it.contains(
-                "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function2;"
+                    "INVOKESTATIC x/MakeComposableKt.makeComposable ()Lkotlin/jvm/functions/Function2;"
                 )
             )
         }
@@ -1068,8 +1068,8 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             ),
             validate = {
                 assertFalse(
-                   it.contains("setContent"),
-                   message = "Property getter was resolved to a setter name"
+                    it.contains("setContent"),
+                    message = "Property getter was resolved to a setter name"
                 )
                 assertFalse(
                     it.contains("Lkotlin/jvm/functions/Function0"),
@@ -1323,7 +1323,7 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
         flipLibraryFirSetting: Boolean = false, // compiles deps with k2 for k1 test and vice versa
-        validate: ((String) -> Unit)? = null
+        validate: ((String) -> Unit)? = null,
     ): List<OutputFile> {
         val libraryClasses = modules.filter { it.key != "Main" }.flatMap {
             classLoader(

@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import java.io.File
 import java.io.OutputStreamWriter
-import java.lang.Appendable
 
 /**
  * This class is a very rudimentary json serializer. It is not fully featured, and does not
@@ -45,6 +44,7 @@ class JsonBuilder(private val sb: Appendable, private val indent: Int = 0) {
         }
         hasEntry = true
     }
+
     fun entry(key: String, value: Boolean) = entryLiteral(key, "$value")
     fun entry(key: String, value: Int) = entryLiteral(key, "$value")
 
@@ -58,7 +58,7 @@ class JsonBuilder(private val sb: Appendable, private val indent: Int = 0) {
             appendLine("{")
             fn()
             if (hasEntry) appendLine()
-            append(" ".repeat((indent-1) * spacesForIndent)) // Close brace is one indent back
+            append(" ".repeat((indent - 1) * spacesForIndent)) // Close brace is one indent back
             append("}")
         }
     }
@@ -73,15 +73,18 @@ class CsvBuilder(private val writer: Appendable) {
         fn()
         appendLine()
     }
+
     fun col(value: String): Unit = with(writer) {
         require(!value.contains(',')) { "Illegal character ',' found: $value" }
         append(value)
         append(",")
     }
+
     fun col(value: Int): Unit = with(writer) {
         append("$value")
         append(",")
     }
+
     fun col(value: Boolean): Unit = with(writer) {
         append(if (value) "1" else "0")
         append(",")

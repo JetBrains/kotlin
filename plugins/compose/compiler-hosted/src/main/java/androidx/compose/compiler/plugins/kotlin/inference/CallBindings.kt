@@ -28,7 +28,7 @@ class CallBindings(
     val target: Binding,
     val parameters: List<CallBindings> = emptyList(),
     val result: CallBindings?,
-    val anyParameters: Boolean
+    val anyParameters: Boolean,
 ) {
     override fun toString(): String {
         val paramsString = if (parameters.isEmpty()) "" else ", ${

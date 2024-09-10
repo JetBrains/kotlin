@@ -21,33 +21,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtAnnotatedExpression
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtTryExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -79,7 +59,7 @@ open class ComposableCallChecker :
     override fun registerModuleComponents(
         container: StorageComponentContainer,
         platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
     ) {
         container.useInstance(this)
     }
@@ -87,7 +67,7 @@ open class ComposableCallChecker :
     private fun checkInlineLambdaCall(
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
-        context: CallCheckerContext
+        context: CallCheckerContext,
     ) {
         if (resolvedCall !is VariableAsFunctionResolvedCall) return
         val descriptor = resolvedCall.variableCall.resultingDescriptor
@@ -101,7 +81,7 @@ open class ComposableCallChecker :
         ) {
             val bindingContext = context.trace.bindingContext
             var node: PsiElement? = reportOn
-            loop@while (node != null) {
+            loop@ while (node != null) {
                 when (node) {
                     is KtLambdaExpression -> {
                         val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
@@ -132,12 +112,12 @@ open class ComposableCallChecker :
     override fun check(
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
-        context: CallCheckerContext
+        context: CallCheckerContext,
     ) {
         val bindingContext = context.trace.bindingContext
         if (
             !resolvedCall.isComposableDelegateReference(bindingContext) &&
-                !resolvedCall.isComposableInvocation()
+            !resolvedCall.isComposableInvocation()
         ) {
             checkInlineLambdaCall(resolvedCall, reportOn, context)
             return
@@ -146,7 +126,7 @@ open class ComposableCallChecker :
         warnOnUnstableNamedArguments(resolvedCall, context)
 
         var node: PsiElement? = reportOn
-        loop@while (node != null) {
+        loop@ while (node != null) {
             when (node) {
                 is KtFunctionLiteral -> {
                     // keep going, as this is a "KtFunction", but we actually want the
@@ -243,14 +223,15 @@ open class ComposableCallChecker :
                         // we will recheck on the property call site instead.
                         if (
                             descriptor is VariableDescriptorWithAccessors &&
-                                descriptor.isDelegated
+                            descriptor.isDelegated
                         ) {
                             if (descriptor.isVar) {
                                 // setValue delegate is not allowed for now.
                                 illegalComposableDelegate(context, reportOn)
                             }
                             if (descriptor is PropertyDescriptor &&
-                                descriptor.getter?.hasComposableAnnotation() != true) {
+                                descriptor.getter?.hasComposableAnnotation() != true
+                            ) {
                                 composableExpected(context, node.nameIdentifier ?: node)
                             }
                             return
@@ -307,7 +288,7 @@ open class ComposableCallChecker :
 
     private fun warnOnUnstableNamedArguments(
         resolvedCall: ResolvedCall<*>,
-        context: CallCheckerContext
+        context: CallCheckerContext,
     ) {
         if (resolvedCall.candidateDescriptor?.hasStableParameterNames() != true) {
             for (valueArgument in resolvedCall.call.valueArguments) {
@@ -324,7 +305,7 @@ open class ComposableCallChecker :
         context: CallCheckerContext,
         unmarkedParamEl: PsiElement,
         unmarkedParamDescriptor: ValueParameterDescriptor,
-        markedParamDescriptor: ValueParameterDescriptor
+        markedParamDescriptor: ValueParameterDescriptor,
     ) {
         context.trace.report(
             ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION.on(
@@ -339,7 +320,7 @@ open class ComposableCallChecker :
     private fun illegalCall(
         context: CallCheckerContext,
         callEl: PsiElement,
-        functionEl: PsiElement? = null
+        functionEl: PsiElement? = null,
     ) {
         context.trace.report(ComposeErrors.COMPOSABLE_INVOCATION.on(callEl))
         if (functionEl != null) {
@@ -349,28 +330,28 @@ open class ComposableCallChecker :
 
     private fun composableExpected(
         context: CallCheckerContext,
-        functionEl: PsiElement
+        functionEl: PsiElement,
     ) {
         context.trace.report(ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl))
     }
 
     private fun illegalCallMustBeReadonly(
         context: CallCheckerContext,
-        callEl: PsiElement
+        callEl: PsiElement,
     ) {
         context.trace.report(ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE.on(callEl))
     }
 
     private fun illegalComposableFunctionReference(
         context: CallCheckerContext,
-        refExpr: KtCallableReferenceExpression
+        refExpr: KtCallableReferenceExpression,
     ) {
         context.trace.report(ComposeErrors.COMPOSABLE_FUNCTION_REFERENCE.on(refExpr))
     }
 
     private fun illegalComposableDelegate(
         context: CallCheckerContext,
-        reportOn: PsiElement
+        reportOn: PsiElement,
     ) {
         context.trace.report(ComposeErrors.COMPOSE_INVALID_DELEGATE.on(reportOn))
     }
@@ -379,7 +360,7 @@ open class ComposableCallChecker :
         expression: KtExpression,
         expressionType: KotlinType,
         expressionTypeWithSmartCast: KotlinType,
-        c: ResolutionContext<*>
+        c: ResolutionContext<*>,
     ) {
         val bindingContext = c.trace.bindingContext
         if (expressionType.isNothing()) return
@@ -503,8 +484,8 @@ fun ResolvedCall<*>.isComposableDelegateReference(bindingContext: BindingContext
 fun ResolvedCall<*>.isComposableDelegateOperator(): Boolean {
     val descriptor = candidateDescriptor
     return descriptor is FunctionDescriptor &&
-        descriptor.isOperator &&
-        descriptor.name in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
+            descriptor.isOperator &&
+            descriptor.name in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
 }
 
 fun ResolvedCall<*>.isComposableInvocation(): Boolean {
@@ -565,7 +546,7 @@ fun CallableDescriptor.isComposableCallable(bindingContext: BindingContext): Boo
         return true
     }
     val functionLiteral = findPsi() as? KtFunctionLiteral
-        // if it isn't a function literal then we are out of things to try.
+    // if it isn't a function literal then we are out of things to try.
         ?: return false
 
     if (functionLiteral.annotationEntries.hasComposableAnnotation(bindingContext)) {
@@ -607,7 +588,7 @@ fun FunctionDescriptor.allowsComposableCalls(bindingContext: BindingContext): Bo
 // In this case, the function below falls back to looking at the parse tree
 // for `expression`, to determine whether we are resolving a value argument.
 private fun ResolutionContext<*>.getValueArgumentPosition(
-    expression: KtExpression
+    expression: KtExpression,
 ): CallPosition.ValueArgumentPosition? =
     when (val position = callPosition) {
         is CallPosition.ValueArgumentPosition ->
@@ -644,7 +625,7 @@ private fun getValueArgumentPositionFromPsi(
 
 private fun getArgumentDescriptor(
     expression: KtExpression,
-    context: BindingContext
+    context: BindingContext,
 ): ValueParameterDescriptor? =
     getValueArgumentPositionFromPsi(expression, context)?.valueParameter
 

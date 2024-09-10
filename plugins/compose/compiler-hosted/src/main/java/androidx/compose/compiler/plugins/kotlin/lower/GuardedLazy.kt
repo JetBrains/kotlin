@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import kotlin.reflect.KProperty
+
 class GuardedLazy<out T>(initializer: () -> T) {
     private var _value: Any? = UNINITIALIZED_VALUE
     private var _initializer: (() -> T)? = initializer

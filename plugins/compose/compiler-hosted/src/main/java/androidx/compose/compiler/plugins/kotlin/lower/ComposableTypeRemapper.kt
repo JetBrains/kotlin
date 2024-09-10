@@ -171,10 +171,10 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         // processed by copier yet.
         if (
             clsSymbol.isBound &&
-                clsSymbol.owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-                // Only process fun interfaces with @Composable types
-                clsSymbol.owner.isFun &&
-                clsSymbol.functions.any { it.owner.needsComposableRemapping() }
+            clsSymbol.owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+            // Only process fun interfaces with @Composable types
+            clsSymbol.owner.isFun &&
+            clsSymbol.functions.any { it.owner.needsComposableRemapping() }
         ) {
             // We always assume the current subtree has not been copied yet.
             // If the old symbol is the same as in remapper, it means we never reached it, so
@@ -191,7 +191,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
     }
 
     override fun visitDelegatingConstructorCall(
-        expression: IrDelegatingConstructorCall
+        expression: IrDelegatingConstructorCall,
     ): IrDelegatingConstructorCall {
         val owner = expression.symbol.owner
         // If we are calling an external constructor, we want to "remap" the types of its signature
@@ -200,8 +200,8 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         // do it ourself here.
         if (
             owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
-                owner.needsComposableRemapping() &&
-                symbolRemapper.getReferencedConstructor(expression.symbol) == owner.symbol
+            owner.needsComposableRemapping() &&
+            symbolRemapper.getReferencedConstructor(expression.symbol) == owner.symbol
         ) {
             symbolRemapper.visitConstructor(owner)
             visitConstructor(owner).patchDeclarationParents(owner.parent)
@@ -221,13 +221,13 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         if (
             containingClass != null &&
             ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE && (
-                // Fake override refers to composable if container is synthetic composable (K2)
-                // or function type is composable (K1)
-                containingClass.defaultType.isSyntheticComposableFunction() || (
-                    containingClass.defaultType.isFunction() &&
-                        expression.dispatchReceiver?.type?.hasComposableAnnotation() == true
-                )
-            )
+                    // Fake override refers to composable if container is synthetic composable (K2)
+                    // or function type is composable (K1)
+                    containingClass.defaultType.isSyntheticComposableFunction() || (
+                            containingClass.defaultType.isFunction() &&
+                                    expression.dispatchReceiver?.type?.hasComposableAnnotation() == true
+                            )
+                    )
         ) {
             val realParams = containingClass.typeParameters.size - 1
             // with composer and changed
@@ -359,7 +359,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
 
     /* copied verbatim from DeepCopyIrTreeWithSymbols */
     private fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(
-        other: IrMemberAccessExpression<*>
+        other: IrMemberAccessExpression<*>,
     ) {
         assert(typeArgumentsCount == other.typeArgumentsCount) {
             "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
@@ -388,7 +388,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
 class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
-    private val composerType: IrType
+    private val composerType: IrType,
 ) : TypeRemapper {
 
     lateinit var deepCopy: IrElementTransformerVoid

@@ -80,7 +80,8 @@ private class RuntimeTestCompiler(
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, sourceInformation)
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, sourceInformation)
         if (optimizeNonSkippingGroups) {
-            put(ComposeConfiguration.FEATURE_FLAGS,
+            put(
+                ComposeConfiguration.FEATURE_FLAGS,
                 listOf(
                     FeatureFlag.OptimizeNonSkippingGroups.featureName,
                 )

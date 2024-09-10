@@ -28,9 +28,11 @@ internal const val STABILITY_GENERIC_INCLUDE = "*"
 internal const val STABILITY_GENERIC_EXCLUDE = "_"
 internal const val STABILITY_GENERIC_SEPARATOR = ","
 internal const val STABILITY_PACKAGE_SEPARATOR = '.'
+
 class FqNameMatcherCollection(private val matchers: Set<FqNameMatcher>) {
     // Cache of external types already matched
     private val externalTypesMatched: MutableMap<FqName, Boolean> = mutableMapOf()
+
     // Tree of matchers for fast lookup
     private val matcherTree = MutableMatcherTree()
 
@@ -53,9 +55,9 @@ class FqNameMatcherCollection(private val matchers: Set<FqNameMatcher>) {
 
         val superTypeNames = superTypes.mapNotNull { it.classFqName }
         return (matcherTree.findFirstPositiveMatcher(name) != null ||
-            superTypeNames.any { superName ->
-                matcherTree.findFirstPositiveMatcher(superName) != null
-            })
+                superTypeNames.any { superName ->
+                    matcherTree.findFirstPositiveMatcher(superName) != null
+                })
             .also {
                 externalTypesMatched[name] = it
             }
@@ -119,6 +121,7 @@ class FqNameMatcher(val pattern: String) {
      * A key for storing this matcher.
      */
     val key: String
+
     /**
      * Mask for generic type inclusion in stability calculation
      */
@@ -142,7 +145,7 @@ class FqNameMatcher(val pattern: String) {
                     hasWildcard = true
                     if (pattern.getOrNull(index + 1) == STABILITY_WILDCARD_SINGLE) {
                         regexPatternBuilder.append(PATTERN_MULTI_WILD)
-                        index ++ // Skip a char to take the multi
+                        index++ // Skip a char to take the multi
                     } else {
                         regexPatternBuilder.append(PATTERN_SINGLE_WILD)
                     }
@@ -223,8 +226,10 @@ class FqNameMatcher(val pattern: String) {
         private const val PATTERN_PACKAGE_SEGMENT = "\\."
 
         private val validPatternMatcher =
-            Regex("((\\w+\\*{0,2}|\\*{1,2})\\.)*" +
-                "((\\w+(<?(?<genericmask>([*|_],)*[*|_])>)+)|(\\w+\\*{0,2}|\\*{1,2}))")
+            Regex(
+                "((\\w+\\*{0,2}|\\*{1,2})\\.)*" +
+                        "((\\w+(<?(?<genericmask>([*|_],)*[*|_])>)+)|(\\w+\\*{0,2}|\\*{1,2}))"
+            )
         private val singleWildcardSuffix = Regex(PATTERN_SINGLE_WILD)
         private val multiWildcardSuffix = Regex(PATTERN_MULTI_WILD)
     }

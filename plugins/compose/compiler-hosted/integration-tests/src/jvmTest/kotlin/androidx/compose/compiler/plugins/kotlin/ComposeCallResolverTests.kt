@@ -234,7 +234,7 @@ class ComposeCallResolverTests : AbstractCodegenTest(useFir = false) {
             val resolvedCall = ktFile.findElementAt(offset)?.getNearestResolvedCall(bindingContext)
                 ?: error(
                     "No resolved call found at index: $index, offset: $offset. Expected " +
-                        "$calltype."
+                            "$calltype."
                 )
 
             when (calltype) {
@@ -263,7 +263,8 @@ fun PsiElement?.getNearestResolvedCall(bindingContext: BindingContext): Resolved
     while (node != null) {
         when (node) {
             is KtBlockExpression,
-            is KtDeclaration -> return null
+            is KtDeclaration,
+            -> return null
             is KtElement -> {
                 val resolvedCall = node.getResolvedCall(bindingContext)
                 if (resolvedCall != null) {

@@ -17,10 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
-import java.io.PrintWriter
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -32,11 +28,15 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
+import java.io.PrintWriter
 
 // AbstractCliTest
 private fun executeCompilerGrabOutput(
     compiler: CLICompiler<*>,
-    args: List<String>
+    args: List<String>,
 ): Pair<String, ExitCode> {
     val output = StringBuilder()
 
@@ -56,6 +56,7 @@ private fun executeCompilerGrabOutput(
 
     return Pair(output.toString(), ExitCode.OK)
 }
+
 // CompilerTestUtil
 private fun executeCompiler(compiler: CLICompiler<*>, args: List<String>): Pair<String, ExitCode> {
     val bytes = ByteArrayOutputStream()
@@ -68,13 +69,14 @@ private fun executeCompiler(compiler: CLICompiler<*>, args: List<String>): Pair<
         System.setErr(origErr)
     }
 }
+
 // jetTestUtils
 fun String.trimTrailingWhitespaces(): String =
     this.split('\n').joinToString(separator = "\n") { it.trimEnd() }
+
 // jetTestUtils
 fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
-    this.trimTrailingWhitespaces().let {
-        result ->
+    this.trimTrailingWhitespaces().let { result ->
         if (result.endsWith("\n")) result else result + "\n"
     }
 
@@ -89,7 +91,7 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFi
         common: String,
         @Language("kotlin")
         jvm: String,
-        output: String
+        output: String,
     ) {
         val optionalArgs = arrayOf(
             "-cp",
@@ -152,7 +154,7 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFi
     private fun CLICompiler<*>.compile(
         sources: File,
         commonSources: File?,
-        vararg mainArguments: String
+        vararg mainArguments: String,
     ): String = buildString {
         val (output, exitCode) = executeCompilerGrabOutput(
             this@compile,

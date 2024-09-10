@@ -18,15 +18,10 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
-import androidx.compose.compiler.plugins.kotlin.FeatureFlag
-import androidx.compose.compiler.plugins.kotlin.FeatureFlags
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
+import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
-import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -38,47 +33,17 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addGetter
-import org.jetbrains.kotlin.ir.builders.declarations.addProperty
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irBoolean
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.builders.irExprBody
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
-import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
-import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.util.isSuspendFunctionOrKFunction
-import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
@@ -132,7 +97,7 @@ private fun List<DeclarationContext>.recordLocalDeclaration(local: DeclarationCo
 }
 
 private fun List<DeclarationContext>.recordLocalCapture(
-    local: IrSymbolOwner
+    local: IrSymbolOwner,
 ): Set<IrValueDeclaration>? {
     val capturesForLocal = reversed().firstNotNullOfOrNull { it.localDeclarationCaptures[local] }
     if (capturesForLocal != null) {
@@ -166,7 +131,7 @@ private class SymbolOwnerContext(override val declaration: IrSymbolOwner) : Decl
 
 private class FunctionLocalSymbol(
     override val declaration: IrSymbolOwner,
-    override val functionContext: FunctionContext
+    override val functionContext: FunctionContext,
 ) : DeclarationContext() {
     override val composable: Boolean get() = functionContext.composable
     override val symbol: IrSymbol get() = declaration.symbol
@@ -433,8 +398,8 @@ class ComposerLambdaMemoization(
 
     private val IrFunction.allowsComposableCalls: Boolean
         get() = hasComposableAnnotation() ||
-            inlineLambdaInfo.preservesComposableScope(this) &&
-            declarationContextStack.peek()?.composable == true
+                inlineLambdaInfo.preservesComposableScope(this) &&
+                declarationContextStack.peek()?.composable == true
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val composable = declaration.allowsComposableCalls
@@ -517,7 +482,7 @@ class ComposerLambdaMemoization(
 
     private fun rememberFunctionReference(
         reference: IrFunctionReference,
-        expression: IrExpression
+        expression: IrExpression,
     ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
@@ -554,7 +519,7 @@ class ComposerLambdaMemoization(
             val hasReceiver = dispatchReceiver != null || extensionReceiver != null
             val receiverIsStable =
                 dispatchReceiver.isNullOrStable() &&
-                    extensionReceiver.isNullOrStable()
+                        extensionReceiver.isNullOrStable()
 
             val captures = mutableListOf<IrValueDeclaration>()
             if (localCaptures != null) {
@@ -632,7 +597,7 @@ class ComposerLambdaMemoization(
             is IrTypeOperatorCall -> {
                 require(
                     argument.operator == IrTypeOperator.IMPLICIT_CAST &&
-                        argument.argument == originalFunctionExpression
+                            argument.argument == originalFunctionExpression
                 ) {
                     "Only implicit cast is supported inside SAM conversion"
                 }
@@ -716,7 +681,7 @@ class ComposerLambdaMemoization(
 
     private fun visitComposableFunctionExpression(
         expression: IrFunctionExpression,
-        declarationContext: DeclarationContext
+        declarationContext: DeclarationContext,
     ): IrExpression {
         val collector = CaptureCollector()
         startCollector(collector)
@@ -774,7 +739,7 @@ class ComposerLambdaMemoization(
 
     private fun irGetComposableSingleton(
         lambdaExpression: IrExpression,
-        lambdaType: IrType
+        lambdaType: IrType,
     ): IrExpression {
         val clazz = getOrCreateComposableSingletonsClass()
         val lambdaName = "lambda-${clazz.declarations.size}"
@@ -843,7 +808,7 @@ class ComposerLambdaMemoization(
     private fun wrapFunctionExpression(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression,
-        collector: CaptureCollector
+        collector: CaptureCollector,
     ): IrExpression {
         val function = expression.function
         val argumentCount = function.valueParameters.size
@@ -851,8 +816,8 @@ class ComposerLambdaMemoization(
         if (argumentCount > MAX_RESTART_ARGUMENT_COUNT && !context.platform.isJvm()) {
             error(
                 "only $MAX_RESTART_ARGUMENT_COUNT parameters " +
-                    "in @Composable lambda are supported on" +
-                    "non-JVM targets (K/JS or K/Wasm or K/Native)"
+                        "in @Composable lambda are supported on" +
+                        "non-JVM targets (K/JS or K/Wasm or K/Native)"
             )
         }
 
@@ -860,7 +825,7 @@ class ComposerLambdaMemoization(
         val useComposableFactory = collector.hasCaptures && declarationContext.composable
         val rememberComposable = rememberComposableLambdaFunction ?: composableLambdaFunction
         val requiresExplicitComposerParameter = useComposableFactory &&
-            rememberComposableLambdaFunction == null
+                rememberComposableLambdaFunction == null
         val restartFactorySymbol =
             if (useComposableFactory)
                 if (useComposableLambdaN)
@@ -926,10 +891,10 @@ class ComposerLambdaMemoization(
     private fun rememberExpression(
         functionContext: FunctionContext,
         expression: IrExpression,
-        captures: List<IrValueDeclaration>
+        captures: List<IrValueDeclaration>,
     ): IrExpression {
         val memoizeLambdasWithoutCaptures =
-            // Kotlin/JS doesn't have an optimization for non-capturing lambdas
+        // Kotlin/JS doesn't have an optimization for non-capturing lambdas
             // https://youtrack.jetbrains.com/issue/KT-49923
             context.platform.isJs() || context.platform.isWasm() ||
                     (
@@ -937,7 +902,7 @@ class ComposerLambdaMemoization(
                             // on Android.
                             context.platform.isJvm() &&
                                     context.languageVersionSettings.languageVersion.usesK2
-                    )
+                            )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
@@ -1038,14 +1003,14 @@ class ComposerLambdaMemoization(
 
     private fun irRemember(
         captures: List<IrExpression>,
-        expression: IrExpression
+        expression: IrExpression,
     ): IrExpression {
         val directRememberFunction = // Exclude the varargs version
             rememberFunctions.singleOrNull {
                 // captures + calculation arg
                 it.valueParameters.size == captures.size + 1 &&
-                    // Exclude the varargs version
-                    it.valueParameters.firstOrNull()?.varargElementType == null
+                        // Exclude the varargs version
+                        it.valueParameters.firstOrNull()?.varargElementType == null
             }
         val rememberFunction = directRememberFunction
             ?: rememberFunctions.single {
@@ -1122,14 +1087,14 @@ class ComposerLambdaMemoization(
 
     private fun IrValueDeclaration.isInlinedLambda(): Boolean =
         isInlineableFunction() &&
-            this is IrValueParameter &&
-            (parent as? IrFunction)?.isInline == true &&
-            !isNoinline
+                this is IrValueParameter &&
+                (parent as? IrFunction)?.isInline == true &&
+                !isNoinline
 
     private fun IrValueDeclaration.isInlineableFunction(): Boolean =
         type.isFunctionOrKFunction() ||
-            type.isSyntheticComposableFunction() ||
-            type.isSuspendFunctionOrKFunction()
+                type.isSyntheticComposableFunction() ||
+                type.isSuspendFunctionOrKFunction()
 
     private fun <T : IrExpression> T.markAsStatic(mark: Boolean): T {
         if (mark) {

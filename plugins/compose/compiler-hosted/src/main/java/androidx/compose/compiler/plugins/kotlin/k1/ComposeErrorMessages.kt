@@ -27,6 +27,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         DiagnosticFactoryToRendererMap(
             "Compose"
         )
+
     override fun getMap() = MAP
 
     init {
@@ -38,7 +39,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.COMPOSABLE_EXPECTED,
             "Functions which invoke @Composable functions must be marked with the @Composable " +
-                "annotation"
+                    "annotation"
         )
 
         MAP.put(
@@ -56,7 +57,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION,
             "Parameter {0} cannot be inlined inside of lambda argument {1} of {2} " +
-                "without also being annotated with @DisallowComposableCalls",
+                    "without also being annotated with @DisallowComposableCalls",
             Renderers.NAME,
             Renderers.NAME,
             Renderers.NAME
@@ -65,7 +66,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE,
             "Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable " +
-                "composables"
+                    "composables"
         )
 
         MAP.put(
@@ -104,7 +105,7 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.TYPE_MISMATCH,
             "Type inference failed. Expected type mismatch: inferred type is {1} but {0}" +
-                " was expected",
+                    " was expected",
             RENDER_TYPE_WITH_ANNOTATIONS,
             RENDER_TYPE_WITH_ANNOTATIONS
         )
@@ -135,12 +136,12 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.REDUNDANT_COMPOSABLE_ANNOTATION,
             "Invalid `@Composable` annotation on inline lambda." +
-                " This will become an error in Kotlin 2.0."
+                    " This will become an error in Kotlin 2.0."
         )
         MAP.put(
             ComposeErrors.NAMED_ARGUMENTS_NOT_ALLOWED,
             "Named arguments in composable function types are deprecated." +
-            " This will become an error in Kotlin 2.0"
+                    " This will become an error in Kotlin 2.0"
         )
     }
 }

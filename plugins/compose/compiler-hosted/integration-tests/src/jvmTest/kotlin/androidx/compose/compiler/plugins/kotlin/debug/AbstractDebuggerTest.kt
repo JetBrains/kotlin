@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
+
 package androidx.compose.compiler.plugins.kotlin.debug
 
 import androidx.compose.compiler.plugins.kotlin.AbstractCodegenTest
@@ -26,32 +27,20 @@ import com.intellij.util.SystemProperties
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.connect.AttachingConnector
-import com.sun.jdi.event.BreakpointEvent
-import com.sun.jdi.event.ClassPrepareEvent
-import com.sun.jdi.event.LocatableEvent
-import com.sun.jdi.event.MethodEntryEvent
-import com.sun.jdi.event.MethodExitEvent
-import com.sun.jdi.event.StepEvent
-import com.sun.jdi.event.VMDeathEvent
-import com.sun.jdi.event.VMDisconnectEvent
-import com.sun.jdi.event.VMStartEvent
+import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.MethodEntryRequest
 import com.sun.jdi.request.MethodExitRequest
 import com.sun.jdi.request.StepRequest
-import java.io.File
-import java.net.URL
-import java.net.URLClassLoader
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.junit.After
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Rule
+import org.junit.*
 import org.junit.rules.TemporaryFolder
+import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
 
 private const val RUNNER_CLASS = "RunnerKt"
 private const val MAIN_METHOD = "main"
@@ -149,7 +138,7 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
 
     private fun invokeRunnerMainInSeparateProcess(
         classLoader: URLClassLoader,
-        port: Int
+        port: Int,
     ): TestProxy {
         val classPath = classLoader.extractUrls().toMutableList()
         classPath.addAll(defaultClassPath.map { it.toURI().toURL() })

@@ -1571,7 +1571,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 }
             }
         """
-    )
+        )
 
     @Test
     fun testSingleVarVersusValProperty() = assertTransform(
@@ -1629,7 +1629,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         classDefSrc: String,
         stability: String,
         externalTypes: Set<String> = emptySet(),
-        transform: (IrClass) -> Unit = {}
+        transform: (IrClass) -> Unit = {},
     ) {
         val source = """
             import androidx.compose.runtime.mutableStateOf
@@ -1668,7 +1668,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         stability: String,
         dumpClasses: Boolean = false,
         externalTypes: Set<String> = emptySet(),
-        packageName: String = "dependency"
+        packageName: String = "dependency",
     ) {
         val irModule = buildModule(
             externalSrc,
@@ -1752,7 +1752,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         expression: String,
         stability: String,
         dumpClasses: Boolean = false,
-        externalTypes: Set<String> = emptySet()
+        externalTypes: Set<String> = emptySet(),
     ) {
         val irModule = buildModule(
             externalSrc,
@@ -1794,7 +1794,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         localSrc: String,
         dumpClasses: Boolean = false,
         packageName: String = "dependency",
-        externalTypes: Set<String>
+        externalTypes: Set<String>,
     ): IrModuleFragment {
         val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
         val dependencySrc = """
@@ -1844,7 +1844,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         @Language("kotlin")
         checked: String,
         unchecked: String = "",
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         checked,
         """

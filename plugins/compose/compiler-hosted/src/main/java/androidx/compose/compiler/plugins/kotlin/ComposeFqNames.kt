@@ -36,6 +36,7 @@ private val internalRootFqName = FqName(internalRoot)
 object ComposeClassIds {
     private fun classIdFor(cname: String) =
         ClassId(rootFqName, Name.identifier(cname))
+
     internal fun internalClassIdFor(cname: String) =
         ClassId(internalRootFqName, Name.identifier(cname))
 
@@ -60,6 +61,7 @@ object ComposeClassIds {
 object ComposeCallableIds {
     private fun topLevelCallableId(name: String) =
         CallableId(rootFqName, Name.identifier(name))
+
     internal fun internalTopLevelCallableId(name: String) =
         CallableId(internalRootFqName, Name.identifier(name))
 

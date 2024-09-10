@@ -20,12 +20,7 @@ import androidx.compose.compiler.plugins.kotlin.facade.K1AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.k1.allowsComposableCalls
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -194,7 +189,7 @@ class ScopeComposabilityTests : AbstractCodegenTest(useFir = false) {
 }
 
 fun PsiElement?.getNearestComposability(
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ): Boolean {
     var node: PsiElement? = this
     while (node != null) {
@@ -210,7 +205,8 @@ fun PsiElement?.getNearestComposability(
             }
             is KtFunction,
             is KtPropertyAccessor,
-            is KtProperty -> {
+            is KtProperty,
+            -> {
                 val descriptor = bindingContext[BindingContext.FUNCTION, node] ?: return false
                 return descriptor.allowsComposableCalls(bindingContext)
             }

@@ -240,7 +240,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expression: String,
         @Language("kotlin")
         extraSrc: String = "",
-        includeUiImports: Boolean = false
+        includeUiImports: Boolean = false,
     ) {
         assertParameterChangeBitsForExpression(
             message = "Expression `$expression` did not compile with the correct %changed flags",
@@ -255,7 +255,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expression: String,
         @Language("kotlin")
         extraSrc: String = "",
-        includeUiImports: Boolean = false
+        includeUiImports: Boolean = false,
     ) {
         assertParameterChangeBitsForExpression(
             message = "Expression `$expression` did not compile with the correct %changed flags",
@@ -272,7 +272,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         expectedEncodedChangedParameter: ChangedParameterEncoding,
         @Language("kotlin")
         extraSrc: String = "",
-        includeUiImports: Boolean = false
+        includeUiImports: Boolean = false,
     ) {
         @Language("kotlin")
         val source = """
@@ -333,12 +333,14 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
     private fun assertChangedBits(
         message: String,
         expected: ChangedParameterEncoding,
-        actual: Int
+        actual: Int,
     ) {
         val maskedActual = actual and ChangedParameterEncoding.Mask
         if (ChangedParameterEncoding.values().none { it.bits == maskedActual }) {
-            fail("$message\nThe actual %changed flags contained an illegal encoding: " +
-                "0b${maskedActual.toString(radix = 2)}")
+            fail(
+                "$message\nThe actual %changed flags contained an illegal encoding: " +
+                        "0b${maskedActual.toString(radix = 2)}"
+            )
         }
 
         assertEquals(

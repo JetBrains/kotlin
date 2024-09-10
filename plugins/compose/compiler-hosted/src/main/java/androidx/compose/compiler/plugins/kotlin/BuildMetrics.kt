@@ -22,13 +22,8 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.IrSourcePrinterVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.isUnitOrNullableUnit
-import java.io.File
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -37,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtParameter
+import java.io.File
 
 @JvmDefaultWithCompatibility
 interface FunctionMetrics {
@@ -57,8 +53,9 @@ interface FunctionMetrics {
     fun recordGroup()
     fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
     )
+
     fun recordParameter(
         declaration: IrValueParameter,
         type: IrType,
@@ -67,6 +64,7 @@ interface FunctionMetrics {
         defaultStatic: Boolean,
         used: Boolean,
     )
+
     fun recordFunction(
         composable: Boolean,
         restartable: Boolean,
@@ -74,11 +72,13 @@ interface FunctionMetrics {
         isLambda: Boolean,
         inline: Boolean,
         hasDefaults: Boolean,
-        readonly: Boolean
+        readonly: Boolean,
     )
+
     fun recordScheme(
-        scheme: String
+        scheme: String,
     )
+
     fun print(out: Appendable, src: IrSourcePrinterVisitor)
 }
 
@@ -89,20 +89,24 @@ interface ModuleMetrics {
     fun recordFunction(
         function: FunctionMetrics,
     )
+
     fun recordClass(
         declaration: IrClass,
         marked: Boolean,
         stability: Stability,
     )
+
     fun recordLambda(
         composable: Boolean,
         memoized: Boolean,
         singleton: Boolean,
     )
+
     fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
     )
+
     fun log(message: String)
     fun Appendable.appendModuleJson()
     fun Appendable.appendComposablesCsv()
@@ -120,11 +124,14 @@ object EmptyModuleMetrics : ModuleMetrics {
     override fun recordLambda(composable: Boolean, memoized: Boolean, singleton: Boolean) {}
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
-    ) {}
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
+    ) {
+    }
+
     override fun log(message: String) {
         println(message)
     }
+
     override fun Appendable.appendModuleJson() {}
     override fun Appendable.appendComposablesCsv() {}
     override fun Appendable.appendComposablesTxt() {}
@@ -163,19 +170,24 @@ object EmptyFunctionMetrics : FunctionMetrics {
         get() = emptyMetricsAccessed()
     override val scheme: String
         get() = emptyMetricsAccessed()
+
     override fun recordGroup() {}
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
-    ) {}
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
+    ) {
+    }
+
     override fun recordParameter(
         declaration: IrValueParameter,
         type: IrType,
         stability: Stability,
         default: IrExpression?,
         defaultStatic: Boolean,
-        used: Boolean
-    ) {}
+        used: Boolean,
+    ) {
+    }
+
     override fun recordFunction(
         composable: Boolean,
         restartable: Boolean,
@@ -183,8 +195,10 @@ object EmptyFunctionMetrics : FunctionMetrics {
         isLambda: Boolean,
         inline: Boolean,
         hasDefaults: Boolean,
-        readonly: Boolean
-    ) {}
+        readonly: Boolean,
+    ) {
+    }
+
     override fun recordScheme(scheme: String) {}
     override fun print(out: Appendable, src: IrSourcePrinterVisitor) {}
 }
@@ -192,7 +206,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
 class ModuleMetricsImpl(
     var name: String,
     val featureFlags: FeatureFlags,
-    val stabilityOf: (IrType) -> Stability
+    val stabilityOf: (IrType) -> Stability,
 ) : ModuleMetrics {
     private var skippableComposables = 0
     private var restartableComposables = 0
@@ -225,7 +239,7 @@ class ModuleMetricsImpl(
     private inner class ClassMetrics(
         val declaration: IrClass,
         val marked: Boolean,
-        val stability: Stability
+        val stability: Stability,
     ) {
 
         private fun Stability.simpleHumanReadable() = when {
@@ -233,6 +247,7 @@ class ModuleMetricsImpl(
             knownUnstable() -> "unstable"
             else -> "runtime"
         }
+
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
             append("${stability.simpleHumanReadable()} ")
@@ -283,7 +298,7 @@ class ModuleMetricsImpl(
     override fun recordClass(
         declaration: IrClass,
         marked: Boolean,
-        stability: Stability
+        stability: Stability,
     ) {
         classes.add(
             ClassMetrics(
@@ -325,7 +340,7 @@ class ModuleMetricsImpl(
 
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
     ) {
         for (arg in paramMeta) {
             totalArguments++
@@ -462,7 +477,7 @@ class ModuleMetricsImpl(
 }
 
 class FunctionMetricsImpl(
-    val function: IrFunction
+    val function: IrFunction,
 ) : FunctionMetrics {
     override var packageName: FqName = function.fqNameForIrSerialization
     override var name: String = function.name.asString()
@@ -477,13 +492,14 @@ class FunctionMetricsImpl(
     override var groups: Int = 0
     override var calls: Int = 0
     override var scheme: String? = null
+
     private class Param(
         val declaration: IrValueParameter,
         val type: IrType,
         val stability: Stability,
         val default: IrExpression?,
         val defaultStatic: Boolean,
-        val used: Boolean
+        val used: Boolean,
     ) {
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
@@ -518,7 +534,7 @@ class FunctionMetricsImpl(
 
     override fun recordComposableCall(
         expression: IrCall,
-        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>
+        paramMeta: List<ComposableFunctionBodyTransformer.CallArgumentMeta>,
     ) {
         calls++
     }
@@ -530,7 +546,7 @@ class FunctionMetricsImpl(
         isLambda: Boolean,
         inline: Boolean,
         hasDefaults: Boolean,
-        readonly: Boolean
+        readonly: Boolean,
     ) {
         this.composable = composable
         this.restartable = restartable

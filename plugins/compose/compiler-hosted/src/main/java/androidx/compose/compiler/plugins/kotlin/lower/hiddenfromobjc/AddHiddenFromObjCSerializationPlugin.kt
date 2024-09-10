@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
  * @see [HideFromObjCDeclarationsSet]
  */
 class AddHiddenFromObjCSerializationPlugin(
-    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet
+    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet,
 ) : DescriptorSerializerPlugin {
 
     private val hasAnnotationFlag = Flags.HAS_ANNOTATIONS.toFlags(true)
@@ -53,7 +53,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)
@@ -67,7 +67,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Constructor.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)
@@ -84,7 +84,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Function.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)
@@ -98,7 +98,7 @@ class AddHiddenFromObjCSerializationPlugin(
         proto: ProtoBuf.Property.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer,
-        extension: SerializerExtension
+        extension: SerializerExtension,
     ) {
         if (descriptor in hideFromObjCDeclarationsSet) {
             val annotationProto = createAnnotationProto(extension)

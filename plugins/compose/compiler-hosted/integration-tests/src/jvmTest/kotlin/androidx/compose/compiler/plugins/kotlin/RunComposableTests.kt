@@ -16,17 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.runtime.Applier
-import androidx.compose.runtime.Composer
-import androidx.compose.runtime.Composition
-import androidx.compose.runtime.MonotonicFrameClock
-import androidx.compose.runtime.Recomposer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
@@ -70,7 +61,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     ): String
                 """.trimIndent()
             ),
-            platformFiles = mapOf("Actual.kt" to """
+            platformFiles = mapOf(
+                "Actual.kt" to """
                     import androidx.compose.runtime.*
 
                     @Composable
@@ -121,7 +113,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     ): String
                 """.trimIndent()
             ),
-            platformFiles = mapOf("Actual.kt" to """
+            platformFiles = mapOf(
+                "Actual.kt" to """
                     import androidx.compose.runtime.*
 
                     @Composable
@@ -167,7 +160,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         value: () -> String = { expectedProperty },
                         content: @Composable (v: String) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -217,7 +211,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         value: String = defaultValueComposable(),
                         content: @Composable (v: String) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -258,7 +253,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         composeValue: @Composable () -> T = { value },
                         content: @Composable (T) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -299,7 +295,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         value: String = remember { "rememberedDefaultValue" },
                         content: @Composable (v: String) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -340,7 +337,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         composeText: (String) -> String = { value },
                         content: @Composable (v: String) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -387,7 +385,8 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                         value: String = "000",
                         content: @Composable (v: String) -> Unit
                     )
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             platformFiles = mapOf(
                 "Actual.kt" to """
                     import androidx.compose.runtime.*
@@ -417,7 +416,7 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         testFunBody: String,
         commonFiles: Map<String, String>, // name to source code
         platformFiles: Map<String, String>, // name to source code
-        accessResults: (results: HashMap<*, *>) -> Unit
+        accessResults: (results: HashMap<*, *>) -> Unit,
     ) {
         val className = "TestFCS_${uniqueNumber++}"
 
@@ -478,7 +477,7 @@ class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         private const val fps = 60
 
         override suspend fun <R> withFrameNanos(
-            onFrame: (Long) -> R
+            onFrame: (Long) -> R,
         ): R {
             delay(1000L / fps)
             return onFrame(System.nanoTime())

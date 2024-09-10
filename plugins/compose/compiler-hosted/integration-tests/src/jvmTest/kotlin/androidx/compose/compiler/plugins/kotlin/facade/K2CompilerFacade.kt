@@ -27,22 +27,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -54,7 +49,6 @@ import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -64,7 +58,7 @@ import org.jetbrains.kotlin.psi.KtFile
 class FirAnalysisResult(
     val firResult: FirResult,
     override val files: List<KtFile>,
-    val reporter: BaseDiagnosticsCollector
+    val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
         get() = reporter.diagnostics.groupBy(
@@ -88,7 +82,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     private fun createSourceSession(
         moduleData: FirModuleData,
         projectSessionProvider: FirProjectSessionProvider,
-        projectEnvironment: AbstractProjectEnvironment
+        projectEnvironment: AbstractProjectEnvironment,
     ): FirSession {
         return FirJvmSessionFactory.createModuleBasedSession(
             moduleData,
@@ -114,7 +108,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     override fun analyze(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): FirAnalysisResult {
         val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
 
@@ -189,7 +183,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     private fun frontend(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): FirFrontendResult {
         val analysisResult = analyze(platformFiles, commonFiles)
 
@@ -218,7 +212,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
     override fun compile(
         platformFiles: List<SourceFile>,
-        commonFiles: List<SourceFile>
+        commonFiles: List<SourceFile>,
     ): GenerationState {
         val frontendResult = frontend(platformFiles, commonFiles)
         val irModuleFragment = frontendResult.firResult.irModuleFragment

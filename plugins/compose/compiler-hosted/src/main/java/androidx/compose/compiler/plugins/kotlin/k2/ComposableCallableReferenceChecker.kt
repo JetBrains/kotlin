@@ -37,7 +37,7 @@ object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker(Mp
     override fun check(
         expression: FirCallableReferenceAccess,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         // The type of a function reference depends on the context where it is used.
         // We could allow non-reflective composable function references, but this would be fragile

@@ -66,31 +66,31 @@ class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignature
 
     private fun String.assertKeyMetaClass(expected: Int) {
         assertEquals(expected,
-            lines().count {
-                it.contains("final class") && it.endsWith("%KeyMeta {")
-            }
+                     lines().count {
+                         it.contains("final class") && it.endsWith("%KeyMeta {")
+                     }
         )
     }
 
     private fun String.assertFunctionKeyMetaClassAnnotationCount(expected: Int) {
         assertEquals(expected,
-            lines().count {
-                it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMetaClass;")
-            }
+                     lines().count {
+                         it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMetaClass;")
+                     }
         )
     }
 
     private fun String.assertFunctionKeyMetaAnnotationCount(expected: Int) {
         assertEquals(expected,
-            lines().sumOf {
-                when {
-                    it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta%Container;") -> {
-                        it.occurrences("@Landroidx/compose/runtime/internal/FunctionKeyMeta;")
-                    }
-                    it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta;") -> 1
-                    else -> 0
-                }
-            }
+                     lines().sumOf {
+                         when {
+                             it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta%Container;") -> {
+                                 it.occurrences("@Landroidx/compose/runtime/internal/FunctionKeyMeta;")
+                             }
+                             it.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta;") -> 1
+                             else -> 0
+                         }
+                     }
         )
     }
 

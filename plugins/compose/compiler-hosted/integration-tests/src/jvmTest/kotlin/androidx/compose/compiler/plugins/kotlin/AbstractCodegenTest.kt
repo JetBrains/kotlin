@@ -17,17 +17,18 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
-import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import java.io.File
+
 var uniqueNumber = 0
 
 abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     private fun dumpClasses(loader: GeneratedClassLoader) {
         for (
-            file in loader.allGeneratedFiles.filter {
-                it.relativePath.endsWith(".class")
-            }
+        file in loader.allGeneratedFiles.filter {
+            it.relativePath.endsWith(".class")
+        }
         ) {
             println("------\nFILE: ${file.relativePath}\n------")
             println(file.asText())
@@ -38,7 +39,7 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
         @Language("kotlin")
         src: String,
         dumpClasses: Boolean = false,
-        validate: (String) -> Unit
+        validate: (String) -> Unit,
     ) {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
@@ -82,7 +83,7 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
 
     protected fun classLoader(
         sources: Map<String, String>,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
             sources.map { (fileName, source) -> SourceFile(fileName, source) }
@@ -94,7 +95,7 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
     protected fun classLoader(
         platformSources: Map<String, String>,
         commonSources: Map<String, String>,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
             platformSources.map { (fileName, source) -> SourceFile(fileName, source) },
@@ -108,7 +109,7 @@ abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFi
         sources: Map<String, String>,
         additionalPaths: List<File>,
         dumpClasses: Boolean = false,
-        forcedFirSetting: Boolean? = null
+        forcedFirSetting: Boolean? = null,
     ): GeneratedClassLoader {
         val loader = createClassLoader(
             sources.map { (fileName, source) -> SourceFile(fileName, source) },

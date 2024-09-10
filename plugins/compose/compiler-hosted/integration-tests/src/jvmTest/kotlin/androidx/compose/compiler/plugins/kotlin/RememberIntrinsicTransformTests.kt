@@ -37,7 +37,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
@@ -794,7 +794,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 }
 
 class RememberIntrinsicTransformTestsStrongSkipping(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractIrTransformTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)

@@ -25,7 +25,7 @@ class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformT
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        dumpTree: Boolean = false
+        dumpTree: Boolean = false,
     ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable

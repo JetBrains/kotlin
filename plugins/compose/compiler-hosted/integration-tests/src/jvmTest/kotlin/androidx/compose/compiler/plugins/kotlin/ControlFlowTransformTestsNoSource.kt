@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class ControlFlowTransformTestsNoSource(
-    useFir: Boolean
+    useFir: Boolean,
 ) : AbstractControlFlowTransformTests(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
