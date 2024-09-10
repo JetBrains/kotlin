@@ -203,9 +203,6 @@ object StandardNames {
         @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
         @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
-        // todo maybe a set
-        @JvmField val atomicInt: FqName = concurrent("AtomicInt")
-
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
         }
