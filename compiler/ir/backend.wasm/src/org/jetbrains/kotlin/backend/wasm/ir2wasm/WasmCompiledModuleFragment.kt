@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -96,7 +96,7 @@ class WasmCompiledModuleFragment(
             if (declaration != null) {
                 val packageFragment = declaration.getPackageFragment()
                 if (packageFragment is IrExternalPackageFragment) {
-                    error("Referencing declaration without package fragment ${declaration.fqNameWhenAvailable}")
+                    compilationException("Referencing declaration without package fragment", declaration)
                 }
             }
             return unbound.getOrPut(ir) { WasmSymbol() }
@@ -111,7 +111,7 @@ class WasmCompiledModuleFragment(
     ) : ReferencableElements<Ir, Wasm>(unbound) {
         fun define(ir: Ir, wasm: Wasm) {
             if (ir in defined)
-                error("Trying to redefine element: IR: $ir Wasm: $wasm")
+                compilationException("Trying to redefine element: IR: $ir Wasm: $wasm", type = null)
 
             elements += wasm
             defined[ir] = wasm
@@ -367,7 +367,8 @@ class WasmCompiledModuleFragment(
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.mainFunctionWrappers.forEach { signature ->
-                    val wrapperFunction = fragment.functions.defined[signature] ?: error("Cannot find symbol for main wrapper")
+                    val wrapperFunction = fragment.functions.defined[signature]
+                        ?: compilationException("Cannot find symbol for main wrapper", type = null)
                     buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
                 }
             }
@@ -418,7 +419,7 @@ class WasmCompiledModuleFragment(
             wasmCompiledFileFragments.forEach { fragment ->
                 val signature = fragment.testFun
                 if (signature != null) {
-                    val testRunner = fragment.functions.defined[signature] ?: error("Cannot find symbol for test runner")
+                    val testRunner = fragment.functions.defined[signature] ?: compilationException("Cannot find symbol for test runner", type = null)
                     buildCall(WasmSymbol(testRunner), serviceCodeLocation)
                 }
             }
@@ -448,7 +449,7 @@ class WasmCompiledModuleFragment(
             stringPoolInitializer?.let {
                 expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(it.second))))
                 expression.addAll(0, it.first.instructions)
-            } ?: error("stringPool initializer not found!")
+            } ?: compilationException("stringPool initializer not found!", type = null)
         }
     }
 
@@ -573,7 +574,8 @@ class WasmCompiledModuleFragment(
                     currentStringId = addressAndId.second
                 }
 
-                val literalPoolIdSymbol = fragment.stringLiteralPoolId.unbound[string] ?: error("String symbol expected")
+                val literalPoolIdSymbol = fragment.stringLiteralPoolId.unbound[string]
+                    ?: compilationException("String symbol expected", type = null)
                 literalAddressSymbol.bind(currentStringAddress)
                 literalPoolIdSymbol.bind(currentStringId)
             }
@@ -670,7 +672,7 @@ fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDe
 ) {
     unbound.forEach { (irSymbol, wasmSymbol) ->
         if (irSymbol !in defined)
-            error("Can't link symbol ${irSymbolDebugDump(irSymbol)}")
+            compilationException("Can't link symbol ${irSymbolDebugDump(irSymbol)}", type = null)
         if (!wasmSymbol.isBound()) {
             wasmSymbol.bind(defined.getValue(irSymbol))
         }
