@@ -16,7 +16,7 @@ kotlinx-coroutines = "1.6.4"
 shadow = "8.3.0" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
-ktor = "2.3.7"
+ktor = "2.3.12"
 kotlinx-metadataJvm = "0.9.0"
 kotlinx-bcv = "0.15.1"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
