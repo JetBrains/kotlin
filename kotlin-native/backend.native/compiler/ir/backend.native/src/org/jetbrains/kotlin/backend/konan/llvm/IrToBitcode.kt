@@ -887,9 +887,9 @@ internal class CodeGeneratorVisitor(
             val initializer = declaration.initializer?.expression
             val globalProperty = (globalPropertyAccess as? GlobalAddressAccess)?.getAddress(null)
             if (globalProperty != null) {
-                LLVMSetInitializer(globalProperty, when (initializer) {
-                    is IrConst, is IrConstantValue -> evaluateExpression(initializer)
-                    else -> LLVMConstNull(type)
+                LLVMSetInitializer(globalProperty, when {
+                    initializer == null || declaration.hasNonConstInitializer -> LLVMConstNull(type)
+                    else -> evaluateExpression(initializer)
                 })
                 // (Cannot do this before the global is initialized).
                 LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)

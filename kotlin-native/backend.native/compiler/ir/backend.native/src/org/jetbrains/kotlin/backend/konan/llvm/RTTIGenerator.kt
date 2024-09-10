@@ -590,6 +590,11 @@ internal class RTTIGenerator(
         val flags: Int
 
         when {
+            isLoweredFunctionReference(irClass) -> {
+                // TODO: might return null so use fallback here, to be fixed in KT-47194
+                relativeName = generationState.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
+                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
+            }
             irClass.isAnonymousObject -> {
                 relativeName = generationState.getLocalClassName(irClass)
                 flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
@@ -597,11 +602,6 @@ internal class RTTIGenerator(
             irClass.isLocal -> {
                 relativeName = generationState.getLocalClassName(irClass)
                 flags = TF_REFLECTION_SHOW_REL_NAME // Only allow relative name to be used in KClass.simpleName.
-            }
-            isLoweredFunctionReference(irClass) -> {
-                // TODO: might return null so use fallback here, to be fixed in KT-47194
-                relativeName = generationState.getLocalClassName(irClass) ?: generateDefaultRelativeName(irClass)
-                flags = 0 // Forbid to use package and relative names in KClass.[simpleName|qualifiedName].
             }
             else -> {
                 relativeName = generateDefaultRelativeName(irClass)

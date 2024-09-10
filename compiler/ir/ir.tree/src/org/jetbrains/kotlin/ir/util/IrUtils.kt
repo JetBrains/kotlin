@@ -163,9 +163,6 @@ fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrEx
     }
 }
 
-val IrField.hasNonConstInitializer: Boolean
-    get() = initializer?.expression.let { it != null && it !is IrConst && it !is IrConstantValue }
-
 fun IrExpression.isNullConst() = this is IrConst && this.kind == IrConstKind.Null
 
 fun IrExpression.isTrueConst() = this is IrConst && this.kind == IrConstKind.Boolean && this.value == true

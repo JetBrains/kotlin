@@ -12,7 +12,12 @@ import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrComposite
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -46,6 +51,23 @@ internal val IrClass.isArrayWithFixedSizeItems: Boolean
     get() = this.fqNameForIrSerialization.asString() in arraysWithFixedSizeItems
 
 fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+
+private fun IrStatement.isConst(): Boolean = when (this) {
+    is IrConst, is IrConstantValue -> true
+    is IrBlock -> {
+        if (statements.isEmpty())
+            true
+        else {
+            // This might happen after the local declarations lowering where local declarations are replaced with an empty composite.
+            statements.take(statements.size - 1).all { it is IrComposite && it.statements.isEmpty() }
+                    && statements.last().isConst()
+        }
+    }
+    else -> false
+}
+
+internal val IrField.hasNonConstInitializer: Boolean
+    get() = initializer?.expression?.isConst() == false
 
 private enum class TypeKind {
     ABSENT,

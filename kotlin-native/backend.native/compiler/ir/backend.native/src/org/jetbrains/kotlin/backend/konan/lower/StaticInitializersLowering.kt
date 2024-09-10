@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.hasNonConstInitializer
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENTRY_POINT
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.llvm.*
