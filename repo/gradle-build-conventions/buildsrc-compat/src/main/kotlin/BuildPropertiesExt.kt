@@ -46,11 +46,6 @@ val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
 val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
     get() = (getOrNull("kotlin.test.junit5.maxParallelForks") as? String)?.toInt()
 
-// Enabling publishing docs jars only on CI build by default
-// Currently dokka task runs non-incrementally and takes big amount of time
-val KotlinBuildProperties.publishGradlePluginsJavadoc: Boolean
-    get() = getBoolean("kotlin.build.gradle.publish.javadocs", isTeamcityBuild)
-
 val KotlinBuildProperties.useFirWithLightTree: Boolean
     get() = getBoolean("kotlin.build.useFirLT")
 

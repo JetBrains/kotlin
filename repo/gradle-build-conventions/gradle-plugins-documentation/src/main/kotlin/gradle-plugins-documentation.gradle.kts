@@ -1,3 +1,4 @@
+import gradle.publishGradlePluginsJavadoc
 import org.jetbrains.dokka.gradle.DokkaMultiModuleFileLayout
 
 plugins {
@@ -18,7 +19,7 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
     onlyIf("Dokka tasks only enabled on TeamCity (-Pteamcity=true)") {
         // Dokka v1 Gradle plugin is not compatible with newer Gradle versions
         // remove this once Dokka v2 Gradle plugin will be used
-        kotlinBuildProperties.isTeamcityBuild
+        kotlinBuildProperties.publishGradlePluginsJavadoc
     }
 
     // https://github.com/Kotlin/dokka/issues/1217

@@ -5,6 +5,7 @@
 
 import gradle.commonSourceSetName
 import gradle.GradlePluginVariant
+import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
