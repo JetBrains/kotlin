@@ -119,18 +119,6 @@ open class ClangFrontend @Inject constructor(
     val headersDirs: ConfigurableFileCollection = objects.fileCollection()
 
     /**
-     * Final computed compiler arguments.
-     */
-    // Marked as input via [headers] and [arguments].
-    @get:Internal
-    val compilerFlags: Provider<List<String>> = providers.provider {
-        listOfNotNull(
-                "-c",
-                "-emit-llvm"
-        ) + headersDirs.map { "-I${it.absolutePath}" } + arguments.get()
-    }
-
-    /**
      * Working directory for [compiler].
      *
      * All inputs will be passed to the compiler as relative paths to this directory.
@@ -210,9 +198,18 @@ open class ClangFrontend @Inject constructor(
                 inputPathRelativeToWorkingDir.set(workUnit.inputPathRelativeToWorkingDir)
                 outputFile.set(workUnit.outputFile)
                 compilerExecutable.set(this@ClangFrontend.compiler)
-                arguments.set(this@ClangFrontend.compilerFlags)
+                arguments.set(defaultCompilerFlags(this@ClangFrontend.headersDirs))
+                arguments.addAll(this@ClangFrontend.arguments)
                 platformManager.set(this@ClangFrontend.platformManager)
             }
+        }
+    }
+
+    companion object {
+        internal fun defaultCompilerFlags(headersDirs: FileCollection): List<String> = buildList {
+            add("-c")
+            add("-emit-llvm")
+            headersDirs.mapTo(this) { "-I${it.absolutePath}" }
         }
     }
 }
