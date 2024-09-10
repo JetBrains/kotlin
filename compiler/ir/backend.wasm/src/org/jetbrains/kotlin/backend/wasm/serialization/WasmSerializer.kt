@@ -155,75 +155,75 @@ class WasmSerializer(outputStream: OutputStream) {
         out.writeBytes(bodyBuffer.toByteArray())
     }
 
-    private fun serialize(func: WasmFunction) =
+    private fun serializeWasmFunction(func: WasmFunction) =
         serializeNamedModuleField(func) {
-            serialize(func.type, ::serialize)
+            serializeWasmSymbolReadOnly(func.type, ::serializeWasmFunctionType)
             when (func) {
                 is WasmFunction.Defined -> withTag(FunctionTags.DEFINED) {
-                    serialize(func.locals, ::serialize)
-                    serialize(func.instructions, ::serialize)
+                    serializeList(func.locals, ::serializeWasmLocal)
+                    serializeList(func.instructions, ::serializeWasmInstr)
                 }
                 is WasmFunction.Imported -> withTag(FunctionTags.IMPORTED) {
-                    serialize(func.importPair)
+                    serializeWasmImportDescriptor(func.importPair)
                 }
             }
         }
 
-    private fun serialize(global: WasmGlobal) =
+    private fun serializeWasmGlobal(global: WasmGlobal) =
         serializeNamedModuleField(global, listOf(global.isMutable, global.importPair == null)) {
-            serialize(global.type)
-            serialize(global.init, ::serialize)
-            global.importPair?.let { serialize(it) }
+            serializeWasmType(global.type)
+            serializeList(global.init, ::serializeWasmInstr)
+            global.importPair?.let { serializeWasmImportDescriptor(it) }
         }
 
-    private fun serialize(funcType: WasmFunctionType) =
+    private fun serializeWasmFunctionType(funcType: WasmFunctionType) =
         serializeNamedModuleField(funcType) {
-            serialize(funcType.parameterTypes, ::serialize)
-            serialize(funcType.resultTypes, ::serialize)
+            serializeList(funcType.parameterTypes, ::serializeWasmType)
+            serializeList(funcType.resultTypes, ::serializeWasmType)
         }
 
-    private fun serialize(typeDecl: WasmTypeDeclaration): Unit =
+    private fun serializeWasmTypeDeclaration(typeDecl: WasmTypeDeclaration): Unit =
         when (typeDecl) {
-            is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serialize(typeDecl) }
-            is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serialize(typeDecl) }
-            is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serialize(typeDecl) }
+            is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serializeWasmFunctionType(typeDecl) }
+            is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serializeWasmStructDeclaration(typeDecl) }
+            is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serializeWasmArrayDeclaration(typeDecl) }
         }
 
-    private fun serialize(structDecl: WasmStructDeclaration) {
+    private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
         serializeNamedModuleField(structDecl, listOf(structDecl.superType == null, structDecl.isFinal)) {
-            serialize(structDecl.fields, ::serialize)
-            structDecl.superType?.let { serialize(it, ::serialize) }
+            serializeList(structDecl.fields, ::serializeWasmStructFieldDeclaration)
+            structDecl.superType?.let { serializeWasmSymbolReadOnly(it, ::serializeWasmTypeDeclaration) }
         }
     }
 
-    private fun serialize(arrDecl: WasmArrayDeclaration): Unit =
+    private fun serializeWasmArrayDeclaration(arrDecl: WasmArrayDeclaration): Unit =
         serializeNamedModuleField(arrDecl, listOf(arrDecl.field.isMutable)) {
-            serialize(arrDecl.field.name)
-            serialize(arrDecl.field.type)
+            serializeString(arrDecl.field.name)
+            serializeWasmType(arrDecl.field.type)
         }
 
-    private fun serialize(memory: WasmMemory) =
+    private fun serializeWasmMemory(memory: WasmMemory) =
         serializeNamedModuleField(memory, listOf(memory.importPair == null)) {
-            serialize(memory.limits)
-            memory.importPair?.let { serialize(it) }
+            serializeWasmLimits(memory.limits)
+            memory.importPair?.let { serializeWasmImportDescriptor(it) }
         }
 
-    private fun serialize(tag: WasmTag): Unit =
+    private fun serializeWasmTag(tag: WasmTag): Unit =
         serializeNamedModuleField(tag, listOf(tag.importPair == null)) {
-            serialize(tag.type)
-            tag.importPair?.let { serialize(it) }
+            serializeWasmFunctionType(tag.type)
+            tag.importPair?.let { serializeWasmImportDescriptor(it) }
         }
 
-    private fun serialize(structFieldDecl: WasmStructFieldDeclaration) {
-        serialize(structFieldDecl.name)
-        serialize(structFieldDecl.type)
+    private fun serializeWasmStructFieldDeclaration(structFieldDecl: WasmStructFieldDeclaration) {
+        serializeString(structFieldDecl.name)
+        serializeWasmType(structFieldDecl.type)
         b.writeByte(structFieldDecl.isMutable.toByte())
     }
 
-    private fun serialize(type: WasmType) =
+    private fun serializeWasmType(type: WasmType) =
         when (type) {
-            is WasmRefType -> withTag(TypeTags.REF) { serialize(type.heapType) }
-            is WasmRefNullType -> withTag(TypeTags.REF_NULL) { serialize(type.heapType) }
+            is WasmRefType -> withTag(TypeTags.REF) { serializeWasmHeapType(type.heapType) }
+            is WasmRefNullType -> withTag(TypeTags.REF_NULL) { serializeWasmHeapType(type.heapType) }
             WasmAnyRef -> setTag(TypeTags.ANYREF)
             WasmEqRef -> setTag(TypeTags.EQREF)
             WasmExnRefType -> setTag(TypeTags.EXTERN_REF_TYPE)
@@ -244,7 +244,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmV128 -> setTag(TypeTags.V12)
         }
 
-    private fun serialize(type: WasmHeapType) =
+    private fun serializeWasmHeapType(type: WasmHeapType) =
         when (type) {
             WasmHeapType.Simple.Any -> setTag(HeapTypeTags.ANY)
             WasmHeapType.Simple.Eq -> setTag(HeapTypeTags.EQ)
@@ -253,17 +253,17 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmHeapType.Simple.NoExtern -> setTag(HeapTypeTags.NO_EXTERN)
             WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
             WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
-            is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serialize(type.type) { serialize(it) } }
+            is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serializeWasmSymbolReadOnly(type.type) { serializeWasmTypeDeclaration(it) } }
         }
 
-    private fun serialize(local: WasmLocal) {
+    private fun serializeWasmLocal(local: WasmLocal) {
         b.writeUInt32(local.id.toUInt())
-        serialize(local.name)
-        serialize(local.type)
+        serializeString(local.name)
+        serializeWasmType(local.type)
         b.writeByte(local.isParameter.toByte())
     }
 
-    private fun serialize(instr: WasmInstr) {
+    private fun serializeWasmInstr(instr: WasmInstr) {
         var opcode = instr.operator.opcode
         if (opcode == WASM_OP_PSEUDO_OPCODE) {
             opcode = when (instr.operator) {
@@ -281,42 +281,42 @@ class WasmSerializer(outputStream: OutputStream) {
         }
         b.writeUInt16(opcode.toUShort())
         when (instr) {
-            is WasmInstrWithLocation -> withTag(InstructionTags.WITH_LOCATION) { serialize(instr.immediates, ::serialize); serialize(instr.location) }
-            is WasmInstrWithoutLocation -> withTag(InstructionTags.WITHOUT_LOCATION) { serialize(instr.immediates, ::serialize); }
+            is WasmInstrWithLocation -> withTag(InstructionTags.WITH_LOCATION) { serializeList(instr.immediates, ::serializeWasmImmediate); serializeSourceLocation(instr.location) }
+            is WasmInstrWithoutLocation -> withTag(InstructionTags.WITHOUT_LOCATION) { serializeList(instr.immediates, ::serializeWasmImmediate); }
         }
     }
 
-    private fun serialize(i: WasmImmediate): Unit =
+    private fun serializeWasmImmediate(i: WasmImmediate): Unit =
         when (i) {
-            is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serialize(i.type) }
-            is WasmImmediate.BlockType.Value -> withTagNullable(ImmediateTags.BLOCK_TYPE_VALUE, i.type) { serialize(i.type!!) }
-            is WasmImmediate.Catch -> withTag(ImmediateTags.CATCH) { serialize(i) }
+            is WasmImmediate.BlockType.Function -> withTag(ImmediateTags.BLOCK_TYPE_FUNCTION) { serializeWasmFunctionType(i.type) }
+            is WasmImmediate.BlockType.Value -> withTagNullable(ImmediateTags.BLOCK_TYPE_VALUE, i.type) { serializeWasmType(i.type!!) }
+            is WasmImmediate.Catch -> withTag(ImmediateTags.CATCH) { serializeCatchImmediate(i) }
             is WasmImmediate.ConstF32 -> withTag(ImmediateTags.CONST_F32) { b.writeUInt32(i.rawBits) }
             is WasmImmediate.ConstF64 -> withTag(ImmediateTags.CONST_F64) { b.writeUInt64(i.rawBits) }
             is WasmImmediate.ConstI32 -> withTag(ImmediateTags.CONST_I32) { b.writeUInt32(i.value.toUInt()) }
             is WasmImmediate.ConstI64 -> withTag(ImmediateTags.CONST_I64) { b.writeUInt64(i.value.toULong()) }
-            is WasmImmediate.ConstString -> withTag(ImmediateTags.CONST_STRING) { serialize(i.value) }
+            is WasmImmediate.ConstString -> withTag(ImmediateTags.CONST_STRING) { serializeString(i.value) }
             is WasmImmediate.ConstU8 -> withTag(ImmediateTags.CONST_U8) { b.writeUByte(i.value) }
-            is WasmImmediate.DataIdx -> withTag(ImmediateTags.DATA_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.ElemIdx -> withTag(ImmediateTags.ELEMENT_INDEX) { serialize(i.value) }
-            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.GcType -> withTag(ImmediateTags.GC_TYPE) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.GlobalIdx -> withTag(ImmediateTags.GLOBAL_INDEX) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.HeapType -> withTag(ImmediateTags.HEAP_TYPE) { serialize(i.value) }
+            is WasmImmediate.DataIdx -> withTag(ImmediateTags.DATA_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.ElemIdx -> withTag(ImmediateTags.ELEMENT_INDEX) { serializeWasmElement(i.value) }
+            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmFunction(it) } }
+            is WasmImmediate.GcType -> withTag(ImmediateTags.GC_TYPE) { serializeWasmSymbolReadOnly(i.value) { serializeWasmTypeDeclaration(it) } }
+            is WasmImmediate.GlobalIdx -> withTag(ImmediateTags.GLOBAL_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmGlobal(it) } }
+            is WasmImmediate.HeapType -> withTag(ImmediateTags.HEAP_TYPE) { serializeWasmHeapType(i.value) }
             is WasmImmediate.LabelIdx -> withTag(ImmediateTags.LABEL_INDEX) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.LabelIdxVector -> withTag(ImmediateTags.LABEL_INDEX_VECTOR) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.LocalIdx -> withTag(ImmediateTags.LOCAL_INDEX) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.LabelIdxVector -> withTag(ImmediateTags.LABEL_INDEX_VECTOR) { serializeList(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.LocalIdx -> withTag(ImmediateTags.LOCAL_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmLocal(it) } }
             is WasmImmediate.MemArg -> withTag(ImmediateTags.MEM_ARG) { b.writeUInt32(i.align); b.writeUInt32(i.offset) }
             is WasmImmediate.MemoryIdx -> withTag(ImmediateTags.MEMORY_INDEX) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.StructFieldIdx -> withTag(ImmediateTags.STRUCT_FIELD_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.SymbolI32 -> withTag(ImmediateTags.SYMBOL_I32) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TypeIdx -> withTag(ImmediateTags.TYPE_INDEX) { serialize(i.value) { serialize(it) } }
-            is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serialize(i.value, ::serialize) }
+            is WasmImmediate.StructFieldIdx -> withTag(ImmediateTags.STRUCT_FIELD_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.SymbolI32 -> withTag(ImmediateTags.SYMBOL_I32) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TypeIdx -> withTag(ImmediateTags.TYPE_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmTypeDeclaration(it) } }
+            is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serializeList(i.value, ::serializeWasmType) }
         }
 
-    private fun serialize(catch: WasmImmediate.Catch) {
+    private fun serializeCatchImmediate(catch: WasmImmediate.Catch) {
         val type = when (catch.type) {
             WasmImmediate.Catch.CatchType.CATCH -> ImmediateCatchTags.CATCH
             WasmImmediate.Catch.CatchType.CATCH_REF -> ImmediateCatchTags.CATCH_REF
@@ -324,83 +324,83 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmImmediate.Catch.CatchType.CATCH_ALL_REF -> ImmediateCatchTags.CATCH_ALL_REF
         }
         withTag(type) {
-            serialize(catch.immediates, ::serialize)
+            serializeList(catch.immediates, ::serializeWasmImmediate)
         }
     }
 
-    private fun serialize(table: WasmTable) {
+    private fun serializeWasmTable(table: WasmTable) {
         val max = table.limits.maxSize
         val ip = table.importPair
         serializeNamedModuleField(table, listOf(max == null, ip == null)) {
             b.writeUInt32(table.limits.minSize)
             max?.let { b.writeUInt32(it) }
-            serialize(table.elementType)
-            ip?.let { serialize(it) }
+            serializeWasmType(table.elementType)
+            ip?.let { serializeWasmImportDescriptor(it) }
         }
     }
 
-    private fun serialize(value: WasmTable.Value): Unit =
+    private fun serializeWasmTableValue(value: WasmTable.Value): Unit =
         when (value) {
-            is WasmTable.Value.Expression -> withTag(TableValueTags.EXPRESSION) { serialize(value.expr, ::serialize) }
-            is WasmTable.Value.Function -> withTag(TableValueTags.FUNCTION) { serialize(value.function) { serialize(it) } }
+            is WasmTable.Value.Expression -> withTag(TableValueTags.EXPRESSION) { serializeList(value.expr, ::serializeWasmInstr) }
+            is WasmTable.Value.Function -> withTag(TableValueTags.FUNCTION) { serializeWasmSymbolReadOnly(value.function) { serializeWasmFunction(it) } }
         }
 
-    private fun serialize(element: WasmElement): Unit =
+    private fun serializeWasmElement(element: WasmElement): Unit =
         serializeNamedModuleField(element) {
-            serialize(element.type)
-            serialize(element.values, ::serialize)
-            serialize(element.mode)
+            serializeWasmType(element.type)
+            serializeList(element.values, ::serializeWasmTableValue)
+            serializeWasmElementMode(element.mode)
         }
 
-    private fun serialize(mode: WasmElement.Mode) =
+    private fun serializeWasmElementMode(mode: WasmElement.Mode) =
         when (mode) {
             is WasmElement.Mode.Active -> withTag(ElementModeTags.ACTIVE) {
-                serialize(mode.table)
-                serialize(mode.offset, ::serialize)
+                serializeWasmTable(mode.table)
+                serializeList(mode.offset, ::serializeWasmInstr)
             }
             WasmElement.Mode.Declarative -> setTag(ElementModeTags.DECLARATIVE)
             WasmElement.Mode.Passive -> setTag(ElementModeTags.PASSIVE)
         }
 
-    private fun serialize(export: WasmExport<*>) {
+    private fun serializeWasmExport(export: WasmExport<*>) {
         // The name is serialized before the tag.
-        serialize(export.name)
+        serializeString(export.name)
         when (export) {
-            is WasmExport.Function -> withTag(ExportTags.FUNCTION) { serialize(export.field) }
-            is WasmExport.Table -> withTag(ExportTags.TABLE) { serialize(export.field) }
-            is WasmExport.Memory -> withTag(ExportTags.MEMORY) { serialize(export.field) }
-            is WasmExport.Global -> withTag(ExportTags.GLOBAL) { serialize(export.field) }
-            is WasmExport.Tag -> withTag(ExportTags.TAG) { serialize(export.field) }
+            is WasmExport.Function -> withTag(ExportTags.FUNCTION) { serializeWasmFunction(export.field) }
+            is WasmExport.Table -> withTag(ExportTags.TABLE) { serializeWasmTable(export.field) }
+            is WasmExport.Memory -> withTag(ExportTags.MEMORY) { serializeWasmMemory(export.field) }
+            is WasmExport.Global -> withTag(ExportTags.GLOBAL) { serializeWasmGlobal(export.field) }
+            is WasmExport.Tag -> withTag(ExportTags.TAG) { serializeWasmTag(export.field) }
         }
     }
 
-    private fun serialize(limit: WasmLimits) =
+    private fun serializeWasmLimits(limit: WasmLimits) =
         withFlags(limit.maxSize == null) {
             b.writeUInt32(limit.minSize)
             limit.maxSize?.let { b.writeUInt32(it) }
         }
 
-    private fun serialize(descriptor: WasmImportDescriptor) {
-        serialize(descriptor.moduleName)
-        serialize(descriptor.declarationName, ::serialize)
+    private fun serializeWasmImportDescriptor(descriptor: WasmImportDescriptor) {
+        serializeString(descriptor.moduleName)
+        serializeWasmSymbolReadOnly(descriptor.declarationName, ::serializeString)
     }
 
-    private fun <A, B> serialize(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
+    private fun <A, B> serializePair(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
         serializeAFunc(pair.first)
         serializeBFunc(pair.second)
     }
 
-    private fun <T> serialize(list: List<T>, serializeFunc: (T) -> Unit) {
+    private fun <T> serializeList(list: List<T>, serializeFunc: (T) -> Unit) {
         b.writeUInt32(list.size.toUInt())
         list.forEach { serializeFunc(it) }
     }
 
-    private fun <T> serialize(set: Set<T>, serializeFunc: (T) -> Unit) {
+    private fun <T> serializeSet(set: Set<T>, serializeFunc: (T) -> Unit) {
         b.writeUInt32(set.size.toUInt())
         set.forEach { serializeFunc(it) }
     }
 
-    private fun <K, V> serialize(map: Map<K, V>, serializeKeyFunc: (K) -> Unit, serializeValueFunc: (V) -> Unit) {
+    private fun <K, V> serializeMap(map: Map<K, V>, serializeKeyFunc: (K) -> Unit, serializeValueFunc: (V) -> Unit) {
         b.writeUInt32(map.size.toUInt())
         map.forEach { (key, value) ->
             serializeKeyFunc(key)
@@ -408,18 +408,18 @@ class WasmSerializer(outputStream: OutputStream) {
         }
     }
 
-    private fun serialize(sl: SourceLocation) =
+    private fun serializeSourceLocation(sl: SourceLocation) =
         when (sl) {
             SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
             is SourceLocation.Location -> withTag(LocationTags.LOCATION) {
-                serialize(sl.module)
-                serialize(sl.file)
+                serializeString(sl.module)
+                serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())
             }
             is SourceLocation.IgnoredLocation -> withTag(LocationTags.IGNORED_LOCATION) {
-                serialize(sl.module)
-                serialize(sl.file)
+                serializeString(sl.module)
+                serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())
             }
@@ -433,148 +433,148 @@ class WasmSerializer(outputStream: OutputStream) {
         }
     }
 
-    private fun serialize(idSignature: IdSignature) =
+    private fun serializeIdSignature(idSignature: IdSignature) =
         when (idSignature) {
-            is IdSignature.AccessorSignature -> withTag(IdSignatureTags.ACCESSOR) { serialize(idSignature) }
-            is IdSignature.CommonSignature -> withTag(IdSignatureTags.COMMON) { serialize(idSignature) }
-            is IdSignature.CompositeSignature -> withTag(IdSignatureTags.COMPOSITE) { serialize(idSignature) }
-            is IdSignature.FileLocalSignature -> withTag(IdSignatureTags.FILE_LOCAL) { serialize(idSignature) }
-            is IdSignature.LocalSignature -> withTag(IdSignatureTags.LOCAL) { serialize(idSignature) }
-            is IdSignature.LoweredDeclarationSignature -> withTag(IdSignatureTags.LOWERED_DECLARATION) { serialize(idSignature) }
-            is IdSignature.ScopeLocalDeclaration -> withTag(IdSignatureTags.SCOPE_LOCAL_DECLARATION) { serialize(idSignature) }
-            is IdSignature.SpecialFakeOverrideSignature -> withTag(IdSignatureTags.SPECIAL_FAKE_OVERRIDE) { serialize(idSignature) }
-            is IdSignature.FileSignature -> withTag(IdSignatureTags.FILE) { serialize(idSignature.fileName) }
+            is IdSignature.AccessorSignature -> withTag(IdSignatureTags.ACCESSOR) { serializeAccessorSignature(idSignature) }
+            is IdSignature.CommonSignature -> withTag(IdSignatureTags.COMMON) { serializeCommonSignature(idSignature) }
+            is IdSignature.CompositeSignature -> withTag(IdSignatureTags.COMPOSITE) { serializeCompositeSignature(idSignature) }
+            is IdSignature.FileLocalSignature -> withTag(IdSignatureTags.FILE_LOCAL) { serializeFileLocalSignature(idSignature) }
+            is IdSignature.LocalSignature -> withTag(IdSignatureTags.LOCAL) { serializeLocalSignature(idSignature) }
+            is IdSignature.LoweredDeclarationSignature -> withTag(IdSignatureTags.LOWERED_DECLARATION) { serializeLoweredDeclarationSignature(idSignature) }
+            is IdSignature.ScopeLocalDeclaration -> withTag(IdSignatureTags.SCOPE_LOCAL_DECLARATION) { serializeScopeLocalDeclaration(idSignature) }
+            is IdSignature.SpecialFakeOverrideSignature -> withTag(IdSignatureTags.SPECIAL_FAKE_OVERRIDE) { serializeSpecialFakeOverrideSignature(idSignature) }
+            is IdSignature.FileSignature -> withTag(IdSignatureTags.FILE) { serializeString(idSignature.fileName) }
         }
 
-    private fun serialize(accessor: IdSignature.AccessorSignature) {
+    private fun serializeAccessorSignature(accessor: IdSignature.AccessorSignature) {
         with(accessor) {
-            serialize(propertySignature)
-            serialize(accessorSignature)
+            serializeIdSignature(propertySignature)
+            serializeCommonSignature(accessorSignature)
         }
     }
 
-    private fun serialize(common: IdSignature.CommonSignature) {
+    private fun serializeCommonSignature(common: IdSignature.CommonSignature) {
         with(common) {
             withFlags(id == null, description == null) {
-                serialize(packageFqName)
-                serialize(declarationFqName)
+                serializeString(packageFqName)
+                serializeString(declarationFqName)
                 id?.let { b.writeUInt64(it.toULong()) }
                 b.writeUInt64(mask.toULong())
-                description?.let { serialize(it) }
+                description?.let { serializeString(it) }
             }
         }
     }
 
-    private fun serialize(composite: IdSignature.CompositeSignature) {
+    private fun serializeCompositeSignature(composite: IdSignature.CompositeSignature) {
         with(composite) {
-            serialize(container)
-            serialize(inner)
+            serializeIdSignature(container)
+            serializeIdSignature(inner)
         }
     }
 
-    private fun serialize(fileLocal: IdSignature.FileLocalSignature) {
+    private fun serializeFileLocalSignature(fileLocal: IdSignature.FileLocalSignature) {
         with(fileLocal) {
             withFlags(description == null) {
-                serialize(container)
+                serializeIdSignature(container)
                 b.writeUInt64(id.toULong())
-                description?.let { serialize(it) }
+                description?.let { serializeString(it) }
             }
         }
     }
 
-    private fun serialize(local: IdSignature.LocalSignature) {
+    private fun serializeLocalSignature(local: IdSignature.LocalSignature) {
         with(local) {
             withFlags(hashSig == null, description == null) {
-                serialize(localFqn)
+                serializeString(localFqn)
                 hashSig?.let { b.writeUInt64(it.toULong()) }
-                description?.let { serialize(it) }
+                description?.let { serializeString(it) }
             }
         }
     }
 
-    private fun serialize(loweredDeclaration: IdSignature.LoweredDeclarationSignature) {
+    private fun serializeLoweredDeclarationSignature(loweredDeclaration: IdSignature.LoweredDeclarationSignature) {
         with(loweredDeclaration) {
-            serialize(original)
+            serializeIdSignature(original)
             b.writeUInt32(stage.toUInt())
             b.writeUInt32(index.toUInt())
         }
     }
 
-    private fun serialize(scopeLocal: IdSignature.ScopeLocalDeclaration) {
+    private fun serializeScopeLocalDeclaration(scopeLocal: IdSignature.ScopeLocalDeclaration) {
         with(scopeLocal) {
             withFlags(description == null) {
                 b.writeUInt32(id.toUInt())
-                description?.let { serialize(it) }
+                description?.let { serializeString(it) }
             }
         }
     }
 
-    private fun serialize(specialFakeOverride: IdSignature.SpecialFakeOverrideSignature) {
+    private fun serializeSpecialFakeOverrideSignature(specialFakeOverride: IdSignature.SpecialFakeOverrideSignature) {
         with(specialFakeOverride) {
-            serialize(memberSignature)
-            serialize(overriddenSignatures, ::serialize)
+            serializeIdSignature(memberSignature)
+            serializeList(overriddenSignatures, ::serializeIdSignature)
         }
     }
 
-    private fun serialize(constantDataElement: ConstantDataElement) {
+    private fun serializeConstantDataElement(constantDataElement: ConstantDataElement) {
         when (constantDataElement) {
-            is ConstantDataCharArray -> withTag(ConstantDataElementTags.CHAR_ARRAY) { serialize(constantDataElement) }
-            is ConstantDataCharField -> withTag(ConstantDataElementTags.CHAR_FIELD) { serialize(constantDataElement) }
-            is ConstantDataIntArray -> withTag(ConstantDataElementTags.INT_ARRAY) { serialize(constantDataElement) }
-            is ConstantDataIntField -> withTag(ConstantDataElementTags.INT_FIELD) { serialize(constantDataElement) }
-            is ConstantDataIntegerArray -> withTag(ConstantDataElementTags.INTEGER_ARRAY) { serialize(constantDataElement) }
-            is ConstantDataStruct -> withTag(ConstantDataElementTags.STRUCT) { serialize(constantDataElement) }
+            is ConstantDataCharArray -> withTag(ConstantDataElementTags.CHAR_ARRAY) { serializeConstantDataCharArray(constantDataElement) }
+            is ConstantDataCharField -> withTag(ConstantDataElementTags.CHAR_FIELD) { serializeConstantDataCharField(constantDataElement) }
+            is ConstantDataIntArray -> withTag(ConstantDataElementTags.INT_ARRAY) { serializeConstantDataIntArray(constantDataElement) }
+            is ConstantDataIntField -> withTag(ConstantDataElementTags.INT_FIELD) { serializeConstantDataIntField(constantDataElement) }
+            is ConstantDataIntegerArray -> withTag(ConstantDataElementTags.INTEGER_ARRAY) { serializeConstantDataIntegerArray(constantDataElement) }
+            is ConstantDataStruct -> withTag(ConstantDataElementTags.STRUCT) { serializeConstantDataStruct(constantDataElement) }
         }
     }
 
-    private fun serialize(constantDataCharArray: ConstantDataCharArray) {
-        serialize(constantDataCharArray.name)
-        serialize(constantDataCharArray.value) { serialize(it) { b.writeUInt32(it.code.toUInt()) } }
+    private fun serializeConstantDataCharArray(constantDataCharArray: ConstantDataCharArray) {
+        serializeString(constantDataCharArray.name)
+        serializeList(constantDataCharArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.code.toUInt()) } }
     }
 
-    private fun serialize(constantDataCharField: ConstantDataCharField) {
-        serialize(constantDataCharField.name)
-        serialize(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
+    private fun serializeConstantDataCharField(constantDataCharField: ConstantDataCharField) {
+        serializeString(constantDataCharField.name)
+        serializeWasmSymbolReadOnly(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
     }
 
-    private fun serialize(constantDataIntArray: ConstantDataIntArray) {
-        serialize(constantDataIntArray.name)
-        serialize(constantDataIntArray.value) { serialize(it) { b.writeUInt32(it.toUInt()) } }
+    private fun serializeConstantDataIntArray(constantDataIntArray: ConstantDataIntArray) {
+        serializeString(constantDataIntArray.name)
+        serializeList(constantDataIntArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.toUInt()) } }
     }
 
-    private fun serialize(constantDataIntField: ConstantDataIntField) {
-        serialize(constantDataIntField.name)
-        serialize(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
+    private fun serializeConstantDataIntField(constantDataIntField: ConstantDataIntField) {
+        serializeString(constantDataIntField.name)
+        serializeWasmSymbolReadOnly(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
     }
 
-    private fun serialize(constantDataIntegerArray: ConstantDataIntegerArray) {
-        serialize(constantDataIntegerArray.name)
-        serialize(constantDataIntegerArray.value) { b.writeUInt64(it.toULong()) }
+    private fun serializeConstantDataIntegerArray(constantDataIntegerArray: ConstantDataIntegerArray) {
+        serializeString(constantDataIntegerArray.name)
+        serializeList(constantDataIntegerArray.value) { b.writeUInt64(it.toULong()) }
         b.writeUInt32(constantDataIntegerArray.integerSize.toUInt())
     }
 
-    private fun serialize(constantDataStruct: ConstantDataStruct) {
-        serialize(constantDataStruct.name)
-        serialize(constantDataStruct.elements, ::serialize)
+    private fun serializeConstantDataStruct(constantDataStruct: ConstantDataStruct) {
+        serializeString(constantDataStruct.name)
+        serializeList(constantDataStruct.elements, ::serializeConstantDataElement)
     }
 
-    private fun serialize(jsCodeSnippet: WasmCompiledModuleFragment.JsCodeSnippet) {
-        serialize(jsCodeSnippet.importName, ::serialize)
-        serialize(jsCodeSnippet.jsCode)
+    private fun serializeJsCodeSnippet(jsCodeSnippet: WasmCompiledModuleFragment.JsCodeSnippet) {
+        serializeWasmSymbolReadOnly(jsCodeSnippet.importName, ::serializeString)
+        serializeString(jsCodeSnippet.jsCode)
     }
 
 
-    private fun serialize(bytes: ByteArray) {
+    private fun serializeByteArray(bytes: ByteArray) {
         b.writeUInt32(bytes.size.toUInt())
         b.writeBytes(bytes)
     }
 
-    private fun serialize(str: String) {
+    private fun serializeString(str: String) {
         serializeAsReference(str) {
             val chars = str.toCharArray()
             if (chars.none { it.isSurrogate() }) {
                 withFlags(true) {
-                    serialize(str.toByteArray())
+                    serializeByteArray(str.toByteArray())
                 }
             } else {
                 val charsByteArray = ByteArray(chars.size * Char.SIZE_BYTES)
@@ -586,38 +586,38 @@ class WasmSerializer(outputStream: OutputStream) {
                     index++
                 }
                 withFlags(false) {
-                    serialize(charsByteArray)
+                    serializeByteArray(charsByteArray)
                 }
             }
         }
     }
 
-    private fun serialize(int: Int) {
+    private fun serializeInt(int: Int) {
         b.writeUInt32(int.toUInt())
     }
 
-    private fun serialize(long: Long) {
+    private fun serializeLong(long: Long) {
         b.writeUInt64(long.toULong())
     }
 
-    private fun <Ir, Wasm : Any> serialize(
+    private fun <Ir, Wasm : Any> serializeReferencableElements(
         referencableElements: WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>,
         irSerializeFunc: (Ir) -> Unit,
         wasmSerializeFunc: (Wasm) -> Unit
-    ) = serialize(referencableElements.unbound, irSerializeFunc) { serialize(it, wasmSerializeFunc) }
+    ) = serializeMap(referencableElements.unbound, irSerializeFunc) { serializeWasmSymbolReadOnly(it, wasmSerializeFunc) }
 
-    private fun <Ir, Wasm : Any> serialize(
+    private fun <Ir, Wasm : Any> serializeReferencableAndDefinable(
         referencableAndDefinable: WasmCompiledModuleFragment.ReferencableAndDefinable<Ir, Wasm>,
         irSerializeFunc: (Ir) -> Unit,
         wasmSerializeFunc: (Wasm) -> Unit
     ) = with(referencableAndDefinable) {
-        serialize(unbound, irSerializeFunc) { serialize(it, wasmSerializeFunc) }
-        serialize(defined, irSerializeFunc, wasmSerializeFunc)
-        serialize(elements, wasmSerializeFunc)
-        serialize(wasmToIr, wasmSerializeFunc, irSerializeFunc)
+        serializeMap(unbound, irSerializeFunc) { serializeWasmSymbolReadOnly(it, wasmSerializeFunc) }
+        serializeMap(defined, irSerializeFunc, wasmSerializeFunc)
+        serializeList(elements, wasmSerializeFunc)
+        serializeMap(wasmToIr, wasmSerializeFunc, irSerializeFunc)
     }
 
-    private fun <T : Any> serialize(symbol: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
+    private fun <T : Any> serializeWasmSymbolReadOnly(symbol: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
         serializeAsReference(symbol) {
             withFlags(symbol.getOwner() == null) {
                 symbol.getOwner()?.let { serializeFunc(it) }
@@ -626,62 +626,62 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeCompiledFileFragment(compiledFileFragment: WasmCompiledFileFragment) =
         with(compiledFileFragment) {
-            serializeNullable(fragmentTag, ::serialize)
-            serialize(functions, ::serialize, ::serialize)
-            serialize(globalFields, ::serialize, ::serialize)
-            serialize(globalVTables, ::serialize, ::serialize)
-            serialize(globalClassITables, ::serialize, ::serialize)
-            serialize(functionTypes, ::serialize, ::serialize)
-            serialize(gcTypes, ::serialize, ::serialize)
-            serialize(vTableGcTypes, ::serialize, ::serialize)
-            serialize(classITableGcType, ::serialize, ::serialize)
-            serialize(classITableInterfaceSlot, ::serialize, ::serialize)
-            serialize(classITableInterfaceTableSize, ::serialize, ::serialize)
-            serialize(classITableInterfaceHasImplementors, ::serialize, ::serialize)
-            serialize(typeInfo, ::serialize, ::serialize)
-            serialize(classIds, ::serialize, ::serialize)
-            serialize(interfaceIds, ::serialize, ::serialize)
-            serialize(stringLiteralAddress, ::serialize, ::serialize)
-            serialize(stringLiteralPoolId, ::serialize, ::serialize)
-            serialize(constantArrayDataSegmentId, { serialize(it, { serialize(it, ::serialize) }, ::serialize)}, ::serialize)
-            serialize(interfaceUnions) { serialize(it, ::serialize) }
-            serialize(jsFuns, ::serialize)
-            serialize(jsModuleImports, ::serialize)
-            serialize(exports, ::serialize)
-            serializeNullable(scratchMemAddr) { serialize(it, ::serialize) }
-            serializeNullable(stringPoolSize) { serialize(it, ::serialize) }
-            serializeNullable(throwableTagIndex) { serialize(it, ::serialize) }
-            serializeNullable(jsExceptionTagIndex) { serialize(it, ::serialize) }
-            serialize(fieldInitializers, ::serialize)
-            serialize(mainFunctionWrappers, ::serialize)
-            serializeNullable(testFun, ::serialize)
-            serialize(closureCallExports) { serialize(it, ::serialize, ::serialize) }
-            serialize(jsModuleAndQualifierReferences, ::serialize)
-            serialize(classAssociatedObjectsInstanceGetters, ::serialize)
-            serializeNullable(tryGetAssociatedObjectFun, ::serialize)
-            serializeNullable(jsToKotlinAnyAdapterFun, ::serialize)
+            serializeNullable(fragmentTag, ::serializeString)
+            serializeReferencableAndDefinable(functions, ::serializeIdSignature, ::serializeWasmFunction)
+            serializeReferencableAndDefinable(globalFields, ::serializeIdSignature, ::serializeWasmGlobal)
+            serializeReferencableAndDefinable(globalVTables, ::serializeIdSignature, ::serializeWasmGlobal)
+            serializeReferencableAndDefinable(globalClassITables, ::serializeIdSignature, ::serializeWasmGlobal)
+            serializeReferencableAndDefinable(functionTypes, ::serializeIdSignature, ::serializeWasmFunctionType)
+            serializeReferencableAndDefinable(gcTypes, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
+            serializeReferencableAndDefinable(vTableGcTypes, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
+            serializeReferencableElements(classITableGcType, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
+            serializeReferencableElements(classITableInterfaceSlot, ::serializeIdSignature, ::serializeInt)
+            serializeReferencableElements(classITableInterfaceTableSize, ::serializeIdSignature, ::serializeInt)
+            serializeReferencableElements(classITableInterfaceHasImplementors, ::serializeIdSignature, ::serializeInt)
+            serializeMap(typeInfo, ::serializeIdSignature, ::serializeConstantDataElement)
+            serializeReferencableElements(classIds, ::serializeIdSignature, ::serializeInt)
+            serializeReferencableElements(interfaceIds, ::serializeIdSignature, ::serializeInt)
+            serializeReferencableElements(stringLiteralAddress, ::serializeString, ::serializeInt)
+            serializeReferencableElements(stringLiteralPoolId, ::serializeString, ::serializeInt)
+            serializeReferencableElements(constantArrayDataSegmentId, { serializePair(it, { serializeList(it, ::serializeLong) }, ::serializeWasmType)}, ::serializeInt)
+            serializeList(interfaceUnions) { serializeList(it, ::serializeIdSignature) }
+            serializeList(jsFuns, ::serializeJsCodeSnippet)
+            serializeSet(jsModuleImports, ::serializeString)
+            serializeList(exports, ::serializeWasmExport)
+            serializeNullable(scratchMemAddr) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeNullable(throwableTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeNullable(jsExceptionTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeList(fieldInitializers, ::serializeFieldInitializer)
+            serializeList(mainFunctionWrappers, ::serializeIdSignature)
+            serializeNullable(testFun, ::serializeIdSignature)
+            serializeList(closureCallExports) { serializePair(it, ::serializeString, ::serializeIdSignature) }
+            serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
+            serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
+            serializeNullable(tryGetAssociatedObjectFun, ::serializeIdSignature)
+            serializeNullable(jsToKotlinAnyAdapterFun, ::serializeIdSignature)
         }
 
-    private fun serialize(fieldInitializer: FieldInitializer) {
+    private fun serializeFieldInitializer(fieldInitializer: FieldInitializer) {
         withFlags(fieldInitializer.isObjectInstanceField) {
-            serialize(fieldInitializer.field)
-            serialize(fieldInitializer.instructions, ::serialize)
+            serializeIdSignature(fieldInitializer.field)
+            serializeList(fieldInitializer.instructions, ::serializeWasmInstr)
         }
     }
 
-    private fun serialize(classAssociatedObjects: ClassAssociatedObjects) {
-        serialize(classAssociatedObjects.klass)
-        serialize(classAssociatedObjects.objects, ::serialize)
+    private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {
+        serializeIdSignature(classAssociatedObjects.klass)
+        serializeList(classAssociatedObjects.objects, ::serializeAssociatedObject)
     }
 
-    private fun serialize(associatedObject: AssociatedObject) = withFlags(associatedObject.isExternal) {
-        serialize(associatedObject.obj)
-        serialize(associatedObject.getterFunc)
+    private fun serializeAssociatedObject(associatedObject: AssociatedObject) = withFlags(associatedObject.isExternal) {
+        serializeIdSignature(associatedObject.obj)
+        serializeIdSignature(associatedObject.getterFunc)
     }
 
-    private fun serialize(obj: JsModuleAndQualifierReference) {
-        serializeNullable(obj.module, ::serialize)
-        serializeNullable(obj.qualifier, ::serialize)
+    private fun serializeJsModuleAndQualifierReference(obj: JsModuleAndQualifierReference) {
+        serializeNullable(obj.module, ::serializeString)
+        serializeNullable(obj.qualifier, ::serializeString)
     }
 
     private fun serializeNamedModuleField(obj: WasmNamedModuleField, flags: List<Boolean> = listOf(), serializeFunc: () -> Unit) =
@@ -689,7 +689,7 @@ class WasmSerializer(outputStream: OutputStream) {
             // Serializes the common part of WasmNamedModuleField.
             withFlags(*listOf(obj.id == null, obj.name.isEmpty()).plus(flags).toBooleanArray()) {
                 obj.id?.let { b.writeUInt32(it.toUInt()) }
-                if (obj.name.isNotEmpty()) serialize(obj.name)
+                if (obj.name.isNotEmpty()) serializeString(obj.name)
                 serializeFunc()
             }
         }
@@ -725,7 +725,7 @@ class WasmSerializer(outputStream: OutputStream) {
                 newReferences.add(it)
             }
         }.id
-        serialize(id)
+        serializeInt(id)
     }
 
     private fun <T : Any> WasmSymbolReadOnly<T>.getOwner() =
