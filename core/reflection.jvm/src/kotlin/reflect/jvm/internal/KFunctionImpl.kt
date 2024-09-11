@@ -144,6 +144,11 @@ internal class KFunctionImpl private constructor(
                         !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
                     createJvmStaticInObjectCaller(member)
 
+                // Create default caller for method whose declaration has value classes in its parameter types
+                // or inline class in return type.
+                caller is ValueClassAwareCaller<*> && (caller as ValueClassAwareCaller<*>).caller is CallerImpl.Method.BoundInstance ->
+                    createBoundStaticCaller(member)
+
                 else ->
                     createStaticMethodCaller(member)
             }
@@ -167,6 +172,11 @@ internal class KFunctionImpl private constructor(
 
     private val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
+
+    private fun createBoundStaticCaller(member: Method): CallerImpl.Method =
+        if (isBound) CallerImpl.Method.DefaultInstanceBoundStatic(
+            member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
+        ) else CallerImpl.Method.Static(member)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,

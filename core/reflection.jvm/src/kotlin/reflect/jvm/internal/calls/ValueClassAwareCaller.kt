@@ -37,7 +37,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private val isDefault: Boolean
 ) : Caller<M> {
 
-    private val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
+    internal val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
         val receiverType = (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.type
         if (
             receiverType != null &&
@@ -85,7 +85,12 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val shift = when {
+            caller is CallerImpl.Method.DefaultInstanceBoundStatic -> {
+                0
+            }
+
             caller is CallerImpl.Method.BoundStatic || caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> {
+                // Expect CallerImpl.Method.DefaultInstanceBoundStatic below,
                 // Bound reference to a static method is only possible for a top level extension function/property,
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
@@ -110,14 +115,13 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor, caller.member) { isValueClass() }
 
-        fun typeSize(type: KotlinType): Int = getMfvcUnboxMethods(type.asSimpleType())?.size ?: 1
-
+        val sumTypeSize = kotlinParameterTypes.sumOf { getMfvcUnboxMethods(it.asSimpleType())?.size ?: 1 }
         // If the default argument is set,
         // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((kotlinParameterTypes.sumOf(::typeSize) + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((sumTypeSize + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
-        val expectedArgsSize = kotlinParameterTypes.sumOf(::typeSize) + flattenedShift + extraArgumentsTail
+        val expectedArgsSize = sumTypeSize + flattenedShift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, descriptor, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox

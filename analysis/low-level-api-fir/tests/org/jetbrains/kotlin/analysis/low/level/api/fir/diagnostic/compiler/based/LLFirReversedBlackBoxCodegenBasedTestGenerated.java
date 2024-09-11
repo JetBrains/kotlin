@@ -50938,6 +50938,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
+      @TestMetadata("kt71378.kt")
+      public void testKt71378() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/kt71378.kt");
+      }
+
+      @Test
       @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")
       public void testManyArgumentsNoneDefaultConstructor() {
         runTest("compiler/testData/codegen/box/reflection/callBy/manyArgumentsNoneDefaultConstructor.kt");

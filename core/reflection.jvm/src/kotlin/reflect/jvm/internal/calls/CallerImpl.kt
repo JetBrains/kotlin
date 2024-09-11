@@ -122,7 +122,7 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundStatic(method: ReflectMethod, internal val boundReceiver: Any?) : BoundCaller, Method(
+        open class BoundStatic(method: ReflectMethod, internal val boundReceiver: Any?) : BoundCaller, Method(
             method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
         ) {
             override fun call(args: Array<*>): Any? {
@@ -130,6 +130,22 @@ internal sealed class CallerImpl<out M : Member>(
                 return callMethod(null, arrayOf(boundReceiver, *args))
             }
         }
+
+        /**
+         * A default caller whose original caller is a instance method.
+         * ```kotlin
+         * class Bar {
+         *     // original caller calls this method
+         *     fun foo(param1: Foo = 1, param2: Foo = 2): ReturnType = ...
+         *     // generated caller for default parameter call
+         *     // static ReturnType foo$default(Bar, Foo, Foo, Int, Object);
+         * }
+         * ```
+         * if Foo is value class or ReturnType is inline class,
+         * [ValueClassAwareCaller] regards it as a normal static function rather than a top level extension function/property.
+         * see [KT-71378](https://youtrack.jetbrains.com/issue/KT-71378)
+         */
+        class DefaultInstanceBoundStatic(method: ReflectMethod, boundReceiver: Any?): BoundStatic(method, boundReceiver)
 
         class BoundStaticMultiFieldValueClass(
             method: ReflectMethod, internal val boundReceiverComponents: Array<Any?>
