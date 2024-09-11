@@ -109,13 +109,13 @@ private fun assembleAndRunProcess(
     errorThread.join()
 
     val retCode = process.waitFor()
-    logger?.info(
-        """
-            |Information about "${command.joinToString(" ")}" call:
-            |
-            |${inputText}
-        """.trimMargin()
-    )
+    """
+        |Information about "${command.joinToString(" ")}" call:
+        |
+        |${inputText}
+    """.trimMargin().lines().forEach { line ->
+        logger?.info(line)
+    }
 
     return RunProcessResult(inputText, errorText, retCode, process)
 }
