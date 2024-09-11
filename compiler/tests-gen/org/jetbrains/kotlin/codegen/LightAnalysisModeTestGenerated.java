@@ -39817,6 +39817,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
       }
 
+      @TestMetadata("dataClassCopyWithValueClass.kt")
+      public void testDataClassCopyWithValueClass() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/dataClassCopyWithValueClass.kt");
+      }
+
       @TestMetadata("defaultAndNonDefaultIntertwined.kt")
       public void testDefaultAndNonDefaultIntertwined() {
         runTest("compiler/testData/codegen/box/reflection/callBy/defaultAndNonDefaultIntertwined.kt");

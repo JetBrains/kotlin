@@ -49729,6 +49729,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("dataClassCopyWithValueClass.kt")
+      public void testDataClassCopyWithValueClass() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/dataClassCopyWithValueClass.kt");
+      }
+
+      @Test
       @TestMetadata("defaultAndNonDefaultIntertwined.kt")
       public void testDefaultAndNonDefaultIntertwined() {
         runTest("compiler/testData/codegen/box/reflection/callBy/defaultAndNonDefaultIntertwined.kt");

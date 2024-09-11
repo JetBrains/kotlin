@@ -64,6 +64,9 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val parameterTypes: List<Type>
         get() = caller.parameterTypes
 
+    override val isBoundInstanceCallWithValueClasses: Boolean
+        get() = caller is CallerImpl.Method.BoundInstance
+
     private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<List<Method>?>, val box: Method?)
 
     private val data: BoxUnboxData = run {
@@ -85,11 +88,13 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val shift = when {
-            caller is CallerImpl.Method.BoundStatic || caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> {
+            caller is CallerImpl.Method.BoundStatic && !caller.isCallByToValueClassMangledMethod -> {
                 // Bound reference to a static method is only possible for a top level extension function/property,
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
+
+            caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> -1
 
             descriptor is ConstructorDescriptor ->
                 if (caller is BoundCaller) -1 else 0
@@ -110,14 +115,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor, caller.member) { isValueClass() }
 
-        fun typeSize(type: KotlinType): Int = getMfvcUnboxMethods(type.asSimpleType())?.size ?: 1
+        val totalParametersTypeSize = kotlinParameterTypes.sumOf { getMfvcUnboxMethods(it.asSimpleType())?.size ?: 1 }
 
         // If the default argument is set,
         // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((kotlinParameterTypes.sumOf(::typeSize) + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((totalParametersTypeSize + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
-        val expectedArgsSize = kotlinParameterTypes.sumOf(::typeSize) + flattenedShift + extraArgumentsTail
+        val expectedArgsSize = totalParametersTypeSize + flattenedShift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, descriptor, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox

@@ -122,7 +122,23 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundStatic(method: ReflectMethod, internal val boundReceiver: Any?) : BoundCaller, Method(
+        /**
+         * @param isCallByToValueClassMangledMethod true if this is a `callBy` caller whose original caller is an instance method that is
+         *  mangled due to value classes in the signature.
+         * ```kotlin
+         * class Bar {
+         *     // original caller calls this method
+         *     fun foo(param1: Foo = ..., param2: Foo = ...): ReturnType = ...
+         *     // generated caller for default parameter call
+         *     // static ReturnType foo$default(Bar, Foo, Foo, Int, Object);
+         * }
+         * ```
+         * If `Foo` is value class or `ReturnType` is inline class, [ValueClassAwareCaller] regards it as a normal static function
+         * rather than a top level extension function/property (see KT-71378).
+         */
+        class BoundStatic(
+            method: ReflectMethod, internal val isCallByToValueClassMangledMethod: Boolean, internal val boundReceiver: Any?,
+        ) : BoundCaller, Method(
             method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
         ) {
             override fun call(args: Array<*>): Any? {

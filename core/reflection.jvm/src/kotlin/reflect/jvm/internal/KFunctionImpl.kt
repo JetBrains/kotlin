@@ -97,7 +97,7 @@ internal class KFunctionImpl private constructor(
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
                     createJvmStaticInObjectCaller(member)
                 else ->
-                    createStaticMethodCaller(member)
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
         }.createValueClassAwareCallerIfNeeded(descriptor)
@@ -144,8 +144,9 @@ internal class KFunctionImpl private constructor(
                         !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
                     createJvmStaticInObjectCaller(member)
 
-                else ->
-                    createStaticMethodCaller(member)
+                else -> {
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
+                }
             }
             else -> null
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
@@ -174,8 +175,11 @@ internal class KFunctionImpl private constructor(
     private fun useBoxedBoundReceiver(member: Method) =
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
-    private fun createStaticMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundStatic(member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver)
+    private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
+        if (isBound)
+            CallerImpl.Method.BoundStatic(
+                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
+            )
         else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =

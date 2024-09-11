@@ -152,13 +152,9 @@ fun box(): String {
 
     assertEquals(S("124"), I.Companion::bar.callBy(one, "2", four))
     assertEquals(four, I.Companion::staticDefault1_1.callBy(four))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, I.Companion::staticDefault1_1.callBy(emptyMap()))
-    }
+    assertEquals(default, I.Companion::staticDefault1_1.callBy(emptyMap()))
     assertEquals(four, I.Companion::staticDefault1_2.callBy(four))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, I.Companion::staticDefault1_2.callBy(emptyMap()))
-    }
+    assertEquals(default, I.Companion::staticDefault1_2.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault32_1.callBy(
@@ -168,9 +164,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault32_1(), I.Companion::staticDefault32_1.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault32_1(), I.Companion::staticDefault32_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault32_2.callBy(
@@ -180,9 +174,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault32_2(), I.Companion::staticDefault32_2.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault32_2(), I.Companion::staticDefault32_2.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault33_1.callBy(
@@ -192,9 +184,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault33_1(), I.Companion::staticDefault33_1.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault33_1(), I.Companion::staticDefault33_1.callBy(emptyMap()))
     assertEquals(
         S("00"),
         I.Companion::staticDefault33_2.callBy(
@@ -204,9 +194,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(I.staticDefault33_2(), I.Companion::staticDefault33_2.callBy(emptyMap()))
-    }
+    assertEquals(I.staticDefault33_2(), I.Companion::staticDefault33_2.callBy(emptyMap()))
 
     return "OK"
 }

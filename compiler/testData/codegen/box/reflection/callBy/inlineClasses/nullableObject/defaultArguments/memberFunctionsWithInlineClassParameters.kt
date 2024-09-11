@@ -151,9 +151,7 @@ fun box(): String {
         assertEquals(default, instance::memberDefault1_1.callBy(emptyMap()))
     }
     assertEquals(zero, instance::memberDefault1_2.callBy(zero))
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(default, instance::memberDefault1_2.callBy(emptyMap()))
-    }
+    assertEquals(default, instance::memberDefault1_2.callBy(emptyMap()))
     assertEquals(
         S("00"),
         instance::memberDefault32_1.callBy(
@@ -175,9 +173,7 @@ fun box(): String {
             0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault32_2(), instance::memberDefault32_2.callBy(emptyMap()))
-    }
+    assertEquals(instance.memberDefault32_2(), instance::memberDefault32_2.callBy(emptyMap()))
     assertEquals(
         S("00"),
         instance::memberDefault33_1.callBy(
@@ -199,9 +195,7 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        assertEquals(instance.memberDefault33_2(), instance::memberDefault33_2.callBy(emptyMap()))
-    }
+    assertEquals(instance.memberDefault33_2(), instance::memberDefault33_2.callBy(emptyMap()))
 
     return "OK"
 }
