@@ -172,20 +172,20 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
         DICreateSubroutineType(builder, allocArrayOf(types.map { it.diType(llvmTargetData) }), types.size)!!
     }
 
-    fun IrFile.diFileScope() = files.getOrPut(this.fileEntry.name) {
-        val path = this.fileEntry.name.toFileAndFolder(context.config)
+    fun IrFileEntry.diFileScope() = files.getOrPut(this.name) {
+        val path = this.name.toFileAndFolder(context.config)
         DICreateFile(builder, path.file, path.folder)!!
     }
 
     fun IrFunction.diFunctionScope(
-            file: IrFile,
+            fileEntry: IrFileEntry,
             linkageName: String,
             startLine: Int,
             nodebug: Boolean,
-    ) = diFunctionScope(file, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
+    ) = diFunctionScope(fileEntry, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
 
     fun diFunctionScope(
-            file: IrFile,
+            fileEntry: IrFileEntry,
             name: String,
             linkageName: String,
             startLine: Int,
@@ -196,7 +196,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             scope = compilationUnit,
             name = (if (nodebug) "<NODEBUG>" else "") + name,
             linkageName = linkageName,
-            file = file.diFileScope(),
+            file = fileEntry.diFileScope(),
             lineNo = startLine,
             type = subroutineType,
             //TODO: need more investigations.

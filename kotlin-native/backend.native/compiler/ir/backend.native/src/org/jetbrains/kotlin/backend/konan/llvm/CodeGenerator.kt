@@ -338,16 +338,16 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             else {
                 val offset = irFunction.startOffset.takeIf { it != UNDEFINED_OFFSET }
                         ?: irFunction.parentAsClass.startOffset.takeIf { it != UNDEFINED_OFFSET }
-                val file = irFunction.fileOrNull.takeIf {
+                val fileEntry = irFunction.fileOrNull?.fileEntry.takeIf {
                     offset != null && context.shouldContainLocationDebugInfo()
                 }
-                val diFunctionScope = file?.let {
+                val diFunctionScope = fileEntry?.let {
                     with(generationState.debugInfo) {
-                        irFunction.diFunctionScope(it, proto.name, it.fileEntry.line(offset!!), false)
+                        irFunction.diFunctionScope(it, proto.name, it.line(offset!!), false)
                     }
                 }
                 @Suppress("UNCHECKED_CAST") val location = diFunctionScope?.let {
-                    val (line, column) = file.fileEntry.lineAndColumn(offset!!)
+                    val (line, column) = fileEntry.lineAndColumn(offset!!)
                     LocationInfo(it as DIScopeOpaqueRef, line, column)
                 }
                 generateFunction(this, proto, needSafePoint = false, startLocation = location, endLocation = location) {

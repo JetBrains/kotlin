@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAn
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -541,7 +538,7 @@ internal class CodeGeneratorVisitor(
 
     override fun visitFile(declaration: IrFile) {
         @Suppress("UNCHECKED_CAST")
-        using(FileScope(declaration)) {
+        using(FileScope(declaration, declaration.fileEntry)) {
             runAndProcessInitializers(declaration.konanLibrary) {
                 declaration.acceptChildrenVoid(this)
                 codegen.processBindClassToObjCNameAnnotations(declaration)
@@ -706,12 +703,10 @@ internal class CodeGeneratorVisitor(
             declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)), false)
         }
 
-        private val fileScope = (fileScope() as? FileScope)
+        private val fileEntry = fileEntry()
         override fun location(offset: Int) = scope?.let { scope ->
-            fileScope?.let {
-                val (line, column) = it.file.fileEntry.lineAndColumn(offset)
-                LocationInfo(scope, line, column)
-            }
+            val (line, column) = fileEntry.lineAndColumn(offset)
+            LocationInfo(scope, line, column)
         }
 
         override fun scope() = scope
@@ -802,8 +797,8 @@ internal class CodeGeneratorVisitor(
             }
             context.irLinker.getFileOf(originalFunction)
         }
-        val scope = if (file != null && file != (currentCodeContext.fileScope() as FileScope).file) {
-            FileScope(file)
+        val scope = if (file != null && file.fileEntry != fileEntry()) {
+            FileScope(file, file.fileEntry)
         } else {
             null
         }
@@ -1367,7 +1362,7 @@ internal class CodeGeneratorVisitor(
         if (function == null || !element.needDebugInfo(context) || currentCodeContext.scope() == null) return null
         val locationInfo = element.startLocation ?: return null
         val location = codegen.generateLocationInfo(locationInfo)
-        val file = (currentCodeContext.fileScope() as FileScope).file.diFileScope()
+        val file = fileEntry().diFileScope()
         return when (element) {
             is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = debugInfo.builder,
@@ -1951,25 +1946,19 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) :
-            FileScope(inlinedBlock.inlineFunctionSymbol?.owner.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
-                generationState.inlineFunctionOrigins[it]?.irFile ?: it.fileOrNull
-            }
-                    ?: (currentCodeContext.fileScope() as? FileScope)?.file
-                    ?: error("returnable block should belong to current file at least")) {
+    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
 
-        private val functionScope by lazy {
+        private val inlineFunctionScope by lazy {
             inlinedBlock.inlineFunctionSymbol?.owner.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
-                it.scope(file().fileEntry.line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
+                it.scope(fileEntry().line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
             }
         }
 
         override fun location(offset: Int): LocationInfo? {
-            val diScope = functionScope ?: return null
+            val diScope = inlineFunctionScope ?: return null
             val inlinedAt = outerContext.location(inlinedBlock.startOffset) ?: return null
-            val (line, column) = file.fileEntry.lineAndColumn(offset)
+            val (line, column) = fileEntry.lineAndColumn(offset)
             return LocationInfo(diScope, line, column, inlinedAt)
         }
 
@@ -1979,12 +1968,16 @@ internal class CodeGeneratorVisitor(
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo() || inlinedBlock.startOffset == UNDEFINED_OFFSET)
                 return@lazy null
-            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.diFileScope())
+            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.fileEntry.diFileScope())
             val (line, column) = inlinedBlock.startLineAndColumn()
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), line, column)!!
+            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.fileEntry.diFileScope(), line, column)!!
         }
 
         override fun scope() = scope
+
+        override fun wrapException(e: Exception): NativeCodeGeneratorException {
+            return NativeCodeGeneratorException.wrap(e, inlinedBlock.inlineFunctionSymbol?.owner)
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -2037,11 +2030,11 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private open inner class FileScope(val file: IrFile) : InnerScopeImpl() {
+    private open inner class FileScope(private val file: IrFile?, val fileEntry: IrFileEntry) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
 
         override fun location(offset: Int) = scope()?.let {
-            val (line, column) = file.fileEntry.lineAndColumn(offset)
+            val (line, column) = fileEntry.lineAndColumn(offset)
             LocationInfo(it, line, column)
         }
 
@@ -2049,7 +2042,7 @@ internal class CodeGeneratorVisitor(
         private val scope by lazy {
             if (!context.shouldContainLocationDebugInfo())
                 return@lazy null
-            file.diFileScope() as DIScopeOpaqueRef?
+            fileEntry.diFileScope() as DIScopeOpaqueRef?
         }
 
         override fun scope() = scope
@@ -2159,7 +2152,7 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    private fun file() = (currentCodeContext.fileScope() as FileScope).file
+    private fun fileEntry(): IrFileEntry = (currentCodeContext.fileScope() as FileScope).fileEntry
 
     //-------------------------------------------------------------------------//
     private fun updateBuilderDebugLocation(element: IrElement) {
@@ -2176,20 +2169,20 @@ internal class CodeGeneratorVisitor(
             else currentCodeContext.location(endOffset)
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.startLine() = file().fileEntry.line(this.startOffset)
+    private fun IrElement.startLine() = fileEntry().line(this.startOffset)
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.startLineAndColumn() = file().fileEntry.lineAndColumn(this.startOffset)
+    private fun IrElement.startLineAndColumn() = fileEntry().lineAndColumn(this.startOffset)
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.endLineAndColumn() = file().fileEntry.lineAndColumn(this.endOffset)
+    private fun IrElement.endLineAndColumn() = fileEntry().lineAndColumn(this.endOffset)
 
     //-------------------------------------------------------------------------//
     private fun debugFieldDeclaration(expression: IrField) {
         val scope = currentCodeContext.classScope() as? ClassScope ?: return
         if (!scope.isExported || !context.shouldContainDebugInfo()) return
         with(debugInfo) {
-            val irFile = (currentCodeContext.fileScope() as FileScope).file
+            val fileEntry = fileEntry()
             val sizeInBits = expression.type.size
             scope.offsetInBits += sizeInBits
             val alignInBits = expression.type.alignment
@@ -2199,7 +2192,7 @@ internal class CodeGeneratorVisitor(
                     refBuilder = builder,
                     refScope = scope.scope as DIScopeOpaqueRef,
                     name = expression.computeSymbolName(),
-                    file = irFile.diFileScope(),
+                    file = fileEntry.diFileScope(),
                     lineNum = expression.startLine(),
                     sizeInBits = sizeInBits,
                     alignInBits = alignInBits,
@@ -2210,7 +2203,7 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun IrFile.diFileScope() = with(debugInfo) { diFileScope() }
+    private fun IrFileEntry.diFileScope() = with(debugInfo) { diFileScope() }
 
     // Saved calculated IrFunction scope which is used several time for getting locations and generating debug info.
     private var irFunctionSavedScope: Pair<IrSimpleFunction, DIScopeOpaqueRef?>? = null
@@ -2242,14 +2235,14 @@ internal class CodeGeneratorVisitor(
             val nodebug = f.originalConstructor != null && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
-                    diFunctionScope(file(), functionLlvmValue.name!!, startLine, nodebug).also {
+                    diFunctionScope(fileEntry(), functionLlvmValue.name!!, startLine, nodebug).also {
                         if (!this@scope.isInline)
                             functionLlvmValue.addDebugInfoSubprogram(it)
                     }
                 } as DIScopeOpaqueRef
             } else {
                 inlinedSubprograms.getOrPut(this@scope) {
-                    diFunctionScope(file(), "<inlined-out:$name>", startLine, nodebug)
+                    diFunctionScope(fileEntry(), "<inlined-out:$name>", startLine, nodebug)
                 } as DIScopeOpaqueRef
             }
         }
@@ -2260,7 +2253,7 @@ internal class CodeGeneratorVisitor(
     private fun LlvmCallable.scope(startLine: Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean) =
             with(debugInfo) {
                 subprograms.getOrPut(this@scope) {
-                    diFunctionScope(file(), name!!, name!!, startLine, subroutineType, nodebug).also {
+                    diFunctionScope(fileEntry(), name!!, name!!, startLine, subroutineType, nodebug).also {
                         this@scope.addDebugInfoSubprogram(it)
                     }
                 } as DIScopeOpaqueRef
