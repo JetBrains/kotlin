@@ -56,7 +56,7 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<?> a;
 
-  private int b = 1 /* initializer type: int */;
+  private int b;
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.util.Collection<?> getA();//  getA()

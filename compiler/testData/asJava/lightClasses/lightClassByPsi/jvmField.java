@@ -46,7 +46,7 @@ public final class C /* C*/ {
   public final @org.jetbrains.annotations.NotNull() java.util.Collection<?> a;
 
   @kotlin.jvm.JvmField()
-  public int b = 1 /* initializer type: int */;
+  public int b;
 
   public  C();//  .ctor()
 

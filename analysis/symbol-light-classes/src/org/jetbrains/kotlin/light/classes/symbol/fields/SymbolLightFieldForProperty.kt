@@ -221,11 +221,7 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _initializer by lazyPub {
         _initializerValue?.createPsiExpression(this) ?: withPropertySymbol { propertySymbol ->
             if (propertySymbol !is KaKotlinPropertySymbol) return@withPropertySymbol null
-            val initializerExpression = when (kotlinOrigin) {
-                is KtProperty -> kotlinOrigin.initializer
-                is KtParameter -> kotlinOrigin.defaultValue
-                else -> null
-            }
+            val initializerExpression = (kotlinOrigin as? KtProperty)?.initializer
             initializerExpression?.evaluateAsAnnotationValue()?.let(::toPsiExpression)
         }
     }

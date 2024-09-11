@@ -13,7 +13,7 @@ public enum Color /* Color*/ {
   GREEN,
   BLUE;
 
-  private final int rgb = 5 /* initializer type: int */;
+  private final int rgb;
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Color @org.jetbrains.annotations.NotNull() [] values();//  values()

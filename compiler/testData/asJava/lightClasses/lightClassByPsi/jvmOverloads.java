@@ -8,7 +8,7 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() java.lang.String type;
 
-  private final boolean p1 = false /* initializer type: boolean */;
+  private final boolean p1;
 
   @kotlin.jvm.JvmOverloads()
   @kotlin.jvm.JvmStatic()

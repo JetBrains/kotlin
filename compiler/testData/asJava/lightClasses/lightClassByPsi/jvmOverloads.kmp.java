@@ -8,7 +8,7 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() java.lang.String type;
 
-  private final boolean p1 = false /* initializer type: boolean */;
+  private final boolean p1;
 
   @<error>()
   public  C(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.Nullable() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() java.lang.String)

@@ -29,9 +29,9 @@ public final class Person /* Person*/ {
 
 public final class User /* User*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String name = "" /* initializer type: java.lang.String */;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String name;
 
-  private final int age = 0 /* initializer type: int */;
+  private final int age;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()

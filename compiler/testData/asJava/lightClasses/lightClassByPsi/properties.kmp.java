@@ -77,7 +77,7 @@ D'E"F\G$H */;
 
   private final int f1$1 = 2 /* initializer type: int */;
 
-  private final long e = 2L /* initializer type: long */;
+  private final long e;
 
   private int counter = 0 /* initializer type: int */;
 
