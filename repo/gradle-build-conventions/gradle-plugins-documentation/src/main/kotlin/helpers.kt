@@ -3,11 +3,14 @@ import gradle.commonSourceSetName
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import java.net.URI
 
@@ -45,25 +48,48 @@ internal fun Project.generateJavadocForPluginVariant(gradlePluginVariant: Gradle
         description = "Generates API documentation for '${variantSourceSet.name}' variant"
         notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
 
-        dokkaSourceSets.named(commonSourceSet.name) {
-            suppress.set(false)
-            jdkVersion.set(8)
-        }
-
-        dokkaSourceSets.named(variantSourceSet.name) {
-            dependsOn(commonSourceSet)
-            suppress.set(false)
-            jdkVersion.set(8)
-
-            externalDocumentationLink {
-                url.set(URI(gradlePluginVariant.gradleApiJavadocUrl).toURL())
-
-                addWorkaroundForElementList(gradlePluginVariant)
-            }
-        }
+        configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
     }
 
     tasks.named<Jar>(variantSourceSet.javadocJarTaskName).configure {
         from(dokkaTask.flatMap { it.outputDirectory })
+    }
+}
+
+internal fun Project.configureTaskForKotlinlang() {
+    if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
+
+    tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
+
+        val gradlePluginVariant = GradlePluginVariant.GRADLE_MIN
+        val javaExtension = this@configureTaskForKotlinlang.extensions.getByType<JavaPluginExtension>()
+        val commonSourceSet = javaExtension.sourceSets.getByName(commonSourceSetName)
+        val variantSourceSet = javaExtension.sourceSets.getByName(gradlePluginVariant.sourceSetName)
+
+        configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
+    }
+}
+
+fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
+    gradlePluginVariant: GradlePluginVariant,
+    commonSourceSet: SourceSet,
+    variantSourceSet: SourceSet,
+) {
+    dokkaSourceSets.named(commonSourceSet.name) {
+        suppress.set(false)
+        jdkVersion.set(8)
+    }
+
+    dokkaSourceSets.named(variantSourceSet.name) {
+        dependsOn(commonSourceSet)
+        suppress.set(false)
+        jdkVersion.set(8)
+
+        externalDocumentationLink {
+            url.set(URI(gradlePluginVariant.gradleApiJavadocUrl).toURL())
+
+            addWorkaroundForElementList(gradlePluginVariant)
+        }
     }
 }

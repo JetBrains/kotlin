@@ -9,6 +9,8 @@ plugins {
 
 pluginApiReference {
     enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    enableKotlinlangDocumentation()
+
     failOnWarning = true
 
     additionalDokkaConfiguration {

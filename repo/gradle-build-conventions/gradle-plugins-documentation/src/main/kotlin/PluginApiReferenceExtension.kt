@@ -28,6 +28,10 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         }
     }
 
+    fun enableKotlinlangDocumentation() {
+        project.configureTaskForKotlinlang()
+    }
+
     private var _failOnWarning: Boolean = false
     var failOnWarning: Boolean
         get() = _failOnWarning
