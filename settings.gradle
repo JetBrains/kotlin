@@ -963,6 +963,8 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:utilities:cli-runner'
     include ':kotlin-native:klib'
     include ':kotlin-native:common'
+    include ':kotlin-native:common:env'
+    include ':kotlin-native:common:files'
     include ':kotlin-native:runtime'
     include ':kotlin-native:libllvmext'
     include ':kotlin-native:llvmDebugInfoC'

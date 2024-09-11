@@ -115,7 +115,7 @@ class NamedNativeInteropConfig(
         }
     }
 
-    private val configuration: Configuration = project.configurations.create(interopStubs.name)
+    val configuration: Configuration = project.configurations.create(interopStubs.name)
 
     init {
         project.tasks.getByName<KotlinCompile>(interopStubs.getTaskName("compile", "Kotlin")) {
