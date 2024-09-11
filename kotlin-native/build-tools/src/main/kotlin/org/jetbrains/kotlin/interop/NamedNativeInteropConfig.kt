@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.interop
 import bootstrapKotlinVersion
 import org.gradle.api.Named
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
@@ -19,7 +17,6 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.Platform
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.utils.capitalized
 import java.io.File
@@ -48,71 +45,16 @@ class NamedNativeInteropConfig(
         }
     }
 
-    private var pkg: String? = null
-
-    fun pkg(value: String) {
-        pkg = value
-    }
-
     private val compilerOpts = mutableListOf<String>()
 
     fun compilerOpts(values: List<String>) {
         compilerOpts.addAll(values)
     }
 
-    fun compilerOpts(vararg values: String) {
-        compilerOpts.addAll(values)
-    }
-
     private var headers = emptyList<String>()
 
-    fun headers(files: FileCollection) {
-        dependsOnFiles(files)
-        headers = headers + files.toSet().map { it.absolutePath }
-    }
-
-    private var linker: String? = null
-
-    fun linker(value: String) {
-        linker = value
-    }
-
-    private val linkerOpts = mutableListOf<String>()
-
-    fun linkerOpts(vararg values: String) {
-        this.linkerOpts(values.toList())
-    }
-
-    fun linkerOpts(values: List<String>) {
-        linkerOpts.addAll(values)
-    }
-
-    private var linkFiles = project.files()
-
-    private val linkTasks = mutableListOf<String>()
-
-    fun linkOutputs(task: Task) {
-        linkOutputs(task.name)
-    }
-
-    private fun linkOutputs(task: String) {
-        linkTasks += task
-        dependsOn(task)
-
-        val prj: Project
-        val taskName: String
-        val index = task.lastIndexOf(':')
-        if (index != -1) {
-            prj = project.project(task.substring(0, index))
-            taskName = task.substring(index + 1)
-        } else {
-            prj = project
-            taskName = task
-        }
-
-        prj.tasks.matching { it.name == taskName }.forEach { // TODO: it is a hack
-            this.dependsOnFiles(it.outputs.files)
-        }
+    fun headers(files: List<String>) {
+        headers = headers + files
     }
 
     val configuration: Configuration = project.configurations.create(interopStubs.name)
@@ -153,47 +95,44 @@ class NamedNativeInteropConfig(
             environment(mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1"))
 
             outputs.dir(generatedSrcDir)
-            outputs.dir(nativeLibsDir)
             outputs.dir(temporaryFilesDir)
 
             // defer as much as possible
             doFirst {
-                val linkerOpts = linkerOpts
-
-                linkTasks.forEach {
-                    linkerOpts.addAll(project.tasks.getByPath(it).outputs.files.files.map { it.absolutePath })
-                }
-
-                linkerOpts.addAll(linkFiles.files.map { it.absolutePath })
-
                 args("-generated", generatedSrcDir)
-                args("-natives", nativeLibsDir)
                 args("-Xtemporary-files-dir", temporaryFilesDir)
                 args("-flavor", "jvm")
-
-                if (defFile != null) {
-                    args("-def", project.file(defFile!!))
-                }
-
-                if (pkg != null) {
-                    args("-pkg", pkg)
-                }
-
-                if (linker != null) {
-                    args("-linker", linker)
-                }
-
+                requireNotNull(defFile)
+                args("-def", project.file(defFile!!))
                 args("-target", HostManager.host)
 
                 // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly
-                environment["PATH"] = project.files(hostPlatform.clang.clangPaths).asPath + File.pathSeparator + environment["PATH"]
+                environment["PATH"] = project.files(project.extensions.getByType<NativeDependenciesExtension>().hostPlatform.clang.clangPaths).asPath + File.pathSeparator + environment["PATH"]
 
                 args(compilerOpts.flatMap { listOf("-compiler-option", it) })
-                args(linkerOpts.flatMap { listOf("-linker-option", it) })
 
                 headers.forEach {
                     args("-header", it)
                 }
+            }
+
+            doLast {
+                // interop tool uses precompiled headers, generated .c file does not have required includes. Add them manually.
+                val generatedName = defFile!!.split(".").reversed().drop(1).joinToString(separator = "")
+                val originalStubs = temporaryFilesDir.resolve("${generatedName}stubs_original.c")
+                val modifiedStubs = temporaryFilesDir.resolve("${generatedName}stubs.c")
+                modifiedStubs.copyTo(originalStubs, overwrite = true)
+                modifiedStubs.printWriter().use { writer ->
+                    (listOf("stdint.h", "string.h", "jni.h") + headers).forEach {
+                        writer.appendLine("#include <$it>")
+                    }
+                    originalStubs.useLines { lines ->
+                        lines.forEach {
+                            writer.appendLine(it)
+                        }
+                    }
+                }
+                originalStubs.delete()
             }
         }
     }
@@ -205,25 +144,9 @@ class NamedNativeInteropConfig(
         }
     }
 
-    private fun dependsOnFiles(files: FileCollection) {
-        dependsOn(files)
-        genTask.configure {
-            inputs.files(files)
-        }
-    }
-
-    private val nativeLibsDir: File
-        get() = project.layout.buildDirectory.dir("nativelibs/${HostManager.host}").get().asFile
-
     private val generatedSrcDir: File
         get() = project.layout.buildDirectory.dir("nativeInteropStubs/$name/kotlin").get().asFile
 
     private val temporaryFilesDir: File
         get() = project.layout.buildDirectory.dir("interopTemp").get().asFile
-
-    val llvmDir: String
-        get() = project.extensions.getByType<NativeDependenciesExtension>().llvmPath
-
-    val hostPlatform: Platform
-        get() = project.extensions.getByType<NativeDependenciesExtension>().hostPlatform
 }

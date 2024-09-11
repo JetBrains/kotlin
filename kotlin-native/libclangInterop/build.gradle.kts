@@ -23,9 +23,11 @@ val libclang =
             "lib/${System.mapLibraryName("clang")}"
         }
 
-val cflags = mutableListOf( "-I${nativeDependencies.llvmPath}/include",
+val commonFlags = listOf("-I${nativeDependencies.llvmPath}/include",
         "-I${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
         *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni)
+val cflags = commonFlags + listOf("-std=c99")
+val cxxflags = commonFlags + listOf("-std=c++11")
 
 val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
 
@@ -82,7 +84,6 @@ val lib = if (HostManager.hostIsMingw) "lib" else "a"
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
-    val cxxflags = listOf("-std=c++11", *cflags.toTypedArray())
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
@@ -119,11 +120,11 @@ tasks.named(solib("clangstubs")).configure {
     dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
 }
 
-val nativelibs = project.tasks.register<Copy>("nativelibs") {
-    val clangstubsSolib = solib("clangstubs")
-    dependsOn(clangstubsSolib)
+val nativelibs by project.tasks.registering(Sync::class) {
+    val lib = solib("clangstubs")
+    dependsOn(lib)
 
-    from(layout.buildDirectory.dir(clangstubsSolib))
+    from(layout.buildDirectory.dir(lib))
     into(layout.buildDirectory.dir("nativelibs"))
 }
 
@@ -131,7 +132,8 @@ kotlinNativeInterop {
     this.create("clang") {
         defFile("clang.def")
         compilerOpts(cflags)
-        linkerOpts(ldflags)
+        headers(listOf("clang-c/Index.h", "clang-c/ext.h"))
+
         genTask.configure {
             dependsOn(libclangextTask)
             inputs.dir(libclangextDir)
