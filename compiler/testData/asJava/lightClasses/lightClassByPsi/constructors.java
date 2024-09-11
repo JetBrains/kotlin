@@ -1,6 +1,6 @@
 public abstract class A /* A*/ {
   @org.jetbrains.annotations.Nullable()
-  private final @org.jetbrains.annotations.Nullable() java.lang.String x = null /* initializer type: null */;
+  private final @org.jetbrains.annotations.Nullable() java.lang.String x;
 
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String getX();//  getX()
