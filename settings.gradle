@@ -973,6 +973,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:platformLibs'
     include ':kotlin-native:libclangext'
     include ':kotlin-native:llvmInterop'
+    include ':kotlin-native:libclangInterop'
     include ':kotlin-native:backend.native:tests'
     project(':kotlin-native:backend.native:tests').projectDir = "$rootDir/kotlin-native/backend.native/tests" as File
     include ':kotlin-native:prepare:kotlin-native-compiler-embeddable'

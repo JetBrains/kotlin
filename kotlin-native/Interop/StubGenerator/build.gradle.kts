@@ -32,7 +32,7 @@ tasks {
     // Copy-pasted from Indexer build.gradle.kts.
     withType<Test>().configureEach {
         val projectsWithNativeLibs = listOf(
-                project(":kotlin-native:Interop:Indexer"),
+                project(":kotlin-native:libclangInterop"),
                 project(":kotlin-native:Interop:Runtime")
         )
         dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })

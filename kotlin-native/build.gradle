@@ -124,7 +124,7 @@ dependencies {
     nativeLibs project(path: ':kotlin-native:common:env', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:common:files', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
-    nativeLibs project(path: ':kotlin-native:Interop:Indexer', configuration: 'nativeLibs')
+    nativeLibs project(path: ':kotlin-native:libclangInterop', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:Interop:Runtime', configuration: 'nativeLibs')
     use(RepoDependencies) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
