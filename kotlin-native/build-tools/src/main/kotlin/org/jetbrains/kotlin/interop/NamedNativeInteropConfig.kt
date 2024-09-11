@@ -136,14 +136,14 @@ class NamedNativeInteropConfig(
             notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
             dependsOn(project.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
             dependsOn(project.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
-            dependsOn(":kotlin-native:Interop:Indexer:nativelibs")
+            dependsOn(":kotlin-native:libclangInterop:nativelibs")
             dependsOn(":kotlin-native:Interop:Runtime:nativelibs")
             classpath = project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CONFIGURATION)
             mainClass = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs("-ea")
             systemProperties(mapOf(
                     "java.library.path" to project.files(
-                            project.project(":kotlin-native:Interop:Indexer").layout.buildDirectory.dir("nativelibs"),
+                            project.project(":kotlin-native:libclangInterop").layout.buildDirectory.dir("nativelibs"),
                             project.project(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs"),
                     ).asPath,
                     // Set the konan.home property because we run the cinterop tool not from a distribution jar
