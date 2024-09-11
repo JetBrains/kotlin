@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
-import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
-import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
-import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
+import org.jetbrains.kotlin.fir.java.enhancement.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -28,9 +26,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.properties.Delegates
@@ -43,7 +41,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     private val annotationList: FirJavaAnnotationList,
     private val originalStatus: FirResolvedDeclarationStatusImpl,
     override val classKind: ClassKind,
-    override val declarations: MutableList<FirDeclaration>,
+    private val declarationList: FirJavaDeclarationList,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
     private val nonEnhancedSuperTypes: List<FirTypeRef>,
@@ -77,6 +75,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> get() = annotationList
+
+    // TODO: the lazy declarations is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val declarations: List<FirDeclaration> get() = declarationList.declarations
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val deprecationsProvider: DeprecationsProvider by lazy {
@@ -130,7 +131,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        transformDeclarations(transformer, data)
         return this
     }
 
@@ -151,7 +151,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        declarations.transformInplace(transformer, data)
         return this
     }
 
@@ -178,10 +177,11 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     override var source: KtSourceElement? = null
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
+    override val declarations: MutableList<FirDeclaration> get() = shouldNotBeCalled()
 
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     var containingClassSymbol: FirClassSymbol<*>? = null
+    var declarationList: FirJavaDeclarationList = FirEmptyJavaDeclarationList
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
@@ -193,7 +193,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             annotationList,
             status as FirResolvedDeclarationStatusImpl,
             classKind,
-            declarations,
+            declarationList,
             scopeProvider,
             symbol,
             superTypeRefs,
