@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
-    implementation(project(":kotlin-native:llvmInterop", "llvmInteropStubs"))
+    implementation(project(":kotlin-native:llvmInterop"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":native:base"))
