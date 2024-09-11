@@ -1148,7 +1148,11 @@ open class FirDeclarationsResolveTransformer(
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
             extractLambdaInfoFromFunctionType(
-                it.coneType, anonymousFunctionExpression, anonymousFunction, returnTypeVariable = null, components, candidate = null,
+                it.coneType,
+                anonymousFunctionExpression,
+                anonymousFunction,
+                returnTypeVariable = null,
+                components,
                 allowCoercionToExtensionReceiver = true,
                 sourceForFunctionExpression = null,
             )

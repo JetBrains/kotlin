@@ -339,7 +339,6 @@ internal object ArgumentCheckingProcessor {
             anonymousFunction,
             returnTypeVariable,
             context.bodyResolveComponents,
-            candidate,
             allowCoercionToExtensionReceiver = duringCompletion,
             sourceForFunctionExpression = expression.source,
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
