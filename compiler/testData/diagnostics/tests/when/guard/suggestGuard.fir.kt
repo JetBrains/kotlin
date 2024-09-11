@@ -3,7 +3,7 @@
 
 fun suggestAnd(x: String, boolExpr: Boolean) {
     when (x) {
-        <!INCOMPATIBLE_TYPES!><!CONDITION_TYPE_MISMATCH!>"OK"<!> <!WRONG_CONDITION_SUGGEST_GUARD_ERROR!>&&<!> boolExpr<!> -> "hello"
+        <!INCOMPATIBLE_TYPES!><!CONDITION_TYPE_MISMATCH!>"OK"<!> <!WRONG_CONDITION_SUGGEST_GUARD!>&&<!> boolExpr<!> -> "hello"
     }
 }
 

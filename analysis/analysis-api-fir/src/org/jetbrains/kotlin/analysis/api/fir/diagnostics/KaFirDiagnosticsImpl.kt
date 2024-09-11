@@ -3830,15 +3830,10 @@ internal class ConfusingBranchConditionWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConfusingBranchConditionWarning
 
-internal class WrongConditionSuggestGuardErrorImpl(
+internal class WrongConditionSuggestGuardImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongConditionSuggestGuardError
-
-internal class WrongConditionSuggestGuardWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongConditionSuggestGuardWarning
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongConditionSuggestGuard
 
 internal class CommaInWhenConditionWithWhenGuardImpl(
     firDiagnostic: KtPsiDiagnostic,

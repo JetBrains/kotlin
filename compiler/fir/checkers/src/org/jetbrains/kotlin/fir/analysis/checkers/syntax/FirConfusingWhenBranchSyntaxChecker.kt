@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -28,13 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.getChildren
 
 object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
-    private val prohibitedTokens = TokenSet.create(
-        IN_KEYWORD, NOT_IN,
-        LT, LTEQ, GT, GTEQ,
-        EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ,
-        ANDAND, OROR
-    )
-
     override fun checkLightTree(
         element: FirWhenExpression,
         source: KtLightSourceElement,
@@ -67,24 +63,17 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val errorToReport = when (expression.tokenType) {
-            IS_EXPRESSION -> FirErrors.CONFUSING_BRANCH_CONDITION
+        val errorReporter = when (expression.tokenType) {
+            IS_EXPRESSION -> ConfusingWhenBranchReporter.Generic
             BINARY_EXPRESSION -> {
                 val operationTokenName = expression.getChildren(tree).first { it.tokenType == OPERATION_REFERENCE }.toString()
                 val operationToken = operationTokenName.getOperationSymbol()
-                when {
-                    operationToken == ANDAND && !booleanSubject -> FirErrors.WRONG_CONDITION_SUGGEST_GUARD
-                    operationToken in prohibitedTokens -> FirErrors.CONFUSING_BRANCH_CONDITION
-                    else -> null
-                }
+                ConfusingWhenBranchReporter(operationToken, booleanSubject)
             }
             else -> null
-        }
-        if (errorToReport != null) {
-            val source =
-                KtLightSourceElement(expression, offset + expression.startOffset, offset + expression.endOffset, tree)
-            reporter.reportOn(source, errorToReport, context)
-        }
+        } ?: return
+        val source = KtLightSourceElement(expression, offset + expression.startOffset, offset + expression.endOffset, tree)
+        errorReporter.report(reporter, source, context)
     }
 
     override fun checkPsi(
@@ -112,24 +101,47 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
         }
     }
 
-    private fun checkConditionExpression(booleanSubject: Boolean, rawExpression: KtExpression?, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkConditionExpression(
+        booleanSubject: Boolean,
+        rawExpression: KtExpression?,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         if (rawExpression == null) return
         if (rawExpression is KtParenthesizedExpression) return
-        val errorToReport = when (val expression = KtPsiUtil.safeDeparenthesize(rawExpression)) {
-            is KtIsExpression -> FirErrors.CONFUSING_BRANCH_CONDITION
-            is KtBinaryExpression -> {
-                val operationToken = expression.operationToken
-                when {
-                    operationToken == ANDAND && !booleanSubject -> FirErrors.WRONG_CONDITION_SUGGEST_GUARD
-                    operationToken in prohibitedTokens -> FirErrors.CONFUSING_BRANCH_CONDITION
-                    else -> null
-                }
-            }
+        val errorReporter = when (val expression = KtPsiUtil.safeDeparenthesize(rawExpression)) {
+            is KtIsExpression -> ConfusingWhenBranchReporter.Generic
+            is KtBinaryExpression -> ConfusingWhenBranchReporter(expression.operationToken, booleanSubject)
             else -> null
-        }
-        if (errorToReport != null) {
-            val source = KtRealPsiSourceElement(rawExpression)
-            reporter.reportOn(source, errorToReport, context)
+        } ?: return
+        val source = KtRealPsiSourceElement(rawExpression)
+        errorReporter.report(reporter, source, context)
+    }
+
+    private fun interface ConfusingWhenBranchReporter {
+        fun report(reporter: DiagnosticReporter, source: AbstractKtSourceElement?, context: DiagnosticContext)
+
+        companion object {
+            private val prohibitedTokens = TokenSet.create(
+                IN_KEYWORD, NOT_IN,
+                LT, LTEQ, GT, GTEQ,
+                EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ,
+                ANDAND, OROR
+            )
+
+            operator fun invoke(operationToken: IElementType, booleanSubject: Boolean): ConfusingWhenBranchReporter? = when {
+                operationToken == ANDAND && !booleanSubject -> GuardSuggestion
+                operationToken in prohibitedTokens -> Generic
+                else -> null
+            }
+
+            val Generic: ConfusingWhenBranchReporter = ConfusingWhenBranchReporter { reporter, source, context ->
+                reporter.reportOn(source, FirErrors.CONFUSING_BRANCH_CONDITION, context)
+            }
+
+            val GuardSuggestion: ConfusingWhenBranchReporter = ConfusingWhenBranchReporter { reporter, source, context ->
+                reporter.reportOn(source, FirErrors.WRONG_CONDITION_SUGGEST_GUARD, context)
+            }
         }
     }
 }
