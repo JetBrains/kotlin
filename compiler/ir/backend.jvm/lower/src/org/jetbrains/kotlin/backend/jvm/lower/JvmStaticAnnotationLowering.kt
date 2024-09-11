@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
@@ -81,25 +82,41 @@ class SingletonObjectJvmStaticTransformer(
     private val irBuiltIns: IrBuiltIns,
     private val cachedFields: CachedFieldsForObjectInstances
 ) : IrElementTransformerVoid() {
-    override fun visitClass(declaration: IrClass): IrStatement {
-        if (declaration.isNonCompanionObject) {
-            for (function in declaration.simpleFunctions()) {
-                if (function.isJvmStaticDeclaration()) {
-                    // dispatch receiver parameter is already null for synthetic property annotation methods
-                    function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
-                        function.dispatchReceiverParameter = null
-                        function.replaceThisByStaticReference(cachedFields, declaration, oldDispatchReceiverParameter)
-                    }
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+        transformFunction(declaration)
+        return super.visitSimpleFunction(declaration)
+    }
+
+    private fun transformFunction(function: IrFunction) {
+        if (function.isJvmStaticInObject()) {
+            // dispatch receiver parameter is already null for synthetic property annotation methods
+            function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
+                function.dispatchReceiverParameter = null
+
+                if (function !is IrLazyFunctionBase) {
+                    function.replaceThisByStaticReference(cachedFields, function.parentAsClass, oldDispatchReceiverParameter)
                 }
             }
         }
-        return super.visitClass(declaration)
     }
 
     // This lowering runs before functions references are handled, and should transform them too.
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
         expression.transformChildrenVoid(this)
+
         val callee = expression.symbol.owner
+        if (callee is IrFunction) {
+            transformFunction(callee)
+        }
+        if (callee is IrProperty) {
+            callee.getter?.let {
+                transformFunction(it)
+            }
+            callee.setter?.let {
+                transformFunction(it)
+            }
+        }
+
         if (callee is IrDeclaration && callee.isJvmStaticInObject()) {
             return expression.makeStatic(irBuiltIns, replaceCallee = null)
         }

@@ -36,7 +36,6 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
         }
     }
 
-    override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
 }

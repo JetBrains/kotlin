@@ -38,13 +38,6 @@ interface Fir2IrExtensions {
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
 
-    /**
-     * Whether this declaration is forcibly made static in the sense that it has no dispatch receiver.
-     *
-     * For example, on JVM this corresponds to the [JvmStatic] annotation.
-     */
-    fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean
-
     fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
     fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean
@@ -60,7 +53,6 @@ interface Fir2IrExtensions {
         override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
-        override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
         override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
         override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
     }

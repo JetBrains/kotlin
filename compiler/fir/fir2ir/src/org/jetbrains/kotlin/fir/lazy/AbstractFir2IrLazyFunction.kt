@@ -104,8 +104,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     internal fun shouldHaveDispatchReceiver(containingClass: IrClass): Boolean {
-        return !fir.isStatic && !containingClass.isFacadeClass &&
-                (!containingClass.isObject || containingClass.isCompanion || !extensions.isTrueStatic(fir, session))
+        return !fir.isStatic && !containingClass.isFacadeClass
     }
 
     override val factory: IrFactory
