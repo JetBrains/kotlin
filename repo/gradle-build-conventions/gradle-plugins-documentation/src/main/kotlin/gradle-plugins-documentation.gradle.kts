@@ -1,3 +1,4 @@
+import de.undercouch.gradle.tasks.download.Download
 import gradle.publishGradlePluginsJavadoc
 import org.jetbrains.dokka.gradle.DokkaMultiModuleFileLayout
 
@@ -11,6 +12,24 @@ val documentationExtension = extensions.create<PluginsApiDocumentationExtension>
 dependencies {
     dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
     dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-multiModulePlugin").get())
+}
+
+val downloadTask = tasks.register<Download>("downloadTemplates") {
+    src(documentationExtension.templatesArchiveUrl)
+    dest(layout.buildDirectory.file("templateDist.zip"))
+    onlyIfModified(true)
+    overwrite(false)
+}
+
+val unzipTemplates = tasks.register<Copy>("unzipTemplates") {
+    dependsOn(downloadTask)
+    from(
+        zipTree(downloadTask.map { it.dest })
+            .matching {
+                include(documentationExtension.templatesArchiveSubDirectoryPattern.get())
+            }
+    )
+    into(layout.buildDirectory.dir("template"))
 }
 
 tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlangDocumentation") {
@@ -32,9 +51,10 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
         )
     )
 
+    dependsOn(unzipTemplates)
     pluginsMapConfiguration.put(
         "org.jetbrains.dokka.base.DokkaBase",
-        "{ \"templatesDir\": \"${documentationExtension.templates.map { it.asFile }.get()}\" }"
+        "{ \"templatesDir\": \"${unzipTemplates.map { it.destinationDir }.get()}\" }"
     )
     pluginsMapConfiguration.put(
         "org.jetbrains.dokka.versioning.VersioningPlugin",

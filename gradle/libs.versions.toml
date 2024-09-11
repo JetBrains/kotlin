@@ -45,12 +45,14 @@ diff-utils = "4.12"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
+downloadTask = "5.6.0"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 dokka-multiModulePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "dokka" }
+downloadTask-gradlePlugin = { module = "de.undercouch:gradle-download-task", version.ref = "downloadTask" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
