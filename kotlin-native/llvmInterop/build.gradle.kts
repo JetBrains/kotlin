@@ -28,6 +28,14 @@ kotlinNativeInterop {
     }
 }
 
+configurations.apiElements.configure {
+    extendsFrom(kotlinNativeInterop["llvm"].configuration)
+}
+
+configurations.runtimeElements.configure {
+    extendsFrom(kotlinNativeInterop["llvm"].configuration)
+}
+
 val nativeLibs by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
