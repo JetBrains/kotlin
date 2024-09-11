@@ -10,6 +10,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
@@ -25,6 +26,7 @@ class IrInlinedFunctionBlockImpl internal constructor(
     override var type: IrType,
     override var origin: IrStatementOrigin?,
     override var inlineFunctionSymbol: IrFunctionSymbol?,
+    override var fileEntry: IrFileEntry,
 ) : IrInlinedFunctionBlock() {
     override var attributeOwnerId: IrAttributeContainer = this
 

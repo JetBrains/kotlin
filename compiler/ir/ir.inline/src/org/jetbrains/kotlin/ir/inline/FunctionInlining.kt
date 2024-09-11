@@ -252,15 +252,13 @@ open class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
+            val inlineFunctionToStore = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = returnType,
-                inlineFunctionSymbol = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) {
-                    callee.symbol
-                } else {
-                    callee.originalFunction.symbol
-                },
+                inlineFunctionSymbol = inlineFunctionToStore.symbol,
+                fileEntry = inlineFunctionToStore.fileEntry,
                 origin = null,
                 statements = copiedParameters + newStatementsFromDefault + newStatements
             ).apply {
