@@ -76,7 +76,11 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             this is AbstractNativeCInteropFModulesTest &&
                     targets.testTarget.family == Family.ANDROID
         )
+
         val testPathFull = getAbsoluteFile(testPath)
+        // FIXME: Modular filtering with stdarg.h is currently skipped - KT-71400
+        Assumptions.assumeFalse(testPathFull.endsWith("builtinsDefs/modulesA"))
+
         val testDataDir = testPathFull.parentFile.parentFile
         val includeFolder = testDataDir.resolve("include")
         val defFile = testPathFull.resolve(defFileName)
