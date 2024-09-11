@@ -427,14 +427,14 @@ fun IrInlinedFunctionBlockImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    inlineFunction: IrFunction,
+    inlineFunctionSymbol: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null,
 ) = IrInlinedFunctionBlockImpl(
     constructorIndicator = null,
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
-    inlineFunction = inlineFunction,
+    inlineFunctionSymbol = inlineFunctionSymbol,
     origin = origin,
 )
 
@@ -442,7 +442,7 @@ fun IrInlinedFunctionBlockImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    inlineFunction: IrFunction,
+    inlineFunctionSymbol: IrFunctionSymbol?,
     origin: IrStatementOrigin?,
     statements: List<IrStatement>,
 ) = IrInlinedFunctionBlockImpl(
@@ -450,7 +450,7 @@ fun IrInlinedFunctionBlockImpl(
     startOffset = startOffset,
     endOffset = endOffset,
     type = type,
-    inlineFunction = inlineFunction,
+    inlineFunctionSymbol = inlineFunctionSymbol,
     origin = origin,
 ).apply {
     this.statements.addAll(statements)

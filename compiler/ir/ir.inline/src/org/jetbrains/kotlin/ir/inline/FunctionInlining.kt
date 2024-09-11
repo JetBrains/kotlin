@@ -256,7 +256,11 @@ open class FunctionInlining(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = returnType,
-                inlineFunction = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) callee else callee.originalFunction,
+                inlineFunctionSymbol = if (inlineFunctionResolver.inlineMode == InlineMode.ALL_FUNCTIONS) {
+                    callee.symbol
+                } else {
+                    callee.originalFunction.symbol
+                },
                 origin = null,
                 statements = copiedParameters + newStatementsFromDefault + newStatements
             ).apply {

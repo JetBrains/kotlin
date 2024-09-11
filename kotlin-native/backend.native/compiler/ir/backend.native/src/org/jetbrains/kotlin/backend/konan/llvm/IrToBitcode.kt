@@ -1952,16 +1952,16 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) :
-            FileScope(inlinedBlock.inlineFunction.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
+            FileScope(inlinedBlock.inlineFunctionSymbol?.owner.let {
+                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
                 generationState.inlineFunctionOrigins[it]?.irFile ?: it.fileOrNull
             }
                     ?: (currentCodeContext.fileScope() as? FileScope)?.file
                     ?: error("returnable block should belong to current file at least")) {
 
         private val functionScope by lazy {
-            inlinedBlock.inlineFunction.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
+            inlinedBlock.inlineFunctionSymbol?.owner.let {
+                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
                 it.scope(file().fileEntry.line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
             }
         }

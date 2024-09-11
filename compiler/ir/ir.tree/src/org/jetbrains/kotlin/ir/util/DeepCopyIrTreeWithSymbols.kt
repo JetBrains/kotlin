@@ -469,7 +469,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrInlinedFunctionBlockImpl(
             inlinedBlock.startOffset, inlinedBlock.endOffset,
             inlinedBlock.type.remapType(),
-            inlinedBlock.inlineFunction,
+            inlinedBlock.inlineFunctionSymbol,
             mapStatementOrigin(inlinedBlock.origin),
             statements = inlinedBlock.statements.memoryOptimizedMap { it.transform() },
         ).processAttributes(inlinedBlock)

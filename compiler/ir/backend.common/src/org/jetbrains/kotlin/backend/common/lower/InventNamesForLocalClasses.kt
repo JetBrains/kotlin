@@ -95,7 +95,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
             if (!data.processingInlinedFunction && inlinedBlock.isFunctionInlining()) {
                 inlinedBlock.getTmpVariablesForArguments().forEach { it.accept(this, data) }
 
-                val inlinedAt = inlinedBlock.inlineFunction.name.asString()
+                val inlinedAt = inlinedBlock.inlineFunctionSymbol?.owner?.name?.asString() ?: "UNKNOWN"
                 val newData = data.append("\$inlined\$$inlinedAt").copy(isLocal = true, processingInlinedFunction = true)
 
                 return inlinedBlock.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
