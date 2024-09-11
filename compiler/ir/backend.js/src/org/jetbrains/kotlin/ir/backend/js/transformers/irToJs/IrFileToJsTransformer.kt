@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
 class IrFileToJsTransformer(private val useBareParameterNames: Boolean = false) : BaseIrElementToJsNodeTransformer<JsBlock, JsStaticContext> {
     override fun visitFile(declaration: IrFile, data: JsStaticContext): JsBlock {
         val fileContext = JsGenerationContext(
-            currentFile = declaration,
+            currentFileEntry = declaration.fileEntry,
             currentFunction = null,
+            currentInlineFunction = null,
             staticContext = data,
             useBareParameterNames = useBareParameterNames
         )

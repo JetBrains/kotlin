@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getStartSourceLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -29,8 +29,9 @@ val emptyScope: JsScope = object : JsScope("nil") {
 }
 
 class JsGenerationContext(
-    val currentFile: IrFile,
+    val currentFileEntry: IrFileEntry,
     val currentFunction: IrFunction?,
+    val currentInlineFunction: IrFunction?,
     val staticContext: JsStaticContext,
     val localNames: LocalNameGenerator? = null,
     private val nameCache: MutableMap<IrElement, JsName> = hashMapOf(),
@@ -39,10 +40,14 @@ class JsGenerationContext(
     private val startLocationCache = hashMapOf<Int, JsLocation>()
     private val endLocationCache = hashMapOf<Int, JsLocation>()
 
-    fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newInlineFunction(
+        fileEntry: IrFileEntry,
+        inlineFun: IrFunction,
+    ): JsGenerationContext {
         return JsGenerationContext(
-            currentFile = file,
-            currentFunction = func,
+            currentFileEntry = fileEntry,
+            currentFunction = currentFunction,
+            currentInlineFunction = inlineFun,
             staticContext = staticContext,
             localNames = localNames,
             nameCache = nameCache,
@@ -52,8 +57,9 @@ class JsGenerationContext(
 
     fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
-            currentFile = currentFile,
+            currentFileEntry = currentFileEntry,
             currentFunction = func,
+            currentInlineFunction = currentInlineFunction,
             staticContext = staticContext,
             localNames = localNames,
             nameCache = nameCache,
@@ -108,6 +114,6 @@ class JsGenerationContext(
         cache: MutableMap<Int, JsLocation>,
         offsetSelector: IrElement.() -> Int,
     ): JsLocation? = cache.getOrPut(irElement.offsetSelector()) {
-        irElement.getSourceLocation(currentFile.fileEntry, offsetSelector) ?: return null
+        irElement.getSourceLocation(currentFileEntry, offsetSelector) ?: return null
     }.copy(name = originalName)
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -41,7 +40,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
         val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
         val newContext = inlinedBlock?.inlineFunctionSymbol?.owner?.let {
-            context.newFile(it.file, context.currentFunction, context.localNames)
+            context.newInlineFunction(inlinedBlock.fileEntry, it)
         } ?: context
 
         val container = inlinedBlock?.statements ?: expression.statements
