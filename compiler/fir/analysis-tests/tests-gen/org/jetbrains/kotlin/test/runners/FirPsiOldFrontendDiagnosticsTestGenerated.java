@@ -8284,6 +8284,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("deadLocalDeclaration.kt")
+        public void testDeadLocalDeclaration() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadLocalDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("deadNestedDeclaration.kt")
+        public void testDeadNestedDeclaration() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadNestedDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("deadPostponedLambda.kt")
+        public void testDeadPostponedLambda() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadPostponedLambda.kt");
+        }
+
+        @Test
         @TestMetadata("expressionInUnitLiteral.kt")
         public void testExpressionInUnitLiteral() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/expressionInUnitLiteral.kt");
