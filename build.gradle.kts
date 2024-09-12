@@ -313,6 +313,11 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":kotlinx-serialization-compiler-plugin.k2",
                 ":kotlinx-serialization-compiler-plugin.backend",
 
+                ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli",
+                ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common",
+                ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.k2",
+                ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend",
+
                 ":kotlin-lombok-compiler-plugin.cli",
                 ":kotlin-lombok-compiler-plugin.common",
                 ":kotlin-lombok-compiler-plugin.k1",
@@ -407,6 +412,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
     ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
