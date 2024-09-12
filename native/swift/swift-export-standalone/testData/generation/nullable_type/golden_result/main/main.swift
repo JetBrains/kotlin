@@ -59,7 +59,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
 }
 public var str: Swift.String? {
     get {
-        return switch __root___str_get() { case .none: .none; case let res: res; }
+        return __root___str_get()
     }
     set {
         return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue)
@@ -110,5 +110,5 @@ public func string_in(
     return __root___string_in__TypesOfArguments__Swift_String_opt___(a)
 }
 public func string_out() -> Swift.String? {
-    return switch __root___string_out() { case .none: .none; case let res: res; }
+    return __root___string_out()
 }

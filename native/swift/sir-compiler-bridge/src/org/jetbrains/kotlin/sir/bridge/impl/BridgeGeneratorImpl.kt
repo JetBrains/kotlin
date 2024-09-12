@@ -418,9 +418,16 @@ private sealed class Bridge(
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
-                    wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
-                }; }"
+                return when (wrappedObject) {
+                    is AsObjCBridged -> wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+                    is AsObject -> "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
+                        wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
+                    }; }"
+                    is AsIs,
+                    is AsOpaqueObject
+                        -> TODO("yet unsupported")
+                    is AsOptionalWrapper -> error("there is not optional wrappers for optional")
+                }
             }
 
             override fun renderNil(): String = error("we do not support wrapping optionals into optionals, as it is impossible in kotlin")
