@@ -58,7 +58,13 @@ internal class TypeTransformerVoidPrinter(
             println()
             printVisitMethodDeclaration(element, hasDataParameter = false, override = true)
             printBlock {
-                printTypeRemappings(element, irTypeFields, hasDataParameter = false)
+                printTypeRemappings(
+                    element,
+                    irTypeFields,
+                    hasDataParameter = false,
+                    replaceTypes = true,
+                    visitTypeMethodName = "transformType"
+                )
                 println("super<", elementVisitorVoidType.render(), ">.", element.visitFunctionName, "(", element.visitorParameterName, ")")
             }
         }
