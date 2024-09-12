@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class IrConstDeclarationAnnotationTransformer(
     interpreter: IrInterpreter,
@@ -28,19 +30,22 @@ internal class IrConstDeclarationAnnotationTransformer(
     suppressExceptions: Boolean,
 ) : IrConstAnnotationTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrElementVisitor<Unit, IrConstTransformer.Data> {
+) {
+    override fun visitAnnotations(element: IrElement) {
+        element.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
 
-    override fun visitElement(element: IrElement, data: Data) {
-        element.acceptChildren(this, data)
-    }
+            override fun visitFile(declaration: IrFile) {
+                transformAnnotations(declaration)
+                super.visitFile(declaration)
+            }
 
-    override fun visitFile(declaration: IrFile, data: Data) {
-        transformAnnotations(declaration)
-        super.visitFile(declaration, data)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
-        transformAnnotations(declaration)
-        super.visitDeclaration(declaration, data)
+            override fun visitDeclaration(declaration: IrDeclarationBase) {
+                transformAnnotations(declaration)
+                super.visitDeclaration(declaration)
+            }
+        })
     }
 }

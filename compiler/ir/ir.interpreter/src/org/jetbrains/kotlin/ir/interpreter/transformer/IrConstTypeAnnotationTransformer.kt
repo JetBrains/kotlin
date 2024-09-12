@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.visitors.IrTypeTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class IrConstTypeAnnotationTransformer(
     interpreter: IrInterpreter,
@@ -30,19 +32,23 @@ internal class IrConstTypeAnnotationTransformer(
     suppressExceptions: Boolean,
 ) : IrConstAnnotationTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrTypeTransformer<Unit, IrConstTransformer.Data> {
+) {
+    override fun visitAnnotations(element: IrElement) {
+        element.acceptVoid(
+            object : IrTypeVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
 
-    override fun visitElement(element: IrElement, data: Data) {
-        element.acceptChildren(this, data)
-    }
+                override fun visitType(container: IrElement, type: IrType) {}
 
-    override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Data): Type {
-        if (type == null) return type
-
-        transformAnnotations(type)
-        if (type is IrSimpleType) {
-            type.arguments.mapNotNull { it.typeOrNull }.forEach { transformType(container, it, data) }
-        }
-        return type
+                override fun visitTypeRecursively(container: IrElement, type: IrType, data: Data) {
+                    transformAnnotations(type)
+                    if (type is IrSimpleType) {
+                        type.arguments.mapNotNull { it.typeOrNull }.forEach { visitTypeRecursively(container, it, data) }
+                    }
+                }
+            }
+        )
     }
 }

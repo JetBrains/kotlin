@@ -53,9 +53,9 @@ fun IrElement.transformConst(
         interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
 
-    return this.transform(irConstExpressionTransformer, IrConstTransformer.Data()).apply {
-        accept(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
-        accept(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+    return this.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data()).apply {
+        irConstDeclarationAnnotationTransformer.visitAnnotations(this)
+        irConstTypeAnnotationTransformer.visitAnnotations(this)
     }
 }
 
@@ -74,7 +74,7 @@ fun IrFile.runConstOptimizations(
         { _, _, _ -> }, { _, _, _ -> },
         suppressExceptions
     )
-    preprocessedFile.transform(irConstExpressionTransformer, IrConstTransformer.Data())
+    preprocessedFile.transform(irConstExpressionTransformer, IrConstExpressionTransformer.Data())
 }
 
 private fun IrFile.preprocessForConstTransformer(
@@ -99,8 +99,6 @@ internal abstract class IrConstTransformer(
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
 ) {
-    internal data class Data(val inConstantExpression: Boolean = false)
-
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)

@@ -35,7 +35,9 @@ internal abstract class IrConstExpressionTransformer(
     suppressExceptions: Boolean,
 ) : IrConstTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
-), IrElementTransformer<IrConstTransformer.Data> {
+), IrElementTransformer<IrConstExpressionTransformer.Data> {
+    internal data class Data(val inConstantExpression: Boolean = false)
+
     override fun visitFunction(declaration: IrFunction, data: Data): IrStatement {
         // It is useless to visit default accessor, and if we do that, we could render excess information for `IrGetField`
         if (declaration.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return declaration
