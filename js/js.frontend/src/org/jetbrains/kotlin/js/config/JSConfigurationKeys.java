@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -94,6 +94,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> COMPILE_SUSPEND_AS_JS_GENERATOR =
             CompilerConfigurationKey.create("force suspend functions compilation int JS generator functions");
+
+    public static final CompilerConfigurationKey<Boolean> COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS =
+            CompilerConfigurationKey.create("lower Kotlin lambdas into arrow functions instead of anonymous functions");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_REGION_COMMENTS =
             CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, " +

@@ -521,6 +521,17 @@ It is deprecated and will be removed in Kotlin 2.2."""
             field = value
         }
 
+    @Argument(
+        value = "-Xes-arrow-functions",
+        description = "Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. " +
+                "Enabled by default in case of ES2015 target usage"
+    )
+    var useEsArrowFunctions: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,

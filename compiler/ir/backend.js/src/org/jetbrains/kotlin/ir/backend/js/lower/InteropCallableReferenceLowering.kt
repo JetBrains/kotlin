@@ -94,7 +94,9 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             )
 
             // TODO: Do we need to set proper offsets?
-            if (capturedDispatchReceiver != null && !context.es6mode)
+            if (capturedDispatchReceiver != null &&
+                !context.configuration.getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
+            ) {
                 return IrCallImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
@@ -106,6 +108,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedDispatchReceiver))
                     putValueArgument(1, functionExpression)
                 }
+            }
 
             return functionExpression
         }
