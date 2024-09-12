@@ -106,7 +106,14 @@ object PathUtil {
     @JvmField
     val KOTLIN_RUNTIME_JAR_PATTERN: Pattern = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar")
     val KOTLIN_STDLIB_JS_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-js.*\\.jar")
+
+    @Deprecated(
+        "Use kotlin-stdlib common klib instead of legacy kotlin-stdlib common jar with metadata",
+        ReplaceWith("KOTLIN_STDLIB_COMMON_KLIB_PATTERN"),
+        level = DeprecationLevel.HIDDEN,
+    )
     val KOTLIN_STDLIB_COMMON_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-common.*\\.jar")
+    val KOTLIN_STDLIB_COMMON_KLIB_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-common.*\\.klib")
     val KOTLIN_JS_LIBRARY_JAR_PATTERN: Pattern = Pattern.compile("kotlin-js-library.*\\.jar")
 
     const val HOME_FOLDER_NAME = "kotlinc"
