@@ -240,10 +240,16 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @RequiredXCodeVersion(minSupportedMajor = 14, minSupportedMinor = 1)
     @GradleTest
     fun shouldDownloadLightNativeBundleWithMaven(gradleVersion: GradleVersion) {
+        // FIXME: We have to use CURRENT for cinterop generation when testing the light bundle (KT-71419). Always use CURRENT after KTI-1928 is done
+        val kotlinNativeVersion = if (HostManager.hostIsMac) {
+            TestVersions.Kotlin.CURRENT
+        } else {
+            TestVersions.Kotlin.STABLE_RELEASE
+        }
         nativeProject("native-download-maven", gradleVersion = gradleVersion) {
             val nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 distributionType = "light",
-                version = TestVersions.Kotlin.STABLE_RELEASE,
+                version = kotlinNativeVersion,
             )
             build(
                 "assemble",
