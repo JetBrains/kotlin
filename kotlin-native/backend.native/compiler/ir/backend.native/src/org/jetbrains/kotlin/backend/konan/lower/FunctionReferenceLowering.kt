@@ -455,16 +455,13 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             val constructor = buildConstructor()
             val arguments = functionReference.getArgumentsWithIr()
             val typeArguments = typeParametersFromEnclosingScope.map { it.defaultType }
-            val expression = if (arguments.isEmpty()) {
-                irBuilder.irConstantObject(clazz, emptyMap(), typeArguments)
-            } else {
-                irBuilder.irCallConstructor(constructor.symbol, typeArguments).apply {
-                    arguments.forEachIndexed { index, argument ->
-                        putValueArgument(index, argument.second)
-                    }
+            val constrCall = irBuilder.irCallConstructor(constructor.symbol, typeArguments).apply {
+                arguments.forEachIndexed { index, argument ->
+                    putValueArgument(index, argument.second)
                 }
             }
-            return BuiltFunctionReference(clazz, expression)
+
+            return BuiltFunctionReference(clazz, constrCall)
         }
 
         private fun IrBuilderWithScope.getDescription() : IrConstantValue {
