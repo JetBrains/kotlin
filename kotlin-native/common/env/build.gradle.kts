@@ -84,12 +84,16 @@ tasks.named("orgjetbrainskotlinbackendkonanenvstubs.o").configure {
     inputs.file(layout.buildDirectory.file("interopTemp/orgjetbrainskotlinbackendkonanenvstubs.c"))
 }
 
-configurations.apiElements.configure {
-    extendsFrom(kotlinNativeInterop["env"].configuration)
+
+dependencies {
+    implementation(kotlinStdlib())
+    api(project(":kotlin-native:Interop:Runtime"))
 }
 
-configurations.runtimeElements.configure {
-    extendsFrom(kotlinNativeInterop["env"].configuration)
+sourceSets {
+    "main" {
+        kotlin.srcDir(kotlinNativeInterop["env"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/env/kotlin") })
+    }
 }
 
 val nativeLibs by configurations.creating {

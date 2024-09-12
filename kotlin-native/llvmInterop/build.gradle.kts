@@ -159,12 +159,15 @@ tasks.named("llvmstubs.o").configure {
     inputs.file(layout.buildDirectory.file("interopTemp/llvmstubs.c"))
 }
 
-configurations.apiElements.configure {
-    extendsFrom(kotlinNativeInterop["llvm"].configuration)
+dependencies {
+    implementation(kotlinStdlib())
+    api(project(":kotlin-native:Interop:Runtime"))
 }
 
-configurations.runtimeElements.configure {
-    extendsFrom(kotlinNativeInterop["llvm"].configuration)
+sourceSets {
+    "main" {
+        kotlin.srcDir(kotlinNativeInterop["llvm"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/llvm/kotlin") })
+    }
 }
 
 val nativeLibs by configurations.creating {
