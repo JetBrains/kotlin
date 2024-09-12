@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
@@ -35,18 +36,13 @@ open class JavaSymbolProvider(
         val foundJavaClass: JavaClass? = null,
     )
 
-    private val classCache =
-        session.firCachesFactory.createCacheWithPostCompute(
-            createValue = createValue@{ classId: ClassId, context: ClassCacheContext? ->
-                val javaClass = context?.foundJavaClass ?: javaFacade.findClass(classId) ?: return@createValue (null to (null to null))
-                FirRegularClassSymbol(classId) to (javaClass to context?.parentClassSymbol)
-            },
-            postCompute = { _, classSymbol, (javaClass, parentClassSymbol) ->
-                if (classSymbol != null && javaClass != null) {
-                    javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
-                }
-            }
-        )
+    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, ClassCacheContext?> =
+        session.firCachesFactory.createCache createValue@{ classId, context ->
+            val javaClass = context?.foundJavaClass ?: javaFacade.findClass(classId) ?: return@createValue null
+            val symbol = FirRegularClassSymbol(classId)
+            javaFacade.convertJavaClassToFir(symbol, context?.parentClassSymbol, javaClass)
+            symbol
+        }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
