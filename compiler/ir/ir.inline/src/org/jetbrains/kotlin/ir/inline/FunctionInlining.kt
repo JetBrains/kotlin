@@ -112,7 +112,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
 open class FunctionInlining(
     val context: CommonBackendContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-    private val insertAdditionalImplicitCasts: Boolean = false,
+    private val insertAdditionalImplicitCasts: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {

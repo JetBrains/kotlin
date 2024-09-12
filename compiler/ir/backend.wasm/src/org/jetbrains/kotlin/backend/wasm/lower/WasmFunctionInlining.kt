@@ -16,7 +16,6 @@ internal class WasmFunctionInlining(private val context: WasmBackendContext) : M
         FunctionInlining(
             context = context,
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
-            insertAdditionalImplicitCasts = true,
         ).inline(irModule)
 
         irModule.patchDeclarationParents()

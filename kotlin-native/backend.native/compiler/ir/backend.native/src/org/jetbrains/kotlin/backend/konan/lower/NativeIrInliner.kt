@@ -22,7 +22,6 @@ internal class NativeIrInliner(
 ) : FunctionInlining(
         context = context.context,
         NativeInlineFunctionResolver(context, inlineMode),
-        insertAdditionalImplicitCasts = true,
         produceOuterThisFields = false,
 )
 
