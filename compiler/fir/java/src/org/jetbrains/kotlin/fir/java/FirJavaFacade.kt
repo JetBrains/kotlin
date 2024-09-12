@@ -69,7 +69,6 @@ abstract class FirJavaFacade(
     }
     private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
-    private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, MutableJavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
@@ -105,15 +104,11 @@ abstract class FirJavaFacade(
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
         if (parentClassSymbol != null) {
-            val parentStack = parentClassTypeParameterStackCache[parentClassSymbol]
-                ?: (parentClassSymbol.fir as? FirJavaClass)?.javaTypeParameterStack
-            if (parentStack != null) {
-                javaTypeParameterStack.addStack(parentStack)
-            }
+            val parentStack = (parentClassSymbol.fir as FirJavaClass).javaTypeParameterStack
+            javaTypeParameterStack.addStack(parentStack)
         }
-        parentClassTypeParameterStackCache[classSymbol] = javaTypeParameterStack
+
         val firJavaClass = createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
-        parentClassTypeParameterStackCache.remove(classSymbol)
         parentClassEffectiveVisibilityCache.remove(classSymbol)
 
         /**
