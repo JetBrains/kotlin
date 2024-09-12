@@ -98,6 +98,12 @@ abstract class KotlinJvmTarget @Inject constructor(
     var withJavaEnabled = false
         private set
 
+    override val runtimeElementsConfigurationName: String
+        get() = if (targetName == "jvm") JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME else super.apiElementsConfigurationName
+
+    override val apiElementsConfigurationName: String
+        get() = if (targetName == "jvm") JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME else super.apiElementsConfigurationName
+
     @Suppress("unused") // user DSL
     fun withJava() {
         if (withJavaEnabled)
@@ -173,8 +179,8 @@ abstract class KotlinJvmTarget @Inject constructor(
         project.plugins.withType(JavaPlugin::class.java) {
             // Eliminate the Java output configurations from dependency resolution to avoid ambiguity between them and
             // the equivalent configurations created for the target:
-            project.configurations.findByName(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
-            project.configurations.findByName(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
+//            project.configurations.findByName(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
+//            project.configurations.findByName(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
             disableJavaPluginTasks(javaSourceSets)
         }
 
