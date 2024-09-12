@@ -2516,7 +2516,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_CONDITION_SUGGEST_GUARD,
-            "Use 'if' instead of '&&' to introduce a guard."
+            "Use 'if' instead of '&&' to introduce additional conditions. See https://kotl.in/guards-in-when."
         )
         map.put(
             COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD,

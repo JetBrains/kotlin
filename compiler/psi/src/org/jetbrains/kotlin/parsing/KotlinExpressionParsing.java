@@ -1028,7 +1028,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     private void parseWhenEntryGuardOrSuggest() {
         if (at(ANDAND)) {
-            errorUntil("Unexpected '&&', use 'if' to introduce a guard", TokenSet.create(LBRACE, RBRACE, ARROW));
+            errorUntil("Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when", TokenSet.create(LBRACE, RBRACE, ARROW));
         } else if (at(IF_KEYWORD)) {
             parseWhenEntryGuard();
         }
