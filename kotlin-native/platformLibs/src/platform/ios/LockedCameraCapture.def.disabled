@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.LockedCameraCapture
+
+modules = LockedCameraCapture
+compilerOpts = -framework LockedCameraCapture
+linkerOpts = -framework LockedCameraCapture
+#Disabled: Swift-only framework
