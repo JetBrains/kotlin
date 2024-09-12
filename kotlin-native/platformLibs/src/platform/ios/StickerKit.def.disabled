@@ -1,0 +1,8 @@
+language = Objective-C
+package = platform.StickerKit
+
+modules.ios_arm64 = StickerKit
+compilerOpts.ios_arm64 = -framework StickerKit
+linkerOpts.ios_arm64 = -framework StickerKit
+#Disabled: Check that framework is not available for simulators
+# The framework is actually empty

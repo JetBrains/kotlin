@@ -1,0 +1,10 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.BrowserEngineCore
+
+# llvm 11 doesn't handle long int in inline assembly in this function
+excludedFunctions = be_memory_inline_jit_restrict_rwx_to_rw_with_witness
+
+modules = BrowserEngineCore
+compilerOpts = -framework BrowserEngineCore
+linkerOpts = -framework BrowserEngineCore

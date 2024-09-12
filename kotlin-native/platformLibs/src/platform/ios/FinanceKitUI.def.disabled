@@ -4,4 +4,4 @@ package = platform.FinanceKitUI
 modules = FinanceKitUI
 compilerOpts = -framework FinanceKitUI
 linkerOpts = -framework FinanceKitUI
-#Disabled: Swift-only framework
+#Disabled: Not officially available for ios
