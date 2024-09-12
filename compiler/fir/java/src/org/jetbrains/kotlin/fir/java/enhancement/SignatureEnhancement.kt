@@ -69,6 +69,13 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,
     private val session: FirSession,
+    /**
+     * If **true** only type parameters from [owner] will be used for enhancement.
+     *
+     * @see FirJavaClass.classJavaTypeParameterStack
+     * @see FirJavaClass.javaTypeParameterStack
+     */
+    private val enhanceClassHeaderOnly: Boolean = false,
     private val overridden: FirCallableDeclaration.() -> List<FirCallableDeclaration>,
 ) {
     /*
@@ -78,8 +85,12 @@ class FirSignatureEnhancement(
      */
     private val moduleData get() = owner.moduleData
 
-    private val javaTypeParameterStack: JavaTypeParameterStack =
-        if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
+    private val javaTypeParameterStack: JavaTypeParameterStack
+        get() = when {
+            owner !is FirJavaClass -> JavaTypeParameterStack.EMPTY
+            enhanceClassHeaderOnly -> owner.classJavaTypeParameterStack
+            else -> owner.javaTypeParameterStack
+        }
 
     private val typeQualifierResolver = session.javaAnnotationTypeQualifierResolver
 

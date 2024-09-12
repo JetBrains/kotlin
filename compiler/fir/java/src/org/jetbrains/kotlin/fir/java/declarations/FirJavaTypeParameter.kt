@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -34,6 +35,7 @@ import kotlin.contracts.contract
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
 class FirJavaTypeParameter(
+    internal val javaTypeParameter: JavaTypeParameter,
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -212,9 +214,11 @@ class FirJavaTypeParameterBuilder {
     val bounds: MutableList<FirTypeRef> = mutableListOf()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
+    lateinit var javaTypeParameter: JavaTypeParameter
 
     fun build(): FirTypeParameter {
         return FirJavaTypeParameter(
+            javaTypeParameter,
             source,
             moduleData,
             origin,

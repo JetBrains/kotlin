@@ -394,7 +394,7 @@ fun FirClassSymbol<*>.createJavaClass(
         this.modality = modality
         this.isStatic = isStatic
         classKind = ClassKind.CLASS
-        javaTypeParameterStack = containingClass.javaTypeParameterStack
+        javaTypeParameterStack = containingClass.classJavaTypeParameterStack
         scopeProvider = JavaScopeProvider
         if (!isStatic) {
             typeParameters += containingClass.nonEnhancedTypeParameters.map {

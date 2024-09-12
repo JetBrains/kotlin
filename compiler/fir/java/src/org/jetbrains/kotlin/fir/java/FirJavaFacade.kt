@@ -99,7 +99,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         val javaTypeParameterStack = MutableJavaTypeParameterStack()
 
         if (parentClassSymbol != null) {
-            val parentStack = (parentClassSymbol.fir as FirJavaClass).javaTypeParameterStack
+            val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
             javaTypeParameterStack.addStack(parentStack)
         }
 
@@ -128,7 +128,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         classSymbol: FirRegularClassSymbol,
         parentClassSymbol: FirRegularClassSymbol?,
         classId: ClassId,
-        javaTypeParameterStack: MutableJavaTypeParameterStack,
+        classJavaTypeParameterStack: MutableJavaTypeParameterStack,
     ): FirJavaClass {
         val moduleData = getModuleDataForClass(javaClass)
         val session = moduleData.session
@@ -149,7 +149,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             this.isTopLevel = classId.outerClassId == null
             isStatic = javaClass.isStatic
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
-            this.javaTypeParameterStack = javaTypeParameterStack
+            this.javaTypeParameterStack = classJavaTypeParameterStack
             existingNestedClassifierNames += javaClass.innerClassNames
             scopeProvider = JavaScopeProvider
 
@@ -161,9 +161,11 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             } ?: EffectiveVisibility.Public
 
             val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-            val classTypeParameters = javaClass.typeParameters.convertTypeParameters(
-                javaTypeParameterStack, classSymbol, moduleData, fakeSource
-            )
+            val classTypeParameters = javaClass.typeParameters.map { javaTypeParameter ->
+                javaTypeParameter.toFirTypeParameter(classSymbol, moduleData, fakeSource).also { firTypeParameter ->
+                    classJavaTypeParameterStack.addParameter(javaTypeParameter, firTypeParameter.symbol)
+                }
+            }
 
             typeParameters += classTypeParameters
             if (!isStatic && parentClassSymbol != null) {
@@ -222,7 +224,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
         val declarations = mutableListOf<FirDeclaration>()
         val firJavaClass = classSymbol.fir as FirJavaClass
         val parentClassSymbol = firJavaClass.containingClassSymbol as? FirRegularClassSymbol
-        val javaTypeParameterStack = firJavaClass.javaTypeParameterStack
+        val javaTypeParameterStack = firJavaClass.classJavaTypeParameterStack
         val moduleData = firJavaClass.moduleData
         val session = moduleData.session
         val classId = classSymbol.classId
@@ -253,7 +255,6 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 javaClass,
                 javaMethod,
                 classId,
-                javaTypeParameterStack,
                 dispatchReceiver,
                 moduleData,
                 classSymbol,
@@ -285,7 +286,6 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 javaClass,
                 classSymbol,
                 classTypeParameters,
-                javaTypeParameterStack,
                 parentClassSymbol,
                 moduleData,
             )
@@ -298,7 +298,6 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 javaClass,
                 classSymbol,
                 classTypeParameters,
-                javaTypeParameterStack,
                 parentClassSymbol,
                 moduleData,
             )
@@ -366,7 +365,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                     firValueParameter.lazyDefaultValue = lazy {
                         javaDefaultValue.toFirExpression(
                             session,
-                            (classSymbol.fir as FirJavaClass).javaTypeParameterStack,
+                            (classSymbol.fir as FirJavaClass).classJavaTypeParameterStack,
                             firValueParameter.returnTypeRef,
                             firValueParameter.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         )
@@ -380,17 +379,16 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
 }
 
 private fun JavaTypeParameter.toFirTypeParameter(
-    javaTypeParameterStack: MutableJavaTypeParameterStack,
     containingDeclarationSymbol: FirBasedSymbol<*>,
     moduleData: FirModuleData,
     source: KtSourceElement?,
 ): FirTypeParameter = buildJavaTypeParameter {
+    javaTypeParameter = this@toFirTypeParameter
     val session = moduleData.session
     this.moduleData = moduleData
     origin = javaOrigin(isFromSource)
     name = this@toFirTypeParameter.name
     symbol = FirTypeParameterSymbol()
-    javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
     this.containingDeclarationSymbol = containingDeclarationSymbol
     for (upperBound in this@toFirTypeParameter.upperBounds) {
         bounds += upperBound.toFirJavaTypeRef(session, source)
@@ -407,13 +405,10 @@ private fun JavaTypeParameter.toFirTypeParameter(
 }
 
 private fun List<JavaTypeParameter>.convertTypeParameters(
-    stack: MutableJavaTypeParameterStack,
     containingDeclarationSymbol: FirBasedSymbol<*>,
     moduleData: FirModuleData,
     source: KtSourceElement?,
-): List<FirTypeParameter> {
-    return map { it.toFirTypeParameter(stack, containingDeclarationSymbol, moduleData, source) }
-}
+): List<FirTypeParameter> = map { it.toFirTypeParameter(containingDeclarationSymbol, moduleData, source) }
 
 private fun createDeclarationsForJavaRecord(
     javaClass: JavaClass,
@@ -570,7 +565,6 @@ private fun convertJavaMethodToFir(
     containingClass: JavaClass,
     javaMethod: JavaMethod,
     classId: ClassId,
-    javaTypeParameterStack: MutableJavaTypeParameterStack,
     dispatchReceiver: ConeClassLikeType,
     moduleData: FirModuleData,
     containingClassSymbol: FirRegularClassSymbol,
@@ -590,7 +584,7 @@ private fun convertJavaMethodToFir(
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
         isStatic = javaMethod.isStatic
-        typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack, methodSymbol, moduleData, fakeSource)
+        typeParameters += javaMethod.typeParameters.convertTypeParameters(methodSymbol, moduleData, fakeSource)
         for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
             valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
         }
@@ -640,7 +634,6 @@ private fun convertJavaConstructorToFir(
     javaClass: JavaClass,
     classSymbol: FirRegularClassSymbol,
     classTypeParameters: List<FirTypeParameter>,
-    javaTypeParameterStack: MutableJavaTypeParameterStack,
     outerClassSymbol: FirRegularClassSymbol?,
     moduleData: FirModuleData,
 ): FirJavaConstructor {
@@ -683,9 +676,7 @@ private fun convertJavaConstructorToFir(
 
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         if (javaConstructor != null) {
-            this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(
-                javaTypeParameterStack, constructorSymbol, moduleData, fakeSource
-            )
+            this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(constructorSymbol, moduleData, fakeSource)
 
             annotationList = FirLazyJavaAnnotationList(javaConstructor, moduleData)
             for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {

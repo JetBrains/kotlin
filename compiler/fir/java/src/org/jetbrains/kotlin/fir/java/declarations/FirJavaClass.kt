@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -47,10 +48,35 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     private val nonEnhancedSuperTypes: List<FirTypeRef>,
     val nonEnhancedTypeParameters: List<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
-    val javaTypeParameterStack: MutableJavaTypeParameterStack,
+
+    /**
+     * Contains mapping for type parameters from classes.
+     *
+     * @see javaTypeParameterStack
+     */
+    val classJavaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
     internal val containingClassSymbol: FirClassSymbol<*>?,
 ) : FirRegularClass() {
+    /**
+     * Unlike [classJavaTypeParameterStack] contains mapping not only for classes,
+     * but also for all member functions.
+     *
+     * @see classJavaTypeParameterStack
+     */
+    val javaTypeParameterStack: JavaTypeParameterStack by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val copy = classJavaTypeParameterStack.copy()
+        for (declaration in declarations) {
+            if (declaration !is FirTypeParameterRefsOwner) continue
+            for (typeParameter in declaration.typeParameters) {
+                if (typeParameter !is FirJavaTypeParameter) continue
+                copy.addParameter(typeParameter.javaTypeParameter, typeParameter.symbol)
+            }
+        }
+
+        copy
+    }
+
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
@@ -69,7 +95,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val superTypeRefs: List<FirTypeRef> by lazy {
-        val enhancement = FirSignatureEnhancement(this, moduleData.session, overridden = { emptyList() })
+        val enhancement = FirSignatureEnhancement(
+            this,
+            moduleData.session,
+            enhanceClassHeaderOnly = true,
+            overridden = { emptyList() },
+        )
+
         enhancement.enhanceSuperTypes(nonEnhancedSuperTypes)
     }
 
@@ -95,7 +127,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
      * TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
      */
     override val typeParameters: List<FirTypeParameterRef> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val enhancement = FirSignatureEnhancement(this, moduleData.session, overridden = { emptyList() })
+        val enhancement = FirSignatureEnhancement(
+            this,
+            moduleData.session,
+            enhanceClassHeaderOnly = true,
+            overridden = { emptyList() },
+        )
+
         enhancement.enhanceTypeParameterBounds(this, nonEnhancedTypeParameters, typeParameterBoundsResolveLock::withLock)
         nonEnhancedTypeParameters
     }
