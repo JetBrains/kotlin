@@ -136,7 +136,7 @@ kotlinNativeInterop {
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation(project(":kotlin-native:Interop:Runtime"))
+    api(project(":kotlin-native:Interop:Runtime"))
 }
 
 sourceSets {

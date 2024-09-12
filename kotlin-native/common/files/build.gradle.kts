@@ -27,12 +27,16 @@ kotlinNativeInterop {
     }
 }
 
-configurations.apiElements.configure {
-    extendsFrom(kotlinNativeInterop["files"].configuration)
+
+dependencies {
+    implementation(kotlinStdlib())
+    api(project(":kotlin-native:Interop:Runtime"))
 }
 
-configurations.runtimeElements.configure {
-    extendsFrom(kotlinNativeInterop["files"].configuration)
+sourceSets {
+    "main" {
+        kotlin.srcDir(kotlinNativeInterop["files"].genTask.map { layout.buildDirectory.dir("nativeInteropStubs/files/kotlin") })
+    }
 }
 
 val nativeLibs by configurations.creating {
