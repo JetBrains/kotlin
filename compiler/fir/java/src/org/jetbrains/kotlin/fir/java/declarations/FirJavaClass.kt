@@ -49,7 +49,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: MutableJavaTypeParameterStack,
     internal val existingNestedClassifierNames: List<Name>,
-    private val containingClassSymbol: FirClassSymbol<*>?,
+    internal val containingClassSymbol: FirClassSymbol<*>?,
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
-import org.jetbrains.kotlin.fir.java.FirJavaFacade.Companion.VALUE_METHOD_NAME
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
@@ -92,6 +91,11 @@ abstract class FirJavaFacade(
 
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 
+    /**
+     * Guarantees that this conversion is free from other classes access.
+     *
+     * All required accesses will be performed on demand lazily after publication.
+     */
     fun convertJavaClassToFir(
         classSymbol: FirRegularClassSymbol,
         parentClassSymbol: FirRegularClassSymbol?,
@@ -195,15 +199,9 @@ abstract class FirJavaFacade(
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = FirInstantJavaDeclarationList(
-                javaClass,
-                classSymbol,
-                parentClassSymbol,
-                javaTypeParameterStack,
-                this,
-            )
+            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol)
         }.apply {
-            if (modality == Modality.SEALED) {
+            if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
                         val classifier = classifierType.classifier as? JavaClass
@@ -223,31 +221,32 @@ abstract class FirJavaFacade(
     }
 }
 
-private class FirInstantJavaDeclarationList(
-    javaClass: JavaClass,
-    classSymbol: FirRegularClassSymbol,
-    parentClassSymbol: FirRegularClassSymbol?,
-    javaTypeParameterStack: MutableJavaTypeParameterStack,
-    classBuilder: FirJavaClassBuilder,
-) : FirJavaDeclarationList {
-    override val declarations: List<FirDeclaration> = buildList {
-        val moduleData = classBuilder.moduleData
+/** @see FirJavaDeclarationList */
+private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol) : FirJavaDeclarationList {
+    /**
+     * [LazyThreadSafetyMode.PUBLICATION] is used here to avoid any potential problems with deadlocks
+     * as we cannot control how Java resolution will access [declarations].
+     */
+    override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val declarations = mutableListOf<FirDeclaration>()
+        val firJavaClass = classSymbol.fir as FirJavaClass
+        val parentClassSymbol = firJavaClass.containingClassSymbol as? FirRegularClassSymbol
+        val javaTypeParameterStack = firJavaClass.javaTypeParameterStack
+        val moduleData = firJavaClass.moduleData
         val session = moduleData.session
         val classId = classSymbol.classId
-        val classTypeParameters = classBuilder.typeParameters.filterIsInstance<FirTypeParameter>()
-        val classKind = javaClass.classKind
-        val classStatus = classBuilder.status
-        val classResolvePhase = classBuilder.resolvePhase
-        val classSource = classBuilder.source
+        val classTypeParameters = firJavaClass.typeParameters.filterIsInstance<FirTypeParameter>()
+        val classKind = firJavaClass.classKind
+        val classStatus = firJavaClass.status
+        val classResolvePhase = firJavaClass.resolvePhase
+        val classSource = firJavaClass.source
 
         val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
         val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
-        val dispatchReceiver = classId.defaultType(classBuilder.typeParameters.map { it.symbol })
+        val dispatchReceiver = firJavaClass.defaultType()
 
-        // TODO: may be we can process fields & methods later.
-        // However, they should be built up to override resolve stage
         for (javaField in javaClass.fields) {
-            this += convertJavaFieldToFir(
+            declarations += convertJavaFieldToFir(
                 javaField,
                 classId,
                 javaTypeParameterStack,
@@ -269,11 +268,11 @@ private class FirInstantJavaDeclarationList(
                 classSymbol,
             )
 
-            this += firJavaMethod
+            declarations += firJavaMethod
 
             if (classIsAnnotation) {
                 val parameterForAnnotationConstructor = convertJavaAnnotationMethodToValueParameter(javaMethod, firJavaMethod, moduleData)
-                if (javaMethod.name == VALUE_METHOD_NAME) {
+                if (javaMethod.name == FirJavaFacade.VALUE_METHOD_NAME) {
                     valueParametersForAnnotationConstructor.valueParameterForValue = javaMethod to parameterForAnnotationConstructor
                 } else {
                     valueParametersForAnnotationConstructor.valueParameters[javaMethod] = parameterForAnnotationConstructor
@@ -285,27 +284,28 @@ private class FirInstantJavaDeclarationList(
         val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
 
         if (javaClassDeclaredConstructors.isEmpty()
-            && javaClass.classKind == ClassKind.CLASS
+            && classKind == ClassKind.CLASS
             && !javaClass.isRecord
             && javaClass.hasDefaultConstructor()
         ) {
-            this += convertJavaConstructorToFir(
+            declarations += convertJavaConstructorToFir(
                 javaConstructor = null,
                 constructorId,
                 javaClass,
-                ownerClassBuilder = classBuilder,
+                classSymbol,
                 classTypeParameters,
                 javaTypeParameterStack,
                 parentClassSymbol,
                 moduleData,
             )
         }
+
         for (javaConstructor in javaClassDeclaredConstructors) {
-            this += convertJavaConstructorToFir(
+            declarations += convertJavaConstructorToFir(
                 javaConstructor,
                 constructorId,
                 javaClass,
-                ownerClassBuilder = classBuilder,
+                classSymbol,
                 classTypeParameters,
                 javaTypeParameterStack,
                 parentClassSymbol,
@@ -314,7 +314,7 @@ private class FirInstantJavaDeclarationList(
         }
 
         if (classKind == ClassKind.ENUM_CLASS) {
-            this += generateValuesFunction(
+            declarations += generateValuesFunction(
                 classSymbol,
                 classSource,
                 classStatus,
@@ -324,7 +324,7 @@ private class FirInstantJavaDeclarationList(
                 classId.relativeClassName,
             )
 
-            this += generateValueOfFunction(
+            declarations += generateValueOfFunction(
                 classSymbol,
                 classSource,
                 classStatus,
@@ -334,7 +334,7 @@ private class FirInstantJavaDeclarationList(
                 classId.relativeClassName,
             )
 
-            this += generateEntriesGetter(
+            declarations += generateEntriesGetter(
                 classSymbol,
                 classSource,
                 classStatus,
@@ -346,10 +346,10 @@ private class FirInstantJavaDeclarationList(
         }
 
         if (classIsAnnotation) {
-            this += buildConstructorForAnnotationClass(
+            declarations += buildConstructorForAnnotationClass(
                 javaClass,
                 constructorId = constructorId,
-                ownerClassBuilder = classBuilder,
+                classSymbol = classSymbol,
                 valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
                 moduleData = moduleData,
             )
@@ -364,7 +364,7 @@ private class FirInstantJavaDeclarationList(
                 moduleData,
                 dispatchReceiver,
                 classTypeParameters,
-                this,
+                declarations,
                 classSymbol,
             )
         }
@@ -383,6 +383,8 @@ private class FirInstantJavaDeclarationList(
                 }
             }
         }
+
+        declarations.ifEmpty { emptyList() }
     }
 }
 
@@ -645,7 +647,7 @@ private fun convertJavaConstructorToFir(
     javaConstructor: JavaConstructor?,
     constructorId: CallableId,
     javaClass: JavaClass,
-    ownerClassBuilder: FirJavaClassBuilder,
+    classSymbol: FirRegularClassSymbol,
     classTypeParameters: List<FirTypeParameter>,
     javaTypeParameterStack: MutableJavaTypeParameterStack,
     outerClassSymbol: FirRegularClassSymbol?,
@@ -654,18 +656,18 @@ private fun convertJavaConstructorToFir(
     val session = moduleData.session
     val constructorSymbol = FirConstructorSymbol(constructorId)
     return buildJavaConstructor {
-        containingClassSymbol = ownerClassBuilder.symbol
+        containingClassSymbol = classSymbol
         source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
         isFromSource = javaClass.isFromSource
         symbol = constructorSymbol
         isInner = javaClass.outerClass != null && !javaClass.isStatic
         val isThisInner = this.isInner
-        val visibility = javaConstructor?.visibility ?: ownerClassBuilder.visibility
+        val visibility = javaConstructor?.visibility ?: classSymbol.visibility
         status = FirResolvedDeclarationStatusImpl(
             visibility,
             Modality.FINAL,
-            visibility.toEffectiveVisibility(ownerClassBuilder.symbol)
+            visibility.toEffectiveVisibility(classSymbol)
         ).apply {
             isInner = isThisInner
             hasStableParameterNames = false
@@ -673,7 +675,7 @@ private fun convertJavaConstructorToFir(
         // TODO get rid of dependency on PSI KT-63046
         isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
         returnTypeRef = buildResolvedTypeRef {
-            coneType = ownerClassBuilder.buildSelfTypeRef()
+            coneType = classSymbol.defaultType()
         }
 
         dispatchReceiverType = if (isThisInner)
@@ -700,43 +702,36 @@ private fun convertJavaConstructorToFir(
             }
         }
     }.apply {
-        containingClassForStaticMemberAttr = ownerClassBuilder.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
 }
 
 private fun buildConstructorForAnnotationClass(
     javaClass: JavaClass,
     constructorId: CallableId,
-    ownerClassBuilder: FirJavaClassBuilder,
+    classSymbol: FirRegularClassSymbol,
     valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor,
     moduleData: FirModuleData,
 ): FirJavaConstructor {
     return buildJavaConstructor {
-        containingClassSymbol = ownerClassBuilder.symbol
+        containingClassSymbol = classSymbol
         source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
         isFromSource = javaClass.isFromSource
         symbol = FirConstructorSymbol(constructorId)
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
         returnTypeRef = buildResolvedTypeRef {
-            coneType = ownerClassBuilder.buildSelfTypeRef()
+            coneType = classSymbol.defaultType()
         }
         valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> valueParameters += firValueParameter }
         isInner = false
         isPrimary = true
     }.apply {
-        containingClassForStaticMemberAttr = ownerClassBuilder.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
 }
 
-private fun FirJavaClassBuilder.buildSelfTypeRef(): ConeKotlinType = symbol.constructType(
-    typeParameters.map {
-        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false)
-    }.toTypedArray(),
-)
-
-private fun FqName.topLevelName() =
-    asString().substringBefore(".")
+private fun FqName.topLevelName() = asString().substringBefore(".")
 
 private fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
