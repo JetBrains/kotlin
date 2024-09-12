@@ -58,21 +58,22 @@ internal open class TypeVisitorPrinter(
         return irTypeFields + parentsFields
     }
 
-    private fun ImportCollectingPrinter.printVisitTypeMethod() {
+    protected fun ImportCollectingPrinter.printVisitTypeMethod(hasDataParameter: Boolean, modality: Modality?, override: Boolean) {
         printFunctionDeclaration(
             name = "visitType",
-            parameters = listOf(
+            parameters = listOfNotNull(
                 FunctionParameter("container", rootElement),
                 FunctionParameter("type", irTypeType),
-                FunctionParameter("data", visitorDataType),
+                FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
             ),
             returnType = StandardTypes.unit,
-            modality = Modality.ABSTRACT,
+            modality = modality,
+            override = override
         )
     }
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
-        printVisitTypeMethod()
+        printVisitTypeMethod(hasDataParameter = true, modality = Modality.ABSTRACT, override = false)
         println()
     }
 
