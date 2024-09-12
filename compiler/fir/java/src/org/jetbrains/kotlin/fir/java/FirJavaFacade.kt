@@ -724,7 +724,7 @@ private fun buildConstructorForAnnotationClass(
 
 private fun FqName.topLevelName() = asString().substringBefore(".")
 
-private fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
+internal fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
 }
 

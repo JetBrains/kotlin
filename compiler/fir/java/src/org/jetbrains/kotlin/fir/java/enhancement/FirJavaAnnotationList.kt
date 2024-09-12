@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.DeprecatedInJavaDocAnnotation
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
+import org.jetbrains.kotlin.fir.java.toSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
-import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import java.util.*
 import kotlin.collections.AbstractList
 
@@ -42,7 +41,7 @@ class FirLazyJavaAnnotationList(
     private val javaAnnotations: Collection<JavaAnnotation> get() = annotationOwner.annotations
 
     private val firAnnotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val fakeSource = (annotationOwner as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(KtFakeSourceElementKind.Enhancement)
+        val fakeSource = annotationOwner.toSourceElement(KtFakeSourceElementKind.Enhancement)
         javaAnnotations.convertAnnotationsToFir(
             ownerModuleData.session,
             fakeSource,

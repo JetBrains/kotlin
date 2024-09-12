@@ -35,9 +35,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
@@ -156,7 +154,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     moduleData: FirModuleData,
     index: Int,
 ): FirValueParameter = buildJavaValueParameter {
-    source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+    source = toSourceElement()
     isFromSource = this@toFirValueParameter.isFromSource
     this.moduleData = moduleData
     containingFunctionSymbol = functionSymbol
