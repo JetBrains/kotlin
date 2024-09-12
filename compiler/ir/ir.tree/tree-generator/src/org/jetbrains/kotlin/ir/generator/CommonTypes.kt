@@ -45,6 +45,7 @@ val typeTransformerVoidType = type(visitors, "IrTypeTransformerVoid", TypeKind.C
 val irTypeType = type(types, "IrType")
 val irSimpleTypeType = type(types, "IrSimpleType", TypeKind.Class)
 val irTypeAbbreviationType = type(types, "IrTypeAbbreviation")
+val irTypeProjectionType = type(types, "IrTypeProjection")
 val irFactoryType = type(declarations, "IrFactory")
 val stageControllerType = type(declarations, "StageController", TypeKind.Class)
 val idSignatureType = type(util, "IdSignature", TypeKind.Class)
