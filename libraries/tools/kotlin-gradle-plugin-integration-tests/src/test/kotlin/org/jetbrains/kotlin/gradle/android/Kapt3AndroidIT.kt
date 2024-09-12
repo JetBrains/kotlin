@@ -340,4 +340,23 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("KT-71233 Kapt does not cause build to fail if no annotation processors are defined")
+    @GradleAndroidTest
+    fun testNoProcessors(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "kapt2/noProcessors",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("build") {
+                assertTasksExecuted(":app:compileDebugKotlin")
+            }
+        }
+    }
 }
