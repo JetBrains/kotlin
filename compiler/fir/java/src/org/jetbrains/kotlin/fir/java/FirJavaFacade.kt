@@ -44,7 +44,7 @@ class FirJavaFacadeForSource(
     session: FirSession,
     private val sourceModuleData: FirModuleData,
     classFinder: JavaClassFinder,
-) : FirJavaFacade(session, sourceModuleData.session.builtinTypes, classFinder) {
+) : FirJavaFacade(session, classFinder) {
     override fun getModuleDataForClass(javaClass: JavaClass): FirModuleData {
         return sourceModuleData
     }
@@ -53,7 +53,6 @@ class FirJavaFacadeForSource(
 @ThreadSafeMutableState
 abstract class FirJavaFacade(
     private val session: FirSession,
-    private val builtinTypes: BuiltinTypes,
     private val classFinder: JavaClassFinder,
 ) {
     companion object {
@@ -369,6 +368,7 @@ private fun JavaTypeParameter.toFirTypeParameter(
     moduleData: FirModuleData,
     source: KtSourceElement?,
 ): FirTypeParameter = buildJavaTypeParameter {
+    val session = moduleData.session
     this.moduleData = moduleData
     origin = javaOrigin(isFromSource)
     name = this@toFirTypeParameter.name
@@ -380,6 +380,7 @@ private fun JavaTypeParameter.toFirTypeParameter(
     }
 
     if (bounds.isEmpty()) {
+        val builtinTypes = session.builtinTypes
         bounds += buildResolvedTypeRef {
             coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType)
         }
@@ -406,6 +407,7 @@ private fun createDeclarationsForJavaRecord(
     destination: MutableList<FirDeclaration>,
     containingClassSymbol: FirRegularClassSymbol,
 ) {
+    val session = moduleData.session
     val functionsByName = destination.filterIsInstance<FirJavaMethod>().groupBy { it.name }
 
     for (recordComponent in javaClass.recordComponents) {
@@ -482,6 +484,7 @@ private fun convertJavaFieldToFir(
     moduleData: FirModuleData,
     containingClassSymbol: FirRegularClassSymbol,
 ): FirDeclaration {
+    val session = moduleData.session
     val fieldName = javaField.name
     val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
     val returnType = javaField.type
@@ -555,6 +558,7 @@ private fun convertJavaMethodToFir(
     moduleData: FirModuleData,
     containingClassSymbol: FirRegularClassSymbol,
 ): FirJavaMethod {
+    val session = moduleData.session
     val methodName = javaMethod.name
     val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
     val methodSymbol = FirNamedFunctionSymbol(methodId)
@@ -610,7 +614,7 @@ private fun convertJavaAnnotationMethodToValueParameter(
         returnTypeRef = firJavaMethod.returnTypeRef
         containingFunctionSymbol = firJavaMethod.symbol
         name = javaMethod.name
-        isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == VALUE_METHOD_NAME
+        isVararg = javaMethod.returnType is JavaArrayType && javaMethod.name == FirJavaFacade.VALUE_METHOD_NAME
     }
 
 private fun convertJavaConstructorToFir(
@@ -623,6 +627,7 @@ private fun convertJavaConstructorToFir(
     outerClassSymbol: FirRegularClassSymbol?,
     moduleData: FirModuleData,
 ): FirJavaConstructor {
+    val session = moduleData.session
     val constructorSymbol = FirConstructorSymbol(constructorId)
     return buildJavaConstructor {
         containingClassSymbol = ownerClassBuilder.symbol
