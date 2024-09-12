@@ -237,17 +237,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     copy.from(processResourcesTask)
                     copy.from(webpackTask.flatMap { it.outputDirectory })
 
-                    if (binary.compilation.platformType == KotlinPlatformType.wasm) {
-                        copy.from(
-                            binary.linkSyncTask.zip(binary.linkTask) { linkSyncTask, linkTask ->
-                                val moduleNameProvider = linkTask.compilerOptions.moduleName
-                                linkSyncTask.destinationDirectory.zip(moduleNameProvider) { destDir, moduleName ->
-                                    destDir.resolve("$moduleName.wasm")
-                                }
-                            }
-                        )
-                    }
-
                     copy.into(binary.distribution.outputDirectory)
                 }
 

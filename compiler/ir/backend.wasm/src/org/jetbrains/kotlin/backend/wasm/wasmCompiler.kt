@@ -261,6 +261,7 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
         }.sorted()
         .joinToString("\n")
     //language=js
+    val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
     return """
 export async function instantiate(imports={}, runInitializer=true) {
     const cachedJsObjects = new WeakMap();
@@ -298,7 +299,7 @@ $jsCodeBodyIndented
       throw "Supported JS engine not detected";
     }
     
-    const wasmFilePath = ${wasmFilePath.toJsStringLiteral()};
+    const wasmFilePath = $pathJsStringLiteral;
     const importObject = {
         js_code,
         intrinsics: {
@@ -334,7 +335,7 @@ $imports
       }
       
       if (isBrowser) {
-        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(wasmFilePath), importObject)).instance;
+        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject)).instance;
       }
     } catch (e) {
       if (e instanceof WebAssembly.CompileError) {
