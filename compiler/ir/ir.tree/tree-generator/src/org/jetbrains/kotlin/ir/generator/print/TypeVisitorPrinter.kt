@@ -104,18 +104,14 @@ internal open class TypeVisitorPrinter(
         element: Element,
         irTypeFields: List<Field>,
         hasDataParameter: Boolean,
-        replaceTypes: Boolean,
-        visitTypeMethodName: String,
     ) {
+        val visitTypeMethodName = "visitTypeRecursively"
         val visitorParam = element.visitorParameterName
         fun addVisitTypeStatement(field: Field) {
             val access = "$visitorParam.${field.name}"
             when (field) {
                 is SimpleField -> {
-                    val argumentToPassToVisitType = if (replaceTypes) {
-                        print(access, " = ")
-                        access
-                    } else if (field.nullable) {
+                    val argumentToPassToVisitType = if (field.nullable) {
                         print(access, "?.let { ")
                         "it"
                     } else {
@@ -126,34 +122,17 @@ internal open class TypeVisitorPrinter(
                         print(", data")
                     }
                     print(")")
-                    if (!replaceTypes && field.nullable) {
+                    if (field.nullable) {
                         print(" }")
                     }
                     println()
                 }
                 is ListField -> {
-                    if (!replaceTypes) {
-                        print(access, ".forEach { ", visitTypeMethodName, "(", visitorParam, ", it")
-                        if (hasDataParameter) {
-                            print(", data")
-                        }
-                        println(") }")
-                    } else if (field.isMutable) {
-                        print(access, " = ", access, ".map { ", visitTypeMethodName, "(", visitorParam, ", it")
-                        if (hasDataParameter) {
-                            print(", data")
-                        }
-                        println(") }")
-                    } else {
-                        print("for (i in 0 until ", access, ".size)")
-                        printBlock {
-                            print(access, "[i] = ", visitTypeMethodName, "(", visitorParam, ", ", access, "[i]")
-                            if (hasDataParameter) {
-                                print(", data")
-                            }
-                            println(")")
-                        }
+                    print(access, ".forEach { ", visitTypeMethodName, "(", visitorParam, ", it")
+                    if (hasDataParameter) {
+                        print(", data")
                     }
+                    println(") }")
                 }
             }
         }
@@ -169,26 +148,11 @@ internal open class TypeVisitorPrinter(
                 withIndent {
                     println(visitorParam, ".getTypeArgument(it)?.let { type ->")
                     withIndent {
-                        if (replaceTypes) {
-                            print(
-                                visitorParam,
-                                ".putTypeArgument(it, ",
-                                visitTypeMethodName,
-                                "(",
-                                visitorParam,
-                                ", type"
-                            )
-                            if (hasDataParameter) {
-                                print(", data")
-                            }
-                            println("))")
-                        } else {
-                            print(visitTypeMethodName, "(", visitorParam, ", type")
-                            if (hasDataParameter) {
-                                print(", data")
-                            }
-                            println(")")
+                        print(visitTypeMethodName, "(", visitorParam, ", type")
+                        if (hasDataParameter) {
+                            print(", data")
                         }
+                        println(")")
                     }
                     println("}")
                 }
@@ -202,9 +166,7 @@ internal open class TypeVisitorPrinter(
                         print(", data")
                     }
                     println(")")
-                    if (!replaceTypes) {
-                        println("it")
-                    }
+                    println("it")
                 }
                 println("}")
                 irTypeFields.forEach(::addVisitTypeStatement)
@@ -226,13 +188,7 @@ internal open class TypeVisitorPrinter(
                 override = true,
             )
             printBlock {
-                printTypeRemappings(
-                    element,
-                    irTypeFields,
-                    hasDataParameter = true,
-                    replaceTypes = false,
-                    visitTypeMethodName = "visitTypeRecursively",
-                )
+                printTypeRemappings(element, irTypeFields, hasDataParameter = true)
                 println(
                     "return super.",
                     element.visitFunctionName,
