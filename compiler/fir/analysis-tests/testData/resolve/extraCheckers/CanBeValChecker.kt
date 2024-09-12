@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+import kotlin.contracts.*
 import kotlin.reflect.KProperty
 import kotlin.properties.Delegates
 
@@ -141,21 +141,45 @@ fun main(args: Array<String?>) {
     }
 }
 
-fun run(f: () -> Unit) = f()
+fun noinlineRun(f: () -> Unit) = f()
 
 fun lambda() {
     var <!VARIABLE_NEVER_READ!>a<!>: Int
     <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 10
 
-    run {
+    noinlineRun {
         <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20
     }
 }
 
 fun lambdaInitialization() {
+    var <!VARIABLE_NEVER_READ!>a<!>: Int
+
+    noinlineRun {
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20
+    }
+}
+
+fun lambdaInitializationWithRead() {
+    lateinit var a: String
+
+    noinlineRun {
+        a = ""
+    }
+
+    a.length
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun inlineRun(f: () -> Unit) {
+    contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }
+    f()
+}
+
+fun inlineLambdaInitialization() {
     <!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ!>a<!>: Int
 
-    run {
+    inlineRun {
         <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20
     }
 }

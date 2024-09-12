@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.nearestNonInPlaceGraph
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -33,19 +34,21 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         @Suppress("UNCHECKED_CAST")
         val properties = data.properties as Set<FirPropertySymbol>
         val ownData = Data(properties)
-        data.graph.traverse(AddAllWrites(), ownData)
+        data.graph.traverse(AddAllWrites(ownData))
         if (ownData.unreadWrites.isNotEmpty()) {
             ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(properties))
         }
-        data.graph.traverse(RemoveVisibleWrites(), ownData)
+        data.graph.traverse(RemoveVisibleWrites(ownData))
 
         val variablesWithUnobservedWrites = mutableSetOf<FirPropertySymbol>()
-        for (statement in ownData.unreadWrites) {
+        for ((statement, scope) in ownData.unreadWrites) {
             if (statement is FirVariableAssignment) {
                 val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
                 variablesWithUnobservedWrites.add(variableSymbol)
-                // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
-                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
+                if (variableSymbol in ownData.variablesWithoutReads || scope == ownData.variableScopes[variableSymbol]) {
+                    // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
+                    reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
+                }
             } else if (statement is FirProperty) {
                 if (statement.symbol !in ownData.variablesWithoutReads && !statement.symbol.ignoreWarnings) {
                     reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
@@ -73,23 +76,26 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
 
     private class Data(val localProperties: Set<FirPropertySymbol>) {
         var writesByNode: Map<CFGNode<*>, PathAwareVariableWriteInfo> = emptyMap()
-        val unreadWrites: MutableSet<FirStatement /* FirProperty | FirVariableAssignment */> = mutableSetOf()
+        val unreadWrites: MutableMap<FirStatement /* FirProperty | FirVariableAssignment */, ControlFlowGraph> = mutableMapOf()
+        val variableScopes: MutableMap<FirPropertySymbol, ControlFlowGraph> = mutableMapOf()
         val variablesWithoutReads: MutableMap<FirPropertySymbol, FirProperty> = mutableMapOf()
     }
 
-    private class AddAllWrites : ControlFlowGraphVisitor<Unit, Data>() {
-        override fun visitNode(node: CFGNode<*>, data: Data) {}
+    private class AddAllWrites(private val data: Data) : ControlFlowGraphVisitorVoid() {
+        override fun visitNode(node: CFGNode<*>) {}
 
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: Data) {
+        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+            val graph = node.owner.nearestNonInPlaceGraph()
             if (node.fir.initializer != null) {
-                data.unreadWrites.add(node.fir)
+                data.unreadWrites[node.fir] = graph
             }
+            data.variableScopes[node.fir.symbol] = graph
             data.variablesWithoutReads[node.fir.symbol] = node.fir
         }
 
-        override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Data) {
+        override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             if (node.fir.calleeReference?.toResolvedPropertySymbol() in data.localProperties) {
-                data.unreadWrites.add(node.fir)
+                data.unreadWrites[node.fir] = node.owner.nearestNonInPlaceGraph()
             }
         }
     }
@@ -118,31 +124,31 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         }
     }
 
-    private class RemoveVisibleWrites : ControlFlowGraphVisitor<Unit, Data>() {
-        override fun visitNode(node: CFGNode<*>, data: Data) {
-            visitAnnotations(node, data)
+    private class RemoveVisibleWrites(private val data: Data) : ControlFlowGraphVisitorVoid() {
+        override fun visitNode(node: CFGNode<*>) {
+            visitAnnotations(node)
         }
 
-        override fun visitQualifiedAccessNode(node: QualifiedAccessNode, data: Data) {
-            visitAnnotations(node, data)
-            visitQualifiedAccess(node, node.fir, data)
+        override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
+            visitAnnotations(node)
+            visitQualifiedAccess(node, node.fir)
         }
 
-        override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Data) {
-            visitAnnotations(node, data)
+        override fun visitFunctionCallExitNode(node: FunctionCallExitNode) {
+            visitAnnotations(node)
             // TODO, KT-64094: receiver of implicit invoke calls does not generate a QualifiedAccessNode.
             ((node.fir as? FirImplicitInvokeCall)?.explicitReceiver as? FirQualifiedAccessExpression)
-                ?.let { visitQualifiedAccess(node, it, data) }
+                ?.let { visitQualifiedAccess(node, it) }
         }
 
-        private fun visitAnnotations(node: CFGNode<*>, data: Data) {
+        private fun visitAnnotations(node: CFGNode<*>) {
             // Annotations don't create CFG nodes. Note that annotations can only refer to `const val`s, so any read
             // of a local inside an annotation is inherently incorrect. Still, use them to suppress the warnings.
             (node.fir as? FirAnnotationContainer)?.annotations?.forEach { call ->
                 call.accept(object : FirVisitorVoid() {
                     override fun visitElement(element: FirElement) {
                         if (element is FirQualifiedAccessExpression) {
-                            visitQualifiedAccess(node, element, data)
+                            visitQualifiedAccess(node, element)
                         }
                         element.acceptChildren(this)
                     }
@@ -150,7 +156,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             }
         }
 
-        private fun visitQualifiedAccess(node: CFGNode<*>, fir: FirQualifiedAccessExpression, data: Data) {
+        private fun visitQualifiedAccess(node: CFGNode<*>, fir: FirQualifiedAccessExpression) {
             val symbol = fir.calleeReference.toResolvedPropertySymbol() ?: return
             data.variablesWithoutReads.remove(symbol)
             data.writesByNode[node]?.values?.forEach { dataForLabel ->

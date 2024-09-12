@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -42,6 +43,11 @@ val FirDeclaration.evaluatedInPlace: Boolean
         is FirFunction, is FirClass -> false
         else -> true // property initializer, etc.
     }
+
+fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
+    if (declaration?.evaluatedInPlace == true)
+        enterNode.previousNodes.firstOrNull()?.owner?.nearestNonInPlaceGraph() ?: this
+    else this
 
 /**
  * [isForInitialization] means that caller is interested in member property in the scope

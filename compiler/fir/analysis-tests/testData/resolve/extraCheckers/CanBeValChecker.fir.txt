@@ -204,20 +204,50 @@ FILE: CanBeValChecker.kt
         }
 
     }
-    public final fun run(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        ^run R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    public final fun noinlineRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^noinlineRun R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun lambda(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
         R|<local>/a| = Int(10)
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/noinlineRun|(<L> = noinlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/a| = Int(20)
         }
         )
     }
     public final fun lambdaInitialization(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int|
-        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/noinlineRun|(<L> = noinlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/a| = Int(20)
+        }
+        )
+    }
+    public final fun lambdaInitializationWithRead(): R|kotlin/Unit| {
+        lateinit lvar a: R|kotlin/String|
+        R|/noinlineRun|(<L> = noinlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/a| = String()
+        }
+        )
+        R|<local>/a|.R|kotlin/String.length|
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun inlineRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(f, EXACTLY_ONCE)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/f|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.EXACTLY_ONCE|)
+            }
+            )
+        }
+
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun inlineLambdaInitialization(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        R|/inlineRun|(<L> = inlineRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|<local>/a| = Int(20)
         }
         )
