@@ -26,7 +26,17 @@ import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import javax.inject.Inject
 
-abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFactory: ObjectFactory) {
+/**
+ * Provides DSL to configure Compose compiler plugin options.
+ *
+ * It is available in the build scripts under "composeCompiler" name:
+ * ```
+ * composeCompiler {
+ *    ...
+ * }
+ * ```
+ */
+abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor(objectFactory: ObjectFactory) {
     /**
      * Generate function key meta classes with annotations indicating the functions and their group keys.
      *

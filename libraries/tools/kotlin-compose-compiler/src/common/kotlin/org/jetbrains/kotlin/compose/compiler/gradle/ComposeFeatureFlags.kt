@@ -69,6 +69,9 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
         PausableComposition("PausableComposition"),
     }
 
+    /**
+     * Contains currently available [ComposeFeatureFlag]s.
+     */
     companion object {
         /**
          * Enable strong skipping.
