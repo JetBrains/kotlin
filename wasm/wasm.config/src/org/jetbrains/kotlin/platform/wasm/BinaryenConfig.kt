@@ -15,8 +15,7 @@ object BinaryenConfig {
 
         // Other options
         "--enable-nontrapping-float-to-int",
-        // It's turned out that it's not safe
-        // "--closed-world",
+        "--closed-world",
 
         // Optimizations:
         // Note the order and repetition of the next options matter.
@@ -29,13 +28,13 @@ object BinaryenConfig {
         "--traps-never-happen",
         "--fast-math",
         // without "--type-merging" it produces increases the size
-        // "--type-ssa",
+        "--type-ssa",
         "-O3",
         "-O3",
         "--gufa",
         "-O3",
         // requires --closed-world
-        // "--type-merging",
+        "--type-merging",
         "-O3",
         "-Oz",
     )

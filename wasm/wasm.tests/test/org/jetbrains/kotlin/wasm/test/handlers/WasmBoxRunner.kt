@@ -215,7 +215,7 @@ private fun assertExpectedSizesMatchActual(
 
         val diff = totalSize - expectedSize
 
-        val message = "Total size of $extension files is $totalSize," +
+        val message = "Total size of $extension files in ${testDir.name} dir is $totalSize," +
                 " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
                 " Diff: $diff (${diff * 100 / expectedSize}%)"
 
