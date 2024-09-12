@@ -16,10 +16,15 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDi
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import java.io.File
 
 /*
@@ -102,31 +107,66 @@ fun main(args: Array<String>) {
     if (args.isEmpty() || args[0] == "checkers") {
         val checkersPath = generationPath ?: File("compiler/fir/checkers/checkers/gen")
         val typePackage = "$basePackage.checkers.type"
-        generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker") {
-            alias<FirTypeRef>("TypeRefChecker")
-            alias<FirResolvedTypeRef>("ResolvedTypeRefChecker")
+        generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker", FirTypeRef::class, FirTypeRef::class) {
+            alias<FirTypeRef>("TypeRefChecker").let {
+                visitAlso<FirImplicitTypeRef>(it)
+                visitAlso<FirTypeRefWithNullability>(it)
+                visitAlso<FirUserTypeRef>(it)
+                visitAlso<FirDynamicTypeRef>(it)
+            }
+            alias<FirResolvedTypeRef>("ResolvedTypeRefChecker").let {
+                visitAlso<FirErrorTypeRef>(it)
+            }
             alias<FirFunctionTypeRef>("FunctionTypeRefChecker")
             alias<FirIntersectionTypeRef>("IntersectionTypeRefChecker")
         }
 
         val expressionPackage = "$basePackage.checkers.expression"
-        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker") {
-            alias<FirStatement>("BasicExpressionChecker")
+        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker", FirStatement::class, FirExpression::class) {
+            alias<FirStatement>("BasicExpressionChecker", false).let {
+                visitAlso<FirExpression>(it)
+                visitAlso<FirVarargArgumentsExpression>(it)
+                visitAlso<FirSamConversionExpression>(it)
+                visitAlso<FirWrappedExpression>(it)
+                visitAlso<FirWrappedArgumentExpression>(it)
+                visitAlso<FirSpreadArgumentExpression>(it)
+                visitAlso<FirNamedArgumentExpression>(it)
+                visitAlso<FirWhenSubjectExpression>(it)
+                visitAlso<FirResolvedReifiedParameterReference>(it)
+                visitAlso<FirComparisonExpression>(it)
+                visitAlso<FirDesugaredAssignmentValueReferenceExpression>(it)
+                visitAlso<FirCheckedSafeCallSubject>(it)
+                visitAlso<FirErrorExpression>(it)
+                visitAlso<FirQualifiedErrorAccessExpression>(it)
+            }
             alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
-            alias<FirCall>("CallChecker")
-            alias<FirFunctionCall>("FunctionCallChecker")
+            alias<FirCall>("CallChecker", false).let {
+                visitAlso<FirDelegatedConstructorCall>(it)
+                visitAlso<FirMultiDelegatedConstructorCall>(it)
+            }
+            alias<FirFunctionCall>("FunctionCallChecker").let {
+                visitAlso<FirComponentCall>(it)
+                visitAlso<FirImplicitInvokeCall>(it)
+            }
             alias<FirPropertyAccessExpression>("PropertyAccessExpressionChecker")
             alias<FirIntegerLiteralOperatorCall>("IntegerLiteralOperatorCallChecker")
             alias<FirVariableAssignment>("VariableAssignmentChecker")
             alias<FirTryExpression>("TryExpressionChecker")
             alias<FirWhenExpression>("WhenExpressionChecker")
-            alias<FirLoop>("LoopExpressionChecker")
-            alias<FirLoopJump>("LoopJumpChecker")
+            alias<FirLoop>("LoopExpressionChecker", false).let {
+                visitAlso<FirErrorLoop>(it)
+            }
+            alias<FirLoopJump>("LoopJumpChecker", false).let {
+                visitAlso<FirBreakExpression>(it)
+                visitAlso<FirContinueExpression>(it)
+            }
             alias<FirBooleanOperatorExpression>("BooleanOperatorExpressionChecker")
             alias<FirReturnExpression>("ReturnExpressionChecker")
             alias<FirBlock>("BlockChecker")
             alias<FirAnnotation>("AnnotationChecker")
-            alias<FirAnnotationCall>("AnnotationCallChecker")
+            alias<FirAnnotationCall>("AnnotationCallChecker").let {
+                visitAlso<FirErrorAnnotationCall>(it)
+            }
             alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
             alias<FirElvisExpression>("ElvisExpressionChecker")
             alias<FirGetClassCall>("GetClassCallChecker")
@@ -135,7 +175,9 @@ fun main(args: Array<String>) {
             alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
             alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
             alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
-            alias<FirResolvedQualifier>("ResolvedQualifierChecker")
+            alias<FirResolvedQualifier>("ResolvedQualifierChecker").let {
+                visitAlso<FirErrorResolvedQualifier>(it)
+            }
             alias<FirLiteralExpression>("LiteralExpressionChecker")
             alias<FirCallableReferenceAccess>("CallableReferenceAccessChecker")
             alias<FirThisReceiverExpression>("ThisReceiverExpressionChecker")
@@ -148,16 +190,30 @@ fun main(args: Array<String>) {
         }
 
         val declarationPackage = "$basePackage.checkers.declaration"
-        generateCheckersComponents(checkersPath, declarationPackage, "FirDeclarationChecker") {
-            alias<FirDeclaration>("BasicDeclarationChecker")
-            alias<FirCallableDeclaration>("CallableDeclarationChecker")
-            alias<FirFunction>("FunctionChecker")
+        generateCheckersComponents(
+            checkersPath,
+            declarationPackage,
+            "FirDeclarationChecker",
+            FirDeclaration::class,
+            FirDeclaration::class
+        ) {
+            alias<FirDeclaration>("BasicDeclarationChecker").let {
+                visitAlso<FirDanglingModifierList>(it)
+                visitAlso<FirCodeFragment>(it)
+            }
+            alias<FirCallableDeclaration>("CallableDeclarationChecker", false).let {
+                visitAlso<FirField>(it)
+                visitAlso<FirErrorProperty>(it)
+            }
+            alias<FirFunction>("FunctionChecker", false)
             alias<FirSimpleFunction>("SimpleFunctionChecker")
             alias<FirProperty>("PropertyChecker")
-            alias<FirClassLikeDeclaration>("ClassLikeChecker")
+            alias<FirClassLikeDeclaration>("ClassLikeChecker", false)
             alias<FirClass>("ClassChecker")
             alias<FirRegularClass>("RegularClassChecker")
-            alias<FirConstructor>("ConstructorChecker")
+            alias<FirConstructor>("ConstructorChecker").let {
+                visitAlso<FirErrorPrimaryConstructor>(it)
+            }
             alias<FirFile>("FileChecker")
             alias<FirScript>("ScriptChecker")
             alias<FirTypeParameter>("FirTypeParameterChecker")
@@ -201,4 +257,5 @@ fun main(args: Array<String>) {
  *   3. generate aliases
  *   4. generate abstract "DeclarationCheckers"
  *   5. generate "ComposedDeclarationCheckers" with OptIn annotation
+ *   6. generate "DeclarationCheckersDiagnosticCompoment"
  */

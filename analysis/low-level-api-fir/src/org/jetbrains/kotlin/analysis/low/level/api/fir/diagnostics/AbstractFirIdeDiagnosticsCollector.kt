@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.type.ComposedTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*

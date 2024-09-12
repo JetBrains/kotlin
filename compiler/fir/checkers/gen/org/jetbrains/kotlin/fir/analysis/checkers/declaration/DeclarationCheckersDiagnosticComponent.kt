@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.collectors.components
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 @OptIn(CheckersComponentInternal::class)
 class DeclarationCheckersDiagnosticComponent(
@@ -43,8 +47,8 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBasicDeclarationCheckers.check(declaration, data)
     }
 
-    override fun visitFile(file: FirFile, data: CheckerContext) {
-        checkers.allFileCheckers.check(file, data)
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
+        checkers.allSimpleFunctionCheckers.check(simpleFunction, data)
     }
 
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
@@ -59,20 +63,24 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allRegularClassCheckers.check(regularClass, data)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
-        checkers.allSimpleFunctionCheckers.check(simpleFunction, data)
-    }
-
-    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: CheckerContext) {
-        checkers.allTypeAliasCheckers.check(typeAlias, data)
-    }
-
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
         checkers.allConstructorCheckers.check(constructor, data)
     }
 
-    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
-        checkers.allConstructorCheckers.check(errorPrimaryConstructor, data)
+    override fun visitFile(file: FirFile, data: CheckerContext) {
+        checkers.allFileCheckers.check(file, data)
+    }
+
+    override fun visitScript(script: FirScript, data: CheckerContext) {
+        checkers.allScriptCheckers.check(script, data)
+    }
+
+    override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
+        checkers.allTypeParameterCheckers.check(typeParameter, data)
+    }
+
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: CheckerContext) {
+        checkers.allTypeAliasCheckers.check(typeAlias, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
@@ -91,10 +99,6 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allValueParameterCheckers.check(valueParameter, data)
     }
 
-    override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
-        checkers.allTypeParameterCheckers.check(typeParameter, data)
-    }
-
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
         checkers.allEnumEntryCheckers.check(enumEntry, data)
     }
@@ -107,36 +111,36 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allAnonymousInitializerCheckers.check(anonymousInitializer, data)
     }
 
-    override fun visitField(field: FirField, data: CheckerContext) {
-        checkers.allCallableDeclarationCheckers.check(field, data)
-    }
-
     override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: CheckerContext) {
         checkers.allBasicDeclarationCheckers.check(danglingModifierList, data)
-    }
-
-    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: CheckerContext) {
-        checkers.allCallableDeclarationCheckers.check(errorProperty, data)
-    }
-
-    override fun visitScript(script: FirScript, data: CheckerContext) {
-        checkers.allScriptCheckers.check(script, data)
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: CheckerContext) {
         checkers.allBasicDeclarationCheckers.check(codeFragment, data)
     }
 
-    private inline fun <reified D : FirDeclaration> Array<FirDeclarationChecker<D>>.check(
-        declaration: D,
+    override fun visitField(field: FirField, data: CheckerContext) {
+        checkers.allCallableDeclarationCheckers.check(field, data)
+    }
+
+    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: CheckerContext) {
+        checkers.allCallableDeclarationCheckers.check(errorProperty, data)
+    }
+
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
+        checkers.allConstructorCheckers.check(errorPrimaryConstructor, data)
+    }
+
+    private inline fun <reified E : FirDeclaration> Array<FirDeclarationChecker<E>>.check(
+        element: E,
         context: CheckerContext
     ) {
         for (checker in this) {
             try {
-                checker.check(declaration, context, reporter)
+                checker.check(element, context, reporter)
             } catch (e: Exception) {
-                rethrowExceptionWithDetails("Exception in declaration checker", e) {
-                    withFirEntry("declaration", declaration)
+                rethrowExceptionWithDetails("Exception in declaration checkers", e) {
+                    withFirEntry("element", element)
                     context.containingFilePath?.let { withEntry("file", it) }
                 }
             }
