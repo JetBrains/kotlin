@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 class Controller<T> {
     fun yield(t: T): Boolean = true
 }

@@ -118,6 +118,12 @@ class NewConstraintSystemImpl(
 
     override fun asReadOnlyStorage(): ConstraintStorage {
         checkState(State.BUILDING, State.FREEZED)
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ConsiderForkPointsWhenCheckingContradictions) && areThereContradictionsInForks()) {
+            // If there are contradictions already, we might apply all the forks because CS is anyway already failed
+            resolveForkPointsConstraints()
+        }
+
         state = State.FREEZED
         return storage
     }
@@ -296,13 +302,20 @@ class NewConstraintSystemImpl(
 
     // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
     override val hasContradiction: Boolean
-        get() = storage.hasContradiction.also {
+        get() {
             checkState(
                 State.FREEZED,
                 State.BUILDING,
                 State.COMPLETION,
                 State.TRANSACTION
             )
+
+            if (storage.hasContradiction) return true
+
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.ConsiderForkPointsWhenCheckingContradictions)) return false
+
+            // Since 2.2 at each hasContradiction check, we make sure that all forks might be successfully resolved, too
+            return areThereContradictionsInForks()
         }
 
     fun addOuterSystem(outerSystem: ConstraintStorage) {
@@ -518,6 +531,10 @@ class NewConstraintSystemImpl(
      *
      */
     fun areThereContradictionsInForks(): Boolean {
+        // Before freezing, we guarantee to apply contradictions to the regular storage if there are any
+        // (see NewConstraintSystemImpl.asReadOnlyStorage)
+        if (state == State.FREEZED) return false
+
         if (constraintsFromAllForkPoints.isEmpty()) return false
 
         val allForkPointsData = constraintsFromAllForkPoints.toList()

@@ -1,5 +1,7 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // JSPECIFY_STATE: warn
+// LANGUAGE: +ConsiderForkPointsWhenCheckingContradictions
 // FULL_JDK
 // ISSUE: KT-68768
 

@@ -795,6 +795,9 @@ internal object ConstraintSystemForks : ResolutionStage() {
         if (candidate.system.hasContradiction) return
 
         if (candidate.system.areThereContradictionsInForks()) {
+            check(!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ConsiderForkPointsWhenCheckingContradictions)) {
+                "This part should only work for obsolete language-version settings"
+            }
             // resolving constraints would lead to regular errors reported
             candidate.system.resolveForkPointsConstraints()
 
