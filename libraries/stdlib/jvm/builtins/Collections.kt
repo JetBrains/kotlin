@@ -349,6 +349,9 @@ public actual interface Map<K, out V> {
 
     /**
      * Represents a key/value pair held by a [Map].
+     *
+     * Map entries are not supposed to be stored separately or used long after they are obtained.
+     * The behavior of an entry is undefined if the backing map has been modified after the entry was obtained.
      */
     public actual interface Entry<out K, out V> {
         /**
@@ -426,6 +429,9 @@ public actual interface MutableMap<K, V> : Map<K, V> {
 
     /**
      * Represents a key/value pair held by a [MutableMap].
+     *
+     * Map entries are not supposed to be stored separately or used long after they are obtained.
+     * The behavior of an entry is undefined if the backing map has been modified after the entry was obtained.
      */
     public actual interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**

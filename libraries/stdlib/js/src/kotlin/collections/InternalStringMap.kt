@@ -261,28 +261,48 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     private class EntriesItr<K, V>(map: InternalStringMap<K, V>) : MutableIterator<MutableEntry<K, V>>, BaseItr<K, V>(map) {
         override fun next(): MutableEntry<K, V> {
             goNext()
-            val key = map.keys.getElement(lastIndex)
-            val value = map.values.getElement(lastIndex)
-            return EntryRef(key, value, map)
+            return EntryRef(map, lastIndex)
         }
     }
 
-    protected class EntryRef<K, V>(
-        override val key: K,
-        override var value: V,
+    internal class EntryRef<K, V>(
         private val map: InternalStringMap<K, V>,
+        private val index: Int
     ) : MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
+        override val key: K
+            get() {
+                checkForComodification()
+                return map.keys.getElement(index)
+            }
+
+        override val value: V
+            get() {
+                checkForComodification()
+                return map.values.getElement(index)
+            }
+
         override fun setValue(newValue: V): V {
-            val prevValue = value
-            map.put(key, newValue)
-            value = newValue
-            return prevValue
+            checkForComodification()
+            map.checkIsMutable()
+            val oldValue = map.values.getElement(index)
+            map.values.setElement(index, newValue)
+            return oldValue
         }
 
-        override fun equals(other: Any?): Boolean = other is Map.Entry<*, *> && other.key == key && other.value == value
+        override fun equals(other: Any?): Boolean =
+            other is Map.Entry<*, *> &&
+                    other.key == key &&
+                    other.value == value
 
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }

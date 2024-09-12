@@ -589,13 +589,22 @@ internal class MapBuilder<K, V> private constructor(
         private val map: MapBuilder<K, V>,
         private val index: Int
     ) : MutableMap.MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
         override val key: K
-            get() = map.keysArray[index]
+            get() {
+                checkForComodification()
+                return map.keysArray[index]
+            }
 
         override val value: V
-            get() = map.valuesArray!![index]
+            get() {
+                checkForComodification()
+                return map.valuesArray!![index]
+            }
 
         override fun setValue(newValue: V): V {
+            checkForComodification()
             map.checkIsMutable()
             val valuesArray = map.allocateValuesArray()
             val oldValue = valuesArray[index]
@@ -611,6 +620,11 @@ internal class MapBuilder<K, V> private constructor(
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }
 

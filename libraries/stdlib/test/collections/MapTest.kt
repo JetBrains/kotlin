@@ -522,6 +522,60 @@ class MapTest {
         }
     }
 
+    // KT-52181
+    @Test
+    fun modifiedBackingMapOfEntry() {
+        fun testEntryFunctionsFail(mapLabel: String, entry: MutableMap.MutableEntry<String, Int>) {
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.key }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.value }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.setValue(200) }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.hashCode() }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.toString() }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.equals(SimpleEntry("b", 20)) }
+        }
+
+        testExceptOn(TestPlatform.Jvm) {
+            val entries = arrayOf("a" to 1, "b" to 2, "c" to 3)
+            val maps = listOf(
+                "HashMap" to hashMapOf(*entries),
+                "LinkedHashMap" to linkedMapOf(*entries),
+                "StringMap" to stringMapOf(*entries),
+                "LinkedStringMap" to linkedStringMapOf(*entries),
+            )
+
+            for ((label, map) in maps) {
+                val entry = map.entries.first { it.key == "b" }
+
+                // Non-structural modifications
+                map["c"] = 30
+                map["b"] = 20
+                assertEquals("b", entry.key, label)
+                assertEquals(20, entry.value, label)
+
+                // Structural modification
+                map["d"] = 4
+                testEntryFunctionsFail(label, entry)
+            }
+        }
+
+        buildMap {
+            this["a"] = 1
+            this["b"] = 2
+            this["c"] = 3
+            val builderEntry = this.entries.first { it.key == "b" }
+
+            // Non-structural modifications
+            this["c"] = 30
+            this["b"] = 20
+            assertEquals("b", builderEntry.key)
+            assertEquals(20, builderEntry.value)
+
+            // Structural modification
+            this["d"] = 4
+            testEntryFunctionsFail("MapBuilder", builderEntry)
+        }
+    }
+
     @Test
     fun firstNotNullOf() {
         val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)

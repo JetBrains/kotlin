@@ -642,16 +642,25 @@ public actual class HashMap<K, V> private constructor(
     }
 
     internal class EntryRef<K, V>(
-            private val map: HashMap<K, V>,
-            private val index: Int
+        private val map: HashMap<K, V>,
+        private val index: Int
     ) : MutableMap.MutableEntry<K, V> {
+        private val expectedModCount = map.modCount
+
         override val key: K
-            get() = map.keysArray[index]
+            get() {
+                checkForComodification()
+                return map.keysArray[index]
+            }
 
         override val value: V
-            get() = map.valuesArray!![index]
+            get() {
+                checkForComodification()
+                return map.valuesArray!![index]
+            }
 
         override fun setValue(newValue: V): V {
+            checkForComodification()
             map.checkIsMutable()
             val valuesArray = map.allocateValuesArray()
             val oldValue = valuesArray[index]
@@ -660,13 +669,18 @@ public actual class HashMap<K, V> private constructor(
         }
 
         override fun equals(other: Any?): Boolean =
-                other is Map.Entry<*, *> &&
-                        other.key == key &&
-                        other.value == value
+            other is Map.Entry<*, *> &&
+                    other.key == key &&
+                    other.value == value
 
         override fun hashCode(): Int = key.hashCode() xor value.hashCode()
 
         override fun toString(): String = "$key=$value"
+
+        private fun checkForComodification() {
+            if (map.modCount != expectedModCount)
+                throw ConcurrentModificationException("The backing map has been modified after this entry was obtained.")
+        }
     }
 }
 
