@@ -195,7 +195,13 @@ abstract class FirJavaFacade(
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = FirInstantJavaDeclarationList()
+            declarationList = FirInstantJavaDeclarationList(
+                javaClass,
+                classSymbol,
+                parentClassSymbol,
+                javaTypeParameterStack,
+                this,
+            )
         }.apply {
             if (modality == Modality.SEALED) {
                 setSealedClassInheritors {
@@ -217,11 +223,26 @@ abstract class FirJavaFacade(
     }
 }
 
-private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
+private class FirInstantJavaDeclarationList(
+    javaClass: JavaClass,
+    classSymbol: FirRegularClassSymbol,
+    parentClassSymbol: FirRegularClassSymbol?,
+    javaTypeParameterStack: MutableJavaTypeParameterStack,
+    classBuilder: FirJavaClassBuilder,
+) : FirJavaDeclarationList {
     override val declarations: List<FirDeclaration> = buildList {
+        val moduleData = classBuilder.moduleData
+        val session = moduleData.session
+        val classId = classSymbol.classId
+        val classTypeParameters = classBuilder.typeParameters.filterIsInstance<FirTypeParameter>()
+        val classKind = javaClass.classKind
+        val classStatus = classBuilder.status
+        val classResolvePhase = classBuilder.resolvePhase
+        val classSource = classBuilder.source
+
         val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
-        val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
-        val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
+        val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
+        val dispatchReceiver = classId.defaultType(classBuilder.typeParameters.map { it.symbol })
 
         // TODO: may be we can process fields & methods later.
         // However, they should be built up to override resolve stage
@@ -272,7 +293,7 @@ private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
                 javaConstructor = null,
                 constructorId,
                 javaClass,
-                ownerClassBuilder = this@buildJavaClass,
+                ownerClassBuilder = classBuilder,
                 classTypeParameters,
                 javaTypeParameterStack,
                 parentClassSymbol,
@@ -284,7 +305,7 @@ private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
                 javaConstructor,
                 constructorId,
                 javaClass,
-                ownerClassBuilder = this@buildJavaClass,
+                ownerClassBuilder = classBuilder,
                 classTypeParameters,
                 javaTypeParameterStack,
                 parentClassSymbol,
@@ -294,30 +315,30 @@ private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
 
         if (classKind == ClassKind.ENUM_CLASS) {
             this += generateValuesFunction(
-                symbol,
-                source,
-                status,
-                resolvePhase,
+                classSymbol,
+                classSource,
+                classStatus,
+                classResolvePhase,
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
             )
 
             this += generateValueOfFunction(
-                symbol,
-                source,
-                status,
-                resolvePhase,
+                classSymbol,
+                classSource,
+                classStatus,
+                classResolvePhase,
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
             )
 
             this += generateEntriesGetter(
-                symbol,
-                source,
-                status,
-                resolvePhase,
+                classSymbol,
+                classSource,
+                classStatus,
+                classResolvePhase,
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
@@ -328,7 +349,7 @@ private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
             this += buildConstructorForAnnotationClass(
                 javaClass,
                 constructorId = constructorId,
-                ownerClassBuilder = this@buildJavaClass,
+                ownerClassBuilder = classBuilder,
                 valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
                 moduleData = moduleData,
             )
@@ -356,7 +377,7 @@ private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
                             session,
                             (classSymbol.fir as FirJavaClass).javaTypeParameterStack,
                             firValueParameter.returnTypeRef,
-                            fakeSource
+                            firValueParameter.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         )
                     }
                 }
