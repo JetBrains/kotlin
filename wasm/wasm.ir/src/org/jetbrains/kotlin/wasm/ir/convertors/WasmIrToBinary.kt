@@ -58,7 +58,8 @@ class WasmIrToBinary(
     val module: WasmModule,
     val moduleName: String,
     val emitNameSection: Boolean,
-    private val debugInformationGenerator: DebugInformationGenerator? = null
+    private val debugInformationGenerator: DebugInformationGenerator? = null,
+    private val optimizeInstructionFlow: Boolean = true
 ) : DebugInformationConsumer {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
@@ -478,8 +479,12 @@ class WasmIrToBinary(
             yield(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
         }
 
-        for (instruction in processInstructionsFlow(expressionWithEndOp)) {
-            appendInstr(instruction)
+        if (optimizeInstructionFlow) {
+            for (instruction in processInstructionsFlow(expressionWithEndOp)) {
+                appendInstr(instruction)
+            }
+        } else {
+            expressionWithEndOp.forEach(::appendInstr)
         }
     }
 
