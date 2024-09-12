@@ -55,7 +55,7 @@ fun IrElement.transformConst(
 
     return this.transform(irConstExpressionTransformer, IrConstTransformer.Data()).apply {
         accept(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
-        accept(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+        irConstTypeAnnotationTransformer.visitElement(this, IrConstTransformer.Data())
     }
 }
 
