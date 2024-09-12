@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -67,9 +66,8 @@ abstract class FirJavaFacade(
             mayHaveAnnotations = if (knownClassNames != null) PACKAGE_INFO_CLASS_NAME in knownClassNames else true
         )
     }
-    private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
-    private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
+    private val knownClassNamesInPackage = session.firCachesFactory.createCache(classFinder::knownClassNamesInPackage)
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))?.takeUnless(JavaClass::hasMetadataAnnotation)
@@ -109,7 +107,6 @@ abstract class FirJavaFacade(
         }
 
         val firJavaClass = createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
-        parentClassEffectiveVisibilityCache.remove(classSymbol)
 
         /**
          * This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
@@ -160,11 +157,12 @@ abstract class FirJavaFacade(
 
             val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
             val parentEffectiveVisibility = parentClassSymbol?.let {
-                parentClassEffectiveVisibilityCache[it] ?: it.fir.effectiveVisibility
+                // `originalStatus` can be used here as in the current implementation, status compiler plugins
+                // cannot change effective visibility.
+                (it.fir as FirJavaClass).originalStatus.effectiveVisibility
             } ?: EffectiveVisibility.Public
-            val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-            parentClassEffectiveVisibilityCache[classSymbol] = effectiveVisibility
 
+            val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
             val classTypeParameters = javaClass.typeParameters.convertTypeParameters(
                 javaTypeParameterStack, classSymbol, moduleData, fakeSource
             )

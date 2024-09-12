@@ -39,7 +39,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val annotationList: FirJavaAnnotationList,
-    private val originalStatus: FirResolvedDeclarationStatusImpl,
+    internal val originalStatus: FirResolvedDeclarationStatusImpl,
     override val classKind: ClassKind,
     private val declarationList: FirJavaDeclarationList,
     override val scopeProvider: FirScopeProvider,
