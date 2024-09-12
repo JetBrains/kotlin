@@ -84,7 +84,8 @@ open class FirKaptAnalysisHandlerExtension(
             classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         }
 
-        if (!optionsBuilder.checkOptions(logger, configuration)) return false
+        optionsBuilder.checkOptions(logger, configuration)?.let { return it }
+
         options = optionsBuilder.build()
         if (options[KaptFlag.VERBOSE]) {
             logger.info(options.logString())
@@ -315,7 +316,7 @@ open class FirKaptAnalysisHandlerExtension(
         return EfficientProcessorLoader(options, logger).loadProcessors()
     }
 
-    private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
+    private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
         if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
             logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
             return false
@@ -324,7 +325,7 @@ open class FirKaptAnalysisHandlerExtension(
         if (processingClasspath.isEmpty()) {
             // Skip annotation processing if no annotation processors were provided
             logger.info("No annotation processors provided. Skip KAPT processing.")
-            return false
+            return true
         }
 
         if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
@@ -347,6 +348,6 @@ open class FirKaptAnalysisHandlerExtension(
             return false
         }
 
-        return true
+        return null
     }
 }
