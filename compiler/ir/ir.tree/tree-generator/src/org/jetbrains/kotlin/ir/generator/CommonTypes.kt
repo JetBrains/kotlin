@@ -41,7 +41,6 @@ val elementTransformerVoidType = type(visitors, "IrElementTransformerVoid", Type
 val typeVisitorType = type(visitors, "IrTypeVisitor", TypeKind.Class)
 val typeVisitorVoidType = type(visitors, "IrTypeVisitorVoid", TypeKind.Class)
 val typeTransformerType = type(visitors, "IrTypeTransformer")
-val typeTransformerVoidType = type(visitors, "IrTypeTransformerVoid", TypeKind.Class)
 val irTypeType = type(types, "IrType")
 val irSimpleTypeType = type(types, "IrSimpleType", TypeKind.Class)
 val irTypeAbbreviationType = type(types, "IrTypeAbbreviation")
