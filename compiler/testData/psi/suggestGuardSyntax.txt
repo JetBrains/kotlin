@@ -51,7 +51,7 @@ KtFile: suggestGuardSyntax.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('String')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when
             PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('boolExpr')
@@ -125,7 +125,7 @@ KtFile: suggestGuardSyntax.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when
             PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('boolExpr')
@@ -184,7 +184,7 @@ KtFile: suggestGuardSyntax.kt
         WHEN_ENTRY
           PsiElement(else)('else')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Unexpected '&&', use 'if' to introduce a guard
+          PsiErrorElement:Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when
             PsiElement(ANDAND)('&&')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('boolExpr')
