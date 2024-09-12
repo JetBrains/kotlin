@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -40,13 +38,8 @@ internal class IrConstTypeAnnotationTransformer(
                     element.acceptChildrenVoid(this)
                 }
 
-                override fun visitType(container: IrElement, type: IrType) {}
-
-                override fun visitTypeRecursively(container: IrElement, type: IrType, data: Data) {
+                override fun visitType(container: IrElement, type: IrType) {
                     transformAnnotations(type)
-                    if (type is IrSimpleType) {
-                        type.arguments.mapNotNull { it.typeOrNull }.forEach { visitTypeRecursively(container, it, data) }
-                    }
                 }
             }
         )
