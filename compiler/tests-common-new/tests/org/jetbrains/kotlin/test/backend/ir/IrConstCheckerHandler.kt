@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isAnnotation
@@ -46,13 +44,8 @@ private class IrConstChecker : IrTypeVisitorVoid() {
         declaration.acceptChildrenVoid(this)
     }
 
-    override fun visitType(container: IrElement, type: IrType) {}
-
-    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+    override fun visitType(container: IrElement, type: IrType) {
         checkAnnotations(type)
-        if (type is IrSimpleType) {
-            type.arguments.mapNotNull { it.typeOrNull }.forEach { visitTypeRecursively(container, it) }
-        }
     }
 
     override fun visitField(declaration: IrField) {

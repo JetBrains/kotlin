@@ -42,18 +42,6 @@ internal class IrTypeParameterScopeValidator(private val reportError: ReportErro
             }
         }
 
-        private fun visitTypeAccess(element: IrElement, type: IrType) {
-            if (type !is IrSimpleType) return
-            (type.classifier as? IrTypeParameterSymbol)?.let {
-                checkTypeParameterReference(element, it)
-            }
-            for (arg in type.arguments) {
-                if (arg is IrTypeProjection) {
-                    visitTypeAccess(element, arg.type)
-                }
-            }
-        }
-
         private fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
             scopeStack.withNewScope(
                 outerScopesAreInvisible = container is IrClass && !container.isInner && container.visibility != DescriptorVisibilities.LOCAL,
@@ -62,10 +50,10 @@ internal class IrTypeParameterScopeValidator(private val reportError: ReportErro
             )
         }
 
-        override fun visitType(container: IrElement, type: IrType) {}
-
-        override fun visitTypeRecursively(container: IrElement, type: IrType) {
-            visitTypeAccess(container, type)
+        override fun visitType(container: IrElement, type: IrType) {
+            ((type as? IrSimpleType)?.classifier as? IrTypeParameterSymbol)?.let {
+                checkTypeParameterReference(container, it)
+            }
         }
 
         override fun visitElement(element: IrElement) {

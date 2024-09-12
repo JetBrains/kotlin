@@ -153,23 +153,10 @@ internal class IrVisibilityChecker(
         }
     }
 
-    private fun List<IrTypeArgument>.checkVisibilities(element: IrElement) {
-        for (argument in this) {
-            (argument as? IrTypeProjection)?.type?.checkVisibilitiesInType(element)
+    override fun visitType(container: IrElement, type: IrType) {
+        if (type is IrSimpleType) {
+            checkVisibility(type.classifier, container)
         }
-    }
-
-    private fun IrType.checkVisibilitiesInType(element: IrElement) {
-        if (this is IrSimpleType) {
-            checkVisibility(classifier, element)
-            arguments.checkVisibilities(element)
-        }
-    }
-
-    override fun visitType(container: IrElement, type: IrType) {}
-
-    override fun visitTypeRecursively(container: IrElement, type: IrType) {
-        type.checkVisibilitiesInType(container)
     }
 
     override fun visitDeclarationReference(expression: IrDeclarationReference) {
