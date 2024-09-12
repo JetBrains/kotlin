@@ -188,8 +188,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                         LookupResult.NotFound -> null
                     }
                 }
-                // The given path still may denote a unique name of a direct library.
-                directLibsSequence(givenPath) + repoLibs
+                repoLibs + directLibsSequence(givenPath) // The given path still may denote a unique name of a direct library.
             }
         }
         return sequence.filterNotNull()
