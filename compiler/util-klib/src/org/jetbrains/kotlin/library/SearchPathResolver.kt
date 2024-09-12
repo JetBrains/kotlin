@@ -124,7 +124,6 @@ fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibr
 abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     directLibs: List<String>,
     val distributionKlib: String?,
-    val localKotlinDir: String?,
     private val skipCurrentDir: Boolean,
     override val logger: Logger
 ) : SearchPathResolver<L> {
@@ -311,25 +310,24 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     directLibs: List<String>,
     distributionKlib: String?,
-    localKotlinDir: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger,
+    logger: Logger,
     private val knownIrProviders: List<String>
-) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger), SearchPathResolver<L> {
+) : KotlinLibrarySearchPathResolver<L>(directLibs, distributionKlib, skipCurrentDir, logger), SearchPathResolver<L> {
 
     @Deprecated(
-        "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' value parameter",
-        ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger, knownIrProviders)"),
+        "Please use the KotlinLibraryProperResolverWithAttributes constructor which does not has 'repositories' and 'localKotlinDir' value parameters",
+        ReplaceWith("KotlinLibraryProperResolverWithAttributes<L>(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)"),
     )
     constructor(
         @Suppress("UNUSED_PARAMETER") repositories: List<String>,
         directLibs: List<String>,
         distributionKlib: String?,
-        localKotlinDir: String?,
+        @Suppress("UNUSED_PARAMETER") localKotlinDir: String?,
         skipCurrentDir: Boolean,
         logger: Logger,
         knownIrProviders: List<String>
-    ) : this(directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger, knownIrProviders)
+    ) : this(directLibs, distributionKlib, skipCurrentDir, logger, knownIrProviders)
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
         val candidatePath = candidate.libraryFile.absolutePath
@@ -361,8 +359,11 @@ class SingleKlibComponentResolver(
     logger: Logger,
     knownIrProviders: List<String>
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    listOf(klibFile),
-    null, null, false, logger, knownIrProviders
+    directLibs = listOf(klibFile),
+    distributionKlib = null,
+    skipCurrentDir = false,
+    logger,
+    knownIrProviders = knownIrProviders
 ) {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
 }

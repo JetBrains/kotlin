@@ -49,7 +49,6 @@ object CommonKLibResolver {
         val libraryResolver = KLibResolverHelper(
             directLibs = libraryAbsolutePaths,
             distributionKlib = null,
-            localKotlinDir = null,
             skipCurrentDir = false,
             logger = logger,
             zipAccessor = zipAccessor,
@@ -83,18 +82,16 @@ class KLibResolution(
 private class KLibResolverHelper(
     directLibs: List<String>,
     distributionKlib: String?,
-    localKotlinDir: String?,
     skipCurrentDir: Boolean,
     logger: Logger,
     private val zipAccessor: ZipFileSystemAccessor?,
     knownIrProviders: List<String>,
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    directLibs,
-    distributionKlib,
-    localKotlinDir,
-    skipCurrentDir,
-    logger,
-    knownIrProviders,
+    directLibs = directLibs,
+    distributionKlib = distributionKlib,
+    skipCurrentDir = skipCurrentDir,
+    logger = logger,
+    knownIrProviders = knownIrProviders,
 ) {
     // Stick with the default KotlinLibrary for now.
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault, zipAccessor)
