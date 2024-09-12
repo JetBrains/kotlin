@@ -125,6 +125,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface PotentialReuse : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PotentialReuse::class
+    }
+
     interface IllegalConstExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalConstExpression::class
     }

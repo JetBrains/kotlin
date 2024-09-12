@@ -149,6 +149,7 @@ object FirErrors {
     // Miscellaneous
     val OTHER_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("OTHER_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val OTHER_ERROR_WITH_REASON: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OTHER_ERROR_WITH_REASON", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val POTENTIAL_REUSE: KtDiagnosticFactory0 = KtDiagnosticFactory0("POTENTIAL_REUSE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // General syntax
     val ILLEGAL_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

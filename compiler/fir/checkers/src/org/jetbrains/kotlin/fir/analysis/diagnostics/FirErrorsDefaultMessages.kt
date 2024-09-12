@@ -537,6 +537,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIAL_REUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
@@ -794,6 +795,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")
         map.put(OTHER_ERROR_WITH_REASON, "Unknown error: {0}.", STRING)
+        map.put(POTENTIAL_REUSE, "This value could be potentially reused.")
 
         // General syntax
         map.put(ILLEGAL_CONST_EXPRESSION, "Incorrect const expression.")

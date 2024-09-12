@@ -131,6 +131,11 @@ internal class OtherErrorWithReasonImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OtherErrorWithReason
 
+internal class PotentialReuseImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PotentialReuse
+
 internal class IllegalConstExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
