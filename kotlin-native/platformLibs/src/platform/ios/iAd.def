@@ -5,3 +5,5 @@ modules = iAd
 
 compilerOpts = -framework iAd
 linkerOpts = -framework iAd
+
+excludedFunctions = ADClientErrorDomain
