@@ -47,8 +47,8 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>""<!> = "";
     <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>) = 34<!>
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>) = false<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>)<!> = false
     <!VARIABLE_EXPECTED!>A()<!> = A()
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
@@ -59,19 +59,19 @@ annotation class Ann
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ i) = 34<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ i)<!> = 34
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>) = 34<!> //repeat for j
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34 //repeat for j
 
     val a = A()
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(l@ a.a) = 3894<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(l@ a.a)<!> = 3894
 
     @Ann
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (i) = 123<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (i)<!> = 123
 }
 
 fun canBe2(j: Int) {
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>) = 34<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34
 }
 
 class A() {
@@ -87,13 +87,13 @@ class Test() {
         (f@ getInt()) <!UNRESOLVED_REFERENCE!>+=<!> 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>1<!>)--<!>
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>1<!>)<!>--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)--<!>
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)<!>--
 
         ++<!VARIABLE_EXPECTED!>2<!>
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>--(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
 
         <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
@@ -103,7 +103,7 @@ class Test() {
         s += (a@ 2)
 
         @Ann
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (<!VARIABLE_EXPECTED!>1<!>) = 123<!>
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
     }
 
     fun testIncompleteSyntax() {
@@ -121,11 +121,11 @@ class Test() {
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)--<!>
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)++<!>
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>++
         --a
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>++(@Ann l@ a)<!>
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>--(a)<!>
+        ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(@Ann l@ a)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!>
     }
 
     fun testVariables1() {

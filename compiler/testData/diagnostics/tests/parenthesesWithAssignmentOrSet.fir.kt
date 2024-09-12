@@ -12,7 +12,7 @@ fun Int.foo() = A()
 fun foo(a: Array<A>) {
     a[0] = a[0] + ""
     a[0] += ""
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a[0]) += ""<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a[0])<!> += ""
     <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a[0])<!> = a[0]
 
     a[0] = (10 + 1).foo()
@@ -21,8 +21,8 @@ fun foo(a: Array<A>) {
 fun bar() {
     var x = ""
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(x) = ""<!>
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(x) += ""<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(x)<!> = ""
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(x)<!> += ""
 }
 
 fun baz() {

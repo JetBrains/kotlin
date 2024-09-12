@@ -16,7 +16,7 @@ fun foo(a: Any?): Int {
 
     var b = 1
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!SYNTAX!>@<!> b) = 2<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!SYNTAX!>@<!> b)<!> = 2
 
     return<!SYNTAX!>@<!> 1
 }

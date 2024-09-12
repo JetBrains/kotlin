@@ -3,7 +3,7 @@
 fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {
     var r: Any?
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Suppress("UNCHECKED_CAST") r = block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int)<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Suppress("UNCHECKED_CAST") r<!> = block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int)
 
     // to prevent unused assignment diagnostic for the above statement
     r.hashCode()

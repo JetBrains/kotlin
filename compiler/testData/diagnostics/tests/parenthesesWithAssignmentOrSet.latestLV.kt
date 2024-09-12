@@ -21,7 +21,7 @@ fun foo(a: Array<A>) {
 fun bar() {
     var x = ""
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(x) = ""<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(x)<!> = ""
     (x) <!UNRESOLVED_REFERENCE!>+=<!> ""
 }
 

@@ -7,7 +7,7 @@ public fun foo(pp: String?): Int {
     while(true) {
         p!!.length
         if (x()) break
-        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(((p))) = null<!>
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(((p)))<!> = null
     }
     // Smart cast is NOT possible here
     // (we could provide it but p = null makes it much harder)

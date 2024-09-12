@@ -434,4 +434,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
         PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
     )
+
+    val OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
+        PositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
+    )
 }

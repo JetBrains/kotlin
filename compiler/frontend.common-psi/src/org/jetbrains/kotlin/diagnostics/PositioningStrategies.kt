@@ -1222,4 +1222,11 @@ object PositioningStrategies {
             return super.mark(packageNameExpression ?: element)
         }
     }
+
+    val OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            val parenthesized = element.getAssignmentLhsIfUnwrappable() ?: return super.mark(element)
+            return super.mark(parenthesized)
+        }
+    }
 }
