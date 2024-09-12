@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.java.FirJavaFacade.Companion.VALUE_METHOD_NAME
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
@@ -194,153 +195,7 @@ abstract class FirJavaFacade(
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = object : FirJavaDeclarationList {
-                override val declarations: List<FirDeclaration> = buildList {
-                    val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
-                    val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
-                    val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
-
-                    // TODO: may be we can process fields & methods later.
-                    // However, they should be built up to override resolve stage
-                    for (javaField in javaClass.fields) {
-                        this += convertJavaFieldToFir(
-                            javaField,
-                            classId,
-                            javaTypeParameterStack,
-                            dispatchReceiver,
-                            moduleData,
-                            classSymbol,
-                        )
-                    }
-
-                    for (javaMethod in javaClass.methods) {
-                        if (javaMethod.isObjectMethodInInterface()) continue
-                        val firJavaMethod = convertJavaMethodToFir(
-                            javaClass,
-                            javaMethod,
-                            classId,
-                            javaTypeParameterStack,
-                            dispatchReceiver,
-                            moduleData,
-                            classSymbol,
-                        )
-
-                        this += firJavaMethod
-
-                        if (classIsAnnotation) {
-                            val parameterForAnnotationConstructor = convertJavaAnnotationMethodToValueParameter(javaMethod, firJavaMethod, moduleData)
-                            if (javaMethod.name == VALUE_METHOD_NAME) {
-                                valueParametersForAnnotationConstructor.valueParameterForValue = javaMethod to parameterForAnnotationConstructor
-                            } else {
-                                valueParametersForAnnotationConstructor.valueParameters[javaMethod] = parameterForAnnotationConstructor
-                            }
-                        }
-                    }
-
-                    val javaClassDeclaredConstructors = javaClass.constructors
-                    val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
-
-                    if (javaClassDeclaredConstructors.isEmpty()
-                        && javaClass.classKind == ClassKind.CLASS
-                        && !javaClass.isRecord
-                        && javaClass.hasDefaultConstructor()
-                    ) {
-                        this += convertJavaConstructorToFir(
-                            javaConstructor = null,
-                            constructorId,
-                            javaClass,
-                            ownerClassBuilder = this@buildJavaClass,
-                            classTypeParameters,
-                            javaTypeParameterStack,
-                            parentClassSymbol,
-                            moduleData,
-                        )
-                    }
-                    for (javaConstructor in javaClassDeclaredConstructors) {
-                        this += convertJavaConstructorToFir(
-                            javaConstructor,
-                            constructorId,
-                            javaClass,
-                            ownerClassBuilder = this@buildJavaClass,
-                            classTypeParameters,
-                            javaTypeParameterStack,
-                            parentClassSymbol,
-                            moduleData,
-                        )
-                    }
-
-                    if (classKind == ClassKind.ENUM_CLASS) {
-                        this += generateValuesFunction(
-                            symbol,
-                            source,
-                            status,
-                            resolvePhase,
-                            moduleData,
-                            classId.packageFqName,
-                            classId.relativeClassName,
-                        )
-
-                        this += generateValueOfFunction(
-                            symbol,
-                            source,
-                            status,
-                            resolvePhase,
-                            moduleData,
-                            classId.packageFqName,
-                            classId.relativeClassName,
-                        )
-
-                        this += generateEntriesGetter(
-                            symbol,
-                            source,
-                            status,
-                            resolvePhase,
-                            moduleData,
-                            classId.packageFqName,
-                            classId.relativeClassName,
-                        )
-                    }
-
-                    if (classIsAnnotation) {
-                        this += buildConstructorForAnnotationClass(
-                            javaClass,
-                            constructorId = constructorId,
-                            ownerClassBuilder = this@buildJavaClass,
-                            valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
-                            moduleData = moduleData,
-                        )
-                    }
-
-                    // There is no need to generated synthetic declarations for java record from binary dependencies
-                    //   because they are actually present in .class files
-                    if (javaClass.isRecord && javaClass.isFromSource) {
-                        createDeclarationsForJavaRecord(
-                            javaClass,
-                            classId,
-                            moduleData,
-                            dispatchReceiver,
-                            classTypeParameters,
-                            this,
-                            classSymbol,
-                        )
-                    }
-
-                    if (classIsAnnotation) {
-                        valueParametersForAnnotationConstructor.forEach { javaMethod, firValueParameter ->
-                            javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
-                                firValueParameter.lazyDefaultValue = lazy {
-                                    javaDefaultValue.toFirExpression(
-                                        session,
-                                        (classSymbol.fir as FirJavaClass).javaTypeParameterStack,
-                                        firValueParameter.returnTypeRef,
-                                        fakeSource
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            declarationList = FirInstantJavaDeclarationList()
         }.apply {
             if (modality == Modality.SEALED) {
                 setSealedClassInheritors {
@@ -357,6 +212,154 @@ abstract class FirJavaFacade(
 
             if (javaClass is BinaryJavaClass) {
                 sourceElement = JavaBinarySourceElement(javaClass)
+            }
+        }
+    }
+}
+
+private class FirInstantJavaDeclarationList : FirJavaDeclarationList {
+    override val declarations: List<FirDeclaration> = buildList {
+        val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
+        val classIsAnnotation = javaClass.classKind == ClassKind.ANNOTATION_CLASS
+        val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
+
+        // TODO: may be we can process fields & methods later.
+        // However, they should be built up to override resolve stage
+        for (javaField in javaClass.fields) {
+            this += convertJavaFieldToFir(
+                javaField,
+                classId,
+                javaTypeParameterStack,
+                dispatchReceiver,
+                moduleData,
+                classSymbol,
+            )
+        }
+
+        for (javaMethod in javaClass.methods) {
+            if (javaMethod.isObjectMethodInInterface()) continue
+            val firJavaMethod = convertJavaMethodToFir(
+                javaClass,
+                javaMethod,
+                classId,
+                javaTypeParameterStack,
+                dispatchReceiver,
+                moduleData,
+                classSymbol,
+            )
+
+            this += firJavaMethod
+
+            if (classIsAnnotation) {
+                val parameterForAnnotationConstructor = convertJavaAnnotationMethodToValueParameter(javaMethod, firJavaMethod, moduleData)
+                if (javaMethod.name == VALUE_METHOD_NAME) {
+                    valueParametersForAnnotationConstructor.valueParameterForValue = javaMethod to parameterForAnnotationConstructor
+                } else {
+                    valueParametersForAnnotationConstructor.valueParameters[javaMethod] = parameterForAnnotationConstructor
+                }
+            }
+        }
+
+        val javaClassDeclaredConstructors = javaClass.constructors
+        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+
+        if (javaClassDeclaredConstructors.isEmpty()
+            && javaClass.classKind == ClassKind.CLASS
+            && !javaClass.isRecord
+            && javaClass.hasDefaultConstructor()
+        ) {
+            this += convertJavaConstructorToFir(
+                javaConstructor = null,
+                constructorId,
+                javaClass,
+                ownerClassBuilder = this@buildJavaClass,
+                classTypeParameters,
+                javaTypeParameterStack,
+                parentClassSymbol,
+                moduleData,
+            )
+        }
+        for (javaConstructor in javaClassDeclaredConstructors) {
+            this += convertJavaConstructorToFir(
+                javaConstructor,
+                constructorId,
+                javaClass,
+                ownerClassBuilder = this@buildJavaClass,
+                classTypeParameters,
+                javaTypeParameterStack,
+                parentClassSymbol,
+                moduleData,
+            )
+        }
+
+        if (classKind == ClassKind.ENUM_CLASS) {
+            this += generateValuesFunction(
+                symbol,
+                source,
+                status,
+                resolvePhase,
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName,
+            )
+
+            this += generateValueOfFunction(
+                symbol,
+                source,
+                status,
+                resolvePhase,
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName,
+            )
+
+            this += generateEntriesGetter(
+                symbol,
+                source,
+                status,
+                resolvePhase,
+                moduleData,
+                classId.packageFqName,
+                classId.relativeClassName,
+            )
+        }
+
+        if (classIsAnnotation) {
+            this += buildConstructorForAnnotationClass(
+                javaClass,
+                constructorId = constructorId,
+                ownerClassBuilder = this@buildJavaClass,
+                valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor,
+                moduleData = moduleData,
+            )
+        }
+
+        // There is no need to generated synthetic declarations for java record from binary dependencies
+        //   because they are actually present in .class files
+        if (javaClass.isRecord && javaClass.isFromSource) {
+            createDeclarationsForJavaRecord(
+                javaClass,
+                classId,
+                moduleData,
+                dispatchReceiver,
+                classTypeParameters,
+                this,
+                classSymbol,
+            )
+        }
+
+        if (classIsAnnotation) {
+            valueParametersForAnnotationConstructor.forEach { javaMethod, firValueParameter ->
+                javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
+                    firValueParameter.lazyDefaultValue = lazy {
+                        javaDefaultValue.toFirExpression(
+                            session,
+                            (classSymbol.fir as FirJavaClass).javaTypeParameterStack,
+                            firValueParameter.returnTypeRef,
+                            fakeSource
+                        )
+                    }
+                }
             }
         }
     }
