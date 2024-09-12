@@ -50,10 +50,7 @@ class FirJavaFacadeForSource(
 }
 
 @ThreadSafeMutableState
-abstract class FirJavaFacade(
-    private val session: FirSession,
-    private val classFinder: JavaClassFinder,
-) {
+abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaClassFinder) {
     companion object {
         val VALUE_METHOD_NAME: Name = Name.identifier("value")
         private const val PACKAGE_INFO_CLASS_NAME = "package-info"
@@ -134,6 +131,7 @@ abstract class FirJavaFacade(
         javaTypeParameterStack: MutableJavaTypeParameterStack,
     ): FirJavaClass {
         val moduleData = getModuleDataForClass(javaClass)
+        val session = moduleData.session
         val fakeSource = javaClass.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
         return buildJavaClass {
             containingClassSymbol = parentClassSymbol
