@@ -26,10 +26,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
      * @property allowLookupByRelativePath Whether the lookup by relative paths is allowed.
      *   true - yes, allow to look up by relative path and by library name.
      *   false - no, allow to look up strictly by library name.
-     * @property isDeprecated Whether this search root is going to be removed in the future
-     *   (and a warning should be displayed when a library was resolved against this root).
      */
-    class SearchRoot(val searchRootPath: File, val allowLookupByRelativePath: Boolean = false, val isDeprecated: Boolean = false) {
+    class SearchRoot(val searchRootPath: File, val allowLookupByRelativePath: Boolean = false) {
         fun lookUp(libraryPath: File): LookupResult {
             if (libraryPath.isAbsolute) {
                 // Look up by the absolute path if it is indeed an absolute path.
@@ -53,15 +51,7 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
                 }
                 ?: return LookupResult.NotFound
 
-            return if (isDeprecated)
-                LookupResult.FoundWithWarning(
-                    library = resolvedLibrary,
-                    warningText = "KLIB resolver: Library '${libraryPath.path}' was found in a custom library repository '${searchRootPath.path}'. " +
-                            "Note, that custom library repositories are deprecated and will be removed in one of the future Kotlin releases. " +
-                            "Please, avoid using '-repo' ('-r') compiler option and specify full paths to libraries in compiler CLI arguments."
-                )
-            else
-                LookupResult.Found(resolvedLibrary)
+            return LookupResult.Found(resolvedLibrary)
         }
 
         companion object {
@@ -93,7 +83,6 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     sealed interface LookupResult {
         object NotFound : LookupResult
         data class Found(val library: File) : LookupResult
-        data class FoundWithWarning(val library: File, val warningText: String) : LookupResult
     }
 
     /**
@@ -196,10 +185,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 val repoLibs = searchRoots.asSequence().map { searchRoot ->
                     when (val lookupResult = searchRoot.lookUp(given)) {
                         is LookupResult.Found -> lookupResult.library
-                        is LookupResult.FoundWithWarning -> {
-                            logger.strongWarning(lookupResult.warningText)
-                            lookupResult.library
-                        }
                         LookupResult.NotFound -> null
                     }
                 }
