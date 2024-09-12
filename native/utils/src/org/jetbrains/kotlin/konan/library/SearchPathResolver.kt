@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
-interface SearchPathResolverWithTarget<L: KotlinLibrary>: SearchPathResolver<L> {
+interface SearchPathResolverWithTarget<L : KotlinLibrary> : SearchPathResolver<L> {
     val target: KonanTarget
 }
 
@@ -19,30 +19,26 @@ fun defaultResolver(
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
-        directLibs,
-        target,
-        distribution.klib,
-        distribution.localKonanDir.absolutePath,
-        skipCurrentDir,
-        logger
+    directLibs = directLibs,
+    target = target,
+    distributionKlib = distribution.klib,
+    skipCurrentDir = skipCurrentDir,
+    logger = logger
 )
 
 internal class KonanLibraryProperResolver(
     directLibs: List<String>,
     override val target: KonanTarget,
     distributionKlib: String?,
-    localKonanDir: String?,
     skipCurrentDir: Boolean,
     override val logger: Logger
 ) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
-    directLibs,
-    distributionKlib,
-    localKonanDir,
-    skipCurrentDir,
-    logger,
-    listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
-),  SearchPathResolverWithTarget<KonanLibrary>
-{
+    directLibs = directLibs,
+    distributionKlib = distributionKlib,
+    skipCurrentDir = skipCurrentDir,
+    logger = logger,
+    knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
+), SearchPathResolverWithTarget<KonanLibrary> {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKonanLibraryComponents(file, target, isDefault)
 
     override val distPlatformHead: File?

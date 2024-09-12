@@ -17,7 +17,6 @@ internal fun klibResolver(
 ): KotlinLibrarySearchPathResolver<KotlinLibrary> = object : KotlinLibrarySearchPathResolver<KotlinLibrary>(
     directLibs = emptyList(),
     distributionKlib,
-    localKotlinDir = null,
     skipCurrentDir,
     logger
 ) {
