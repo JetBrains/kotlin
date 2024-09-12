@@ -38,7 +38,11 @@ class WasmBoxRunner(
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
 
-        val testJsQuiet = """
+        val filesToIgnoreInSizeChecks = mutableSetOf<File>()
+
+        fun File.ignoreInSizeChecks() = also { filesToIgnoreInSizeChecks.add(it) }
+
+        val testJs = """
                     let actualResult;
                     try {
                         // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
@@ -55,15 +59,10 @@ class WasmBoxRunner(
     
                     if (actualResult !== "OK")
                         throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
-                """.trimIndent()
 
-        val testJsVerbose = testJsQuiet + """
-            
-            
-                    console.log('test passed');
+                    if (${debugMode >= DebugMode.DEBUG})
+                        console.log('test passed');
                 """.trimIndent()
-
-        val testJs = if (debugMode >= DebugMode.DEBUG) testJsVerbose else testJsQuiet
 
         fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
             val dir = File(outputDirBase, mode)
@@ -71,13 +70,17 @@ class WasmBoxRunner(
 
             writeCompilationResult(res, dir, baseFileName, false)
 
-            File(dir, "test.mjs").writeText(testJs)
+            File(dir, "test.mjs")
+                .ignoreInSizeChecks()
+                .writeText(testJs)
 
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
 
             if (debugMode >= DebugMode.DEBUG) {
-                File(dir, "index.html").writeText(
-                    """
+                File(dir, "index.html")
+                    .ignoreInSizeChecks()
+                    .writeText(
+                        """
                                 <!DOCTYPE html>
                                 <html lang="en">
                                 <body>
@@ -97,7 +100,7 @@ class WasmBoxRunner(
                                 </body>
                                 </html>
                             """.trimIndent()
-                )
+                    )
 
                 val path = dir.absolutePath
                 println(" ------ $mode Wat  file://$path/index.wat")
@@ -133,8 +136,8 @@ class WasmBoxRunner(
             processExceptions(exceptions)
 
             when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir)
+                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
+                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
             }
         }
 
@@ -175,7 +178,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     return null
 }
 
-fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
+fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>) {
     val expectedDceSizes =
         InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
             .map {
@@ -184,25 +187,26 @@ fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, te
                 val size = it.substring(i + 1)
                 extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
             }
-    assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes)
+    assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes, filesToIgnore)
 }
 
-fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
+fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>) {
     val expectedOptimizeSizes = InTextDirectivesUtils
         .findListWithPrefixes(testFileContent, "// WASM_OPT_EXPECTED_OUTPUT_SIZE: ")
         .lastOrNull()
         ?.filter(Char::isDigit)
         ?.toInt() ?: return
 
-    assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes))
+    assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
 }
 
 private fun assertExpectedSizesMatchActual(
     debugMode: DebugMode,
     testDir: File,
-    fileExtensionToItsExpectedSize: Iterable<Pair<String, Int>>
+    fileExtensionToItsExpectedSize: Iterable<Pair<String, Int>>,
+    filesToIgnore: Set<File>
 ) {
-    val filesByExtension = testDir.listFiles()?.groupBy { it.extension }.orEmpty()
+    val filesByExtension = testDir.listFiles()?.filterNot { it in filesToIgnore }?.groupBy { it.extension }.orEmpty()
 
     val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
         val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
