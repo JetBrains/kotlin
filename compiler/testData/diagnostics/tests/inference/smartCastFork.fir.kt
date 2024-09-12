@@ -14,7 +14,7 @@ fun <T> bar(a: A<T>, w: T) {
     if (a is B) {
         baz(a, 1) // OK in FE1.0
         baz(a, w) // Type mismatch: Required Int, but found E
-        <!INFERENCE_UNSUCCESSFUL_FORK("it(B & A<T>) <: A<TypeVariable(F)>")!>baz<!>(a, "")
+        baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>, "")
     }
 
     if (a is B || a is C) {

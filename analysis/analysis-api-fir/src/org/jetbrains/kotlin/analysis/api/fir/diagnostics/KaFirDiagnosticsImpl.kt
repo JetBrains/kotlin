@@ -1933,12 +1933,6 @@ internal class RedundantSpreadOperatorInNamedFormInFunctionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.RedundantSpreadOperatorInNamedFormInFunction
 
-internal class InferenceUnsuccessfulForkImpl(
-    override val message: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InferenceUnsuccessfulFork
-
 internal class NestedClassAccessedViaInstanceReferenceImpl(
     override val symbol: KaClassLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,

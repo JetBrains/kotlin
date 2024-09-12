@@ -12,12 +12,12 @@ interface C : A<Long>
 fun <F> Controller<F>.baz(a: A<F>, f: F) {}
 
 fun <T> bar(a: A<T>, w: T) {
-    <!INFERENCE_UNSUCCESSFUL_FORK, INFERENCE_UNSUCCESSFUL_FORK, INFERENCE_UNSUCCESSFUL_FORK!>generate<!> {
-        <!INFERENCE_UNSUCCESSFUL_FORK!>if (a is B) {
-            baz(a, 1)
-            <!INFERENCE_UNSUCCESSFUL_FORK!>baz<!>(a, w)
-            <!INFERENCE_UNSUCCESSFUL_FORK!>baz<!>(a, "")
-        }<!>
+    generate {
+        if (a is B) {
+            baz(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>a<!>, 1)
+            baz(a, w)
+            <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
+        }
     }
 
     generate {
@@ -30,14 +30,14 @@ fun <T> bar(a: A<T>, w: T) {
         }
     }
 
-    <!INFERENCE_UNSUCCESSFUL_FORK, INFERENCE_UNSUCCESSFUL_FORK!>generate<!> {
+    generate {
         if (a is B) {
-            baz(a, 1)
+            baz(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>a<!>, 1)
         }
 
-        <!INFERENCE_UNSUCCESSFUL_FORK!>if (a is B) {
-            <!INFERENCE_UNSUCCESSFUL_FORK!>baz<!>(a, w)
-        }<!>
+        if (a is B) {
+            <!ARGUMENT_TYPE_MISMATCH!>baz(a, w)<!>
+        }
     }
 
     generate {

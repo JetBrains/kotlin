@@ -451,7 +451,6 @@ object FirErrors {
     val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION", ProhibitAssigningSingleElementsToVarargsInNamedForm, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
-    val INFERENCE_UNSUCCESSFUL_FORK: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INFERENCE_UNSUCCESSFUL_FORK", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Ambiguity

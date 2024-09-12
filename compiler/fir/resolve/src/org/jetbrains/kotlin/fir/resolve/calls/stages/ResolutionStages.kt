@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
@@ -794,8 +794,13 @@ internal object ConstraintSystemForks : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (candidate.system.hasContradiction) return
 
-        candidate.system.checkIfForksMightBeSuccessfullyResolved()?.let { csError ->
-            sink.yieldDiagnostic(InferenceError(csError))
+        if (candidate.system.areThereContradictionsInForks()) {
+            // resolving constraints would lead to regular errors reported
+            candidate.system.resolveForkPointsConstraints()
+
+            for (error in candidate.system.errors) {
+                sink.reportDiagnostic(InferenceError(error))
+            }
         }
     }
 }

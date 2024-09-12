@@ -350,7 +350,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_C
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_UNSUCCESSFUL_FORK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFIX_MODIFIER_REQUIRED
@@ -1396,7 +1395,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator.")
         map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator.")
-        map.put(INFERENCE_UNSUCCESSFUL_FORK, "Unsuccessful inference fork at position ''{0}''.", TO_STRING)
         map.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference.", RENDER_CLASS_OR_OBJECT_NAME_QUOTED)
         map.put(
             INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION,

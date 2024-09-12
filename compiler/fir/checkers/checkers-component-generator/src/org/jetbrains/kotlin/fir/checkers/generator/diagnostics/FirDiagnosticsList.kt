@@ -722,9 +722,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION by warning<KtExpression>()
         val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning<KtExpression>()
 
-        val INFERENCE_UNSUCCESSFUL_FORK by error<PsiElement> {
-            parameter<String>("message")
-        }
         val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error<PsiElement> {
             parameter<FirClassLikeSymbol<*>>("symbol")
         }

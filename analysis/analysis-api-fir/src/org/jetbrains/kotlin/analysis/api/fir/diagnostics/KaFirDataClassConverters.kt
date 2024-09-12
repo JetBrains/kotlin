@@ -2253,13 +2253,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INFERENCE_UNSUCCESSFUL_FORK) { firDiagnostic ->
-        InferenceUnsuccessfulForkImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE) { firDiagnostic ->
         NestedClassAccessedViaInstanceReferenceImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),

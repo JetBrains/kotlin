@@ -1613,11 +1613,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantSpreadOperatorInNamedFormInFunction::class
     }
 
-    interface InferenceUnsuccessfulFork : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InferenceUnsuccessfulFork::class
-        val message: String
-    }
-
     interface NestedClassAccessedViaInstanceReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NestedClassAccessedViaInstanceReference::class
         val symbol: KaClassLikeSymbol

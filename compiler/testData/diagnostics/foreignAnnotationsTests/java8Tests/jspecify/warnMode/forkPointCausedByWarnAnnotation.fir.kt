@@ -22,6 +22,6 @@ fun myRun(block: () -> Unit) {}
 
 fun foo(a: A<String>, b: B<String, Boolean>) {
     myRun {
-        a.<!INFERENCE_UNSUCCESSFUL_FORK!>foo<!>(b)
+        a.foo(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>b<!>)
     }
 }

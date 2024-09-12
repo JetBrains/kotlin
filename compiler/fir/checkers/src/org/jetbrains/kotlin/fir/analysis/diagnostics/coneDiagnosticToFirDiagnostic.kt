@@ -19,11 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -41,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
@@ -611,13 +606,6 @@ private fun ConstraintSystemError.toDiagnostic(
                     ?: candidate.sourceOfCallToSymbolWith(this.typeVariable as ConeTypeVariable)
                     ?: source,
                 typeVariableName,
-            )
-        }
-
-        is NoSuccessfulFork -> {
-            FirErrors.INFERENCE_UNSUCCESSFUL_FORK.createOn(
-                source,
-                position.initialConstraint.asStringWithoutPosition(),
             )
         }
 

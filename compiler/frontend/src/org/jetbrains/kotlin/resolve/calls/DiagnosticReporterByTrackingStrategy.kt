@@ -815,8 +815,6 @@ class DiagnosticReporterByTrackingStrategy(
             is ConstrainingTypeIsError -> {}
             // LowerPriorityToPreserveCompatibility is not expected to report something
             is LowerPriorityToPreserveCompatibility -> {}
-            // NoSuccessfulFork does not exist in K1
-            is NoSuccessfulFork -> shouldNotBeCalled()
             // MultiLambdaBuilderInferenceRestriction does not exist in K1
             is org.jetbrains.kotlin.resolve.calls.inference.model.MultiLambdaBuilderInferenceRestriction<*> -> shouldNotBeCalled()
             // NotEnoughInformationForTypeParameterImpl is already considered above
