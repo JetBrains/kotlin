@@ -123,6 +123,16 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
 
+    private val directLibraryUniqueNames: Map</* Unique Name*/ String, File> by lazy {
+        HashMap<String, File>().apply {
+            for (directLib in directLibs) {
+                val absolutePath = SearchRoot.lookUpByAbsolutePath(File(directLib)) ?: continue
+                val uniqueName = libraryComponentBuilder(absolutePath, false).singleOrNull()?.uniqueName ?: continue
+                this[uniqueName] = absolutePath
+            }
+        }
+    }
+
     private val directLibraries: List<KotlinLibrary> by lazy {
         directLibs.mapNotNull { SearchRoot.lookUpByAbsolutePath(File(it)) }.flatMap { libraryComponentBuilder(it, false) }
     }
@@ -163,11 +173,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         // resolution) so we can pass it to the compiler directly. This code takes this into account and looks for
         // a library dependencies also in libs passed to the compiler as files (passed to the resolver as the
         // 'directLibraries' property).
-        return directLibraries.asSequence().filter {
-            it.uniqueName == givenName
-        }.map {
-            it.libraryFile
-        }
+        return generateSequence { directLibraryUniqueNames[givenName] }
     }
 
     override fun resolutionSequence(givenPath: String): Sequence<File> {
