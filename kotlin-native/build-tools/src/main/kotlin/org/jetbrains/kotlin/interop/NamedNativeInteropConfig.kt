@@ -5,25 +5,19 @@
 
 package org.jetbrains.kotlin.interop
 
-import bootstrapKotlinVersion
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.Platform
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
@@ -55,7 +49,6 @@ class NamedNativeInteropConfig(
     }
 
     private val interopStubsName = name + "InteropStubs"
-    private val interopStubs: SourceSet = project.extensions.getByType<JavaPluginExtension>().sourceSets.create(interopStubsName)
 
     val genTask = project.tasks.register<JavaExec>("gen" + interopStubsName.capitalized)
 
@@ -135,23 +128,7 @@ class NamedNativeInteropConfig(
         }
     }
 
-    val configuration: Configuration = project.configurations.create(interopStubs.name)
-
     init {
-        project.tasks.getByName<KotlinCompile>(interopStubs.getTaskName("compile", "Kotlin")) {
-            compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
-        }
-
-        (interopStubs.extensions.getByName("kotlin") as SourceDirectorySet).srcDir(project.tasks.named(genTask.name).map { generatedSrcDir })
-
-        project.dependencies {
-            (interopStubs.apiConfigurationName)(project(":kotlin-native:Interop:Runtime"))
-            (interopStubs.apiConfigurationName)("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
-        }
-
-        configuration.extendsFrom(project.configurations.getByName(interopStubs.runtimeClasspathConfigurationName))
-        project.dependencies.add(this.configuration.name, interopStubs.output)
-
         genTask.configure {
             notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
             dependsOn(project.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
