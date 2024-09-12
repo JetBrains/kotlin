@@ -246,7 +246,14 @@ internal class StubBasedFirTypeDeserializer(
 
         val typeElement = typeReference.typeElement?.unwrapNullability()
         val arguments = when (typeElement) {
-            is KtUserType -> typeElement.typeArguments.map { typeArgument(it) }.toTypedArray()
+            is KtUserType -> buildList {
+                // The type for Outer<T>.Inner<S> needs to have type args <S, T>
+                var current: KtUserType? = typeElement
+                while (current != null) {
+                    current.typeArguments.forEach { add(typeArgument(it)) }
+                    current = current.qualifier
+                }
+            }.toTypedArray()
             is KtFunctionType -> buildList {
                 typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
                 addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })

@@ -50,11 +50,11 @@ public open [ResolvedTo(BODY_RESOLVE)] class Outer<[ResolvedTo(BODY_RESOLVE)] T>
 
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun createInner(): R|Outer.Inner|
+    public final [ResolvedTo(BODY_RESOLVE)] fun createInner(): R|Outer.Inner<T>|
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun createInner2(): R|Outer.Nested2.Inner2<kotlin/Int>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun createInner2(): R|Outer.Nested2.Inner2<kotlin/Int, kotlin/Short, T>|
 
-    public final [ResolvedTo(BODY_RESOLVE)] fun createInner3(): R|Outer.Nested3.Inner3<kotlin/Int>|
+    public final [ResolvedTo(BODY_RESOLVE)] fun createInner3(): R|Outer.Nested3.Inner3<kotlin/Int, kotlin/Short>|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|Outer<T>|
 
