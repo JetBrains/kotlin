@@ -95,6 +95,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   }
 
   @Test
+  @TestMetadata("genericsOnOuterClass.kt")
+  public void testGenericsOnOuterClass() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/genericsOnOuterClass.kt");
+  }
+
+  @Test
   @TestMetadata("incompleteDelegation.kt")
   public void testIncompleteDelegation() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/incompleteDelegation.kt");
