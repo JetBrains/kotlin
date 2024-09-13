@@ -476,25 +476,23 @@ private fun compileSources(
 private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
 ): KotlinLibraryResolverImpl<KonanLibrary> {
-    val libraries = cinteropArguments.library
     return defaultResolver(
-            libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
-            target,
-            Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
+        directLibs = cinteropArguments.library,
+        target,
+        Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
     ).libraryResolver()
 }
 
 private fun resolveDependencies(
         resolver: KotlinLibraryResolverImpl<KonanLibrary>, cinteropArguments: CInteropArguments
 ): List<KotlinLibrary> {
-    val libraries = cinteropArguments.library
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
     val noEndorsedLibs = cinteropArguments.noendorsedlibs
     return resolver.resolveWithDependencies(
-            libraries.toUnresolvedLibraries,
-            noStdLib = false,
-            noDefaultLibs = noDefaultLibs,
-            noEndorsedLibs = noEndorsedLibs
+        unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
+        noStdLib = false,
+        noDefaultLibs = noDefaultLibs,
+        noEndorsedLibs = noEndorsedLibs
     ).getFullList(TopologicalLibraryOrder)
 }
 
