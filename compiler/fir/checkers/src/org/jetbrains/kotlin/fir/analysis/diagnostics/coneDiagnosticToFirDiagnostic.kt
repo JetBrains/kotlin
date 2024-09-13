@@ -117,7 +117,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
                     it.contextArguments?.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) == true ||
                     it.chosenExtensionReceiver?.containsErrorTypeForSuppressingAmbiguityError() == true
         } -> null
-        applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
+        applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol }) // create
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
                 (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableNullableReceiver>()?.to(it)
