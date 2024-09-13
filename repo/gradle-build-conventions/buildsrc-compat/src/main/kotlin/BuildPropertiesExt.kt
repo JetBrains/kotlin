@@ -60,3 +60,19 @@ val KotlinBuildProperties.limitTestTasksConcurrency: Boolean
 
 val KotlinBuildProperties.konanDataDir: String?
     get() = getOrNull("konan.data.dir") as String?
+
+/**
+ * If `true`, `:kotlin-native:platformLibs` will compile platform libraries klibs without parallelism.
+ */
+val KotlinBuildProperties.limitPlatformLibsCompilationConcurrency: Boolean
+    get() = !getBoolean("kotlin.native.platformLibs.parallel", true)
+
+
+/**
+ * If `true`, `:kotlin-native:platformLibs` will build platform libraries caches without parallelism.
+ */
+val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
+    get() {
+        // if platform libs compilation parallelism is disabled, also disable parallel cache building by default.
+        return !getBoolean("kotlin.native.platformLibs.parallelCaches", !limitPlatformLibsCompilationConcurrency)
+    }

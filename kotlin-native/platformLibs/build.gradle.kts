@@ -25,6 +25,21 @@ fun defFileToLibName(target: String, name: String) = "$target-$name"
 
 private fun interopTaskName(libName: String, targetName: String) = "compileKonan${libName.capitalized}${targetName.capitalized}"
 
+private abstract class CompilePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
+private abstract class CachePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
+
+private val compilePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsent("compilePlatformLibsSemaphore", CompilePlatformLibsSemaphore::class.java) {
+    if (kotlinBuildProperties.limitPlatformLibsCompilationConcurrency) {
+        maxParallelUsages.set(1)
+    }
+}
+
+private val cachePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsent("cachePlatformLibsSemaphore", CachePlatformLibsSemaphore::class.java) {
+    if (kotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency) {
+        maxParallelUsages.set(1)
+    }
+}
+
 // endregion
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
@@ -77,7 +92,8 @@ enabledTargets(platformManager).forEach { target ->
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )
-            this.enableParallel.set(project.getBooleanProperty("kotlin.native.platformLibs.parallel") ?: true)
+
+            usesService(compilePlatformLibsSemaphore)
         }
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
@@ -103,6 +119,8 @@ enabledTargets(platformManager).forEach { target ->
                     dependsOn(it)
                     dependsOn("${it}Cache")
                 }
+
+                usesService(cachePlatformLibsSemaphore)
             }
             cacheTasks.add(cacheTask)
         }

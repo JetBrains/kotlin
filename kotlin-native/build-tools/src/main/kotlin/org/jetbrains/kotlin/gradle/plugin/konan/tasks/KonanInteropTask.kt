@@ -16,7 +16,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -47,9 +46,6 @@ abstract class KonanInteropTask @Inject constructor(
 
     @get:Input
     abstract val extraOpts: ListProperty<String>
-
-    @get:Internal
-    val enableParallel: Property<Boolean> = project.objects.property<Boolean>().convention(false)
 
     @get:InputFile
     abstract val defFile: RegularFileProperty
@@ -113,15 +109,11 @@ abstract class KonanInteropTask @Inject constructor(
 
             addAll(extraOpts.get())
         }
-        if (enableParallel.get()) {
-            val workQueue = workerExecutor.noIsolation()
-            interchangeBox[this.path] = interopRunner
-            workQueue.submit(RunTool::class.java) {
-                taskName = path
-                this.args = args
-            }
-        } else {
-            interopRunner.run(args)
+        val workQueue = workerExecutor.noIsolation()
+        interchangeBox[this.path] = interopRunner
+        workQueue.submit(RunTool::class.java) {
+            taskName = path
+            this.args = args
         }
     }
 }
