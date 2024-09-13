@@ -121,13 +121,13 @@ class WasmFileCodegenContext(
             wasmFileFragment.classIds.reference(irClass.getReferenceKey())
         }
 
-    fun addJsFun(importName: WasmSymbol<String>, jsCode: String) {
-        wasmFileFragment.jsFuns +=
+    fun addJsFun(irFunction: IrFunctionSymbol, importName: WasmSymbol<String>, jsCode: String) {
+        wasmFileFragment.jsFuns[irFunction.getReferenceKey()] =
             WasmCompiledModuleFragment.JsCodeSnippet(importName = importName, jsCode = jsCode)
     }
 
-    fun addJsModuleImport(module: String) {
-        wasmFileFragment.jsModuleImports += module
+    fun addJsModuleImport(irFunction: IrFunctionSymbol, module: String) {
+        wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
     val scratchMemAddr: WasmSymbol<Int>
@@ -158,8 +158,8 @@ class WasmFileCodegenContext(
         wasmFileFragment.testFun = testFun.getReferenceKey()
     }
 
-    fun addClosureCallExport(exportSignature: String, exportFunction: IrFunctionSymbol) {
-        wasmFileFragment.closureCallExports.add(exportSignature to exportFunction.getReferenceKey())
+    fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {
+        wasmFileFragment.equivalentFunctions.add(key to function.getReferenceKey())
     }
 
     fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {

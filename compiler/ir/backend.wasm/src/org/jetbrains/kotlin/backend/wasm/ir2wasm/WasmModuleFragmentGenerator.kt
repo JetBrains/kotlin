@@ -66,7 +66,16 @@ internal fun compileIrFile(
         wasmFileCodegenContext.addMainFunctionWrapper(symbol)
     }
     fileContext.closureCallExports.forEach { (exportSignature, function) ->
-        wasmFileCodegenContext.addClosureCallExport(exportSignature, function.symbol)
+        wasmFileCodegenContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
+    }
+    fileContext.kotlinClosureToJsConverters.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<2>_$exportSignature", function.symbol)
+    }
+    fileContext.jsClosureCallers.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<3>_$exportSignature", function.symbol)
+    }
+    fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<4>_$exportSignature", function.symbol)
     }
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->

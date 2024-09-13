@@ -645,8 +645,8 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeReferencableElements(stringLiteralPoolId, ::serializeString, ::serializeInt)
             serializeReferencableElements(constantArrayDataSegmentId, { serializePair(it, { serializeList(it, ::serializeLong) }, ::serializeWasmType)}, ::serializeInt)
             serializeList(interfaceUnions) { serializeList(it, ::serializeIdSignature) }
-            serializeList(jsFuns, ::serializeJsCodeSnippet)
-            serializeSet(jsModuleImports, ::serializeString)
+            serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
+            serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
             serializeNullable(scratchMemAddr) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
@@ -655,7 +655,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeList(fieldInitializers, ::serializeFieldInitializer)
             serializeList(mainFunctionWrappers, ::serializeIdSignature)
             serializeNullable(testFun, ::serializeIdSignature)
-            serializeList(closureCallExports) { serializePair(it, ::serializeString, ::serializeIdSignature) }
+            serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
             serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
             serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
             serializeNullable(tryGetAssociatedObjectFun, ::serializeIdSignature)

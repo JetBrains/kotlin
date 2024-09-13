@@ -636,7 +636,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
         testFun = deserializeTestFun(),
-        closureCallExports = deserializeClosureCallExports(),
+        equivalentFunctions = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
         tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject(),
@@ -661,8 +661,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeStringLiteralPoolId() = deserializeReferencableElements(::deserializeString, ::deserializeInt)
     private fun deserializeConstantArrayDataSegmentId(): ReferencableElements<Pair<List<Long>, WasmType>, Int> = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
     private fun deserializeInterfaceUnions(): MutableList<List<IdSignature>> = deserializeList { deserializeList(::deserializeIdSignature) }
-    private fun deserializeJsFuns() = deserializeList(::deserializeJsCodeSnippet)
-    private fun deserializeJsModuleImports() = deserializeSet(::deserializeString)
+    private fun deserializeJsFuns() = deserializeMap(::deserializeIdSignature, ::deserializeJsCodeSnippet)
+    private fun deserializeJsModuleImports() = deserializeMap(::deserializeIdSignature, ::deserializeString)
     private fun deserializeExports() = deserializeList(::deserializeExport)
     private fun deserializeNullableIntSymbol() = deserializeNullable { deserializeSymbol(::deserializeInt) }
     private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)

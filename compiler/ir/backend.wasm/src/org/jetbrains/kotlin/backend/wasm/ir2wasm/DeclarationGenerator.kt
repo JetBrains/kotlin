@@ -66,26 +66,6 @@ class DeclarationGenerator(
             return
         }
 
-        val wasmImportModule = declaration.getWasmImportDescriptor()
-        val jsCode = declaration.getJsFunAnnotation()
-        val importedName = when {
-            wasmImportModule != null -> {
-                check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
-                wasmFileCodegenContext.addJsModuleImport(wasmImportModule.moduleName)
-                wasmImportModule
-            }
-            jsCode != null -> {
-                // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
-                require(declaration is IrSimpleFunction)
-                val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
-                wasmFileCodegenContext.addJsFun(jsFunName, jsCode)
-                WasmImportDescriptor("js_code", jsFunName)
-            }
-            else -> {
-                null
-            }
-        }
-
         if (declaration.isFakeOverride)
             return
 
@@ -115,6 +95,25 @@ class DeclarationGenerator(
 
         val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
 
+        val wasmImportModule = declaration.getWasmImportDescriptor()
+        val jsCode = declaration.getJsFunAnnotation()
+        val importedName = when {
+            wasmImportModule != null -> {
+                check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
+                wasmFileCodegenContext.addJsModuleImport(declaration.symbol, wasmImportModule.moduleName)
+                wasmImportModule
+            }
+            jsCode != null -> {
+                // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
+                require(declaration is IrSimpleFunction)
+                val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
+                wasmFileCodegenContext.addJsFun(declaration.symbol, jsFunName, jsCode)
+                WasmImportDescriptor("js_code", jsFunName)
+            }
+            else -> {
+                null
+            }
+        }
         if (importedName != null) {
             // Imported functions don't have bodies. Declaring the signature:
             wasmFileCodegenContext.defineFunction(

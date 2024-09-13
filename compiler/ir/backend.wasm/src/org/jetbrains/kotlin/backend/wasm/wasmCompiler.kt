@@ -198,8 +198,8 @@ fun compileWasm(
         val jsFuns = mutableSetOf<JsCodeSnippet>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
         wasmCompiledFileFragments.forEach { fragment ->
-            jsModuleImports.addAll(fragment.jsModuleImports)
-            jsFuns.addAll(fragment.jsFuns)
+            jsModuleImports.addAll(fragment.jsModuleImports.values)
+            jsFuns.addAll(fragment.jsFuns.values)
             jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
         }
 
