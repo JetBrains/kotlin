@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
@@ -23,7 +24,7 @@ bitcode {
     }
 }
 
-val cflags = listOf(
+val includeFlags = listOf(
         "-I${layout.projectDirectory.dir("include").asFile}",
         *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
 )
@@ -37,13 +38,13 @@ native {
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-            flags(*cflags.toTypedArray(),
+            flags(*includeFlags.toTypedArray(),
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
     sourceSet {
         "main" {
-            file(layout.buildDirectory.file("interopTemp/orgjetbrainskotlinbackendkonanenvstubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
+            file(layout.buildDirectory.file("nativeInteropStubs/env/c/stubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
         }
     }
 
@@ -64,14 +65,9 @@ val nativelibs by project.tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("nativelibs"))
 }
 
-kotlinNativeInterop {
-    create("env") {
-        defFile("env.konan.backend.kotlin.jetbrains.org.def")
-        compilerOpts(cflags)
-        headers(listOf("Env.h"))
-
-        dependsOn(bitcode.hostTarget.module("env").get().sourceSets.main.get().task.get())
-    }
+kotlinNativeInterop.create("env").genTask.configure {
+    defFile.set(layout.projectDirectory.file("env.konan.backend.kotlin.jetbrains.org.def"))
+    headersDirs.from(layout.projectDirectory.dir("include"))
 }
 
 tasks.named(solib("orgjetbrainskotlinbackendkonanenvstubs")).configure {
@@ -79,9 +75,8 @@ tasks.named(solib("orgjetbrainskotlinbackendkonanenvstubs")).configure {
 }
 
 native.sourceSets["main"]!!.implicitTasks()
-tasks.named("orgjetbrainskotlinbackendkonanenvstubs.o").configure {
-    dependsOn(kotlinNativeInterop["env"].genTask)
-    inputs.file(layout.buildDirectory.file("interopTemp/orgjetbrainskotlinbackendkonanenvstubs.c"))
+tasks.named("stubs.o").configure {
+    inputs.file(kotlinNativeInterop["env"].genTask.map { it.cBridge })
 }
 
 

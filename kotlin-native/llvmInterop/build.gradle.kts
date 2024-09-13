@@ -11,14 +11,16 @@ plugins {
     id("native-dependencies")
 }
 
-val commonFlags = listOf(
+val includeFlags = listOf(
         "-I${nativeDependencies.llvmPath}/include",
         "-I${rootProject.project(":kotlin-native:llvmDebugInfoC").projectDir}/src/main/include",
         "-I${rootProject.project(":kotlin-native:libllvmext").projectDir}/src/main/include",
+        *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
+)
+val commonFlags = listOf(
         "-Wall", "-W", "-Wno-unused-parameter", "-Wwrite-strings", "-Wmissing-field-initializers",
         "-pedantic", "-Wno-long-long", "-Wcovered-switch-default", "-Wdelete-non-virtual-dtor",
         "-DNDEBUG", "-D__STDC_CONSTANT_MACROS", "-D__STDC_FORMAT_MACROS", "-D__STDC_LIMIT_MACROS",
-        *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
 )
 val cflags = commonFlags + listOf("-std=c99")
 
@@ -105,13 +107,13 @@ native {
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-            flags(*cflags.toTypedArray(),
+            flags(*includeFlags.toTypedArray(), *cflags.toTypedArray(),
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
     sourceSet {
         "main" {
-            file(layout.buildDirectory.file("interopTemp/llvmstubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
+            file(layout.buildDirectory.file("nativeInteropStubs/llvm/c/stubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
         }
     }
 
@@ -137,26 +139,19 @@ val nativelibs by project.tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("nativelibs"))
 }
 
-kotlinNativeInterop {
-    create("llvm") {
-        defFile("llvm.def")
-        compilerOpts(cflags)
-        headers(listOf(
-                "llvm-c/Core.h", "llvm-c/Target.h", "llvm-c/Analysis.h", "llvm-c/BitWriter.h",
-                "llvm-c/BitReader.h", "llvm-c/Transforms/PassBuilder.h",
-                "llvm-c/TargetMachine.h", "llvm-c/Target.h", "llvm-c/Linker.h",
-                "llvm-c/DebugInfo.h", "DebugInfoC.h", "CAPIExtensions.h", "RemoveRedundantSafepoints.h", "OpaquePointerAPI.h"
-        ))
-
-        dependsOn(":kotlin-native:llvmDebugInfoC:${lib("debugInfo")}")
-        dependsOn(":kotlin-native:libllvmext:${lib("llvmext")}")
-    }
+kotlinNativeInterop.create("llvm").genTask.configure {
+    defFile.set(layout.projectDirectory.file("llvm.def"))
+    compilerOptions.addAll(cflags)
+    headersDirs.from(
+            "${nativeDependencies.llvmPath}/include",
+            "${rootProject.project(":kotlin-native:llvmDebugInfoC").projectDir}/src/main/include",
+            "${rootProject.project(":kotlin-native:libllvmext").projectDir}/src/main/include",
+    )
 }
 
 native.sourceSets["main"]!!.implicitTasks()
-tasks.named("llvmstubs.o").configure {
-    dependsOn(kotlinNativeInterop["llvm"].genTask)
-    inputs.file(layout.buildDirectory.file("interopTemp/llvmstubs.c"))
+tasks.named("stubs.o").configure {
+    inputs.file(kotlinNativeInterop["llvm"].genTask.map { it.cBridge })
 }
 
 dependencies {

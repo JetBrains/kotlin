@@ -11,7 +11,6 @@ plugins {
 }
 
 val libclangextProject = project(":kotlin-native:libclangext")
-val libclangextTask = libclangextProject.path + ":build"
 val libclangextDir = libclangextProject.layout.buildDirectory.get().asFile
 val libclangextIsEnabled = libclangextProject.findProperty("isEnabled")!! as Boolean
 
@@ -23,11 +22,11 @@ val libclang =
             "lib/${System.mapLibraryName("clang")}"
         }
 
-val commonFlags = listOf("-I${nativeDependencies.llvmPath}/include",
+val includeFlags = listOf("-I${nativeDependencies.llvmPath}/include",
         "-I${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
         *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni)
-val cflags = commonFlags + listOf("-std=c99")
-val cxxflags = commonFlags + listOf("-std=c++11")
+val cflags = listOf("-std=c99")
+val cxxflags = listOf("-std=c++11")
 
 val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
 
@@ -87,12 +86,12 @@ native {
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-            flags(*cflags.toTypedArray(),
+            flags(*includeFlags.toTypedArray(), *cflags.toTypedArray(),
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
         (".cpp" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
-            flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
+            flags(*includeFlags.toTypedArray(), *cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
 
     }
@@ -128,17 +127,13 @@ val nativelibs by project.tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("nativelibs"))
 }
 
-kotlinNativeInterop {
-    this.create("clang") {
-        defFile("clang.def")
-        compilerOpts(cflags)
-        headers(listOf("clang-c/Index.h", "clang-c/ext.h"))
-
-        genTask.configure {
-            dependsOn(libclangextTask)
-            inputs.dir(libclangextDir)
-        }
-    }
+kotlinNativeInterop.create("clang").genTask.configure {
+    defFile.set(layout.projectDirectory.file("clang.def"))
+    compilerOptions.addAll(cflags)
+    headersDirs.from(
+            "${nativeDependencies.llvmPath}/include",
+            "${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
+    )
 }
 
 dependencies {
@@ -167,20 +162,17 @@ artifacts {
     }
 }
 
-// Please note that list of headers should be fixed manually.
-// See KT-46231 for details.
+// TODO: Replace with a common way to generate sources. Also add a test that generation didn't change checked-in sources.
 val updatePrebuilt by tasks.registering(Sync::class) {
-    dependsOn("genClangInteropStubs")
-
     into(layout.projectDirectory.dir("prebuilt/nativeInteropStubs"))
 
-    from(layout.buildDirectory.dir("nativeInteropStubs/clang/kotlin")) {
+    from(kotlinNativeInterop["clang"].genTask.map { it.kotlinBridges }) {
         include("clang/clang.kt")
         into("kotlin")
     }
 
-    from(layout.buildDirectory.dir("interopTemp")) {
-        include("clangstubs.c")
+    from(kotlinNativeInterop["clang"].genTask.map { it.cBridge }) {
         into("c")
+        rename("stubs.c", "clangstubs.c")
     }
 }

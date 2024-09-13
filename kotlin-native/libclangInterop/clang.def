@@ -1,3 +1,5 @@
+headers = clang-c/Index.h clang-c/ext.h
+
 headerFilter = clang-c/**
 
 strictEnums = CXErrorCode CXCursorKind CXTypeKind CXDiagnosticSeverity CXLoadDiag_Error CXSaveError \

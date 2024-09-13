@@ -23,7 +23,7 @@ bitcode {
     }
 }
 
-val cflags = listOf(
+val includeFlags = listOf(
         "-I${layout.projectDirectory.dir("include").asFile}",
         *nativeDependencies.hostPlatform.clangForJni.hostCompilerArgsForJni
 )
@@ -37,13 +37,13 @@ native {
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
-            flags(*cflags.toTypedArray(),
+            flags(*includeFlags.toTypedArray(),
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
     sourceSet {
         "main" {
-            file(layout.buildDirectory.file("interopTemp/orgjetbrainskotlinbackendkonanfilesstubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
+            file(layout.buildDirectory.file("nativeInteropStubs/files/c/stubs.c").get().asFile.toRelativeString(layout.projectDirectory.asFile))
         }
     }
 
@@ -64,14 +64,9 @@ val nativelibs by project.tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("nativelibs"))
 }
 
-kotlinNativeInterop {
-    create("files") {
-        defFile("files.konan.backend.kotlin.jetbrains.org.def")
-        compilerOpts(cflags)
-        headers(listOf("Files.h"))
-
-        dependsOn(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get())
-    }
+kotlinNativeInterop.create("files").genTask.configure {
+    defFile.set(layout.projectDirectory.file("files.konan.backend.kotlin.jetbrains.org.def"))
+    headersDirs.from(layout.projectDirectory.dir("include"))
 }
 
 tasks.named(solib("orgjetbrainskotlinbackendkonanfilesstubs")).configure {
@@ -79,9 +74,8 @@ tasks.named(solib("orgjetbrainskotlinbackendkonanfilesstubs")).configure {
 }
 
 native.sourceSets["main"]!!.implicitTasks()
-tasks.named("orgjetbrainskotlinbackendkonanfilesstubs.o").configure {
-    dependsOn(kotlinNativeInterop["files"].genTask)
-    inputs.file(layout.buildDirectory.file("interopTemp/orgjetbrainskotlinbackendkonanfilesstubs.c"))
+tasks.named("stubs.o").configure {
+    inputs.file(kotlinNativeInterop["files"].genTask.map { it.cBridge })
 }
 
 
