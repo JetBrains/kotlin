@@ -5,7 +5,7 @@ plugins {
 kotlin.jvmToolchain(11)
 
 dependencies {
-    compileOnly(project(":plugins:compose-compiler-plugin:compiler-hosted"))
+    embedded(project(":plugins:compose-compiler-plugin:compiler-hosted"))
 }
 
 description = "Compiler plugin that enables Compose"
@@ -26,7 +26,6 @@ base {
     archivesName = "compose-compiler"
 }
 runtimeJarWithRelocation {
-    configurations = listOf(project.configurations.compileClasspath.get())
     relocate("com.intellij", "org.jetbrains.kotlin.com.intellij")
 }
 
