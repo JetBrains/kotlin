@@ -57,7 +57,6 @@ public class SirTypeProviderImpl(
 
                 ktType.isDoubleType -> SirNominalType(SirSwiftModule.double)
                 ktType.isFloatType -> SirNominalType(SirSwiftModule.float)
-                ktType.isNothingType -> SirNominalType(SirSwiftModule.never)
 
                 else -> null
             }
@@ -67,7 +66,7 @@ public class SirTypeProviderImpl(
             when (kaType) {
                 is KaUsualClassType -> with(sirSession) {
                     when {
-                        kaType.isNothingType -> null // TODO: KT-71087
+                        kaType.isNothingType -> SirSwiftModule.never
                         kaType.isStringType -> SirSwiftModule.string
                         kaType.isAnyType -> KotlinRuntimeModule.kotlinBase
                         else -> {

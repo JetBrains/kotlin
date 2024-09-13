@@ -58,12 +58,23 @@ func null_strings() throws {
     try assertEquals(actual: optionalString, expected: nil)
 }
 
+func null_never() throws {
+    try assertEquals(actual: meaningOfLife(input: 42), expected: nil)
+    try assertEquals(actual: meaningOfLife(input: nil), expected: "optional nothing received")
+    try assertEquals(actual: meaningOfLife, expected: nil)
+
+    try assertEquals(actual: multiple_nothings(arg1: nil, arg2: 1, arg3: nil), expected: nil)
+
+    meaningOfLife = nil
+}
+
 class Null_typeTests : TestProvider {
     var tests: [TestCase] = []
 
     init() {
         providers.append(self)
         tests = [
+            TestCase(name: "null_never", method: withAutorelease(null_never)),
             TestCase(name: "null_type", method: withAutorelease(null_type)),
             TestCase(name: "null_strings", method: withAutorelease(null_strings)),
         ]

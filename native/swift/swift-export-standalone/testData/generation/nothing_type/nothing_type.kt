@@ -4,16 +4,21 @@
 
 typealias Foo = Nothing
 
-typealias OptionalNothing = Nothing? // broken due to unsupported Nullable Nothing types. TODO: KT-71087
+typealias OptionalNothing = Nothing?
 
 fun meaningOfLife(): Nothing = TODO()
 
 fun meaningOfLife(p: Nothing): Nothing = TODO()
 
-// impossible construct on Kotlin Side - 'Nothing' return type can't be specified with type alias
-//fun meaningOfLife(): Foo = TODO()
-
 var variable: Nothing = TODO()
 val value: Nothing = TODO()
 
 class Bar(val p: Nothing)
+
+fun nullableNothingInput(input: Nothing?) = print("input is nil")
+fun nullableNothingOutput(): Nothing? = null
+
+var nullableNothingVariable: Nothing? = null
+
+fun meaningOfLife(input: Int): Nothing? = null
+fun meaningOfLife(input: Nothing?): String = "hello"

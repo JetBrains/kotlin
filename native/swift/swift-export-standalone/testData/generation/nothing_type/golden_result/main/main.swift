@@ -2,7 +2,7 @@
 import KotlinRuntime
 
 public typealias Foo = Swift.Never
-public typealias OptionalNothing = Swift.Never
+public typealias OptionalNothing = Swift.Never?
 public final class Bar : KotlinRuntime.KotlinBase {
     public var p: Swift.Never {
         get {
@@ -18,6 +18,14 @@ public final class Bar : KotlinRuntime.KotlinBase {
         p: Swift.Never
     ) {
         fatalError()
+    }
+}
+public var nullableNothingVariable: Swift.Never? {
+    get {
+        return { __root___nullableNothingVariable_get(); return nil; }()
+    }
+    set {
+        return __root___nullableNothingVariable_set__TypesOfArguments__Optional_Swift_Never___()
     }
 }
 public var value: Swift.Never {
@@ -37,7 +45,25 @@ public func meaningOfLife() -> Swift.Never {
     return __root___meaningOfLife()
 }
 public func meaningOfLife(
+    input: Swift.Int32
+) -> Swift.Never? {
+    return { __root___meaningOfLife__TypesOfArguments__Swift_Int32__(input); return nil; }()
+}
+public func meaningOfLife(
+    input: Swift.Never?
+) -> Swift.String {
+    return __root___meaningOfLife__TypesOfArguments__Optional_Swift_Never___()
+}
+public func meaningOfLife(
     p: Swift.Never
 ) -> Swift.Never {
     fatalError()
+}
+public func nullableNothingInput(
+    input: Swift.Never?
+) -> Swift.Void {
+    return __root___nullableNothingInput__TypesOfArguments__Optional_Swift_Never___()
+}
+public func nullableNothingOutput() -> Swift.Never? {
+    return { __root___nullableNothingOutput(); return nil; }()
 }

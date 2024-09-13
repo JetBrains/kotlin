@@ -54,6 +54,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("nullable_never_type")
+  public void testNullable_never_type() {
+    runTest("native/swift/swift-export-standalone/testData/execution/nullable_never_type/");
+  }
+
+  @Test
   @TestMetadata("properties")
   public void testProperties() {
     runTest("native/swift/swift-export-standalone/testData/execution/properties/");

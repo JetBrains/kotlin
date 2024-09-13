@@ -23,3 +23,10 @@ fun foo_any(a: Any?): String = "optional"
 
 var optionalString: String? = null
 fun strIdentity(str: String?): String? = str
+
+fun meaningOfLife(input: Int): Nothing? = if (input == 42) null else TODO("try again")
+fun meaningOfLife(input: Nothing?): String = "optional nothing received"
+
+var meaningOfLife: Nothing? = null
+
+fun multiple_nothings(arg1: Nothing?, arg2: Int, arg3: Nothing?): Nothing? = null

@@ -142,7 +142,11 @@ private fun BridgeRequest.initializationDescriptor(typeNamer: SirTypeNamer): Bri
 // 1. this name will be UGLY in the debug session
 private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>, typeNamer: SirTypeNamer): String {
     val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-        typeNamer.swiftFqName(it.bridge.swiftType).replace(".", "_") + if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
+        typeNamer.swiftFqName(it.bridge.swiftType)
+            .replace(".", "_")
+            .replace("<", "_")
+            .replace(">", "_") +
+                if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
@@ -154,7 +158,7 @@ private inline fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: (name: String, args: List<String>) -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
-    add("public fun $kotlinBridgeName(${allParameters.joinToString { "${it.name}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
+    add("public fun $kotlinBridgeName(${allParameters.filter { it.isRenderable }.joinToString { "${it.name}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
     val indent = "    "
     allParameters.forEach {
         add("${indent}val __${it.name} = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name)}")
@@ -171,12 +175,12 @@ private inline fun BridgeFunctionDescriptor.createKotlinBridge(
 }
 
 private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String {
-    val call = "$cBridgeName(${allParameters.joinToString { it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name) }})"
+    val call = "$cBridgeName(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name) }})"
     return returnType.inSwiftSources.kotlinToSwift(typeNamer, call)
 }
 
 private fun BridgeFunctionDescriptor.cDeclaration() =
-    "${returnType.cType.repr} ${cBridgeName}(${allParameters.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
+    "${returnType.cType.repr} ${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
 
 private inline fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (name: String, args: List<String>) -> String) =
     FunctionBridge(
@@ -217,6 +221,13 @@ private fun bridgeType(type: SirType): Bridge {
             is Bridge.AsObject,
             is Bridge.AsObjCBridged
                 -> Bridge.AsOptionalWrapper(bridge)
+            is Bridge.AsOpaqueObject -> {
+                if (bridge.swiftType.isNever) {
+                    Bridge.AsOptionalNothing
+                } else {
+                    error("Found Optional wrapping for OpaqueObject. That is impossible")
+                }
+            }
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
 
@@ -246,7 +257,9 @@ private fun createBridgeParameterName(kotlinName: String): String {
 private data class BridgeParameter(
     val name: String,
     val bridge: Bridge,
-)
+) {
+    var isRenderable: Boolean = bridge !is Bridge.AsOptionalNothing
+}
 
 private enum class CType(val repr: String) {
     Void("void"),
@@ -383,6 +396,24 @@ private sealed class Bridge(
         }
     }
 
+    data object AsOptionalNothing : Bridge(
+        SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),
+        KotlinType.Unit,
+        CType.Void
+    ) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "null"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "Unit"
+        }
+
+        override val inSwiftSources = object : InSwiftSourcesConversion {
+            override fun renderNil(): String = error("unrepresentable")
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = renderNil()
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "{ ${valueExpression}; return nil; }()"
+        }
+    }
+
     class AsOptionalWrapper(
         val wrappedObject: Bridge,
     ) : Bridge(wrappedObject.swiftType, wrappedObject.kotlinType, wrappedObject.cType) {
@@ -413,7 +444,7 @@ private sealed class Bridge(
                     is AsIs,
                     is AsOpaqueObject
                         -> TODO("yet unsupported")
-                    is AsOptionalWrapper -> error("there is not optional wrappers for optional")
+                    is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
                 }
             }
 
@@ -426,7 +457,7 @@ private sealed class Bridge(
                     is AsIs,
                     is AsOpaqueObject
                         -> TODO("yet unsupported")
-                    is AsOptionalWrapper -> error("there is not optional wrappers for optional")
+                    is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
                 }
             }
 
