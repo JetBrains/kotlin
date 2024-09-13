@@ -19,6 +19,8 @@
 
 package org.jetbrains.kotlin.powerassert
 
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -128,8 +130,8 @@ class PowerAssertCallTransformer(
             index: Int,
             dispatch: IrExpression?,
             extension: IrExpression?,
-            arguments: List<IrExpression?>,
-            variables: List<IrTemporaryVariable>,
+            arguments: PersistentList<IrExpression?>,
+            variables: PersistentList<IrTemporaryVariable>,
         ): IrExpression {
             if (index >= roots.size) {
                 val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter)
@@ -139,11 +141,11 @@ class PowerAssertCallTransformer(
             } else {
                 val root = roots[index]
                 if (root == null) {
-                    val newArguments = arguments + call.getValueArgument(index)
+                    val newArguments = arguments.add(call.getValueArgument(index))
                     return recursive(index + 1, dispatch, extension, newArguments, variables)
                 } else {
                     return buildDiagramNesting(sourceFile, root, variables) { argument, newVariables ->
-                        val newArguments = arguments + argument
+                        val newArguments = arguments.add(argument)
                         recursive(index + 1, dispatch, extension, newArguments, newVariables)
                     }
                 }
@@ -152,7 +154,7 @@ class PowerAssertCallTransformer(
 
         return buildDiagramNestingNullable(sourceFile, dispatchRoot) { dispatch, dispatchNewVariables ->
             buildDiagramNestingNullable(sourceFile, extensionRoot, dispatchNewVariables) { extension, extensionNewVariables ->
-                recursive(0, dispatch, extension, emptyList(), extensionNewVariables)
+                recursive(0, dispatch, extension, persistentListOf(), extensionNewVariables)
             }
         }
     }
