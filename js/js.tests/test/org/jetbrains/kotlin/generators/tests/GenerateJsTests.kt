@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
-import org.jetbrains.kotlin.js.test.ir.AbstractMultiModuleOrderTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
+import org.jetbrains.kotlin.test.TargetBackend
+import org.junit.jupiter.api.Disabled
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -254,7 +254,11 @@ fun main(args: Array<String>) {
                 model("stepping")
             }
 
-            testClass<AbstractIrJsLocalVariableTest> {
+            testClass<AbstractIrJsLocalVariableTest>(
+                annotations = listOf(
+                    annotation(Disabled::class.java, "value" to "flaky, see KTI-1959"),
+                )
+            ) {
                 // The tests in the 'inlineScopes' directory are meant to test a JVM backend
                 // specific feature, so there is no reason to enable them for JS.
                 model("localVariables", excludeDirs = listOf("inlineScopes"))

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Disabled;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/localVariables")
 @TestDataPath("$PROJECT_ROOT")
+@Disabled("flaky, see KTI-1959")
 public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTest {
   @Test
   public void testAllFilesPresentInLocalVariables() {
@@ -232,6 +234,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @Nested
   @TestMetadata("compiler/testData/debug/localVariables/constructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Disabled("flaky, see KTI-1959")
   public class Constructors {
     @Test
     public void testAllFilesPresentInConstructors() {
@@ -254,6 +257,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @Nested
   @TestMetadata("compiler/testData/debug/localVariables/destructuring")
   @TestDataPath("$PROJECT_ROOT")
+  @Disabled("flaky, see KTI-1959")
   public class Destructuring {
     @Test
     public void testAllFilesPresentInDestructuring() {
@@ -342,6 +346,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @Nested
   @TestMetadata("compiler/testData/debug/localVariables/receiverMangling")
   @TestDataPath("$PROJECT_ROOT")
+  @Disabled("flaky, see KTI-1959")
   public class ReceiverMangling {
     @Test
     public void testAllFilesPresentInReceiverMangling() {
@@ -400,6 +405,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   @Nested
   @TestMetadata("compiler/testData/debug/localVariables/suspend")
   @TestDataPath("$PROJECT_ROOT")
+  @Disabled("flaky, see KTI-1959")
   public class Suspend {
     @Test
     public void testAllFilesPresentInSuspend() {
@@ -457,6 +463,7 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
     @Nested
     @TestMetadata("compiler/testData/debug/localVariables/suspend/completion")
     @TestDataPath("$PROJECT_ROOT")
+    @Disabled("flaky, see KTI-1959")
     public class Completion {
       @Test
       public void testAllFilesPresentInCompletion() {
