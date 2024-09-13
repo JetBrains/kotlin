@@ -293,4 +293,27 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
         project.assertBinaryDependencies("commonTest", stdlibDependencies)
     }
+
+    @Test
+    fun `KT-71444 Android and JVM fails to transitively resolve kotlin-stdlib-common when it hasn't explicit version set`() {
+        val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
+        val kotlin = project.multiplatformExtension
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
+        }
+
+        project.evaluate()
+
+        val kgpVersion = project.getKotlinPluginVersion()
+        // This list is exhaustive. We don't expect to see kotlin-stdlib-common as it should be replaced by kotlin-stdlib
+        val jvmAndAndroidDependencies = listOf(
+            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.2"),
+            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.2"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
+            binaryCoordinates("org.jetbrains:annotations:13.0"),
+        )
+
+        project.assertBinaryDependencies("jvmAndAndroidMain", jvmAndAndroidDependencies)
+        project.assertBinaryDependencies("jvmAndAndroidTest", jvmAndAndroidDependencies)
+    }
 }
