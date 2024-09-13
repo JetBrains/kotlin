@@ -169,6 +169,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun RigidTypeMarker.typeDepth(): Int {
         require(this is ConeRigidType)
 
+        if (this is ConeCapturedType) {
+            return constructor.projection.type?.typeDepth() ?: 1
+        }
+
         if (this is ConeClassLikeType) {
             val fullyExpanded = fullyExpandedType(session)
             if (this !== fullyExpanded) {
