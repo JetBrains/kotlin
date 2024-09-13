@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -240,33 +239,6 @@ class KotlinCallResolver(
                             otherCandidate.addDiagnostic(EnumEntryAmbiguityWarning(propertyDescriptor, enumEntryDescriptor))
                             return setOf(otherCandidate)
                         }
-                    }
-                }
-            }
-            if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
-                kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE &&
-                candidates.all { it.isSuccessful } &&
-                candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
-            ) {
-                val candidatesWithAnnotation = candidates.filter {
-                    it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME)
-                }.toSet()
-                val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
-                if (candidatesWithAnnotation.isNotEmpty()) {
-                    @Suppress("UNCHECKED_CAST")
-                    val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
-                        maximallySpecificCandidates as Set<SimpleResolutionCandidate>,
-                        resolutionCallbacks
-                    )
-                    maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                        newCandidates,
-                        CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        discriminateGenerics = true
-                    )
-
-                    if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
-                        maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
-                        maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
                     }
                 }
             }

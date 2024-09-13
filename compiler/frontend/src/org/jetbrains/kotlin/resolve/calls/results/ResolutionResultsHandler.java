@@ -226,14 +226,6 @@ public class ResolutionResultsHandler {
         Set<MutableResolvedCall<D>> specificCalls =
                 myResolver.chooseMaximallySpecificCandidates(refinedCandidates, checkArgumentsMode, discriminateGenerics);
 
-        if (specificCalls.size() > 1) {
-            specificCalls = specificCalls.stream()
-                    .filter((call) ->
-                                    !call.getCandidateDescriptor().getAnnotations().hasAnnotation(
-                                            AnnotationsForResolveKt.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME())
-                    ).collect(Collectors.toSet());
-        }
-
         if (specificCalls.size() == 1) {
             return OverloadResolutionResultsImpl.success(specificCalls.iterator().next());
         }
