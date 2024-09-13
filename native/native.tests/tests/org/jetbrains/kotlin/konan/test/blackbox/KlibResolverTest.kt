@@ -641,6 +641,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 val mainLibraryFile = compileMainModule(
                     dependency2File.absolutePath,
                     extraCliArgs = listOf("-l", dependency1File.absolutePath, "-l", dependency1UniqueName),
+                    warningHandler = { warning ->
+                        assertTrue(warning.startsWith("warning: KLIB resolver: Library '${dependency1File.absolutePath}' was found by its unique name '$dependency1UniqueName'"))
+                    }
                 )
                 val mainLibraryDependencies = mainLibraryFile.readLibrary().dependencies
                 assertContainsElements(mainLibraryDependencies, dependency1UniqueName)

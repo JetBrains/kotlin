@@ -488,12 +488,14 @@ private fun resolveDependencies(
 ): List<KotlinLibrary> {
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
     val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    return resolver.resolveWithDependencies(
+    val resolvedLibraries = resolver.resolveWithDependencies(
         unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
         noEndorsedLibs = noEndorsedLibs
     ).getFullList(TopologicalLibraryOrder)
+    validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
+    return resolvedLibraries
 }
 
 internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon: Boolean, propertyOverrides: Map<String, String> = emptyMap(), konanDataDir: String? = null) =

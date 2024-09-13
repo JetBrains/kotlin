@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueName
 
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
@@ -55,7 +56,9 @@ class KonanLibrariesResolveSupport(
                 KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
                 DuplicatedUniqueNameStrategy.DENY
             ),
-        )
+        ).also { resolvedLibraries ->
+            validateNoLibrariesWerePassedViaCliByUniqueName(libraryPaths, resolvedLibraries.getFullList(), resolver.logger)
+        }
     }
 
     internal val exportedLibraries =

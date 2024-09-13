@@ -151,17 +151,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     }
 
     /**
-     * Returns a [File] instance if the [path] is valid on the current file system and null otherwise.
-     * Doesn't check whether the file denoted by [path] really exists.
-     */
-    private fun validFileOrNull(path: String): File? =
-        try {
-            File(Paths.get(path))
-        } catch (_: InvalidPathException) {
-            null
-        }
-
-    /**
      * Returns a sequence of libraries passed to the compiler directly for which unique_name == [givenName].
      */
     private fun directLibsSequence(givenName: String): Sequence<File> {
@@ -391,3 +380,41 @@ class CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
             libraryFile.absolutePath, logger, knownIrProviders
         ).resolve(libraryFile.absolutePath)
 }
+
+fun validateNoLibrariesWerePassedViaCliByUniqueName(givenNames: List<String>, resolvedLibraries: List<KotlinLibrary>, logger: Logger) {
+    if (givenNames.isEmpty() || resolvedLibraries.isEmpty()) return
+
+    val potentiallyUniqueNames: Set<String> = givenNames.filterTo(hashSetOf()) { givenName ->
+        val given: File? = validFileOrNull(givenName)
+        given == null || given.nameSegments.size == 1
+    }
+
+    if (potentiallyUniqueNames.isEmpty()) return
+
+    for (library in resolvedLibraries) {
+        val uniqueName = library.uniqueName
+        if (uniqueName in potentiallyUniqueNames && uniqueName != library.libraryFile.name) {
+            // The name of the library file or the library directory does not match the unique name,
+            // and at the same time this unique name was specified at CLI argument.
+            // Need to log a warning.
+            logger.strongWarning(
+                "KLIB resolver: Library '${library.libraryFile}' was found by its unique name '$uniqueName'. " +
+                        "This could happen if the library unique name was passed instead of the library path as one of compiler's CLI arguments. " +
+                        "Note, that using unique name is deprecated and will become unavailable in one of the future Kotlin releases. " +
+                        "Please, specify full paths to libraries in compiler CLI arguments."
+            )
+        }
+    }
+}
+
+/**
+ * Returns a [File] instance if the [path] is valid on the current file system and null otherwise.
+ * Doesn't check whether the file denoted by [path] really exists.
+ */
+private fun validFileOrNull(path: String): File? =
+    try {
+        File(Paths.get(path))
+    } catch (_: InvalidPathException) {
+        null
+    }
+
