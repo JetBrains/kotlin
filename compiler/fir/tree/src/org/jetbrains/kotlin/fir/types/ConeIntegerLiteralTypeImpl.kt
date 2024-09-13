@@ -49,7 +49,7 @@ class ConeIntegerLiteralConstantTypeImpl(
             }
 
             fun addSignedPossibleTypes() {
-                checkBoundsAndAddPossibleType(StandardClassIds.Int, INT_RANGE)
+                checkBoundsAndAddPossibleType(StandardClassIds.Int, INT_RANGE) //
                 possibleTypes += createType(StandardClassIds.Long)
                 checkBoundsAndAddPossibleType(StandardClassIds.Byte, BYTE_RANGE)
                 checkBoundsAndAddPossibleType(StandardClassIds.Short, SHORT_RANGE)
