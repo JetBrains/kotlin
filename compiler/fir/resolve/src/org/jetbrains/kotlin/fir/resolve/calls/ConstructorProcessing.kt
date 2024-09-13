@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
-private operator fun <T> Pair<T, *>?.component1(): T? = this?.first
-private operator fun <T> Pair<*, T>?.component2(): T? = this?.second
-
 internal enum class ConstructorFilter(val acceptInner: Boolean, val acceptNested: Boolean) {
     OnlyInner(acceptInner = true, acceptNested = false),
     OnlyNested(acceptInner = false, acceptNested = true),
