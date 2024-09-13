@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.callConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
-import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -909,28 +906,3 @@ class FirCallResolver(
 
 /** A candidate in the overload candidate set. */
 data class OverloadCandidate(val candidate: Candidate, val isInBestCandidates: Boolean)
-
-/** Used for IDE */
-class AllCandidatesCollector(
-    components: BodyResolveComponents,
-    resolutionStageRunner: ResolutionStageRunner
-) : CandidateCollector(components, resolutionStageRunner) {
-    private val allCandidatesMap = mutableMapOf<FirBasedSymbol<*>, Candidate>()
-
-    override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
-        // Filter duplicate symbols. In the case of typealias constructor calls, we consider the original constructor for uniqueness.
-        val key = (candidate.symbol.fir as? FirConstructor)?.originalConstructorIfTypeAlias?.symbol
-            ?: candidate.symbol
-
-        // To preserve the behavior of a HashSet which keeps the first added item, we use getOrPut instead of put.
-        // Changing this behavior breaks testData/components/callResolver/resolveCandidates/singleCandidate/functionTypeVariableCall_extensionReceiver.kt
-        allCandidatesMap.getOrPut(key) { candidate }
-        return super.consumeCandidate(group, candidate, context)
-    }
-
-    // We want to get candidates at all tower levels.
-    override fun shouldStopAtTheGroup(group: TowerGroup): Boolean = false
-
-    val allCandidates: Collection<Candidate>
-        get() = allCandidatesMap.values
-}
