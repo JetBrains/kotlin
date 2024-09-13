@@ -45,7 +45,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple().delimiter(",")
     val staticLibrary by argParser.option(ArgType.String, description = "embed static library to the result")
             .multiple().delimiter(",")
-    val library by argParser.option(ArgType.String, shortName = "l", description = "library to use for building")
+    val library by argParser.option(ArgType.String, shortName = "l", description = "path to the library to use for building")
             .multiple()
     val libraryVersion by argParser.option(
             ArgType.String,
