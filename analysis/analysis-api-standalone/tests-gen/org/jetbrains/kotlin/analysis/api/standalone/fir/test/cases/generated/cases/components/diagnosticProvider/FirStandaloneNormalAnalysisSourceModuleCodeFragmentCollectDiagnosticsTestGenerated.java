@@ -76,6 +76,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCodeFragmentCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("suspend.kt")
+  public void testSuspend() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/suspend.kt");
+  }
+
+  @Test
   @TestMetadata("typeMismatch.kt")
   public void testTypeMismatch() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/typeMismatch.kt");
