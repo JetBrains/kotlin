@@ -10,6 +10,6 @@ public fun <T> Iterable<T>.contains1(element: @kotlin.internal.NoInfer T): Boole
 
 
 fun test() {
-    val a: Boolean = listOf(1).contains1("")
+    val a: Boolean = listOf(1).<!TYPE_MISMATCH!>contains1<!>("")
     val b: Boolean = listOf(1).contains1(1)
 }

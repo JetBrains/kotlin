@@ -437,6 +437,11 @@ class ConstraintInjector(
                 } else {
                     c.addError(NewConstraintError(lowerType, upperType, position))
                 }
+            } else if (isK2) {
+                @OptIn(K2Only::class)
+                for (constraintWithNoInfer in constraintsWithNoInfer) {
+                    c.addError(ConeNoInferSubtyping(constraintWithNoInfer, position))
+                }
             }
         }
 

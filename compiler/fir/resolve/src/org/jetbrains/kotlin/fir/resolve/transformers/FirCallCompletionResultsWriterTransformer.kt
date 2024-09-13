@@ -55,10 +55,12 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -1208,6 +1210,17 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
         candidate.system.errors.any { it is InferredEmptyIntersection }
 
+    private fun FirNamedReferenceWithCandidate.noInferTypeMismatchIfAny(): ConeNoInferTypeMismatch? {
+        for (error in candidate.system.errors) {
+            if (error !is ConeNoInferSubtyping) continue
+            val lowerType = finalSubstitutor.substituteOrSelf(error.lowerType as ConeKotlinType)
+            val upperType = finalSubstitutor.substituteOrSelf(error.upperType as ConeKotlinType)
+            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, lowerType, upperType)) continue
+            return ConeNoInferTypeMismatch(lowerType, upperType)
+        }
+        return null
+    }
+
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
             this is FirErrorReferenceWithCandidate -> this.diagnostic
@@ -1220,10 +1233,11 @@ class FirCallCompletionResultsWriterTransformer(
 
                 ConeConstraintSystemHasContradiction(candidate)
             }
+
             // NB: these additional errors might not lead to marking candidate unsuccessful because it may be a warning in FE 1.0
             // We consider those warnings as errors in FIR
             hasAdditionalResolutionErrors() -> ConeConstraintSystemHasContradiction(candidate)
-            else -> null
+            else -> noInferTypeMismatchIfAny()
         }
 
         return when (errorDiagnostic) {

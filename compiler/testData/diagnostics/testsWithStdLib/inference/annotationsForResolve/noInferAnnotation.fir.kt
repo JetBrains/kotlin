@@ -36,12 +36,12 @@ fun <E> f2(e: E): Out<@kotlin.internal.NoInfer E> = TODO()
 fun <T> test7(t: T, x: Out<T>) {}
 
 fun usage(y: Int) {
-    test1(1, "312")
-    1.test2("")
+    <!TYPE_MISMATCH!>test1<!>(1, "312")
+    1.<!TYPE_MISMATCH!>test2<!>("")
     <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test3<!>("")
-    test4(1, listOf("a"))
-    val x: In<String> = <!INITIALIZER_TYPE_MISMATCH!>id(y)<!>
-    test5(id(y))
+    <!TYPE_MISMATCH("kotlin.String; kotlin.Int")!>test4<!>(1, listOf("a"))
+    val x: In<String> = <!INITIALIZER_TYPE_MISMATCH!><!TYPE_MISMATCH!>id<!>(y)<!>
+    <!TYPE_MISMATCH!>test5<!>(id(y))
     id(y).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test6<!>()
     test7(B(), f2(A()))
 }
@@ -51,23 +51,23 @@ fun <E> f(): @kotlin.internal.NoInfer E = TODO()
 
 fun flexibleTypes(y: Int) {
     Java.g0(f<Int>())
-    Java.g1(id(y))
+    Java.<!TYPE_MISMATCH!>g1<!>(id(y))
 }
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <T> List<T>.contains1(e: @kotlin.internal.NoInfer T): Boolean = true
 
 fun test(i: Int?, a: Any, l: List<Int>) {
-    l.contains1(a)
-    l.contains1("")
-    l.contains1(i)
+    l.<!TYPE_MISMATCH!>contains1<!>(a)
+    l.<!TYPE_MISMATCH!>contains1<!>("")
+    l.<!TYPE_MISMATCH!>contains1<!>(i)
 }
 
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <T> assertEquals1(e1: T, e2: @kotlin.internal.NoInfer T): Boolean = true
 
 fun test(s: String) {
-    assertEquals1(s, 11)
+    <!TYPE_MISMATCH!>assertEquals1<!>(s, 11)
 }
 
 fun interface Predicate<in T> {
@@ -78,5 +78,5 @@ fun interface Predicate<in T> {
 fun <T> testSamParameterType(a: Predicate<@kotlin.internal.NoInfer T>, b: Predicate<T>): T = TODO()
 
 fun test() {
-    testSamParameterType({ x: String -> false }, { x: CharSequence -> true })
+    <!TYPE_MISMATCH!>testSamParameterType<!>({ x: String -> false }, { x: CharSequence -> true })
 }
