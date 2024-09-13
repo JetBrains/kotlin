@@ -20,38 +20,19 @@
 package org.jetbrains.kotlin.powerassert.diagram
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.powerassert.earliestStartOffset
-import java.io.File
 
 data class SourceFile(
     private val irFile: IrFile,
 ) {
-    companion object {
-        private val KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS = System.getProperty("KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS") ?: ""
-        private val sourceRoots = listOf(".") + KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS.split(",").map { it.trim() }
-    }
-
-    private val source: String = run {
-        File(irFile.path).also { file ->
-            if (file.exists()) {
-                return@run file.readText()
-            }
-        }
-
-        for (root in sourceRoots) {
-            val file = File(root, irFile.path)
-            if (file.exists()) {
-                return@run file.readText()
-            }
-        }
-        throw IllegalArgumentException("Unable to find source for IrFile: ${irFile.path}")
-    }
-        .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
+    private val source = irFile.readSourceText()
 
     fun getSourceRangeInfo(element: IrElement): SourceRangeInfo {
         var range = element.startOffset..element.endOffset
@@ -88,4 +69,19 @@ data class SourceFile(
         val lineContent = getText(info)
         return CompilerMessageLocation.create(irFile.path, info.startLineNumber, info.startColumnNumber, lineContent)!!
     }
+}
+
+private fun IrFile.readSourceText(): String {
+    // First, try and get source text via PSI.
+    when (val entry = fileEntry) {
+        is PsiIrFileEntry -> return entry.psiFile.text
+    }
+
+    // If PSI is not available, try and access the source text via FIR.
+    val sourceFile = (metadata as? FirMetadataSource.File)?.fir?.sourceFile
+    if (sourceFile != null) {
+        return sourceFile.getContentsAsStream().reader().readText()
+    }
+
+    error("Unable to find source for IrFile: $path")
 }

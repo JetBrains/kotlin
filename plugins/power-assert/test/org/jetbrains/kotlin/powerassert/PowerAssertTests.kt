@@ -46,14 +46,6 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert : AbstractFirLi
 // ------------------------ configuration ------------------------
 
 fun TestConfigurationBuilder.configurePlugin() {
-    // TODO there has got to be a better way?
-    val sourceRoots = File("plugins/power-assert/testData/")
-        .walkTopDown()
-        .filter { it.isDirectory }
-        .joinToString(",") { it.path }
-    System.setProperty("KOTLIN_POWER_ASSERT_ADD_SRC_ROOTS", sourceRoots)
-
-
     defaultDirectives {
         +FULL_JDK
         +WITH_STDLIB
