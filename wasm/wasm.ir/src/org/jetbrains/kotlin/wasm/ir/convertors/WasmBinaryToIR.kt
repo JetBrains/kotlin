@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 
 
@@ -526,7 +527,9 @@ class WasmBinaryToIR(val b: MyByteReader) {
     }
 }
 
-class MyByteReader(val ins: java.io.InputStream) : ByteReader() {
+class MyByteReader(ins: java.io.InputStream) : ByteReader() {
+    private val ins = BufferedInputStream(ins)
+
     var offset: Long = 0
 
     class SizeLimit(val maxSize: Long, val reason: String)
