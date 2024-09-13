@@ -3,15 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.tools.lib
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("native")
     id("native-dependencies")
+}
+
+val library = solib("callbacks")
+
+val cppLink by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+dependencies {
+    cppLink(project(":kotlin-native:libclangext"))
 }
 
 native {
@@ -33,7 +50,7 @@ native {
     }
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
-    target(solib("callbacks"), objSet) {
+    target(library, objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
@@ -42,7 +59,7 @@ native {
               "-lclangext")
     }
     tasks.named(solib("callbacks")).configure {
-        dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
+        inputs.files(cppLink)
         dependsOn(nativeDependencies.libffiDependency)
     }
 }
@@ -81,23 +98,34 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
     }
 }
 
-val nativelibs by tasks.registering(Sync::class) {
-    val callbacksSolib = solib("callbacks")
-    dependsOn(callbacksSolib)
-
-    from(layout.buildDirectory.dir(callbacksSolib))
-    into(layout.buildDirectory.dir("nativelibs"))
-}
-
-val nativeLibs by configurations.creating {
+val cppApiElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
         attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, nativelibs)
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }

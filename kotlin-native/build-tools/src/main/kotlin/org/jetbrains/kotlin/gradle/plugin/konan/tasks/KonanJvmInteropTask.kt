@@ -15,6 +15,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
 
+@CacheableTask
 open class KonanJvmInteropTask @Inject constructor(
         objectFactory: ObjectFactory,
         layout: ProjectLayout,
@@ -47,6 +49,13 @@ open class KonanJvmInteropTask @Inject constructor(
      */
     @get:Classpath
     val interopStubGeneratorClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    /**
+     * Native libraries required for Interop Stub Generator CLI tool.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val interopStubGeneratorNativeLibs: ConfigurableFileCollection = objectFactory.fileCollection()
 
     /**
      * `.def` file for which to generate bridges.
@@ -82,10 +91,6 @@ open class KonanJvmInteropTask @Inject constructor(
         }
     }
 
-    // TODO: Must depend on the libraries themselves.
-    @get:Input
-    val nativeLibrariesPaths: ListProperty<String> = objectFactory.listProperty()
-
     /**
      * Compiler options for `clang`.
      */
@@ -120,12 +125,16 @@ open class KonanJvmInteropTask @Inject constructor(
             addAll(compilerOptions.get())
         }
 
+        val nativeLibrariesPaths = interopStubGeneratorNativeLibs.files.joinToString(separator = File.pathSeparator) {
+            it.parentFile.absolutePath
+        }
+
         execOperations.javaexec {
             classpath(interopStubGeneratorClasspath)
             mainClass.assign("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
             jvmArgs("-ea")
             systemProperties(mapOf(
-                    "java.library.path" to nativeLibrariesPaths.get().joinToString(separator = File.pathSeparator),
+                    "java.library.path" to nativeLibrariesPaths,
                     // Set the konan.home property because we run the cinterop tool not from a distribution jar
                     // so it will not be able to determine this path by itself.
                     "konan.home" to platformManagerProvider.get().nativeProtoDistribution.root.asFile.absolutePath,

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("native")
 }
+
+val library = lib("debugInfo")
 
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
@@ -45,7 +50,7 @@ native {
     }
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
 
-    target(lib("debugInfo"), objSet) {
+    target(library, objSet) {
         tool(*hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qcv", ruleOut(), *ruleInAll())
     }
@@ -71,4 +76,37 @@ native {
             )
         }
     }
+}
+
+val cppApiElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+artifacts {
+    add(cppApiElements.name, layout.projectDirectory.dir("src/main/include"))
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    // Static library, nothing in cppRuntimeElements
 }

@@ -1,5 +1,8 @@
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
@@ -9,6 +12,8 @@ plugins {
     id("native")
     id("native-dependencies")
 }
+
+val library = solib("orgjetbrainskotlinbackendkonanfilesstubs")
 
 bitcode {
     hostTarget {
@@ -47,7 +52,7 @@ native {
         }
     }
 
-    target(solib("orgjetbrainskotlinbackendkonanfilesstubs"), sourceSets["main"]!!.transform(".c" to ".$obj")) {
+    target(library, sourceSets["main"]!!.transform(".c" to ".$obj")) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags(
                 "-shared",
@@ -56,20 +61,12 @@ native {
     }
 }
 
-val nativelibs by project.tasks.registering(Sync::class) {
-    val lib = solib("orgjetbrainskotlinbackendkonanfilesstubs")
-    dependsOn(lib)
-
-    from(layout.buildDirectory.dir(lib))
-    into(layout.buildDirectory.dir("nativelibs"))
-}
-
 kotlinNativeInterop.create("files").genTask.configure {
     defFile.set(layout.projectDirectory.file("files.konan.backend.kotlin.jetbrains.org.def"))
     headersDirs.from(layout.projectDirectory.dir("include"))
 }
 
-tasks.named(solib("orgjetbrainskotlinbackendkonanfilesstubs")).configure {
+tasks.named(library).configure {
     dependsOn(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get())
 }
 
@@ -77,7 +74,6 @@ native.sourceSets["main"]!!.implicitTasks()
 tasks.named("stubs.o").configure {
     inputs.file(kotlinNativeInterop["files"].genTask.map { it.cBridge })
 }
-
 
 dependencies {
     implementation(kotlinStdlib())
@@ -90,17 +86,35 @@ sourceSets {
     }
 }
 
-val nativeLibs by configurations.creating {
+val cppApiElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
         attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, layout.buildDirectory.dir("nativelibs")) {
-        builtBy(nativelibs)
-    }
+    add(cppApiElements.name, layout.projectDirectory.dir("include"))
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }

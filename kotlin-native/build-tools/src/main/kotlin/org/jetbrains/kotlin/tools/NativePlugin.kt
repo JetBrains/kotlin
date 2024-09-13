@@ -14,6 +14,7 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.cpp.CppConsumerPlugin
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
@@ -39,6 +40,7 @@ open class NativePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.apply<BasePlugin>()
         project.apply<NativeDependenciesPlugin>()
+        project.apply<CppConsumerPlugin>()
         project.extensions.create("native", NativeToolsExtension::class.java, project)
     }
 }

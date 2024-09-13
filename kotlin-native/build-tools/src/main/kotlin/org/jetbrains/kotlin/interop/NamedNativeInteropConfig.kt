@@ -14,34 +14,19 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.utils.capitalized
 
 class NamedNativeInteropConfig(
-        private val project: Project,
+        project: Project,
         private val _name: String,
 ) : Named {
     override fun getName(): String = _name
 
-    private val interopStubsName = name + "InteropStubs"
-
-    val genTask = project.tasks.register<KonanJvmInteropTask>("gen" + interopStubsName.capitalized)
-
-    init {
-        genTask.configure {
-            dependsOn(project.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
-            dependsOn(project.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
-            interopStubGeneratorClasspath.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CONFIGURATION))
-            kotlinBridges.set(project.layout.buildDirectory.dir("nativeInteropStubs/${this@NamedNativeInteropConfig.name}/kotlin"))
-            cBridge.set(project.layout.buildDirectory.file("nativeInteropStubs/${this@NamedNativeInteropConfig.name}/c/stubs.c"))
-            temporaryFilesDir.set(project.layout.buildDirectory.dir("interopTemp"))
-
-            nativeLibrariesPaths.addAll(
-                    project.project(":kotlin-native:libclangInterop").layout.buildDirectory.dir("nativelibs").get().asFile.absolutePath,
-                    project.project(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs").get().asFile.absolutePath,
-            )
-            dependsOn(":kotlin-native:libclangInterop:nativelibs")
-            dependsOn(":kotlin-native:Interop:Runtime:nativelibs")
-            inputs.dir(project.project(":kotlin-native:libclangInterop").layout.buildDirectory.dir("nativelibs"))
-            inputs.dir(project.project(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs"))
-
-            platformManagerProvider.set(project.extensions.getByType<PlatformManagerProvider>())
-        }
+    val genTask = project.tasks.register<KonanJvmInteropTask>("gen${name.capitalized}InteropStubs") {
+        dependsOn(project.extensions.getByType<NativeDependenciesExtension>().hostPlatformDependency)
+        dependsOn(project.extensions.getByType<NativeDependenciesExtension>().llvmDependency)
+        interopStubGeneratorClasspath.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CONFIGURATION))
+        interopStubGeneratorNativeLibs.from(project.configurations.getByName(NativeInteropPlugin.INTEROP_STUB_GENERATOR_CPP_CONFIGURATION))
+        kotlinBridges.set(project.layout.buildDirectory.dir("nativeInteropStubs/${this@NamedNativeInteropConfig.name}/kotlin"))
+        cBridge.set(project.layout.buildDirectory.file("nativeInteropStubs/${this@NamedNativeInteropConfig.name}/c/stubs.c"))
+        temporaryFilesDir.set(project.layout.buildDirectory.dir("interopTemp"))
+        platformManagerProvider.set(project.extensions.getByType<PlatformManagerProvider>())
     }
 }

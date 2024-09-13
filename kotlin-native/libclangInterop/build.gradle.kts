@@ -1,6 +1,8 @@
+import org.gradle.kotlin.dsl.named
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
@@ -14,6 +16,29 @@ val libclangextProject = project(":kotlin-native:libclangext")
 val libclangextDir = libclangextProject.layout.buildDirectory.get().asFile
 val libclangextIsEnabled = libclangextProject.findProperty("isEnabled")!! as Boolean
 
+val library = solib("clangstubs")
+
+val cppLink by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppApi by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+    }
+}
+
+dependencies {
+    cppApi(project(":kotlin-native:libclangext"))
+    cppLink(project(":kotlin-native:libclangext"))
+}
 
 val libclang =
         if (HostManager.hostIsMingw) {
@@ -106,7 +131,7 @@ native {
     val objSet = arrayOf(sourceSets["main-c"]!!.transform(".c" to ".$obj"),
             sourceSets["main-cpp"]!!.transform(".cpp" to ".$obj"))
 
-    target(solib("clangstubs"), *objSet) {
+    target(library, *objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags(
                 "-shared",
@@ -115,25 +140,15 @@ native {
     }
 }
 
-tasks.named(solib("clangstubs")).configure {
-    dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
-}
-
-val nativelibs by project.tasks.registering(Sync::class) {
-    val lib = solib("clangstubs")
-    dependsOn(lib)
-
-    from(layout.buildDirectory.dir(lib))
-    into(layout.buildDirectory.dir("nativelibs"))
+tasks.named(library).configure {
+    inputs.files(cppLink)
 }
 
 kotlinNativeInterop.create("clang").genTask.configure {
     defFile.set(layout.projectDirectory.file("clang.def"))
     compilerOptions.addAll(cflags)
-    headersDirs.from(
-            "${nativeDependencies.llvmPath}/include",
-            "${project(":kotlin-native:libclangext").projectDir.absolutePath}/src/main/include",
-    )
+    headersDirs.from("${nativeDependencies.llvmPath}/include")
+    headersDirs.from(cppApi)
 }
 
 dependencies {
@@ -147,19 +162,36 @@ sourceSets {
     }
 }
 
-val nativeLibs by configurations.creating {
+val cppApiElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
         attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, layout.buildDirectory.dir("nativelibs")) {
-        builtBy(nativelibs)
-    }
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }
 
 // TODO: Replace with a common way to generate sources. Also add a test that generation didn't change checked-in sources.

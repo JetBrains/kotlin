@@ -3,12 +3,25 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.cpp.CppConsumerPlugin
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.*
 
 plugins {
     kotlin("jvm")
     id("native-dependencies")
+}
+
+apply<CppConsumerPlugin>()
+
+val cppRuntimeOnly by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
 }
 
 dependencies {
@@ -19,6 +32,9 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":compiler:util"))
+
+    cppRuntimeOnly(project(":kotlin-native:libclangInterop"))
+    cppRuntimeOnly(project(":kotlin-native:Interop:Runtime"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -40,14 +56,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 tasks.withType<Test>().configureEach {
-    val projectsWithNativeLibs = listOf(
-            project(":kotlin-native:libclangInterop"),
-            project(":kotlin-native:Interop:Runtime")
-    )
-    dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })
+    inputs.files(cppRuntimeOnly)
     dependsOn(nativeDependencies.llvmDependency)
-    systemProperty("java.library.path", projectsWithNativeLibs.joinToString(File.pathSeparator) {
-        it.layout.buildDirectory.dir("nativelibs").get().asFile.absolutePath
+    systemProperty("java.library.path", cppRuntimeOnly.elements.map { elements ->
+        elements.joinToString(File.pathSeparator) { it.asFile.parentFile.absolutePath }
     })
 
     systemProperty("kotlin.native.llvm.libclang", "${nativeDependencies.llvmPath}/" + if (HostManager.hostIsMingw) {

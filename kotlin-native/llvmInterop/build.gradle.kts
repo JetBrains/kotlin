@@ -1,7 +1,9 @@
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.ToolExecutionTask
 import org.jetbrains.kotlin.tools.solib
 
 plugins {
@@ -9,6 +11,32 @@ plugins {
     id("native-interop-plugin")
     id("native")
     id("native-dependencies")
+}
+
+val library = solib("llvmstubs")
+
+val cppLink by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppApi by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+    }
+}
+
+dependencies {
+    cppApi(project(":kotlin-native:llvmDebugInfoC"))
+    cppLink(project(":kotlin-native:llvmDebugInfoC"))
+    cppApi(project(":kotlin-native:libllvmext"))
+    cppLink(project(":kotlin-native:libllvmext"))
 }
 
 val includeFlags = listOf(
@@ -117,7 +145,7 @@ native {
         }
     }
 
-    target(solib("llvmstubs"), sourceSets["main"]!!.transform(".c" to ".$obj")) {
+    target(library, sourceSets["main"]!!.transform(".c" to ".$obj")) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags(
                 "-shared",
@@ -126,27 +154,15 @@ native {
     }
 }
 
-tasks.named(solib("llvmstubs")).configure {
-    dependsOn(":kotlin-native:llvmDebugInfoC:${lib("debugInfo")}")
-    dependsOn(":kotlin-native:libllvmext:${lib("llvmext")}")
-}
-
-val nativelibs by project.tasks.registering(Sync::class) {
-    val lib = solib("llvmstubs")
-    dependsOn(lib)
-
-    from(layout.buildDirectory.dir(lib))
-    into(layout.buildDirectory.dir("nativelibs"))
+tasks.named(library).configure {
+    inputs.files(cppLink)
 }
 
 kotlinNativeInterop.create("llvm").genTask.configure {
     defFile.set(layout.projectDirectory.file("llvm.def"))
     compilerOptions.addAll(cflags)
-    headersDirs.from(
-            "${nativeDependencies.llvmPath}/include",
-            "${rootProject.project(":kotlin-native:llvmDebugInfoC").projectDir}/src/main/include",
-            "${rootProject.project(":kotlin-native:libllvmext").projectDir}/src/main/include",
-    )
+    headersDirs.from("${nativeDependencies.llvmPath}/include")
+    headersDirs.from(cppApi)
 }
 
 native.sourceSets["main"]!!.implicitTasks()
@@ -165,17 +181,34 @@ sourceSets {
     }
 }
 
-val nativeLibs by configurations.creating {
+val cppApiElements by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
         attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+val cppLinkElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+val cppRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_RUNTIME))
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
     }
 }
 
 artifacts {
-    add(nativeLibs.name, layout.buildDirectory.dir("nativelibs")) {
-        builtBy(nativelibs)
-    }
+    add(cppLinkElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
+    add(cppRuntimeElements.name, tasks.named<ToolExecutionTask>(library).map { it.output })
 }

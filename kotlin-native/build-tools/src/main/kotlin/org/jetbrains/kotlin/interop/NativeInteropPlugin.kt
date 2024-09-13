@@ -9,17 +9,30 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 
 open class NativeInteropPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.apply<NativeDependenciesPlugin>()
 
         val interopStubGenerator = target.configurations.create(INTEROP_STUB_GENERATOR_CONFIGURATION)
+        val interopStubGeneratorCppRuntimeOnly = target.configurations.create(INTEROP_STUB_GENERATOR_CPP_CONFIGURATION) {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            attributes {
+                attribute(CppUsage.USAGE_ATTRIBUTE, target.objects.named(CppUsage.LIBRARY_RUNTIME))
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+            }
+        }
         target.dependencies {
             interopStubGenerator(project(":kotlin-native:Interop:StubGenerator"))
             interopStubGenerator(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
+            interopStubGeneratorCppRuntimeOnly(project(":kotlin-native:libclangInterop"))
+            interopStubGeneratorCppRuntimeOnly(project(":kotlin-native:Interop:Runtime"))
         }
 
         target.extensions.add("kotlinNativeInterop", target.objects.domainObjectContainer(NamedNativeInteropConfig::class.java) {
@@ -29,5 +42,6 @@ open class NativeInteropPlugin : Plugin<Project> {
 
     companion object {
         const val INTEROP_STUB_GENERATOR_CONFIGURATION = "interopStubGenerator"
+        const val INTEROP_STUB_GENERATOR_CPP_CONFIGURATION = "interopStubGeneratorCppRuntimeOnly"
     }
 }
