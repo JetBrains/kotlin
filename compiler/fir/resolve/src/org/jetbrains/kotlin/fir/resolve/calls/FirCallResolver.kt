@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirOverloadByLambdaReturnTypeResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
@@ -66,7 +65,6 @@ class FirCallResolver(
     private val towerResolver: FirTowerResolver = FirTowerResolver(components, components.resolutionStageRunner)
 ) {
     private val session = components.session
-    private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
 
     private lateinit var transformer: FirExpressionsResolveTransformer
 
@@ -210,7 +208,6 @@ class FirCallResolver(
 
         val result = towerResolver.runResolver(info, resolutionContext, collector)
         var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
-        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
         return ResolutionResult(info, applicability, reducedCandidates)
     }
