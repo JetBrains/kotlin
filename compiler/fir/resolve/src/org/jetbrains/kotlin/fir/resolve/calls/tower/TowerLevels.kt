@@ -486,7 +486,7 @@ internal class ScopeTowerLevel(
         )
     }
 
-    override fun processFunctionsByName(
+    override fun processFunctionsByName( // bobko 1. First "phase"
         info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {

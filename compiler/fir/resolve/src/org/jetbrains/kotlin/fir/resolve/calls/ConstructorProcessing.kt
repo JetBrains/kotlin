@@ -62,7 +62,7 @@ private fun FirScope.processConstructorsByName(
     )
 }
 
-internal fun FirScope.processFunctionsAndConstructorsByName(
+internal fun FirScope.processFunctionsAndConstructorsByName( // 1. First "phase"
     callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,

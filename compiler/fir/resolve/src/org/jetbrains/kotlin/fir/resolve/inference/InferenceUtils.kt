@@ -64,6 +64,7 @@ fun extractLambdaInfoFromFunctionType(
 
     var coerceFirstParameterToExtensionReceiver = false
     val argumentValueParameters = lambda.valueParameters
+    // bobko. lambda: it vs explicit lambda params
     val parameters = if (lambda.isLambda && !lambda.hasExplicitParameterList && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {

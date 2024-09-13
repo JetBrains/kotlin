@@ -71,7 +71,7 @@ open class CandidateCollector(
             candidates.add(candidate)
         }
 
-        return applicability
+        return applicability // bobko Candidate applicability
     }
 
     fun bestCandidates(): List<Candidate> = candidates

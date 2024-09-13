@@ -325,7 +325,7 @@ internal object ArgumentCheckingProcessor {
         }
     }
 
-    private fun ArgumentContext.createResolvedLambdaAtom(
+    private fun ArgumentContext.createResolvedLambdaAtom( // bobko. lambdas?!?!
         atom: ConeResolutionAtomWithPostponedChild,
         duringCompletion: Boolean,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?
@@ -333,7 +333,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.lambdaExpression
         val anonymousFunction = expression.anonymousFunction
 
-        val resolvedArgument = extractLambdaInfoFromFunctionType(
+        val lhs = extractLambdaInfoFromFunctionType(
             expectedType,
             expression,
             anonymousFunction,
@@ -341,7 +341,8 @@ internal object ArgumentCheckingProcessor {
             context.bodyResolveComponents,
             allowCoercionToExtensionReceiver = duringCompletion,
             sourceForFunctionExpression = expression.source,
-        ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
+        )
+        val resolvedArgument = lhs ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
         atom.subAtom = resolvedArgument
         candidate.addPostponedAtom(resolvedArgument)
@@ -365,7 +366,7 @@ internal object ArgumentCheckingProcessor {
             } else {
                 if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
                     reportDiagnostic(
-                        ArgumentTypeMismatch(
+                        ArgumentTypeMismatch( // bobko. this ArgumentTypeMismatch makes candidate inapplicable
                             expectedType, lambdaType, expression,
                             context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
                         )

@@ -180,6 +180,7 @@ class FirCallResolver(
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
     ): ResolutionResult {
+        // println("--- " + name) // bobko
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
         val typeArguments = if (qualifiedAccess is FirFunctionCall || forceCallKind == CallKind.Function) {

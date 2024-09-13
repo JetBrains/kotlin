@@ -208,7 +208,7 @@ class Candidate(
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         _diagnostics += diagnostic
         if (diagnostic.applicability < lowestApplicability) {
-            lowestApplicability = diagnostic.applicability
+            lowestApplicability = diagnostic.applicability // bobko Someone added a diagnostic to discard this candidate
         }
     }
 
