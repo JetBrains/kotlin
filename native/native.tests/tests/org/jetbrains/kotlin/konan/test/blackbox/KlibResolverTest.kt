@@ -637,14 +637,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             }
 
             // Passing both dependencies by path and additionally the transitive one by unique name:
-            run {
-                val mainLibraryFile = compileMainModule(
+            expectFailingDueToPassedUniqueName(dependency1File.absolutePath, dependency1UniqueName) {
+                compileMainModule(
                     dependency2File.absolutePath,
-                    extraCliArgs = listOf("-l", dependency1File.absolutePath, "-l", dependency1UniqueName),
+                    extraCliArgs = listOf("-l", dependency1File.absolutePath, "-l", dependency1UniqueName)
                 )
-                val mainLibraryDependencies = mainLibraryFile.readLibrary().dependencies
-                assertContainsElements(mainLibraryDependencies, dependency1UniqueName)
-                assertContainsElements(mainLibraryDependencies, dependency2UniqueName)
             }
         }
 
@@ -679,6 +676,15 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 fail("Normally should not get here")
             } catch (cte: CompilationToolException) {
                 assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\""))
+            }
+        }
+
+        private inline fun expectFailingDueToPassedUniqueName(libraryPath: String, uniqueName: String, block: () -> Unit) {
+            try {
+                block()
+                fail("Normally should not get here")
+            } catch (cte: CompilationToolException) {
+                assertTrue(cte.reason.contains("error: KLIB resolver: Library '$libraryPath' was found by its unique name '$uniqueName'"))
             }
         }
 
