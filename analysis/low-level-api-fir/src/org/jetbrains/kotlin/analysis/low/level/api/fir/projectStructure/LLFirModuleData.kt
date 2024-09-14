@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -59,21 +59,10 @@ class LLFirModuleData private constructor(val ktModule: KaModule) : FirModuleDat
 
     override val isCommon: Boolean get() = ktModule.targetPlatform.isCommon()
 
-    override val session: FirSession
-        get() = boundSession ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
+    override val session: LLFirSession
+        get() = boundSession?.let { it as LLFirSession }
+            ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as LLFirModuleData
-
-        if (ktModule != other.ktModule) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return ktModule.hashCode()
-    }
+    override fun equals(other: Any?): Boolean = this === other || other is LLFirModuleData && ktModule == other.ktModule
+    override fun hashCode(): Int = ktModule.hashCode()
 }
