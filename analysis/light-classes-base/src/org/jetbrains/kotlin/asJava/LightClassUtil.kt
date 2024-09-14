@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
+@OptIn(IntellijInternalApi::class)
 object LightClassUtil {
 
     fun findClass(stub: StubElement<*>, predicate: (PsiClassStub<*>) -> Boolean): PsiClass? {
@@ -71,7 +73,8 @@ object LightClassUtil {
         return wrappers.toList()
     }
 
-    private fun isMangled(wrapperName: @NlsSafe String, prefix: String): Boolean {
+    @IntellijInternalApi
+    fun isMangled(wrapperName: @NlsSafe String, prefix: String): Boolean {
         //see KT-54803 for other mangling strategies
         // A memory optimization for `wrapperName.startsWith("$prefix$")`, see KT-63486
         return wrapperName.length > prefix.length
@@ -103,9 +106,6 @@ object LightClassUtil {
 
     fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
         var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
-        var fieldFinder: (PsiField) -> Boolean = { psiField ->
-            psiField is KtLightElement<*, *> && psiField.kotlinOrigin === declaration
-        }
 
         if (psiClass is KtLightClass) {
             val origin = psiClass.kotlinOrigin
@@ -117,23 +117,12 @@ object LightClassUtil {
                         psiClass = containingLightClass
                     }
                 }
-            } else {
-                // Decompiled version of [KtLightClass] may not have [kotlinOrigin]
-                val containingDeclaration = declaration.containingClassOrObject
-                if (containingDeclaration is KtObjectDeclaration &&
-                    containingDeclaration.isCompanion()
-                ) {
-                    psiClass.containingClass?.let { containingClass ->
-                        psiClass = containingClass
-                        fieldFinder = { psiField ->
-                            psiField.name == declaration.name
-                        }
-                    }
-                }
             }
         }
 
-        return psiClass.fields.find(fieldFinder)
+        return psiClass.fields.find { psiField: PsiField ->
+            psiField is KtLightElement<*, *> && psiField.kotlinOrigin === declaration
+        }
     }
 
     fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {

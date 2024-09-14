@@ -198,10 +198,12 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getOwnInnerClasses(): List<PsiClass> = cachedValueWithLibraryTracker {
         this.clsDelegate.innerClasses.map { psiClass ->
+            val innerClassName = psiClass.name
             val innerDeclaration = this.kotlinOrigin
                 ?.declarations
-                ?.filterIsInstance<KtClassOrObject>()
-                ?.firstOrNull { cls -> cls.name == this.clsDelegate.name }
+                ?.firstNotNullOfOrNull { clsDeclaration ->
+                    (clsDeclaration as? KtClassOrObject)?.takeIf { it.name == innerClassName }
+                }
 
             KtLightClassForDecompiledDeclaration(
                 clsDelegate = psiClass,

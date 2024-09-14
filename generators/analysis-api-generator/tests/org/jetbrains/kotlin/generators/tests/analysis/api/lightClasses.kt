@@ -57,6 +57,12 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
                 model("lightElements", pattern = TestGeneratorUtil.KT)
             }
         }
+
+        run {
+            testClass<AbstractSymbolLightClassesNestedClassesConsistencyForLibraryTest> {
+                model("libraryNestedClassesConsistency", pattern = TestGeneratorUtil.KT)
+            }
+        }
     }
 }
 

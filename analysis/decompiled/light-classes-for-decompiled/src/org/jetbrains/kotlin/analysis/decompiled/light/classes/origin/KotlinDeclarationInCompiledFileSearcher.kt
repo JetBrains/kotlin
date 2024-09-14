@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiParameterList
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiType
-import com.intellij.psi.PsiTypes
+import com.intellij.openapi.util.IntellijInternalApi
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.StringValue
@@ -26,16 +22,7 @@ import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationContainer
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.allConstructors
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
@@ -90,10 +77,10 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
-                val setter = if (JvmAbi.isGetterName(memberName) && !PsiTypes.voidType().equals(member.returnType)) {
+                val setter = if (JvmAbi.isGetterName(memberName) && PsiTypes.voidType() != member.returnType) {
                     propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
                     false
-                } else if (JvmAbi.isSetterName(memberName) && PsiTypes.voidType().equals(member.returnType)) {
+                } else if (JvmAbi.isSetterName(memberName) && PsiTypes.voidType() == member.returnType) {
                     propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
                     true
                 } else null
@@ -124,7 +111,45 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
                 if (container is KtObjectDeclaration && memberName == "INSTANCE") {
                     return container
                 }
-                declarations.singleOrNull { it !is KtNamedFunction && it.name == memberName }
+
+                val declarations = when {
+                    container is KtFile || container is KtObjectDeclaration -> declarations
+                    member.hasModifier(JvmModifier.STATIC) -> {
+                        val nonPropertyDeclarations = declarations.filter { it is KtEnumEntry || it is KtObjectDeclaration }
+
+                        // Fields for properties from companion objects are materialized in the containing class
+                        // Compiled code cannot have more than one companion object, so we can pick the first one
+                        val propertiesFromCompanion = (container as? KtClass)?.companionObjects
+                            ?.firstOrNull()
+                            ?.declarations
+                            ?.filterIsInstance<KtProperty>()
+                            .orEmpty()
+
+                        nonPropertyDeclarations + propertiesFromCompanion
+                    }
+
+                    else -> declarations
+                }
+
+                declarations.singleOrNull(fun(declaration: KtDeclaration): Boolean {
+                    if (declaration is KtNamedFunction) return false
+                    val name = declaration.name ?: return false
+
+                    // In the case of name conflict between class and companion object property names,
+                    // one of them may be mangled.
+
+                    // There are 3 cases:
+                    // 1. Both properties have JvmField annotation – both fields will have the same not mangled name.
+                    // 2. The class property doesn't have JvmField annotation – a field from the class
+                    // will have manged name (with $1 suffix).
+                    // 3. The class property has JvmField annotation – a field from the companion object
+                    // will have a mangled name (with $1 suffix).
+
+                    // To simplify the logic around the mangling name creation (especially for JvmField case),
+                    // it is enough to just check the mangling fact
+                    @OptIn(IntellijInternalApi::class)
+                    return memberName == name || LightClassUtil.isMangled(memberName, name)
+                })
             }
             else -> declarations.singleOrNull { it.name == memberName }
         }
