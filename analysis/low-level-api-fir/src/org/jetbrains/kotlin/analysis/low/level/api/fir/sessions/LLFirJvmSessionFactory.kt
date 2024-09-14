@@ -121,7 +121,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
         return buildList {
-            val firJavaFacade = LLFirJavaFacadeForBinaries(session, project.createJavaClassFinder(scope), moduleDataProvider)
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, project.createJavaClassFinder(scope))
             val deserializedSymbolProviderFactory = LLLibrarySymbolProviderFactory.fromSettings(project)
             addAll(
                 deserializedSymbolProviderFactory.createJvmLibrarySymbolProvider(
