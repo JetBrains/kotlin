@@ -9,8 +9,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.util.Logger as KLogger
  */
 class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -63,7 +63,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     }
 
     override fun createCommonLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -89,7 +89,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     }
 
     override fun createNativeLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -110,7 +110,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     }
 
     override fun createJsLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -128,7 +128,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     }
 
     override fun createWasmLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -143,7 +143,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
     }
 
     override fun createBuiltinsSymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {

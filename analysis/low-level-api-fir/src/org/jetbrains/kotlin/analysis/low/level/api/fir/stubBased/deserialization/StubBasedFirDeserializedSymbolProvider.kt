@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -48,8 +49,7 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
  */
 internal open class StubBasedFirDeserializedSymbolProvider(
-    session: FirSession,
-    moduleDataProvider: SingleModuleDataProvider,
+    session: LLFirSession,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     project: Project,
@@ -58,11 +58,11 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     // A workaround for KT-63718. It should be removed with KT-64236.
     isFallbackDependenciesProvider: Boolean,
 ) : LLFirKotlinSymbolProvider(session) {
-    private val moduleData = moduleDataProvider.getModuleData(null)
+    private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
     final override val declarationProvider = project.createDeclarationProvider(
         scope,
-        contextualModule = session.llFirModuleData.ktModule.takeIf { !isFallbackDependenciesProvider },
+        contextualModule = session.ktModule.takeIf { !isFallbackDependenciesProvider },
     )
 
     override val allowKotlinPackage: Boolean get() = true

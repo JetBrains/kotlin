@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 
 val FirElementWithResolveState.llFirModuleData: LLFirModuleData
-    get() {
-        return moduleData as LLFirModuleData
-    }
+    get() = moduleData as LLFirModuleData
 
 val FirSession.llFirModuleData: LLFirModuleData
-    get() {
-        return moduleData as LLFirModuleData
-    }
+    get() = moduleData as LLFirModuleData
 
+val LLFirSession.moduleData: LLFirModuleData
+    get() = llFirModuleData
 
 val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
     get() = fir.llFirModuleData

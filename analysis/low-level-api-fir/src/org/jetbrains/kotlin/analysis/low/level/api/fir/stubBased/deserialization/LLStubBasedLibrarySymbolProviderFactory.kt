@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createNativeForwardDeclarationsSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
  */
 internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -51,7 +51,6 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                     project,
                     scope,
                     session,
-                    moduleDataProvider,
                     kotlinScopeProvider,
                     isFallbackDependenciesProvider,
                 )
@@ -61,7 +60,7 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
     }
 
     override fun createCommonLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -73,14 +72,13 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
             project = project,
             baseScope = scope,
             session = session,
-            moduleDataProvider = moduleDataProvider,
             kotlinScopeProvider = kotlinScopeProvider,
             isFallbackDependenciesProvider = isFallbackDependenciesProvider,
         )
     )
 
     override fun createNativeLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -92,21 +90,19 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                 project,
                 scope,
                 session,
-                moduleDataProvider,
                 kotlinScopeProvider,
                 isFallbackDependenciesProvider,
             ),
             createNativeForwardDeclarationsSymbolProvider(
                 project,
                 session,
-                moduleDataProvider,
                 kotlinScopeProvider,
             ),
         )
     }
 
     override fun createJsLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -118,7 +114,6 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                 project,
                 scope,
                 session,
-                moduleDataProvider,
                 kotlinScopeProvider,
                 isFallbackDependenciesProvider,
             ),
@@ -126,7 +121,7 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
     }
 
     override fun createWasmLibrarySymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         moduleDataProvider: SingleModuleDataProvider,
@@ -138,7 +133,6 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                 project,
                 scope,
                 session,
-                moduleDataProvider,
                 kotlinScopeProvider,
                 isFallbackDependenciesProvider,
             ),
@@ -146,7 +140,7 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
     }
 
     override fun createBuiltinsSymbolProvider(
-        session: FirSession,
+        session: LLFirSession,
         moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider
     ): List<FirSymbolProvider> {
@@ -158,12 +152,11 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
 
 private class StubBasedBuiltInsSymbolProvider(
     project: Project,
-    session: FirSession,
+    session: LLFirSession,
     moduleData: LLFirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
 ) : StubBasedFirDeserializedSymbolProvider(
     session,
-    SingleModuleDataProvider(moduleData),
     kotlinScopeProvider,
     BuiltinsDeserializedContainerSourceProvider,
     project,

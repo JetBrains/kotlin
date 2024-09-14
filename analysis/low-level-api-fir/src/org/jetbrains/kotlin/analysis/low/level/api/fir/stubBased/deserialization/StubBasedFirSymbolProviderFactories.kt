@@ -10,8 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
@@ -21,15 +20,13 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 internal fun createStubBasedFirSymbolProviderForClassFiles(
     project: Project,
     baseScope: GlobalSearchScope,
-    session: FirSession,
-    moduleDataProvider: SingleModuleDataProvider,
+    session: LLFirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project,
     baseScope,
     session,
-    moduleDataProvider,
     kotlinScopeProvider,
     JvmAndBuiltinsDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
@@ -42,15 +39,13 @@ internal fun createStubBasedFirSymbolProviderForClassFiles(
 internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
     project: Project,
     baseScope: GlobalSearchScope,
-    session: FirSession,
-    moduleDataProvider: SingleModuleDataProvider,
+    session: LLFirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project,
     baseScope,
     session,
-    moduleDataProvider,
     kotlinScopeProvider,
     NullDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
@@ -66,15 +61,13 @@ internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
 internal fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
     project: Project,
     baseScope: GlobalSearchScope,
-    session: FirSession,
-    moduleDataProvider: SingleModuleDataProvider,
+    session: LLFirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     isFallbackDependenciesProvider: Boolean,
 ): FirSymbolProvider = createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project,
     baseScope,
     session,
-    moduleDataProvider,
     kotlinScopeProvider,
     NullDeserializedContainerSourceProvider,
     isFallbackDependenciesProvider,
@@ -84,8 +77,7 @@ internal fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
 internal fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project: Project,
     baseScope: GlobalSearchScope,
-    session: FirSession,
-    moduleDataProvider: SingleModuleDataProvider,
+    session: LLFirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
     isFallbackDependenciesProvider: Boolean,
@@ -96,7 +88,6 @@ internal fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
         symbolProviderFactory = { reducedScope: GlobalSearchScope ->
             StubBasedFirDeserializedSymbolProvider(
                 session,
-                moduleDataProvider,
                 kotlinScopeProvider,
                 deserializedContainerSourceProvider,
                 project,
