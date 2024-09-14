@@ -361,13 +361,6 @@ It is deprecated and will be removed in Kotlin 2.2."""
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Argument(value = "-Xir-base-class-in-metadata", description = "Write base classes into metadata.")
-    var irBaseClassInMetadata = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xir-safe-external-boolean",
         description = "Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'."
@@ -683,8 +676,6 @@ It is deprecated and will be removed in a future release."""
     }
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
-        collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
-
         if (irPerFile && (moduleKind != MODULE_ES && target != ES_2015)) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
