@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -72,23 +69,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     private fun createLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
         scope: GlobalSearchScope,
         builtinSymbolProvider: FirSymbolProvider,
     ): LLFirModuleWithDependenciesSymbolProvider {
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
-            providers = createProjectLibraryProvidersForScope(
-                session,
-                kotlinScopeProvider,
-                project,
-                scope
-            ),
+            providers = createProjectLibraryProvidersForScope(session, scope),
             LLFirDependenciesSymbolProvider(session) {
                 buildList {
-                    addAll(collectDependencySymbolProviders(moduleData.ktModule))
+                    addAll(collectDependencySymbolProviders(session.ktModule))
                     add(builtinSymbolProvider)
                 }
             },
@@ -97,8 +86,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     abstract fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean = false,
     ): List<FirSymbolProvider>
@@ -258,7 +245,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     }
 
     protected class SourceSessionCreationContext(
-        val moduleData: LLFirModuleData,
         val contentScope: GlobalSearchScope,
         val firProvider: LLFirProvider,
         val dependencyProvider: LLFirDependenciesSymbolProvider,
@@ -326,9 +312,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
 
             val context = SourceSessionCreationContext(
-                moduleData, firProvider.searchScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
+                firProvider.searchScope, firProvider, dependencyProvider, syntheticFunctionInterfaceProvider,
                 switchableExtensionDeclarationsSymbolProvider,
             )
+
             additionalSessionConfiguration(context)
         }
     }
@@ -403,8 +390,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
                         val restLibrariesProvider = createProjectLibraryProvidersForScope(
                             session,
-                            scopeProvider,
-                            project,
                             librariesSearchScope,
                             isFallbackDependenciesProvider = true,
                         )
@@ -465,9 +450,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val symbolProvider = createLibraryProvidersForScope(
                 this,
-                moduleData,
-                kotlinScopeProvider,
-                project,
                 module.contentScope,
                 builtinsSession.symbolProvider
             )

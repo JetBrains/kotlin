@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.registerJsComponents
 
 @OptIn(SessionConfiguration::class)
@@ -83,8 +83,6 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {

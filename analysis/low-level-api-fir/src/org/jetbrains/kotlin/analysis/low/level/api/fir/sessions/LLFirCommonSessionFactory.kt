@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -88,8 +89,6 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
@@ -110,7 +109,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 OptionalAnnotationClassesProvider.createIfNeeded(
                     session,
                     moduleDataProvider,
-                    kotlinScopeProvider,
+                    session.kotlinScopeProvider,
                     packagePartProvider
                 )
             )
