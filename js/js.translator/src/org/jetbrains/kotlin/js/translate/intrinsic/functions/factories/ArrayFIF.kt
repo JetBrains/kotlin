@@ -60,7 +60,7 @@ object ArrayFIF : CompositeFIF() {
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
     @JvmStatic
-    fun typedArraysEnabled(config: JsConfig) = config.configuration.get(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
+    fun typedArraysEnabled(@Suppress("unused") config: JsConfig) = true
 
     fun unsignedPrimitiveToSigned(type: KotlinType): PrimitiveType? {
         // short-circuit

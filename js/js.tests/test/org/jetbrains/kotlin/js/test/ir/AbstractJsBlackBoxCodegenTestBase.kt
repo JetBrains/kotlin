@@ -60,7 +60,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
             JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
             JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-            +JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
             +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
         }

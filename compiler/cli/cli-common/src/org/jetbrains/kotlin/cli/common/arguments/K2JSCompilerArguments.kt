@@ -532,13 +532,23 @@ It is deprecated and will be removed in Kotlin 2.2."""
             field = value
         }
 
+    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @GradleOption(
-        value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
-    @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays into JS typed arrays.")
-    var typedArrays = true
+    @GradleDeprecatedOption(
+        message = "Only for legacy backend.",
+        level = DeprecationLevel.WARNING, // TODO: KT-70222 Replace with ERROR in 2.2, remove completely in 2.3
+        removeAfter = LanguageVersion.KOTLIN_2_2,
+    )
+    @Argument(
+        value = "-Xtyped-arrays",
+        description = """This option does nothing and is left for compatibility with the legacy backend.
+It is deprecated and will be removed in a future release."""
+    )
+    var typedArrays = false
         set(value) {
             checkFrozen()
             field = value

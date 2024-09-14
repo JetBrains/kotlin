@@ -140,11 +140,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val TYPED_ARRAYS by directive(
-        description = "Enables typed arrays",
-        applicability = DirectiveApplicability.Global
-    )
-
     val GENERATE_SOURCE_MAP by directive(
         description = "Enables generation of source map",
         applicability = DirectiveApplicability.Global

@@ -145,10 +145,11 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.target.set(value)
 
     /**
-     * Translate primitive arrays into JS typed arrays.
+     * This option does nothing and is left for compatibility with the legacy backend. It is deprecated and will be removed in a future release.
      *
-     * Default value: true
+     * Default value: false
      */
+    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.WARNING)
     var typedArrays: kotlin.Boolean
         get() = options.typedArrays.get()
         set(value) = options.typedArrays.set(value)

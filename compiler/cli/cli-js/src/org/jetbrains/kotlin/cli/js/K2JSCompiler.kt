@@ -808,6 +808,13 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.metaInfo) {
             messageCollector.report(WARNING, "The '-meta-info' command line option does nothing and will be removed in a future release")
         }
+        @Suppress("DEPRECATION")
+        if (arguments.typedArrays) {
+            messageCollector.report(
+                WARNING,
+                "The '-Xtyped-arrays' command line option does nothing and will be removed in a future release"
+            )
+        }
 
         if (arguments.debuggerCustomFormatters) {
             configuration.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, true)
@@ -837,8 +844,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null)
             }
         }
-
-        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.typedArrays)
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled)
 

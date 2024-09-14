@@ -56,9 +56,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<ModuleKind> MODULE_KIND =
             CompilerConfigurationKey.create("module kind");
 
-    public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
-            CompilerConfigurationKey.create("TypedArrays enabled");
-
     public static final CompilerConfigurationKey<IncrementalDataProvider> INCREMENTAL_DATA_PROVIDER =
             CompilerConfigurationKey.create("incremental data provider");
 
