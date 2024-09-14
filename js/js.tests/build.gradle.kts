@@ -251,7 +251,11 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
         if (k1Es5Enabled) {
             include("org/jetbrains/kotlin/js/test/ir/*")
 
-            include("org/jetbrains/kotlin/incremental/*")
+            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerFileTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerFileWithPLTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerModuleTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerModuleWithPLTestGenerated.class")
+
             include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
             includeTestOld()
             include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
@@ -263,7 +267,8 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
             "org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class",
             "org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class",
             "org/jetbrains/kotlin/js/test/ir/IrJsES6TypeScriptExportTestGenerated.class",
-            "org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class",
+            "org/jetbrains/kotlin/incremental/JsIrES6InvalidationPerFileTestGenerated.class",
+            "org/jetbrains/kotlin/incremental/JsIrES6InvalidationPerModuleTestGenerated.class",
         )
         if (k1Es6Enabled) {
             include(*k1Es6Tests)
@@ -274,6 +279,12 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
     if (k2Es5Enabled || k2Es6Enabled) {
         if (k2Es5Enabled) {
             include("org/jetbrains/kotlin/js/test/fir/*")
+
+            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerFileTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerFileWithPLTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerModuleTestGenerated.class")
+            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerModuleWithPLTestGenerated.class")
+
             includeTestOld()
         }
         val k2Es6Tests = arrayOf(
@@ -281,6 +292,9 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
             "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class",
             "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class",
             "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class",
+            "org/jetbrains/kotlin/js/test/fir/FirJsES6TypeScriptExportTestGenerated.class",
+            "org/jetbrains/kotlin/incremental/JsFirES6InvalidationPerModuleTestGenerated.class",
+            "org/jetbrains/kotlin/incremental/JsFirES6InvalidationPerFileTestGenerated.class",
         )
         if (k2Es6Enabled) {
             include(*k2Es6Tests)
