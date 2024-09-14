@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -79,7 +82,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             session,
             providers = createProjectLibraryProvidersForScope(
                 session,
-                moduleData,
                 kotlinScopeProvider,
                 project,
                 scope
@@ -95,7 +97,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
     abstract fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         project: Project,
         scope: GlobalSearchScope,
@@ -335,12 +336,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     protected class LibrarySessionCreationContext(
         val contentScope: GlobalSearchScope,
         val firProvider: LLFirProvider,
-        val dependencyProvider: LLFirDependenciesSymbolProvider
+        val dependencyProvider: LLFirDependenciesSymbolProvider,
     )
 
     protected fun doCreateLibrarySession(
         module: KaModule,
-        additionalSessionConfiguration: LLFirLibraryOrLibrarySourceResolvableModuleSession.(context: LibrarySessionCreationContext) -> Unit
+        additionalSessionConfiguration: LLFirLibraryOrLibrarySourceResolvableModuleSession.(context: LibrarySessionCreationContext) -> Unit,
     ): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         val binaryModule = when (module) {
             is KaLibraryModule, is KaBuiltinsModule -> module
@@ -402,7 +403,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
                         val restLibrariesProvider = createProjectLibraryProvidersForScope(
                             session,
-                            moduleData,
                             scopeProvider,
                             project,
                             librariesSearchScope,

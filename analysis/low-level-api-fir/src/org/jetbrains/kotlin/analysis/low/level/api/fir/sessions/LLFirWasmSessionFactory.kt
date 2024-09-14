@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory.registerWasmComponents
@@ -93,18 +91,13 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
 
     override fun createProjectLibraryProvidersForScope(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         project: Project,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
-        val moduleDataProvider = SingleModuleDataProvider(moduleData)
         return LLLibrarySymbolProviderFactory.fromSettings(project).createWasmLibrarySymbolProvider(
             session,
-            moduleData,
-            kotlinScopeProvider,
-            moduleDataProvider,
             scope,
             isFallbackDependenciesProvider,
         )

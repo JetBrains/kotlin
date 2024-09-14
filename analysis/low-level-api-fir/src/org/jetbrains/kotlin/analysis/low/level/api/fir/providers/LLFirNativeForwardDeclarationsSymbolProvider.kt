@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createForwardDeclarationProvider
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.createSyntheticForwardDeclarationClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.psi.KtProperty
  */
 internal class LLFirNativeForwardDeclarationsSymbolProvider(
     session: LLFirSession,
-    private val kotlinScopeProvider: FirKotlinScopeProvider,
     override val declarationProvider: KotlinDeclarationProvider,
     override val packageProvider: KotlinPackageProvider,
 ) : LLFirKotlinSymbolProvider(session) {
@@ -61,7 +59,7 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
                     ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
                     ?: return@createValue null
 
-                createSyntheticForwardDeclarationClass(classId, moduleData, this.session, kotlinScopeProvider) {
+                createSyntheticForwardDeclarationClass(classId, moduleData, this.session, this.session.kotlinScopeProvider) {
                     source = KtRealPsiSourceElement(declaration)
                 }
             }
@@ -127,12 +125,9 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
  *
  * @return a new symbol provider or `null` if the module of the passed [session] cannot contain forward declarations
  */
-fun createNativeForwardDeclarationsSymbolProvider(
-    project: Project,
-    session: LLFirSession,
-    kotlinScopeProvider: FirKotlinScopeProvider,
-): FirSymbolProvider? {
+fun createNativeForwardDeclarationsSymbolProvider(session: LLFirSession): FirSymbolProvider? {
     val ktModule = session.ktModule
+    val project = ktModule.project
     val packageProvider = project.createForwardDeclarationsPackageProvider(ktModule)
     val declarationProvider = project.createForwardDeclarationProvider(ktModule)
 
@@ -143,6 +138,6 @@ fun createNativeForwardDeclarationsSymbolProvider(
     if (packageProvider == null || declarationProvider == null) return null
 
     return LLFirNativeForwardDeclarationsSymbolProvider(
-        session, kotlinScopeProvider, declarationProvider, packageProvider,
+        session, declarationProvider, packageProvider,
     )
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProv
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.JsFlexibleTypeFactory
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
@@ -39,12 +38,9 @@ import org.jetbrains.kotlin.util.Logger as KLogger
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
  */
-class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) : LLLibrarySymbolProviderFactory {
+internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProviderFactory {
     override fun createJvmLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
@@ -53,10 +49,10 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         return listOf(
             JvmClassFileBasedSymbolProvider(
                 session,
-                moduleDataProvider,
-                kotlinScopeProvider,
+                SingleModuleDataProvider(session.moduleData),
+                session.kotlinScopeProvider,
                 packagePartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
+                VirtualFileFinderFactory.getInstance(session.project).create(scope),
                 firJavaFacade
             )
         )
@@ -64,13 +60,13 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
 
     override fun createCommonLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
+        val kotlinScopeProvider = session.kotlinScopeProvider
         return buildList {
             add(
                 MetadataSymbolProvider(
@@ -78,9 +74,10 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
                     moduleDataProvider,
                     kotlinScopeProvider,
                     packagePartProvider as PackageAndMetadataPartProvider,
-                    VirtualFileFinderFactory.getInstance(project).create(scope),
+                    VirtualFileFinderFactory.getInstance(session.project).create(scope),
                 )
             )
+
             val kLibs = moduleData.getLibraryKLibs()
             if (kLibs.isNotEmpty()) {
                 add(KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs))
@@ -90,18 +87,19 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
 
     override fun createNativeLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
             FORWARD_DECLARATIONS_MODULE_NAME,
             moduleDataProvider.platform,
         ).apply {
             bindSession(session)
         }
+
+        val kotlinScopeProvider = session.kotlinScopeProvider
         val kLibs = moduleData.getLibraryKLibs()
         return listOfNotNull(
             KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs),
@@ -111,17 +109,16 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
 
     override fun createJsLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val kLibs = moduleData.getLibraryKLibs()
 
         return listOf(
             KlibBasedSymbolProvider(
-                session, moduleDataProvider, kotlinScopeProvider, kLibs,
+                session, moduleDataProvider, session.kotlinScopeProvider, kLibs,
                 flexibleTypeFactory = JsFlexibleTypeFactory(session),
             )
         )
@@ -129,24 +126,21 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
 
     override fun createWasmLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
+        val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val kLibs = moduleData.getLibraryKLibs()
 
         return listOf(
-            KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs)
+            KlibBasedSymbolProvider(session, moduleDataProvider, session.kotlinScopeProvider, kLibs)
         )
     }
 
-    override fun createBuiltinsSymbolProvider(
-        session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-    ): List<FirSymbolProvider> {
+    override fun createBuiltinsSymbolProvider(session: LLFirSession): List<FirSymbolProvider> {
+        val moduleData = session.moduleData
+        val kotlinScopeProvider = session.kotlinScopeProvider
         return listOf(
             FirFallbackBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider),
             FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, moduleData, kotlinScopeProvider)
@@ -171,9 +165,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         }
     }
 
-    companion object {
-        private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
-    }
+    private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
 
     private object IntellijLogBasedLogger : KLogger {
         override fun log(message: String) {

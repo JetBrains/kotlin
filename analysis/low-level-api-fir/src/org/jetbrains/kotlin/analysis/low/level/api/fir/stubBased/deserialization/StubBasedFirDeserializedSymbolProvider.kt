@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.*
@@ -50,17 +50,15 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  */
 internal open class StubBasedFirDeserializedSymbolProvider(
     session: LLFirSession,
-    private val kotlinScopeProvider: FirKotlinScopeProvider,
     private val deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
-    project: Project,
     scope: GlobalSearchScope,
-
     // A workaround for KT-63718. It should be removed with KT-64236.
     isFallbackDependenciesProvider: Boolean,
 ) : LLFirKotlinSymbolProvider(session) {
+    private val kotlinScopeProvider: FirKotlinScopeProvider get() = session.kotlinScopeProvider
     private val moduleData: LLFirModuleData get() = session.llFirModuleData
 
-    final override val declarationProvider = project.createDeclarationProvider(
+    final override val declarationProvider = session.project.createDeclarationProvider(
         scope,
         contextualModule = session.ktModule.takeIf { !isFallbackDependenciesProvider },
     )
@@ -88,7 +86,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
-    final override val packageProvider = project.createPackageProvider(scope)
+    final override val packageProvider = session.project.createPackageProvider(scope)
 
     /**
      * Computes the origin for the declarations coming from [file].

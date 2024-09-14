@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarations
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.LLStubBasedLibrarySymbolProviderFactory
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 /**
@@ -24,9 +22,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 internal interface LLLibrarySymbolProviderFactory {
     fun createJvmLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         firJavaFacade: FirJavaFacade,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
@@ -35,9 +30,6 @@ internal interface LLLibrarySymbolProviderFactory {
 
     fun createCommonLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
@@ -45,43 +37,30 @@ internal interface LLLibrarySymbolProviderFactory {
 
     fun createNativeLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
     fun createJsLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
     fun createWasmLibrarySymbolProvider(
         session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
         isFallbackDependenciesProvider: Boolean,
     ): List<FirSymbolProvider>
 
-    fun createBuiltinsSymbolProvider(
-        session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-    ): List<FirSymbolProvider>
+    fun createBuiltinsSymbolProvider(session: LLFirSession): List<FirSymbolProvider>
 
     companion object {
         fun fromSettings(project: Project): LLLibrarySymbolProviderFactory {
             val platformSettings = KotlinPlatformSettings.getInstance(project)
             return when (platformSettings.deserializedDeclarationsOrigin) {
-                KotlinDeserializedDeclarationsOrigin.BINARIES -> LLBinaryOriginLibrarySymbolProviderFactory(project)
-                KotlinDeserializedDeclarationsOrigin.STUBS -> LLStubBasedLibrarySymbolProviderFactory(project)
+                KotlinDeserializedDeclarationsOrigin.BINARIES -> LLBinaryOriginLibrarySymbolProviderFactory
+                KotlinDeserializedDeclarationsOrigin.STUBS -> LLStubBasedLibrarySymbolProviderFactory
             }
         }
     }
