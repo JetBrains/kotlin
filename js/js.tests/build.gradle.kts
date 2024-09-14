@@ -272,7 +272,7 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
         }
     }
     if (k2Es5Enabled || k2Es6Enabled) {
-        if (k1Es5Enabled) {
+        if (k2Es5Enabled) {
             include("org/jetbrains/kotlin/js/test/fir/*")
             includeTestOld()
         }
