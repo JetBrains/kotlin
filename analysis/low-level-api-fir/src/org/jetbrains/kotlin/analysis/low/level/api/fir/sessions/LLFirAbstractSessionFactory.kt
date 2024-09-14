@@ -143,7 +143,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 }
             }
 
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, provider.searchScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, provider.searchScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(

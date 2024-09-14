@@ -55,7 +55,7 @@ internal class LLStubBasedLibrarySymbolProviderFactory(private val project: Proj
                     isFallbackDependenciesProvider,
                 )
             )
-            add(LLFirJavaSymbolProvider(session, moduleData, project, scope))
+            add(LLFirJavaSymbolProvider(session, scope))
         }
     }
 

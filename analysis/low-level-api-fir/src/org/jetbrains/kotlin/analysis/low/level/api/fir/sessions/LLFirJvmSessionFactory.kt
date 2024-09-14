@@ -35,7 +35,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     override fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module, FirKotlinScopeProvider(::wrapScopeWithJvmMapped)) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
 
             register(
@@ -59,7 +59,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
     override fun createLibrarySession(module: KaModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
             registerJavaComponents(JavaModuleResolver.getInstance(project))
-            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.moduleData, project, context.contentScope)
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, context.contentScope)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
