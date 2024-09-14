@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 package foo
 
 class MyException(m: String? = null): Exception(m)

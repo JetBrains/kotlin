@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 // FILE: a.kt
 @file:JsModule("./a.mjs")

@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS
 // ES_MODULES
-// DONT_TARGET_EXACT_BACKEND: JS
 // SKIP_DCE_DRIVEN
 
 // MODULE: export_nested_class

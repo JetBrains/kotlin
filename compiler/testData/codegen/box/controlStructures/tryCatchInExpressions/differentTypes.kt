@@ -2,7 +2,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 
 fun foo(b: Byte, s: String, i: Int, d: Double, li: Long): String = "$b $s $i $d $li"
 

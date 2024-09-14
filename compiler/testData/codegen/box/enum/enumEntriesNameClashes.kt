@@ -1,6 +1,6 @@
 // LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // KT-59611
-// IGNORE_BACKEND: JS, JVM
+// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 import kotlin.enums.*

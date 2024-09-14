@@ -2,7 +2,7 @@
 // See same test for diagnostics:
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 

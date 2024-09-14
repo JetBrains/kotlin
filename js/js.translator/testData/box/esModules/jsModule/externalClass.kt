@@ -1,5 +1,4 @@
 // ES_MODULES
-// DONT_TARGET_EXACT_BACKEND: JS
 
 package foo
 

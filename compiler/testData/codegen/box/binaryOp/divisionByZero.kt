@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // reason - no error from division by zero in JS or WASM

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 @file:Suppress("INCOMPATIBLE_TYPES", "UNCHECKED_CAST")
 
 fun <T> unchecked(x: Any?) = x as T

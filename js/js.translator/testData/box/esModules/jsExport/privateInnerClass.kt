@@ -1,5 +1,4 @@
 // KT-65657
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
 // FILE: main.kt

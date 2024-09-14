@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 
 import kotlin.reflect.KProperty

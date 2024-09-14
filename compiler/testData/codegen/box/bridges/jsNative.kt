@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 package foo
 
 external interface A {

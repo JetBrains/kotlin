@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 inline fun <reified T> handle(s: T): String {
     return "${T::class}"
 }

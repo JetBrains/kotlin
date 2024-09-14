@@ -78,8 +78,6 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_EXPRESSION_TESTS = Collections.emptyList();
 
-    private static final List<String> JS_FAILING_TESTS = Collections.emptyList();
-
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
             String suffix = integerType.substring(0, integerType.startsWith("U") ? 2 : 1);
@@ -149,7 +147,6 @@ public class GenerateRangesCodegenTestData {
             String generatedBody,
             boolean isForUnsigned,
             boolean ignoreJvmIR,
-            boolean ignoreJs,
             boolean useOldManglingScheme
     ) {
         PrintWriter out;
@@ -163,9 +160,6 @@ public class GenerateRangesCodegenTestData {
 
         if (ignoreJvmIR) {
             out.println("// IGNORE_BACKEND: JVM_IR");
-        }
-        if (ignoreJs) {
-            out.println("// IGNORE_BACKEND: JS");
         }
         boolean hasRangeUntil = generatedBody.contains("..<");
         if (hasRangeUntil) {
@@ -260,14 +254,13 @@ public class GenerateRangesCodegenTestData {
                     }
 
                     String fileName = testFunName + ".kt";
-                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false, false, false);
-                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false, false, false);
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false, false);
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false, false);
                     writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true,
                                 JVM_IR_FAILING_UNSIGNED_LITERAL_TESTS.contains(testFunName),
-                                false, USE_OLD_MANGLING_IN_UNSIGNED_LITERAL_TESTS.contains(testFunName));
+                                USE_OLD_MANGLING_IN_UNSIGNED_LITERAL_TESTS.contains(testFunName));
                     writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true,
                                 JVM_IR_FAILING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName),
-                                JS_FAILING_TESTS.contains(testFunName),
                                 USE_OLD_MANGLING_IN_UNSIGNED_EXPRESSION_TESTS.contains(testFunName));
                 }
             }

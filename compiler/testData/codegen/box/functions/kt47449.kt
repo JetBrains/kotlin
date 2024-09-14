@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 typealias EmptyFunctionResult<T> = () -> T
 
 typealias LoggingFunctionType<T> = (tag: String, message: String, throwable: Throwable?) -> T

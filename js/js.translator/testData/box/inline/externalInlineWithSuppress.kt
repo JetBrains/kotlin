@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // FILE: main.kt
 @file:Suppress(
     "NESTED_CLASS_IN_EXTERNAL_INTERFACE",

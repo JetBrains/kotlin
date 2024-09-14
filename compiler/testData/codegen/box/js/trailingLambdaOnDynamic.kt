@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 
 fun box(): String {
     val foo = js("{ bar: function(x, y) { return y(x) } }")

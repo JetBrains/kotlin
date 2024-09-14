@@ -1,6 +1,5 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // DONT_TARGET_EXACT_BACKEND: JVM
-// DONT_TARGET_EXACT_BACKEND: JS
 // WITH_STDLIB
 
 fun <T> T.id() = this

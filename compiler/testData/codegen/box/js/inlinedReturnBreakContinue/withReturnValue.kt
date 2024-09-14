@@ -1,7 +1,7 @@
 // ISSUE: KT-68975
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/withReturnValue.kt
 // LANGUAGE: +BreakContinueInInlineLambdas
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 

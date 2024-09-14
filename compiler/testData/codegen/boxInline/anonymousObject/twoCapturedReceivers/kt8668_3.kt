@@ -1,5 +1,4 @@
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_BACKEND: JS
 // FILE: 1.kt
 
 package test

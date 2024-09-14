@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 
 import kotlin.reflect.createInstance

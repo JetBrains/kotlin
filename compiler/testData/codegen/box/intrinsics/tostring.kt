@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 fun assertEquals(expected: String, actual: String, message: String) {
     if (expected != actual) {
         throw AssertionError("${message}: expected $expected, actual $actual")

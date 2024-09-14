@@ -1,5 +1,4 @@
 // The test checks an optimization which is implemented only for JS_IR backend
-// DONT_TARGET_EXACT_BACKEND: JS
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 

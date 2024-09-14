@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS
 // ES_MODULES
-// DONT_TARGET_EXACT_BACKEND: JS
 
 // MODULE: export_inner_class
 // FILE: lib.kt
