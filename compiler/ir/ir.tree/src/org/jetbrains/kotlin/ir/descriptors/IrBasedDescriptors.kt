@@ -581,7 +581,11 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.toIrBasedDescriptor() as ReceiverParameterDescriptor
 
     override fun getContextReceivers(): List<ReceiverParameterDescriptor> {
-        TODO("Not yet implemented")
+        return owner
+            .fields
+            .filter { it.origin == IrDeclarationOrigin.FIELD_FOR_CLASS_CONTEXT_RECEIVER }
+            .map(::IrBasedContextReceiverFieldDescriptor)
+            .toList()
     }
 
     override fun getUnsubstitutedPrimaryConstructor() =
@@ -1094,6 +1098,26 @@ class IrBasedDelegateFieldDescriptor(owner: IrField) : IrBasedFieldDescriptor(ow
 
     override val isDelegated: Boolean
         get() = true
+}
+
+class IrBasedContextReceiverFieldDescriptor(owner: IrField) : IrBasedCallableDescriptor<IrField>(owner), ReceiverParameterDescriptor {
+    override fun getOriginal() = this
+
+    override fun substitute(substitutor: TypeSubstitutor): Nothing {
+        TODO("Not yet implemented")
+    }
+
+    override fun getName(): Name = owner.name
+
+    override fun getValue(): ReceiverValue {
+        TODO("Not yet implemented")
+    }
+
+    override fun copy(newOwner: DeclarationDescriptor): ReceiverParameterDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getType(): KotlinType = owner.type.toIrBasedKotlinType()
 }
 
 fun IrField.toIrBasedDescriptor() = if (origin == IrDeclarationOrigin.DELEGATE) {
