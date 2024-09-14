@@ -30,7 +30,6 @@ where advanced options include:
   -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Minimize the names of members.
   -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
-  -Xir-new-ir2js             New fragment-based 'ir2js'.
   -Xir-per-file              Generate one .js file per source file.
   -Xir-per-module            Generate one .js file per module.
   -Xir-per-module-output-name Add a custom output name to the split .js files.
