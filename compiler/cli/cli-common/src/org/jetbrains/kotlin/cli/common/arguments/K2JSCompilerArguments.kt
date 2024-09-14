@@ -580,13 +580,6 @@ It is deprecated and will be removed in a future release."""
             field = value
         }
 
-    @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support for .kts files using K/JS (with '-Xir' only).")
-    var enableJsScripting = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(value = "-Xfake-override-validator", description = "Enable the IR fake override validator.")
     var fakeOverrideValidator = false
         set(value) {
@@ -690,10 +683,6 @@ It is deprecated and will be removed in a future release."""
     }
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
-        // TODO: 'enableJsScripting' is used in intellij tests
-        //   Drop it after removing the usage from the intellij repository:
-        //   https://github.com/JetBrains/intellij-community/blob/master/plugins/kotlin/gradle/gradle-java/tests/test/org/jetbrains/kotlin/gradle/CompilerArgumentsCachingTest.kt#L329
-        collector.deprecationWarn(enableJsScripting, false, "-Xenable-js-scripting")
         collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
 
         if (irPerFile && (moduleKind != MODULE_ES && target != ES_2015)) {
