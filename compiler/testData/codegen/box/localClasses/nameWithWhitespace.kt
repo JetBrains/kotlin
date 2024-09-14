@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // Names with spaces are not valid according to the dex specification

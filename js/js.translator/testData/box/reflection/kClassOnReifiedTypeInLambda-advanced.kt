@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 // FILE: lib.kt
 // RECOMPILE
 package foo

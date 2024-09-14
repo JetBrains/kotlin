@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // MODULE: lib
 // FILE: A.kt
 inline fun funA(flag: Boolean): String {

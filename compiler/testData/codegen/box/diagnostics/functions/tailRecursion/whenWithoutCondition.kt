@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 tailrec fun withWhen2(counter : Int) : Int =
         when {
             counter == 0 -> counter

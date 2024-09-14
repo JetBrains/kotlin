@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 //   KT-65822: JS targets are ignored, as they doesn't support source-binary-source dependencies
 // IGNORE_BACKEND_K2: WASM
 //   Reason: KT-65794

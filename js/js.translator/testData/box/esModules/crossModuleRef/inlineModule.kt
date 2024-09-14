@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 // MODULE: lib1
 // FILE: lib1.kt

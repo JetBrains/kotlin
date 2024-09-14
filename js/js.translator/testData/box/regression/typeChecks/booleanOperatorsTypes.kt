@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 package foo
 
 fun check(x: Any?) {

@@ -2,7 +2,6 @@
 // WASM_MUTE_REASON: STDLIB_ASSERT
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS
 // See related issue: https://youtrack.jetbrains.com/issue/KT-59059/Native-Assert-does-not-evaluate-argument-value-when-disabled
 // ASSERTIONS_MODE: always-disable
 // WITH_STDLIB

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 open class A(val a: String = DEFAULT_A){
     companion object: A(){
         const val DEFAULT_A = "O"

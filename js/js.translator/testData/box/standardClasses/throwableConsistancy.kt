@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 fun test(case: String, expctedMessage: String?, expectedCause: Throwable?, expectedToString: String, t: Throwable): String {
     val actualMessage = t.message
     if (actualMessage != expctedMessage) return "$case FAIL message: $actualMessage, expcted: $expctedMessage"

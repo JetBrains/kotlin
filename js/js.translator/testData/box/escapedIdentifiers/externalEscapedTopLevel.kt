@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 package foo

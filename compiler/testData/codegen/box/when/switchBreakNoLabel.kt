@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 fun test(): Boolean {
     var flagOuter = false
     var flagInner = false

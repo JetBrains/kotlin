@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 var l = ""
 
 enum class Foo {

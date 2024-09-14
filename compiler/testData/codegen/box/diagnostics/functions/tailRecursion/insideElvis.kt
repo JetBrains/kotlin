@@ -1,5 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 // IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun test(counter : Int) : Int? {

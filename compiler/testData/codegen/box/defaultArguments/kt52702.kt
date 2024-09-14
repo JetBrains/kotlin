@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // Check that local variables for inline functions and inline default lambdas start
 // after they are initialized.
 

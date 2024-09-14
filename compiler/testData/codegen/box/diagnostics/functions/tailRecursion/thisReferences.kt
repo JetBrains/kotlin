@@ -1,6 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 class A {
     tailrec fun f1(c : Int) {
         if (c > 0) {

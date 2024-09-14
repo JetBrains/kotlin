@@ -1,6 +1,5 @@
 // LANGUAGE: +ProperIeee754Comparisons
 // It doesn't work on JS due to how numbers are represented, but it could be changed in the future.
-// IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // Exclamation marks are not valid in names in the dex file format.

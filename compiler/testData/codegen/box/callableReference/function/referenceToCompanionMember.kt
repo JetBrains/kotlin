@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 
 class A {
     companion object {

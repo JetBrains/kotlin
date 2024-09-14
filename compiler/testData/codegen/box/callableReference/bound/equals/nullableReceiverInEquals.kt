@@ -3,7 +3,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 
 // JVM_ABI_K1_K2_DIFF: KT-63859
 

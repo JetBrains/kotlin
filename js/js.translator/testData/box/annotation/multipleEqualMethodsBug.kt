@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 package foo
 
 annotation class Parent {

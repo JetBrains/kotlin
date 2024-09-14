@@ -1,6 +1,6 @@
 // LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
-// IGNORE_BACKEND: JS, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR_ES6
 
 package test
 

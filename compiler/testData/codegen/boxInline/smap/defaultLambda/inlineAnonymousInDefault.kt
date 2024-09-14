@@ -1,10 +1,10 @@
 // SEPARATE_SMAP_DUMPS
 // SKIP_INLINE_CHECK_IN: lParams$default
-// IGNORE_BACKEND: JS
 // IGNORE_INLINER: IR
 // FILE: 1.kt
 
 package test
+//A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
