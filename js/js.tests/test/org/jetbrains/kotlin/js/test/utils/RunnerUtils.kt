@@ -275,7 +275,7 @@ fun extractEntryModulePath(
 
 fun getTestChecker(testServices: TestServices): AbstractJsTestChecker {
     val runTestInNashorn = java.lang.Boolean.getBoolean("kotlin.js.useNashorn")
-    val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: TargetBackend.JS
+    val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: TargetBackend.JS_IR
     return if (targetBackend.isIR) {
         if (runTestInNashorn) NashornIrJsTestChecker else V8IrJsTestChecker
     } else {
