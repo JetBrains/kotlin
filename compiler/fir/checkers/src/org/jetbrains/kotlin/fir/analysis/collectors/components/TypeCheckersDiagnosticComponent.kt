@@ -73,7 +73,7 @@ class TypeCheckersDiagnosticComponent(
         checkers.allTypeRefCheckers.check(typeRef, data)
     }
 
-    private fun <T : FirTypeRef> Collection<FirTypeChecker<T>>.check(
+    private inline fun <reified T : FirTypeRef> Array<FirTypeChecker<T>>.check(
         typeRef: T,
         context: CheckerContext
     ) {

@@ -75,12 +75,20 @@ class Generator(
                 }
 
                 for ((kClass, alias) in configuration.aliases) {
-                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.setType} by lazy { ${alias.fieldName}")
-                    for (parent in configuration.parentsMap.getValue(kClass)) {
+                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.arrayType} by lazy { ")
+                    val parents = configuration.parentsMap.getValue(kClass)
+                    if (parents.isNotEmpty()) {
+                        print('(')
+                    }
+                    print(alias.fieldName)
+                    for (parent in parents) {
                         val parentAlias = configuration.aliases.getValue(parent)
                         print(" + ${parentAlias.fieldName}")
                     }
-                    println(" }")
+                    if (parents.isNotEmpty()) {
+                        print(')')
+                    }
+                    println(".toTypedArray() }")
                 }
             }
             println("}")
@@ -173,6 +181,9 @@ class Generator(
 
     private val Alias.mutableSetType: String
         get() = "MutableSet<$this>"
+
+    private val Alias.arrayType: String
+        get() = "Array<$this>"
 
     private val Fqn.simpleName: String
         get() = this.split(".").last()

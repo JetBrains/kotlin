@@ -127,7 +127,7 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allBasicDeclarationCheckers.check(codeFragment, data)
     }
 
-    private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(
+    private inline fun <reified D : FirDeclaration> Array<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext
     ) {

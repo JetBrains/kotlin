@@ -264,7 +264,7 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(qualifiedErrorAccessExpression, data)
     }
 
-    private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(
+    private inline fun <reified E : FirStatement> Array<FirExpressionChecker<E>>.check(
         expression: E,
         context: CheckerContext
     ) {
