@@ -135,13 +135,13 @@ class PostponedArgumentsAnalyzer(
         val receiver = lambda.receiverType?.let(::substitute)
         val contextReceivers = lambda.contextReceiverTypes.map(::substitute)
         val parameters = lambda.parameterTypes.map(::substitute)
-        val rawReturnType = lambda.returnType
+        val lambdaReturnType = lambda.returnType
 
         val expectedTypeForReturnArguments = when {
-            c.canBeProper(rawReturnType) -> substitute(rawReturnType)
+            c.canBeProper(lambdaReturnType) -> substitute(lambdaReturnType)
 
             // For Unit-coercion
-            !rawReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(rawReturnType) -> unitType
+            !lambdaReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(lambdaReturnType) -> unitType
 
             // Supplying the expected type for lambda effectively makes it being resolved in the FULL completion mode.
             // For non-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: calls inside return
@@ -156,7 +156,7 @@ class PostponedArgumentsAnalyzer(
             // NB: It's explicitly put below the unit case
             // (see testData/diagnostics/tests/inference/pcla/lambdaBelongsToOuterCallUnitConstraint.kt)
             withPCLASession && resolutionContext.session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21) ->
-                substitute(rawReturnType)
+                substitute(lambdaReturnType)
 
             else -> null
         }
