@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -406,9 +407,16 @@ class DeclarationGenerator(
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
         val fqnShouldBeEmitted = context.backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
-        //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
-        val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
-        val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+
+        val klass = classMetadata.klass
+        val packageName =
+            if (fqnShouldBeEmitted) {
+                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+            } else {
+                ""
+            }
+
+        val simpleName = klass.kotlinFqName.shortName().asString()
 
         val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(packageName)
         val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
@@ -425,18 +433,18 @@ class DeclarationGenerator(
             )
         )
 
-        val superClass = classMetadata.klass.getSuperClass(context.backendContext.irBuiltIns)
+        val superClass = klass.getSuperClass(context.backendContext.irBuiltIns)
         val superTypeId = superClass?.let {
             ConstantDataIntField("SuperTypeId", context.referenceTypeId(it.symbol))
         } ?: ConstantDataIntField("SuperTypeId", -1)
 
         val typeInfoContent = mutableListOf(typeInfo, superTypeId)
-        if (!classMetadata.klass.isAbstractOrSealed) {
+        if (!klass.isAbstractOrSealed) {
             typeInfoContent.add(interfaceTable(classMetadata))
         }
 
         return ConstantDataStruct(
-            name = "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
+            name = "Class TypeInfo: ${klass.fqNameWhenAvailable} ",
             elements = typeInfoContent
         )
     }
