@@ -91,8 +91,6 @@ where advanced options include:
                              Enable signature uniqueness checks.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
-  -Xklib-double-inlining     Turn on experimental double-inlining mode.
-                             Warning: This feature is unstable.
   -Xexplicit-api={strict|warning|disable}
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
@@ -118,6 +116,7 @@ where advanced options include:
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
+  -Xklib-no-double-inlining  Turn off double-inlining mode.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.

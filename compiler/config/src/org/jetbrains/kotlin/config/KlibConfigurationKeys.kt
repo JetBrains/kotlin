@@ -19,8 +19,8 @@ object KlibConfigurationKeys {
         CompilerConfigurationKey.create("Turn on the checks on uniqueness of signatures")
 
     @JvmField
-    val EXPERIMENTAL_DOUBLE_INLINING: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Turns on experimental double-inlining mode")
+    val DOUBLE_INLINING_ENABLED: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("Turns on double-inlining mode")
 
     @JvmField
     val SYNTHETIC_ACCESSORS_DUMP_DIR: CompilerConfigurationKey<String?> =

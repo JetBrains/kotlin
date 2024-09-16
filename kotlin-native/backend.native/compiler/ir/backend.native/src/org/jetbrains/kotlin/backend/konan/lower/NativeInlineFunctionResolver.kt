@@ -86,7 +86,7 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
         val body = function.body ?: return
 
-        val experimentalDoubleInlining = context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
+        val doubleInliningEnabled = context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)
 
         NativeAssertionWrapperLowering(context).lower(function)
 
@@ -98,12 +98,12 @@ internal class NativeInlineFunctionResolver(
 
         OuterThisInInlineFunctionsSpecialAccessorLowering(
                 context,
-                generatePublicAccessors = !experimentalDoubleInlining // Make accessors public if `SyntheticAccessorLowering` is disabled.
+                generatePublicAccessors = !doubleInliningEnabled // Make accessors public if `SyntheticAccessorLowering` is disabled.
         ).lowerWithoutAddingAccessorsToParents(function)
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
-        if (!context.config.produce.isCache && !functionIsCached && !experimentalDoubleInlining) {
+        if (!context.config.produce.isCache && !functionIsCached && !doubleInliningEnabled) {
             // Do not extract local classes off of inline functions from cached libraries.
             LocalClassesInInlineFunctionsLowering(context).lower(body, function)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
@@ -113,7 +113,7 @@ internal class NativeInlineFunctionResolver(
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
 
-        if (experimentalDoubleInlining) {
+        if (doubleInliningEnabled) {
             NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
             SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         }

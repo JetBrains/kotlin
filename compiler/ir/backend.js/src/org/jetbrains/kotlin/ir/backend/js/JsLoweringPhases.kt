@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -884,20 +883,20 @@ fun getJsLowerings(
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-    localClassesExtractionFromInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    localClassesInInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    localClassesExtractionFromInlineFunctionsPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-    inlineOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-    syntheticAccessorGenerationPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    inlineOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    syntheticAccessorGenerationPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
     dumpSyntheticAccessorsPhase.takeIf {
-        configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) &&
+        configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) &&
                 configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
     },
     cacheInlineFunctionsBeforeInliningAllFunctionsPhase,

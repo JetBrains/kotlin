@@ -28,10 +28,8 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -41,8 +39,6 @@ import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal typealias LoweringList = List<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
 
@@ -184,7 +180,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
 private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
         { context, irFile ->
             // Make accessors public if `SyntheticAccessorLowering` is disabled.
-            val generatePublicAccessors = !context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
+            val generatePublicAccessors = !context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)
             OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors).lower(irFile)
         },
         name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
@@ -194,7 +190,7 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringP
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
         { context, irFile ->
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
-            if (!context.config.produce.isCache && !context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+            if (!context.config.produce.isCache && !context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED)) {
                 LocalClassesInInlineFunctionsLowering(context).lower(irFile)
                 LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
             }
@@ -631,18 +627,18 @@ private val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-        assertionWrapperPhase,
-        lateinitPhase,
-        sharedVariablesPhase,
-        outerThisSpecialAccessorInInlineFunctionsPhase,
-        extractLocalClassesFromInlineBodies,
-        inlineCallableReferenceToLambdaPhase,
-        arrayConstructorPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-        cacheOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-        inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-        syntheticAccessorGenerationPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-        cacheAllFunctionsPhase,
+    assertionWrapperPhase,
+    lateinitPhase,
+    sharedVariablesPhase,
+    outerThisSpecialAccessorInInlineFunctionsPhase,
+    extractLocalClassesFromInlineBodies,
+    inlineCallableReferenceToLambdaPhase,
+    arrayConstructorPhase,
+    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    cacheOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    inlineOnlyPrivateFunctionsPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    syntheticAccessorGenerationPhase.takeIf { context.config.configuration.getBoolean(KlibConfigurationKeys.DOUBLE_INLINING_ENABLED) },
+    cacheAllFunctionsPhase,
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
