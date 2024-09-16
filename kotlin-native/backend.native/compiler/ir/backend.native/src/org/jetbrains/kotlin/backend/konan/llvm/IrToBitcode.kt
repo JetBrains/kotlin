@@ -329,36 +329,6 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun <T:IrElement> findCodeContext(entry: T, context:CodeContext?, predicate: CodeContext.(T) -> Boolean): CodeContext? {
-        if(context == null)
-            //TODO: replace `return null` with `throw NoContextFound()` ASAP.
-            return null
-        if (context.predicate(entry))
-            return context
-        return findCodeContext(entry, (context as? InnerScope)?.outerContext, predicate)
-    }
-
-
-    private inline fun <R> switchSymbolizationContextTo(symbol: IrFunctionSymbol, block: () -> R): R? {
-        val functionContext = findCodeContext(symbol.owner, currentCodeContext) {
-            val declaration = (this as? FunctionScope)?.declaration
-            val inlinedBlock = (this as? InlinedBlockScope)?.inlinedBlock
-            val inlinedFunction = inlinedBlock?.inlineFunction
-            declaration == it || inlinedFunction == it
-        } ?: return null
-
-        /**
-         * We can't switch context safely, only for symbolzation needs: location, scope detection.
-         */
-        using(object: InnerScopeImpl() {
-            override fun location(offset: Int): LocationInfo? = functionContext.location(offset)
-
-            override fun scope(): DIScopeOpaqueRef? = functionContext.scope()
-
-        }) {
-            return block()
-        }
-    }
     private fun appendCAdapters(elements: CAdapterExportedElements) {
         CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
     }
@@ -1430,12 +1400,8 @@ internal class CodeGeneratorVisitor(
 
     private fun generateVariable(variable: IrVariable) {
         context.log { "generateVariable               : ${ir2string(variable)}" }
-        val isInlinedArgument = variable.isTmpForInline
         val value = variable.initializer?.let { initializer ->
-            (currentCodeContext.functionScope()?.takeIf { isInlinedArgument } as? FunctionScope)
-                    ?.declaration?.symbol?.let {
-                        switchSymbolizationContextTo(it) { evaluateExpression(initializer) }
-                    } ?: evaluateExpression(initializer)
+            evaluateExpression(initializer)
         }
         currentCodeContext.genDeclareVariable(variable, value)
     }
