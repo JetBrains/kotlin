@@ -430,6 +430,11 @@ private fun mapInapplicableCandidateError(
                 rootCause.candidateSymbol
             )
 
+            is WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(
+                qualifiedAccessSource ?: source,
+                rootCause.desiredCount, rootCause.symbol
+            )
+
             else -> genericDiagnostic
         }
     }.distinct()

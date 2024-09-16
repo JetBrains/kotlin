@@ -1,0 +1,41 @@
+/genericInvokeInCompanion.fir.kt:(181,187): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(181,187): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(213,219): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(213,219): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(255,261): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(255,261): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(273,279): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(273,279): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(295,301): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(295,301): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(327,333): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(327,333): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(547,548): error: Cannot infer type for this parameter. Please specify it explicitly.
+
+/genericInvokeInCompanion.fir.kt:(547,548): error: Not enough information to infer type argument for 'T'.
+
+/genericInvokeInCompanion.fir.kt:(573,588): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(616,631): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(663,678): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(720,730): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(748,763): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(785,800): error: One type argument expected for fun <T> invoke(name: String): C<T>.
+
+/genericInvokeInCompanion.fir.kt:(832,842): error: One type argument expected for fun <T> invoke(name: String): C<T>.

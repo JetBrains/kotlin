@@ -30,7 +30,7 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           ]
           callableId = /MyClass.contains
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for fun contains(str: String): Boolean.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

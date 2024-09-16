@@ -1209,7 +1209,9 @@ object PositioningStrategies {
 
     val TYPE_ARGUMENT_LIST_OR_SELF = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            element.getChildOfType<KtTypeArgumentList>()?.let { return markElement(it) }
+            ((element as? KtQualifiedExpression)?.selectorExpression ?: element).getChildOfType<KtTypeArgumentList>()?.let {
+                return markElement(it)
+            }
             return super.mark(element)
         }
     }

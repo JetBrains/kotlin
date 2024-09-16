@@ -1523,7 +1523,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRONG_NUMBER_OF_TYPE_ARGUMENTS,
             "$wrongNumberOfTypeArguments for {1}.",
             null,
-            RENDER_CLASS_OR_OBJECT_NAME_QUOTED
+            SYMBOL
         )
         map.put(
             NO_TYPE_ARGUMENTS_ON_RHS,

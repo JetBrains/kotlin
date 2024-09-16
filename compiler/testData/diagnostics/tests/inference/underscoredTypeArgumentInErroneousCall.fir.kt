@@ -8,5 +8,5 @@ fun main() {
     <!UNRESOLVED_REFERENCE!>convTo<!><<!OTHER_ERROR!>_<!>>()
     <!UNRESOLVED_REFERENCE!>convTo<!><<!OTHER_ERROR!>_<!>>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!><String, <!OTHER_ERROR!>_<!>>()
+    foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, <!OTHER_ERROR!>_<!>><!>()
 }

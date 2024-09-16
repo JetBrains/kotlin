@@ -1699,7 +1699,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface WrongNumberOfTypeArguments : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongNumberOfTypeArguments::class
         val expectedCount: Int
-        val classifier: KaClassLikeSymbol
+        val owner: KaSymbol
     }
 
     interface NoTypeArgumentsOnRhs : KaFirDiagnostic<PsiElement> {

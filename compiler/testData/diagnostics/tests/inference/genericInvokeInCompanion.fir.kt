@@ -1,4 +1,5 @@
 // ISSUE: KT-71210
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 class C<T> {
     companion object {
@@ -25,13 +26,13 @@ fun main() {
 
     <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>C<!>("")
     C<Int>("")
-    <!INAPPLICABLE_CANDIDATE!>C<!><Int, Int, Int>("")
+    C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
 
-    C.Companion.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int, Int>("")
-    C<Int>.Companion.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int, Int>("")
-    C<Int, Int, Int>.Companion.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int>("")
+    C.Companion.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
+    C<Int>.Companion.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
+    C<Int, Int, Int>.Companion.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>("")
 
-    C.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int, Int>("")
-    C<Int>.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int, Int>("")
-    C<Int, Int, Int>.<!INAPPLICABLE_CANDIDATE!>invoke<!><Int, Int>("")
+    C.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
+    C<Int>.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
+    C<Int, Int, Int>.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>("")
 }

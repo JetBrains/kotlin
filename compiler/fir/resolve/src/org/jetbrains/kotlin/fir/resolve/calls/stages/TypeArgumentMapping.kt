@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.WrongNumberOfTypeArguments
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -48,18 +50,19 @@ internal object MapTypeArguments : ResolutionStage() {
             return
         }
 
+        val desiredTypeParameterCount = owner.typeParameters.size
         if (
-            typeArguments.size == owner.typeParameters.size ||
+            typeArguments.size == desiredTypeParameterCount ||
             callInfo.callKind == CallKind.DelegatingConstructorCall ||
             (owner as? FirDeclaration)?.origin is FirDeclarationOrigin.DynamicScope
         ) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(
-                if (typeArguments.size > owner.typeParameters.size) typeArguments.take(owner.typeParameters.size)
+                if (typeArguments.size > desiredTypeParameterCount) typeArguments.take(desiredTypeParameterCount)
                 else typeArguments
             )
-            sink.yieldDiagnostic(InapplicableCandidate)
+            sink.yieldDiagnostic(WrongNumberOfTypeArguments(desiredTypeParameterCount, candidate.symbol))
         }
     }
 
