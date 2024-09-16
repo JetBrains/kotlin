@@ -40,8 +40,9 @@ class WasmSymbols(
         context.module.getPackage(FqName("kotlin"))
     private val enumsInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.enums"))
+    private val wasmInternalFqName = FqName("kotlin.wasm.internal")
     private val wasmInternalPackage: PackageViewDescriptor =
-        context.module.getPackage(FqName("kotlin.wasm.internal"))
+        context.module.getPackage(wasmInternalFqName)
     private val kotlinJsPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.js"))
     private val collectionsPackage: PackageViewDescriptor =
@@ -254,14 +255,23 @@ class WasmSymbols(
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
     // KProperty implementations
-    val kLocalDelegatedPropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedPropertyImpl2")
-    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedMutablePropertyImpl2")
-    val kProperty0Impl: IrClassSymbol = this.getInternalClass("KProperty0Impl2")
-    val kProperty1Impl: IrClassSymbol = this.getInternalClass("KProperty1Impl2")
-    val kProperty2Impl: IrClassSymbol = this.getInternalClass("KProperty2Impl2")
-    val kMutableProperty0Impl: IrClassSymbol = this.getInternalClass("KMutableProperty0Impl2")
-    val kMutableProperty1Impl: IrClassSymbol = this.getInternalClass("KMutableProperty1Impl2")
-    val kMutableProperty2Impl: IrClassSymbol = this.getInternalClass("KMutableProperty2Impl2")
+    val kLocalDelegatedPropertyImpl: IrClassSymbol =
+        getInternalClassOrNull("KLocalDelegatedPropertyImpl2") ?: getInternalClass("KLocalDelegatedPropertyImpl")
+    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol =
+        getInternalClassOrNull("KLocalDelegatedMutablePropertyImpl2") ?: getInternalClass("KLocalDelegatedMutablePropertyImpl")
+    val kProperty0Impl: IrClassSymbol =
+        getInternalClassOrNull("KProperty0Impl2") ?: getInternalClass("KProperty0Impl")
+    val kProperty1Impl: IrClassSymbol =
+        getInternalClassOrNull("KProperty1Impl2") ?: getInternalClass("KProperty1Impl")
+    val kProperty2Impl: IrClassSymbol =
+        getInternalClassOrNull("KProperty2Impl2") ?: getInternalClass("KProperty2Impl")
+    val kMutableProperty0Impl: IrClassSymbol =
+        getInternalClassOrNull("KMutableProperty0Impl2") ?: getInternalClass("KMutableProperty0Impl")
+    val kMutableProperty1Impl: IrClassSymbol =
+        getInternalClassOrNull("KMutableProperty1Impl2") ?: getInternalClass("KMutableProperty1Impl")
+    val kMutableProperty2Impl: IrClassSymbol =
+        getInternalClassOrNull("KMutableProperty2Impl2") ?: getInternalClass("KMutableProperty2Impl")
+
     val kMutableProperty0: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty0"))
     val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
     val kMutableProperty2: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty2"))
@@ -415,8 +425,8 @@ class WasmSymbols(
 
     val invokeOnExportedFunctionExit get() = invokeOnExportedFunctionExitIfWasi ?: error("Cannot access to wasi related std in js mode")
 
-    private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
-        memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+    private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor? =
+        memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
 
     private fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
         memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
@@ -424,7 +434,7 @@ class WasmSymbols(
     private fun findProperty(memberScope: MemberScope, name: Name): List<PropertyDescriptor> =
         memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).toList()
 
-    internal fun getClass(fqName: FqName): ClassDescriptor =
+    internal fun getClass(fqName: FqName): ClassDescriptor? =
         findClass(context.module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
     internal fun getProperty(fqName: FqName): PropertyDescriptor =
@@ -445,9 +455,16 @@ class WasmSymbols(
 
     private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackage)
 
-    private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.descriptorExtension.referenceClass(getClass(fqName))
+    private fun getIrClassOrNull(fqName: FqName): IrClassSymbol? =
+        getClass(fqName)?.let { symbolTable.descriptorExtension.referenceClass(it) }
+
+    private fun getIrClass(fqName: FqName): IrClassSymbol =
+        getIrClassOrNull(fqName)
+            ?: error("Class \"${fqName.asString()}\" not found! Please make sure that your stdlib version is the same as the compiler.")
+
     private fun getIrType(fqName: String): IrType = getIrClass(FqName(fqName)).defaultType
-    private fun getInternalClass(name: String): IrClassSymbol = getIrClass(FqName("kotlin.wasm.internal.$name"))
+    private fun getInternalClassOrNull(name: String): IrClassSymbol? = getIrClassOrNull(wasmInternalFqName.child(Name.identifier(name)))
+    private fun getInternalClass(name: String): IrClassSymbol = getIrClass(wasmInternalFqName.child(Name.identifier(name)))
     fun getKFunctionType(type: IrType, list: List<IrType>): IrType {
         return irBuiltIns.functionN(list.size).typeWith(list + type)
     }
