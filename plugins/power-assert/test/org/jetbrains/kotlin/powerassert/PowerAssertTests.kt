@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.powerassert
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -74,7 +73,7 @@ class PowerAssertEnvironmentConfigurator(testServices: TestServices) : Environme
             .ifEmpty { listOf("kotlin.assert") }
             .mapTo(mutableSetOf()) { FqName(it) }
 
-        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(configuration.messageCollector, functions))
+        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(PowerAssertConfiguration(configuration, functions)))
     }
 }
 

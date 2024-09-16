@@ -49,15 +49,14 @@ import org.jetbrains.kotlin.powerassert.diagram.*
 class PowerAssertCallTransformer(
     private val sourceFile: SourceFile,
     private val context: IrPluginContext,
-    private val messageCollector: MessageCollector,
-    private val functions: Set<FqName>,
+    private val configuration: PowerAssertConfiguration,
 ) : IrElementTransformerVoidWithContext() {
     private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
 
     override fun visitCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
         val fqName = function.kotlinFqName
-        if (function.valueParameters.isEmpty() || functions.none { fqName == it }) {
+        if (function.valueParameters.isEmpty() || configuration.functions.none { fqName == it }) {
             return super.visitCall(expression)
         }
 
@@ -69,15 +68,15 @@ class PowerAssertCallTransformer(
             val valueTypesTruncated = function.valueParameters.subList(0, function.valueParameters.size - 1)
                 .joinToString("") { it.type.render() + ", " }
             val valueTypesAll = function.valueParameters.joinToString("") { it.type.render() + ", " }
-            messageCollector.warn(
+            configuration.messageCollector.warn(
                 expression = expression,
                 message = """
-          |Unable to find overload of function $fqName for power-assert transformation callable as:
-          | - $fqName(${valueTypesTruncated}String)
-          | - $fqName($valueTypesTruncated() -> String)
-          | - $fqName(${valueTypesAll}String)
-          | - $fqName($valueTypesAll() -> String)
-        """.trimMargin(),
+                  |Unable to find overload of function $fqName for power-assert transformation callable as:
+                  | - $fqName(${valueTypesTruncated}String)
+                  | - $fqName($valueTypesTruncated() -> String)
+                  | - $fqName(${valueTypesAll}String)
+                  | - $fqName($valueTypesAll() -> String)
+                """.trimMargin(),
             )
             return super.visitCall(expression)
         }
@@ -102,7 +101,7 @@ class PowerAssertCallTransformer(
 
         // If all roots are null, there are no transformable parameters
         if (dispatchRoot == null && extensionRoot == null && roots.all { it == null }) {
-            messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
+            configuration.messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
             return super.visitCall(expression)
         }
 

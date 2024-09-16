@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.name.FqName
 
 val KEY_FUNCTIONS = CompilerConfigurationKey<List<String>>("fully-qualified function names")
@@ -40,6 +39,13 @@ class PowerAssertCompilerPluginRegistrar(
         val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
         if (functions.isEmpty()) return
 
-        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(configuration.messageCollector, functions.toSet()))
+        IrGenerationExtension.registerExtension(
+            PowerAssertIrGenerationExtension(
+                PowerAssertConfiguration(
+                    configuration,
+                    functions.toSet()
+                )
+            )
+        )
     }
 }
