@@ -246,6 +246,18 @@ internal class DivisionByZeroImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DivisionByZero
 
+internal class BobkoIterableOverloadsImpl(
+    override val text: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.BobkoIterableOverloads
+
+internal class BobkoCollectionOverloadsImpl(
+    override val text: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.BobkoCollectionOverloads
+
 internal class ValOrVarOnLoopParameterImpl(
     override val valOrVar: KtKeywordToken,
     firDiagnostic: KtPsiDiagnostic,

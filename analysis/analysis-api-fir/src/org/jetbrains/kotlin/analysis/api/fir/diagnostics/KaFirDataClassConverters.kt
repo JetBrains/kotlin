@@ -248,6 +248,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.BOBKO_ITERABLE_OVERLOADS) { firDiagnostic ->
+        BobkoIterableOverloadsImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.BOBKO_COLLECTION_OVERLOADS) { firDiagnostic ->
+        BobkoCollectionOverloadsImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VAL_OR_VAR_ON_LOOP_PARAMETER) { firDiagnostic ->
         ValOrVarOnLoopParameterImpl(
             firDiagnostic.a,
