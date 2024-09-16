@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -90,8 +91,8 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param dependencies The list of KLIBs that the KLIB being produced depends on.
  * @param createModuleSerializer Used for creating a backend-specific instance of [IrModuleSerializer].
  * @param metadataSerializer Something capable of serializing the metadata of the source files. See the corresponding interface KDoc.
- * @param runKlibCheckers Additional checks to be run before serializing [irModuleFragment]. Can be used to report serialization-time
- *     diagnostics.
+ * @param platformKlibCheckers Additional checks to be run before serializing [irModuleFragment].
+ *     Can be used to report serialization-time diagnostics.
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
  * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
@@ -113,7 +114,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         shouldCheckSignaturesOnUniqueness: Boolean,
     ) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
-    runKlibCheckers: (IrModuleFragment, IrDiagnosticReporter, CompilerConfiguration) -> Unit = { _, _, _ -> },
+    platformKlibCheckers: List<(IrDiagnosticReporter) -> IrElementVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
 ): SerializerOutput<Dependency> {
@@ -126,6 +127,12 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     val serializedIr = irModuleFragment?.let {
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
         runKlibCheckers(it, irDiagnosticReporter, configuration)
+
+        it.runIrLevelCheckers(
+            irDiagnosticReporter,
+            *platformKlibCheckers.toTypedArray(),
+        )
+
         createModuleSerializer(
             irDiagnosticReporter,
             it.irBuiltins,
@@ -194,4 +201,13 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         serializedIr = if (serializedIr == null) null else SerializedIrModule(compiledKotlinFiles.mapNotNull { it.irData }),
         neededLibraries = dependencies,
     )
+}
+
+private fun IrModuleFragment.runIrLevelCheckers(
+    diagnosticReporter: IrDiagnosticReporter,
+    vararg checkers: (IrDiagnosticReporter) -> IrElementVisitor<*, Nothing?>,
+) {
+    for (checker in checkers) {
+        accept(checker(diagnosticReporter), null)
+    }
 }

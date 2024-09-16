@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
@@ -647,12 +648,12 @@ fun serializeModuleIntoKlib(
             ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
         },
         metadataSerializer = metadataSerializer,
-        runKlibCheckers = { irModuleFragment, irDiagnosticReporter, compilerConfiguration ->
-            if (builtInsPlatform == BuiltInsPlatform.JS) {
+        platformKlibCheckers = listOfNotNull(
+            { irDiagnosticReporter: IrDiagnosticReporter ->
                 val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
-                JsKlibCheckers.check(cleanFilesIrData, irModuleFragment, moduleExportedNames, irDiagnosticReporter, compilerConfiguration)
-            }
-        },
+                JsKlibCheckers.makeChecker(cleanFilesIrData, moduleExportedNames, irDiagnosticReporter, configuration)
+            }.takeIf { builtInsPlatform == BuiltInsPlatform.JS  }
+        ),
         processCompiledFileData = { ioFile, compiledFile ->
             incrementalResultsConsumer?.run {
                 processPackagePart(ioFile, compiledFile.metadata, empty, empty)

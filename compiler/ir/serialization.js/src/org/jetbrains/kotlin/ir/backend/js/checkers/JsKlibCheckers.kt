@@ -31,14 +31,13 @@ object JsKlibCheckers {
         JsKlibJsCodeCallChecker
     )
 
-    fun check(
+    fun makeChecker(
         cleanFiles: List<SerializedIrFile>,
-        dirtyModule: IrModuleFragment,
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>>,
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration
-    ) {
-        dirtyModule.acceptVoid(object : IrElementVisitorVoid {
+    ): IrElementVisitorVoid {
+        return object : IrElementVisitorVoid {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
 
             override fun visitElement(element: IrElement) {
@@ -71,6 +70,6 @@ object JsKlibCheckers {
                 }
                 super.visitCall(expression)
             }
-        })
+        }
     }
 }
