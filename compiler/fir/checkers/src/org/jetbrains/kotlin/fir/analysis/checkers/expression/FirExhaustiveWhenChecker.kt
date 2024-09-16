@@ -26,16 +26,17 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         reportNotExhaustive(expression, context, reporter)
         reportElseMisplaced(expression, reporter, context)
+        reportRedundantElse(expression, context, reporter)
     }
 
     private fun reportEmptyThenInExpression(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -121,6 +122,15 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
             val branch = indexedValue.value
             if (branch.condition is FirElseIfTrueCondition && indexedValue.index < branchesCount - 1) {
                 reporter.reportOn(branch.source, FirErrors.ELSE_MISPLACED_IN_WHEN, context)
+            }
+        }
+    }
+
+    private fun reportRedundantElse(whenExpression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (whenExpression.exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive) {
+            for (branch in whenExpression.branches) {
+                if (branch.source == null || branch.condition !is FirElseIfTrueCondition) continue
+                reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN, context)
             }
         }
     }

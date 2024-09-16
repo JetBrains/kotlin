@@ -27,7 +27,7 @@ fun case1() {
     val when1 = when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
-        else -> {}
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
     }
 
     val when2 = when (z) {
@@ -69,7 +69,7 @@ fun case3() {
     val when1: Any = when (a) {
         true -> { }
         false -> { }
-        else -> { }
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> { }
     }
     val when2: Any = when (a) {
         true -> { }
@@ -91,7 +91,7 @@ fun case4() {
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  SClass.C ->{ }
-        else -> { }
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> { }
     }
 
     val when2 = when (x){

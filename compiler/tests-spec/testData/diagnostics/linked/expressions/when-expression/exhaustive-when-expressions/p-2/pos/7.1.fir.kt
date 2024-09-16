@@ -62,7 +62,7 @@ fun case_6(value_1: SealedClassMixed): String = when (value_1) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
-    else -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*

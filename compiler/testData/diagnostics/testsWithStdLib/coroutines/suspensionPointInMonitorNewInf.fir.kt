@@ -1,5 +1,7 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
 // SKIP_TXT
+
 import kotlin.concurrent.withLock
 
 val lock = java.util.concurrent.locks.ReentrantLock()
@@ -50,7 +52,7 @@ suspend fun ifWhenAndOtherNonsence() {
                 is Int -> {
                     return@synchronized 1 + <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>returnsInt<!>()
                 }
-                else -> {}
+                <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
             }
         } else {}
     }

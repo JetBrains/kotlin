@@ -1112,7 +1112,7 @@ fun case_63(x: Any?, b: Boolean) {
     val z3 = null
 
     if (x is Number?) {
-        if (x !== when (b) { true -> z1; false -> z2; else -> z3 }) {
+        if (x !== when (b) { true -> z1; false -> z2; <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> z3 }) {
             if (x is Int?) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)

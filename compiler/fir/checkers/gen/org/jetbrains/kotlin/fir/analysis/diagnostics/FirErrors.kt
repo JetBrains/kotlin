@@ -804,6 +804,7 @@ object FirErrors {
     val NON_EXHAUSTIVE_WHEN_STATEMENT: KtDiagnosticFactory2<String, List<WhenMissingCase>> = KtDiagnosticFactory2("NON_EXHAUSTIVE_WHEN_STATEMENT", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, KtWhenExpression::class)
     val INVALID_IF_AS_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_IF_AS_EXPRESSION", ERROR, SourceElementPositioningStrategies.IF_EXPRESSION, KtIfExpression::class)
     val ELSE_MISPLACED_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("ELSE_MISPLACED_IN_WHEN", ERROR, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class)
+    val REDUNDANT_ELSE_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_ELSE_IN_WHEN", WARNING, SourceElementPositioningStrategies.ELSE_ENTRY, KtWhenEntry::class)
     val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ILLEGAL_DECLARATION_IN_WHEN_SUBJECT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT", ERROR, SourceElementPositioningStrategies.COMMAS, PsiElement::class)
     val DUPLICATE_BRANCH_CONDITION_IN_WHEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("DUPLICATE_BRANCH_CONDITION_IN_WHEN", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

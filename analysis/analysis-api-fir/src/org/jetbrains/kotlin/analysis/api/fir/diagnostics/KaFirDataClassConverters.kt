@@ -4578,6 +4578,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REDUNDANT_ELSE_IN_WHEN) { firDiagnostic ->
+        RedundantElseInWhenImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT) { firDiagnostic ->
         IllegalDeclarationInWhenSubjectImpl(
             firDiagnostic.a,

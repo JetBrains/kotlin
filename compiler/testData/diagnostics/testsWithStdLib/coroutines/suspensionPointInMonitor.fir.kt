@@ -50,7 +50,7 @@ suspend fun ifWhenAndOtherNonsence() {
                 is Int -> {
                     return@synchronized 1 + <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>returnsInt<!>()
                 }
-                else -> {}
+                <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
             }
         } else {}
     }

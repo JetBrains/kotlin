@@ -31,6 +31,6 @@ enum class MyEnum {
     val x = when(this) {
         <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
         <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
-        else -> 3
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
     }
 }

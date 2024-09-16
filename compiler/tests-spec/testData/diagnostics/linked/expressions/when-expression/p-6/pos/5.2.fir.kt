@@ -229,7 +229,7 @@ fun case_23(value_1: Nothing) {
 fun case_24(value_1: Nothing?) = when (value_1) {
     <!SENSELESS_COMPARISON!>throw Exception()<!>, <!SENSELESS_COMPARISON!><!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> ""<!> -> ""
     <!SENSELESS_COMPARISON!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
-    else -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*

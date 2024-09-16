@@ -205,7 +205,7 @@ fun case_17(x: Boolean?, y: Boolean?) {
             false -> x!!
             null -> if (true) if (true) if (true) if (true) if (true) when (y) {
                 <!SENSELESS_COMPARISON!>true<!> -> when (y) {
-                    else -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
+                    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
                 }
                 <!SENSELESS_COMPARISON!>false<!> -> x!!
                 <!SENSELESS_COMPARISON!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!

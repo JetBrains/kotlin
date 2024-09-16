@@ -20,13 +20,13 @@ import test.*
 
 fun foo(e: E) = when (e) {
     E.FIRST -> 42
-    else -> -42
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> -42
 }
 
 fun bar(s: S?) = when (s) {
     is Derived -> "Derived"
     null -> ""
-    else -> TODO("What?!?!")
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> TODO("What?!?!")
 }
 
 fun baz(b: Boolean?) = when (b) {
@@ -34,12 +34,12 @@ fun baz(b: Boolean?) = when (b) {
     false -> 0
     null -> -1
     // Still warning
-    else -> TODO()
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> TODO()
 }
 
 fun baz(b: Boolean) = when (b) {
     true -> 1
     false -> 0
     // Still warning
-    else -> TODO()
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> TODO()
 }

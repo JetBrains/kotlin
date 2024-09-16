@@ -150,19 +150,42 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     }
 
     private fun processExhaustivenessCheck(whenExpression: FirWhenExpression) {
-        if (whenExpression.hasElseBranch()) {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.ProperlyExhaustive)
-            return
-        }
-
         val session = bodyResolveComponents.session
         val subjectType = getSubjectType(session, whenExpression)
         if (subjectType == null) {
-            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH)
+            whenExpression.replaceExhaustivenessStatus(
+                when {
+                    whenExpression.hasElseBranch() -> ExhaustivenessStatus.ProperlyExhaustive
+                    else -> ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
+                }
+            )
             return
         }
 
-        whenExpression.replaceExhaustivenessStatus(computeExhaustivenessStatus(whenExpression, subjectType.minimumBoundIfFlexible(session)))
+        val minimumBound = subjectType.minimumBoundIfFlexible(session)
+
+        // May not need to calculate the status of the minimum bound if there is an else branch for a platform type subject.
+        // In that case, only the upper bound of the platform type needs to be calculated.
+        val minimumStatus by lazy { computeExhaustivenessStatus(whenExpression, minimumBound) }
+
+        fun computeUpperBoundStatus(): ExhaustivenessStatus {
+            val upperBound = subjectType.upperBoundIfFlexible()
+            if (upperBound == minimumBound) return minimumStatus
+            return computeExhaustivenessStatus(whenExpression, upperBound)
+        }
+
+        val status = when {
+            whenExpression.hasElseBranch() -> when {
+                // If there is an else branch and the upper-bound is properly exhaustive, the else branch is redundant.
+                // Otherwise, the when-expression is properly exhaustive based on the else branch.
+                computeUpperBoundStatus() == ExhaustivenessStatus.ProperlyExhaustive -> ExhaustivenessStatus.RedundantlyExhaustive
+                else -> ExhaustivenessStatus.ProperlyExhaustive
+            }
+
+            else -> minimumStatus
+        }
+
+        whenExpression.replaceExhaustivenessStatus(status)
     }
 
     private fun FirWhenExpression.hasElseBranch(): Boolean {

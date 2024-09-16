@@ -45,7 +45,7 @@ fun case_4(value_1: SealedClass?) {
     when (value_1) {
         !is SealedChild2 -> {} // including null
         <!USELESS_IS_CHECK!>is SealedChild2?<!> -> {} // redundant nullable type check
-        else -> {}
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
     }
 }
 

@@ -3848,6 +3848,11 @@ internal class ElseMisplacedInWhenImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtWhenEntry>(firDiagnostic, token), KaFirDiagnostic.ElseMisplacedInWhen
 
+internal class RedundantElseInWhenImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtWhenEntry>(firDiagnostic, token), KaFirDiagnostic.RedundantElseInWhen
+
 internal class IllegalDeclarationInWhenSubjectImpl(
     override val illegalReason: String,
     firDiagnostic: KtPsiDiagnostic,

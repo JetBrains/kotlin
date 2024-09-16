@@ -27,7 +27,7 @@ fun foo() : Int {
       1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
       !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
-      else -> 1
+      <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 1
     }
 
     return 0

@@ -185,7 +185,7 @@ fun poll25(flag: Boolean): Flow<String> {
 
 fun poll26(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> false -> foo7() else -> ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
+        val inv = when (flag) { true -> ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> false -> foo7() <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> }
         inv
     }
 }

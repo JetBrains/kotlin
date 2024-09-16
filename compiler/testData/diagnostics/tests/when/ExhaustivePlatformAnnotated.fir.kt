@@ -50,7 +50,7 @@ fun test_4(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
 
@@ -73,7 +73,7 @@ fun test_7(): Int {
     return when (J.getNotNull()) {
         J.A -> 1
         J.B -> 2
-        else -> 3
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
     }
 }
 
@@ -82,7 +82,7 @@ fun test_8(): Int {
         J.A -> 1
         J.B -> 2
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
 
@@ -115,6 +115,6 @@ fun test_12(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
