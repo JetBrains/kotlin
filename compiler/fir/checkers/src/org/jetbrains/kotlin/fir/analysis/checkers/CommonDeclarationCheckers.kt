@@ -107,6 +107,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
             FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
             FirThrowableSubclassChecker,
+            FirIterableOverloadsInClassChecker,
             FirOpenMemberChecker,
             FirClassVarianceChecker,
             FirSealedSupertypeChecker,
@@ -166,6 +167,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirImportsChecker,
             FirOptInImportsChecker,
+            FirIterableCollectionOverloadsInFileChecker,
             FirUnresolvedInMiddleOfImportChecker,
             FirTopLevelPropertiesChecker,
             FirPackageConflictsWithClassifierChecker,
