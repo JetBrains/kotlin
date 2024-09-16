@@ -254,19 +254,17 @@ class WasmSymbols(
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
     // KProperty implementations
-    val kLocalDelegatedPropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedPropertyImpl")
-    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedMutablePropertyImpl")
-    val kProperty0Impl: IrClassSymbol = this.getInternalClass("KProperty0Impl")
-    val kProperty1Impl: IrClassSymbol = this.getInternalClass("KProperty1Impl")
-    val kProperty2Impl: IrClassSymbol = this.getInternalClass("KProperty2Impl")
-    val kMutableProperty0Impl: IrClassSymbol = this.getInternalClass("KMutableProperty0Impl")
-    val kMutableProperty1Impl: IrClassSymbol = this.getInternalClass("KMutableProperty1Impl")
-    val kMutableProperty2Impl: IrClassSymbol = this.getInternalClass("KMutableProperty2Impl")
+    val kLocalDelegatedPropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedPropertyImpl2")
+    val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = this.getInternalClass("KLocalDelegatedMutablePropertyImpl2")
+    val kProperty0Impl: IrClassSymbol = this.getInternalClass("KProperty0Impl2")
+    val kProperty1Impl: IrClassSymbol = this.getInternalClass("KProperty1Impl2")
+    val kProperty2Impl: IrClassSymbol = this.getInternalClass("KProperty2Impl2")
+    val kMutableProperty0Impl: IrClassSymbol = this.getInternalClass("KMutableProperty0Impl2")
+    val kMutableProperty1Impl: IrClassSymbol = this.getInternalClass("KMutableProperty1Impl2")
+    val kMutableProperty2Impl: IrClassSymbol = this.getInternalClass("KMutableProperty2Impl2")
     val kMutableProperty0: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty0"))
     val kMutableProperty1: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty1"))
     val kMutableProperty2: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KMutableProperty2"))
-
-    val kTypeStub = getInternalFunction("kTypeStub")
 
     val arraysCopyInto = findFunctions(collectionsPackage.memberScope, Name.identifier("copyInto"))
         .map { symbolTable.descriptorExtension.referenceSimpleFunction(it) }

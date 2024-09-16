@@ -3557,6 +3557,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("kproperty.kt")
+        public void testKproperty() {
+          runTest("compiler/testData/codegen/box/callableReference/equality/kproperty.kt");
+        }
+
+        @Test
+        @TestMetadata("kpropertyWithCapturingEquality.kt")
+        public void testKpropertyWithCapturingEquality() {
+          runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingEquality.kt");
+        }
+
+        @Test
+        @TestMetadata("kpropertyWithCapturingInequality.kt")
+        public void testKpropertyWithCapturingInequality() {
+          runTest("compiler/testData/codegen/box/callableReference/equality/kpropertyWithCapturingInequality.kt");
+        }
+
+        @Test
         @TestMetadata("noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt")
         public void testNoCoercionToUnitIfFunctionAlreadyReturnsUnit() {
           runTest("compiler/testData/codegen/box/callableReference/equality/noCoercionToUnitIfFunctionAlreadyReturnsUnit.kt");
