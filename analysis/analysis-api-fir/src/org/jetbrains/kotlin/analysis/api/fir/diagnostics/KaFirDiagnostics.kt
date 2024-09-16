@@ -206,6 +206,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DivisionByZero::class
     }
 
+    interface BobkoIterableOverloads : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = BobkoIterableOverloads::class
+        val text: String
+    }
+
+    interface BobkoCollectionOverloads : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = BobkoCollectionOverloads::class
+        val text: String
+    }
+
     interface ValOrVarOnLoopParameter : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ValOrVarOnLoopParameter::class
         val valOrVar: KtKeywordToken
