@@ -21,6 +21,7 @@ suspend fun test() = B.bar()
 
 // METHOD : ExtensionComponentsKt$bar$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=2
+// VARIABLE : NAME=<name for destructuring parameter 0> TYPE=LA; INDEX=*
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=z_param TYPE=I INDEX=4
 // VARIABLE : NAME=this TYPE=LExtensionComponentsKt$bar$2; INDEX=0

@@ -12,6 +12,8 @@ suspend fun foo(data: Data, body: suspend (Data) -> Unit) {
 }
 
 // METHOD : DataClassKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+// JVM_IR_TEMPLATES
+// VARIABLE : NAME=<name for destructuring parameter 0> TYPE=LData; INDEX=*
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=3
 // VARIABLE : NAME=y_param TYPE=I INDEX=4
 // VARIABLE : NAME=this TYPE=LDataClassKt$test$2; INDEX=0
