@@ -289,7 +289,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                     if (isBound) CallerImpl.Method.BoundJvmStaticInObject(accessor)
                     else CallerImpl.Method.JvmStaticInObject(accessor)
                 else ->
-                    if (isBound) CallerImpl.Method.BoundStatic(accessor, boundReceiver)
+                    if (isBound) CallerImpl.Method.BoundStatic(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
                     else CallerImpl.Method.Static(accessor)
             }
         }

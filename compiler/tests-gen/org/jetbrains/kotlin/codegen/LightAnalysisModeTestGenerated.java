@@ -39787,6 +39787,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
       }
 
+      @TestMetadata("dataClassCopyWithValueClass.kt")
+      public void testDataClassCopyWithValueClass() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/dataClassCopyWithValueClass.kt");
+      }
+
       @TestMetadata("defaultAndNonDefaultIntertwined.kt")
       public void testDefaultAndNonDefaultIntertwined() {
         runTest("compiler/testData/codegen/box/reflection/callBy/defaultAndNonDefaultIntertwined.kt");
@@ -39855,11 +39860,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestMetadata("kt61304.kt")
       public void testKt61304() {
         runTest("compiler/testData/codegen/box/reflection/callBy/kt61304.kt");
-      }
-
-      @TestMetadata("kt71378.kt")
-      public void testKt71378() {
-        runTest("compiler/testData/codegen/box/reflection/callBy/kt71378.kt");
       }
 
       @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")

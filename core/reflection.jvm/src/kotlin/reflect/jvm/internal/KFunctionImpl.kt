@@ -97,7 +97,7 @@ internal class KFunctionImpl private constructor(
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
                     createJvmStaticInObjectCaller(member)
                 else ->
-                    createStaticMethodCaller(member)
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
         }.createValueClassAwareCallerIfNeeded(descriptor)
@@ -144,13 +144,13 @@ internal class KFunctionImpl private constructor(
                         !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
                     createJvmStaticInObjectCaller(member)
 
-                // Create default caller for method whose declaration has value classes in its parameter types
-                // or inline class in return type.
-                caller is ValueClassAwareCaller<*> && (caller as ValueClassAwareCaller<*>).caller is CallerImpl.Method.BoundInstance ->
-                    createBoundStaticCaller(member)
-
-                else ->
-                    createStaticMethodCaller(member)
+                else -> {
+                    createStaticMethodCaller(
+                        member,
+                        isCallByToValueClassMangledMethod = caller is ValueClassAwareCaller<*> &&
+                                (caller as ValueClassAwareCaller<*>).caller is CallerImpl.Method.BoundInstance
+                    )
+                }
             }
             else -> null
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
@@ -173,19 +173,17 @@ internal class KFunctionImpl private constructor(
     private val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
-    private fun createBoundStaticCaller(member: Method): CallerImpl.Method =
-        if (isBound) CallerImpl.Method.DefaultInstanceBoundStatic(
-            member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
-        ) else CallerImpl.Method.Static(member)
-
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
     // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
     private fun useBoxedBoundReceiver(member: Method) =
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
-    private fun createStaticMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundStatic(member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver)
+    private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
+        if (isBound)
+            CallerImpl.Method.BoundStatic(
+                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
+            )
         else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =

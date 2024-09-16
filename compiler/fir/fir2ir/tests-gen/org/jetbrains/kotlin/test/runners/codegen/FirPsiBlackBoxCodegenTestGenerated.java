@@ -50549,6 +50549,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("dataClassCopyWithValueClass.kt")
+      public void testDataClassCopyWithValueClass() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/dataClassCopyWithValueClass.kt");
+      }
+
+      @Test
       @TestMetadata("defaultAndNonDefaultIntertwined.kt")
       public void testDefaultAndNonDefaultIntertwined() {
         runTest("compiler/testData/codegen/box/reflection/callBy/defaultAndNonDefaultIntertwined.kt");
@@ -50630,12 +50636,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       @TestMetadata("kt61304.kt")
       public void testKt61304() {
         runTest("compiler/testData/codegen/box/reflection/callBy/kt61304.kt");
-      }
-
-      @Test
-      @TestMetadata("kt71378.kt")
-      public void testKt71378() {
-        runTest("compiler/testData/codegen/box/reflection/callBy/kt71378.kt");
       }
 
       @Test

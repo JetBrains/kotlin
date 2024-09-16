@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
-// WITH_STDLIB
+
 import kotlin.time.Duration
 
 data class Test(val a: Duration, val b: Boolean)

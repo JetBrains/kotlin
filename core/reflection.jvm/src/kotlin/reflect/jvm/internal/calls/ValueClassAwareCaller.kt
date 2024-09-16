@@ -85,16 +85,13 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val shift = when {
-            caller is CallerImpl.Method.DefaultInstanceBoundStatic -> {
-                0
-            }
-
-            caller is CallerImpl.Method.BoundStatic || caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> {
-                // Expect CallerImpl.Method.DefaultInstanceBoundStatic below,
+            caller is CallerImpl.Method.BoundStatic && !caller.isCallByToValueClassMangledMethod -> {
                 // Bound reference to a static method is only possible for a top level extension function/property,
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
+
+            caller is CallerImpl.Method.BoundStaticMultiFieldValueClass -> -1
 
             descriptor is ConstructorDescriptor ->
                 if (caller is BoundCaller) -1 else 0
