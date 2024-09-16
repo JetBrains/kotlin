@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -56,6 +57,10 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
                 .toFile()
                 .apply { mkdirs() }.toPath(),
         )
+
+
+    // KT-71497: Generation of native distribution is not Configuration Cache friendly
+    private fun BuildOptions.disableConfigurationCacheForNativeDistGeneration() = copy(configurationCache = ConfigurationCacheValue.DISABLED)
 
     @AfterEach
     fun afterEach() {
@@ -122,8 +127,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("K/N distribution with platform libraries generation")
     @GradleTest
     fun testLibrariesGeneration(gradleVersion: GradleVersion) {
-        nativeProject("native-platform-libraries", gradleVersion = gradleVersion) {
-
+        nativeProject(
+            "native-platform-libraries",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+        ) {
             includeOtherProjectAsSubmodule("native-platform-libraries", "", "subproject", true)
 
             buildGradleKts.appendText("\nkotlin.linuxX64()\n")
@@ -214,7 +222,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("Build K/N project with compiler reinstallation")
     @GradleTest
     fun testCompilerReinstallation(gradleVersion: GradleVersion) {
-        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+        platformLibrariesProject(
+            "linuxX64",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+        ) {
             // Install the compiler at the first time. Don't build to reduce execution time.
             buildWithLightDist("tasks") {
                 assertOutputContains("${generateRegexTemplate}linux_x64".toRegex())
@@ -223,7 +235,8 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             // Reinstall the compiler.
             buildWithLightDist(
                 "tasks",
-                buildOptions = defaultBuildOptions.copy(nativeOptions = defaultBuildOptions.nativeOptions.copy(reinstall = true))
+                buildOptions = buildOptions
+                    .copy(nativeOptions = buildOptions.nativeOptions.copy(reinstall = true))
             ) {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
                 assertOutputContains("${generateRegexTemplate}linux_x64".toRegex())
@@ -260,14 +273,18 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         } else {
             TestVersions.Kotlin.STABLE_RELEASE
         }
-        nativeProject("native-download-maven", gradleVersion = gradleVersion) {
-            val nativeOptions = defaultBuildOptions.nativeOptions.copy(
+        nativeProject(
+            "native-download-maven",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+        ) {
+            val nativeOptions = buildOptions.nativeOptions.copy(
                 distributionType = "light",
                 version = kotlinNativeVersion,
             )
             build(
                 "assemble",
-                buildOptions = defaultBuildOptions.copy(nativeOptions = nativeOptions),
+                buildOptions = buildOptions.copy(nativeOptions = nativeOptions),
             ) {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
                 assertOutputContains(generateRegex)
@@ -357,9 +374,10 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     private fun platformLibrariesProject(
         vararg targets: String,
         gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
         test: TestProject.() -> Unit = {},
     ) {
-        nativeProject("native-platform-libraries", gradleVersion) {
+        nativeProject("native-platform-libraries", gradleVersion, buildOptions = buildOptions) {
             buildGradleKts.appendText(
                 targets.joinToString(prefix = "\n", separator = "\n") {
                     "kotlin.$it()"
@@ -371,7 +389,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     private fun TestProject.buildWithLightDist(
         vararg tasks: String,
-        buildOptions: BuildOptions = defaultBuildOptions.copy(),
+        buildOptions: BuildOptions = this.buildOptions,
         assertions: BuildResult.() -> Unit,
     ) =
         build(
