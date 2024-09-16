@@ -1,3 +1,4 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Network Security UniformTypeIdentifiers darwin libkern osx posix
 language = Objective-C
 package = platform.DeviceDiscoveryExtension
 
