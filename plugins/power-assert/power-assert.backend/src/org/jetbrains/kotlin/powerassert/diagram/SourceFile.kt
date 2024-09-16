@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.powerassert.earliestStartOffset
 
 data class SourceFile(
-    private val irFile: IrFile,
+    val irFile: IrFile,
 ) {
     private val source = irFile.readSourceText()
 

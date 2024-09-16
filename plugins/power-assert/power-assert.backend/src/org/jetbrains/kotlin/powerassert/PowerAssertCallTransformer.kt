@@ -117,6 +117,10 @@ class PowerAssertCallTransformer(
         )
     }
 
+    private fun buildTree(expression: IrExpression): Node? {
+        return buildTree(configuration.constTracker, sourceFile, expression)
+    }
+
     private fun DeclarationIrBuilder.diagram(
         call: IrCall,
         delegate: FunctionDelegate,

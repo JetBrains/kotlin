@@ -19,9 +19,11 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -76,10 +78,17 @@ class ElvisNode(
     override fun toString() = "ElvisNode(${expression.dumpKotlinLike()})"
 }
 
-fun buildTree(expression: IrExpression): Node? {
+fun buildTree(
+    constTracker: EvaluatedConstTracker?,
+    sourceFile: SourceFile,
+    expression: IrExpression,
+): Node? {
     class RootNode : Node() {
         override fun toString() = "RootNode"
     }
+
+    fun IrConst.isEvaluatedConst(): Boolean =
+        constTracker?.load(startOffset, endOffset, sourceFile.irFile.nameWithPackage) != null
 
     val tree = RootNode()
     expression.accept(
@@ -229,7 +238,13 @@ fun buildTree(expression: IrExpression): Node? {
             }
 
             override fun visitConst(expression: IrConst, data: Node) {
-                data.addChild(ConstantNode(expression))
+                if (expression.isEvaluatedConst()) {
+                    // Constants evaluated by the compiler should be shown as they are not explicit in the source code.
+                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                    chainNode.addChild(ExpressionNode(expression))
+                } else {
+                    data.addChild(ConstantNode(expression))
+                }
             }
 
             override fun visitWhen(expression: IrWhen, data: Node) {
