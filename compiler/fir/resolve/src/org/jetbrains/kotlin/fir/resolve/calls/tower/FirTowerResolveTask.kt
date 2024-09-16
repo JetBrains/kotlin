@@ -253,7 +253,7 @@ internal open class FirTowerResolveTask(
             }
 
             // NB: canBeValue means it's resolved to an object or companion object
-            if (resolvedQualifier.canBeValue) {
+            if (resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty()) {
                 runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
             }
 
