@@ -392,6 +392,8 @@ enum class LanguageFeature(
     // this feature will eventually switch this warning to an error
     ProhibitScriptTopLevelInnerClasses(sinceVersion = null, kind = OTHER),
 
+    ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs(sinceVersion = null, kind = BUG_FIX), // KT-70916
+
     // Experimental features
 
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),

@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -46,5 +47,27 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
   @TestMetadata("signatureClash_MPP.kt")
   public void testSignatureClash_MPP() {
     runTest("compiler/testData/diagnostics/klibSerializationTests/signatureClash_MPP.kt");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PrivateTypeUsageInsideNonPrivateInlineFunction {
+    @Test
+    public void testAllFilesPresentInPrivateTypeUsageInsideNonPrivateInlineFunction() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("privateTypesInsideInternalInlineFunctionError.kt")
+    public void testPrivateTypesInsideInternalInlineFunctionError() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionError.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTypesInsideInternalInlineFunctionWarning.kt")
+    public void testPrivateTypesInsideInternalInlineFunctionWarning() {
+      runTest("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateTypesInsideInternalInlineFunctionWarning.kt");
+    }
   }
 }

@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
-fun IrDeclarationWithVisibility.isEffectivelyPrivate(): Boolean {
-    val isNonPrivate = visibility == DescriptorVisibilities.PUBLIC
+val IrDeclarationWithVisibility.isNonPrivate: Boolean
+    get() = visibility == DescriptorVisibilities.PUBLIC
             || visibility == DescriptorVisibilities.PROTECTED
             || visibility == DescriptorVisibilities.INTERNAL
 
+fun IrDeclarationWithVisibility.isEffectivelyPrivate(): Boolean {
     return when {
         isNonPrivate -> parentClassOrNull?.isEffectivelyPrivate() ?: false
 

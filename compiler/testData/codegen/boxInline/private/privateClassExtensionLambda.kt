@@ -15,7 +15,12 @@ private class S {
     }
 }
 
-@Suppress("PRIVATE_CLASS_MEMBER_FROM_INLINE", "EXPOSED_PARAMETER_TYPE", "EXPOSED_RECEIVER_TYPE")
+@Suppress(
+    "IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR",
+    "PRIVATE_CLASS_MEMBER_FROM_INLINE",
+    "EXPOSED_PARAMETER_TYPE",
+    "EXPOSED_RECEIVER_TYPE",
+)
 internal inline fun S.call2(s: S.() -> String): String {
     return s() + a()
 }

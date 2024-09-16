@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.DiagnosticContextImpl
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 
 interface IrDiagnosticReporter {
     val languageVersionSettings: LanguageVersionSettings
@@ -28,4 +27,19 @@ object IrDiagnosticRenderers {
         (it.owner as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "unknown name"
     }
     val DECLARATION_NAME = Renderer<IrDeclarationWithName> { it.name.asString() }
+
+    /**
+     * Inspired by [org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_KIND].
+     */
+    val DECLARATION_KIND = Renderer<IrDeclaration> { declaration ->
+        when (declaration) {
+            is IrSimpleFunction -> when {
+                declaration.isPropertyAccessor -> "property accessor"
+                else -> "function"
+            }
+            is IrConstructor -> "constructor"
+            is IrProperty -> "property"
+            else -> "declaration"
+        }
+    }
 }
