@@ -16701,6 +16701,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("genericInvokeInCompanion.kt")
+      public void testGenericInvokeInCompanion() {
+        runTest("compiler/testData/diagnostics/tests/inference/genericInvokeInCompanion.kt");
+      }
+
+      @Test
       @TestMetadata("genericOnJavaWildcardBoundedByRaw.kt")
       public void testGenericOnJavaWildcardBoundedByRaw() {
         runTest("compiler/testData/diagnostics/tests/inference/genericOnJavaWildcardBoundedByRaw.kt");
