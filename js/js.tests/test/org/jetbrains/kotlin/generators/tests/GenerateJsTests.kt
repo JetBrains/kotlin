@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -29,7 +30,7 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
-            testClass<AbstractClassicJsKlibEvolutionTest> {
+            testClass<AbstractClassicJsKlibEvolutionTest>(annotations = listOf(*legacyFrontend())) {
                 model(targetBackend = TargetBackend.JS_IR)
             }
             testClass<AbstractFirJsKlibEvolutionTest> {
@@ -40,13 +41,13 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
-            testClass<AbstractJsPartialLinkageWithICTestCase> {
+            testClass<AbstractJsPartialLinkageWithICTestCase>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICTestCase> {
+            testClass<AbstractJsPartialLinkageNoICTestCase>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICES6TestCase> {
+            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
             testClass<AbstractFirJsPartialLinkageNoICTestCase> {
@@ -64,31 +65,31 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
-            testClass<AbstractJsKlibCompatibilityNoICTestCase> {
+            testClass<AbstractJsKlibCompatibilityNoICTestCase>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
-            testClass<AbstractJsKlibCompatibilityNoICES6TestCase> {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            testClass<AbstractJsKlibCompatibilityNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
-            testClass<AbstractJsKlibCompatibilityWithICTestCase> {
+            testClass<AbstractJsKlibCompatibilityWithICTestCase>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
-            testClass<AbstractJsIrInvalidationPerFileTest> {
+            testClass<AbstractJsIrInvalidationPerFileTest>(annotations = listOf(*legacyFrontend())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
-            testClass<AbstractJsIrInvalidationPerModuleTest> {
+            testClass<AbstractJsIrInvalidationPerModuleTest>(annotations = listOf(*legacyFrontend())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
-            testClass<AbstractJsIrES6InvalidationPerFileTest> {
+            testClass<AbstractJsIrES6InvalidationPerFileTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
-            testClass<AbstractJsIrES6InvalidationPerModuleTest> {
+            testClass<AbstractJsIrES6InvalidationPerModuleTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
@@ -100,19 +101,19 @@ fun main(args: Array<String>) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
-            testClass<AbstractJsFirES6InvalidationPerFileTest> {
+            testClass<AbstractJsFirES6InvalidationPerFileTest>(annotations = listOf(*es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
-            testClass<AbstractJsFirES6InvalidationPerModuleTest> {
+            testClass<AbstractJsFirES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
 
-            testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
+            testClass<AbstractJsIrInvalidationPerFileWithPLTest>(annotations = listOf(*legacyFrontend())) {
                 model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
-            testClass<AbstractJsIrInvalidationPerModuleWithPLTest> {
+            testClass<AbstractJsIrInvalidationPerModuleWithPLTest>(annotations = listOf(*legacyFrontend())) {
                 model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
@@ -126,7 +127,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
-            testClass<AbstractSourceMapGenerationSmokeTest> {
+            testClass<AbstractSourceMapGenerationSmokeTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
             testClass<AbstractFirSourceMapGenerationSmokeTest> {
@@ -135,7 +136,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/multiModuleOrder/", testRunnerMethodName = "runTest0") {
-            testClass<AbstractMultiModuleOrderTest> {
+            testClass<AbstractMultiModuleOrderTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
             testClass<AbstractFirMultiModuleOrderTest> {
@@ -144,11 +145,11 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrBoxJsTest> {
+            testClass<AbstractIrBoxJsTest>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractIrBoxJsES6Test> {
+            testClass<AbstractIrBoxJsES6Test>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
@@ -160,17 +161,17 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractFirJsES6BoxTest> {
+            testClass<AbstractFirJsES6BoxTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsTypeScriptExportTest> {
+            testClass<AbstractIrJsTypeScriptExportTest>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractIrJsES6TypeScriptExportTest> {
+            testClass<AbstractIrJsES6TypeScriptExportTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
@@ -178,19 +179,19 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractFirJsES6TypeScriptExportTest> {
+            testClass<AbstractFirJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
-            testClass<AbstractWebDemoExamplesTest> {
+            testClass<AbstractWebDemoExamplesTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsIrLineNumberTest> {
+            testClass<AbstractJsIrLineNumberTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
 
@@ -200,11 +201,11 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsCodegenBoxTest> {
+            testClass<AbstractIrJsCodegenBoxTest>(annotations = listOf(*legacyFrontend())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
-            testClass<AbstractIrJsES6CodegenBoxTest> {
+            testClass<AbstractIrJsES6CodegenBoxTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
@@ -212,15 +213,15 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirJsES6CodegenBoxTest> {
+            testClass<AbstractFirJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractIrJsCodegenInlineTest> {
+            testClass<AbstractIrJsCodegenInlineTest>(annotations = listOf(*legacyFrontend())) {
                 model("boxInline")
             }
 
-            testClass<AbstractIrJsES6CodegenInlineTest> {
+            testClass<AbstractIrJsES6CodegenInlineTest>(annotations = listOf(*legacyFrontend(), *es6())) {
                 model("boxInline")
             }
 
@@ -228,11 +229,11 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsES6CodegenInlineTest> {
+            testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
                 model("boxInline")
             }
 
-            testClass<AbstractIrCodegenWasmJsInteropJsTest> {
+            testClass<AbstractIrCodegenWasmJsInteropJsTest>(annotations = listOf(*legacyFrontend())) {
                 model("boxWasmJsInterop")
             }
 
@@ -240,13 +241,13 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractFirJsES6CodegenWasmJsInteropTest> {
+            testClass<AbstractFirJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
             }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsSteppingTest> {
+            testClass<AbstractIrJsSteppingTest>(annotations = listOf(*legacyFrontend())) {
                 model("stepping")
             }
 
@@ -256,6 +257,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrJsLocalVariableTest>(
                 annotations = listOf(
+                    *legacyFrontend(),
                     annotation(Disabled::class.java, "value" to "flaky, see KTI-1959"),
                 )
             ) {
@@ -311,7 +313,10 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractDiagnosticsTestWithJsStdLib>(suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated") {
+            testClass<AbstractDiagnosticsTestWithJsStdLib>(
+                suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated",
+                annotations = listOf(*legacyFrontend()),
+            ) {
                 model(
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
@@ -320,7 +325,10 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractDiagnosticsTestWithJsStdLibWithBackend>(suiteTestClassName = "DiagnosticsWithJsStdLibAndBackendTestGenerated") {
+            testClass<AbstractDiagnosticsTestWithJsStdLibWithBackend>(
+                suiteTestClassName = "DiagnosticsWithJsStdLibAndBackendTestGenerated",
+                annotations = listOf(*legacyFrontend()),
+            ) {
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -331,7 +339,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
-            testClass<AbstractClassicJsIrTextTest> {
+            testClass<AbstractClassicJsIrTextTest>(annotations = listOf(*legacyFrontend())) {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k2")
                 )
@@ -358,3 +366,11 @@ fun main(args: Array<String>) {
         }
     }
 }
+
+private fun legacyFrontend() = arrayOf(
+    annotation(Tag::class.java, "legacy-frontend")
+)
+
+private fun es6() = arrayOf(
+    annotation(Tag::class.java, "es6")
+)

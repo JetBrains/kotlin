@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/typescript-export/js")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("es6")
 public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeScriptExportTest {
   @Test
   public void testAllFilesPresentInJs() {
@@ -28,6 +30,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/abstract-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Abstract_classes {
     @Test
     @TestMetadata("abstract-classes.kt")
@@ -44,6 +47,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/abstract-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Abstract_classes_in_exported_file {
     @Test
     @TestMetadata("abstract-classes.kt")
@@ -60,6 +64,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/collections")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Collections {
     @Test
     public void testAllFilesPresentInCollections() {
@@ -76,6 +81,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/collections-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Collections_in_exported_file {
     @Test
     public void testAllFilesPresentInCollections_in_exported_file() {
@@ -92,6 +98,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/constructors")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Constructors {
     @Test
     public void testAllFilesPresentInConstructors() {
@@ -108,6 +115,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/constructors-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Constructors_in_exported_file {
     @Test
     public void testAllFilesPresentInConstructors_in_exported_file() {
@@ -124,6 +132,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/data-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Data_classes {
     @Test
     public void testAllFilesPresentInData_classes() {
@@ -140,6 +149,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/data-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Data_classes_in_exported_file {
     @Test
     public void testAllFilesPresentInData_classes_in_exported_file() {
@@ -156,6 +166,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/deprecated")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Deprecated {
     @Test
     public void testAllFilesPresentInDeprecated() {
@@ -172,6 +183,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/deprecated-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Deprecated_in_exported_file {
     @Test
     public void testAllFilesPresentInDeprecated_in_exported_file() {
@@ -188,6 +200,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/enum-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Enum_classes {
     @Test
     public void testAllFilesPresentInEnum_classes() {
@@ -204,6 +217,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/enum-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Enum_classes_in_exported_file {
     @Test
     public void testAllFilesPresentInEnum_classes_in_exported_file() {
@@ -220,6 +234,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/escaped-declarations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Escaped_declarations {
     @Test
     public void testAllFilesPresentInEscaped_declarations() {
@@ -236,6 +251,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/escaped-declarations-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Escaped_declarations_in_exported_file {
     @Test
     public void testAllFilesPresentInEscaped_declarations_in_exported_file() {
@@ -252,6 +268,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/excluded-exported-declarations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Excluded_exported_declarations {
     @Test
     public void testAllFilesPresentInExcluded_exported_declarations() {
@@ -268,6 +285,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/excluded-exported-declarations-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Excluded_exported_declarations_in_exported_file {
     @Test
     public void testAllFilesPresentInExcluded_exported_declarations_in_exported_file() {
@@ -284,6 +302,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/functions")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Functions {
     @Test
     public void testAllFilesPresentInFunctions() {
@@ -300,6 +319,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/functions-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Functions_in_exported_file {
     @Test
     public void testAllFilesPresentInFunctions_in_exported_file() {
@@ -316,6 +336,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/implicit-export")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Implicit_export {
     @Test
     public void testAllFilesPresentInImplicit_export() {
@@ -332,6 +353,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/inheritance")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Inheritance {
     @Test
     public void testAllFilesPresentInInheritance() {
@@ -348,6 +370,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Inner_classes {
     @Test
     public void testAllFilesPresentInInner_classes() {
@@ -364,6 +387,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Inner_classes_in_exported_file {
     @Test
     public void testAllFilesPresentInInner_classes_in_exported_file() {
@@ -380,6 +404,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/interfaces")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Interfaces {
     @Test
     public void testAllFilesPresentInInterfaces() {
@@ -396,6 +421,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/interfaces-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Interfaces_in_exported_file {
     @Test
     public void testAllFilesPresentInInterfaces_in_exported_file() {
@@ -412,6 +438,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/js-name")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Js_name {
     @Test
     public void testAllFilesPresentInJs_name() {
@@ -428,6 +455,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/js-name-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Js_name_in_exported_file {
     @Test
     public void testAllFilesPresentInJs_name_in_exported_file() {
@@ -444,6 +472,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/js-static")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Js_static {
     @Test
     public void testAllFilesPresentInJs_static() {
@@ -460,6 +489,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/js-static-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Js_static_in_exported_file {
     @Test
     public void testAllFilesPresentInJs_static_in_exported_file() {
@@ -476,6 +506,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/member-properties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Member_properties {
     @Test
     public void testAllFilesPresentInMember_properties() {
@@ -492,6 +523,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/member-properties-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Member_properties_in_exported_file {
     @Test
     public void testAllFilesPresentInMember_properties_in_exported_file() {
@@ -508,6 +540,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/methods")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Methods {
     @Test
     public void testAllFilesPresentInMethods() {
@@ -524,6 +557,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/methods-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Methods_in_exported_file {
     @Test
     public void testAllFilesPresentInMethods_in_exported_file() {
@@ -540,6 +574,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/module-systems")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Module_systems {
     @Test
     public void testAllFilesPresentInModule_systems() {
@@ -574,6 +609,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/module-systems-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Module_systems_in_exported_file {
     @Test
     public void testAllFilesPresentInModule_systems_in_exported_file() {
@@ -608,6 +644,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/namespaces")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Namespaces {
     @Test
     public void testAllFilesPresentInNamespaces() {
@@ -624,6 +661,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/namespaces-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Namespaces_in_exported_file {
     @Test
     public void testAllFilesPresentInNamespaces_in_exported_file() {
@@ -640,6 +678,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/not-exported-declarations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Not_exported_declarations {
     @Test
     public void testAllFilesPresentInNot_exported_declarations() {
@@ -656,6 +695,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/not-exported-declarations-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Not_exported_declarations_in_exported_file {
     @Test
     public void testAllFilesPresentInNot_exported_declarations_in_exported_file() {
@@ -672,6 +712,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/objects")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Objects {
     @Test
     public void testAllFilesPresentInObjects() {
@@ -688,6 +729,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/objects-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Objects_in_exported_file {
     @Test
     public void testAllFilesPresentInObjects_in_exported_file() {
@@ -704,6 +746,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/primitives")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Primitives {
     @Test
     public void testAllFilesPresentInPrimitives() {
@@ -720,6 +763,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/primitives-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Primitives_in_exported_file {
     @Test
     public void testAllFilesPresentInPrimitives_in_exported_file() {
@@ -736,6 +780,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/private-primary-constructor")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Private_primary_constructor {
     @Test
     public void testAllFilesPresentInPrivate_primary_constructor() {
@@ -752,6 +797,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/properties")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Properties {
     @Test
     public void testAllFilesPresentInProperties() {
@@ -768,6 +814,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/properties-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Properties_in_exported_file {
     @Test
     public void testAllFilesPresentInProperties_in_exported_file() {
@@ -784,6 +831,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/regular-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Regular_classes {
     @Test
     public void testAllFilesPresentInRegular_classes() {
@@ -800,6 +848,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/regular-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Regular_classes_in_exported_file {
     @Test
     public void testAllFilesPresentInRegular_classes_in_exported_file() {
@@ -816,6 +865,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/sealed-classes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Sealed_classes {
     @Test
     public void testAllFilesPresentInSealed_classes() {
@@ -832,6 +882,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/sealed-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Sealed_classes_in_exported_file {
     @Test
     public void testAllFilesPresentInSealed_classes_in_exported_file() {
@@ -848,6 +899,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/selective-export")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Selective_export {
     @Test
     public void testAllFilesPresentInSelective_export() {
@@ -864,6 +916,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/strict-implicit-export")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Strict_implicit_export {
     @Test
     public void testAllFilesPresentInStrict_implicit_export() {
@@ -880,6 +933,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/visibility")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Visibility {
     @Test
     public void testAllFilesPresentInVisibility() {
@@ -896,6 +950,7 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
   @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/visibility-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
   public class Visibility_in_exported_file {
     @Test
     public void testAllFilesPresentInVisibility_in_exported_file() {

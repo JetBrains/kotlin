@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/box")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Test
   public void testAllFilesPresentInBox() {
@@ -28,6 +30,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/annotation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Annotation {
     @Test
     public void testAllFilesPresentInAnnotation() {
@@ -50,6 +53,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/builtins")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Builtins {
     @Test
     public void testAllFilesPresentInBuiltins() {
@@ -90,6 +94,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/callableReference")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
@@ -99,6 +104,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/callableReference/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Function {
       @Test
       public void testAllFilesPresentInFunction() {
@@ -163,6 +169,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/callableReference/property")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Property {
       @Test
       public void testAllFilesPresentInProperty() {
@@ -192,6 +199,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/char")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Char {
     @Test
     public void testAllFilesPresentInChar() {
@@ -286,6 +294,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/classObject")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ClassObject {
     @Test
     @TestMetadata("accessing.kt")
@@ -374,6 +383,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/closure")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Closure {
     @Test
     public void testAllFilesPresentInClosure() {
@@ -665,6 +675,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/closure/inlineAnonymousFunctions")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class InlineAnonymousFunctions {
       @Test
       public void testAllFilesPresentInInlineAnonymousFunctions() {
@@ -730,6 +741,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/coercion")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Coercion {
     @Test
     public void testAllFilesPresentInCoercion() {
@@ -890,6 +902,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/coroutines")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Coroutines {
     @Test
     public void testAllFilesPresentInCoroutines() {
@@ -1008,6 +1021,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/crossModuleRef")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class CrossModuleRef {
     @Test
     public void testAllFilesPresentInCrossModuleRef() {
@@ -1114,6 +1128,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/crossModuleRefIR")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class CrossModuleRefIR {
     @Test
     public void testAllFilesPresentInCrossModuleRefIR() {
@@ -1238,6 +1253,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dataClass")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class DataClass {
     @Test
     public void testAllFilesPresentInDataClass() {
@@ -1296,6 +1312,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dce")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Dce {
     @Test
     public void testAllFilesPresentInDce() {
@@ -1312,6 +1329,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
@@ -1460,6 +1478,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/delegateProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class DelegateProperty {
     @Test
     public void testAllFilesPresentInDelegateProperty() {
@@ -1608,6 +1627,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/delegation")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
@@ -1726,6 +1746,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/dynamic")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Dynamic {
     @Test
     public void testAllFilesPresentInDynamic() {
@@ -1880,6 +1901,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/enum")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Enum {
     @Test
     @TestMetadata("accessing.kt")
@@ -1974,6 +1996,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/esModules")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class EsModules {
     @Test
     public void testAllFilesPresentInEsModules() {
@@ -1983,6 +2006,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRef")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class CrossModuleRef {
       @Test
       public void testAllFilesPresentInCrossModuleRef() {
@@ -2089,6 +2113,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerFile")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class CrossModuleRefPerFile {
       @Test
       public void testAllFilesPresentInCrossModuleRefPerFile() {
@@ -2195,6 +2220,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerModule")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class CrossModuleRefPerModule {
       @Test
       public void testAllFilesPresentInCrossModuleRefPerModule() {
@@ -2283,6 +2309,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/export")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Export {
       @Test
       public void testAllFilesPresentInExport() {
@@ -2479,6 +2506,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/incremental")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Incremental {
       @Test
       public void testAllFilesPresentInIncremental() {
@@ -2495,6 +2523,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/inline")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
@@ -2511,6 +2540,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsExport")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class JsExport {
       @Test
       public void testAllFilesPresentInJsExport() {
@@ -2569,6 +2599,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class JsModule {
       @Test
       public void testAllFilesPresentInJsModule() {
@@ -2663,6 +2694,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/jsName")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class JsName {
       @Test
       public void testAllFilesPresentInJsName() {
@@ -2685,6 +2717,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/kotlin.test")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Kotlin_test {
       @Test
       public void testAllFilesPresentInKotlin_test() {
@@ -2749,6 +2782,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/main")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Main {
       @Test
       public void testAllFilesPresentInMain() {
@@ -2807,6 +2841,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/native")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
@@ -2830,6 +2865,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/escapedIdentifiers")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class EscapedIdentifiers {
     @Test
     public void testAllFilesPresentInEscapedIdentifiers() {
@@ -2936,6 +2972,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/examples")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Examples {
     @Test
     public void testAllFilesPresentInExamples() {
@@ -2958,6 +2995,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/export")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Export {
     @Test
     public void testAllFilesPresentInExport() {
@@ -3220,6 +3258,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/expression")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Expression {
     @Test
     public void testAllFilesPresentInExpression() {
@@ -3229,6 +3268,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/cast")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Cast {
       @Test
       public void testAllFilesPresentInCast() {
@@ -3407,6 +3447,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/compareTo")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
@@ -3429,6 +3470,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/dollarParameter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class DollarParameter {
       @Test
       public void testAllFilesPresentInDollarParameter() {
@@ -3445,6 +3487,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/equals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
@@ -3533,6 +3576,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/evaluationOrder")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class EvaluationOrder {
       @Test
       @TestMetadata("2dangerousInExpression.kt")
@@ -3765,6 +3809,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/for")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class For {
       @Test
       public void testAllFilesPresentInFor() {
@@ -3865,6 +3910,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/function")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Function {
       @Test
       @TestMetadata("adderClosure.kt")
@@ -4085,6 +4131,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/identifierClash")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class IdentifierClash {
       @Test
       public void testAllFilesPresentInIdentifierClash() {
@@ -4113,6 +4160,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/identityEquals")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class IdentityEquals {
       @Test
       public void testAllFilesPresentInIdentityEquals() {
@@ -4135,6 +4183,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/if")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class If {
       @Test
       public void testAllFilesPresentInIf() {
@@ -4175,6 +4224,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/invoke")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Invoke {
       @Test
       public void testAllFilesPresentInInvoke() {
@@ -4257,6 +4307,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/misc")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Misc {
       @Test
       public void testAllFilesPresentInMisc() {
@@ -4525,6 +4576,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/stringClass")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class StringClass {
       @Test
       public void testAllFilesPresentInStringClass() {
@@ -4613,6 +4665,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/stringTemplates")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class StringTemplates {
       @Test
       public void testAllFilesPresentInStringTemplates() {
@@ -4641,6 +4694,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/try")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Try {
       @Test
       public void testAllFilesPresentInTry() {
@@ -4723,6 +4777,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/typeCheck")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class TypeCheck {
       @Test
       public void testAllFilesPresentInTypeCheck() {
@@ -4775,6 +4830,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/when")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
@@ -4989,6 +5045,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/expression/while")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class While {
       @Test
       public void testAllFilesPresentInWhile() {
@@ -5030,6 +5087,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/extensionFunction")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ExtensionFunction {
     @Test
     public void testAllFilesPresentInExtensionFunction() {
@@ -5142,6 +5200,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/extensionProperty")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ExtensionProperty {
     @Test
     @TestMetadata("absExtension.kt")
@@ -5194,6 +5253,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/incremental")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Incremental {
     @Test
     public void testAllFilesPresentInIncremental() {
@@ -5336,6 +5396,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inheritance")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Inheritance {
     @Test
     @TestMetadata("abstractVarOverride.kt")
@@ -5489,6 +5550,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/inheritance/interfaces")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Interfaces {
       @Test
       @TestMetadata("abstractClassInheritingDefaultMethod.kt")
@@ -5530,6 +5592,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/initialize")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Initialize {
     @Test
     public void testAllFilesPresentInInitialize() {
@@ -5594,6 +5657,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
@@ -6156,6 +6220,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineEvaluationOrder")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineEvaluationOrder {
     @Test
     public void testAllFilesPresentInInlineEvaluationOrder() {
@@ -6490,6 +6555,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineMultiFile")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineMultiFile {
     @Test
     public void testAllFilesPresentInInlineMultiFile() {
@@ -6680,6 +6746,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineMultiModule")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineMultiModule {
     @Test
     public void testAllFilesPresentInInlineMultiModule() {
@@ -6888,6 +6955,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineSizeReduction")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineSizeReduction {
     @Test
     public void testAllFilesPresentInInlineSizeReduction() {
@@ -7000,6 +7068,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/inlineStdlib")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineStdlib {
     @Test
     public void testAllFilesPresentInInlineStdlib() {
@@ -7064,6 +7133,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/intrinsics")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
@@ -7080,6 +7150,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/java")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Java {
     @Test
     public void testAllFilesPresentInJava() {
@@ -7089,6 +7160,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/java/abstractList")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class AbstractList {
       @Test
       public void testAllFilesPresentInAbstractList() {
@@ -7105,6 +7177,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/java/arrayList")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class ArrayList {
       @Test
       @TestMetadata("access.kt")
@@ -7212,6 +7285,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsAstOptimizations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsAstOptimizations {
     @Test
     public void testAllFilesPresentInJsAstOptimizations() {
@@ -7246,6 +7320,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsCode")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsCode {
     @Test
     public void testAllFilesPresentInJsCode() {
@@ -7490,6 +7565,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsExport")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsExport {
     @Test
     public void testAllFilesPresentInJsExport() {
@@ -7536,6 +7612,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsModule")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsModule {
     @Test
     public void testAllFilesPresentInJsModule() {
@@ -7678,6 +7755,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsName")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsName {
     @Test
     public void testAllFilesPresentInJsName() {
@@ -7814,6 +7892,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/jsQualifier")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsQualifier {
     @Test
     public void testAllFilesPresentInJsQualifier() {
@@ -7860,6 +7939,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/keep")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Keep {
     @Test
     public void testAllFilesPresentInKeep() {
@@ -7912,6 +7992,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/kotlin.test")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Kotlin_test {
     @Test
     public void testAllFilesPresentInKotlin_test() {
@@ -7976,6 +8057,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/labels")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Labels {
     @Test
     public void testAllFilesPresentInLabels() {
@@ -8058,6 +8140,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/local")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Local {
     @Test
     public void testAllFilesPresentInLocal() {
@@ -8074,6 +8157,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/main")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Main {
     @Test
     public void testAllFilesPresentInMain() {
@@ -8132,6 +8216,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiFile")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class MultiFile {
     @Test
     public void testAllFilesPresentInMultiFile() {
@@ -8184,6 +8269,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiModule")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class MultiModule {
     @Test
     public void testAllFilesPresentInMultiModule() {
@@ -8278,6 +8364,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiModuleWrappers")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class MultiModuleWrappers {
     @Test
     public void testAllFilesPresentInMultiModuleWrappers() {
@@ -8287,6 +8374,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/amd")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Amd {
       @Test
       public void testAllFilesPresentInAmd() {
@@ -8315,6 +8403,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Common_js {
       @Test
       public void testAllFilesPresentInCommon_js() {
@@ -8343,6 +8432,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/plain")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Plain {
       @Test
       public void testAllFilesPresentInPlain() {
@@ -8371,6 +8461,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/multiModuleWrappers/umd")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Umd {
       @Test
       public void testAllFilesPresentInUmd() {
@@ -8394,6 +8485,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multiPackage")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class MultiPackage {
     @Test
     public void testAllFilesPresentInMultiPackage() {
@@ -8458,6 +8550,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/multideclaration")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Multideclaration {
     @Test
     public void testAllFilesPresentInMultideclaration() {
@@ -8510,6 +8603,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/nameClashes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class NameClashes {
     @Test
     public void testAllFilesPresentInNameClashes() {
@@ -8670,6 +8764,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/native")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Native {
     @Test
     @TestMetadata("accessToCompanionObjectFromInlineFun.kt")
@@ -8932,6 +9027,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class NestedTypes {
     @Test
     public void testAllFilesPresentInNestedTypes() {
@@ -9050,6 +9146,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/number")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Number {
     @Test
     public void testAllFilesPresentInNumber() {
@@ -9252,6 +9349,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/objectDeclaration")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ObjectDeclaration {
     @Test
     public void testAllFilesPresentInObjectDeclaration() {
@@ -9346,6 +9444,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/operatorOverloading")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class OperatorOverloading {
     @Test
     public void testAllFilesPresentInOperatorOverloading() {
@@ -9494,6 +9593,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/package")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Package {
     @Test
     public void testAllFilesPresentInPackage() {
@@ -9534,6 +9634,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/polyfills")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Polyfills {
     @Test
     public void testAllFilesPresentInPolyfills() {
@@ -9543,6 +9644,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/acosh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Acosh {
       @Test
       @TestMetadata("acoshWithExistedIntrinsic.kt")
@@ -9565,6 +9667,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/asinh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Asinh {
       @Test
       public void testAllFilesPresentInAsinh() {
@@ -9587,6 +9690,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/atanh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Atanh {
       @Test
       public void testAllFilesPresentInAtanh() {
@@ -9609,6 +9713,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/clz32")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Clz32 {
       @Test
       public void testAllFilesPresentInClz32() {
@@ -9631,6 +9736,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/cosh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Cosh {
       @Test
       public void testAllFilesPresentInCosh() {
@@ -9653,6 +9759,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/expm1")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Expm1 {
       @Test
       public void testAllFilesPresentInExpm1() {
@@ -9675,6 +9782,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/fill")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Fill {
       @Test
       public void testAllFilesPresentInFill() {
@@ -9697,6 +9805,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/globalThis")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class GlobalThis {
       @Test
       public void testAllFilesPresentInGlobalThis() {
@@ -9719,6 +9828,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/hypot")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Hypot {
       @Test
       public void testAllFilesPresentInHypot() {
@@ -9741,6 +9851,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/imul")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Imul {
       @Test
       public void testAllFilesPresentInImul() {
@@ -9763,6 +9874,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/isView")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class IsView {
       @Test
       public void testAllFilesPresentInIsView() {
@@ -9785,6 +9897,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log10")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Log10 {
       @Test
       public void testAllFilesPresentInLog10() {
@@ -9807,6 +9920,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log1p")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Log1p {
       @Test
       public void testAllFilesPresentInLog1p() {
@@ -9829,6 +9943,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/log2")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Log2 {
       @Test
       public void testAllFilesPresentInLog2() {
@@ -9851,6 +9966,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sign")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Sign {
       @Test
       public void testAllFilesPresentInSign() {
@@ -9873,6 +9989,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sinh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Sinh {
       @Test
       public void testAllFilesPresentInSinh() {
@@ -9895,6 +10012,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/sort")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Sort {
       @Test
       public void testAllFilesPresentInSort() {
@@ -9917,6 +10035,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/tanh")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Tanh {
       @Test
       public void testAllFilesPresentInTanh() {
@@ -9939,6 +10058,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/polyfills/trunc")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Trunc {
       @Test
       public void testAllFilesPresentInTrunc() {
@@ -9962,6 +10082,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/propertyAccess")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class PropertyAccess {
     @Test
     @TestMetadata("accessToInstanceProperty.kt")
@@ -10122,6 +10243,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/propertyOverride")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class PropertyOverride {
     @Test
     public void testAllFilesPresentInPropertyOverride() {
@@ -10210,6 +10332,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/range")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Range {
     @Test
     public void testAllFilesPresentInRange() {
@@ -10286,6 +10409,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/reflection")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
@@ -10446,6 +10570,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/regression")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Regression {
     @Test
     public void testAllFilesPresentInRegression() {
@@ -10491,6 +10616,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class StdlibTestSnippets {
       @Test
       @TestMetadata("abstractCollectionToArray.kt")
@@ -10531,6 +10657,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Nested
     @TestMetadata("js/js.translator/testData/box/regression/typeChecks")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class TypeChecks {
       @Test
       public void testAllFilesPresentInTypeChecks() {
@@ -10566,6 +10693,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/reified")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
@@ -10696,6 +10824,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/rtti")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Rtti {
     @Test
     public void testAllFilesPresentInRtti() {
@@ -10820,6 +10949,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class SafeCall {
     @Test
     public void testAllFilesPresentInSafeCall() {
@@ -10872,6 +11002,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/simple")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Simple {
     @Test
     public void testAllFilesPresentInSimple() {
@@ -11080,6 +11211,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/standardClasses")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class StandardClasses {
     @Test
     public void testAllFilesPresentInStandardClasses() {
@@ -11198,6 +11330,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/superCall")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class SuperCall {
     @Test
     public void testAllFilesPresentInSuperCall() {
@@ -11244,6 +11377,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/trait")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Trait {
     @Test
     public void testAllFilesPresentInTrait() {
@@ -11308,6 +11442,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
   @Nested
   @TestMetadata("js/js.translator/testData/box/vararg")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Vararg {
     @Test
     public void testAllFilesPresentInVararg() {

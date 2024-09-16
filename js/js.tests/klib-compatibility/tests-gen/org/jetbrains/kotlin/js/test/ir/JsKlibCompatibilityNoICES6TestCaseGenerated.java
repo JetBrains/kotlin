@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/versionCompatibility")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
+@Tag("es6")
 public class JsKlibCompatibilityNoICES6TestCaseGenerated extends AbstractJsKlibCompatibilityNoICES6TestCase {
   @Test
   @TestMetadata("addEnumEntry")
@@ -27,7 +30,7 @@ public class JsKlibCompatibilityNoICES6TestCaseGenerated extends AbstractJsKlibC
 
   @Test
   public void testAllFilesPresentInVersionCompatibility() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/versionCompatibility"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/versionCompatibility"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
   }
 
   @Test

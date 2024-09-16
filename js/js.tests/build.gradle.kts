@@ -215,7 +215,7 @@ fun Test.setupNodeJs() {
     )
 }
 
-fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enabled: Boolean, k2Es6Enabled: Boolean) {
+fun Test.setUpJsBoxTests(tags: String?) {
     setupV8()
 
     setupNodeJs()
@@ -241,66 +241,8 @@ fun Test.setUpJsBoxTests(k1Es5Enabled: Boolean, k1Es6Enabled: Boolean, k2Es5Enab
     systemProperty("kotlin.js.kotlin.test.klib.path", "libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib")
     inputs.file(rootDir.resolve("libraries/kotlin.test/build/libs/kotlin-test-js-$version.klib"))
 
-    fun includeTestOld() {
-        include("org/jetbrains/kotlin/js/testOld/*")
-        include("org/jetbrains/kotlin/js/testOld/klib/*")
-        include("org/jetbrains/kotlin/js/testOld/optimizer/*")
-    }
-
-    if (k1Es5Enabled || k1Es6Enabled) {
-        if (k1Es5Enabled) {
-            include("org/jetbrains/kotlin/js/test/ir/*")
-
-            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerFileTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerFileWithPLTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerModuleTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsIrInvalidationPerModuleWithPLTestGenerated.class")
-
-            include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
-            includeTestOld()
-            include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
-            include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
-        }
-
-        val k1Es6Tests = arrayOf(
-            "org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class",
-            "org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/ir/IrJsES6TypeScriptExportTestGenerated.class",
-            "org/jetbrains/kotlin/incremental/JsIrES6InvalidationPerFileTestGenerated.class",
-            "org/jetbrains/kotlin/incremental/JsIrES6InvalidationPerModuleTestGenerated.class",
-        )
-        if (k1Es6Enabled) {
-            include(*k1Es6Tests)
-        } else {
-            exclude(*k1Es6Tests)
-        }
-    }
-    if (k2Es5Enabled || k2Es6Enabled) {
-        if (k2Es5Enabled) {
-            include("org/jetbrains/kotlin/js/test/fir/*")
-
-            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerFileTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerFileWithPLTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerModuleTestGenerated.class")
-            include("org/jetbrains/kotlin/incremental/JsFirInvalidationPerModuleWithPLTestGenerated.class")
-
-            includeTestOld()
-        }
-        val k2Es6Tests = arrayOf(
-            "org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class",
-            "org/jetbrains/kotlin/js/test/fir/FirJsES6TypeScriptExportTestGenerated.class",
-            "org/jetbrains/kotlin/incremental/JsFirES6InvalidationPerModuleTestGenerated.class",
-            "org/jetbrains/kotlin/incremental/JsFirES6InvalidationPerFileTestGenerated.class",
-        )
-        if (k2Es6Enabled) {
-            include(*k2Es6Tests)
-        } else {
-            exclude(*k2Es6Tests)
-        }
+    useJUnitPlatform {
+        tags?.let { includeTags(it) }
     }
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
@@ -334,9 +276,8 @@ fun Test.setUpBoxTests() {
     forwardProperties()
 }
 
-@Suppress("unused")
-val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(k1Es5Enabled = true, k1Es6Enabled = true, k2Es5Enabled = true, k2Es6Enabled = true)
+projectTest("test", jUnitMode = JUnitMode.JUnit5) {
+    setUpJsBoxTests(null)
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -351,22 +292,22 @@ val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
 }
 
 projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(k1Es5Enabled = true, k1Es6Enabled = false, k2Es5Enabled = false, k2Es6Enabled = false)
+    setUpJsBoxTests("legacy-frontend & !es6")
     useJUnitPlatform()
 }
 
 projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(k1Es5Enabled = false, k1Es6Enabled = true, k2Es5Enabled = false, k2Es6Enabled = false)
+    setUpJsBoxTests("legacy-frontend & es6")
     useJUnitPlatform()
 }
 
 projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(k1Es5Enabled = false, k1Es6Enabled = false, k2Es5Enabled = true, k2Es6Enabled = false)
+    setUpJsBoxTests("!legacy-frontend & !es6")
     useJUnitPlatform()
 }
 
 projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(k1Es5Enabled = false, k1Es6Enabled = false, k2Es5Enabled = false, k2Es6Enabled = true)
+    setUpJsBoxTests("!legacy-frontend & es6")
     useJUnitPlatform()
 }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/lineNumbers")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
   @Test
   public void testAllFilesPresentInLineNumbers() {
@@ -328,6 +330,7 @@ public class JsIrLineNumberTestGenerated extends AbstractJsIrLineNumberTest {
   @Nested
   @TestMetadata("js/js.translator/testData/lineNumbers/inlineMultiModule")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class InlineMultiModule {
     @Test
     public void testAllFilesPresentInInlineMultiModule() {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiagnosticsTestWithJsStdLibWithBackend {
   @Test
   public void testAllFilesPresentInTestsWithJsStdLibAndBackendCompilation() {
@@ -28,6 +30,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/constants")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Constants {
     @Test
     public void testAllFilesPresentInConstants() {
@@ -44,6 +47,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/exportedNamesClash")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ExportedNamesClash {
     @Test
     public void testAllFilesPresentInExportedNamesClash() {
@@ -108,6 +112,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
@@ -142,6 +147,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JsCode {
     @Test
     public void testAllFilesPresentInJsCode() {
@@ -253,6 +259,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class InlinedReturnBreakContinue {
       @Test
       public void testAllFilesPresentInInlinedReturnBreakContinue() {
@@ -318,6 +325,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/name")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Name {
     @Test
     public void testAllFilesPresentInName() {
@@ -340,6 +348,7 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class UnsupportedFeatures {
     @Test
     public void testAllFilesPresentInUnsupportedFeatures() {

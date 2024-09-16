@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
+@Tag("es6")
 public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6InvalidationPerModuleTest {
   @Test
   @TestMetadata("abstractClassWithJsExport")

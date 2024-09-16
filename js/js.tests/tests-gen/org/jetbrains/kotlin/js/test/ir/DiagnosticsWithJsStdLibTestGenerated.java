@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTestWithJsStdLib {
   @Test
   public void testAllFilesPresentInTestsWithJsStdLib() {
@@ -142,6 +144,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class ClassLiteral {
     @Test
     public void testAllFilesPresentInClassLiteral() {
@@ -158,6 +161,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class DynamicTypes {
     @Test
     public void testAllFilesPresentInDynamicTypes() {
@@ -480,6 +484,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/export")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Export {
     @Test
     public void testAllFilesPresentInExport() {
@@ -580,6 +585,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/inline")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
@@ -596,6 +602,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class JvmDeclarations {
     @Test
     public void testAllFilesPresentInJvmDeclarations() {
@@ -612,6 +619,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Module {
     @Test
     public void testAllFilesPresentInModule() {
@@ -676,6 +684,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/name")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Name {
     @Test
     public void testAllFilesPresentInName() {
@@ -950,6 +959,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Native {
     @Test
     public void testAllFilesPresentInNative() {
@@ -1115,6 +1125,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeGetter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class NativeGetter {
       @Test
       public void testAllFilesPresentInNativeGetter() {
@@ -1179,6 +1190,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeInvoke")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class NativeInvoke {
       @Test
       public void testAllFilesPresentInNativeInvoke() {
@@ -1243,6 +1255,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nativeSetter")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class NativeSetter {
       @Test
       public void testAllFilesPresentInNativeSetter() {
@@ -1307,6 +1320,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class OptionlBody {
       @Test
       public void testAllFilesPresentInOptionlBody() {
@@ -1341,6 +1355,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class Rtti {
       @Test
       public void testAllFilesPresentInRtti() {
@@ -1381,6 +1396,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/unusedParam")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
     public class UnusedParam {
       @Test
       public void testAllFilesPresentInUnusedParam() {
@@ -1416,6 +1432,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Qualifier {
     @Test
     public void testAllFilesPresentInQualifier() {
@@ -1438,6 +1455,7 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
   @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection")
   @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {

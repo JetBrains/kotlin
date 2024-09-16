@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/evolution")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("legacy-frontend")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEvolutionTest {
   private void runTest(String testDataFilePath) {
