@@ -58,9 +58,13 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
     override val symbolNamesProvider: FirSymbolNamesProvider =
         LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider, allowKotlinPackage)
 
-    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, KtClassLikeDeclaration> =
+    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, KtClassLikeDeclaration?> =
         session.firCachesFactory.createCache(
-            createValue = { classId: ClassId, declaration: KtClassLikeDeclaration ->
+            createValue = createValue@{ classId: ClassId, contextDeclaration: KtClassLikeDeclaration? ->
+                val declaration = contextDeclaration
+                    ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
+                    ?: return@createValue null
+
                 createSyntheticForwardDeclarationClass(classId, moduleData, this.session, kotlinScopeProvider) {
                     source = KtRealPsiSourceElement(declaration)
                 }
@@ -78,9 +82,7 @@ internal class LLFirNativeForwardDeclarationsSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        val declaration = declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
-        @OptIn(FirSymbolProviderInternals::class)
-        return getClassLikeSymbolByClassId(classId, declaration)
+        return classCache.getValue(classId, null)
     }
 
     // Region: no-op overrides for symbols that don't exist in K/N forward declarations
