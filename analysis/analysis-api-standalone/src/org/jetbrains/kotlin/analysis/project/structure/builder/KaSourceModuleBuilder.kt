@@ -83,6 +83,7 @@ public class KtSourceModuleBuilder(
                 }
             }
             addAll(sourceVirtualFiles)
+            sortBy { it.path }
         }
     }
 }

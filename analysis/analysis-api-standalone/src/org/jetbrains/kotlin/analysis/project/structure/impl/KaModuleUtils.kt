@@ -61,6 +61,7 @@ internal fun getSourceFilePaths(
  * collect all `.kt`, `.kts`, and `.java` files under that folder.
  *
  * Note that this util gracefully skips [IOException] during file tree traversal.
+ * Also, there are no guarantees about the iteration order that subdirectories are visited.
  */
 internal fun collectSourceFilePaths(root: Path): List<Path> {
     // NB: [Files#walk] throws an exception if there is an issue during IO.
