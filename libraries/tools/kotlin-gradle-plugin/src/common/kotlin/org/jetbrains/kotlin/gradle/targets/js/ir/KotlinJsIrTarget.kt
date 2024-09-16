@@ -383,7 +383,6 @@ constructor(
             }
     }
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
         .newInstance<KotlinJsCompilerOptionsDefault>()
         .apply {

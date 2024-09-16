@@ -245,7 +245,6 @@ abstract class KotlinMultiplatformExtension
         KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
     }
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinCommonCompilerOptions =
         project.objects.KotlinCommonCompilerOptionsDefault(project)
             .also {

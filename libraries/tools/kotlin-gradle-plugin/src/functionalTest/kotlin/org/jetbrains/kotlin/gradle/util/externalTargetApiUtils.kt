@@ -30,7 +30,6 @@ class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate),
     override val compilations: NamedDomainObjectContainer<FakeCompilation>
         get() = super.compilations as NamedDomainObjectContainer<FakeCompilation>
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions
         get() = super.compilerOptions as KotlinJvmCompilerOptions
 }

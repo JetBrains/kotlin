@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 /**
  * DSL entity with the ability to configure Kotlin compiler options.
  */
-@ExperimentalKotlinGradlePluginApi
 interface HasConfigurableKotlinCompilerOptions<CO : KotlinCommonCompilerOptions> {
 
     /**
@@ -19,13 +18,11 @@ interface HasConfigurableKotlinCompilerOptions<CO : KotlinCommonCompilerOptions>
      *
      * This can be used to get the values of currently configured options or modify them.
      */
-    @ExperimentalKotlinGradlePluginApi
     val compilerOptions: CO
 
     /**
      * Configures the [compilerOptions] with the provided configuration.
      */
-    @ExperimentalKotlinGradlePluginApi
     fun compilerOptions(configure: CO.() -> Unit) {
         configure(compilerOptions)
     }
@@ -33,7 +30,6 @@ interface HasConfigurableKotlinCompilerOptions<CO : KotlinCommonCompilerOptions>
     /**
      * Configures the [compilerOptions] with the provided configuration.
      */
-    @ExperimentalKotlinGradlePluginApi
     fun compilerOptions(configure: Action<CO>) {
         configure.execute(compilerOptions)
     }

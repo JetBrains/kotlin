@@ -99,6 +99,5 @@ abstract class DecoratedExternalKotlinTarget internal constructor(
      *
      * @since 2.0.0
      */
-    @ExperimentalKotlinGradlePluginApi
     open val compilerOptions: KotlinCommonCompilerOptions = delegate.compilerOptions
 }

@@ -39,7 +39,6 @@ abstract class KotlinMetadataTarget @Inject constructor(
         emptySet()
     }
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
 

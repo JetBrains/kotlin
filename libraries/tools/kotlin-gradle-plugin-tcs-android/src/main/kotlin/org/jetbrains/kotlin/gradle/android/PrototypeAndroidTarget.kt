@@ -17,7 +17,6 @@ data class PrototypeAndroidDsl(
     var compileSdk: Int
 )
 
-@OptIn(ExperimentalKotlinGradlePluginApi::class)
 class PrototypeAndroidTarget(
     delegate: Delegate,
     val androidDsl: PrototypeAndroidDsl
@@ -29,7 +28,6 @@ class PrototypeAndroidTarget(
     override val compilations: NamedDomainObjectContainer<PrototypeAndroidCompilation>
         get() = super.compilations as NamedDomainObjectContainer<PrototypeAndroidCompilation>
 
-    @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions
         get() = super.compilerOptions as KotlinJvmCompilerOptions
 }
