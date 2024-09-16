@@ -9,13 +9,15 @@
 package org.jetbrains.kotlin.sir
 
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.callable]
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.classMemberDeclaration]
  */
-sealed interface SirCallable : SirDeclaration {
+sealed interface SirClassMemberDeclaration : SirDeclaration {
     override val origin: SirOrigin
     override val visibility: SirVisibility
     override val documentation: String?
     override var parent: SirDeclarationParent
     override val attributes: MutableList<SirAttribute>
-    var body: SirFunctionBody?
+    val isOverride: Boolean
+    val isInstance: Boolean
+    val modality: SirModality
 }

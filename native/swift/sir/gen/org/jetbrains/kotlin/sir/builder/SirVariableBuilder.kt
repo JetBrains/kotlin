@@ -20,6 +20,9 @@ class SirVariableBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
+    var isOverride: Boolean = false
+    var isInstance: Boolean = true
+    var modality: SirModality = SirModality.UNSPECIFIED
     lateinit var name: String
     lateinit var type: SirType
     lateinit var getter: SirGetter
@@ -31,6 +34,9 @@ class SirVariableBuilder {
             visibility,
             documentation,
             attributes,
+            isOverride,
+            isInstance,
+            modality,
             name,
             type,
             getter,
@@ -58,6 +64,9 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
+    copyBuilder.isOverride = original.isOverride
+    copyBuilder.isInstance = original.isInstance
+    copyBuilder.modality = original.modality
     copyBuilder.name = original.name
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter

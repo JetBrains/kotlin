@@ -11,14 +11,16 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.function]
  */
-abstract class SirFunction : SirCallable() {
+abstract class SirFunction : SirElementBase(), SirCallable, SirClassMemberDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: MutableList<SirAttribute>
-    abstract override val kind: SirCallableKind
     abstract override var body: SirFunctionBody?
+    abstract override val isOverride: Boolean
+    abstract override val isInstance: Boolean
+    abstract override val modality: SirModality
     abstract val name: String
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType

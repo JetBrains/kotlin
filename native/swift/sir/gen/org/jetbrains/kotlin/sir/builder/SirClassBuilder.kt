@@ -23,7 +23,7 @@ class SirClassBuilder {
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     var superClass: SirType? = null
-    var modality: SirClassModality = SirClassModality.UNSPECIFIED
+    var modality: SirModality = SirModality.UNSPECIFIED
 
     fun build(): SirClass {
         return SirClassImpl(

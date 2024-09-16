@@ -20,12 +20,11 @@ class SirInitBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
-    lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val parameters: MutableList<SirParameter> = mutableListOf()
     lateinit var initKind: SirInitializerKind
-    var isOverride: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var isOverride: Boolean = false
 
     fun build(): SirInit {
         return SirInitImpl(
@@ -33,7 +32,6 @@ class SirInitBuilder {
             visibility,
             documentation,
             attributes,
-            kind,
             body,
             isFailable,
             parameters,
@@ -62,7 +60,6 @@ inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): Si
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     copyBuilder.isFailable = original.isFailable
     copyBuilder.parameters.addAll(original.parameters)

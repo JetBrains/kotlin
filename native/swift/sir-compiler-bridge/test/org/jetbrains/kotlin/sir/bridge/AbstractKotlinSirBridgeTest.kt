@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -106,39 +107,58 @@ private fun readRequestFromFile(file: File): FunctionBridgeRequest {
     val kind = BridgeRequestKind.valueOf(properties.getProperty("kind", "FUNCTION"))
 
     val callable = when (kind) {
-        BridgeRequestKind.FUNCTION -> buildFunction {
-            this.name = fqName.last()
-            this.returnType = returnType
-            this.parameters += parameters
-            this.kind = SirCallableKind.FUNCTION
-        }
-        BridgeRequestKind.PROPERTY_GETTER -> {
-            val getter = buildGetter {
-                this.kind = SirCallableKind.FUNCTION
+        BridgeRequestKind.FUNCTION -> {
+            val function = buildFunction {
+                this.name = fqName.last()
+                this.returnType = returnType
+                this.parameters += parameters
             }
 
-            getter.parent = buildVariable {
+            buildModule {
+                name = "BridgeTest"
+            }.apply {
+                addChild { function }
+            }
+
+            function
+        }
+        BridgeRequestKind.PROPERTY_GETTER -> {
+            val getter = buildGetter {}
+
+            val variable = buildVariable {
                 this.name = fqName.last()
                 this.type = returnType
                 check(parameters.isEmpty())
                 this.getter = getter
             }
 
+            getter.parent = variable
+
+            buildModule {
+                name = "BridgeTest"
+            }.apply {
+                addChild { variable }
+            }
+
             getter
         }
         BridgeRequestKind.PROPERTY_SETTER -> {
-            val setter = buildSetter {
-                this.kind = SirCallableKind.FUNCTION
-            }
+            val setter = buildSetter {}
 
-            setter.parent = buildVariable {
+            val variable = buildVariable {
                 this.name = fqName.last()
                 this.type = returnType
                 check(parameters.isEmpty())
-                this.getter = buildGetter {
-                    this.kind = SirCallableKind.FUNCTION
-                }
+                this.getter = buildGetter {}
                 this.setter = setter
+            }
+
+            setter.parent = variable
+
+            buildModule {
+                name = "BridgeTest"
+            }.apply {
+                addChild { variable }
             }
 
             setter

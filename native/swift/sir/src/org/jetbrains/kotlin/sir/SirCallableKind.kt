@@ -9,8 +9,19 @@ enum class SirCallableKind {
     FUNCTION,
     INSTANCE_METHOD,
     CLASS_METHOD,
-    STATIC_METHOD,
 }
 
-val SirVariable.kind: SirCallableKind
-    get() = getter.kind
+val SirCallable.kind: SirCallableKind
+    get() = when (this) {
+        is SirSetter, is SirGetter -> (parent as SirVariable).kind
+        is SirFunction -> (this as SirClassMemberDeclaration).kind
+        is SirInit -> SirCallableKind.CLASS_METHOD
+    }
+
+val SirClassMemberDeclaration.kind: SirCallableKind
+    get() = if (parent is SirModule)
+        SirCallableKind.FUNCTION
+    else if (isInstance)
+        SirCallableKind.INSTANCE_METHOD
+    else
+        SirCallableKind.CLASS_METHOD

@@ -17,7 +17,6 @@ internal class SirInitImpl(
     override val visibility: SirVisibility,
     override val documentation: String?,
     override val attributes: MutableList<SirAttribute>,
-    override val kind: SirCallableKind,
     override var body: SirFunctionBody?,
     override val isFailable: Boolean,
     override val parameters: MutableList<SirParameter>,

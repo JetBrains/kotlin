@@ -33,14 +33,12 @@ public object KotlinRuntimeModule : SirModule() {
             origin = KotlinRuntimeElement()
             declarations += buildInit {
                 origin = KotlinRuntimeElement()
-                kind = SirCallableKind.CLASS_METHOD
                 isFailable = false
                 initKind = SirInitializerKind.ORDINARY
                 isOverride = false
             }
             declarations += buildInit {
                 origin = KotlinRuntimeElement()
-                kind = SirCallableKind.CLASS_METHOD
                 isFailable = false
                 initKind = SirInitializerKind.ORDINARY
                 isOverride = false

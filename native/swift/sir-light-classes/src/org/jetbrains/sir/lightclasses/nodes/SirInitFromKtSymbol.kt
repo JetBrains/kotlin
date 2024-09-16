@@ -30,9 +30,6 @@ internal class SirInitFromKtSymbol(
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)
     }
-    override val kind: SirCallableKind by lazy {
-        SirCallableKind.CLASS_METHOD
-    }
     override val parameters: List<SirParameter> by lazy {
         translateParameters()
     }

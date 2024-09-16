@@ -5,12 +5,10 @@
 
 package org.jetbrains.sir.lightclasses.extensions
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.SirCallableKind
+import org.jetbrains.kotlin.sir.SirModality
 
 internal val KaCallableSymbol.sirCallableKind: SirCallableKind
     get() = when (location) {
@@ -19,7 +17,7 @@ internal val KaCallableSymbol.sirCallableKind: SirCallableKind
             if (isRootPackage == true) {
                 SirCallableKind.FUNCTION
             } else {
-                SirCallableKind.STATIC_METHOD
+                SirCallableKind.CLASS_METHOD
             }
         }
         KaSymbolLocation.CLASS, KaSymbolLocation.PROPERTY,
@@ -29,3 +27,10 @@ internal val KaCallableSymbol.sirCallableKind: SirCallableKind
     }
 
 internal fun KaSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text
+
+internal val KaSymbolModality.sirModality: SirModality
+    get() = when (this) {
+        KaSymbolModality.FINAL -> SirModality.FINAL
+        KaSymbolModality.SEALED -> SirModality.UNSPECIFIED
+        KaSymbolModality.OPEN, KaSymbolModality.ABSTRACT -> SirModality.OPEN
+    }

@@ -20,7 +20,6 @@ class SirGetterBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
-    lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
 
     fun build(): SirGetter {
@@ -29,7 +28,6 @@ class SirGetterBuilder {
             visibility,
             documentation,
             attributes,
-            kind,
             body,
         )
     }
@@ -37,7 +35,7 @@ class SirGetterBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildGetter(init: SirGetterBuilder.() -> Unit): SirGetter {
+inline fun buildGetter(init: SirGetterBuilder.() -> Unit = {}): SirGetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -45,7 +43,7 @@ inline fun buildGetter(init: SirGetterBuilder.() -> Unit): SirGetter {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Unit): SirGetter {
+inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Unit = {}): SirGetter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -54,7 +52,6 @@ inline fun buildGetterCopy(original: SirGetter, init: SirGetterBuilder.() -> Uni
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     return copyBuilder.apply(init).build()
 }

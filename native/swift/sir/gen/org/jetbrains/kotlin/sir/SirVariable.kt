@@ -11,12 +11,15 @@ package org.jetbrains.kotlin.sir
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.variable]
  */
-abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationParent {
+abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationParent, SirClassMemberDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: MutableList<SirAttribute>
+    abstract override val isOverride: Boolean
+    abstract override val isInstance: Boolean
+    abstract override val modality: SirModality
     abstract val name: String
     abstract val type: SirType
     abstract val getter: SirGetter

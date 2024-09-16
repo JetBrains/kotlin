@@ -16,9 +16,11 @@ public class SirTrampolineFunction(
     override val origin: SirOrigin get() = SirOrigin.Trampoline(source)
     override val visibility: SirVisibility get() = source.visibility
     override val documentation: String? get() = source.documentation
-    override val kind: SirCallableKind get() = SirCallableKind.FUNCTION
     override val name: String get() = source.name
     override val returnType: SirType get() = source.returnType
+    override val isOverride: Boolean get() = false
+    override val isInstance: Boolean get() = false
+    override val modality: SirModality get() = SirModality.UNSPECIFIED
 
     override val attributes: MutableList<SirAttribute> get() = source.attributes
 

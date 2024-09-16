@@ -53,6 +53,15 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("attributes", attributeType, isMutableList = true)
     }
 
+    val classMemberDeclaration by sealedElement {
+        customParentInVisitor = declaration
+        parent(declaration)
+
+        +field("isOverride", boolean)
+        +field("isInstance", boolean)
+        +field("modality", modalityKind)
+    }
+
     val extension: Element by element {
         customParentInVisitor = declaration
         parent(declaration)
@@ -106,7 +115,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val callable by sealedElement {
         parent(declaration)
 
-        +field("kind", callableKind)
         +field("body", functionBodyType, nullable = true, mutable = true)
     }
 
@@ -125,6 +133,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     val function by element {
         customParentInVisitor = callable
         parent(callable)
+        parent(classMemberDeclaration)
 
         +field("name", string)
         +listField("parameters", parameterType)
@@ -150,6 +159,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = declaration
         parent(declaration)
         parent(declarationParent)
+        parent(classMemberDeclaration)
 
         +field("name", string)
         +field("type", typeType)

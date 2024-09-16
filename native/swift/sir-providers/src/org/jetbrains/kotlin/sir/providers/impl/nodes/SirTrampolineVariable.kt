@@ -19,11 +19,13 @@ public class SirTrampolineVariable(
     override val documentation: String? get() = source.documentation
     override val name: String get() = source.name
     override val type: SirType get() = source.type
+    override val isOverride: Boolean get() = false
+    override val isInstance: Boolean get() = false
+    override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: MutableList<SirAttribute> get() = source.attributes
     override val getter: SirGetter by lazy {
         buildGetterCopy(source.getter) {
             origin = SirOrigin.Trampoline(source.getter)
-            kind = SirCallableKind.FUNCTION
             body = SirFunctionBody(
                 listOf(
                     source.swiftFqName
@@ -36,7 +38,6 @@ public class SirTrampolineVariable(
         source.setter?.let { setter ->
             buildSetterCopy(setter) {
                 origin = SirOrigin.Trampoline(setter)
-                kind = SirCallableKind.FUNCTION
                 body = SirFunctionBody(
                     listOf(
                         "${source.swiftFqName} = newValue"

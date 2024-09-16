@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.sir
 
-enum class SirClassModality {
+enum class SirModality {
     OPEN,
     FINAL,
     UNSPECIFIED,
 }
+
+val SirClassMemberDeclaration.effectiveModality: SirModality
+    get() = when ((this.parent as? SirClass)?.modality) {
+        SirModality.FINAL -> SirModality.FINAL
+        else -> this.modality
+    }
