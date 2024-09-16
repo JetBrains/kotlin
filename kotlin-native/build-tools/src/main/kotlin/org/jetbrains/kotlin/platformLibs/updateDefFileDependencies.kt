@@ -17,7 +17,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.kotlinNativeDist
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -81,7 +81,7 @@ private fun Project.registerUpdateDefFileDependenciesTask(
     onlyIf("-P${updateDefFileDependenciesFlag} is not set") { shouldUpdate }
     defFiles.from(familyDefFiles(family))
     targetNames.set(targets.map { it.name })
-    runKonan.set(File(kotlinNativeDist.absolutePath).resolve("bin/run_konan"))
+    runKonan.set(nativeDistribution.map { it.runKonan.asFile })
     defFileDiffsFile.set(layout.buildDirectory.file("${family.visibleName}ChangedDefFiles"))
 }
 

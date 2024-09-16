@@ -1,6 +1,7 @@
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.kotlinNativeDist
+import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 
 plugins {
     kotlin("jvm")
@@ -96,20 +97,35 @@ sourceSets {
     }
 }
 
+open class ProjectTestArgumentProvider @Inject constructor(
+        objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+    @get:Classpath
+    val compilerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val nativeDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+
+    override fun asArguments(): Iterable<String> = listOf(
+            "-DcompilerClasspath=${compilerClasspath.files.joinToString(separator = File.pathSeparator) { it.absolutePath }}",
+            "-Dkotlin.native.home=${nativeDistribution.get().root.asFile.absolutePath}",
+    )
+}
+
 projectTest {
     /**
      * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
      */
-    dependsOn(runtimeJar)
-    val runtimeJarPathProvider = project.provider {
-        val jar = runtimeJar.get().outputs.files.asPath
-        val trove = configurations.detachedConfiguration(
+    jvmArgumentProviders.add(objects.newInstance<ProjectTestArgumentProvider>().apply {
+        compilerClasspath.from(runtimeJar)
+        compilerClasspath.from(configurations.detachedConfiguration(
                 dependencies.create(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-        )
-        (trove.files + jar).joinToString(File.pathSeparatorChar.toString())
-    }
-    doFirst {
-        systemProperty("compilerClasspath", runtimeJarPathProvider.get())
-        systemProperty("kotlin.native.home", kotlinNativeDist)
-    }
+        ))
+
+        // The tests run the compiler and try to produce an executable on host.
+        // So, distribution with stdlib and runtime for host is required.
+        nativeDistribution.set(project.nativeDistribution)
+        dependsOn(":kotlin-native:distRuntime")
+    })
 }

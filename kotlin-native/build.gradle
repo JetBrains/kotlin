@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -66,10 +67,10 @@ allprojects {
 }
 
 def platformManager = project.extensions.platformManager
-def distDir = UtilsKt.getKotlinNativeDist(project)
 def hostName = PlatformInfo.hostName
 def targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
 def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
     distPack
@@ -156,8 +157,8 @@ tasks.named("build") {
 tasks.register("distNativeSources", Zip) {
     dependsOn(configurations.commonSources)
     duplicatesStrategy = DuplicatesStrategy.FAIL
-    destinationDirectory = file("$distDir/sources")
-    archiveFileName = "kotlin-stdlib-native-sources.zip"
+    destinationDirectory = nativeDistribution.map { it.sources }
+    archiveFileName = nativeDistribution.map { it.stdlibSources.asFile.name }
 
     includeEmptyDirs = false
     include('**/*.kt')
@@ -186,7 +187,7 @@ tasks.register("distSources") {
 
 tasks.register("shadowJar", ShadowJar) {
     mergeServiceFiles()
-    destinationDirectory.set(file("$distDir/konan/lib"))
+    destinationDirectory.set(nativeDistribution.map { it.compilerJars })
     archiveBaseName.set("kotlin-native")
     archiveVersion.set("")
     archiveClassifier.set("")
@@ -213,7 +214,7 @@ tasks.register("distCompiler", Copy) {
         dependsOn configurations.embeddableJar
     }
 
-    destinationDir distDir
+    into(nativeDistribution.map { it.root })
 
     from(configurations.nativeLibs) {
         into('konan/nativelib')
@@ -297,7 +298,7 @@ tasks.register("distCompiler", Copy) {
 }
 
 tasks.register("distDef", Copy) {
-    destinationDir project.file("$distDir/konan/platformDef/")
+    into(nativeDistribution.map { it.platformLibsDefinitions })
     dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
     platformManager.targetValues.each { target ->
@@ -309,7 +310,7 @@ tasks.register("distDef", Copy) {
 }
 
 tasks.register("listDist", Exec) {
-    commandLine 'find', distDir
+    commandLine 'find', nativeDistribution.get().root
 }
 
 tasks.register("distRuntime", Copy) {
@@ -322,16 +323,13 @@ tasks.register("distStdlibCache") {
     }
 }
 
-def stdlib = 'klib/common/stdlib'
-def stdlibDefaultComponent = "$stdlib/default"
-
 tasks.register("distStdlib", Copy) {
     from(project(":kotlin-native:runtime")
             .tasks
             .named("nativeStdlib")
             .map { it.outputs.files }
     )
-    destinationDir project.file("$distDir/$stdlib")
+    into(nativeDistribution.map { it.stdlib })
 }
 
 tasks.register("crossDistRuntime") {
@@ -354,7 +352,7 @@ targetList.each { target ->
             }
         }.files
 
-        destinationDir project.file("$distDir/konan/targets/$target/native")
+        into(nativeDistribution.map { it.runtime(target) })
 
         from(bitcodeFiles) {
             include("*.bc")
@@ -365,7 +363,7 @@ targetList.each { target ->
         dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
 
-        destinationDir project.file("$distDir/$stdlibDefaultComponent")
+        into(nativeDistribution.map { it.stdlib.dir("default") })
     }
 
     tasks.register("${target}PlatformLibs") {
@@ -380,9 +378,9 @@ targetList.each { target ->
             dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
 
-            destinationDir project.file("$distDir/klib/cache/")
+            into(nativeDistribution.map { it.cache("stdlib", target) })
 
-            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target")) {
+            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$target-gSTATIC/stdlib-cache")) {
                 include('**')
             }
         }
@@ -435,7 +433,7 @@ tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
     archiveVersion.set(kotlinVersion)
-    from(UtilsKt.getKotlinNativeDist(project)) {
+    from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
@@ -470,7 +468,7 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
     archiveVersion.set(kotlinVersion)
-    from(UtilsKt.getKotlinNativeDist(project)) {
+    from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
@@ -583,7 +581,7 @@ tasks.register("tc-dist", (PlatformInfo.isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName")
     archiveVersion.set(kotlinVersion)
-    from(UtilsKt.getKotlinNativeDist(project)) {
+    from(nativeDistribution) {
         include '**'
         exclude 'dependencies'
         into "${archiveBaseName.get()}-${archiveVersion.get()}"
@@ -718,7 +716,7 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 
 tasks.named("clean", Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
-    it.delete(distDir)
+    it.delete(nativeDistribution.map { it.root })
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
     it.delete("${projectDir}/compile_commands.json")

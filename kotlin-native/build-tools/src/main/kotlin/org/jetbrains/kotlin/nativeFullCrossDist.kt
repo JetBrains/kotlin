@@ -15,6 +15,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import java.io.File
 
 /**
@@ -77,7 +78,7 @@ private fun Project.setupTaskToUnpackDistToCurrentDist(
         if (includes != null) include(includes)
         if (excludes != null) exclude(excludes)
     }
-    into(kotlinNativeDist)
+    into(nativeDistribution.map { it.root })
     dependsOn(dependency)
 
     // this incantation makes it so that we will have something like build/unpackedDonorDarwinDist/<contents of dist>

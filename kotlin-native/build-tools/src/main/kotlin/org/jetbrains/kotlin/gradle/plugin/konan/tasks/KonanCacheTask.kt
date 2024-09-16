@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoadersService
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
 import java.util.*
@@ -62,7 +64,7 @@ abstract class KonanCacheTask @Inject constructor(
 
     @get:Input
     /** Path to a compiler distribution that is used to build this cache. */
-    val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).convention(project.kotlinNativeDist)
+    val compilerDistributionPath: Provider<File> = project.nativeDistribution.map { it.root.asFile }
 
     @get:Input
     var cachedLibraries: Map<File, File> = emptyMap()

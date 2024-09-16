@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.konan.target.enabledTargets
+import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
 import java.time.Duration
@@ -640,7 +641,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                             Duration.parse("PT${it}")
                         } ?: Duration.ofMinutes(5))
                 this.executorsClasspath.from(project.executorsClasspathConfiguration())
-                this.distPath.set(project.project(":kotlin-native").projectDir.absolutePath)
+                this.distPath.set(project.nativeProtoDistribution.root.asFile.absolutePath)
                 this.dataDirPath.set(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
 
                 usesService(runGTestSemaphore)

@@ -6,9 +6,9 @@
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
@@ -55,7 +55,7 @@ enabledTargets(platformManager).forEach { target ->
             group = BasePlugin.BUILD_GROUP
             description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
-            this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
+            this.compilerDistributionPath.set(nativeDistribution.map { it.root.asFile.absolutePath })
             dependsOn(":kotlin-native:${targetName}CrossDist")
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
@@ -82,7 +82,7 @@ enabledTargets(platformManager).forEach { target ->
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
             from(libTask)
-            into(kotlinNativeDist.resolve("klib/platform/$targetName/$artifactName"))
+            into(nativeDistribution.map { it.platformLib(name = artifactName, target = targetName) })
         }
         installTasks.add(klibInstallTask)
 
@@ -92,7 +92,7 @@ enabledTargets(platformManager).forEach { target ->
                 this.target = targetName
                 originalKlib.fileProvider(libTask.map { it.outputs.files.singleFile })
                 klibUniqName = artifactName
-                cacheRoot = kotlinNativeDist.resolve("klib/cache").absolutePath
+                cacheRoot = nativeDistribution.get().cachesRoot.asFile.absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
 

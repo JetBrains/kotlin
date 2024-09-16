@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.kotlinNativeDist
 import java.util.*
 
 

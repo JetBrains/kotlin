@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.Platform
+import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 import org.jetbrains.kotlin.utils.capitalized
 import java.io.File
 
@@ -147,7 +148,7 @@ class NamedNativeInteropConfig(
                     ).asPath,
                     // Set the konan.home property because we run the cinterop tool not from a distribution jar
                     // so it will not be able to determine this path by itself.
-                    "konan.home" to project.project(":kotlin-native").projectDir,
+                    "konan.home" to project.nativeProtoDistribution.root.asFile.absolutePath,
             ))
             environment(mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1"))
 
