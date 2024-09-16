@@ -16,6 +16,7 @@
 
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("kotlin.native.build-tools-conventions")
@@ -33,6 +34,9 @@ native {
                           "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1")
     if (libclangextEnabled) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
+    }
+    if (HostManager.hostIsMac) {
+        cxxflags += "-D_Float16=short"
     }
     suffixes {
         (".cpp" to ".$obj") {

@@ -41,6 +41,7 @@ native {
         }
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"
+            cxxflags += "-D_Float16=short"
         }
         else -> Unit
     }
