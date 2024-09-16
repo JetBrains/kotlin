@@ -175,6 +175,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirVisibilityQualifierChecker,
             FirInlineBodyResolvedQualifierChecker,
             FirCustomEnumEntriesMigrationQualifierChecker,
+            FirQualifierWithTypeArgumentsChecker,
         )
 
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>

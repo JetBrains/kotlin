@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -276,21 +278,31 @@ class FirCallResolver(
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiverOf)
-        val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
+        val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics.orEmpty()
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
-            collectCandidates(qualifiedAccess, callee.name, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver, callSite = callSite, resolutionMode = resolutionMode)
+            collectCandidates(
+                qualifiedAccess,
+                callee.name,
+                isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
+                callSite = callSite,
+                resolutionMode = resolutionMode
+            )
         }
 
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
         // just to try to resolve to package/class and then report meaningful error at FirStandaloneQualifierChecker
         @OptIn(ApplicabilityDetail::class)
         if (isUsedAsReceiver || !basicResult.applicability.isSuccess) {
-            (qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
+            val explicitReceiver = qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier
+            val diagnosticFromTypeArguments = if (explicitReceiver != null && explicitReceiver.typeArguments.isNotEmpty()) {
+                ConeTypeArgumentsForOuterClass(explicitReceiver.source!!)
+            } else null
+            explicitReceiver
                 ?.continueQualifier(
                     callee,
                     qualifiedAccess,
-                    nonFatalDiagnosticFromExpression,
+                    nonFatalDiagnosticFromExpression + listOfNotNull(diagnosticFromTypeArguments),
                     session,
                     components
                 )
@@ -368,16 +380,16 @@ class FirCallResolver(
                     runIf(reducedCandidates.singleOrNull()?.doesResolutionResultOverrideOtherToPreserveCompatibility() == true) {
                         ConeResolutionResultOverridesOtherToPreserveCompatibility
                     }
-                val nonFatalDiagnosticFromExpressionWithExtra = when {
-                    nonFatalDiagnosticFromExpression != null -> nonFatalDiagnosticFromExpression + listOfNotNull(extraDiagnostic)
-                    extraDiagnostic == null -> null
-                    else -> listOf(extraDiagnostic)
-                }
+                val nonFatalDiagnosticFromExpressionWithExtra = nonFatalDiagnosticFromExpression + listOfNotNull(extraDiagnostic)
                 return components.buildResolvedQualifierForClass(
                     referencedSymbol,
                     qualifiedAccess.source,
                     qualifiedAccess.typeArguments,
-                    diagnostic ?: extractNestedClassAccessDiagnostic(nameReference.source, qualifiedAccess.explicitReceiver, referencedSymbol),
+                    diagnostic ?: extractNestedClassAccessDiagnostic(
+                        nameReference.source,
+                        qualifiedAccess.explicitReceiver,
+                        referencedSymbol
+                    ),
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
                         nameReference.source,
                         qualifiedAccess.explicitReceiver,

@@ -90,7 +90,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 fun FirResolvedQualifier.continueQualifier(
     namedReference: FirSimpleNamedReference,
     qualifiedAccess: FirQualifiedAccessExpression,
-    nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>?,
+    nonFatalDiagnosticsFromExpression: List<ConeDiagnostic>,
     session: FirSession,
     components: BodyResolveComponents,
 ): QualifierResolutionResult? {

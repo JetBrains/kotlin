@@ -1,5 +1,6 @@
 // ISSUE: KT-71210
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// FIR_DUMP
 
 class C<T> {
     companion object {

@@ -34,8 +34,8 @@ fun nullableClassifiers() {
 }
 
 fun classifiersWithTA() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::class
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::foo
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::class
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.C<!>::foo
 
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B<Int>.InnerC<!>::class
     // A.B<Int>.InnerC::foo // correct

@@ -275,6 +275,10 @@ class ConeTypeArgumentsNotAllowedOnPackageError(source: KtSourceElement) : ConeD
     override val reason: String get() = "Type arguments are not allowed for packages"
 }
 
+class ConeTypeArgumentsForOuterClass(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Type arguments for outer class maybe redundant"
+}
+
 class ConeTypeArgumentsForOuterClassWhenNestedReferencedError(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Type arguments for outer class are redundant when nested class is referenced"
 }
