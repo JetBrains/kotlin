@@ -71,17 +71,13 @@ import kotlin.collections.zip
  */
 class ComposableTargetAnnotationsTransformer(
     context: IrPluginContext,
-    symbolRemapper: ComposableSymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags) {
+) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags) {
     private val ComposableTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
-        ?.let(symbolRemapper::getReferencedClass)
     private val ComposableOpenTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableOpenTarget)
-        ?.let(symbolRemapper::getReferencedClass)
     private val ComposableInferredTargetClass = getTopLevelClassOrNull(ComposeClassIds.ComposableInferredTarget)
-        ?.let(symbolRemapper::getReferencedClass)
 
     /**
      * A map of element to the owning function of the element.

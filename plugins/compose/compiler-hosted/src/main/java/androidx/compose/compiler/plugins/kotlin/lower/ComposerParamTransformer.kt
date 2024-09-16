@@ -34,24 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.defaultValueForType
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isGetter
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.remapTypeParameters
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -66,12 +49,10 @@ import kotlin.math.min
 
 class ComposerParamTransformer(
     context: IrPluginContext,
-    symbolRemapper: DeepCopySymbolRemapper,
     stabilityInferencer: StabilityInferencer,
     metrics: ModuleMetrics,
     featureFlags: FeatureFlags,
-) :
-    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     /**
@@ -89,25 +70,14 @@ class ComposerParamTransformer(
 
         module.transformChildrenVoid(this)
 
-        module.acceptVoid(symbolRemapper)
-
         val typeRemapper = ComposerTypeRemapper(
             context,
-            symbolRemapper,
             composerType
         )
-        // for each declaration, we create a deepCopy transformer It is important here that we
-        // use the "preserving metadata" variant since we are using this copy to *replace* the
-        // originals, or else the module we would produce wouldn't have any metadata in it.
-        val transformer = DeepCopyIrTreeWithRemappedComposableTypes(
-            context,
-            symbolRemapper,
-            typeRemapper
-        ).also { typeRemapper.deepCopy = it }
-        module.transformChildren(
-            transformer,
-            null
-        )
+        val transformer = ComposableTypeTransformer(context, typeRemapper)
+        // for each declaration, we remap types to ensure that @Composable lambda types are realized
+        module.transformChildrenVoid(transformer)
+
         // just go through and patch all of the parents to make sure things are properly wired
         // up.
         module.patchDeclarationParents()

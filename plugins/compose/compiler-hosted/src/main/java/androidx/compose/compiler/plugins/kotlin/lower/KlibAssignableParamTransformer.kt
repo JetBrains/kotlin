@@ -63,13 +63,11 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class KlibAssignableParamTransformer(
     context: IrPluginContext,
-    symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     context,
-    symbolRemapper,
     metrics,
     stabilityInferencer,
     featureFlags

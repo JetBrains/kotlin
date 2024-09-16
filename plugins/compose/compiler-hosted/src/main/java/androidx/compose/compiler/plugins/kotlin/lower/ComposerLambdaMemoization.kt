@@ -244,11 +244,10 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
 
 class ComposerLambdaMemoization(
     context: IrPluginContext,
-    symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
 
     ModuleLoweringPass {
 
@@ -1018,7 +1017,7 @@ class ComposerLambdaMemoization(
                 it.valueParameters.firstOrNull()?.varargElementType != null
             }
 
-        val rememberFunctionSymbol = referenceSimpleFunction(rememberFunction.symbol)
+        val rememberFunctionSymbol = rememberFunction.symbol
         val irBuilder = DeclarationIrBuilder(
             generatorContext = context,
             symbol = currentFunctionContext!!.symbol,

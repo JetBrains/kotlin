@@ -46,14 +46,12 @@ val hiddenFromObjCClassId = ClassId.fromString("kotlin/native/HiddenFromObjC")
  */
 class AddHiddenFromObjCLowering(
     private val pluginContext: IrPluginContext,
-    symbolRemapper: ComposableSymbolRemapper,
     metrics: ModuleMetrics,
     private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet?,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     pluginContext,
-    symbolRemapper,
     metrics,
     stabilityInferencer,
     featureFlags

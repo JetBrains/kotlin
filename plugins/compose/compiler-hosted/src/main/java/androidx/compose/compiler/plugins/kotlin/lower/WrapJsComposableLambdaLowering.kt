@@ -78,28 +78,27 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
  */
 class WrapJsComposableLambdaLowering(
     context: IrPluginContext,
-    symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
     context,
-    symbolRemapper,
     metrics,
     stabilityInferencer,
     featureFlags,
 ) {
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
-            context, symbolRemapper, stabilityInferencer, metrics, featureFlags
+            context, stabilityInferencer, metrics, featureFlags
         )
-        symbolRemapper.getReferencedSimpleFunction(
-            getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }.first {
+        getTopLevelFunctions(ComposeCallableIds.remember)
+            .map { it.owner }
+            .first {
                 it.valueParameters.size == 2 && !it.valueParameters.first().isVararg
+            }.symbol.owner
+            .let {
+                composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
             }.symbol
-        ).owner.let {
-            composerParamTransformer.visitSimpleFunction(it) as IrSimpleFunction
-        }.symbol
     }
 
     override fun lower(module: IrModuleFragment) {
@@ -140,12 +139,11 @@ class WrapJsComposableLambdaLowering(
         val argumentsCount = lambda.function.valueParameters.size +
                 if (lambda.function.extensionReceiverParameter != null) 1 else 0
 
-        val invokeSymbol = symbolRemapper.getReferencedClass(
-            getTopLevelClass(ComposeClassIds.ComposableLambda)
-        ).functions.single {
-            it.owner.name.asString() == "invoke" &&
-                    argumentsCount == it.owner.valueParameters.size
-        }
+        val invokeSymbol = getTopLevelClass(ComposeClassIds.ComposableLambda)
+            .functions.single {
+                it.owner.name.asString() == "invoke" &&
+                        argumentsCount == it.owner.valueParameters.size
+            }
 
         return IrFunctionReferenceImpl(
             startOffset = UNDEFINED_OFFSET,

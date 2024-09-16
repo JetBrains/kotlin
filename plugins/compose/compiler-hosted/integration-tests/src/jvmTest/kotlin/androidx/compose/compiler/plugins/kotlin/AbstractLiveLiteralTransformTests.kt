@@ -57,7 +57,6 @@ abstract class AbstractLiveLiteralTransformTests(
                             moduleFragment: IrModuleFragment,
                             pluginContext: IrPluginContext,
                         ) {
-                            val symbolRemapper = DeepCopySymbolRemapper()
                             val keyVisitor = DurableKeyVisitor(builtKeys)
                             val stabilityInferencer = StabilityInferencer(
                                 pluginContext.moduleDescriptor,
@@ -69,7 +68,6 @@ abstract class AbstractLiveLiteralTransformTests(
                                 liveLiteralsV2Enabled,
                                 keyVisitor,
                                 pluginContext,
-                                symbolRemapper,
                                 ModuleMetricsImpl("temp", featureFlags) { stabilityInferencer.stabilityOf(it) },
                                 stabilityInferencer,
                                 featureFlags

@@ -64,46 +64,24 @@ object ComposeCompilerKey : GeneratedDeclarationKey()
 
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
-    val symbolRemapper: DeepCopySymbolRemapper,
     val metrics: ModuleMetrics,
     val stabilityInferencer: StabilityInferencer,
     private val featureFlags: FeatureFlags,
 ) : IrElementTransformerVoid(), ModuleLoweringPass {
     protected val builtIns = context.irBuiltIns
 
-    private val _composerIrClass =
+    protected val composerIrClass =
         context.referenceClass(ComposeClassIds.Composer)?.owner
             ?: error("Cannot find the Composer class in the classpath")
 
-    private val _composableIrClass =
+    protected val composableIrClass =
         context.referenceClass(ComposeClassIds.Composable)?.owner
             ?: error("Cannot find the Composable annotation class in the classpath")
-
-    // this ensures that composer always references up-to-date composer class symbol
-    // otherwise, after remapping of symbols in DeepCopyTransformer, it results in duplicated
-    // references
-    protected val composerIrClass: IrClass
-        get() = symbolRemapper.getReferencedClass(_composerIrClass.symbol).owner
-
-    protected val composableIrClass: IrClass
-        get() = symbolRemapper.getReferencedClass(_composableIrClass.symbol).owner
 
     protected val jvmSyntheticIrClass by guardedLazy {
         context.referenceClass(
             ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier("JvmSynthetic"))
         )!!.owner
-    }
-
-    fun referenceFunction(symbol: IrFunctionSymbol): IrFunctionSymbol {
-        return symbolRemapper.getReferencedFunction(symbol)
-    }
-
-    fun referenceSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
-        return symbolRemapper.getReferencedSimpleFunction(symbol)
-    }
-
-    fun referenceConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol {
-        return symbolRemapper.getReferencedConstructor(symbol)
     }
 
     fun getTopLevelClass(classId: ClassId): IrClassSymbol {
@@ -131,9 +109,7 @@ abstract class AbstractComposeLowering(
     fun getTopLevelPropertyGetter(callableId: CallableId): IrFunctionSymbol {
         val propertySymbol = context.referenceProperties(callableId).firstOrNull()
             ?: error("Property was not found ${callableId.asSingleFqName()}")
-        return symbolRemapper.getReferencedFunction(
-            propertySymbol.owner.getter!!.symbol
-        )
+        return propertySymbol.owner.getter!!.symbol
     }
 
     val FeatureFlag.enabled get() = featureFlags.isEnabled(this)
@@ -1254,7 +1230,7 @@ abstract class AbstractComposeLowering(
         invalid: IrExpression,
         calculation: IrExpression,
     ): IrCall {
-        val symbol = referenceFunction(cacheFunction.symbol)
+        val symbol = cacheFunction.symbol
         return IrCallImpl(
             startOffset,
             endOffset,
@@ -1433,7 +1409,7 @@ abstract class AbstractComposeLowering(
         endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         val type = function.returnType
-        val symbol = referenceFunction(function.symbol)
+        val symbol = function.symbol
         return IrCallImpl(
             startOffset,
             endOffset,

@@ -102,14 +102,12 @@ class KeyInfo(
  */
 class DurableFunctionKeyTransformer(
     context: IrPluginContext,
-    symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : DurableKeyTransformer(
     DurableKeyVisitor(),
     context,
-    symbolRemapper,
     stabilityInferencer,
     metrics,
     featureFlags,

@@ -84,9 +84,6 @@ class ComposeIrGenerationExtension(
             )
         }
 
-        // create a symbol remapper to be used across all transforms
-        val symbolRemapper = ComposableSymbolRemapper()
-
         if (useK2) {
             moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
         }
@@ -102,7 +99,6 @@ class ComposeIrGenerationExtension(
         if (pluginContext.platform.isNative()) {
             AddHiddenFromObjCLowering(
                 pluginContext,
-                symbolRemapper,
                 metrics,
                 descriptorSerializerContext?.hideFromObjCDeclarationsSet,
                 stabilityInferencer,
@@ -113,7 +109,6 @@ class ComposeIrGenerationExtension(
         ClassStabilityTransformer(
             useK2,
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             classStabilityInferredCollection = descriptorSerializerContext
@@ -130,7 +125,6 @@ class ComposeIrGenerationExtension(
                 usePerFileEnabledFlag = liveLiteralsV2Enabled,
                 keyVisitor = DurableKeyVisitor(),
                 context = pluginContext,
-                symbolRemapper = symbolRemapper,
                 metrics = metrics,
                 stabilityInferencer = stabilityInferencer,
                 featureFlags = featureFlags,
@@ -141,7 +135,6 @@ class ComposeIrGenerationExtension(
 
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             featureFlags,
@@ -156,7 +149,6 @@ class ComposeIrGenerationExtension(
         // Generate default wrappers for virtual functions
         ComposableDefaultParamLowering(
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             featureFlags
@@ -165,7 +157,6 @@ class ComposeIrGenerationExtension(
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             featureFlags,
@@ -176,7 +167,6 @@ class ComposeIrGenerationExtension(
         // parameter.
         ComposerParamTransformer(
             pluginContext,
-            symbolRemapper,
             stabilityInferencer,
             metrics,
             featureFlags,
@@ -184,7 +174,6 @@ class ComposeIrGenerationExtension(
 
         ComposableTargetAnnotationsTransformer(
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             featureFlags,
@@ -196,7 +185,6 @@ class ComposeIrGenerationExtension(
 
         ComposableFunctionBodyTransformer(
             pluginContext,
-            symbolRemapper,
             metrics,
             stabilityInferencer,
             sourceInformationEnabled,
@@ -207,7 +195,6 @@ class ComposeIrGenerationExtension(
         if (isKlibTarget) {
             KlibAssignableParamTransformer(
                 pluginContext,
-                symbolRemapper,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
@@ -217,7 +204,6 @@ class ComposeIrGenerationExtension(
         if (pluginContext.platform.isJs() || pluginContext.platform.isWasm()) {
             WrapJsComposableLambdaLowering(
                 pluginContext,
-                symbolRemapper,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
