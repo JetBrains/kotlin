@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
@@ -135,10 +134,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-abstract class AbstractIrCustomScriptCodegenTest : AbstractCustomScriptCodegenTest() {
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-}
+abstract class AbstractIrCustomScriptCodegenTest : AbstractCustomScriptCodegenTest()
 
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(
     {

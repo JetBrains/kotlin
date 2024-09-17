@@ -510,8 +510,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     @Override
-    public TargetBackend getBackend() {
-        return TargetBackend.JVM;
+    public final TargetBackend getBackend() {
+        return TargetBackend.JVM_IR;
     }
 
     @Override

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.cre
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.Paths
@@ -25,9 +24,6 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     lateinit var klibName: String
     lateinit var outputDir: File
     lateinit var klibPath: String
-
-    override val backend
-        get() = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 abstract class AbstractKaptModeBytecodeShapeTest : CodegenTestCase() {
@@ -29,9 +28,6 @@ abstract class AbstractKaptModeBytecodeShapeTest : CodegenTestCase() {
             override fun getClassBuilderMode() = ClassBuilderMode.KAPT3
         }
     }
-
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         compile(files)

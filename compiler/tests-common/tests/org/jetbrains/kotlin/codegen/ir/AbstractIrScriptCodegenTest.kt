@@ -6,9 +6,5 @@
 package org.jetbrains.kotlin.codegen.ir
 
 import org.jetbrains.kotlin.codegen.AbstractScriptCodegenTest
-import org.jetbrains.kotlin.test.TargetBackend
 
-abstract class AbstractIrScriptCodegenTest : AbstractScriptCodegenTest() {
-    override val backend
-        get() = TargetBackend.JVM_IR
-}
+abstract class AbstractIrScriptCodegenTest : AbstractScriptCodegenTest()

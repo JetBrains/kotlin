@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.addIfNotNull
-
 
 class FirLightTreeLinkageModeTest : JvmIrLinkageModeTest() {
     override val useFir: Boolean
@@ -42,9 +40,6 @@ class FirPsiLinkageModeTest : JvmIrLinkageModeTest() {
 }
 
 open class JvmIrLinkageModeTest : CodegenTestCase() {
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
     private var enableLinkageViaSignatures: Boolean? = null
 
     private var source = """

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -25,9 +24,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
 open class MethodOrderTest : CodegenTestCase() {
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
     fun testDelegatedMethod() {
         doTest(
             """

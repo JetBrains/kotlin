@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
 import org.jetbrains.kotlin.test.FirParser.Psi
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
@@ -63,9 +62,6 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
     private fun loadScript(text: String) {
         myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment.project)
     }
-
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
 
     private fun createScriptTestEnvironment(vararg scriptDefinitions: String) {
         if (myEnvironment != null) {

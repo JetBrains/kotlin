@@ -16,7 +16,7 @@ interface FrontendBackendConfiguration {
         get() = false
     val firParser: FirParser
         get() = FirParser.Psi
-    val backend
+    val backend: TargetBackend
         get() = TargetBackend.ANY
 
     fun configureIrFir(configuration: CompilerConfiguration) {

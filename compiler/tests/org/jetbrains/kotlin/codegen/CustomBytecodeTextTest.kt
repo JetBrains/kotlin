@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TargetBackend
 
 @OptIn(ObsoleteTestInfrastructure::class)
 open class CustomBytecodeTextTest : CodegenTestCase() {
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
     fun testEnumMapping() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         myFiles = CodegenTestFiles.create(
