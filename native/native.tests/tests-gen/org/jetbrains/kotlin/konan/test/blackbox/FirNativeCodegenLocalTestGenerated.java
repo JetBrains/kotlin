@@ -1037,9 +1037,9 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
-    @TestMetadata("localClassesInInlineFunctionExtraction.kt")
-    public void testLocalClassesInInlineFunctionExtraction() {
-      runTest("native/native.tests/testData/codegen/fileCheck/localClassesInInlineFunctionExtraction.kt");
+    @TestMetadata("noLocalClassesInInlineFunctionExtraction.kt")
+    public void testNoLocalClassesInInlineFunctionExtraction() {
+      runTest("native/native.tests/testData/codegen/fileCheck/noLocalClassesInInlineFunctionExtraction.kt");
     }
 
     @Test
