@@ -121,10 +121,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractTopLevelMembersInvocationTest> {
-                model("codegen/topLevelMemberInvocation", extension = null, recursive = false)
-            }
-
             testClass<AbstractDefaultArgumentsReflectionTest> {
                 model("codegen/defaultArguments/reflection")
             }

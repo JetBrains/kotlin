@@ -142,7 +142,6 @@
 /compiler/testData/codegen/script/ "Kotlin Frontend"
 /compiler/testData/codegen/scriptCustom/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/codegen/sourceInfo/
-/compiler/testData/codegen/topLevelMemberInvocation/ "Kotlin JVM"
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"
 /compiler/testData/compileKotlinAgainstJava/ "Kotlin Frontend" "Kotlin JVM"
