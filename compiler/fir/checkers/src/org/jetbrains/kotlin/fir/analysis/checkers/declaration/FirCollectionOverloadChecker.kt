@@ -98,10 +98,10 @@ fun foo(
                 param.returnTypeRef.coneType.isSubtypeOf(subtypeOf, context.session)
     }
     if (iterableParams.mapTo(HashSet()) { TypeEqualsWrapper(it.second.returnTypeRef.coneType, context.session) }.size > 1) {
-        val msg = "$diagStr: ${iterableParams.first().second.returnTypeRef.coneType.classId}\n" +
+        val msg = "BOBKO_MARKER $diagStr: ${iterableParams.first().second.returnTypeRef.coneType.classId}\n" +
                 iterableParams
                     .joinToString("\n") { (fn, _) -> FirDiagnosticRenderers.SYMBOL.render(fn.symbol) }
-                    .prependIndent()
+                    .prependIndent(indent = "    BOBKO_MARKER ")
         // writer.write(msg + "\n")
         // System.err.println(msg)
         // println(msg)
