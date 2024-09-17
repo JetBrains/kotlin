@@ -1,8 +1,14 @@
+// TARGET_BACKEND: JVM_IR
+
+package test
+
 class A {
     companion object {
         class Foo(val a: Int = 1) {}
     }
 }
 
-// CLASS: A$Companion$Foo
-// HAS_DEFAULT_CONSTRUCTOR: true
+fun box(): String {
+    Class.forName("test.A\$Companion\$Foo").getDeclaredConstructor()
+    return "OK"
+}

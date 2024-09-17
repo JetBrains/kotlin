@@ -1,6 +1,17 @@
+// TARGET_BACKEND: JVM_IR
+// FULL_JDK
+
+package test
+
 private class A {
-  public inner class Foo(val a: Int = 1) {}
+    public inner class Foo(val a: Int = 1) {}
 }
 
-// CLASS: A$Foo
-// HAS_DEFAULT_CONSTRUCTOR: false
+fun box(): String {
+    try {
+        Class.forName("test.A\$Foo").getDeclaredConstructor()
+        return "Fail"
+    } catch (e: NoSuchMethodException) {
+        return "OK"
+    }
+}

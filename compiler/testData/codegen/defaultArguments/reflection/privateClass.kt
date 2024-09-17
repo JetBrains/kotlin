@@ -1,4 +1,10 @@
+// TARGET_BACKEND: JVM_IR
+
+package test
+
 private class Foo(val a: Int = 1) {}
 
-// CLASS: Foo
-// HAS_DEFAULT_CONSTRUCTOR: true
+fun box(): String {
+    Class.forName("test.Foo").getDeclaredConstructor()
+    return "OK"
+}
