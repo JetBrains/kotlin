@@ -5252,7 +5252,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKa
 	public final fun useChromeCanaryHeadless ()V
 	public final fun useChromeHeadless ()V
 	public final fun useChromeHeadlessNoSandbox ()V
-	public final fun useChromeHeadlessWasmGc ()V
 	public final fun useChromium ()V
 	public final fun useChromiumHeadless ()V
 	public final fun useConfigDirectory (Ljava/io/File;)V
