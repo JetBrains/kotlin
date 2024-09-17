@@ -69,7 +69,7 @@ class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : Runt
 
 fun TestConfigurationBuilder.configureForKotlinxSerialization(
     noLibraries: Boolean = false,
-    target: TargetBackend = TargetBackend.JVM,
+    target: TargetBackend = TargetBackend.JVM_IR,
     useJdk11: Boolean = false
 ) {
     defaultDirectives {
@@ -89,7 +89,7 @@ fun TestConfigurationBuilder.configureForKotlinxSerialization(
 
 fun TestConfigurationBuilder.enableSerializationRuntimeProviders(target: TargetBackend) {
     when (target) {
-        TargetBackend.JVM, TargetBackend.JVM_IR -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJvmProvider)
+        TargetBackend.JVM_IR -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJvmProvider)
         TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJsProvider)
         else -> error("Unsupported backend")
     }

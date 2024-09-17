@@ -28,17 +28,8 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 
-open class IrCustomScriptCodegenTest : CustomScriptCodegenTest() {
-    override val backend: TargetBackend
-        get() = TargetBackend.JVM_IR
-
-    override fun testAnnotatedDefinition() {
-        // Discussing
-    }
-}
-
 @Suppress("JUnitTestCaseWithNoTests")
-class FirLightTreeCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
+class FirLightTreeCustomScriptCodegenTest : CustomScriptCodegenTest() {
     override val useFir: Boolean
         get() = true
 
@@ -47,7 +38,7 @@ class FirLightTreeCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
-class FirPsiCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
+class FirPsiCustomScriptCodegenTest : CustomScriptCodegenTest() {
     override val useFir: Boolean
         get() = true
 
@@ -61,8 +52,10 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
         loadScript("val x = 1")
         val res = generateScriptClass()
         assertNull(res.safeGetAnnotation(KotlinScript::class))
-        assertNotNull(res.safeGetAnnotation(MyScriptClassAnnotation::class))
-        assertNotNull(res.getConstructor().safeGetAnnotation(MyScriptConstructorAnnotation::class))
+
+        // Note: these were not null in the old JVM backend.
+        assertNull(res.safeGetAnnotation(MyScriptClassAnnotation::class))
+        assertNull(res.getConstructor().safeGetAnnotation(MyScriptConstructorAnnotation::class))
     }
 
     private fun generateScriptClass(): Class<*> = generateClass("ScriptTest")
@@ -72,7 +65,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
     }
 
     override val backend: TargetBackend
-        get() = TargetBackend.JVM
+        get() = TargetBackend.JVM_IR
 
     private fun createScriptTestEnvironment(vararg scriptDefinitions: String) {
         if (myEnvironment != null) {

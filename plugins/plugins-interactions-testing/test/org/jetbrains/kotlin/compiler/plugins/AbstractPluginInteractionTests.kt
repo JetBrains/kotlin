@@ -45,7 +45,7 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::ParcelizeEnvironmentConfigurator
     )
 
-    enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM)
+    enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM_IR)
     useCustomRuntimeClasspathProviders(
         ::LombokRuntimeClassPathProvider,
         ::ParcelizeRuntimeClasspathProvider
