@@ -75,9 +75,14 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
             IrValidationAfterInliningOnlyPrivateFunctionsPhase(
                     context = context.context,
                     checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                        // Call sites of only non-private functions are allowed at this stage.
                         val inlineFunction = inlineFunctionUseSite.symbol.owner
-                        !inlineFunction.isConsideredAsPrivateForInlining()
+                        when {
+                            // TODO: remove this condition after the fix of KT-69457:
+                            inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                            // Call sites of non-private functions are allowed at this stage.
+                            else -> !inlineFunction.isConsideredAsPrivateForInlining()
+                        }
                     }
             ).lower(module)
         }
