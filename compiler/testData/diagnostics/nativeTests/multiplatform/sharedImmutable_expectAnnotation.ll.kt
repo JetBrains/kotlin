@@ -2,7 +2,7 @@
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
 // LANGUAGE: +MultiPlatformProjects
-// DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION
+// DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION_ERROR
 // WITH_STDLIB
 
 // MODULE: common

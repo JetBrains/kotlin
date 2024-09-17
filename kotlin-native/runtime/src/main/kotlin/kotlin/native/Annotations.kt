@@ -60,9 +60,9 @@ public typealias Throws = kotlin.Throws
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("This annotation is redundant and has no effect")
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
 /**

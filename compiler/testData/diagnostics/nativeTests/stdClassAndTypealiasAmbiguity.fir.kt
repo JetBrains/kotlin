@@ -3,7 +3,7 @@ import kotlin.jvm.*
 import kotlin.native.concurrent.*
 import kotlin.native.*
 
-@<!DEPRECATION!>SharedImmutable<!>
+@<!DEPRECATION_ERROR!>SharedImmutable<!>
 @ThreadLocal
 val x = 42
 
