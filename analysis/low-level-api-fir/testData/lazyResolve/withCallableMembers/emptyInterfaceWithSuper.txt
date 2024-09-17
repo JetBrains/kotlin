@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
+FILE: [ResolvedTo(RAW_FIR)] emptyInterfaceWithSuper.kt
     public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : InterfaceWithMembers {
     }
     public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers : AnotherSuperInterface {
