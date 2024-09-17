@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.codegen;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.config.JvmClosureGenerationScheme;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.FqName;
@@ -39,6 +42,13 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+    }
+
+    @Override
+    protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
+        configuration.put(JVMConfigurationKeys.LAMBDAS, JvmClosureGenerationScheme.CLASS);
+        configuration.put(JVMConfigurationKeys.SAM_CONVERSIONS, JvmClosureGenerationScheme.CLASS);
+        super.updateConfiguration(configuration);
     }
 
     public void testTraitImpl() {
@@ -65,13 +75,6 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public void testCallableReferenceWrapper() {
         doTestKotlinSyntheticClass(
                 "val f = String::get",
-                "$1"
-        );
-    }
-
-    public void testLocalFunction() {
-        doTestKotlinSyntheticClass(
-                "fun foo() { fun bar() {} }",
                 "$1"
         );
     }

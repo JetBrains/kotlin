@@ -76,14 +76,6 @@ public class OuterClassGenTest extends CodegenTestCase {
         doTest("foo.PackageInnerObject", "outerClassInfo");
     }
 
-    public void testLambdaInNoInlineFun() {
-        doTest("foo.Foo$foo$1", "foo.Foo$1Lambda", "outerClassInfo");
-    }
-
-    public void testLambdaInConstructor() {
-        doTest("foo.Foo$s$1", "foo.Foo$1LambdaInConstructor", "outerClassInfo");
-    }
-
     public void testObjectLiteralInPackageClass() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", null, null);
         doCustomTest("foo/OuterClassInfoKt\\$packageObjectLiteral\\$1", expectedInfo, "outerClassInfo");
@@ -109,46 +101,9 @@ public class OuterClassGenTest extends CodegenTestCase {
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineObject");
     }
 
-    public void testLocalObjectInInlineLambda() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
-        doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineObject");
-    }
-
     public void testLocalObjectInLambdaInlinedIntoObject() {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineObject");
-    }
-
-    public void testLocalObjectInLambdaInlinedIntoObject2() {
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "run", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
-                     objectInLambda, "inlineObject");
-    }
-
-    public void testLambdaInInlineFunction() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
-        doCustomTest("foo/Foo\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInlined() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
-        doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInInlineLambda() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
-        doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInLambdaInlinedIntoObject() {
-        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineLambda");
-    }
-
-    public void testLambdaInLambdaInlinedIntoObject2() {
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "invoke", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
-                     objectInLambda, "inlineLambda");
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String testDataFile) {
