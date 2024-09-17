@@ -404,10 +404,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("isInline", boolean)
         +field("isExpect", boolean)
         +field("returnType", irTypeType)
-        +field("dispatchReceiverParameter", valueParameter, nullable = true)
-        +field("extensionReceiverParameter", valueParameter, nullable = true)
-        // The first `contextReceiverParametersCount` value parameters are context receivers.
-        +field("contextReceiverParametersCount", int)
         +field("body", body, nullable = true)
     }
     val constructor: Element by element(Declaration) {
