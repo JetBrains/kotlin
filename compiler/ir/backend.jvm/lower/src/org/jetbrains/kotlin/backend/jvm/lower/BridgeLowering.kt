@@ -476,9 +476,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
-                    valueParameters.take(info.argumentsToCheck).forEach {
-                        +parameterTypeCheck(it, target.valueParameters[it.index].type, info.defaultValueGenerator(this@apply))
-                    }
+                    nonDispatchParameters
+                        .take(info.argumentsToCheck)
+                        .forEach {
+                            +parameterTypeCheck(it, target.parameters[it.indexNew].type, info.defaultValueGenerator(this@apply))
+                        }
                 }
                 +irReturn(delegatingCall(this@apply, target, specialBridge.superQualifierSymbol))
             }
@@ -502,7 +504,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         // If there is an existing function that would conflict with a special bridge signature, insert the special bridge
         // code directly as a prelude in the existing method.
         if (specialOverrideSignature == ourSignature) {
-            val argumentsToCheck = valueParameters.take(specialOverrideInfo.argumentsToCheck)
+            val argumentsToCheck = nonDispatchParameters.take(specialOverrideInfo.argumentsToCheck)
             val shouldGenerateParameterChecks = argumentsToCheck.any { !it.type.isNullable() }
             if (shouldGenerateParameterChecks) {
                 // Rewrite the body to check if arguments have wrong type. If so, return the default value, otherwise,
