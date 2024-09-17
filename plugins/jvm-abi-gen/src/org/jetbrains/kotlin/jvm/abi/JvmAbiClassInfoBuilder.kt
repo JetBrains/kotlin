@@ -37,10 +37,9 @@ internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean)
 
     fun buildClassInfo(): Map<String, AbiClassInfo> {
         if (removePrivateClasses) {
-            val visited = hashSetOf<String>()
-            for ((className, info) in abiClassInfo) if (info != AbiClassInfo.Deleted) {
-                for (superInterface in allSuperInterfaces[className].orEmpty()) {
-                    keepInterface(superInterface, visited)
+            for ((className, info) in abiClassInfo.toMap()) {
+                if (info != AbiClassInfo.Deleted) {
+                    keepInterfacesOf(className)
                 }
             }
         }
@@ -48,19 +47,17 @@ internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean)
         return abiClassInfo
     }
 
-    private fun keepInterface(className: String, visited: MutableSet<String>) {
-        if (!visited.add(className)) return
-
-        abiClassInfo[className] = AbiClassInfo.Public
-
-        for (outerClass in generateSequence(className, innerClassToOuter::get).drop(1)) {
-            if (abiClassInfo[outerClass] == AbiClassInfo.Deleted) {
-                abiClassInfo[outerClass] = AbiClassInfo.Stripped(emptyMap(), prune = true)
-            }
-        }
-
+    private fun keepInterfacesOf(className: String) {
         for (superInterface in allSuperInterfaces[className].orEmpty()) {
-            keepInterface(superInterface, visited)
+            if (abiClassInfo.put(superInterface, AbiClassInfo.Public) == AbiClassInfo.Public)
+                continue
+
+            for (outerClass in generateSequence(superInterface, innerClassToOuter::get).drop(1)) {
+                if (abiClassInfo[outerClass] == AbiClassInfo.Deleted) {
+                    abiClassInfo[outerClass] = AbiClassInfo.Stripped(emptyMap(), prune = true)
+                }
+            }
+            keepInterfacesOf(superInterface)
         }
     }
 }
