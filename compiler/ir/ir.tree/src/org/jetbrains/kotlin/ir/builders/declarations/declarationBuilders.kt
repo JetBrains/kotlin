@@ -324,6 +324,7 @@ fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDe
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
+            kind = kind,
             name = name,
             type = type,
             isAssignable = isAssignable,
