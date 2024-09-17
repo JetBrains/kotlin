@@ -59,15 +59,19 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class OptInUsageChecker : CallChecker {
     interface OptInDiagnosticReporter {
-        fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?)
+        fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?, isFromSuperType: Boolean = false)
     }
 
     class OptInFactoryBasedReporter(
         val factory: DiagnosticFactory2<PsiElement, FqName, String>,
-        val defaultMessage: (FqName) -> String
+        val defaultMessage: (FqName, Boolean) -> String,
     ) : OptInDiagnosticReporter {
-        override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
-            trace.reportDiagnosticOnce(factory.on(element, fqName, message?.takeIf { it.isNotBlank() } ?: defaultMessage(fqName)))
+        override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?, isFromSuperType: Boolean) {
+            trace.reportDiagnosticOnce(
+                factory.on(
+                    element,
+                    fqName,
+                    message?.takeIf { it.isNotBlank() } ?: defaultMessage(fqName, isFromSuperType)))
         }
     }
 
@@ -125,9 +129,10 @@ class OptInUsageChecker : CallChecker {
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
 
-        internal fun getDefaultDiagnosticMessage(prefix: String): (FqName) -> String = { fqName: FqName ->
-            OptInNames.buildDefaultDiagnosticMessage(prefix, fqName.asString())
-        }
+        internal fun getDefaultDiagnosticMessage(prefix: String): (FqName, Boolean) -> String =
+            { fqName: FqName, isFromSuperType: Boolean ->
+                OptInNames.buildDefaultDiagnosticMessage(prefix, fqName.asString(), isFromSuperType)
+            }
 
         private val USAGE_DIAGNOSTICS = OptInReporterMultiplexer(
             warning = OptInFactoryBasedReporter(
@@ -157,7 +162,7 @@ class OptInUsageChecker : CallChecker {
             element: PsiElement,
             languageVersionSettings: LanguageVersionSettings,
             trace: BindingTrace,
-            diagnostics: OptInReporterMultiplexer
+            diagnostics: OptInReporterMultiplexer,
         ) {
             for ((annotationFqName, severity, message, subclassesOnly) in descriptions) {
                 if (!element.isOptInAllowed(annotationFqName, languageVersionSettings, trace.bindingContext, subclassesOnly)) {
@@ -166,7 +171,7 @@ class OptInUsageChecker : CallChecker {
                         OptInDescription.Severity.ERROR -> diagnostics.error
                         OptInDescription.Severity.FUTURE_ERROR -> diagnostics.futureError
                     }
-                    diagnostic.report(trace, element, annotationFqName, message)
+                    diagnostic.report(trace, element, annotationFqName, message, subclassesOnly)
                 }
             }
         }

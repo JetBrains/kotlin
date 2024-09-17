@@ -330,13 +330,19 @@ class ConstantExpressionEvaluator(
     companion object {
         private class ExperimentalityDiagnostic1(
             val factory: DiagnosticFactory1<PsiElement, String>,
-            val verb: String
+            val verb: String,
         ) : OptInUsageChecker.OptInDiagnosticReporter {
-            override fun report(trace: BindingTrace, element: PsiElement, fqName: FqName, message: String?) {
+            override fun report(
+                trace: BindingTrace,
+                element: PsiElement,
+                fqName: FqName,
+                message: String?,
+                isFromSuperType: Boolean,
+            ) {
                 val defaultMessage = OptInUsageChecker.getDefaultDiagnosticMessage(
                     "Unsigned literals are experimental and their usages $verb be marked"
                 )
-                trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName)))
+                trace.reportDiagnosticOnce(factory.on(element, defaultMessage(fqName, isFromSuperType)))
             }
         }
 
