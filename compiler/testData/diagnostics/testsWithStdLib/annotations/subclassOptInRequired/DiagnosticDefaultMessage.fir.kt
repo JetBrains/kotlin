@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalSubclassOptIn::class)
 @RequiresOptIn
 annotation class ApiMarker
 

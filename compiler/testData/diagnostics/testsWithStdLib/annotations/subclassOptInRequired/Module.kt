@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // MODULE: a
-@file:OptIn(ExperimentalSubclassOptIn::class)
 package a
 
 @RequiresOptIn

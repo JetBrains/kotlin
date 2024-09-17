@@ -1,5 +1,4 @@
 FILE: ClassIdDiagnosticRendering.kt
-    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalSubclassOptIn|)))
     package a.b.c
 
     @R|kotlin/RequiresOptIn|() public final annotation class Marker : R|kotlin/Annotation| {

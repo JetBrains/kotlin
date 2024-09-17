@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-@file:OptIn(ExperimentalSubclassOptIn::class)
 
 @RequiresOptIn
 annotation class Boom

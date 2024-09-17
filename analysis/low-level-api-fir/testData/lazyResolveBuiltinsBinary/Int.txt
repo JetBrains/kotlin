@@ -3842,7 +3842,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() @R|kotlin/ExperimentalSubclassOptIn|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class SubclassOptInRequired : R|kotlin/Annotation|, R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class SubclassOptInRequired : R|kotlin/Annotation|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubclassOptInRequired] constructor([ResolvedTo(BODY_RESOLVE)] markerClass: R|kotlin/reflect/KClass<out kotlin/Annotation>|): R|kotlin/SubclassOptInRequired| {
             super<R|kotlin/Any|>()
         }

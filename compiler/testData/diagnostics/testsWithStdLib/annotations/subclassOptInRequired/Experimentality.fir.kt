@@ -5,7 +5,7 @@
 @RequiresOptIn
 annotation class ApiMarker
 
-@<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, OPT_IN_USAGE_ERROR, UNRESOLVED_REFERENCE!>SubclassOptInRequired<!>(ApiMarker::class)
+@<!OPT_IN_USAGE_ERROR!>SubclassOptInRequired<!>(ApiMarker::class)
 open class OpenKlassA
 
 @OptIn(ExperimentalSubclassOptIn::class)
