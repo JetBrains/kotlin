@@ -489,13 +489,13 @@ abstract class KotlinCompile @Inject constructor(
     override fun source(vararg sources: Any) {
         javaSourceFiles.from(sources)
         scriptSourceFiles.from(sources)
-        super.setSource(sources)
+        super.source(sources)
     }
 
     // override source to track Java and script sources as well
     override fun setSource(vararg sources: Any) {
-        javaSourceFiles.from(*sources)
-        scriptSourceFiles.from(*sources)
+        javaSourceFiles.setFrom(*sources)
+        scriptSourceFiles.setFrom(*sources)
         super.setSource(*sources)
     }
 

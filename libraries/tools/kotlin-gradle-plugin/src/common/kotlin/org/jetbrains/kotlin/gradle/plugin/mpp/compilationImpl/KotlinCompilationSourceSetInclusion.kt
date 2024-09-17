@@ -120,7 +120,7 @@ internal class KotlinCompilationSourceSetInclusion(
             compilation.project.tasks.withType(KotlinNativeCompile::class.java)
                 .matching { it.name == compilation.compileKotlinTaskName }
                 .configureEach { task ->
-                    task.setSource(sourceFiles)
+                    task.source(sourceFiles)
                     task.commonSources.from(
                         compilation.project.files(Callable { if (addAsCommonSources.value) sourceFiles() else emptyList() })
                     )

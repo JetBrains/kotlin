@@ -114,14 +114,14 @@ internal fun addCompilationSourcesToExternalCompileTask(
 ) {
     if (compilation is KotlinJvmAndroidCompilation) {
         compilation.androidVariant.forEachKotlinSourceDirectorySet(compilation.project) { sourceSet ->
-            task.configure { it.setSource(sourceSet) }
+            task.configure { it.source(sourceSet) }
         }
         compilation.androidVariant.forEachJavaSourceDir { sources ->
-            task.configure { it.setSource(sources.dir) }
+            task.configure { it.source(sources.dir) }
         }
     } else {
         task.configure { taskInstance ->
-            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.setSource(sourceSet.kotlin) }
+            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.kotlin) }
         }
     }
 }

@@ -45,8 +45,7 @@ interface KotlinCompileTool : PatternFilterable, Task {
     /**
      * Sets input sources for this task.
      *
-     * **Note**: due to [a bug](https://youtrack.jetbrains.com/issue/KT-59632/KotlinCompileTool.setSource-should-replace-existing-sources),
-     * the `setSource()` function does not update already added sources.
+     * New [sources] replace already added one.
      *
      * @param sources object is evaluated as per [org.gradle.api.Project.files].
      */

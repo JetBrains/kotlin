@@ -44,7 +44,7 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
         with(target.project) {
             afterEvaluate {
                 tasks.named<AbstractKotlinCompile<*>>(compileKotlinTaskName).configure {
-                    it.setSource(javaSourceSet.java)
+                    it.source(javaSourceSet.java)
                 }
             }
         }

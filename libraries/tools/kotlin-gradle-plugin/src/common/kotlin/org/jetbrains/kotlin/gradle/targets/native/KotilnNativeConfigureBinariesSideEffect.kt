@@ -127,7 +127,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         // Gradle build cache transforms symlinks into regular files https://guides.gradle.org/using-build-cache/#symbolic_links
         task.outputs.cacheIf { task.outputKind != CompilerOutputKind.FRAMEWORK }
 
-        task.setSource(compilation.compileTaskProvider.flatMap { it.outputFile })
+        task.source(compilation.compileTaskProvider.flatMap { it.outputFile })
         task.includes.clear() // we need to include non '.kt' or '.kts' files
         task.disallowSourceChanges()
 
