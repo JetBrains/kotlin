@@ -73,8 +73,9 @@ kotlin {
                 implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
 
                 // runtime tests
-                implementation(composeRuntime())
-                implementation(composeRuntimeTestUtils())
+                implementationArtifactOnly(composeRuntime())
+                implementationArtifactOnly(composeRuntimeTestUtils())
+                implementation(libs.androidx.collections)
 
                 // other compose
                 implementationArtifactOnly(compose("foundation", "foundation"))

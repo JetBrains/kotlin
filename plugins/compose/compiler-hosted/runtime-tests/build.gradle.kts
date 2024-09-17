@@ -50,8 +50,9 @@ kotlin {
                 implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
 
                 // external deps
-                implementation(composeRuntime())
-                implementation(composeRuntimeTestUtils())
+                implementation(composeRuntime()) { isTransitive = false }
+                implementation(composeRuntimeTestUtils()) { isTransitive = false }
+                implementation(libs.androidx.collections)
             }
         }
     }
