@@ -27,7 +27,7 @@ object DiagnosticComponentsFactory {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
                 add(LanguageVersionSettingsDiagnosticComponent(session, reporter))
             }
-        }
+        }.toTypedArray()
         return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
     }
 

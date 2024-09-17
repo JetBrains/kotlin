@@ -51,7 +51,7 @@ fun FirSession.collectLostDiagnosticsOnFile(
 ): List<KtDiagnostic> {
     val collector = CliDiagnosticsCollector(this, scopeSession) { reporter ->
         DiagnosticCollectorComponents(
-            listOf(LossDiagnosticCollectorComponent(this, reporter)),
+            arrayOf(LossDiagnosticCollectorComponent(this, reporter)),
             ReportCommitterDiagnosticComponent(this, reporter)
         )
     }

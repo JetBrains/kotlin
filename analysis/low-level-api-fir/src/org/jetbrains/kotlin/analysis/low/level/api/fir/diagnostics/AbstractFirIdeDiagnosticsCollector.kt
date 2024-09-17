@@ -66,7 +66,7 @@ private object CheckersFactory {
             add(ExpressionCheckersDiagnosticComponent(session, reporter, expressionCheckers))
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
-        }
+        }.toTypedArray()
         return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
     }
 
