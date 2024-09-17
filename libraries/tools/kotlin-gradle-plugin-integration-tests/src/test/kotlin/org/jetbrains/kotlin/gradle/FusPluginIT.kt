@@ -45,7 +45,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            projectPath.resolve(reportRelativePath).toFile().deleteRecursively()
+            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
         }
     }
 
@@ -121,7 +121,7 @@ class FusPluginIT : KGPBaseTest() {
 
             assertNotEquals(firstBuildId, secondBuildId, "Build is should be unique for every build")
 
-            projectPath.resolve(reportRelativePath).toFile().deleteRecursively()
+            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
         }
     }
 
@@ -161,7 +161,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            projectPath.resolve(reportRelativePath).toFile().deleteRecursively()
+            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
         }
     }
 
@@ -219,7 +219,7 @@ class FusPluginIT : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve(reportRelativePath).toFile().deleteRecursively()
+            assertTrue {  projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
 
             build(
                 "assemble",
@@ -232,7 +232,7 @@ class FusPluginIT : KGPBaseTest() {
                     "BUILD FINISHED"
                 )
             }
-            projectPath.resolve(reportRelativePath).toFile().deleteRecursively()
+            assertTrue { projectPath.resolve(reportRelativePath).toFile().deleteRecursively() }
         }
     }
 
