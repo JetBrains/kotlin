@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Contri
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsTaskMetrics
-import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
@@ -57,7 +55,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     UsesLibraryFilterCachingService,
-    UsesBuildFusService,
     KotlinJsCompile,
     K2MultiplatformCompilationTask,
     ProducesKlib {
@@ -340,10 +337,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 icFeatures = makeIncrementalCompilationFeatures(),
             )
         } else null
-
-        buildFusService.orNull?.reportFusMetrics {
-            CompileKotlinJsTaskMetrics.collectMetrics(icEnv != null, it)
-        }
 
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,

@@ -206,11 +206,6 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
     }
 }
-internal object CompileKotlinJsTaskMetrics : FusMetrics {
-    internal fun collectMetrics(incrementalCompilation: Boolean, metricsContainer: StatisticsValuesConsumer) {
-        metricsContainer.report(BooleanMetrics.JS_KLIB_INCREMENTAL, incrementalCompilation)
-    }
-}
 
 internal object CompileKotlinJsIrLinkMetrics : FusMetrics {
     internal fun collectMetrics(

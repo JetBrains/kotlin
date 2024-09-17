@@ -52,7 +52,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     JS_SOURCE_MAP(OR, SAFE),
 
-    JS_KLIB_INCREMENTAL(OR, SAFE),
     JS_IR_INCREMENTAL(OR, SAFE),
 
     //Build reports
@@ -89,6 +88,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     COCOAPODS_PLUGIN_ENABLED(OR, SAFE);
 
     companion object {
-        const val VERSION = 8
+        const val VERSION = 9
     }
 }
