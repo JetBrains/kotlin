@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.packagePattern
 import org.jetbrains.kotlin.spec.utils.validators.BlackBoxTestTypeValidator
 import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationException
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.Assert
 import java.io.File
 
@@ -26,6 +27,9 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         private const val HELPERS_PATH = "$CODEGEN_BOX_TESTDATA_PATH/helpers"
         private const val HELPERS_PACKAGE_VARIABLE = "<!PACKAGE!>"
     }
+
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 
     private fun addPackageDirectiveToHelperFile(helperContent: String, packageName: String?) =
         helperContent.replace(HELPERS_PACKAGE_VARIABLE, if (packageName == null) "" else "package $packageName")
