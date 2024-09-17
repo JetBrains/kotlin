@@ -19,9 +19,4 @@ inline class Foo(val x: Int) {
 // 1 INVOKEVIRTUAL java/lang/StringBuilder\.append \(I\)Ljava/lang/StringBuilder;
 // 1 INVOKEVIRTUAL java/lang/StringBuilder.toString \(\)Ljava/lang/String;
 // 1 INVOKEVIRTUAL Foo.unbox-impl \(\)I
-
-// JVM_TEMPLATES:
-// 2 INVOKEVIRTUAL java/lang/StringBuilder\.append \(Ljava/lang/String;\)Ljava/lang/StringBuilder;
-
-// JVM_IR_TEMPLATES:
 // 1 INVOKEVIRTUAL java/lang/StringBuilder\.append \(Ljava/lang/String;\)Ljava/lang/StringBuilder;

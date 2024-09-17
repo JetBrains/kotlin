@@ -15,8 +15,4 @@ fun test() {
     }
 }
 
-// JVM_TEMPLATES
-// 1 final synthetic LReceiver; \$this_useExtensionLambda
-
-// JVM_IR_TEMPLATES
 // 1 final synthetic LReceiver; \$this

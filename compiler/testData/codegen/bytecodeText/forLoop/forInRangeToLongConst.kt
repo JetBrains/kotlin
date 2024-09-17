@@ -27,17 +27,10 @@ fun test(): Long {
 // 0 L2I
 // 0 I2L
 
-// JVM_TEMPLATES
-// 1 IFGT
-// 1 LCMP
-// 1 IF
-
-// JVM_IR_TEMPLATES
 // 1 LCMP
 // 1 IFGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 0 ILOAD
 // 0 ISTORE
 // 0 IADD

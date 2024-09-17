@@ -22,11 +22,6 @@ fun box(): String {
 // @MangledSamWrappersKt$sam$B$0.class:
 // public final synthetic f-iUtXLc0\(Ljava/lang/String;\)Ljava/lang/String;
 
-// JVM_TEMPLATES:
-// @MangledSamWrappersKt$box$b$1.class:
-// 1 public final invoke\(Ljava/lang/String;\)LA;
-
-// JVM_IR_TEMPLATES:
 // @MangledSamWrappersKt$box$b$1.class:
 // 0 public final invoke-iUtXLc0-iUtXLc0\(Ljava/lang/String;\)Ljava/lang/String;
 // 1 public final invoke-iUtXLc0\(Ljava/lang/String;\)Ljava/lang/String;

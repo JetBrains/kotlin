@@ -17,24 +17,6 @@ fun bar() {
 // 0 valueOf
 // 0 Value\s\(\)
 
-// JVM_TEMPLATES
-// 1 LOCALVARIABLE x I (.*) 6
-// 1 LOCALVARIABLE y I (.*) 5
-// 1 LOCALVARIABLE x J (.*) 7
-// 1 LOCALVARIABLE y J (.*) 5
-// 1 LOCALVARIABLE x F (.*) 6
-// 1 LOCALVARIABLE y F (.*) 5
-// 1 LOCALVARIABLE x D (.*) 7
-// 1 LOCALVARIABLE y D (.*) 5
-// 1 LOCALVARIABLE x B (.*) 6
-// 1 LOCALVARIABLE y B (.*) 5
-// 1 LOCALVARIABLE x S (.*) 6
-// 1 LOCALVARIABLE y S (.*) 5
-// 1 LOCALVARIABLE x C (.*) 6
-// 1 LOCALVARIABLE y C (.*) 5
-// 1 LOCALVARIABLE x Z (.*) 6
-// 1 LOCALVARIABLE y Z (.*) 5
-
 // JVM_IR_TEMPLATES
 // 1 LOCALVARIABLE x I (.*) 6
 // 1 LOCALVARIABLE y I (.*) 5

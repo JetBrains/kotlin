@@ -32,8 +32,4 @@ fun labeled(): ULong? {
 // 0 valueOf
 // 0 intValue
 
-// JVM_TEMPLATES:
-// 3 INVOKESTATIC ULong\.box
-
-// JVM_IR_TEMPLATES:
 // 2 INVOKESTATIC ULong\.box

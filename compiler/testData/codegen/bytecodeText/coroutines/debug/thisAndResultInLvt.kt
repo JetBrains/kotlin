@@ -18,8 +18,6 @@ class A {
     }
 }
 
-// BEs generate continuation classes differently, JVM_IR generates more correctly
-
 // foo, c's lambda and foo's continuation
 // 3 LOCALVARIABLE \$result Ljava/lang/Object;
 
@@ -30,10 +28,5 @@ class A {
 // 3 LOCALVARIABLE block Lkotlin/jvm/functions/Function2;
 // 1 LOCALVARIABLE \$continuation Lkotlin/coroutines/Continuation;
 
-// JVM_TEMPLATES
-// invokeSuspend
-// 1 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1;
-
-// JVM_IR_TEMPLATES
 // <init>, invoke, invoke bridge, create, invokeSuspend
 // 5 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1; L0 L.* 0

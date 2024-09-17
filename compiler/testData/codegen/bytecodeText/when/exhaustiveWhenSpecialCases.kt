@@ -84,8 +84,4 @@ fun testLambdaResultExpression_throws(a: A) {
     }.let { it() }
 }
 
-// JVM_TEMPLATES
-// 7 ATHROW
-
-// JVM_IR_TEMPLATES
 // 3 ATHROW

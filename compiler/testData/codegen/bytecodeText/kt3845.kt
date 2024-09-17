@@ -47,10 +47,5 @@ inline fun foo(x: () -> Unit) = x()
 // Every property should be accessed directly in this example because they all are final class properties with default accessors
 // 0 INVOKESPECIAL Example\.set
 
-// JVM_TEMPLATES
-// ...except the access in `private inline fun`.
-// 2 INVOKEVIRTUAL Example\.set
-
-// JVM_IR_TEMPLATES
 // ...including the access in `private inline fun` which we know is only called from `init`.
 // 0 INVOKEVIRTUAL Example\.set

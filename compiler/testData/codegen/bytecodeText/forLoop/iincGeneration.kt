@@ -35,11 +35,6 @@ fun uShortRangeTo(a: UShort, b: UShort) { for (i in a .. b) {} }
 
 // 0 ISUB
 
-// JVM_TEMPLATES
-// 4 IADD
-// 16 IINC
-
-// JVM_IR_TEMPLATES
 // 122 ILOAD
 // 42 ISTORE
 // 0 IADD

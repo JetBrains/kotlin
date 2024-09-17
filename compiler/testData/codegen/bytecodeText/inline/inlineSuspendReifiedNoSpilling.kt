@@ -25,13 +25,6 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
 // 1 \$i\$f\$receiveJSON I .* 2
 // 2 \$i\$f\$respond I .* 3
 
-// JVM_TEMPLATES
-// $i$f$respond x1, $i$f$receiveJSON x2: before and after suspension point
-// 3 ISTORE 5
-// 0 ILOAD 5
-// 2 \$i\$f\$receiveJSON I .* 5
-// 1 \$i\$f\$respond I .* 5
-
 // JVM_IR_TEMPLATES
 // 5 ISTORE 3
 // 1 ISTORE 2
