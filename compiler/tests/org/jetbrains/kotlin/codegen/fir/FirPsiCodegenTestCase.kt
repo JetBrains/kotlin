@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.codegen.fir
 
 import org.jetbrains.kotlin.codegen.CustomBytecodeTextTest
+import org.jetbrains.kotlin.codegen.MethodOrderTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.Psi
@@ -92,35 +93,15 @@ class FirPsiInnerClassInfoGenTest : IrInnerClassInfoGenTest() {
         get() = Psi
 }
 
-class FirPsiMethodOrderTest : IrMethodOrderTest() {
+class FirPsiMethodOrderTest : MethodOrderTest() {
     override val useFir: Boolean
         get() = true
 
     override val firParser: FirParser
         get() = Psi
 
-    override fun testDelegatedMethod() {
-        doTest(
-            """
-                interface Trait {
-                    fun f0()
-                    fun f4()
-                    fun f3()
-                    fun f2()
-                    fun f1()
-                    fun f5()
-                }
-
-                val delegate: Trait = throw Error()
-
-                val obj = object : Trait by delegate {
-                    override fun f3() { }
-                }
-            """,
-            "\$obj$1",
-            listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
-        )
-    }
+    override fun delegatedMethodExpectation(): List<String> =
+        listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
 }
 
 class FirPsiReflectionClassLoaderTest : IrReflectionClassLoaderTest() {
