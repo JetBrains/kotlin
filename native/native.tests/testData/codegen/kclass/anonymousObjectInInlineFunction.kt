@@ -2,11 +2,6 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-// KT-64460: When producing cache, anonymous objects are not extracted from inline functions to module scope, so the following happens
-// kotlin.AssertionError: Expected <class codegen.kclass.kclass0.MainKt$1>, actual <class codegen.kclass.kclass0.box$$inlined$getHasFoo$1>.
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
 package codegen.kclass.kclass0
 import kotlin.test.*
@@ -16,18 +11,31 @@ interface HasFoo {
     fun foo(): String
 }
 
-private inline fun getHasFoo(s: String) = object : HasFoo {
-    override fun foo(): String = s
+private inline fun getHasFooPrivate(s: String) = object : HasFoo {
+    override fun foo(): String = s + "_private"
+}
+
+inline fun getHasFooPublic(s: String) = object : HasFoo {
+    override fun foo(): String = s + "_public"
 }
 
 fun box(): String {
-    val hasFoo = getHasFoo("zzz")
+    val hasFooPrivate = getHasFooPrivate("a")
     checkClass(
-        hasFoo::class,
+        hasFooPrivate::class,
         expectedQualifiedName = null,
         expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
-        expectedToStringName = "class codegen.kclass.kclass0.AnonymousObjectInInlineFunctionKt\$1",
-        expectedInstance = hasFoo,
+        expectedToStringName = "class codegen.kclass.kclass0.box\$\$inlined\$getHasFooPrivate\$1",
+        expectedInstance = hasFooPrivate,
+        expectedNotInstance = Any()
+    )
+    val hasFooPublic = getHasFooPublic("b")
+    checkClass(
+        hasFooPublic::class,
+        expectedQualifiedName = null,
+        expectedSimpleName = null, // KT-64460: simpleName is explicitly prohibited in NATIVE backend
+        expectedToStringName = "class codegen.kclass.kclass0.box\$\$inlined\$getHasFooPublic\$1",
+        expectedInstance = hasFooPublic,
         expectedNotInstance = Any()
     )
     return "OK"

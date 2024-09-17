@@ -1563,12 +1563,6 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
-    @TestMetadata("anonymousObjectInInlineFunctionWithCache.kt")
-    public void testAnonymousObjectInInlineFunctionWithCache() {
-      runTest("native/native.tests/testData/codegen/kclass/anonymousObjectInInlineFunctionWithCache.kt");
-    }
-
-    @Test
     @TestMetadata("bindClassToObjCName.kt")
     public void testBindClassToObjCName() {
       runTest("native/native.tests/testData/codegen/kclass/bindClassToObjCName.kt");
