@@ -1,28 +1,20 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.TargetBackend
 
 @OptIn(ObsoleteTestInfrastructure::class)
-open class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
-    open fun testEnumMapping() {
+open class CustomBytecodeTextTest : CodegenTestCase() {
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
+
+    fun testEnumMapping() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         myFiles = CodegenTestFiles.create(
             "whenMappingOrder.kt",
@@ -45,8 +37,16 @@ open class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
 
         val text = generateToText()
         val getstatics = text.lines().filter { it.contains("GETSTATIC MyEnum.") }.map { it.trim() }
-        KtUsefulTestCase.assertOrderedEquals(
-            "actual bytecode:\n$text", getstatics, listOf(
+        assertOrderedEquals(
+            "actual bytecode:\n$text",
+            getstatics,
+            listOf(
+                "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
+                "GETSTATIC MyEnum.${'$'}ENTRIES : Lkotlin/enums/EnumEntries;",
+                "GETSTATIC MyEnum.ENTRY1 : LMyEnum;",
+                "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
+                "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
+                "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.codegen.fir
 
+import org.jetbrains.kotlin.codegen.CustomBytecodeTextTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.Psi
@@ -130,7 +131,7 @@ class FirPsiReflectionClassLoaderTest : IrReflectionClassLoaderTest() {
         get() = Psi
 }
 
-class FirPsiCustomBytecodeTextTest : IrCustomBytecodeTextTest() {
+class FirPsiCustomBytecodeTextTest : CustomBytecodeTextTest() {
     override val useFir: Boolean
         get() = true
 

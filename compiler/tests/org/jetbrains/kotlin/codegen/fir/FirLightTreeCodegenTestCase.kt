@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.codegen.fir
 
+import org.jetbrains.kotlin.codegen.CustomBytecodeTextTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
@@ -130,7 +131,7 @@ class FirLightTreeReflectionClassLoaderTest : IrReflectionClassLoaderTest() {
         get() = LightTree
 }
 
-class FirLightTreeCustomBytecodeTextTest : IrCustomBytecodeTextTest() {
+class FirLightTreeCustomBytecodeTextTest : CustomBytecodeTextTest() {
     override val useFir: Boolean
         get() = true
 
@@ -153,4 +154,3 @@ class FirLightTreeSourceInfoGenTest : IrSourceInfoGenTest() {
     override val firParser: FirParser
         get() = LightTree
 }
-

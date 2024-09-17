@@ -157,10 +157,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
     }
 
-    protected void loadMultiFiles(@NotNull List<TestFile> files) {
-        myFiles = loadMultiFiles(files, myEnvironment.getProject());
-    }
-
     @NotNull
     public static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
         Collections.sort(files);
@@ -261,15 +257,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     protected String generateToText() {
-        return generateToText(null);
-    }
-
-    @NotNull
-    protected String generateToText(@Nullable String ignorePathPrefix) {
         if (classFileFactory == null) {
             classFileFactory = generateFiles(myEnvironment, myFiles);
         }
-        return classFileFactory.createText(ignorePathPrefix);
+        return classFileFactory.createText(null);
     }
 
     @NotNull
@@ -436,7 +427,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         );
         setupEnvironment(myEnvironment);
 
-        loadMultiFiles(files);
+        myFiles = loadMultiFiles(files, myEnvironment.getProject());
 
         generateClassesInFile(reportProblems);
 

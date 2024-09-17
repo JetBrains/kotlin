@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.Assertions
@@ -18,7 +18,7 @@ private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
 private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
 private const val JVM_IR_TEMPLATES_WITH_INLINE_SCOPES = "// JVM_IR_TEMPLATES_WITH_INLINE_SCOPES"
 
-class OccurrenceInfo constructor(
+internal class OccurrenceInfo(
     private val numberOfOccurrences: Int,
     private val needle: String,
     val backend: TargetBackend,
@@ -36,7 +36,7 @@ class OccurrenceInfo constructor(
     }
 }
 
-fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
+internal fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
     val result = ArrayList<OccurrenceInfo>()
     var backend = TargetBackend.ANY
     var inlineScopesNumbersEnabled = false
@@ -65,7 +65,7 @@ fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
     return result
 }
 
-fun readExpectedOccurrencesForMultiFileTest(
+internal fun readExpectedOccurrencesForMultiFileTest(
     fileName: String,
     fileContent: String,
     withGeneratedFile: MutableMap<String, List<OccurrenceInfo>>,
@@ -115,7 +115,7 @@ private fun parseOccurrenceInfo(matcher: Matcher, backend: TargetBackend, inline
     return OccurrenceInfo(numberOfOccurrences, needle, backend, inlineScopesNumbersEnabled)
 }
 
-fun checkGeneratedTextAgainstExpectedOccurrences(
+internal fun checkGeneratedTextAgainstExpectedOccurrences(
     text: String,
     expectedOccurrences: List<OccurrenceInfo>,
     currentBackend: TargetBackend,
@@ -165,7 +165,7 @@ fun checkGeneratedTextAgainstExpectedOccurrences(
     }
 }
 
-fun assertTextWasGenerated(expectedOutputFile: String, generated: Map<String, String>, assertions: Assertions) {
+internal fun assertTextWasGenerated(expectedOutputFile: String, generated: Map<String, String>, assertions: Assertions) {
     if (!generated.containsKey(expectedOutputFile)) {
         val failMessage = StringBuilder()
         failMessage.append("Missing output file ").append(expectedOutputFile).append(", got ").append(generated.size).append(": ")
