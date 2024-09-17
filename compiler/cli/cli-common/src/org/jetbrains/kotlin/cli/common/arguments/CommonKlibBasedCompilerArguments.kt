@@ -61,7 +61,7 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         value = "-Xklib-no-double-inlining",
         description = "Turn off double-inlining mode."
     )
-    var noDoubleInlining = true
+    var noDoubleInlining = false
         set(value) {
             checkFrozen()
             field = value
