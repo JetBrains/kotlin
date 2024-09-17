@@ -47108,6 +47108,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
     }
 
+    @TestMetadata("kt71462.kt")
+    public void testKt71462() {
+      runTest("compiler/testData/codegen/box/typealias/kt71462.kt");
+    }
+
     @TestMetadata("objectLiteralConstructor.kt")
     public void testObjectLiteralConstructor() {
       runTest("compiler/testData/codegen/box/typealias/objectLiteralConstructor.kt");
