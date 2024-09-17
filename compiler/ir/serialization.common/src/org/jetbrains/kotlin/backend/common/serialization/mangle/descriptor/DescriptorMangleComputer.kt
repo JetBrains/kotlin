@@ -125,7 +125,6 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
                     mangleType(tBuilder, mixed, null)
                 } else mangleType(tBuilder, upper, null)
             }
-            else -> error("Unexpected type $wrappedType")
         }
     }
 

@@ -238,7 +238,6 @@ internal class NotNullTypeParameterImpl(override val delegate: SimpleType) : Not
                 unwrappedType.lowerBound.prepareReplacement(),
                 unwrappedType.upperBound.prepareReplacement()
             ).wrapEnhancement(unwrappedType.getEnhancement())
-            else -> error("Incorrect type: $unwrappedType")
         }
     }
 

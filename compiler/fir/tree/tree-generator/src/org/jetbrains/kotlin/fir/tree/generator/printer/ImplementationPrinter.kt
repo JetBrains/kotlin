@@ -129,8 +129,6 @@ internal class ImplementationPrinter(
                                             is ListField -> {
                                                 println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                             }
-
-                                            else -> throw IllegalStateException()
                                         }
                                     }
                                 }

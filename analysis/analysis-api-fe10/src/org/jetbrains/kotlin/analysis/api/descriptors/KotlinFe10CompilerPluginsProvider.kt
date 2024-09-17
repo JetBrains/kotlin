@@ -22,7 +22,6 @@ internal class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider
     override fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean {
         val extension = when (pluginType) {
             CompilerPluginType.ASSIGNMENT -> AssignResolutionAltererExtension
-            else -> return false
         }
         return extension.getInstances(module.project).isNotEmpty()
     }

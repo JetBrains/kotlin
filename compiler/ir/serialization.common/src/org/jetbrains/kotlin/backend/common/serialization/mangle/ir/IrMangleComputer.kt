@@ -130,7 +130,6 @@ open class IrMangleComputer(
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
-            else -> error("Unexpected type $type")
         }
     }
 

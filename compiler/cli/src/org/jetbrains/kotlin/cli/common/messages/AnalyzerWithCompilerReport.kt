@@ -136,7 +136,6 @@ class AnalyzerWithCompilerReport(
             Severity.INFO -> INFO
             Severity.ERROR -> ERROR
             Severity.WARNING -> WARNING
-            else -> throw IllegalStateException("Unknown severity: $severity")
         }
 
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)

@@ -243,7 +243,6 @@ open class DurableKeyTransformer(
             is IrDynamicType -> "dynamic"
             is IrErrorType -> "IrErrorType"
             is IrSimpleType -> (classifier.owner as IrDeclarationWithName).name.asString()
-            else -> "{${javaClass.simpleName} $this}"
         }
     }
 

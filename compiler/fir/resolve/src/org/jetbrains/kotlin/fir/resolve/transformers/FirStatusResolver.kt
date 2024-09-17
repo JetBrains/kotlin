@@ -381,7 +381,6 @@ private val FirClass.modality: Modality?
     get() = when (this) {
         is FirRegularClass -> status.modality
         is FirAnonymousObject -> Modality.FINAL
-        else -> error("Unknown kind of class: ${this::class}")
     }
 
 private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {

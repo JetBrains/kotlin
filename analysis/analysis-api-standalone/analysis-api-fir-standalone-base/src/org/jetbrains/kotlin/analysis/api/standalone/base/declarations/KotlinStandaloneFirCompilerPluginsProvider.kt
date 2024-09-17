@@ -35,7 +35,6 @@ class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: Compiler
     override fun isPluginOfTypeRegistered(module: KaSourceModule, pluginType: CompilerPluginType): Boolean {
         val extension = when (pluginType) {
             CompilerPluginType.ASSIGNMENT -> FirAssignExpressionAltererExtension::class
-            else -> return false
         }
 
         return getRegisteredExtensions(module, FirExtensionRegistrarAdapter)

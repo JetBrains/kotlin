@@ -351,7 +351,6 @@ class ClassicFrontendFacade(
         val suffix = when (configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
             WasmTarget.JS -> "-js"
             WasmTarget.WASI -> "-wasi"
-            else -> error("Unexpected wasi target")
         }
 
         val runtimeKlibsNames =

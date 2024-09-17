@@ -99,9 +99,6 @@ internal object UsualClassTypeQualifierBuilder {
             is FirAnonymousObject -> listOf(declaration)
             is FirRegularClass -> declaration.collectForLocal()
             is FirTypeAlias -> listOf(declaration) // TODO: handle type aliases
-            else -> errorWithAttachment("Invalid declaration ${declaration::class}") {
-                withFirEntry("declaration", declaration)
-            }
         }
     }
 }

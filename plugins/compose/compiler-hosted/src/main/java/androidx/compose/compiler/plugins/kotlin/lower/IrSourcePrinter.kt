@@ -1403,8 +1403,6 @@ class IrSourcePrinterVisitor(
                     append(it.renderTypeAbbreviation())
                 }
             }
-
-            else -> "{${javaClass.simpleName} $this}"
         }
 
     private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
@@ -1437,8 +1435,6 @@ class IrSourcePrinterVisitor(
                 if (variance != Variance.INVARIANT) append(' ')
                 append(type.renderSrc())
             }
-
-            else -> "IrTypeArgument[$this]"
         }
 
     private fun renderTypeAnnotations(annotations: List<IrConstructorCall>) =

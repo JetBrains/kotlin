@@ -24,7 +24,6 @@ val KonanConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
     CompilerOutputKind.TEST_BUNDLE -> true
-    else -> error("not supported: ${this.produce}")
 }
 
 val CompilerOutputKind.isNativeLibrary: Boolean

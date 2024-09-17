@@ -514,7 +514,6 @@ class ControlFlowGraphBuilder {
         val name = when (klass) {
             is FirAnonymousObject -> "<anonymous object>"
             is FirRegularClass -> klass.name.asString()
-            else -> throw IllegalArgumentException("Unknown class kind: ${klass::class}")
         }
 
         val enterNode = enterGraph(klass, name, ControlFlowGraph.Kind.Class) {

@@ -47,7 +47,6 @@ fun IrType.isNullable(): Boolean =
         }
         is IrDynamicType -> true
         is IrErrorType -> this.isMarkedNullable
-        else -> false
     }
 
 val IrType.isBoxedArray: Boolean

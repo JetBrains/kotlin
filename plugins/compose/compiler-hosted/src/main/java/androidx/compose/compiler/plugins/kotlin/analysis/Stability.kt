@@ -346,7 +346,6 @@ class StabilityInferencer(
         return when (argument) {
             is IrStarProjection -> Stability.Unstable
             is IrTypeProjection -> stabilityOf(argument.type, substitutions, currentlyAnalyzing)
-            else -> error("Unexpected IrTypeArgument: $argument")
         }
     }
 

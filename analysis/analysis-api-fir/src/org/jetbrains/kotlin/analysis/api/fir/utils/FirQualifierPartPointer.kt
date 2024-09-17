@@ -45,7 +45,6 @@ private class FirTypeArgumentListPointer(typeArgumentList: FirTypeArgumentList, 
                             variance = coneTypeArgument.kind.toVariance()
                         }
                     }
-                    else -> error("Unexpected type argument kind: $coneTypeArgument")
                 }
 
                 typeArguments.add(typeArgument)

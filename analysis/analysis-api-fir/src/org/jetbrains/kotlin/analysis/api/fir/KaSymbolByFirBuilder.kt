@@ -120,7 +120,6 @@ internal class KaSymbolByFirBuilder(
             return when (firSymbol) {
                 is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
                 is FirTypeParameterSymbol -> buildTypeParameterSymbol(firSymbol)
-                else -> throwUnexpectedElementError(firSymbol)
             }
         }
 
@@ -129,7 +128,6 @@ internal class KaSymbolByFirBuilder(
             is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
             is FirRegularClassSymbol -> buildNamedClassOrObjectSymbol(firSymbol)
             is FirTypeAliasSymbol -> buildTypeAliasSymbol(firSymbol)
-            else -> throwUnexpectedElementError(firSymbol)
         }
 
         fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KaNamedClassSymbol {

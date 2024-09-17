@@ -310,7 +310,6 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
             }
 
         }
-        else -> error("Unexpected type $this")
     }
 }
 

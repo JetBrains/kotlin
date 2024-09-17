@@ -503,7 +503,6 @@ class ReplTest : TestCase() {
                                 "#$index: Expected $expectedVal, got NotEvaluated",
                                 expectedVal, actualVal
                             )
-                            else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $actualVal", expectedVal == null)
                         }
                         if (!ignoreDiagnostics) {
                             val expectedDiag = expectedRes.reports

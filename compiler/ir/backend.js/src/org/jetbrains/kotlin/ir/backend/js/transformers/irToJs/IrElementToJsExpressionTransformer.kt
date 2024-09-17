@@ -330,11 +330,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     expression.receiver.accept(this, data),
                     expression.arguments.memoryOptimizedMap { it.accept(this, data) }
                 )
-
-            else -> compilationException(
-                "Unexpected operator ${expression.operator}",
-                expression
-            )
         }.withSource(expression, data)
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {

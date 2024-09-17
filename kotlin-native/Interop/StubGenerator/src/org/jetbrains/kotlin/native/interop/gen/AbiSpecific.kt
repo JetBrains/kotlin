@@ -25,8 +25,6 @@ internal fun Type.isStret(target: KonanTarget): Boolean {
         Architecture.X86 -> DarwinX86AbiInfo()
 
         Architecture.ARM32 -> DarwinArm32AbiInfo(target)
-
-        else -> error("Cannot generate ObjC stubs for $target.")
     }
     return abiInfo.shouldUseStret(unwrappedType)
 }

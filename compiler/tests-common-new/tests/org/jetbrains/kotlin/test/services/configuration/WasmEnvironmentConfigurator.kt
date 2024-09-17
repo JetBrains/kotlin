@@ -52,7 +52,6 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
             val suffix = when (target) {
                 WasmTarget.JS -> "-js"
                 WasmTarget.WASI -> "-wasi"
-                else -> error("Unexpected wasi target")
             }
             return listOf(System.getProperty("kotlin.wasm$suffix.stdlib.path")!!, System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!)
         }

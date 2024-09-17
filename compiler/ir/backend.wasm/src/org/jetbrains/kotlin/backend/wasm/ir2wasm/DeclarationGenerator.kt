@@ -544,5 +544,4 @@ fun generateConstExpression(
             body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
             body.commentGroupEnd()
         }
-        else -> error("Unknown constant kind")
     }

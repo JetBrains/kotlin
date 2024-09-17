@@ -556,8 +556,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 p.printWithNoIndent("dynamic")
             is IrErrorType ->
                 p.printWithNoIndent("ErrorType")
-            else ->
-                p.printWithNoIndent("??? /* ERROR: unknown type: ${this.javaClass.simpleName} */")
         }
     }
 

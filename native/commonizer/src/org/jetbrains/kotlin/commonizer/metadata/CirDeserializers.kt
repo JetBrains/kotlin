@@ -369,7 +369,6 @@ object CirDeserializers {
                     isMarkedNullable = isMarkedNullable
                 )
             }
-            else -> error("Unexpected classifier type: $classifier")
         }
     }
 

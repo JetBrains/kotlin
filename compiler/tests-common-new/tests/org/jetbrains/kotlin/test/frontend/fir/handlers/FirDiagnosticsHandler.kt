@@ -436,7 +436,6 @@ private val KtSourceElement.parentAsSourceElement: KtSourceElement?
         KtNodeTypes.REFERENCE_EXPRESSION -> when (this) {
             is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
-            else -> null
         }
         else -> null
     }
@@ -447,7 +446,6 @@ private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
             is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)
                 ?.toKtLightSourceElement(treeStructure, kind)
-            else -> null
         }
         else -> null
     }

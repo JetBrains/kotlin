@@ -49,7 +49,6 @@ internal class NoInlineFunctionUseSitesValidator(
                 when (function) {
                     is IrSimpleFunction -> if (function.isAccessor) "property accessor" else "function"
                     is IrConstructor -> "constructor"
-                    else -> /* unexpected, but */ function::class.java.simpleName
                 }
             )
             append(" ").append(function.name.asString())

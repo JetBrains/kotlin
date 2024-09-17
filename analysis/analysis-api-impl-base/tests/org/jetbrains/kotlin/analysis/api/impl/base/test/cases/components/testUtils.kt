@@ -57,7 +57,6 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
                     is KaPropertyGetterSymbol -> callableId ?: "<getter>"
                     is KaPropertySetterSymbol -> callableId ?: "<setter>"
                     is KaAnonymousFunctionSymbol -> "<anonymous function>"
-                    else -> error("unexpected symbol kind in KaCall: ${this@with::class}")
                 }
             )
             append("(")

@@ -43,6 +43,5 @@ fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypePr
         is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
         is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
         is ConeKotlinType -> newType
-        else -> old
     }
 }

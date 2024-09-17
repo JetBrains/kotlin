@@ -350,7 +350,6 @@ open class IrFileSerializer(
                 proto.dynamic = serializeDynamicType(type)
             is IrErrorType ->
                 proto.error = serializeErrorType(type)
-            else -> TODO("IrType serialization not implemented yet: $type.")
         }
         return proto.build()
     }
@@ -390,7 +389,6 @@ open class IrFileSerializer(
                     is IrSimpleType -> IrTypeKind.SIMPLE
                     is IrDynamicType -> IrTypeKind.DYNAMIC
                     is IrErrorType -> IrTypeKind.ERROR
-                    else -> error("Unexpected IrType kind: $this")
                 },
                 classifier = type.classifierOrNull,
                 nullability = (type as? IrSimpleType)?.nullability,

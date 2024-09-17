@@ -193,7 +193,6 @@ private fun buildResultingTypeAndAdaptation(
             }
             createKPropertyType(receiverType, propertyType, isMutable) to null
         }
-        else -> ConeErrorType(ConeUnsupportedCallableReferenceTarget(candidate)) to null
     }
 }
 

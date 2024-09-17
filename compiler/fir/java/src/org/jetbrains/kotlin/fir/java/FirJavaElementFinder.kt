@@ -423,7 +423,6 @@ private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSessio
                 else
                     (typeProjection.type as ConeClassLikeType).mapToCanonicalString(session)
             }
-            else -> ERROR_TYPE_STUB
         } + "[]"
     }
 
@@ -455,6 +454,5 @@ private fun ConeTypeProjection.mapToCanonicalString(session: FirSession): String
 
             wildcard + type.mapToCanonicalString(session)
         }
-        else -> ERROR_TYPE_STUB
     }
 }

@@ -630,7 +630,6 @@ private val Modality.flags: Int
         Modality.ABSTRACT, Modality.SEALED -> Opcodes.ACC_ABSTRACT
         Modality.FINAL -> Opcodes.ACC_FINAL
         Modality.OPEN -> 0
-        else -> throw AssertionError("Unsupported modality $this")
     }
 
 private val DescriptorVisibility.flags: Int

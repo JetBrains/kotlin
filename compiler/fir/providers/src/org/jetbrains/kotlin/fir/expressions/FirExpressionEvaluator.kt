@@ -316,7 +316,6 @@ object FirExpressionEvaluator {
             val result = when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> leftBoolean && rightBoolean
                 LogicOperationKind.OR -> leftBoolean || rightBoolean
-                else -> error("Boolean logic expression of a kind \"${booleanOperatorExpression.kind}\" is not supported in compile time evaluation")
             }
 
             return result.toConstExpression(ConstantValueKind.Boolean, booleanOperatorExpression).wrap()

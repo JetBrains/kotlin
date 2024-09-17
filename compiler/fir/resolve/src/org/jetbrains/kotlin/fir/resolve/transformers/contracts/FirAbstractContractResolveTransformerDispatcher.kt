@@ -375,17 +375,11 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 private val FirContractDescriptionOwner.valueParameters: List<FirValueParameter>
     get() = when (this) {
         is FirFunction -> valueParameters
-        else -> errorWithAttachment("Expected ${FirFunction::class.java} but ${this::class.java} found") {
-            withFirEntry("foundElement", this@valueParameters)
-        }
     }
 
 private val FirContractDescriptionOwner.body: FirBlock
     get() = when (this) {
         is FirFunction -> body!!
-        else -> errorWithAttachment("Expected ${FirFunction::class.java} but ${this::class.java} found") {
-            withFirEntry("foundElement", this@body)
-        }
     }
 
 private fun FirContractDescriptionOwner.error(): Nothing = throw IllegalStateException("${this::class} can not be a contract owner")

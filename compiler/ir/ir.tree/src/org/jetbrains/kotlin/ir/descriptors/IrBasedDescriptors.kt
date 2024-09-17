@@ -1182,8 +1182,6 @@ fun IrType.toIrBasedKotlinType(builtins: KotlinBuiltIns? = null): KotlinType = w
         }
     is IrDynamicType -> originalKotlinType ?: builtins?.let(::createDynamicType) ?: error("Couldn't instantiate DynamicType")
     is IrErrorType -> originalKotlinType ?: error("Can't find KotlinType in IrErrorType: " + (this as IrType).render())
-    else ->
-        throw AssertionError("Unexpected type: $this = ${this.render()}")
 }
 
 private fun makeKotlinType(

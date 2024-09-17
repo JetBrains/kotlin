@@ -31,7 +31,6 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
             val shouldReport = when (declaration) {
                 is FirRegularClass -> declaration.isInner || declaration.isLocal
                 is FirAnonymousObject -> true
-                else -> false
             }
 
             if (shouldReport) {

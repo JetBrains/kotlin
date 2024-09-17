@@ -361,7 +361,6 @@ object ConeTypeCompatibilityChecker {
         return when (this) {
             is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneType as? ConeClassLikeType)
             is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneType as? ConeClassLikeType }
-            else -> emptyList()
         }
     }
 
@@ -372,7 +371,6 @@ object ConeTypeCompatibilityChecker {
         return when (this) {
             is FirTypeAliasSymbol -> typeParameterSymbols[index]
             is FirClassSymbol<*> -> typeParameterSymbols[index]
-            else -> return null
         }
     }
 
@@ -450,7 +448,6 @@ object ConeTypeCompatibilityChecker {
                 return when (this) {
                     is FirAnonymousObjectSymbol -> true
                     is FirRegularClassSymbol -> modality == Modality.FINAL
-                    else -> error("unknown type of FirClass $this")
                 }
             }
     }

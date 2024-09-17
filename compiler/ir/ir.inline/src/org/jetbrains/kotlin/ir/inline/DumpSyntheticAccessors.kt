@@ -93,7 +93,6 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
                     }
                     else -> error("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
                 }
-                else -> error("Unexpected accessor type: ${accessor.id()}")
             }
         }
 

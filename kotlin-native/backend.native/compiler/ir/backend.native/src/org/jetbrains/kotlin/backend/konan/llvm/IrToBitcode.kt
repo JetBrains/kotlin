@@ -1928,7 +1928,6 @@ internal class CodeGeneratorVisitor(
                         *fields.toTypedArray()
                 )
             }
-            else -> TODO("Unimplemented IrConstantValue subclass ${value::class.qualifiedName}")
         }
     }
 

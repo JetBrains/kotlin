@@ -661,7 +661,6 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             }
             is FirStarProjection -> buildStarProjection { source = original.source }
             is FirPlaceholderProjection -> buildPlaceholderProjection { source = original.source }
-            else -> shouldNotBeCalled()
         }
     }
 }

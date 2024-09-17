@@ -419,7 +419,6 @@ abstract class CompileServiceImplBase(
 
                 }
             }
-            else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
         }
     }
 

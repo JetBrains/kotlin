@@ -54,7 +54,6 @@ abstract class BaseIrTypeSubstitutor : AbstractIrTypeSubstitutor() {
                 buildSimpleType()
             }
             is IrDynamicType, is IrErrorType -> makeTypeProjection(irType, Variance.INVARIANT)
-            else -> error("Unexpected type: $irType")
         }
     }
 

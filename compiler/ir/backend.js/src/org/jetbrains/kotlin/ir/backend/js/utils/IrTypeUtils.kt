@@ -39,7 +39,6 @@ fun IrType.asString(context: JsIrBackendContext): String = when (this) {
                 (arguments.ifNotEmpty {
                     joinToString(separator = ",", prefix = "<", postfix = ">") { it.asString(context) }
                 } ?: "")
-    else -> error("Unexpected kind of IrType: " + javaClass.typeName)
 }
 
 private fun IrTypeArgument.asString(context: JsIrBackendContext): String = when (this) {

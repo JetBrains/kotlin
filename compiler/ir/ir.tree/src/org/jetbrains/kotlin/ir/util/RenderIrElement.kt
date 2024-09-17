@@ -820,8 +820,6 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
                     append(it.renderTypeAbbreviation(renderer, options))
                 }
         }
-
-        else -> "{${javaClass.simpleName} $this}"
     }
 
 private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =

@@ -41,6 +41,5 @@ private fun ObjCExportContext.formatPropertyName(symbol: KaPropertyAccessorSymbo
     return when (symbol) {
         is KaPropertyGetterSymbol -> name
         is KaPropertySetterSymbol -> "set" + name.replaceFirstChar(kotlin.Char::uppercaseChar)
-        else -> ""
     }
 }
