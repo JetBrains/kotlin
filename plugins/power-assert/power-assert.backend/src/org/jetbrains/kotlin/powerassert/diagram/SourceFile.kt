@@ -72,15 +72,15 @@ data class SourceFile(
 }
 
 private fun IrFile.readSourceText(): String {
-    // First, try and get source text via PSI.
-    when (val entry = fileEntry) {
-        is PsiIrFileEntry -> return entry.psiFile.text
-    }
-
-    // If PSI is not available, try and access the source text via FIR.
+    // Try and access the source text via FIR metadata.
     val sourceFile = (metadata as? FirMetadataSource.File)?.fir?.sourceFile
     if (sourceFile != null) {
-        return sourceFile.getContentsAsStream().reader().readText()
+        return sourceFile.getContentsAsStream().use { it.reader().readText() }
+    }
+
+    // If FIR metadata isn't available, try and get source text via PSI.
+    when (val entry = fileEntry) {
+        is PsiIrFileEntry -> return entry.psiFile.text
     }
 
     error("Unable to find source for IrFile: $path")
