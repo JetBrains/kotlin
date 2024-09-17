@@ -23,17 +23,15 @@ import kotlin.experimental.ExperimentalObjCRefinement
 public expect annotation class CName(val externName: String = "", val shortName: String = "")
 
 /**
- * Freezing API is deprecated since 1.7.20.
+ * Freezing API has been deprecated since Kotlin 1.7.20,
+ * and support for the legacy memory manager was completely removed from the compiler in 1.9.20.
  *
- * See [documentation](https://kotlinlang.org/docs/native-migration-guide.html) for details
+ * See the [documentation](https://kotlinlang.org/docs/native-migration-guide.html) for details.
  */
-// Note: when changing level of deprecation here, also change
-// * `freezing` mode handling in KonanConfig.kt
-// * frontend diagnostics in ErrorsNative.kt
 @SinceKotlin("1.7")
 @RequiresOptIn(
     message = "Freezing API is deprecated since 1.7.20. See https://kotlinlang.org/docs/native-migration-guide.html for details",
-    level = RequiresOptIn.Level.WARNING,
+    level = RequiresOptIn.Level.WARNING
 )
 @Target(
     AnnotationTarget.CLASS,
@@ -51,6 +49,8 @@ public expect annotation class CName(val externName: String = "", val shortName:
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation
+@Deprecated("Opting in for the freezing API is no longer supported.")
+@DeprecatedSinceKotlin(warningSince = "2.1")
 public expect annotation class FreezingIsDeprecated
 
 /**
