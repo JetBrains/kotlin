@@ -1457,30 +1457,37 @@ internal class KaFirResolver(
         return resolvedArgumentMapping?.entries.createArgumentMapping(signatureOfCallee)
     }
 
-    private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
+    private fun Collection<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
         signatureOfCallee: KaFunctionSignature<*>,
     ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
+        if (this == null || isEmpty()) return emptyMap()
+
         val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
             // We intentionally use `symbol.name` instead of `name` here, since
             // `FirValueParameter.name` is not affected by the `@ParameterName`
             it.symbol.name
         }
-        val ktArgumentMapping = linkedMapOf<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
-        this?.forEach { (firExpression, firValueParameter) ->
+
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>(size)
+        this.forEach { (firExpression, firValueParameter) ->
             val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, ktArgumentMapping)
         }
-        return ktArgumentMapping.ifEmpty { emptyMap() }
+
+        return ktArgumentMapping
     }
 
     private fun FirArrayLiteral.createArgumentMapping(
         arrayOfSymbol: KaNamedFunctionSymbol,
         substitutor: KaSubstitutor,
     ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
-        val ktArgumentMapping = linkedMapOf<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
+        val arguments = argumentList.arguments
+        if (arguments.isEmpty()) return emptyMap()
+
+        val ktArgumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>(arguments.size)
         val parameterSymbol = arrayOfSymbol.valueParameters.single()
 
-        for (firExpression in argumentList.arguments) {
+        for (firExpression in arguments) {
             mapArgumentExpressionToParameter(
                 firExpression,
                 with(analysisSession) { parameterSymbol.substitute(substitutor) },
@@ -1488,7 +1495,7 @@ internal class KaFirResolver(
             )
         }
 
-        return ktArgumentMapping.ifEmpty { emptyMap() }
+        return ktArgumentMapping
     }
 
     private fun mapArgumentExpressionToParameter(
