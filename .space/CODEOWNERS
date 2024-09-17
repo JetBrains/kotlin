@@ -199,6 +199,8 @@
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
+/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/directives/WasmEnvironmentConfigurationDirectives.kt "Kotlin Wasm"
+/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/configuration/WasmEnvironmentConfigurator.kt "Kotlin Wasm"
 /compiler/tests-compiler-utils/ "Kotlin Frontend"
 /compiler/tests-integration/ "Kotlin Frontend"
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
