@@ -30,3 +30,9 @@ fun meaningOfLife(input: Nothing?): String = "optional nothing received"
 var meaningOfLife: Nothing? = null
 
 fun multiple_nothings(arg1: Nothing?, arg2: Int, arg3: Nothing?): Nothing? = null
+
+
+typealias OptionalInt = Int?
+var optionalInt: OptionalInt = null
+fun intIdentity(input: Int?): Int? = input
+fun doubleIdentity(input: Double?): Double? = input

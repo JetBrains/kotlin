@@ -93,6 +93,11 @@ fun nullable_input_ref(i: Class_without_package?): Unit = TODO()
 fun nullable_output_ref(): Class_without_package? = null
 var nullableRef: Class_without_package? = null
 
+fun nullable_input_prim(i: Int?): Unit = TODO()
+fun nullable_output_prim(): Int? = null
+
+var nullablePrim: Int? = null
+
 // FILE: inheritance.kt
 
 open class OPEN_CLASS
@@ -113,11 +118,6 @@ interface INTERFACE
 enum class ENUM {
     A,
 }
-
-fun nullable_input_prim(i: Int?): Unit = TODO()
-fun nullable_output_prim(): Int? = null
-
-var nullablePrim: Int? = null
 
 fun Int?.extensionOnNullabelPrimitive(): Unit = TODO()
 fun Class_without_package?.extensionOnNullabelRef(): Unit = TODO()

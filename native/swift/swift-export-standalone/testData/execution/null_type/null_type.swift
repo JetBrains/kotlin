@@ -36,6 +36,24 @@ func null_type() throws {
     try assertEquals(actual: p_opt_typealias(input: nonoptional), expected: nonoptional)
     try assertEquals(actual: p_opt_typealias(input: optional), expected: optional)
     try assertEquals(actual: p_opt_typealias(input: nil), expected: nil)
+
+    try assertEquals(actual: optionalInt, expected: nil)
+    var int = optionalInt
+    int = intIdentity(input: 123)
+    optionalInt = int
+    try assertEquals(actual: optionalInt, expected: 123)
+
+    optionalInt = 1
+    try assertEquals(actual: optionalInt, expected: 1)
+
+    optionalInt = Optional<Int32>.some(2)
+    try assertEquals(actual: optionalInt, expected: 2)
+
+    optionalInt = nil
+    try assertEquals(actual: optionalInt, expected: nil)
+
+    try assertEquals(actual: doubleIdentity(input: nil), expected: nil)
+    try assertEquals(actual: doubleIdentity(input: 1.1), expected: 1.1)
 }
 
 func null_strings() throws {

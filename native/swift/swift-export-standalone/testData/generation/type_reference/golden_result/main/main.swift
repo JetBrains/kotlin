@@ -215,6 +215,14 @@ public final class Object_without_package : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
+public var nullablePrim: Swift.Int32? {
+    get {
+        return __root___nullablePrim_get()?.int32Value
+    }
+    set {
+        return __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue.flatMap { it in NSNumber(value: it) })
+    }
+}
 public var nullableRef: main.Class_without_package? {
     get {
         return switch __root___nullableRef_get() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
@@ -283,10 +291,18 @@ public func combine(
 ) -> Swift.Void {
     return __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
 }
+public func nullable_input_prim(
+    i: Swift.Int32?
+) -> Swift.Void {
+    return __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i.flatMap { it in NSNumber(value: it) })
+}
 public func nullable_input_ref(
     i: main.Class_without_package?
 ) -> Swift.Void {
     return __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i?.__externalRCRef() ?? 0)
+}
+public func nullable_output_prim() -> Swift.Int32? {
+    return __root___nullable_output_prim()?.int32Value
 }
 public func nullable_output_ref() -> main.Class_without_package? {
     return switch __root___nullable_output_ref() { case 0: .none; case let res: main.Class_without_package(__externalRCRef: res); }
@@ -449,22 +465,6 @@ public extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 public extension ExportedKotlinPackages.ignored {
-    public static var nullablePrim: Swift.Never {
-        get {
-            fatalError()
-        }
-        set {
-            fatalError()
-        }
-    }
-    public static func nullable_input_prim(
-        i: Swift.Never
-    ) -> Swift.Void {
-        fatalError()
-    }
-    public static func nullable_output_prim() -> Swift.Never {
-        fatalError()
-    }
     public static func produce_ABSTRACT_CLASS() -> Swift.Never {
         fatalError()
     }

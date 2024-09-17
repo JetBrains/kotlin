@@ -35,3 +35,21 @@ fun p_opt_opt_in(input: OptOptRef?) = Unit
 fun string_in(a: String?): Unit = TODO()
 fun string_out(): String? = null
 var str: String? = null
+
+fun primitive_in(
+    arg1: Boolean?,
+    arg2: Byte?,
+    arg3: Short?,
+    arg4: Int?,
+    arg5: Long?,
+    arg6: UByte?,
+    arg7: UShort?,
+    arg8: UInt?,
+    arg9: ULong?,
+    arg10: Float?,
+    arg11: Double?,
+    arg12: Char?,
+): Unit = TODO()
+fun primitive_out(): Boolean? = null
+var primitive: Double? = null
+

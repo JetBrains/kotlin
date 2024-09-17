@@ -65,11 +65,19 @@ uintptr_t __root___Object_without_package_get();
 
 void __root___combine__TypesOfArguments__main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
+NSNumber * __root___nullablePrim_get();
+
+void __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(NSNumber * newValue);
+
 uintptr_t __root___nullableRef_get();
 
 void __root___nullableRef_set__TypesOfArguments__main_Class_without_package_opt___(uintptr_t newValue);
 
+void __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(NSNumber * i);
+
 void __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(uintptr_t i);
+
+NSNumber * __root___nullable_output_prim();
 
 uintptr_t __root___nullable_output_ref();
 

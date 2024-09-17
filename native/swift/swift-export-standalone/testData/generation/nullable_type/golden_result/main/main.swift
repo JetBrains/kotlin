@@ -57,6 +57,14 @@ public final class Foo : KotlinRuntime.KotlinBase {
         return switch Foo_produce(self.__externalRCRef()) { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
     }
 }
+public var primitive: Swift.Double? {
+    get {
+        return __root___primitive_get()?.doubleValue
+    }
+    set {
+        return __root___primitive_set__TypesOfArguments__Swift_Double_opt___(newValue.flatMap { it in NSNumber(value: it) })
+    }
+}
 public var str: Swift.String? {
     get {
         return __root___str_get()
@@ -103,6 +111,25 @@ public func p_opt_opt_in(
 }
 public func p_opt_opt_out() -> main.OptOptRef {
     return switch __root___p_opt_opt_out() { case 0: .none; case let res: main.Bar(__externalRCRef: res); }
+}
+public func primitive_in(
+    arg1: Swift.Bool?,
+    arg2: Swift.Int8?,
+    arg3: Swift.Int16?,
+    arg4: Swift.Int32?,
+    arg5: Swift.Int64?,
+    arg6: Swift.UInt8?,
+    arg7: Swift.UInt16?,
+    arg8: Swift.UInt32?,
+    arg9: Swift.UInt64?,
+    arg10: Swift.Float?,
+    arg11: Swift.Double?,
+    arg12: Swift.Unicode.UTF16.CodeUnit?
+) -> Swift.Void {
+    return __root___primitive_in__TypesOfArguments__Swift_Bool_opt__Swift_Int8_opt__Swift_Int16_opt__Swift_Int32_opt__Swift_Int64_opt__Swift_UInt8_opt__Swift_UInt16_opt__Swift_UInt32_opt__Swift_UInt64_opt__Swift_Float_opt__Swift_Double_opt__Swift_Unicode_UTF16_CodeUnit_opt___(arg1.flatMap { it in NSNumber(value: it) }, arg2.flatMap { it in NSNumber(value: it) }, arg3.flatMap { it in NSNumber(value: it) }, arg4.flatMap { it in NSNumber(value: it) }, arg5.flatMap { it in NSNumber(value: it) }, arg6.flatMap { it in NSNumber(value: it) }, arg7.flatMap { it in NSNumber(value: it) }, arg8.flatMap { it in NSNumber(value: it) }, arg9.flatMap { it in NSNumber(value: it) }, arg10.flatMap { it in NSNumber(value: it) }, arg11.flatMap { it in NSNumber(value: it) }, arg12.flatMap { it in NSNumber(value: it) })
+}
+public func primitive_out() -> Swift.Bool? {
+    return __root___primitive_out()?.boolValue
 }
 public func string_in(
     a: Swift.String?

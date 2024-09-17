@@ -245,6 +245,18 @@ public fun __root___combine__TypesOfArguments__main_Class_without_package_Export
     combine(__arg1, __arg2, __arg3, __arg4)
 }
 
+@ExportedBridge("__root___nullablePrim_get")
+public fun __root___nullablePrim_get(): kotlin.native.internal.NativePtr {
+    val _result = nullablePrim
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
+}
+
+@ExportedBridge("__root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___")
+public fun __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(newValue)
+    nullablePrim = __newValue
+}
+
 @ExportedBridge("__root___nullableRef_get")
 public fun __root___nullableRef_get(): kotlin.native.internal.NativePtr {
     val _result = nullableRef
@@ -257,10 +269,22 @@ public fun __root___nullableRef_set__TypesOfArguments__main_Class_without_packag
     nullableRef = __newValue
 }
 
+@ExportedBridge("__root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___")
+public fun __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i: kotlin.native.internal.NativePtr): Unit {
+    val __i = if (i == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(i)
+    nullable_input_prim(__i)
+}
+
 @ExportedBridge("__root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___")
 public fun __root___nullable_input_ref__TypesOfArguments__main_Class_without_package_opt___(i: kotlin.native.internal.NativePtr): Unit {
     val __i = if (i == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(i) as Class_without_package
     nullable_input_ref(__i)
+}
+
+@ExportedBridge("__root___nullable_output_prim")
+public fun __root___nullable_output_prim(): kotlin.native.internal.NativePtr {
+    val _result = nullable_output_prim()
+    return if (_result == null) return kotlin.native.internal.NativePtr.NULL else return _result.objcPtr()
 }
 
 @ExportedBridge("__root___nullable_output_ref")

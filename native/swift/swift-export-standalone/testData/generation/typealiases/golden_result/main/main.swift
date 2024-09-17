@@ -9,7 +9,7 @@ public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
-public typealias nullable_primitive = Swift.Never
+public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
 public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
