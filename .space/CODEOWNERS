@@ -419,7 +419,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin IDE Analysis Core" "Compose" "Parcelize"
+*Generated.java "Kotlin" "Kotlin IDE Analysis Core" "Kotlin Wasm" "Compose" "Parcelize" 
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
