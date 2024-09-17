@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -207,7 +208,7 @@ class OptInUsageChecker : CallChecker {
             for (annotation in annotations) {
                 result.addIfNotNull(
                     annotation.annotationClass?.loadOptInForMarkerAnnotation(useFutureError)
-                        ?: if (fromSupertype) annotation.loadSubclassOptInRequired(context) else null
+                        ?: if (fromSupertype) annotation.loadSubclassOptInRequired(module) else null
                 )
             }
 
@@ -297,13 +298,13 @@ class OptInUsageChecker : CallChecker {
             return OptInDescription(fqNameSafe, severity, message, subclassesOnly)
         }
 
-        private fun AnnotationDescriptor.loadSubclassOptInRequired(context: BindingContext?): OptInDescription? {
+        private fun AnnotationDescriptor.loadSubclassOptInRequired(module: ModuleDescriptor): OptInDescription? {
             if (this.fqName != SUBCLASS_OPT_IN_REQUIRED_FQ_NAME) return null
             val markerClass = allValueArguments[OPT_IN_ANNOTATION_CLASS]
             if (markerClass !is KClassValue) return null
             val value = markerClass.value
             if (value !is KClassValue.Value.NormalClass) return null
-            val markerDescriptor = context?.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, value.classId.asSingleFqName().toUnsafe())
+            val markerDescriptor = markerClass.getArgumentType(module).constructor.declarationDescriptor as? ClassDescriptor
             return markerDescriptor?.loadOptInForMarkerAnnotation(subclassesOnly = true)
         }
 

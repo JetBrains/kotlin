@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: pcg/Foo.java
 package pcg;
 
@@ -10,4 +11,4 @@ public class Foo {}
 // FILE: two.kt
 import pcg.Foo
 
-class Bar() : Foo()
+class Bar() : <!OPT_IN_USAGE_ERROR!>Foo<!>()
