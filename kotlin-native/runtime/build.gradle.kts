@@ -569,11 +569,11 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
     )
 
-    this.extraOpts.addAll(
+    this.extraOpts.addAll(listOfNotNull(
             "-no-default-libs",
             "-no-endorsed-libs",
             "-nostdlib",
-            "-Werror",
+            "-Werror".takeIf { !kotlinBuildProperties.disableWerror },
             "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
@@ -589,7 +589,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common",
-    )
+    ))
 
     val common by sourceSets.creating {
         srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
