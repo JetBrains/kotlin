@@ -379,6 +379,7 @@ open class DeepCopyIrTreeWithSymbols(
             isHidden = declaration.isHidden,
         ).apply {
             transformAnnotations(declaration)
+            _kind = declaration._kind
             defaultValue = declaration.defaultValue?.transform()
         }
 
