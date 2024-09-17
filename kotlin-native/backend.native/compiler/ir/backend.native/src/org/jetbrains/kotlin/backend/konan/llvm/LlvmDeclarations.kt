@@ -278,12 +278,10 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
         } else {
-            if (!context.config.producePerFileCache)
-                "${KonanBinaryInterface.MANGLE_CLASS_PREFIX}:$internalName"
-            else {
-                val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
-                declaration.computePrivateTypeInfoSymbolName(containerName)
-            }
+            val filePathIfNeeded = if (context.config.producePerFileCache)
+                (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+            else null
+            declaration.computePrivateTypeInfoSymbolName(filePathIfNeeded)
         }
 
         if (declaration.typeInfoHasVtableAttached) {
@@ -454,13 +452,10 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
-                    "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
-                else {
-                    val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
-                    declaration.computePrivateSymbolName(containerName)
-                }
+                val filePathIfNeeded = if (context.config.producePerFileCache && declaration.parentClassOrNull == null)
+                    (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                else null
+                declaration.computePrivateSymbolName(filePathIfNeeded)
             }
 
             val proto = LlvmFunctionProto(declaration, symbolName, this, linkageOf(declaration))
