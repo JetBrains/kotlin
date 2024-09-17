@@ -45,6 +45,7 @@ class Fir2IrLazyConstructor(
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
+        this.contextReceiverParametersCount = fir.contextReceivers.size
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -82,12 +83,6 @@ class Fir2IrLazyConstructor(
     override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
     }
-
-    override var dispatchReceiverParameter: IrValueParameter? = null
-
-    override var extensionReceiverParameter: IrValueParameter? = null
-
-    override var contextReceiverParametersCount: Int = fir.contextReceivers.size
 
     override var metadata: MetadataSource?
         get() = null

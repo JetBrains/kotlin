@@ -38,6 +38,7 @@ class Fir2IrLazySimpleFunction(
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
+        this.contextReceiverParametersCount = fir.contextReceiversForFunctionOrContainingProperty().size
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -49,8 +50,6 @@ class Fir2IrLazySimpleFunction(
     override var returnType: IrType by lazyVar(lock) {
         fir.symbol.resolvedReturnTypeRef.toIrType(typeConverter)
     }
-
-    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
         if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
