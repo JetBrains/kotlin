@@ -104,6 +104,9 @@ public object KotlinModificationTopics {
 
     public val CODE_FRAGMENT_CONTEXT_MODIFICATION: Topic<KotlinCodeFragmentContextModificationListener> =
         Topic(KotlinCodeFragmentContextModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
+
+    public val GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalScriptModuleStateModificationListener> =
+        Topic(KotlinGlobalScriptModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 }
 
 /**
