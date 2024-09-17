@@ -118,31 +118,6 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
 }
 
 @PhaseDescription(
-    name = "ReplaceDefaultImplsOverriddenSymbols",
-    description = "Replace overridden symbols for methods inherited from interfaces to classes"
-)
-internal class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : ClassLoweringPass {
-    override fun lower(irClass: IrClass) {
-        for (declaration in irClass.declarations) {
-            if (declaration is IrSimpleFunction) {
-                visitSimpleFunction(declaration)
-            }
-        }
-    }
-
-    // Functions introduced by InheritedDefaultMethodsOnClassesLowering may be inherited lower in the hierarchy.
-    // Here we use the same logic as the delegation itself (`getTargetForRedirection`) to determine
-    // if the overridden symbol has been, or will be, replaced and patch it accordingly.
-    fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
-            if (symbol.owner.findInterfaceImplementation(context.config.jvmDefaultMode) != null)
-                context.cachedDeclarations.getDefaultImplsRedirection(symbol.owner).symbol
-            else symbol
-        }
-    }
-}
-
-@PhaseDescription(
     name = "InterfaceSuperCalls",
     description = "Redirect super interface calls to DefaultImpls"
 )
