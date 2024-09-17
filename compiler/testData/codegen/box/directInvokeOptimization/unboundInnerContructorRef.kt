@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 invoke\(
 
 class Outer (val x: String) {

@@ -19,7 +19,6 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/util/Iterator.hasNext \(\)Z
 // 0 java/util/Iterator.next \(\)Ljava/lang/Object;
 // 0 MyUIntIterator.next \(\)Ljava/lang/Object;

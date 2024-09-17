@@ -4,7 +4,6 @@
 // LAMBDAS: CLASS
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
 // TODO: restore indy for SAM types with contravariant projections. See KT-52428 for more info.
 

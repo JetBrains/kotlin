@@ -25,7 +25,6 @@ fun f(a: Char): Int {
 // 0 getStep
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 5 ILOAD
 // 3 ISTORE
 // 1 IADD

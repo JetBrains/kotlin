@@ -30,7 +30,6 @@ fun f(a: Int): Int {
 // 1 IF_ICMPGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 3 ILOAD
 // 2 ISTORE
 // 0 IADD

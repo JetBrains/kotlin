@@ -67,7 +67,6 @@ fun box(): String {
 }
 
 //CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 INVOKESTATIC IC1.box-impl
 // 0 INVOKESTATIC IC2.box-impl
 // 0 INVOKESTATIC IC3.box-impl

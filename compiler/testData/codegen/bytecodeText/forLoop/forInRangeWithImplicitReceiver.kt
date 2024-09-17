@@ -24,7 +24,6 @@ fun Int.digitsUpto(end: Int): Int {
 // 2 IF_ICMP
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 8 ILOAD
 // 3 ISTORE
 // 1 IADD

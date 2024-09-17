@@ -3,7 +3,6 @@
 // SAM_CONVERSIONS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
 // 1 final synthetic class AdaptedFunRefWithDefaultParametersKt\$box\$[0-9]+
 

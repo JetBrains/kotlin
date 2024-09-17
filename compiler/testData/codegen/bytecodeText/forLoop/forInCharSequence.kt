@@ -24,7 +24,6 @@ fun test() {
 // 0 hasNext
 // 0 nextChar
 
-// JVM_IR_TEMPLATES
 // 10 ILOAD
 // 8 ISTORE
 // 0 IADD

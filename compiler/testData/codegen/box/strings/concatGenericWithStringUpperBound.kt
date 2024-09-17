@@ -27,7 +27,6 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 INVOKEVIRTUAL java/lang/StringBuilder\.append \(Ljava/lang/Object;\)Ljava/lang/StringBuilder;
 //  ^ single instance of 'StringBuilder.append(Object)' from 'concatAny',
 //    keep it here to make sure there's no error in regexp.

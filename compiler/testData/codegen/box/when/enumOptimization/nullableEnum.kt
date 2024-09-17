@@ -17,5 +17,4 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 TABLESWITCH

@@ -18,7 +18,6 @@ class MyIteratorImpl : MyIterator() {
 fun box(): String = iterate(MyIteratorImpl())
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/util/Iterator.next
 // 1 MyIterator.next
 // 1 MyIteratorImpl.next

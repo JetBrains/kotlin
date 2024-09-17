@@ -4,7 +4,6 @@
 // LAMBDAS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 // ^ Since indy for SAM types with contravariant projections is disabled (see genericWithInProjection.kt), the bytecode in this test is

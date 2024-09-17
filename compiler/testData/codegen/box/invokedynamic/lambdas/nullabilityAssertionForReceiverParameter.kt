@@ -5,7 +5,6 @@
 // CHECK_BYTECODE_TEXT
 
 // FILE: box.kt
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 fun box(): String {

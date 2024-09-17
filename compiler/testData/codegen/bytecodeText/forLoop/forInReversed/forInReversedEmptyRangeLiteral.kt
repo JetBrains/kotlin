@@ -28,7 +28,6 @@ fun box(): String {
 // 0 getLast
 // 0 getStep
 
-// JVM_IR_TEMPLATES
 // Int- and Char-based loops are completely elimiated
 // 0 ILOAD
 // 0 ISTORE
