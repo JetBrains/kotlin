@@ -5,24 +5,28 @@
 
 package org.jetbrains.kotlin.klib
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.test.CompilerTestUtil
+import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
+import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 import java.nio.file.Path
 
-class FilePathsInKlibTest : CodegenTestCase() {
-
+@OptIn(ObsoleteTestInfrastructure::class)
+class FilePathsInKlibTest : KtUsefulTestCase() {
     companion object {
         private const val MODULE_NAME = "M"
-        private const val testDataFile = "compiler/testData/ir/klibLayout/multiFiles.kt"
+        private const val TEST_DATA_FILE = "compiler/testData/ir/klibLayout/multiFiles.kt"
     }
 
     private val runtimeKlibPath = "libraries/stdlib/build/classes/kotlin/js/main"
@@ -49,10 +53,18 @@ class FilePathsInKlibTest : CodegenTestCase() {
     }
 
     private fun createTestFiles(): List<TestFile> {
-        val file = File(testDataFile)
-        val expectedText = KtTestUtil.doLoadFile(file)
+        val file = File(TEST_DATA_FILE)
 
-        return createTestFilesFromFile(file, expectedText)
+        return TestFiles.createTestFiles(
+            file.getName(),
+            KtTestUtil.doLoadFile(file),
+            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
+                override fun create(fileName: String, text: String, directives: Directives): TestFile =
+                    TestFile(fileName, text, directives)
+            },
+            false,
+            false,
+        )
     }
 
     private fun compileKlib(testFiles: List<TestFile>, extraArgs: List<String>, workingDir: File): File {
