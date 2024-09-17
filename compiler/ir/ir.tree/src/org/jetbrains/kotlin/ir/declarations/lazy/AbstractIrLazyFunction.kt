@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.ir.util.deserializedIr
 abstract class AbstractIrLazyFunction : IrSimpleFunction(), IrLazyFunctionBase {
     abstract val isDeserializationEnabled: Boolean
 
-    override var dispatchReceiverParameter: IrValueParameter? = null
-
-    override var extensionReceiverParameter: IrValueParameter? = null
-
     fun tryLoadIr(): Boolean {
         if (!isInline || isFakeOverride) return false
         if (!isDeserializationEnabled) return false
