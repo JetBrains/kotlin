@@ -178,10 +178,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("modules.xml", extension = "xml")
             }
 
-            testClass<AbstractWriteSignatureTest> {
-                model("writeSignature")
-            }
-
             testClass<AbstractControlFlowTest> {
                 model("cfg")
                 model("cfgWithStdLib", testMethod = "doTestWithStdLib")
