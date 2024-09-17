@@ -44,12 +44,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
 
     override lateinit var returnType: IrType
 
-    override var dispatchReceiverParameter: IrValueParameter? = null
-
-    override var extensionReceiverParameter: IrValueParameter? = null
-
-    override var contextReceiverParametersCount: Int = 0
-
     override var body: IrBody? = null
 
     @ObsoleteDescriptorBasedAPI

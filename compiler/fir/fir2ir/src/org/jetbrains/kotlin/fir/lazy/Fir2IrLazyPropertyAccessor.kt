@@ -42,6 +42,7 @@ class Fir2IrLazyPropertyAccessor(
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
+        this.contextReceiverParametersCount = fir.contextReceiversForFunctionOrContainingProperty().size
     }
 
     override val fir: FirCallableDeclaration
@@ -64,8 +65,6 @@ class Fir2IrLazyPropertyAccessor(
     override var returnType: IrType by lazyVar(lock) {
         if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
-
-    override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
         if (firParentClass == null) return@lazyMappedFunctionListVar emptyList()
