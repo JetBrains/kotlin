@@ -409,7 +409,7 @@ class DeclarationGenerator(
         val fqnShouldBeEmitted = context.backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
 
         val klass = classMetadata.klass
-        val packageName =
+        val qualifier =
             if (fqnShouldBeEmitted) {
                 (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
             } else {
@@ -418,13 +418,13 @@ class DeclarationGenerator(
 
         val simpleName = klass.kotlinFqName.shortName().asString()
 
-        val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(packageName)
+        val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(qualifier)
         val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
 
         val typeInfo = ConstantDataStruct(
             name = "TypeInfo",
             elements = listOf(
-                ConstantDataIntField("TypePackageNameLength", packageName.length),
+                ConstantDataIntField("TypePackageNameLength", qualifier.length),
                 ConstantDataIntField("TypePackageNameId", packageNamePoolId),
                 ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
                 ConstantDataIntField("TypeNameLength", simpleName.length),
