@@ -416,7 +416,7 @@ class DeclarationGenerator(
                 ""
             }
 
-        val simpleName = klass.kotlinFqName.shortName().asString()
+        val simpleName = klass.name.asString()
 
         val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(qualifier)
         val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
