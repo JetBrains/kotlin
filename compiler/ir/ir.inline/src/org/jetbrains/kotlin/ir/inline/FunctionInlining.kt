@@ -663,7 +663,7 @@ open class FunctionInlining(
                         currentScope.scope.createTemporaryVariable(
                             startOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
                             endOffset = if (it.isDefaultArg) irExpression.startOffset else UNDEFINED_OFFSET,
-                            irExpression = irExpression,
+                            irExpression = irExpression.doImplicitCastIfNeededTo(it.parameter.type),
                             // If original type of parameter is T, then `it.parameter.type` is T after substitution or erasure,
                             // depending on whether T reified or not.
                             irType = it.parameter.type,
@@ -686,14 +686,14 @@ open class FunctionInlining(
         }
 
         private fun evaluateReceiverForPropertyWithField(reference: IrPropertyReference): IrVariable? {
-            val argument = reference.dispatchReceiver ?: reference.extensionReceiver ?: return null
+            val argument = reference.getArgumentsWithIr().singleOrNull()?.let { ParameterToArgument(it.first, it.second) } ?: return null
             // Arguments may reference the previous ones - substitute them.
-            val irExpression = argument.transform(ParameterSubstitutor(), data = null)
+            val irExpression = argument.argumentExpression.transform(ParameterSubstitutor(), data = null)
 
             val newVariable = currentScope.scope.createTemporaryVariable(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
-                irExpression = irExpression,
+                irExpression = irExpression.doImplicitCastIfNeededTo(argument.parameter.type),
                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_this",
                 isMutable = false,
                 origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
