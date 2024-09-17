@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+FILE: [ResolvedTo(RAW_FIR)] complexEmptyInterfaceWithSuper.kt
     public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : MarkerInterface1, MarkerInterface2, MarkerInterface3 {
     }
     public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface1 : R|kotlin/Any| {

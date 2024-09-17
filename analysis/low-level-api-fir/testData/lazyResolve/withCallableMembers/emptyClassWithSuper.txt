@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] emptyClassWithSuper.kt
+FILE: [ResolvedTo(RAW_FIR)] emptyClassWithSuper.kt
     public final? [ResolvedTo(RAW_FIR)] class EmptyClass : InterfaceWithMembers {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>

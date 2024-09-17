@@ -1,5 +1,5 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] nonEmptyInterfaceWithSuper.kt
+FILE: [ResolvedTo(RAW_FIR)] nonEmptyInterfaceWithSuper.kt
     public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : InterfaceWithMembers {
         public? final? [ResolvedTo(RAW_FIR)] val newProperty: String
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=EmptyInterface] get(): String
