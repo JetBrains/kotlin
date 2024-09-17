@@ -139,7 +139,18 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     }
 
     protected void loadFiles(@NotNull String... names) {
-        myFiles = CodegenTestFiles.create(myEnvironment.getProject(), names);
+        List<KtFile> files = new ArrayList<>(names.length);
+        for (String name : names) {
+            try {
+                String content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataPathBase() + "/codegen/", name);
+                KtFile file = KtTestUtil.createFile(name, content, myEnvironment.getProject());
+                files.add(file);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        myFiles = CodegenTestFiles.create(files);
     }
 
     protected void loadFile() {

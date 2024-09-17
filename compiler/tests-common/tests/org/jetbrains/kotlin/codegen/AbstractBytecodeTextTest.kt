@@ -27,7 +27,8 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         if (isMultiFileTest(files) && !InTextDirectivesUtils.isDirectiveDefined(wholeFile.readText(), "TREAT_AS_ONE_FILE")) {
             doTestMultiFile(files, !isIgnored)
         } else {
-            val expected = readExpectedOccurrences(wholeFile.path)
+            val lines = File(wholeFile.path).readLines().dropLastWhile(String::isEmpty)
+            val expected = readExpectedOccurrences(lines)
             val actual = generateToText("helpers/")
             checkGeneratedTextAgainstExpectedOccurrences(actual, expected, backend, !isIgnored, JUnit4Assertions)
         }

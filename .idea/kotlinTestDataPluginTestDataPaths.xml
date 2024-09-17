@@ -78,7 +78,6 @@
         <option value="$PROJECT_DIR$/js/js.translator/testData" />
         <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
         <option value="$PROJECT_DIR$/plugins/allopen/testData" />
-        <option value="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/fir-plugin-prototype/testData" />
         <option value="$PROJECT_DIR$/plugins/imports-dumper/testData" />

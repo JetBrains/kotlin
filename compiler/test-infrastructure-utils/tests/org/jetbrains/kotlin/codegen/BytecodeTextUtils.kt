@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
-import java.io.File
 import java.util.ArrayList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -35,11 +34,6 @@ class OccurrenceInfo constructor(
     override fun toString(): String {
         return "$numberOfOccurrences $needle"
     }
-}
-
-fun readExpectedOccurrences(filename: String): List<OccurrenceInfo> {
-    val lines = File(filename).readLines().dropLastWhile(String::isEmpty)
-    return readExpectedOccurrences(lines)
 }
 
 fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {

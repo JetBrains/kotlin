@@ -139,7 +139,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
                 runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
             }
-            TestJdkKind.ANDROID_API -> null
         }
 
         inline fun getJdkHomeFromProperty(onNull: () -> File?): File? {
@@ -156,7 +155,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         fun getJdkClasspathRoot(jdkKind: TestJdkKind): File? = when (jdkKind) {
             TestJdkKind.MOCK_JDK -> KtTestUtil.findMockJdkRtJar()
             TestJdkKind.MODIFIED_MOCK_JDK -> KtTestUtil.findMockJdkRtModified()
-            TestJdkKind.ANDROID_API -> KtTestUtil.findAndroidApiJar()
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
@@ -210,7 +208,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         getJdkClasspathRoot(jdkKind)?.let { configuration.addJvmClasspathRoot(it) }
 
         when (jdkKind) {
-            TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.ANDROID_API -> {
+            TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK -> {
                 configuration.put(JVMConfigurationKeys.NO_JDK, true)
             }
 

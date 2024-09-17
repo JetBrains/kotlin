@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.allopen.*
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
@@ -156,35 +152,6 @@ fun main(args: Array<String>) {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
             }
             //TODO: write a proper k2 multiplatform test runner KT-63183
-        }
-
-        testGroup(
-            "plugins/android-extensions/android-extensions-compiler/test",
-            "plugins/android-extensions/android-extensions-compiler/testData"
-        ) {
-            testClass<AbstractAndroidSyntheticPropertyDescriptorTest> {
-                model("descriptors", recursive = false, extension = null)
-            }
-
-            testClass<AbstractAndroidBoxTest> {
-                model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
-                model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
-            }
-
-            testClass<AbstractAndroidIrBoxTest> {
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-            }
-
-            testClass<AbstractAndroidBytecodeShapeTest> {
-                model("codegen/bytecodeShape", recursive = false, extension = null)
-            }
         }
 
         testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {

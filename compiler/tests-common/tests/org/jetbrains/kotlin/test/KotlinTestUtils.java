@@ -180,10 +180,6 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findMockJdkRtModified());
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
-        else if (jdkKind == TestJdkKind.ANDROID_API) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findAndroidApiJar());
-            configuration.put(JVMConfigurationKeys.NO_JDK, true);
-        }
         else if (jdkKind == TestJdkKind.FULL_JDK_11) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home());
         }

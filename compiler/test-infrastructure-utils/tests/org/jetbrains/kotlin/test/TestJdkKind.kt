@@ -34,5 +34,4 @@ enum class TestJdkKind(val requiresSeparateProcess: Boolean = false) {
 
     // JDK found at java.home
     FULL_JDK,
-    ANDROID_API,
 }

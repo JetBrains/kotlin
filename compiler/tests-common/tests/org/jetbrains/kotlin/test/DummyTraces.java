@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.diagnostics.Severity;
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -126,103 +124,6 @@ public class DummyTraces {
         @Override
         public boolean wantsDiagnostics() {
             return false;
-        }
-    };
-
-    public static BindingTrace DUMMY_EXCEPTION_ON_ERROR_TRACE = new BindingTrace() {
-        @NotNull
-        @Override
-        public BindingContext getBindingContext() {
-            return new BindingContext() {
-                @Nullable
-                @Override
-                public Project getProject() {
-                    return null;
-                }
-
-                @NotNull
-                @Override
-                public Diagnostics getDiagnostics() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.get(slice, key);
-                }
-
-                @NotNull
-                @Override
-                public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
-                }
-
-                @NotNull
-                @TestOnly
-                @Override
-                public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-                    return ImmutableMap.of();
-                }
-
-                @Nullable
-                @Override
-                public KotlinType getType(@NotNull KtExpression expression) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
-                }
-
-                @Override
-                public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
-                    // do nothing
-                }
-            };
-        }
-
-        @Nullable
-        @Override
-        public Project getProject() {
-            return null;
-        }
-
-        @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-        }
-
-        @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-        }
-
-        @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            assert slice.isCollective();
-            return Collections.emptySet();
-        }
-
-        @Nullable
-        @Override
-        public KotlinType getType(@NotNull KtExpression expression) {
-            return null;
-        }
-
-        @Override
-        public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        }
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(DefaultErrorMessages.render(diagnostic));
-            }
-        }
-
-        @Override
-        public boolean wantsDiagnostics() {
-            return true;
         }
     };
 }
