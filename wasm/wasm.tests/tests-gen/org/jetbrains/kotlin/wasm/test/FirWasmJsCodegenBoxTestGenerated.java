@@ -12452,6 +12452,16 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Reflection {
+      @Test
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
     public class Signature {

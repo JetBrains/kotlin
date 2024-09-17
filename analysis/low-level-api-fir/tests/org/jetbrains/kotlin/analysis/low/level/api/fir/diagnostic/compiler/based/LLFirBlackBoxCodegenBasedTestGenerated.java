@@ -16579,6 +16579,88 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Reflection {
+      @Test
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("classInClassObject.kt")
+      public void testClassInClassObject() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classInClassObject.kt");
+      }
+
+      @Test
+      @TestMetadata("classInObject.kt")
+      public void testClassInObject() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classInObject.kt");
+      }
+
+      @Test
+      @TestMetadata("classWithTwoDefaultArgs.kt")
+      public void testClassWithTwoDefaultArgs() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classWithTwoDefaultArgs.kt");
+      }
+
+      @Test
+      @TestMetadata("classWithVararg.kt")
+      public void testClassWithVararg() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classWithVararg.kt");
+      }
+
+      @Test
+      @TestMetadata("enum.kt")
+      public void testEnum() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/enum.kt");
+      }
+
+      @Test
+      @TestMetadata("internalClass.kt")
+      public void testInternalClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/internalClass.kt");
+      }
+
+      @Test
+      @TestMetadata("privateClass.kt")
+      public void testPrivateClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/privateClass.kt");
+      }
+
+      @Test
+      @TestMetadata("privateConstructor.kt")
+      public void testPrivateConstructor() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/privateConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("publicClass.kt")
+      public void testPublicClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicClass.kt");
+      }
+
+      @Test
+      @TestMetadata("publicClassWoDefArgs.kt")
+      public void testPublicClassWoDefArgs() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicClassWoDefArgs.kt");
+      }
+
+      @Test
+      @TestMetadata("publicInnerClass.kt")
+      public void testPublicInnerClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("publicInnerClassInPrivateClass.kt")
+      public void testPublicInnerClassInPrivateClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicInnerClassInPrivateClass.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
     public class Signature {

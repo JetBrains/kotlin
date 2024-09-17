@@ -13754,6 +13754,21 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @UseExtTestCaseGroupProvider()
+      @UsePartialLinkage(mode = Mode.DISABLED)
+      @Tag("no-partial-linkage-may-be-skipped")
+      public class Reflection {
+        @Test
+        public void testAllFilesPresentInReflection() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

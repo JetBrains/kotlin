@@ -95,7 +95,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeListing")
                 model("codegen/composeLike")
                 model("codegen/composeLikeBytecodeText")
-                model("codegen/defaultArguments")
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 

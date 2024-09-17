@@ -12476,6 +12476,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Reflection {
+      @Test
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
     public class Signature {

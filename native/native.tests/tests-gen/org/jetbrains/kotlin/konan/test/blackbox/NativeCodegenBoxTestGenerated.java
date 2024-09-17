@@ -13170,6 +13170,17 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+      @TestDataPath("$PROJECT_ROOT")
+      @UseExtTestCaseGroupProvider()
+      public class Reflection {
+        @Test
+        public void testAllFilesPresentInReflection() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
       @TestDataPath("$PROJECT_ROOT")
       @UseExtTestCaseGroupProvider()

@@ -13531,6 +13531,79 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/defaultArguments/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractLightAnalysisModeTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInReflection() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      }
+
+      @TestMetadata("classInClassObject.kt")
+      public void testClassInClassObject() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classInClassObject.kt");
+      }
+
+      @TestMetadata("classInObject.kt")
+      public void testClassInObject() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classInObject.kt");
+      }
+
+      @TestMetadata("classWithTwoDefaultArgs.kt")
+      public void testClassWithTwoDefaultArgs() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classWithTwoDefaultArgs.kt");
+      }
+
+      @TestMetadata("classWithVararg.kt")
+      public void testClassWithVararg() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/classWithVararg.kt");
+      }
+
+      @TestMetadata("enum.kt")
+      public void testEnum() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/enum.kt");
+      }
+
+      @TestMetadata("internalClass.kt")
+      public void testInternalClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/internalClass.kt");
+      }
+
+      @TestMetadata("privateClass.kt")
+      public void testPrivateClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/privateClass.kt");
+      }
+
+      @TestMetadata("privateConstructor.kt")
+      public void testPrivateConstructor() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/privateConstructor.kt");
+      }
+
+      @TestMetadata("publicClass.kt")
+      public void testPublicClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicClass.kt");
+      }
+
+      @TestMetadata("publicClassWoDefArgs.kt")
+      public void testPublicClassWoDefArgs() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicClassWoDefArgs.kt");
+      }
+
+      @TestMetadata("publicInnerClass.kt")
+      public void testPublicInnerClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicInnerClass.kt");
+      }
+
+      @TestMetadata("publicInnerClassInPrivateClass.kt")
+      public void testPublicInnerClassInPrivateClass() {
+        runTest("compiler/testData/codegen/box/defaultArguments/reflection/publicInnerClassInPrivateClass.kt");
+      }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

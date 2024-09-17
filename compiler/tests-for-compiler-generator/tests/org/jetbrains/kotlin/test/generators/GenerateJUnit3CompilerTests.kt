@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
-import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirLightTreeDefaultArgumentsReflectionTest
-import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirPsiDefaultArgumentsReflectionTest
-import org.jetbrains.kotlin.codegen.defaultConstructor.ir.AbstractIrDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
@@ -119,10 +115,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractKaptModeBytecodeShapeTest> {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractDefaultArgumentsReflectionTest> {
-                model("codegen/defaultArguments/reflection")
             }
 
             testClass<AbstractLoadJavaTest> {
@@ -296,10 +288,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("writeFlags", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrDefaultArgumentsReflectionTest> {
-                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractIrWriteSignatureTest> {
                 model("writeSignature", targetBackend = TargetBackend.JVM_IR)
             }
@@ -312,20 +300,12 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("writeFlags", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractFirPsiDefaultArgumentsReflectionTest> {
-                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractFirPsiWriteSignatureTest> {
                 model("writeSignature", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractFirLightTreeWriteFlagsTest> {
                 model("writeFlags", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractFirLightTreeDefaultArgumentsReflectionTest> {
-                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractFirLightTreeCheckLocalVariablesTableTest> {
