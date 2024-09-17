@@ -49,6 +49,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     apiVersion = KotlinVersion.KOTLIN_2_0
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
+    allWarningsAsErrors = !kotlinBuildProperties.disableWerror
 }
 
 val configurationBuiltins = resolvingConfiguration("builtins") {
@@ -117,6 +118,7 @@ kotlin {
                                 diagnosticNamesArg
                             )
                         )
+                        allWarningsAsErrors = !kotlinBuildProperties.disableWerror
                     }
                 }
             }
@@ -239,6 +241,7 @@ kotlin {
                         "-Xallow-kotlin-package",
                         "-Xexpect-actual-classes",
                     )
+                    allWarningsAsErrors = !kotlinBuildProperties.disableWerror
                 }
             }
             val main by getting {
@@ -248,10 +251,6 @@ kotlin {
                         "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
                         diagnosticNamesArg,
                     )
-
-                    if (!kotlinBuildProperties.disableWerror) {
-                        allWarningsAsErrors = true
-                    }
                 }
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
@@ -266,17 +265,19 @@ kotlin {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
         compilations {
             all {
-                @Suppress("DEPRECATION")
-                kotlinOptions.freeCompilerArgs += listOfNotNull(
-                    "-Xallow-kotlin-package",
-                    "-Xexpect-actual-classes",
-                    diagnosticNamesArg
-                )
+                kotlinOptions {
+                    @Suppress("DEPRECATION")
+                    freeCompilerArgs += listOfNotNull(
+                        "-Xallow-kotlin-package",
+                        "-Xexpect-actual-classes",
+                        diagnosticNamesArg
+                    )
+                    allWarningsAsErrors = !kotlinBuildProperties.disableWerror
+                }
             }
             @Suppress("DEPRECATION")
             val main by getting {
                 kotlinOptions.freeCompilerArgs += "-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME"
-                kotlinOptions.allWarningsAsErrors = true
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
                 }
@@ -334,6 +335,7 @@ kotlin {
                         "-Xexpect-actual-classes",
                         "-nostdlib",
                     )
+                    allWarningsAsErrors = !kotlinBuildProperties.disableWerror
                 }
             }
         }
