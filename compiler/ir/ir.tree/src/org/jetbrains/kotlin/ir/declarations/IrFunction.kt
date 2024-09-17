@@ -29,9 +29,9 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     abstract var returnType: IrType
 
-    abstract var dispatchReceiverParameter: IrValueParameter?
+    var dispatchReceiverParameter: IrValueParameter? = null
 
-    abstract var extensionReceiverParameter: IrValueParameter?
+    var extensionReceiverParameter: IrValueParameter? = null
 
     @OptIn(DelicateIrParameterIndexSetter::class)
     var valueParameters: List<IrValueParameter> = emptyList()
@@ -45,7 +45,8 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
             field = value
         }
 
-    abstract var contextReceiverParametersCount: Int
+    // The first `contextReceiverParametersCount` value parameters are context receivers.
+    var contextReceiverParametersCount: Int = 0
 
     abstract var body: IrBody?
 
