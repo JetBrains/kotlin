@@ -253,15 +253,42 @@ internal class CheckIrElementVisitor(
         super.visitFunction(declaration)
         declaration.checkFunction(declaration)
 
-        for ((i, p) in declaration.valueParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of value parameter ${p.index} != $i")
+        for ((i, param) in declaration.valueParameters.withIndex()) {
+            if (param.index != i) {
+                reportError(declaration, "Inconsistent index (old API) of value parameter ${param.index} != $i")
             }
         }
 
-        for ((i, p) in declaration.typeParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of type parameter ${p.index} != $i")
+        var lastKind: IrParameterKind? = null
+        for ((i, param) in declaration.parameters.withIndex()) {
+            if (param.indexNew != i) {
+                reportError(declaration, "Inconsistent index (new API) of value parameter ${param.indexNew} != $i")
+            }
+
+            val kind = param.kind
+            if (lastKind != null) {
+                if (kind < lastKind) {
+                    reportError(
+                        declaration,
+                        "Invalid order of function parameters: $kind is placed after ${lastKind}.\n" +
+                                "Parameters must follow a strict order: " +
+                                "[dispatch receiver, context parameters, extension receiver, regular parameters]."
+                    )
+                }
+
+                if (!kind.canHaveMultiple) {
+                    if (kind == lastKind) {
+                        reportError(declaration, "Function may have only one $kind parameter")
+                    }
+                }
+            }
+
+            lastKind = kind
+        }
+
+        for ((i, param) in declaration.typeParameters.withIndex()) {
+            if (param.index != i) {
+                reportError(declaration, "Inconsistent index of type parameter ${param.index} != $i")
             }
         }
     }
