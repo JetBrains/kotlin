@@ -155,7 +155,7 @@ class WasmFileCodegenContext(
     }
 
     fun defineTestFun(testFun: IrFunctionSymbol) {
-        wasmFileFragment.testFun = testFun.getReferenceKey()
+        wasmFileFragment.testFun.add(testFun.getReferenceKey())
     }
 
     fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {

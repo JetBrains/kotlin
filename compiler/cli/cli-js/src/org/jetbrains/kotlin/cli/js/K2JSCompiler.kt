@@ -485,7 +485,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 irFactory,
                 allowIncompleteImplementations = arguments.irDce,
             )
-            val wasmCompiledFileFragments = allModules.flatMap { codeGenerator.generateModule(it) }
+            val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
             val res = compileWasm(
                 wasmCompiledFileFragments = wasmCompiledFileFragments,

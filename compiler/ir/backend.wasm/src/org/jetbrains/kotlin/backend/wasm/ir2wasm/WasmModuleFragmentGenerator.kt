@@ -16,20 +16,22 @@ class WasmModuleFragmentGenerator(
     private val idSignatureRetriever: IdSignatureRetriever,
     private val allowIncompleteImplementations: Boolean,
 ) {
-    fun generateModule(irModuleFragment: IrModuleFragment): List<WasmCompiledFileFragment> {
-        val wasmCompiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
+    fun generateModuleAsSingleFileFragment(irModuleFragment: IrModuleFragment): WasmCompiledFileFragment {
+        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+
         for (irFile in irModuleFragment.files) {
-            val wasmFileFragment = compileIrFile(
+            compileIrFile(
                 irFile,
                 backendContext,
-                idSignatureRetriever,
                 wasmModuleMetadataCache,
                 allowIncompleteImplementations,
-                fragmentTag = null
+                wasmFileCodegenContext,
+                wasmModuleTypeTransformer,
             )
-            wasmCompiledModuleFragments.add(wasmFileFragment)
         }
-        return wasmCompiledModuleFragments
+        return wasmFileFragment
     }
 }
 
@@ -44,7 +46,25 @@ internal fun compileIrFile(
     val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
     val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
     val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+    compileIrFile(
+        irFile,
+        backendContext,
+        wasmModuleMetadataCache,
+        allowIncompleteImplementations,
+        wasmFileCodegenContext,
+        wasmModuleTypeTransformer,
+    )
+    return wasmFileFragment
+}
 
+private fun compileIrFile(
+    irFile: IrFile,
+    backendContext: WasmBackendContext,
+    wasmModuleMetadataCache: WasmModuleMetadataCache,
+    allowIncompleteImplementations: Boolean,
+    wasmFileCodegenContext: WasmFileCodegenContext,
+    wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+) {
     val generator = DeclarationGenerator(
         backendContext,
         wasmFileCodegenContext,
@@ -104,6 +124,4 @@ internal fun compileIrFile(
             wasmFileCodegenContext.defineJsToKotlinAnyAdapterFun(jsToKotlinAnyAdapter)
         }
     }
-
-    return wasmFileFragment
 }

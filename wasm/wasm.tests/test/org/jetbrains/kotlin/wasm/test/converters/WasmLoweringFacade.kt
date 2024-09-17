@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.name.FqName
@@ -88,7 +87,7 @@ class WasmLoweringFacade(
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = false,
         )
-        val wasmCompiledFileFragments = allModules.flatMap { codeGenerator.generateModule(it) }
+        val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
         val compilerResult = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
@@ -113,7 +112,7 @@ class WasmLoweringFacade(
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = true,
         )
-        val wasmCompiledFileFragmentsDce = allModules.flatMap { codeGeneratorDce.generateModule(it) }
+        val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
 
         val compilerResultWithDCE = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,

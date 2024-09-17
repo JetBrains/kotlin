@@ -48,7 +48,7 @@ class WasmCompiledFileFragment(
     var jsExceptionTagIndex: WasmSymbol<Int>? = null,
     val fieldInitializers: MutableList<FieldInitializer> = mutableListOf(),
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
-    var testFun: IdSignature? = null,
+    var testFun: MutableList<IdSignature> = mutableListOf(),
     val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
@@ -411,9 +411,9 @@ class WasmCompiledModuleFragment(
         val startUnitTestsFunction = WasmFunction.Defined("kotlin.test.startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
-                val signature = fragment.testFun
-                if (signature != null) {
-                    val testRunner = fragment.functions.defined[signature] ?: compilationException("Cannot find symbol for test runner", type = null)
+                fragment.testFun.forEach { testFunc ->
+                    val testRunner = fragment.functions.defined[testFunc]
+                        ?: compilationException("Cannot find symbol for test runner", type = null)
                     buildCall(WasmSymbol(testRunner), serviceCodeLocation)
                 }
             }
