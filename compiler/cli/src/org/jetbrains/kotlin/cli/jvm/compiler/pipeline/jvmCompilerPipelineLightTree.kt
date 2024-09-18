@@ -261,7 +261,8 @@ private fun FrontendContextForSingleModuleLightTree.compileModule(): Pair<FirRes
         return null
     }
 
-    return firResult to runBackend(firResult, diagnosticsReporter)
+    val generationState = runBackend(firResult, diagnosticsReporter) ?: return null
+    return firResult to generationState
 }
 
 private fun FrontendContext.compileModuleToAnalyzedFirViaLightTree(

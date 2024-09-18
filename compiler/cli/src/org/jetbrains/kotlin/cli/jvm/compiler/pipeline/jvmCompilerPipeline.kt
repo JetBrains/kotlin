@@ -68,9 +68,14 @@ import java.io.File
 internal fun FrontendContextForSingleModule.runBackend(
     firResult: FirResult,
     diagnosticsReporter: BaseDiagnosticsCollector,
-): GenerationState {
+): GenerationState? {
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
     val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), firResult, compilerEnvironment)
+
+    if (diagnosticsReporter.hasErrors) {
+        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+        return null
+    }
 
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 

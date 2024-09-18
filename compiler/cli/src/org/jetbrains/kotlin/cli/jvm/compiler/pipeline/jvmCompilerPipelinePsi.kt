@@ -145,7 +145,8 @@ private fun FrontendContextForSingleModulePsi.compileModule(): Pair<FirResult, G
         return null
     }
 
-    return firResult to runBackend(firResult, diagnosticsReporter)
+    val generationState = runBackend(firResult, diagnosticsReporter) ?: return null
+    return firResult to generationState
 }
 
 internal fun FrontendContext.compileSourceFilesToAnalyzedFirViaPsi(
