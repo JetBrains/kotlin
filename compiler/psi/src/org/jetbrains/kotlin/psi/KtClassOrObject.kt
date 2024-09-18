@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -95,14 +84,14 @@ abstract class KtClassOrObject :
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
-    fun isTopLevel(): Boolean = stub?.isTopLevel() ?: isKtFile(parent)
+    fun isTopLevel(): Boolean = greenStub?.isTopLevel() ?: isKtFile(parent)
 
     override fun getClassId(): ClassId? {
-        stub?.let { return it.getClassId() }
+        greenStub?.let { return it.getClassId() }
         return ClassIdCalculator.calculateClassId(this)
     }
 
-    override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
+    override fun isLocal(): Boolean = greenStub?.isLocal() ?: KtPsiUtil.isLocal(this)
 
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
 
@@ -171,7 +160,7 @@ abstract class KtClassOrObject :
     }
 
     protected fun getQualifiedName(): String? {
-        val stub = stub
+        val stub = greenStub
         if (stub != null) {
             val fqName = stub.getFqName()
             return fqName?.asString()

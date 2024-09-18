@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -51,7 +40,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean hasTypeParameterListBeforeFunctionName() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasTypeParameterListBeforeFunctionName();
         }
@@ -72,7 +61,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public boolean hasBlockBody() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasBlockBody();
         }
@@ -161,7 +150,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public boolean hasBody() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasBody();
         }
@@ -176,7 +165,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtTypeReference getReceiverTypeReference() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             if (!stub.isExtension()) {
                 return null;
@@ -213,7 +202,8 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
         if (contextReceiverList != null) {
             return contextReceiverList.contextReceivers();
-        } else {
+        }
+        else {
             return Collections.emptyList();
         }
     }
@@ -221,7 +211,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtTypeReference getTypeReference() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE);
             int returnTypeIndex = stub.isExtension() ? 1 : 0;
@@ -256,7 +246,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean isTopLevel() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.isTopLevel();
         }
@@ -280,7 +270,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean mayHaveContract(boolean isAllowedOnMembers) {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.mayHaveContract();
         }
