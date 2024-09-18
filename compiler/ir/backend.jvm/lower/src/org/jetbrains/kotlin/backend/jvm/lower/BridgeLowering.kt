@@ -136,7 +136,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.
             // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
             val remove = irClass.functions.find {
-                val original = context.inlineClassReplacements.originalFunctionForStaticReplacement[it]
+                val original = it.originalFunctionOfStaticInlineClassReplacement
                 original != null && MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(original)
             }
             if (remove != null) {
