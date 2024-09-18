@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
@@ -36,7 +35,7 @@ private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.
 
 private abstract class KonanInteropInProcessAction @Inject constructor() : WorkAction<KonanInteropInProcessAction.Parameters> {
     interface Parameters : WorkParameters {
-        var taskName: String
+        val isolatedClassLoadersService: Property<KonanCliRunnerIsolatedClassLoadersService>
         val compilerDistribution: NativeDistributionProperty
         val target: Property<String>
         val args: ListProperty<String>
@@ -52,8 +51,11 @@ private abstract class KonanInteropInProcessAction @Inject constructor() : WorkA
                 load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
             }
         }.prepare()
-        val toolRunner = interchangeBox.remove(parameters.taskName) ?: error(":(")
-        toolRunner.run(parameters.args.get())
+        KonanCliRunner(
+                parameters.isolatedClassLoadersService.get().getClassLoader(parameters.compilerDistribution.get().compilerClasspath.files),
+                useArgFile = false,
+                toolName = "cinterop",
+        ).run(parameters.args.get())
     }
 }
 
@@ -147,15 +149,8 @@ abstract class KonanInteropTask @Inject constructor(
         val workQueue = workerExecutor.noIsolation()
 
         if (allowRunningCInteropInProcess) {
-            val interopRunner = KonanCliRunner(
-                    isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files),
-                    useArgFile = false,
-                    toolName = "cinterop",
-            )
-
-            interchangeBox[this.path] = interopRunner
             workQueue.submit(KonanInteropInProcessAction::class.java) {
-                taskName = path
+                this.isolatedClassLoadersService.set(this@KonanInteropTask.isolatedClassLoadersService)
                 this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
                 this.target.set(konanTarget.map { it.visibleName })
                 this.args.addAll(args)
@@ -168,5 +163,3 @@ abstract class KonanInteropTask @Inject constructor(
         }
     }
 }
-
-internal val interchangeBox = ConcurrentHashMap<String, KonanCliRunner>()
