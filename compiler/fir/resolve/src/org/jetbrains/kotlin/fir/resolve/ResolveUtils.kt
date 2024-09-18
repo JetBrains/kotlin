@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -762,3 +763,5 @@ val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
 
 fun ConeClassLikeLookupTag.isRealOwnerOf(declarationSymbol: FirCallableSymbol<*>): Boolean =
     this == declarationSymbol.dispatchReceiverClassLookupTagOrNull()
+
+val FirUserTypeRef.shortName: Name get() = qualifier.last().name

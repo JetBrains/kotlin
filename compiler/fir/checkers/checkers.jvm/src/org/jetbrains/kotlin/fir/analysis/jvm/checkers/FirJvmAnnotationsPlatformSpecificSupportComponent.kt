@@ -21,12 +21,12 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         StandardClassIds.Annotations.Target,
         JvmStandardClassIds.Annotations.Java.Target,
         JvmStandardClassIds.Annotations.JvmName,
+        StandardClassIds.Annotations.DeprecatedSinceKotlin,
+        StandardClassIds.Annotations.SinceKotlin,
     )
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
         JvmStandardClassIds.Annotations.Java.Deprecated,
-        StandardClassIds.Annotations.DeprecatedSinceKotlin,
-        StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.WasExperimental,
         JvmStandardClassIds.Annotations.JvmRecord,
     )
