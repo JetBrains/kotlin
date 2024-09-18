@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -37,7 +38,7 @@ class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
-    val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
+    val originalConstructorForConstructorReplacement by irAttribute<IrConstructor, IrConstructor>(false).asMap()
 
     private fun IrValueParameter.grouped(
         name: String?,
@@ -84,7 +85,7 @@ class MemoizedMultiFieldValueClassReplacements(
     ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
 
 
-    val oldMfvcDefaultArguments = ConcurrentHashMap<IrValueParameter, IrExpression>()
+    val oldMfvcDefaultArguments by irAttribute<IrValueParameter, IrExpression>(false).asMap()
 
     private fun buildReplacement(
         function: IrFunction,
@@ -184,14 +185,16 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
+    val bindingOldFunctionToParameterTemplateStructure by irAttribute<IrFunction, List<RemappedParameter>>(false).asMap()
+
+    private val _bindingNewFunctionToParameterTemplateStructure by irAttribute<IrFunction, List<RemappedParameter>>(false).asMap()
     val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> =
-        object : ConcurrentHashMap<IrFunction, List<RemappedParameter>>() {
+        object : MutableMap<IrFunction, List<RemappedParameter>> by _bindingNewFunctionToParameterTemplateStructure {
             override fun put(key: IrFunction, value: List<RemappedParameter>): List<RemappedParameter>? {
                 require(key.explicitParametersCount == value.sumOf { it.valueParameters.size }) {
                     "Illegal structure $value for function ${key.dump()}"
                 }
-                return super.put(key, value)
+                return _bindingNewFunctionToParameterTemplateStructure.put(key, value)
             }
         }
 
@@ -324,7 +327,7 @@ class MemoizedMultiFieldValueClassReplacements(
         return this
     }
 
-    private val fieldsToRemove = ConcurrentHashMap<IrClass, MutableSet<IrField>>()
+    private val fieldsToRemove by irAttribute<IrClass, MutableSet<IrField>>(false).asMap()
     fun getFieldsToRemove(clazz: IrClass): Set<IrField> = fieldsToRemove[clazz] ?: emptySet()
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
         fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field.withAddedStaticReplacementIfNeeded())
