@@ -1323,54 +1323,53 @@ class ComposableFunctionBodyTransformer(
 
         val setDefaults = mutableStatementContainer()
         val skipDefaults = mutableStatementContainer()
-//        val parametersScope = Scope.ParametersScope()
-        parameters.fastForEachIndexed { slotIndex, param ->
-            val defaultIndex = scope.defaultIndexForSlotIndex(slotIndex)
-            val defaultValue = param.defaultValue?.expression
-            if (defaultParam != null && defaultValue != null) {
-//                val transformedDefault = inScope(parametersScope) {
-//                    defaultValue.expression.transform(this, null)
-//                }
 
-                // we want to call this on the transformed version.
-                defaultExprIsStatic[slotIndex] = defaultValue.isStatic()
-                defaultExpr[slotIndex] = defaultValue
-                val hasStaticDefaultExpr = defaultExprIsStatic[slotIndex]
-                when {
-                    isSkippableDeclaration && !hasStaticDefaultExpr &&
-                            dirty is IrChangedBitMaskVariable -> {
-                        // If we are setting the parameter to the default expression and
-                        // running the default expression again, and the expression isn't
-                        // provably static, we can't be certain that the dirty value of
-                        // SAME is going to be valid. We must mark it as UNCERTAIN. In order
-                        // to avoid slot-table misalignment issues, we must mark it as
-                        // UNCERTAIN even when we skip the defaults, so that any child
-                        // function receives UNCERTAIN vs SAME/DIFFERENT deterministically.
-                        setDefaults.statements.add(
-                            irIf(
-                                condition = irGetBit(defaultParam, defaultIndex),
-                                body = irBlock(
-                                    statements = listOf(
-                                        irSet(param, defaultValue),
-                                        dirty.irSetSlotUncertain(slotIndex)
+        withScope(defaultScope) {
+            parameters.fastForEachIndexed { slotIndex, param ->
+                val defaultIndex = scope.defaultIndexForSlotIndex(slotIndex)
+                val defaultValue = param.defaultValue?.expression
+                if (defaultParam != null && defaultValue != null) {
+
+                    // we want to call this on the transformed version.
+                    defaultExprIsStatic[slotIndex] = defaultValue.isStatic()
+                    defaultExpr[slotIndex] = defaultValue
+                    val hasStaticDefaultExpr = defaultExprIsStatic[slotIndex]
+                    when {
+                        isSkippableDeclaration && !hasStaticDefaultExpr &&
+                                dirty is IrChangedBitMaskVariable -> {
+                            // If we are setting the parameter to the default expression and
+                            // running the default expression again, and the expression isn't
+                            // provably static, we can't be certain that the dirty value of
+                            // SAME is going to be valid. We must mark it as UNCERTAIN. In order
+                            // to avoid slot-table misalignment issues, we must mark it as
+                            // UNCERTAIN even when we skip the defaults, so that any child
+                            // function receives UNCERTAIN vs SAME/DIFFERENT deterministically.
+                            setDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, defaultIndex),
+                                    body = irBlock(
+                                        statements = listOf(
+                                            irSet(param, defaultValue),
+                                            dirty.irSetSlotUncertain(slotIndex)
+                                        )
                                     )
                                 )
                             )
-                        )
-                        skipDefaults.statements.add(
-                            irIf(
-                                condition = irGetBit(defaultParam, defaultIndex),
-                                body = dirty.irSetSlotUncertain(slotIndex)
+                            skipDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, defaultIndex),
+                                    body = dirty.irSetSlotUncertain(slotIndex)
+                                )
                             )
-                        )
-                    }
-                    else -> {
-                        setDefaults.statements.add(
-                            irIf(
-                                condition = irGetBit(defaultParam, defaultIndex),
-                                body = irSet(param, defaultValue)
+                        }
+                        else -> {
+                            setDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, defaultIndex),
+                                    body = irSet(param, defaultValue)
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -1589,7 +1588,7 @@ class ComposableFunctionBodyTransformer(
             // otherwise, we wrap the whole thing in an if expression with a skip
             scope.hasDefaultsGroup = true
             scope.metrics.recordGroup()
-            bodyPreamble.statements.add(irStartDefaults(sourceElement))
+            bodyPreamble.statements.add(irStartDefaults(sourceElement, defaultScope))
             bodyPreamble.statements.add(
                 irIfThenElse(
                     // this prevents us from re-executing the defaults if this function is getting
@@ -1912,8 +1911,7 @@ class ComposableFunctionBodyTransformer(
             is IrField,
             is IrProperty,
             is IrFunction,
-            is IrClass,
-            -> {
+            is IrClass -> {
                 // these declarations get scopes, but they are handled individually
                 return super.visitDeclaration(declaration)
             }
@@ -1923,8 +1921,7 @@ class ComposableFunctionBodyTransformer(
             is IrTypeParameter,
             is IrLocalDelegatedProperty,
             is IrValueDeclaration,
-            is IrScript,
-            -> {
+            is IrScript -> {
                 // these declarations do not create new "scopes", so we do nothing
                 return super.visitDeclaration(declaration)
             }
@@ -2130,12 +2127,15 @@ class ComposableFunctionBodyTransformer(
             irIfTraceInProgress(irCall(it))
         }
 
-    private fun irStartDefaults(element: IrElement): IrExpression {
-        return irMethodCall(
-            irCurrentComposer(),
-            startDefaultsFunction,
-            element.startOffset,
-            element.endOffset
+    private fun irStartDefaults(element: IrElement, scope: Scope.BlockScope): IrExpression {
+        return irWithSourceInformation(
+            irMethodCall(
+                irCurrentComposer(),
+                startDefaultsFunction,
+                element.startOffset,
+                element.endOffset
+            ),
+            scope
         )
     }
 

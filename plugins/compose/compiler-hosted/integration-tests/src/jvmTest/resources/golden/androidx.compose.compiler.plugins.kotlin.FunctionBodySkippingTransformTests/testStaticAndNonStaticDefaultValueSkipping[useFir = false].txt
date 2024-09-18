@@ -23,7 +23,7 @@ fun Example(
 @Composable
 fun Example(wontChange: Int, mightChange: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Example)P(1)<curren...>,<A(wont...>,<A(migh...>:Test.kt")
+  sourceInformation(%composer, "C(Example)P(1)<A(wont...>,<A(migh...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -35,6 +35,7 @@ fun Example(wontChange: Int, mightChange: Int, %composer: Composer?, %changed: I
   }
   if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
     %composer.startDefaults()
+    sourceInformation(%composer, "<curren...>")
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {
         wontChange = 123

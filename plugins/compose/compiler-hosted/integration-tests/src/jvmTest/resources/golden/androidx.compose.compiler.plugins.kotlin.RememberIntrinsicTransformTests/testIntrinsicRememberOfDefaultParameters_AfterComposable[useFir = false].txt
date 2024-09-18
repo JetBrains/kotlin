@@ -20,7 +20,7 @@ fun Test(a: Int = remember { 0 }, b: Int = SomeComposable(), c: Int = remember {
 @Composable
 fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<rememb...>,<SomeCo...>,<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Test):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -37,6 +37,7 @@ fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: 
   }
   if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
     %composer.startDefaults()
+    sourceInformation(%composer, "<rememb...>,<SomeCo...>,<rememb...>")
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {
         a = <block>{
