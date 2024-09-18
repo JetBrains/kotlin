@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -93,7 +93,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     companion object {
         fun merge(session: FirSession, project: Project, providers: List<LLFirJavaSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
-                val combinedScope = GlobalSearchScope.union(providers.map { it.searchScope })
+                val combinedScope = KotlinGlobalSearchScopeMerger.getInstance(project).union(providers.map { it.searchScope })
                 val javaClassFinder = project.createJavaClassFinder(combinedScope)
                 LLFirCombinedJavaSymbolProvider(session, project, providers, javaClassFinder)
             } else providers.singleOrNull()

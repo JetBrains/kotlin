@@ -33,6 +33,9 @@ public interface KotlinPackageProviderFactory : KotlinPlatformComponent {
  *
  * Package providers should not be naively merged by combining scopes and calling [createPackageProvider], because there may be additional
  * package providers which do not operate based on scopes (e.g. resolve extension package providers).
+ *
+ * The provider merger should consider merging scopes with [KotlinGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger]
+ * if there is a useful implementation provided by the platform.
  */
 public interface KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider>, KotlinPlatformComponent {
     public companion object {
