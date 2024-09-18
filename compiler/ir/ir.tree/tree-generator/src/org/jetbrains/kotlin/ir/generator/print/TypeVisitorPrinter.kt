@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
@@ -27,6 +28,30 @@ internal open class TypeVisitorPrinter(
     override val visitorType: ClassRef<*>,
     protected val rootElement: Element,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
+
+    companion object {
+
+        @JvmStatic
+        protected fun ImportCollectingPrinter.printVisitTypeKDoc() {
+            printKDoc(
+                """
+                A customization point called by [visitTypeRecursively] on each field of [container] that contains
+                an [${irTypeType.render()}], as well as on all the latter's type arguments (for [${irSimpleTypeType.render()}]s).
+                """.trimIndent()
+            )
+        }
+
+        @JvmStatic
+        protected fun ImportCollectingPrinter.printVisitTypeRecursivelyKDoc() {
+            printKDoc(
+                """
+                Called by [visitTypeRecursively] on each field of [container] that contains an [${irTypeType.render()}].
+                The default implementation calls [visitType] for [type] and each of its type arguments
+                (for [${irSimpleTypeType.render()}]s).
+                """.trimIndent()
+            )
+        }
+    }
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
         get() = listOf(elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
@@ -80,9 +105,11 @@ internal open class TypeVisitorPrinter(
     }
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
+        printVisitTypeKDoc()
         printVisitTypeMethod(name = "visitType", hasDataParameter = true, modality = Modality.ABSTRACT, override = false)
         println()
         println()
+        printVisitTypeRecursivelyKDoc()
         printVisitTypeMethod(name = "visitTypeRecursively", hasDataParameter = true, modality = Modality.OPEN, override = false)
         printBlock {
             printlnMultiLine(
