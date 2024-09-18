@@ -38,6 +38,9 @@ public interface KotlinDeclarationProviderFactory : KotlinPlatformComponent {
  * Hence, [KotlinDeclarationProvider]s cannot just be combined by combining the scopes of all declaration providers and calling
  * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
  * account.
+ *
+ * The provider merger should consider merging scopes with [KotlinGlobalSearchScopeMerger][org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMerger]
+ * if there is a useful implementation provided by the platform.
  */
 public interface KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
     public companion object {
