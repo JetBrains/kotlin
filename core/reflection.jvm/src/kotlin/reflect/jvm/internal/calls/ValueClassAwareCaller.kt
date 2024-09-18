@@ -37,7 +37,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private val isDefault: Boolean
 ) : Caller<M> {
 
-    internal val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
+    private val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
         val receiverType = (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.type
         if (
             receiverType != null &&
@@ -63,6 +63,9 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
     override val parameterTypes: List<Type>
         get() = caller.parameterTypes
+
+    override val isBoundInstanceCallWithValueClasses: Boolean
+        get() = caller is CallerImpl.Method.BoundInstance
 
     private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<List<Method>?>, val box: Method?)
 
@@ -112,13 +115,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor, caller.member) { isValueClass() }
 
-        val sumTypeSize = kotlinParameterTypes.sumOf { getMfvcUnboxMethods(it.asSimpleType())?.size ?: 1 }
+        val totalParametersTypeSize = kotlinParameterTypes.sumOf { getMfvcUnboxMethods(it.asSimpleType())?.size ?: 1 }
+
         // If the default argument is set,
         // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
-            (if (isDefault) ((sumTypeSize + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((totalParametersTypeSize + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
-        val expectedArgsSize = sumTypeSize + flattenedShift + extraArgumentsTail
+        val expectedArgsSize = totalParametersTypeSize + flattenedShift + extraArgumentsTail
         checkParametersSize(expectedArgsSize, descriptor, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox

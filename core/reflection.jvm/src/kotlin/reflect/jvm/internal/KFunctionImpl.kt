@@ -145,11 +145,7 @@ internal class KFunctionImpl private constructor(
                     createJvmStaticInObjectCaller(member)
 
                 else -> {
-                    createStaticMethodCaller(
-                        member,
-                        isCallByToValueClassMangledMethod = caller is ValueClassAwareCaller<*> &&
-                                (caller as ValueClassAwareCaller<*>).caller is CallerImpl.Method.BoundInstance
-                    )
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
                 }
             }
             else -> null
