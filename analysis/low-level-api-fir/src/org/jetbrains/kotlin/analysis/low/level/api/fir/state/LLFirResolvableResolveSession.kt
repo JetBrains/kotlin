@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -33,7 +35,7 @@ internal class LLFirResolvableResolveSession(
     moduleProvider: LLModuleProvider,
     resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
     sessionProvider: LLSessionProvider,
-    diagnosticProvider: LLDiagnosticProvider
+    diagnosticProvider: LLDiagnosticProvider,
 ) : LLFirResolveSession(
     moduleProvider = moduleProvider,
     resolutionStrategyProvider = resolutionStrategyProvider,
@@ -94,7 +96,7 @@ internal class LLFirResolvableResolveSession(
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
 
-        val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration.parentsWithSelfCodeFragmentAware)
+        val nonLocalDeclaration = getNonLocalContainingDeclaration(ktDeclaration, codeFragmentAware = true)
             ?: errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", module) { it.moduleDescription }
