@@ -2592,6 +2592,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     public void testKt71550() {
       runTest("compiler/testData/codegen/box/boxing/kt71550.kt");
     }
+
+    @Test
+    @TestMetadata("kt71550_2.kt")
+    public void testKt71550_2() {
+      runTest("compiler/testData/codegen/box/boxing/kt71550_2.kt");
+    }
   }
 
   @Nested
