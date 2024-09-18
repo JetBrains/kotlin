@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.staticDefaultStub
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.util.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 @PhaseDescription(
     name = "StaticDefaultFunction",
@@ -52,7 +54,7 @@ internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : I
     )
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]
+        val irFunction = (expression.returnTargetSymbol.owner as? IrSimpleFunction)?.staticDefaultStub
         return super.visitReturn(
             if (irFunction != null) {
                 with(expression) {
@@ -77,7 +79,7 @@ internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : I
     }
 
     private fun getStaticFunctionWithReceivers(function: IrSimpleFunction): IrSimpleFunction =
-        context.staticDefaultStubs.getOrPut(function.symbol) {
+        function::staticDefaultStub.getOrSetIfNull {
             context.irFactory.createStaticFunctionWithReceivers(
                 function.parent,
                 function.name,
