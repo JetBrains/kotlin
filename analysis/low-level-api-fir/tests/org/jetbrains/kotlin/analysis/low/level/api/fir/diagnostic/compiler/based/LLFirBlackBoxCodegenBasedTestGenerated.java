@@ -2599,6 +2599,18 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("kt71550.kt")
+    public void testKt71550() {
+      runTest("compiler/testData/codegen/box/boxing/kt71550.kt");
+    }
+
+    @Test
+    @TestMetadata("kt71550_2.kt")
+    public void testKt71550_2() {
+      runTest("compiler/testData/codegen/box/boxing/kt71550_2.kt");
+    }
+
+    @Test
     @TestMetadata("missingValueClassUnboxing.kt")
     public void testMissingValueClassUnboxing() {
       runTest("compiler/testData/codegen/box/boxing/missingValueClassUnboxing.kt");

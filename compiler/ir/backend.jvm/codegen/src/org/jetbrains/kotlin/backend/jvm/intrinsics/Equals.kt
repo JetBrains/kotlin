@@ -90,11 +90,11 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
 
         val leftType = codegen.typeMapper.mapTypeAsDeclaration(a.type)
+        val rightType = codegen.typeMapper.mapTypeAsDeclaration(b.type)
         if (expression.origin == IrStatementOrigin.EQEQEQ || expression.origin == IrStatementOrigin.EXCLEQEQ) {
-            return referenceEquals(expression, a, b, leftType, codegen, data)
+            return referenceEquals(expression, a, b, leftType, rightType, codegen, data)
         }
 
-        val rightType = codegen.typeMapper.mapTypeAsDeclaration(b.type)
 
         // Avoid boxing for `primitive == object` and `boxed primitive == primitive` where we know
         // what comparison means. The optimization does not apply to `object == primitive` as equals
@@ -114,14 +114,14 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
                 val bValue = b.accept(codegen, data).materializedAt(rightType, b.type)
                 return NonIEEE754FloatComparison(expression, operator, aValue, bValue)
             } else {
-                referenceEquals(expression, a, b, leftType, codegen, data)
+                referenceEquals(expression, a, b, leftType, rightType, codegen, data)
             }
         }
 
         // We can use reference equality for enums, otherwise we fall back to boxed equality.
         return when {
             a.isEnumValue || b.isEnumValue ->
-                referenceEquals(expression, a, b, leftType, codegen, data)
+                referenceEquals(expression, a, b, leftType, rightType, codegen, data)
 
             a.isClassValue && b.isClassValue -> {
                 val leftValue = codegen.generateClassLiteralReference(a, wrapIntoKClass = false, wrapPrimitives = true, data = data)
@@ -146,10 +146,11 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         left: IrExpression,
         right: IrExpression,
         leftType: Type,
+        rightType: Type,
         codegen: ExpressionCodegen,
         data: BlockInfo
     ): PromisedValue {
-        val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
+        val operandType = if (!isPrimitive(leftType) || !isPrimitive(rightType)) AsmTypes.OBJECT_TYPE else leftType
         return if (operandType == Type.INT_TYPE && (left.isIntegerConst(0) || right.isIntegerConst(0))) {
             val nonZero = if (left.isIntegerConst(0)) right else left
             IntegerZeroComparison(expression, nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
