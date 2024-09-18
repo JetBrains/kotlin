@@ -30,6 +30,24 @@ public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSource
   }
 
   @Test
+  @TestMetadata("destructuringDeclarations.kt")
+  public void testDestructuringDeclarations() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/destructuringDeclarations.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntries.kt")
+  public void testEnumEntries() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/enumEntries.kt");
+  }
+
+  @Test
+  @TestMetadata("functionalType.kt")
+  public void testFunctionalType() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/functionalType.kt");
+  }
+
+  @Test
   @TestMetadata("localFunctionInsideAnnotationCall.kt")
   public void testLocalFunctionInsideAnnotationCall() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideAnnotationCall.kt");
@@ -57,5 +75,17 @@ public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSource
   @TestMetadata("localFunctionInsideSuperEntryCall.kt")
   public void testLocalFunctionInsideSuperEntryCall() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/localFunctionInsideSuperEntryCall.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelProperty.kt")
+  public void testTopLevelProperty() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/topLevelProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameters.kt")
+  public void testTypeParameters() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/typeParameters.kt");
   }
 }

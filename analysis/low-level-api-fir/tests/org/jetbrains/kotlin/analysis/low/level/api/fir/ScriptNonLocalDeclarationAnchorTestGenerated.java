@@ -36,6 +36,12 @@ public class ScriptNonLocalDeclarationAnchorTestGenerated extends AbstractScript
   }
 
   @Test
+  @TestMetadata("destructuringDeclarationsScript.kts")
+  public void testDestructuringDeclarationsScript() {
+    runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/destructuringDeclarationsScript.kts");
+  }
+
+  @Test
   @TestMetadata("statements.kts")
   public void testStatements() {
     runTest("analysis/low-level-api-fir/testData/nonLocalDeclarationAnchors/statements.kts");

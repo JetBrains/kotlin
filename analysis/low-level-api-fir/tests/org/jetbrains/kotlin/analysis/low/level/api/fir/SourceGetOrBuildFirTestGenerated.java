@@ -1188,6 +1188,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("functionalTypeInsideAlias.kt")
+    public void testFunctionalTypeInsideAlias() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/functionalTypeInsideAlias.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTypeArgumentsCount.kt")
     public void testInvalidTypeArgumentsCount() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/invalidTypeArgumentsCount.kt");
