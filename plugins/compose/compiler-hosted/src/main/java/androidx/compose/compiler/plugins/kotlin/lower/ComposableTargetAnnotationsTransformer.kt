@@ -281,7 +281,7 @@ class ComposableTargetAnnotationsTransformer(
                 ) ?: InferenceCallTargetNode(this, expression)
         if (target.isOverlyWide()) return result
 
-        val arguments = expression.arguments.filterIndexed { index, argument ->
+        val arguments = expression.valueArguments.filterIndexed { index, argument ->
             argument?.let {
                 it.isComposableLambda || it.isComposableParameter || (
                         if (
@@ -430,7 +430,7 @@ class ComposableTargetAnnotationsTransformer(
 
     private fun IrElement.findTransformedLambda(): IrFunctionExpression? =
         when (this) {
-            is IrCall -> arguments.firstNotNullOfOrNull { it?.findTransformedLambda() }
+            is IrCall -> valueArguments.firstNotNullOfOrNull { it?.findTransformedLambda() }
             is IrGetField -> symbol.owner.initializer?.findTransformedLambda()
             is IrBody -> statements.firstNotNullOfOrNull { it.findTransformedLambda() }
             is IrReturn -> value.findTransformedLambda()
@@ -545,7 +545,7 @@ class ComposableTargetAnnotationsTransformer(
         valueParameters.any { it.type.isComposable }
 
     private fun IrCall.hasComposableArguments() =
-        arguments.any { argument ->
+        valueArguments.any { argument ->
             argument?.type?.let { type ->
                 (type.isOrHasComposableLambda || type.isSamComposable)
             } == true
@@ -719,7 +719,7 @@ class InferenceFunctionCallType(
             val target = call.symbol.owner.annotations.target.let { target ->
                 if (target.isUnspecified) defaultTarget else target
             }
-            val parameters = call.arguments.filterNotNull().filter {
+            val parameters = call.valueArguments.filterNotNull().filter {
                 it.type.isOrHasComposableLambda
             }.map {
                 it.type.toScheme(defaultTarget)
@@ -1066,7 +1066,7 @@ private fun IrType.samOwnerOrNull() =
         } else null
     }
 
-private val IrCall.arguments
+private val IrCall.valueArguments
     get() = Array(valueArgumentsCount) {
         getValueArgument(it)
     }.toList()
