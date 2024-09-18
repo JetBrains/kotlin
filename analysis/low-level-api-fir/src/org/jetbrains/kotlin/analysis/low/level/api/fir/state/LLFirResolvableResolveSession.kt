@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.fir.FirElement
@@ -64,20 +67,29 @@ internal class LLFirResolvableResolveSession(
         val module = getModule(containingKtFile)
 
         return when (getModuleResolutionStrategy(module)) {
-            LLModuleResolutionStrategy.LAZY -> findSourceFirSymbol(ktDeclaration).also { resolveFirToPhase(it.fir, phase) }
-            LLModuleResolutionStrategy.STATIC -> findFirCompiledSymbol(ktDeclaration, module)
+            LLModuleResolutionStrategy.LAZY -> {
+                if (module is KaLibraryModule) {
+                    val session = LLFirSessionCache.getInstance(project).getSession(module, preferBinary = true)
+                    return findFirCompiledSymbol(session, ktDeclaration)
+                }
+
+                findSourceFirSymbol(ktDeclaration).also { resolveFirToPhase(it.fir, phase) }
+            }
+            LLModuleResolutionStrategy.STATIC -> {
+                val session = getSessionFor(module)
+                findFirCompiledSymbol(session, ktDeclaration)
+            }
         }
     }
 
-    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
+    private fun findFirCompiledSymbol(session: LLFirSession, ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         requireWithAttachment(
             ktDeclaration.containingKtFile.isCompiled,
             { "`findFirCompiledSymbol` only works on compiled declarations, but the given declaration is not compiled." },
         ) {
-            withPsiEntry("declaration", ktDeclaration, module)
+            withPsiEntry("declaration", ktDeclaration, session.ktModule)
         }
 
-        val session = getSessionFor(module)
         val searcher = FirDeclarationForCompiledElementSearcher(session)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
