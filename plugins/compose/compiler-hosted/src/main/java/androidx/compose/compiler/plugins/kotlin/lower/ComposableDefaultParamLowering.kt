@@ -225,14 +225,14 @@ class ComposableDefaultParamLowering(
         // move receiver parameters to value parameters
         val dispatcherReceiver = wrapper.dispatchReceiverParameter
         if (dispatcherReceiver != null) {
-            wrapper.valueParameters += dispatcherReceiver
             wrapper.dispatchReceiverParameter = null
+            wrapper.valueParameters += dispatcherReceiver
         }
 
         val extensionReceiver = wrapper.extensionReceiverParameter
         if (extensionReceiver != null) {
-            wrapper.valueParameters += extensionReceiver
             wrapper.extensionReceiverParameter = null
+            wrapper.valueParameters += extensionReceiver
         }
 
         wrapper.body = DeclarationIrBuilder(
