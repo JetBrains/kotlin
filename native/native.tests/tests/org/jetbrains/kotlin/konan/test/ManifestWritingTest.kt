@@ -20,10 +20,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.toOutput
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.*
+
+private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation/manifest-writing"
 
 /**
  * Testdata:
@@ -33,19 +37,19 @@ import java.util.*
  * [doManifestTest] runs compiler with designated arguments on a stub-file and asserts that
  * the generated manifest and compiler output correspond to the respective golden files in test data.
  */
-@TestDataPath("\$PROJECT_ROOT/native/native.tests/testData/klib/manifestWriting")
+@TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("simpleManifest")
-    fun testSimpleManifest() {
-        doManifestTest("native/native.tests/testData/klib/manifestWriting/simpleManifest")
+    fun testSimpleManifest(testInfo: TestInfo) {
+        doManifestTest(testInfo)
     }
 
     @Test
     @TestMetadata("nativeTargetsOverwrite")
-    fun testNativeTargetsOverwrite() {
+    fun testNativeTargetsOverwrite(testInfo: TestInfo) {
         doManifestTest(
-            "native/native.tests/testData/klib/manifestWriting/nativeTargetsOverwrite",
+            testInfo,
             // note some leading and trailing spaces
             "-Xmanifest-native-targets=ios_arm64, ios_x64,linux_x64 ,mingw_x64,macos_x64,macos_arm64"
         )
@@ -53,15 +57,16 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
 
     @Test
     @TestMetadata("nativeTargetsOverwriteUnknownTarget")
-    fun testNativeTargetsOverwriteUnknownTargetName() {
+    fun testNativeTargetsOverwriteUnknownTargetName(testInfo: TestInfo) {
         doManifestTest(
-            "native/native.tests/testData/klib/manifestWriting/nativeTargetsOverwriteUnknownTarget",
+            testInfo,
             "-Xmanifest-native-targets=ios_arm64,ios_x64, unknown_target"
         )
     }
 
-    private fun doManifestTest(testDataDir: String, vararg additionalCompilerArguments: String) {
-        val rootDir = File(testDataDir)
+    private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
+        val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
+        val rootDir = File(TEST_DATA_ROOT, testName)
         require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
 
         val compilationResult = compileLibrary(
@@ -127,7 +132,7 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
         }
 
         private val stubSourceFile: File
-            get() = File("native/native.tests/testData/klib/manifestWriting/stub.kt").also {
+            get() = File("$TEST_DATA_ROOT/stub.kt").also {
                 require(it.exists()) { "Missing stub.kt-file, looked at: ${it.absolutePath}" }
             }
     }

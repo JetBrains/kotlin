@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
+
+private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation"
 
 /**
  * This test asserts that K/N compiler "agrees" to try to compile klib for any target
@@ -27,16 +31,18 @@ import java.io.File
  * It doesn't check whether the resulting klib is same across all hosts or even valid
  * (i.e. compiler can emit empty klib and the test will still pass)
  */
-@TestDataPath("\$PROJECT_ROOT/native/native.tests/testData/klib/crossCompilationOutput")
+@TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
 abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
     @Test
-    @TestMetadata("klibCrossCompilation")
-    fun testKlibCrossCompilation() {
+    @TestMetadata("compiler-output")
+    fun testKlibCrossCompilation(testInfo: TestInfo) {
         Assumptions.assumeFalse(
             HostManager.hostIsMac,
             "This test targets cross-compilation to iOS and therefore disabled on Macs, as compiling iOS on Mac isn't interesting for this test"
         )
-        val rootDir = File("native/native.tests/testData/klib/crossCompilationOutput/klibCrossCompilation")
+        val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
+
+        val rootDir = File(TEST_DATA_ROOT, testName)
         val compilationResult = compileLibrary(testRunSettings, rootDir.resolve("hello.kt"))
         val expectedOutput = rootDir.resolve("output.txt")
 
@@ -62,6 +68,8 @@ abstract class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
     }.joinToString(separator = "\n")
 
     companion object {
+
+
         /**
          * Capturing groups:
          * 1 - path to K/N Dist ($KONAN_HOME)

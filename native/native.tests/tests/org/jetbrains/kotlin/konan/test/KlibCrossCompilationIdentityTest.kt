@@ -29,7 +29,7 @@ import java.nio.file.Path
 import java.security.MessageDigest
 import kotlin.io.path.absolute
 
-private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/crossCompilationIdentity"
+private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-compilation/identity"
 
 /**
  * This test works in the following way:
