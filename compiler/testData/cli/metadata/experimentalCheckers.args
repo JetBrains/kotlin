@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/experimentalCheckers.kt
+-Xuse-fir-experimental-checkers
+-d
+$TEMP_DIR$
