@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -52,7 +53,7 @@ internal class FragmentLocalFunctionPatchLowering(
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val localDeclarationsDataKey = when (expression.symbol.owner.origin) {
-                    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> context.mapping.defaultArgumentsOriginalFunction[expression.symbol.owner]
+                    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> expression.symbol.owner.defaultArgumentsOriginalFunction
                     else -> expression.symbol.owner
                 }
                 val localsData = localDeclarationsData[localDeclarationsDataKey] ?: return expression

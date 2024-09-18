@@ -491,7 +491,7 @@ open class DefaultParameterCleaner(
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrValueParameter && declaration.defaultValue != null) {
             if (replaceDefaultValuesWithStubs) {
-                if (context.mapping.defaultArgumentsOriginalFunction[declaration.parent as IrFunction] == null) {
+                if ((declaration.parent as IrFunction).defaultArgumentsOriginalFunction == null) {
                     declaration.defaultValue = context.irFactory.createExpressionBody(
                         IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.type, "Default Stub").apply {
                             attributeOwnerId = declaration.defaultValue!!.expression
@@ -514,7 +514,7 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 ) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction) {
-            (context.mapping.defaultArgumentsOriginalFunction[declaration] as? IrSimpleFunction)?.run {
+            (declaration.defaultArgumentsOriginalFunction as? IrSimpleFunction)?.run {
                 declaration.overriddenSymbols = declaration.overriddenSymbols memoryOptimizedPlus overriddenSymbols.mapNotNull {
                     (it.owner.defaultArgumentsDispatchFunction as? IrSimpleFunction)?.symbol
                 }

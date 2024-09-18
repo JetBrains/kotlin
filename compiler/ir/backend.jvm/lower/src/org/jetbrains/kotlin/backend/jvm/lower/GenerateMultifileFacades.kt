@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -221,7 +222,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 ): IrSimpleFunction? {
     val target = this
 
-    val originalVisibility = context.mapping.defaultArgumentsOriginalFunction[this]?.visibility ?: visibility
+    val originalVisibility = defaultArgumentsOriginalFunction?.visibility ?: visibility
 
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
