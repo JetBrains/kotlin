@@ -35,6 +35,7 @@ modules.forEach { module ->
     if (module == "kotlin-test-js" || module == "kotlin-stdlib-js") {
         library.attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class, "library"))
             attribute(Attribute.of("org.jetbrains.kotlin.js.compiler", String::class.java), "ir")
         }
     }
