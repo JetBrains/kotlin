@@ -23,9 +23,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.assignResolutionAltererExtension"
                         interface="org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.jsSyntheticTranslateExtension"
-                        interface="org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
                         interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
                         area="IDEA_PROJECT" dynamic="true"/>

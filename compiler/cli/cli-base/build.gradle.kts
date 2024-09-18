@@ -13,7 +13,6 @@ dependencies {
     api(project(":compiler:light-classes"))
     api(project(":compiler:javac-wrapper"))
     api(project(":compiler:ir.serialization.jvm"))
-    api(project(":js:js.translator"))
     api(project(":native:frontend.native"))
     api(project(":wasm:wasm.frontend"))
     api(project(":kotlin-util-klib"))

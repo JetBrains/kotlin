@@ -75,7 +75,6 @@ import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -723,7 +722,6 @@ class KotlinCoreEnvironment private constructor(
             StorageComponentContainerContributor.registerExtensionPoint(project)
             DeclarationAttributeAltererExtension.registerExtensionPoint(project)
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
-            JsSyntheticTranslateExtension.registerExtensionPoint(project)
             CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
