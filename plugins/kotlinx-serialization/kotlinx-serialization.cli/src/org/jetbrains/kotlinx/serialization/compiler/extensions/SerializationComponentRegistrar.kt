@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -73,7 +72,6 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
             SyntheticResolveExtension.registerExtension(SerializationResolveExtension(serializationDescriptorSerializer))
 
-            JsSyntheticTranslateExtension.registerExtension(SerializationJsExtension(serializationDescriptorSerializer))
             IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, intrinsicsState))
 
             StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
