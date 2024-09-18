@@ -10,7 +10,10 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
+    testCompileOnly(libs.junit4)
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testApi(projectTests(":generators:test-generator"))
     testRuntimeOnly(toolsJar())
 }
@@ -22,6 +25,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist")
+    useJUnitPlatform()
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }
@@ -43,12 +47,9 @@ task<Exec>("downloadJspecifyTests") {
     }
 }
 
-val test: Test by tasks
-
-test.apply {
+tasks.test {
     exclude("**/*JspecifyAnnotationsTestGenerated*")
 }
-
 task<Test>("jspecifyTests") {
     workingDir(project.rootDir)
     include("**/*JspecifyAnnotationsTestGenerated*")

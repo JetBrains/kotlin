@@ -11,9 +11,12 @@ dependencies {
     testApi(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")
     testApi(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testCompileOnly(libs.junit4)
     testCompileOnly(intellijCore())
 
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
@@ -27,4 +30,5 @@ testsJar {}
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    useJUnitPlatform()
 }
