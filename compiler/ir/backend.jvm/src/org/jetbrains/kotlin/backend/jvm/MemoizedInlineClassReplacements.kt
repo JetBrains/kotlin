@@ -34,7 +34,6 @@ class MemoizedInlineClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    private val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     private val mangleCallsToJavaMethodsWithValueClasses =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
@@ -160,7 +159,6 @@ class MemoizedInlineClassReplacements(
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
-            originalFunctionForMethodReplacement[this] = function
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
                 // The function's name will be mangled, so preserve the old receiver name.
