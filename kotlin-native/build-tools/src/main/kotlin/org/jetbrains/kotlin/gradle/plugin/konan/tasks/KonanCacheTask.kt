@@ -11,11 +11,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
+import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import java.io.File
@@ -92,10 +92,10 @@ abstract class KonanCacheTask @Inject constructor(
         args += additionalCacheFlags
         args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
 
-        KonanCliRunner(
-                isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files),
-                useArgFile = true,
+        isolatedClassLoadersService.get().getClassLoader(compilerDistribution.get().compilerClasspath.files).runKonanTool(
                 toolName = "konanc",
-        ).run(args)
+                args = args,
+                useArgFile = true,
+        )
     }
 }

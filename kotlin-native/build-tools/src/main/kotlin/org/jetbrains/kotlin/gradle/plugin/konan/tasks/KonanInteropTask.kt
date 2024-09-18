@@ -51,11 +51,11 @@ private abstract class KonanInteropInProcessAction @Inject constructor() : WorkA
                 load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
             }
         }.prepare()
-        KonanCliRunner(
-                parameters.isolatedClassLoadersService.get().getClassLoader(parameters.compilerDistribution.get().compilerClasspath.files),
-                useArgFile = false,
+        parameters.isolatedClassLoadersService.get().getClassLoader(parameters.compilerDistribution.get().compilerClasspath.files).runKonanTool(
                 toolName = "cinterop",
-        ).run(parameters.args.get())
+                args = parameters.args.get(),
+                useArgFile = false,
+        )
     }
 }
 

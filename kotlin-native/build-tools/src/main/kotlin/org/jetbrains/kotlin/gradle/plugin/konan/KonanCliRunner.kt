@@ -80,49 +80,47 @@ private fun isPrintableUnicode(c: Char): Boolean {
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
-internal class KonanCliRunner(
-        private val classLoader: ClassLoader,
-        private val useArgFile: Boolean,
-        private val toolName: String,
+internal fun ClassLoader.runKonanTool(
+        toolName: String,
+        args: List<String>,
+        useArgFile: Boolean,
 ) {
-    fun run(args: List<String>) {
-        val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
-        val daemonEntryPoint = "daemonMain"
+    val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
+    val daemonEntryPoint = "daemonMain"
 
-        System.setProperty(runFromDaemonPropertyName, "true")
+    System.setProperty(runFromDaemonPropertyName, "true")
 
-        val transformedArgs = if (useArgFile) {
-            val argFile = Files.createTempFile(/* prefix = */ "konancArgs", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
-            argFile.printWriter().use { w ->
-                for (arg in args) {
-                    val escapedArg = arg
-                            .replace("\\", "\\\\")
-                            .replace("\"", "\\\"")
-                    w.println("\"$escapedArg\"")
-                }
+    val transformedArgs = if (useArgFile) {
+        val argFile = Files.createTempFile(/* prefix = */ "konancArgs", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
+        argFile.printWriter().use { w ->
+            for (arg in args) {
+                val escapedArg = arg
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                w.println("\"$escapedArg\"")
             }
-
-            listOf("@${argFile.absolutePath}")
-        } else {
-            args
         }
 
-        Logging.getLogger(this::class.java).log(
-                LogLevel.INFO,
-                """|Run in-process tool "$toolName"
+        listOf("@${argFile.absolutePath}")
+    } else {
+        args
+    }
+
+    Logging.getLogger("KonanCliRunner").log(
+            LogLevel.INFO,
+            """|Run in-process tool "$toolName"
                    |Arguments = ${args.toPrettyString()}
                    |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
                 """.trimMargin()
-        )
+    )
 
-        try {
-            val mainClass = classLoader.loadClass(mainClass)
-            val entryPoint = mainClass.methods
-                    .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
+    try {
+        val mainClass = loadClass(mainClass)
+        val entryPoint = mainClass.methods
+                .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
 
-            entryPoint.invoke(null, (listOf(toolName) + transformedArgs).toTypedArray())
-        } catch (t: InvocationTargetException) {
-            throw t.targetException
-        }
+        entryPoint.invoke(null, (listOf(toolName) + transformedArgs).toTypedArray())
+    } catch (t: InvocationTargetException) {
+        throw t.targetException
     }
 }
