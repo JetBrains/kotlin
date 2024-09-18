@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.fus.internal
 
 import org.gradle.api.logging.Logger
 import java.io.File
-import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.*
 
@@ -27,7 +26,7 @@ internal fun InternalGradleBuildFusStatisticsService.writeDownFusMetrics(log: Lo
     val reportFile = reportDir.resolve(UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
     reportFile.createNewFile()
 
-    FileOutputStream(reportFile, true).bufferedWriter().use {
+    reportFile.outputStream().bufferedWriter().use {
         it.appendLine("Build: $buildId")
         getAllReportedMetrics().forEach { reportedMetrics ->
             it.appendLine(reportedMetrics.toString())

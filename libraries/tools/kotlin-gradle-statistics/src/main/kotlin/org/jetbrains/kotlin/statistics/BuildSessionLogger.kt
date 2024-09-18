@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.statistics
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
 
@@ -68,8 +67,8 @@ class BuildSessionLogger(
             statisticsFolder.mkdirs()
             val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
 
-            FileOutputStream(file, true).bufferedWriter().use { writer ->
-                writer.appendLine("Build: $buildId")
+            file.outputStream().bufferedWriter().use { writer ->
+                writer.write("Build: $buildId")
                 metricsContainer.flush(writer)
             }
         } catch (_: IOException) {
