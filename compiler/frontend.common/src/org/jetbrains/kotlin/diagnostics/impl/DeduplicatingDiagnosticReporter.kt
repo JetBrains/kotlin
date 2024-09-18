@@ -20,6 +20,10 @@ class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : D
             inner.report(diagnostic, context)
         }
     }
+
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+        inner.checkAndCommitReportsOn(element, context)
+    }
 }
 
 fun DiagnosticReporter.deduplicating(): DeduplicatingDiagnosticReporter = DeduplicatingDiagnosticReporter(this)

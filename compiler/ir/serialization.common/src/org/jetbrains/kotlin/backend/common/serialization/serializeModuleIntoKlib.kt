@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -126,7 +127,8 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     }
 
     val serializedIr = irModuleFragment?.let {
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
 
         it.runIrLevelCheckers(
             irDiagnosticReporter,

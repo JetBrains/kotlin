@@ -20,13 +20,7 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:42:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
 
-/privateTypesInsideInternalInlineFunctionError.kt:42:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
-
 /privateTypesInsideInternalInlineFunctionError.kt:43:5: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
-
-/privateTypesInsideInternalInlineFunctionError.kt:43:5: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
-
-/privateTypesInsideInternalInlineFunctionError.kt:44:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
 
 /privateTypesInsideInternalInlineFunctionError.kt:44:5: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
 
@@ -46,12 +40,6 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
 
-/privateTypesInsideInternalInlineFunctionError.kt:58:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
-
 /privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
-
-/privateTypesInsideInternalInlineFunctionError.kt:59:13: error: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A
-
-/privateTypesInsideInternalInlineFunctionError.kt:60:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package
 
 /privateTypesInsideInternalInlineFunctionError.kt:60:13: error: Inline function accesses a declaration with narrower visibility: private final class A defined in root package

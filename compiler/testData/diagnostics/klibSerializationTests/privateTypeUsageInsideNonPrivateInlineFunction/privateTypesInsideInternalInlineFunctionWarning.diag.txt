@@ -20,13 +20,7 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:42:5: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:42:5: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
-
 /privateTypesInsideInternalInlineFunctionWarning.kt:43:5: warning: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A. This will become an error in a future release.
-
-/privateTypesInsideInternalInlineFunctionWarning.kt:43:5: warning: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A. This will become an error in a future release.
-
-/privateTypesInsideInternalInlineFunctionWarning.kt:44:5: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:44:5: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
 
@@ -46,12 +40,6 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:58:13: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
 
-/privateTypesInsideInternalInlineFunctionWarning.kt:58:13: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
-
 /privateTypesInsideInternalInlineFunctionWarning.kt:59:13: warning: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A. This will become an error in a future release.
-
-/privateTypesInsideInternalInlineFunctionWarning.kt:59:13: warning: Inline function accesses a declaration with narrower visibility: internal final class Nested defined in A. This will become an error in a future release.
-
-/privateTypesInsideInternalInlineFunctionWarning.kt:60:13: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:60:13: warning: Inline function accesses a declaration with narrower visibility: private final class A defined in root package. This will become an error in a future release.
