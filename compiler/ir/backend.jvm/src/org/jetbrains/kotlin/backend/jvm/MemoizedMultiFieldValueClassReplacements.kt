@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -29,7 +30,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.util.concurrent.ConcurrentHashMap
+
+var IrConstructor.originalConstructorOfThisMfvcConstructorReplacement: IrConstructor? by irAttribute(followAttributeOwner = false)
+
+private var IrClass.mfvcFieldsToRemove: MutableSet<IrField>? by irAttribute(followAttributeOwner = false)
+
+var IrValueParameter.oldMfvcDefaultArgument: IrExpression? by irAttribute(followAttributeOwner = false)
+
+var IrFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction: List<RemappedParameter>? by irAttribute(followAttributeOwner = false)
+
+private var IrFunction._parameterTemplateStructureOfThisNewMfvcBidingFunction: List<RemappedParameter>? by irAttribute(followAttributeOwner = false)
+var IrFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction: List<RemappedParameter>?
+    get() = _parameterTemplateStructureOfThisNewMfvcBidingFunction
+    set(value) {
+        if (value != null) {
+            require(explicitParametersCount == value.sumOf { it.valueParameters.size }) {
+                "Illegal structure $value for function ${this.dump()}"
+            }
+        }
+        _parameterTemplateStructureOfThisNewMfvcBidingFunction = value
+    }
 
 /**
  * Keeps track of replacement functions and multi-field value class box/unbox functions.
@@ -38,8 +60,6 @@ class MemoizedMultiFieldValueClassReplacements(
     irFactory: IrFactory,
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
-    val originalConstructorForConstructorReplacement by irAttribute<IrConstructor, IrConstructor>(false).asMap()
-
     private fun IrValueParameter.grouped(
         name: String?,
         substitutionMap: Map<IrTypeParameterSymbol, IrType>,
@@ -57,7 +77,7 @@ class MemoizedMultiFieldValueClassReplacements(
             }
         )
         val rootMfvcNode = this@MemoizedMultiFieldValueClassReplacements.getRootMfvcNode(type.erasedUpperBound)
-        defaultValue?.expression?.let { oldMfvcDefaultArguments.putIfAbsent(this, it) }
+        defaultValue?.expression?.let { this::oldMfvcDefaultArgument.getOrSetIfNull { it } }
         val newType = type.substitute(substitutionMap) as IrSimpleType
         val localSubstitutionMap = makeTypeArgumentsFromType(newType)
         val valueParameters = rootMfvcNode.mapLeaves { leaf ->
@@ -83,9 +103,6 @@ class MemoizedMultiFieldValueClassReplacements(
         targetFunction: IrFunction,
         originWhenFlattened: IrDeclarationOrigin,
     ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
-
-
-    val oldMfvcDefaultArguments by irAttribute<IrValueParameter, IrExpression>(false).asMap()
 
     private fun buildReplacement(
         function: IrFunction,
@@ -185,19 +202,6 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    val bindingOldFunctionToParameterTemplateStructure by irAttribute<IrFunction, List<RemappedParameter>>(false).asMap()
-
-    private val _bindingNewFunctionToParameterTemplateStructure by irAttribute<IrFunction, List<RemappedParameter>>(false).asMap()
-    val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> =
-        object : MutableMap<IrFunction, List<RemappedParameter>> by _bindingNewFunctionToParameterTemplateStructure {
-            override fun put(key: IrFunction, value: List<RemappedParameter>): List<RemappedParameter>? {
-                require(key.explicitParametersCount == value.sumOf { it.valueParameters.size }) {
-                    "Illegal structure $value for function ${key.dump()}"
-                }
-                return _bindingNewFunctionToParameterTemplateStructure.put(key, value)
-            }
-        }
-
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT, noFakeOverride = true) {
             typeParameters = listOf()
@@ -206,14 +210,14 @@ class MemoizedMultiFieldValueClassReplacements(
             copyTypeParametersFrom(function, parameterMap = (function.parentAsClass.typeParameters zip typeParameters).toMap())
             val newFlattenedParameters =
                 makeAndAddGroupedValueParametersFrom(function, includeDispatcherReceiver = true, substitutionMap, this)
-            bindingOldFunctionToParameterTemplateStructure[function] = newFlattenedParameters
-            bindingNewFunctionToParameterTemplateStructure[this] = newFlattenedParameters
+            function.parameterTemplateStructureOfThisOldMfvcBidingFunction = newFlattenedParameters
+            this.parameterTemplateStructureOfThisNewMfvcBidingFunction = newFlattenedParameters
         }
 
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction = buildReplacement(function, function.origin) {
         val remappedParameters = makeMethodLikeRemappedParameters(function)
-        bindingOldFunctionToParameterTemplateStructure[function] = remappedParameters
-        bindingNewFunctionToParameterTemplateStructure[this] = remappedParameters
+        function.parameterTemplateStructureOfThisOldMfvcBidingFunction = remappedParameters
+        this.parameterTemplateStructureOfThisNewMfvcBidingFunction = remappedParameters
     }
 
     private fun createConstructorReplacement(constructor: IrConstructor): IrConstructor {
@@ -223,11 +227,11 @@ class MemoizedMultiFieldValueClassReplacements(
         }.apply {
             parent = constructor.parent
             val remappedParameters = makeMethodLikeRemappedParameters(constructor)
-            bindingOldFunctionToParameterTemplateStructure[constructor] = remappedParameters
+            constructor.parameterTemplateStructureOfThisOldMfvcBidingFunction = remappedParameters
             copyTypeParametersFrom(constructor)
             annotations = constructor.annotations
-            originalConstructorForConstructorReplacement[this] = constructor
-            bindingNewFunctionToParameterTemplateStructure[this] = remappedParameters
+            this.originalConstructorOfThisMfvcConstructorReplacement = constructor
+            this.parameterTemplateStructureOfThisNewMfvcBidingFunction = remappedParameters
             if (constructor.metadata != null) {
                 metadata = constructor.metadata
                 constructor.metadata = null
@@ -327,10 +331,11 @@ class MemoizedMultiFieldValueClassReplacements(
         return this
     }
 
-    private val fieldsToRemove by irAttribute<IrClass, MutableSet<IrField>>(false).asMap()
-    fun getFieldsToRemove(clazz: IrClass): Set<IrField> = fieldsToRemove[clazz] ?: emptySet()
+    fun getFieldsToRemove(clazz: IrClass): Set<IrField> = clazz.mfvcFieldsToRemove ?: emptySet()
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
-        fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field.withAddedStaticReplacementIfNeeded())
+        clazz::mfvcFieldsToRemove.getOrSetIfNull {
+            ConcurrentHashMap<IrField, Unit>().keySet(Unit)
+        }.add(field.withAddedStaticReplacementIfNeeded())
     }
 
     fun getMfvcFieldNode(field: IrField): NameableMfvcNode? {
@@ -391,9 +396,9 @@ class MemoizedMultiFieldValueClassReplacements(
         sourceFunction: IrFunction,
         getArgument: (sourceParameter: IrValueParameter, targetParameterType: IrType) -> IrExpression?
     ): Map<IrValueParameter, IrExpression?> {
-        val targetStructure = bindingNewFunctionToParameterTemplateStructure[targetFunction]
+        val targetStructure = targetFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction
             ?: targetFunction.explicitParameters.map { RegularMapping(it) }
-        val sourceStructure = bindingNewFunctionToParameterTemplateStructure[sourceFunction]
+        val sourceStructure = sourceFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction
             ?: sourceFunction.explicitParameters.map { RegularMapping(it) }
         verifyStructureCompatibility(targetStructure, sourceStructure)
         return buildMap {

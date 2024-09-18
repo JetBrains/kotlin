@@ -91,7 +91,7 @@ object InlineClassAbi {
     }
 
     private fun IrFunction.isAlreadyMangledMfvcFunction(context: JvmBackendContext) =
-        context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[this]?.any { it is MultiFieldValueClassMapping } == true
+        this.parameterTemplateStructureOfThisNewMfvcBidingFunction?.any { it is MultiFieldValueClassMapping } == true
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
         hashSuffix(

@@ -529,10 +529,10 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             val implementationStructure = if (isFakeOverride) {
                 val superDeclaration = replacement.allOverridden().singleOrNull { it.body != null }
                     ?: error("${this.render()} is fake override and has no implementation")
-                replacements.bindingNewFunctionToParameterTemplateStructure[superDeclaration]
+                superDeclaration.parameterTemplateStructureOfThisNewMfvcBidingFunction
                     ?: superDeclaration.explicitParameters.map { RegularMapping(it) }
             } else {
-                replacements.bindingNewFunctionToParameterTemplateStructure[replacement]
+                replacement.parameterTemplateStructureOfThisNewMfvcBidingFunction
                     ?: error("${replacement.render()} must have MFVC structure")
             }
             copyTypeParametersFrom(source) // without static type parameters
@@ -572,7 +572,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 }
                 valueParameters = valueParametersAsMutableList
             }
-            replacements.bindingNewFunctionToParameterTemplateStructure[this] = structure
+            this.parameterTemplateStructureOfThisNewMfvcBidingFunction = structure
             annotations = source.annotations
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
@@ -630,7 +630,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
     }
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
-        val parametersStructure = replacements.bindingOldFunctionToParameterTemplateStructure[original]!!
+        val parametersStructure = original.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
         require(parametersStructure.size == original.explicitParameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
@@ -666,7 +666,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
     ) {
         for (i in old2newList.indices) {
             val (param, newParamList) = old2newList[i]
-            val defaultValue = replacements.oldMfvcDefaultArguments[param] ?: continue
+            val defaultValue = param.oldMfvcDefaultArgument ?: continue
             val structure = parametersStructure[i]
             if (structure is MultiFieldValueClassMapping) {
                 val fakeFunction = context.irFactory.buildFun {
@@ -1015,7 +1015,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         },
     ): IrMemberAccessExpression<*> {
         val parameter2expression = typedArgumentList(originalFunction, original)
-        val structure = replacements.bindingOldFunctionToParameterTemplateStructure[originalFunction]!!
+        val structure = originalFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
         require(parameter2expression.size == structure.size)
         require(structure.sumOf { it.valueParameters.size } == replacement.explicitParametersCount)
         val newArguments: List<IrExpression?> =

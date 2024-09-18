@@ -606,7 +606,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     }.unwrapBlock(), bridge.returnType.upperBound)
 
     private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
-        val structure = context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[function] ?: return null
+        val structure = function.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return null
         require(structure.sumOf { it.valueParameters.size } == function.explicitParametersCount) {
             "Bad parameters structure: $structure"
         }

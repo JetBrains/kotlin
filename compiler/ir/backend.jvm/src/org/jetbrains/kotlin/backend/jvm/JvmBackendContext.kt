@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
-import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -190,7 +189,7 @@ class JvmBackendContext(
             }
             oldFunction.explicitParameters.zip(newFunction.explicitParameters).toMap()
         }
-        val oldRemappedParameters = multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[oldFunction] ?: return
+        val oldRemappedParameters = oldFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return
         val newRemapsFromOld = oldRemappedParameters.mapNotNull { oldRemapping ->
             when (oldRemapping) {
                 is RegularMapping -> parametersMapping[oldRemapping.valueParameter]?.let(::RegularMapping)
@@ -206,6 +205,6 @@ class JvmBackendContext(
         }
         val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.valueParameters.map { it to remap } }.toMap()
         val newBinding = newFunction.explicitParameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
-        multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[newFunction] = newBinding
+        newFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction = newBinding
     }
 }

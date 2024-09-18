@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.hasMangledParameters
+import org.jetbrains.kotlin.backend.jvm.originalConstructorOfThisMfvcConstructorReplacement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,7 +44,7 @@ internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : C
         if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
             return
 
-        if ((context.multiFieldValueClassReplacements.originalConstructorForConstructorReplacement[primaryConstructor] ?: primaryConstructor).hasMangledParameters())
+        if ((primaryConstructor.originalConstructorOfThisMfvcConstructorReplacement ?: primaryConstructor).hasMangledParameters())
             return
 
         if (primaryConstructor.valueParameters.isEmpty() || !primaryConstructor.valueParameters.all { it.hasDefaultValue() })
