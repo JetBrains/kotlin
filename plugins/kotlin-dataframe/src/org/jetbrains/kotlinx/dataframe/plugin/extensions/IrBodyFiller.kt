@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -18,8 +17,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -175,8 +176,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
         val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
         val jvmName = constructors.single { it.owner.valueParameters.size == 1 }
-        val markerName = ((getter.extensionReceiverParameter!!.type as IrSimpleType).arguments.single() as IrSimpleType).classFqName?.shortName()!!
-        val jvmNameArg = "${markerName.identifier}_${declaration.name.identifier}"
+        val marker =
+            ((getter.extensionReceiverParameter!!.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
+        val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
         getter.annotations = listOf(
             IrConstructorCallImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 0, 1)
                 .also {
@@ -216,6 +218,21 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
 
         return declaration
+    }
+
+    private fun IrDeclarationWithName.nestedName() = buildString { computeNestedName(this@nestedName, this) }
+
+    private fun computeNestedName(declaration: IrDeclarationWithName, result: StringBuilder): Boolean {
+        when (val parent = declaration.parent) {
+            is IrClass -> {
+                if (!computeNestedName(parent, result)) return false
+            }
+            is IrPackageFragment -> {}
+            else -> return false
+        }
+        if (result.isNotEmpty()) result.append('_')
+        result.append(declaration.name.asString())
+        return true
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
