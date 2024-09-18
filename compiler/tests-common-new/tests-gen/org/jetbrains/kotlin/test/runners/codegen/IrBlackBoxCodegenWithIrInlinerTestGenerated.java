@@ -36796,6 +36796,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("extensionInAnotherObject.kt")
+    public void testExtensionInAnotherObject() {
+      runTest("compiler/testData/codegen/box/jvmStatic/extensionInAnotherObject.kt");
+    }
+
+    @Test
     @TestMetadata("extensionPropertyGetter.kt")
     public void testExtensionPropertyGetter() {
       runTest("compiler/testData/codegen/box/jvmStatic/extensionPropertyGetter.kt");

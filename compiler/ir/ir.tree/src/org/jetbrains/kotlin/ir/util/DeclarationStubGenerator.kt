@@ -204,8 +204,8 @@ abstract class DeclarationStubGenerator(
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
             ).generateParentDeclaration().also {
-                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
-                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter, true)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter, false)
                 it.valueParameters = it.createValueParameters()
             }
         }
@@ -228,8 +228,8 @@ abstract class DeclarationStubGenerator(
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
             ).generateParentDeclaration().also {
-                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
-                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter, true)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter, false)
                 it.valueParameters = it.createValueParameters()
             }
         }
@@ -274,8 +274,11 @@ abstract class DeclarationStubGenerator(
         }.generateParentDeclaration()
     }
 
-    private fun IrLazyFunctionBase.createReceiverParameter(parameter: ReceiverParameterDescriptor?): IrValueParameter? =
-        if (stubGenerator.extensions.isStaticFunction(descriptor)) null
+    private fun IrLazyFunctionBase.createReceiverParameter(
+        parameter: ReceiverParameterDescriptor?,
+        functionDispatchReceiver: Boolean,
+    ): IrValueParameter? =
+        if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
         else typeTranslator.buildWithScope(this) {
             parameter?.generateReceiverParameterStub()?.also { it.parent = this@createReceiverParameter }
         }
