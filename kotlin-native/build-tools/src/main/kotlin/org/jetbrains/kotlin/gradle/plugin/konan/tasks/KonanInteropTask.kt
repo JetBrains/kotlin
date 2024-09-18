@@ -58,7 +58,6 @@ abstract class KonanInteropTask @Inject constructor(
         private val workerExecutor: WorkerExecutor,
         private val layout: ProjectLayout,
         private val fileOperations: FileOperations,
-        private val execOperations: ExecOperations,
 ): DefaultTask() {
     @get:Input
     abstract val konanTarget: Property<KonanTarget>
@@ -135,7 +134,6 @@ abstract class KonanInteropTask @Inject constructor(
         if (allowRunningCInteropInProcess) {
             val interopRunner = KonanCliInteropRunner(
                     fileOperations,
-                    execOperations,
                     logger,
                     isolatedClassLoadersService.get(),
                     compilerDistributionPath.get(),

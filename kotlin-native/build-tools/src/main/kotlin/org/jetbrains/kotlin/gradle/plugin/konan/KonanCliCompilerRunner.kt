@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin.konan
 
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.logging.Logger
-import org.gradle.process.ExecOperations
 import java.nio.file.Files
 
 /** Kotlin/Native compiler runner */
 internal class KonanCliCompilerRunner(
         fileOperations: FileOperations,
-        execOperations: ExecOperations,
         logger: Logger,
         isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         konanHome: String,
-) : KonanCliRunner("konanc", fileOperations, execOperations, logger, isolatedClassLoadersService, konanHome) {
+) : KonanCliRunner("konanc", fileOperations, logger, isolatedClassLoadersService, konanHome) {
     override fun transformArgs(args: List<String>): List<String> {
         val argFile = Files.createTempFile(/* prefix = */ "konancArgs", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
         argFile.printWriter().use { w ->

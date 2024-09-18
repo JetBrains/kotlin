@@ -9,41 +9,20 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.Logger
 import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
-import java.util.*
 
 private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
 internal abstract class KonanCliRunner(
         protected val toolName: String,
         private val fileOperations: FileOperations,
-        private val execOperations: ExecOperations,
         private val logger: Logger,
         private val isolatedClassLoadersService: KonanCliRunnerIsolatedClassLoadersService,
         private val konanHome: String,
 ) {
     private val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
     private val daemonEntryPoint get() = "daemonMain"
-
-    protected open val execEnvironment: Map<String, String> = emptyMap()
-    // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
-    private val execEnvironmentBlacklist: Set<String> by lazy {
-        HashSet<String>().also { collector ->
-            KonanCliRunner::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
-                stream.reader().use { r -> r.forEachLine { collector.add(it) } }
-            }
-        }
-    }
-
-    private val execSystemPropertiesBlacklist: Set<String> = setOf(
-            "java.endorsed.dirs",       // Fix for KT-25887
-            "user.dir",                 // Don't propagate the working dir of the current Gradle process
-            "java.system.class.loader",  // Don't use custom class loaders
-            "runFromDaemonPropertyName"
-    )
 
     private val classpath: Set<File> by lazy {
         fileOperations.fileTree("$konanHome/konan/lib/").apply {
@@ -52,20 +31,7 @@ internal abstract class KonanCliRunner(
         }.files
     }
 
-    protected open val mustRunViaExec get() = false.also { System.setProperty(runFromDaemonPropertyName, "true") }
     protected open fun transformArgs(args: List<String>) = listOf(toolName) + args
-
-    private val jvmArgs: List<String> by lazy {
-        mutableListOf<String>().apply {
-            add("-ea")
-            add("-Xmx3G")
-
-            // Disable C2 compiler for HotSpot VM to improve compilation speed.
-            System.getProperty("java.vm.name")?.let { vmName ->
-                if (vmName.contains("HotSpot", true)) add("-XX:TieredStopAtLevel=1")
-            }
-        }
-    }
 
     fun run(args: List<String>) {
         check(classpath.isNotEmpty()) {
@@ -76,47 +42,8 @@ internal abstract class KonanCliRunner(
             """.trimIndent()
         }
 
-        if (mustRunViaExec) runViaExec(args) else runInProcess(args)
-    }
+        System.setProperty(runFromDaemonPropertyName, "true")
 
-    private fun runViaExec(args: List<String>) {
-        val transformedArgs = transformArgs(args)
-        val systemProperties = System.getProperties()
-                /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
-                .snapshot()
-                .asSequence()
-                .map { (k, v) -> k.toString() to v.toString() }
-                .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
-                .escapeQuotesForWindows()
-                .toMap() + mapOf("konan.home" to konanHome)
-
-
-        logger.log(
-                LogLevel.INFO,
-                """|Run "$toolName" tool in a separate JVM process
-                   |Main class = $mainClass
-                   |Arguments = ${args.toPrettyString()}
-                   |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
-                   |Classpath = ${classpath.map { it.absolutePath }.toPrettyString()}
-                   |JVM options = ${jvmArgs.toPrettyString()}
-                   |Java system properties = ${systemProperties.toPrettyString()}
-                   |Suppressed ENV variables = ${execEnvironmentBlacklist.toPrettyString()}
-                   |Custom ENV variables = ${execEnvironment.toPrettyString()}
-                """.trimMargin()
-        )
-
-        execOperations.javaexec {
-            this.mainClass.set(this@KonanCliRunner.mainClass)
-            this.classpath(this@KonanCliRunner.classpath)
-            this.jvmArgs(this@KonanCliRunner.jvmArgs)
-            this.systemProperties(systemProperties)
-            execEnvironmentBlacklist.forEach { this.environment.remove(it) }
-            this.environment(execEnvironment)
-            this.args(transformedArgs)
-        }
-    }
-
-    private fun runInProcess(args: List<String>) {
         val transformedArgs = transformArgs(args)
 
         logger.log(
@@ -141,20 +68,6 @@ internal abstract class KonanCliRunner(
     }
 
     companion object {
-        private fun String.escapeQuotes() = replace("\"", "\\\"")
-
-        private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
-                if (HostManager.hostIsMingw) map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() } else this
-
-        private fun Map<String, String>.toPrettyString(): String = buildString {
-            append('[')
-            if (this@toPrettyString.isNotEmpty()) append('\n')
-            this@toPrettyString.entries.forEach { (key, value) ->
-                append('\t').append(key).append(" = ").append(value.toPrettyString()).append('\n')
-            }
-            append(']')
-        }
-
         private fun Collection<String>.toPrettyString(): String = buildString {
             append('[')
             if (this@toPrettyString.isNotEmpty()) append('\n')
@@ -168,8 +81,6 @@ internal abstract class KonanCliRunner(
                     any { it == '"' || it.isWhitespace() } -> '"' + escapeStringCharacters() + '"'
                     else -> this
                 }
-
-        private fun Properties.snapshot(): Properties = clone() as Properties
 
         private fun String.escapeStringCharacters(): String {
             val buffer = StringBuilder(length)

@@ -15,7 +15,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
@@ -28,7 +27,6 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KonanCompileTask @Inject constructor(
         private val fileOperations: FileOperations,
-        private val execOperations: ExecOperations,
         private val objectFactory: ObjectFactory,
 ) : DefaultTask() {
     // Changing the compiler version must rebuild the library.
@@ -60,7 +58,7 @@ abstract class KonanCompileTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        val toolRunner = KonanCliCompilerRunner(fileOperations, execOperations, logger, isolatedClassLoadersService.get(), compilerDistributionPath.get())
+        val toolRunner = KonanCliCompilerRunner(fileOperations, logger, isolatedClassLoadersService.get(), compilerDistributionPath.get())
 
         outputDirectory.get().asFile.prepareAsOutput()
 

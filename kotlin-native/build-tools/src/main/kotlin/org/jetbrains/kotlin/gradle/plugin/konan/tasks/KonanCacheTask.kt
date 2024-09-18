@@ -11,7 +11,6 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliCompilerRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.PlatformManager
@@ -29,7 +28,6 @@ enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
 
 abstract class KonanCacheTask @Inject constructor(
         private val fileOperations: FileOperations,
-        private val execOperations: ExecOperations,
 ) : DefaultTask() {
     @get:InputDirectory
     abstract val originalKlib: DirectoryProperty
@@ -89,6 +87,6 @@ abstract class KonanCacheTask @Inject constructor(
             args += "-Xmake-per-file-cache"
         args += additionalCacheFlags
         args += cachedLibraries.map { "-Xcached-library=${it.key},${it.value}" }
-        KonanCliCompilerRunner(fileOperations, execOperations, logger, isolatedClassLoadersService.get(), konanHome).run(args)
+        KonanCliCompilerRunner(fileOperations, logger, isolatedClassLoadersService.get(), konanHome).run(args)
     }
 }
