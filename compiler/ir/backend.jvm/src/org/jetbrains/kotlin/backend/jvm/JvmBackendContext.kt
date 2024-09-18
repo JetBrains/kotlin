@@ -109,8 +109,6 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)

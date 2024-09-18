@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.Type
 
 @PhaseDescription(
@@ -402,7 +403,7 @@ private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContex
     ) return this
     // We need to use suspend function originals here, since if we use 'this' here,
     // turing FlowCollector into 'fun interface' leads to AbstractMethodError. See KT-49294.
-    return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
+    return suspendFunctionOriginal()::viewOfOriginalSuspendFunction.getOrSetIfNull { createSuspendFunctionStub(context) }
 }
 
 private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContext): IrSimpleFunction {

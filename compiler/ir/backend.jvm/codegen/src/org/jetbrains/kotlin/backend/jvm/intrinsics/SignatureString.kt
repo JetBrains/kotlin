@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.viewOfOriginalSuspendFunction
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -37,7 +38,7 @@ object SignatureString : IntrinsicMethod() {
             is IrConstructor -> function
         }
         if (resolved.isSuspend) {
-            resolved = codegen.context.suspendFunctionOriginalToView[resolved] ?: resolved
+            resolved = resolved.viewOfOriginalSuspendFunction ?: resolved
         }
         val method = codegen.methodSignatureMapper.mapAsmMethod(resolved)
         val descriptor = method.name + method.descriptor
