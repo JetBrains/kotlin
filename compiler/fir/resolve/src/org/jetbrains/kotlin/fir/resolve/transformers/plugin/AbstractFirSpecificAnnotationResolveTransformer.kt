@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.shortName
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
@@ -348,7 +349,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
-        val name = typeRef.qualifier.last().name
+        val name = typeRef.shortName
         if (metaAnnotationsFromPlugins.isNotEmpty()) return true
         return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames || annotationsFromPlugins.any { it.shortName() == name }
     }

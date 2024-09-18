@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.extensions.withGeneratedDeclarationsSymbolProviderDisabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.shortName
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -277,6 +278,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
         if (annotations.isEmpty()) return
 
+        val namesWithArguments = resolveTargetSession.annotationPlatformSupport.requiredAnnotationsWithArgumentsShortClassNames
+
         var hasApplicableAnnotation = false
         val containerForAnnotations = ArrayList<FirAnnotation>(annotations.size)
         for (annotation in annotations) {
@@ -295,8 +298,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     annotationTypeRef = transformer.annotationTransformer.createDeepCopyOfTypeRef(userTypeRef)
 
                     // Non-empty arguments must be lazy expressions
-                    if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation)) {
-                        argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, llFirSession)
+                    if (FirLazyBodiesCalculator.needCalculatingAnnotationCall(annotation) && userTypeRef.shortName in namesWithArguments) {
+                        argumentList = FirLazyBodiesCalculator.calculateLazyArgumentsForAnnotation(annotation, resolveTargetSession)
                     }
                 }
             } else {

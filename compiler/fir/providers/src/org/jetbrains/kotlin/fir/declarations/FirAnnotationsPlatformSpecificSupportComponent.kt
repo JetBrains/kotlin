@@ -25,6 +25,10 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
+    val requiredAnnotationsWithArgumentsShortClassNames: Set<Name> by lazy {
+        requiredAnnotationsWithArguments.mapTo(mutableSetOf()) { it.shortClassName }
+    }
+
     /**
      * Maps deprecation annotation ClassIds to the flag
      * which is true iff the corresponding annotation must
@@ -53,11 +57,11 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
         override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.Target,
+            StandardClassIds.Annotations.DeprecatedSinceKotlin,
+            StandardClassIds.Annotations.SinceKotlin,
         )
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
-            StandardClassIds.Annotations.DeprecatedSinceKotlin,
-            StandardClassIds.Annotations.SinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
         )
 
